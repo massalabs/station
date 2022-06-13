@@ -9,7 +9,7 @@ Everything is this project is WIP prototype.
 
 ## How to ...
 
-### ... get the last version of `thyra-server`
+### ... get the last version of `thyra-server` ?
 
 To install the last version of the `thyra-server` application you need to:
 
@@ -18,7 +18,14 @@ To install the last version of the `thyra-server` application you need to:
 
 Note: you can change `main` to a tag or a commit value if needed.
 
-That's it, thyra-server is installed in '$HOME/go/bin/' dir.
+That's it, thyra-server is installed in '$HOME/go/bin/' dir and you can use it by executing `thyra-server` in your terminal.
+
+### ... access a website stored on the Massa blockchain ?
+
+Prerequisite: Having a running thyra-server application on your machine.
+
+To access the website you need to go to http://localhost:8080/website?url=<address of the website>.
+For instance, to access flappy text stored on the blockchain, click the following link: http://localhost:8080/website?url=A1aMywGBgBywiL6WcbKR4ugxoBtdP9P3waBVi5e713uvj7F1DJL.
 
 ## Additional information
 
