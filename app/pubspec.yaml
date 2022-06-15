@@ -29,6 +29,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  webview_flutter_plus: ^0.3.0+2
   thyra_bridge_dart:
     path: ../bridge/dart
 
