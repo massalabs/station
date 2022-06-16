@@ -6,7 +6,9 @@ import (
 	"fmt"
 
 	"github.com/decred/dcrd/dcrec/secp256k1/v4"
-	"github.com/decred/dcrd/dcrec/secp256k1/v4/schnorr"
+	//"github.com/decred/dcrd/dcrec/secp256k1/v4/schnorr"
+
+	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 	"github.com/massalabs/thyra/pkg/node"
 	"lukechampine.com/blake3"
 
@@ -57,6 +59,8 @@ func message(expiry uint64, fee uint64, senderPubKey []byte, op Operation) []byt
 
 func sign(msg []byte, privKey []byte) ([]byte, error) {
 	digest := blake3.Sum256(msg)
+	fmt.Println("digest", digest)
+	fmt.Println("privKey", privKey)
 
 	sign, err := schnorr.Sign(
 		secp256k1.PrivKeyFromBytes(privKey),
@@ -77,6 +81,8 @@ func Call(c *node.Client, expiry uint64, fee uint64, op Operation, pubKey []byte
 	if err != nil {
 		return "", err
 	}
+
+	fmt.Println("signature", signature)
 
 	r, err := c.RPCClient.Call(
 		context.Background(),

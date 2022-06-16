@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	extbase58 "github.com/btcsuite/btcutil/base58"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/node/send_operation"
@@ -11,12 +12,12 @@ import (
 
 func main() {
 	base58Address := "A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh"
-	addr, err := base58.CheckDecode(base58Address[1:])
+	addr, _, err := extbase58.CheckDecode(base58Address[1:])
 	if err != nil {
 		panic(err)
 	}
 
-	pubKey, err := base58.CheckDecode("28oAUrFgbp2bMZat5kmtxjHWmg6R4rYzFiyoZud9UhYGZtB7iy") //"zkTGqfwJp43tY4FPgRXC7fr2xML3kDQ8bch15SpnDehuxWiKS")
+	pubKey, err := base58.CheckDecode("zkTGqfwJp43tY4FPgRXC7fr2xML3kDQ8bch15SpnDehuxWiKS")
 	if err != nil {
 		panic(err)
 	}

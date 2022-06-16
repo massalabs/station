@@ -15,6 +15,7 @@ require (
 )
 
 require (
+	github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 // indirect
 	github.com/ethereum/go-ethereum v1.10.18 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 )
@@ -24,6 +25,7 @@ require (
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/bitherhq/go-ethereum v1.7.1
+	github.com/btcsuite/btcd/btcec/v2 v2.2.0
 	github.com/btcsuite/btcutil v1.0.2
 	github.com/decred/dcrd/crypto/blake256 v1.0.0
 	github.com/decred/dcrd/dcrec/secp256k1/v3 v3.0.0

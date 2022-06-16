@@ -48,7 +48,7 @@ func (c *CallSC) Content() interface{} {
 			GazPrice:        fmt.Sprint(c.gazPrice),
 			ParallelCoins:   fmt.Sprint(c.nbParallelCoins),
 			SequentialCoins: fmt.Sprint(c.nbSequentialCoins),
-			TargetAddr:      "A" + base58.CheckEncode(c.address),
+			TargetAddr:      "A" + base58.CheckEncode(append(make([]byte, 1), c.address...)),
 			TargetFunc:      c.function,
 			Param:           hex.EncodeToString(c.parameters),
 		},
