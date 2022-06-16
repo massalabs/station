@@ -58,9 +58,34 @@ func handleSubsequentRequest(w http.ResponseWriter, r *http.Request) {
 	w.Write(body)
 }
 
+var dns = map[string]string{"flappy": "A1aMywGBgBywiL6WcbKR4ugxoBtdP9P3waBVi5e713uvj7F1DJL"}
+
+func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
+	i := strings.Index(r.Host, ".massa")
+	if i < 0 {
+		panic("no .massa in URL")
+	}
+
+	name := r.Host[:i]
+
+	addr, ok := dns[name]
+	if !ok {
+		panic("following name not resolved " + name)
+	}
+
+	body, err := Fetch(addr, "index.html")
+	if err != nil {
+		panic(err)
+	}
+
+	w.Write(body)
+}
+
 func HandlerFunc(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasPrefix(r.URL.Path, "/website") {
+		if strings.Index(r.Host, ".massa") > 0 {
+			handleMassaDomainRequest(w, r)
+		} else if strings.HasPrefix(r.URL.Path, "/website") {
 			handleInitialRequest(w, r)
 		} else if strings.Contains(path.Base(r.URL.Path), ".") {
 			handleSubsequentRequest(w, r)
