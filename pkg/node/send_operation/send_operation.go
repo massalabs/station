@@ -3,10 +3,11 @@ package send_operation
 import (
 	"context"
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
 
-	"github.com/decred/dcrd/dcrec/secp256k1/v4"
-	"github.com/decred/dcrd/dcrec/secp256k1/v4/schnorr"
+	"github.com/btcsuite/btcd/btcec/v2"
+	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 	"github.com/massalabs/thyra/pkg/node"
 	"lukechampine.com/blake3"
 
@@ -55,17 +56,34 @@ func message(expiry uint64, fee uint64, senderPubKey []byte, op Operation) []byt
 	return msg
 }
 
-func sign(msg []byte, privKey []byte) ([]byte, error) {
+func sign(msg []byte, privKeyBytes []byte) ([]byte, error) {
 	digest := blake3.Sum256(msg)
 
-	sign, err := schnorr.Sign(
-		secp256k1.PrivKeyFromBytes(privKey),
-		digest[:])
+	// TODO: Use random bytes
+	var auxBytes [32]byte
+	aux := decodeHex("0000000000000000000000000000000000000000000000000000000000000000")
+	copy(auxBytes[:], aux)
+
+	var signOpts = []schnorr.SignOption{schnorr.CustomNonce(auxBytes)}
+
+	privKey, _ := btcec.PrivKeyFromBytes(privKeyBytes)
+
+	signature, err := schnorr.Sign(privKey, digest[:], signOpts...)
 	if err != nil {
-		return nil, err
+		fmt.Println("sig generation failed", err)
 	}
 
-	return sign.Serialize(), nil
+	return signature.Serialize(), nil
+}
+
+func decodeHex(hexStr string) []byte {
+	b, err := hex.DecodeString(hexStr)
+	if err != nil {
+		panic("invalid hex string in test source: err " + err.Error() +
+			", hex: " + hexStr)
+	}
+
+	return b
 }
 
 func Call(c *node.Client, expiry uint64, fee uint64, op Operation, pubKey []byte, privKey []byte) (string, error) {
