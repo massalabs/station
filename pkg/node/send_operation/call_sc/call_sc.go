@@ -48,7 +48,7 @@ func (c *CallSC) Content() interface{} {
 			GazPrice:        fmt.Sprint(c.gazPrice),
 			ParallelCoins:   fmt.Sprint(c.nbParallelCoins),
 			SequentialCoins: fmt.Sprint(c.nbSequentialCoins),
-			TargetAddr:      "A" + base58.CheckEncode(c.address),
+			TargetAddr:      "A" + base58.CheckEncode(append(make([]byte, 1), c.address...)),
 			TargetFunc:      c.function,
 			Param:           hex.EncodeToString(c.parameters),
 		},
@@ -80,7 +80,7 @@ func (c *CallSC) Message() (msg []byte) {
 	msg = append(msg, buf[:n]...)
 
 	//target address
-	msg = append(msg, c.address[1:]...)
+	msg = append(msg, c.address...)
 
 	//target function
 	n = binary.PutUvarint(buf, uint64(len([]byte(c.function))))
