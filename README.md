@@ -27,6 +27,26 @@ Prerequisite: Having a running thyra-server application on your machine.
 To access the website you need to go to http://localhost:8080/website?url=<address of the website>.
 For instance, to access flappy text stored on the blockchain, click the following link: http://localhost:8080/website?url=A1aMywGBgBywiL6WcbKR4ugxoBtdP9P3waBVi5e713uvj7F1DJL.
 
+### ... redirect massa Top Level Domain to localhost ?
+
+#### Linux
+1- Install dnsmasq
+```shell
+sudo apt install dnsmasq
+```
+2 - Add massa TLD resolution to localhost
+Edit `/etc/dnsmasq.conf` and add `address=/.massa/127.0.0.1`
+
+NOTE : If DNR is globally slow, add the following lines to the same file (`/etc/dnsmasq.conf`):
+```shell
+no-resolv
+server=8.8.8.8
+server=8.8.4.4
+```
+
+
+
+
 ## Additional information
 
 ### Why this name ?

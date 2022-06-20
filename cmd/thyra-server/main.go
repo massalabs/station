@@ -26,7 +26,10 @@ func main() {
 		}
 	}()
 
-	server.Port = 8080
+	server.Port = 80
+	server.TLSPort = 443
+	server.TLSCertificate = "insecure.crt"
+	server.TLSCertificateKey = "insecure.key"
 
 	// Start server which listening
 	server.ConfigureAPI()

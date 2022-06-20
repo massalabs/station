@@ -5,6 +5,7 @@
 //  Thick client HTTP server API.
 //  Schemes:
 //    http
+//    https
 //  Host: localhost
 //  BasePath: /
 //  Version: 0.0.0
