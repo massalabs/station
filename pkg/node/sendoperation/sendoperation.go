@@ -1,9 +1,9 @@
-package send_operation
+package sendoperation
 
 import (
 	"context"
+	"crypto/rand"
 	"encoding/binary"
-	"encoding/hex"
 	"fmt"
 
 	"github.com/btcsuite/btcd/btcec/v2"
@@ -26,16 +26,12 @@ type sendOperationsReq struct {
 	Signature string                  `json:"signature"`
 }
 
-type sendOperationsRes struct {
-	ID []string
-}
-
 type Operation interface {
 	Content() interface{}
 	Message() []byte
 }
 
-func message(expiry uint64, fee uint64, senderPubKey []byte, op Operation) []byte {
+func message(expiry uint64, fee uint64, senderPubKey []byte, operation Operation) []byte {
 	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
 
@@ -51,43 +47,33 @@ func message(expiry uint64, fee uint64, senderPubKey []byte, op Operation) []byt
 	msg = append(msg, senderPubKey...)
 
 	//operation
-	msg = append(msg, op.Message()...)
+	msg = append(msg, operation.Message()...)
 
 	return msg
 }
 
-func sign(msg []byte, privKeyBytes []byte) ([]byte, error) {
+func sign(msg []byte, privKey []byte) ([]byte, error) {
 	digest := blake3.Sum256(msg)
 
-	// TODO: Use random bytes
 	var auxBytes [32]byte
-	aux := decodeHex("0000000000000000000000000000000000000000000000000000000000000000")
-	copy(auxBytes[:], aux)
+
+	if _, err := rand.Read(auxBytes[:]); err != nil {
+		return nil, err
+	}
 
 	var signOpts = []schnorr.SignOption{schnorr.CustomNonce(auxBytes)}
 
-	privKey, _ := btcec.PrivKeyFromBytes(privKeyBytes)
+	pk, _ := btcec.PrivKeyFromBytes(privKey)
 
-	signature, err := schnorr.Sign(privKey, digest[:], signOpts...)
+	signature, err := schnorr.Sign(pk, digest[:], signOpts...)
 	if err != nil {
-		fmt.Println("sig generation failed", err)
+		return nil, err
 	}
 
 	return signature.Serialize(), nil
 }
 
-func decodeHex(hexStr string) []byte {
-	b, err := hex.DecodeString(hexStr)
-	if err != nil {
-		panic("invalid hex string in test source: err " + err.Error() +
-			", hex: " + hexStr)
-	}
-
-	return b
-}
-
-func Call(c *node.Client, expiry uint64, fee uint64, op Operation, pubKey []byte, privKey []byte) (string, error) {
-
+func Call(client *node.Client, expiry uint64, fee uint64, op Operation, pubKey []byte, privKey []byte) (string, error) {
 	signature, err := sign(
 		message(expiry, fee, pubKey, op),
 		privKey,
@@ -96,7 +82,7 @@ func Call(c *node.Client, expiry uint64, fee uint64, op Operation, pubKey []byte
 		return "", err
 	}
 
-	r, err := c.RPCClient.Call(
+	response, err := client.RPCClient.Call(
 		context.Background(),
 		"send_operations",
 		[][]sendOperationsReq{
@@ -113,16 +99,16 @@ func Call(c *node.Client, expiry uint64, fee uint64, op Operation, pubKey []byte
 		return "", err
 	}
 
-	if r.Error != nil {
-		return "", r.Error
+	if response.Error != nil {
+		return "", response.Error
 	}
 
-	var res *sendOperationsRes
+	var id []string
 
-	err = r.GetObject(&res)
+	err = response.GetObject(&id)
 	if err != nil {
 		return "", err
 	}
 
-	return res.ID[0], nil
+	return id[0], nil
 }

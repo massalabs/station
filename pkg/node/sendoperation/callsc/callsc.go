@@ -1,4 +1,4 @@
-package call_sc
+package callsc
 
 import (
 	"encoding/binary"
@@ -55,8 +55,8 @@ func (c *CallSC) Content() interface{} {
 	}
 }
 
-func (c *CallSC) Message() (msg []byte) {
-	msg = make([]byte, 0)
+func (c *CallSC) Message() []byte {
+	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
 
 	//operationId
@@ -92,5 +92,5 @@ func (c *CallSC) Message() (msg []byte) {
 	msg = append(msg, buf[:n]...)
 	msg = append(msg, c.parameters...)
 
-	return
+	return msg
 }
