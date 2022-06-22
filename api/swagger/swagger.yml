@@ -8,6 +8,7 @@ produces:
 - application/json
 schemes:
 - http
+- https
 swagger: "2.0"
 paths:
   /cmd/callSmartContract:
