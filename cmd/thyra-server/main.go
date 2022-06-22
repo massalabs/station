@@ -1,9 +1,11 @@
 package main
 
 import (
+	"flag"
 	"log"
 
 	"github.com/go-openapi/loads"
+	"github.com/jessevdk/go-flags"
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
 
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
@@ -28,8 +30,18 @@ func main() {
 
 	server.Port = 80
 	server.TLSPort = 443
-	server.TLSCertificate = "insecure.crt"
-	server.TLSCertificateKey = "insecure.key"
+
+	certFilePtr := flag.String("tls-certificate", "", "path to certificate file")
+	keyFilePtr := flag.String("tls-key", "", "path to key file")
+	flag.Parse()
+
+	if *certFilePtr != "" {
+		server.TLSCertificate = flags.Filename(*certFilePtr)
+	}
+
+	if *keyFilePtr != "" {
+		server.TLSCertificateKey = flags.Filename(*keyFilePtr)
+	}
 
 	// Start server which listening
 	server.ConfigureAPI()
