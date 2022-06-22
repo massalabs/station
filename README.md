@@ -44,8 +44,26 @@ server=8.8.8.8
 server=8.8.4.4
 ```
 
+#### MacOS
+See: https://www.larry.dev/no-more-etc-hosts-on-mac-with-dnsmasq/
 
+### ... secure HTTPS configuration ?
 
+Using HTTPS configuration without specifying your own certificate and key triggers a warning: `insecure HTTPS configuration`.
+
+To solve this you need to create your own certificate. You can do so by using openssl:
+```shell
+openssl req -newkey rsa:4096 \
+            -x509 \
+            -sha256 \
+            -days 365 \
+            -nodes \
+            -out my_thyra.crt \
+            -keyout my_thyra.key
+```
+
+You can now execute a thyra-server using the following command changing *path to ...* to proper values:
+`thyra-server --tls-certificate <path to my_thyra.crt> --tls-key <path to my_thyra.key>`.
 
 ## Additional information
 
