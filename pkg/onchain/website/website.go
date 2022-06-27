@@ -17,10 +17,12 @@ func Fetch(addr string, filename string) ([]byte, error) {
 		return nil, err
 	}
 
-	msg := ""
+	/*msg := ""
 	for k := range m {
 		msg = msg + k + ", "
 	}
+
+	fmt.Println("files", msg)*/
 
 	return m[filename], nil
 }
@@ -58,7 +60,10 @@ func handleSubsequentRequest(w http.ResponseWriter, r *http.Request) {
 	w.Write(body)
 }
 
-var dns = map[string]string{"flappy": "A1aMywGBgBywiL6WcbKR4ugxoBtdP9P3waBVi5e713uvj7F1DJL"}
+var dns = map[string]string{
+	"flappy": "A1aMywGBgBywiL6WcbKR4ugxoBtdP9P3waBVi5e713uvj7F1DJL",
+	"blog":   "A1NjcatuB6SLecX8xQp8nF3xMr6eW3YDQ2a9i7gaetK9SskJrBi",
+}
 
 func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
 	i := strings.Index(r.Host, ".massa")
@@ -73,10 +78,19 @@ func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
 		panic("following name not resolved " + name)
 	}
 
-	body, err := Fetch(addr, "index.html")
+	var target string
+	if r.URL.Path == "/" {
+		target = "index.html"
+	} else {
+		target = r.URL.Path[1:]
+	}
+
+	body, err := Fetch(addr, target)
 	if err != nil {
 		panic(err)
 	}
+
+	//fmt.Println(target, body)
 
 	w.Write(body)
 }

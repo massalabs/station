@@ -7,6 +7,7 @@ import (
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
+	apiHandler "github.com/massalabs/thyra/internal/apihandler"
 
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 )
@@ -42,6 +43,8 @@ func main() {
 	if *keyFilePtr != "" {
 		server.TLSCertificateKey = flags.Filename(*keyFilePtr)
 	}
+
+	api.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(apiHandler.ExecuteFunction)
 
 	// Start server which listening
 	server.ConfigureAPI()
