@@ -90,6 +90,13 @@ func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	if strings.Index(target, ".css") > 0 {
+		w.Header().Set("Content-Type", "text/css")
+	} else if strings.Index(target, ".js") > 0 {
+		w.Header().Set("Content-Type", "application/json")
+	} else if strings.Index(target, ".html") > 0 {
+		w.Header().Set("Content-Type", "text/html")
+	}
 	//fmt.Println(target, body)
 
 	w.Write(body)
