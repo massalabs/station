@@ -42,6 +42,9 @@ class Binding {
       return ffi.DynamicLibrary.open(
           absolute("../../build/libraries/linux_amd64/libthyra.so"));
     }
+    if (Platform.isAndroid) {
+      return ffi.DynamicLibrary.open('$_libraryName.so');
+    }
     try {
       return ffi.DynamicLibrary.open("$_libraryName.so");
     } catch (e) {
