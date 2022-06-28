@@ -16,19 +16,19 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// NewCmdCallSCParams creates a new CmdCallSCParams object
+// NewCmdExecuteFunctionParams creates a new CmdExecuteFunctionParams object
 //
 // There are no default values defined in the spec.
-func NewCmdCallSCParams() CmdCallSCParams {
+func NewCmdExecuteFunctionParams() CmdExecuteFunctionParams {
 
-	return CmdCallSCParams{}
+	return CmdExecuteFunctionParams{}
 }
 
-// CmdCallSCParams contains all the bound params for the cmd call s c operation
+// CmdExecuteFunctionParams contains all the bound params for the cmd execute function operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters cmdCallSC
-type CmdCallSCParams struct {
+// swagger:parameters cmdExecuteFunction
+type CmdExecuteFunctionParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -37,21 +37,21 @@ type CmdCallSCParams struct {
 	  Required: true
 	  In: body
 	*/
-	Body CmdCallSCBody
+	Body CmdExecuteFunctionBody
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewCmdCallSCParams() beforehand.
-func (o *CmdCallSCParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewCmdExecuteFunctionParams() beforehand.
+func (o *CmdExecuteFunctionParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body CmdCallSCBody
+		var body CmdExecuteFunctionBody
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
 				res = append(res, errors.Required("body", "body", ""))

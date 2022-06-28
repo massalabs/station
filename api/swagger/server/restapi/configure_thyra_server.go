@@ -39,9 +39,9 @@ func configureAPI(api *operations.ThyraServerAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	if api.CmdCallSCHandler == nil {
-		api.CmdCallSCHandler = operations.CmdCallSCHandlerFunc(func(params operations.CmdCallSCParams) middleware.Responder {
-			return middleware.NotImplemented("operation operations.CmdCallSC has not yet been implemented")
+	if api.CmdExecuteFunctionHandler == nil {
+		api.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(func(params operations.CmdExecuteFunctionParams) middleware.Responder {
+			return middleware.NotImplemented("operation operations.CmdExecuteFunctionHandler has not yet been implemented")
 		})
 	}
 	if api.KpiHandler == nil {

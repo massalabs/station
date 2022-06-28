@@ -30,17 +30,17 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "description": "Thick client HTTP server API.",
-    "title": "thick-client",
+    "description": "Thyra HTTP server API.",
+    "title": "thyra-server",
     "version": "0.0.0"
   },
   "paths": {
-    "/cmd/callSmartContract": {
+    "/cmd/executeFunction": {
       "post": {
         "produces": [
           "application/json"
         ],
-        "operationId": "cmdCallSC",
+        "operationId": "cmdExecuteFunction",
         "parameters": [
           {
             "name": "body",
@@ -48,62 +48,70 @@ func init() {
             "required": true,
             "schema": {
               "type": "object",
+              "required": [
+                "name",
+                "at"
+              ],
               "properties": {
-                "operation_context": {
-                  "description": "Context attributes of the operation to send to a node.",
+                "args": {
+                  "description": "Arguments to pass to the function.",
+                  "type": "string",
+                  "default": ""
+                },
+                "at": {
+                  "description": "Smart contract address exporting the function to call.",
+                  "type": "string"
+                },
+                "coins": {
+                  "description": "Coins to be send from caller to smart contract address.",
                   "type": "object",
                   "properties": {
-                    "expiry": {
-                      "description": "Set the expiry duration (in ?) of the transaction.",
-                      "type": "integer"
+                    "parallel": {
+                      "description": "Number of parallel coins to transfer from the caller to the smart contract address.",
+                      "type": "number",
+                      "default": 0
                     },
-                    "fee": {
-                      "description": "Set the fee amount (in massa) that will be given to the block creator.",
-                      "type": "number"
-                    },
-                    "gaz": {
-                      "description": "Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.",
-                      "type": "object",
-                      "properties": {
-                        "limit": {
-                          "description": "Maximum number of gaz unit that a node will be able consume.",
-                          "type": "integer"
-                        },
-                        "price": {
-                          "description": "Price of a gaz unit.",
-                          "type": "number"
-                        }
-                      }
-                    },
-                    "originator": {
-                      "description": "Identifier of the originator of the transaction. This identifier must be knowned by the thick client.",
-                      "type": "string"
+                    "sequential": {
+                      "description": "Number of sequential coins to transfer from the caller to the smart contract address.",
+                      "type": "number",
+                      "default": 0
                     }
                   }
                 },
-                "smart_contract_context": {
-                  "description": "Smart contract attributes of the operation to send to a node.",
+                "expiry": {
+                  "description": "Set the expiry duration (in number of slots) of the transaction.",
+                  "type": "integer",
+                  "default": 3
+                },
+                "fee": {
+                  "description": "Set the fee amount (in massa) that will be given to the block creator.",
+                  "type": "number",
+                  "default": 0
+                },
+                "gaz": {
+                  "description": "Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.",
                   "type": "object",
                   "properties": {
-                    "function": {
-                      "description": "Function attibutes to call",
-                      "type": "object",
-                      "properties": {
-                        "at": {
-                          "description": "Address of the smart contract exposing the function",
-                          "type": "string"
-                        },
-                        "name": {
-                          "description": "Name of the function to call",
-                          "type": "string"
-                        },
-                        "params": {
-                          "description": "Parameters to pass to the function",
-                          "type": "string"
-                        }
-                      }
+                    "limit": {
+                      "description": "Maximum number of gaz unit that a node will be able consume.",
+                      "type": "integer",
+                      "default": 700000000
+                    },
+                    "price": {
+                      "description": "Price of a gaz unit.",
+                      "type": "number",
+                      "default": 0
                     }
                   }
+                },
+                "keyId": {
+                  "description": "Defines the key to used to sign the transaction.",
+                  "type": "string",
+                  "default": ""
+                },
+                "name": {
+                  "description": "Function name to call.",
+                  "type": "string"
                 }
               }
             }
@@ -111,9 +119,52 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "operation id.",
+            "description": "OK.",
             "schema": {
+              "description": "Operation id.",
               "type": "string"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "description": "Error object.",
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "properties": {
+                "code": {
+                  "description": "error code.",
+                  "type": "string"
+                },
+                "message": {
+                  "description": "error message.",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "description": "Error object.",
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "properties": {
+                "code": {
+                  "description": "error code.",
+                  "type": "string"
+                },
+                "message": {
+                  "description": "error message.",
+                  "type": "string"
+                }
+              }
             }
           }
         }
@@ -236,17 +287,17 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "description": "Thick client HTTP server API.",
-    "title": "thick-client",
+    "description": "Thyra HTTP server API.",
+    "title": "thyra-server",
     "version": "0.0.0"
   },
   "paths": {
-    "/cmd/callSmartContract": {
+    "/cmd/executeFunction": {
       "post": {
         "produces": [
           "application/json"
         ],
-        "operationId": "cmdCallSC",
+        "operationId": "cmdExecuteFunction",
         "parameters": [
           {
             "name": "body",
@@ -254,62 +305,70 @@ func init() {
             "required": true,
             "schema": {
               "type": "object",
+              "required": [
+                "name",
+                "at"
+              ],
               "properties": {
-                "operation_context": {
-                  "description": "Context attributes of the operation to send to a node.",
+                "args": {
+                  "description": "Arguments to pass to the function.",
+                  "type": "string",
+                  "default": ""
+                },
+                "at": {
+                  "description": "Smart contract address exporting the function to call.",
+                  "type": "string"
+                },
+                "coins": {
+                  "description": "Coins to be send from caller to smart contract address.",
                   "type": "object",
                   "properties": {
-                    "expiry": {
-                      "description": "Set the expiry duration (in ?) of the transaction.",
-                      "type": "integer"
+                    "parallel": {
+                      "description": "Number of parallel coins to transfer from the caller to the smart contract address.",
+                      "type": "number",
+                      "default": 0
                     },
-                    "fee": {
-                      "description": "Set the fee amount (in massa) that will be given to the block creator.",
-                      "type": "number"
-                    },
-                    "gaz": {
-                      "description": "Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.",
-                      "type": "object",
-                      "properties": {
-                        "limit": {
-                          "description": "Maximum number of gaz unit that a node will be able consume.",
-                          "type": "integer"
-                        },
-                        "price": {
-                          "description": "Price of a gaz unit.",
-                          "type": "number"
-                        }
-                      }
-                    },
-                    "originator": {
-                      "description": "Identifier of the originator of the transaction. This identifier must be knowned by the thick client.",
-                      "type": "string"
+                    "sequential": {
+                      "description": "Number of sequential coins to transfer from the caller to the smart contract address.",
+                      "type": "number",
+                      "default": 0
                     }
                   }
                 },
-                "smart_contract_context": {
-                  "description": "Smart contract attributes of the operation to send to a node.",
+                "expiry": {
+                  "description": "Set the expiry duration (in number of slots) of the transaction.",
+                  "type": "integer",
+                  "default": 3
+                },
+                "fee": {
+                  "description": "Set the fee amount (in massa) that will be given to the block creator.",
+                  "type": "number",
+                  "default": 0
+                },
+                "gaz": {
+                  "description": "Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.",
                   "type": "object",
                   "properties": {
-                    "function": {
-                      "description": "Function attibutes to call",
-                      "type": "object",
-                      "properties": {
-                        "at": {
-                          "description": "Address of the smart contract exposing the function",
-                          "type": "string"
-                        },
-                        "name": {
-                          "description": "Name of the function to call",
-                          "type": "string"
-                        },
-                        "params": {
-                          "description": "Parameters to pass to the function",
-                          "type": "string"
-                        }
-                      }
+                    "limit": {
+                      "description": "Maximum number of gaz unit that a node will be able consume.",
+                      "type": "integer",
+                      "default": 700000000
+                    },
+                    "price": {
+                      "description": "Price of a gaz unit.",
+                      "type": "number",
+                      "default": 0
                     }
                   }
+                },
+                "keyId": {
+                  "description": "Defines the key to used to sign the transaction.",
+                  "type": "string",
+                  "default": ""
+                },
+                "name": {
+                  "description": "Function name to call.",
+                  "type": "string"
                 }
               }
             }
@@ -317,9 +376,52 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "operation id.",
+            "description": "OK.",
             "schema": {
+              "description": "Operation id.",
               "type": "string"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "description": "Error object.",
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "properties": {
+                "code": {
+                  "description": "error code.",
+                  "type": "string"
+                },
+                "message": {
+                  "description": "error message.",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "description": "Error object.",
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "properties": {
+                "code": {
+                  "description": "error code.",
+                  "type": "string"
+                },
+                "message": {
+                  "description": "error message.",
+                  "type": "string"
+                }
+              }
             }
           }
         }
@@ -382,91 +484,35 @@ func init() {
     }
   },
   "definitions": {
-    "CmdCallSCParamsBodyOperationContext": {
-      "description": "Context attributes of the operation to send to a node.",
+    "CmdExecuteFunctionParamsBodyCoins": {
+      "description": "Coins to be send from caller to smart contract address.",
       "type": "object",
       "properties": {
-        "expiry": {
-          "description": "Set the expiry duration (in ?) of the transaction.",
-          "type": "integer"
+        "parallel": {
+          "description": "Number of parallel coins to transfer from the caller to the smart contract address.",
+          "type": "number",
+          "default": 0
         },
-        "fee": {
-          "description": "Set the fee amount (in massa) that will be given to the block creator.",
-          "type": "number"
-        },
-        "gaz": {
-          "description": "Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.",
-          "type": "object",
-          "properties": {
-            "limit": {
-              "description": "Maximum number of gaz unit that a node will be able consume.",
-              "type": "integer"
-            },
-            "price": {
-              "description": "Price of a gaz unit.",
-              "type": "number"
-            }
-          }
-        },
-        "originator": {
-          "description": "Identifier of the originator of the transaction. This identifier must be knowned by the thick client.",
-          "type": "string"
+        "sequential": {
+          "description": "Number of sequential coins to transfer from the caller to the smart contract address.",
+          "type": "number",
+          "default": 0
         }
       }
     },
-    "CmdCallSCParamsBodyOperationContextGaz": {
+    "CmdExecuteFunctionParamsBodyGaz": {
       "description": "Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.",
       "type": "object",
       "properties": {
         "limit": {
           "description": "Maximum number of gaz unit that a node will be able consume.",
-          "type": "integer"
+          "type": "integer",
+          "default": 700000000
         },
         "price": {
           "description": "Price of a gaz unit.",
-          "type": "number"
-        }
-      }
-    },
-    "CmdCallSCParamsBodySmartContractContext": {
-      "description": "Smart contract attributes of the operation to send to a node.",
-      "type": "object",
-      "properties": {
-        "function": {
-          "description": "Function attibutes to call",
-          "type": "object",
-          "properties": {
-            "at": {
-              "description": "Address of the smart contract exposing the function",
-              "type": "string"
-            },
-            "name": {
-              "description": "Name of the function to call",
-              "type": "string"
-            },
-            "params": {
-              "description": "Parameters to pass to the function",
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
-    "CmdCallSCParamsBodySmartContractContextFunction": {
-      "description": "Function attibutes to call",
-      "type": "object",
-      "properties": {
-        "at": {
-          "description": "Address of the smart contract exposing the function",
-          "type": "string"
-        },
-        "name": {
-          "description": "Name of the function to call",
-          "type": "string"
-        },
-        "params": {
-          "description": "Parameters to pass to the function",
-          "type": "string"
+          "type": "number",
+          "default": 0
         }
       }
     },

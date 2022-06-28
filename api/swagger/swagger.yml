@@ -1,8 +1,8 @@
 consumes:
 - application/json
 info:
-  description: Thick client HTTP server API.
-  title: thick-client
+  description: Thyra HTTP server API.
+  title: thyra-server
   version: 0.0.0
 produces:
 - application/json
@@ -11,63 +11,103 @@ schemes:
 - https
 swagger: "2.0"
 paths:
-  /cmd/callSmartContract:
+  /cmd/executeFunction:
     post:
-      operationId: cmdCallSC
+      operationId: cmdExecuteFunction
       parameters:
         - in: body
           name: body
           required: true
           schema:
             type: object
+            required:
+              - name
+              - at
             properties:
-              operation_context:
-                description: Context attributes of the operation to send to a node.
+              name:
+                description: Function name to call.
+                type: string
+              at:
+                description: Smart contract address exporting the function to call.
+                type: string
+              args:
+                description: Arguments to pass to the function.
+                type: string
+                default: ""
+              gaz:
                 type: object
+                description: Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.
                 properties:
-                  expiry:
-                    type: integer
-                    description: Set the expiry duration (in ?) of the transaction.
-                  fee:
+                  price:
                     type: number
-                    description: Set the fee amount (in massa) that will be given to the block creator.
-                  gaz:
-                    type: object
-                    description: Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.
-                    properties:
-                      price:
-                        type: number
-                        description: Price of a gaz unit.
-                      limit:
-                        type: integer
-                        description: Maximum number of gaz unit that a node will be able consume.
-                  originator:
-                    type: string
-                    description: Identifier of the originator of the transaction. This identifier must be knowned by the thick client.
-              smart_contract_context:
-                description: Smart contract attributes of the operation to send to a node.
+                    description: Price of a gaz unit.
+                    default: 0
+                  limit:
+                    type: integer
+                    description: Maximum number of gaz unit that a node will be able consume.
+                    default: 700000000
+              coins:
                 type: object
+                description: Coins to be send from caller to smart contract address.
                 properties:
-                  function:
-                    description: Function attibutes to call
-                    type: object
-                    properties:
-                      name:
-                        description: Name of the function to call
-                        type: string
-                      at:
-                        description: Address of the smart contract exposing the function
-                        type: string
-                      params:
-                        description: Parameters to pass to the function
-                        type: string
+                  parallel:
+                    description: Number of parallel coins to transfer from the caller to the smart contract address.
+                    type: number
+                    default: 0
+                  sequential:
+                    description: Number of sequential coins to transfer from the caller to the smart contract address.
+                    type: number
+                    default: 0
+              expiry:
+                description: Set the expiry duration (in number of slots) of the transaction.
+                type: integer
+                default: 3
+              fee:
+                description: Set the fee amount (in massa) that will be given to the block creator.
+                type: number
+                default: 0
+              keyId:
+                description: Defines the key to used to sign the transaction.
+                type: string
+                default: ""
       produces:
       - application/json
       responses:
         '200':
-          description: operation id.
+          description: OK.
           schema:
             type: string
+            description: Operation id.
+        '422':
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            type: object
+            description: Error object.
+            required:
+              - code
+              - message
+            properties:
+              code:
+                description: error code.
+                type: string
+              message:
+                description: error message.
+                type: string
+        '500':
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            type: object
+            description: Error object.
+            required:
+              - code
+              - message
+            properties:
+              code:
+                description: error code.
+                type: string
+              message:
+                description: error message.
+                type: string
   /kpi:
     get:
       operationId: kpi

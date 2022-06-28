@@ -11,15 +11,15 @@ import (
 	golangswaggerpaths "path"
 )
 
-// CmdCallSCURL generates an URL for the cmd call s c operation
-type CmdCallSCURL struct {
+// CmdExecuteFunctionURL generates an URL for the cmd execute function operation
+type CmdExecuteFunctionURL struct {
 	_basePath string
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *CmdCallSCURL) WithBasePath(bp string) *CmdCallSCURL {
+func (o *CmdExecuteFunctionURL) WithBasePath(bp string) *CmdExecuteFunctionURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -27,15 +27,15 @@ func (o *CmdCallSCURL) WithBasePath(bp string) *CmdCallSCURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *CmdCallSCURL) SetBasePath(bp string) {
+func (o *CmdExecuteFunctionURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *CmdCallSCURL) Build() (*url.URL, error) {
+func (o *CmdExecuteFunctionURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/cmd/callSmartContract"
+	var _path = "/cmd/executeFunction"
 
 	_basePath := o._basePath
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
@@ -44,7 +44,7 @@ func (o *CmdCallSCURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *CmdCallSCURL) Must(u *url.URL, err error) *url.URL {
+func (o *CmdExecuteFunctionURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -55,17 +55,17 @@ func (o *CmdCallSCURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *CmdCallSCURL) String() string {
+func (o *CmdExecuteFunctionURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *CmdCallSCURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *CmdExecuteFunctionURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on CmdCallSCURL")
+		return nil, errors.New("scheme is required for a full url on CmdExecuteFunctionURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on CmdCallSCURL")
+		return nil, errors.New("host is required for a full url on CmdExecuteFunctionURL")
 	}
 
 	base, err := o.Build()
@@ -79,6 +79,6 @@ func (o *CmdCallSCURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *CmdCallSCURL) StringFull(scheme, host string) string {
+func (o *CmdExecuteFunctionURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

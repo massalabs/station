@@ -42,8 +42,8 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 
 		JSONProducer: runtime.JSONProducer(),
 
-		CmdCallSCHandler: CmdCallSCHandlerFunc(func(params CmdCallSCParams) middleware.Responder {
-			return middleware.NotImplemented("operation CmdCallSC has not yet been implemented")
+		CmdExecuteFunctionHandler: CmdExecuteFunctionHandlerFunc(func(params CmdExecuteFunctionParams) middleware.Responder {
+			return middleware.NotImplemented("operation CmdExecuteFunction has not yet been implemented")
 		}),
 		KpiHandler: KpiHandlerFunc(func(params KpiParams) middleware.Responder {
 			return middleware.NotImplemented("operation Kpi has not yet been implemented")
@@ -51,7 +51,7 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 	}
 }
 
-/*ThyraServerAPI Thick client HTTP server API. */
+/*ThyraServerAPI Thyra HTTP server API. */
 type ThyraServerAPI struct {
 	spec            *loads.Document
 	context         *middleware.Context
@@ -84,8 +84,8 @@ type ThyraServerAPI struct {
 	//   - application/json
 	JSONProducer runtime.Producer
 
-	// CmdCallSCHandler sets the operation handler for the cmd call s c operation
-	CmdCallSCHandler CmdCallSCHandler
+	// CmdExecuteFunctionHandler sets the operation handler for the cmd execute function operation
+	CmdExecuteFunctionHandler CmdExecuteFunctionHandler
 	// KpiHandler sets the operation handler for the kpi operation
 	KpiHandler KpiHandler
 
@@ -165,8 +165,8 @@ func (o *ThyraServerAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.CmdCallSCHandler == nil {
-		unregistered = append(unregistered, "CmdCallSCHandler")
+	if o.CmdExecuteFunctionHandler == nil {
+		unregistered = append(unregistered, "CmdExecuteFunctionHandler")
 	}
 	if o.KpiHandler == nil {
 		unregistered = append(unregistered, "KpiHandler")
@@ -262,7 +262,7 @@ func (o *ThyraServerAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/cmd/callSmartContract"] = NewCmdCallSC(o.context, o.CmdCallSCHandler)
+	o.handlers["POST"]["/cmd/executeFunction"] = NewCmdExecuteFunction(o.context, o.CmdExecuteFunctionHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
