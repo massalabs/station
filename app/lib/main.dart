@@ -3,7 +3,7 @@ import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 import 'package:thyra_bridge_dart/thyra_bridge_dart.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -29,34 +29,92 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  
+  // String webContent = String.fromCharCodes(binding.fetchWebsite(
+  //     "A1aMywGBgBywiL6WcbKR4ugxoBtdP9P3waBVi5e713uvj7F1DJL", "index.html"));
+
+  late String webContent;
+  late WebViewPlusController controller;
+  late WebViewPlus body;
+
+  @override
+  void initState() {
+    super.initState();
+    webContent = "testttt";
+    body = WebViewPlus(
+        javascriptMode: JavascriptMode.unrestricted,
+        onWebViewCreated: (WebViewPlusController webViewPlusController) {
+          controller = webViewPlusController;
+        }
+        // onWebViewCreated: (controller) {
+        //   controller.loadString("testttt");
+        // },
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // String webContent = ''' <!DOCTYPE html>
-    // <html>
-    // <body>
+    // WebViewPlusController controller;
 
-    // <h2>Example to load html from string</h2>
-
-    // <p>This is paragraph 1</p>
-
-    // <img src="https://thumbs.dreamstime.com/b/sun-rays-mountain-landscape-5721010.jpg"  width="250" height="250">
-
-    // </body>
-    // </html>''';
-    final binding = Binding();
-    // String webContent = String.fromCharCodes(binding.fetchWoc("1234", "index.html"));
-    String webContent = String.fromCharCodes(binding.fetchWebsite("A1aMywGBgBywiL6WcbKR4ugxoBtdP9P3waBVi5e713uvj7F1DJL", "index.html"));
     return Scaffold(
       appBar: AppBar(
-        title: const Text('WebView Load HTML Locally From assets'),
+        // title: const Text('WebView Load HTML Locally From assets'),
+        title: TextField(
+          textAlign: TextAlign.center,
+          // The style of the input field
+          decoration: const InputDecoration(
+            hintText: 'Title',
+            icon: Icon(Icons.edit), // Edit icon
+            // The style of the hint text
+            hintStyle: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+            ),
+          ),
+          onSubmitted: (text) {
+            _doSomething(text, controller);
+          },
+          // The controller of the input box
+        ),
       ),
-      body: WebViewPlus(
-        javascriptMode: JavascriptMode.unrestricted,
-        onWebViewCreated: (controller){
-          controller.loadString(webContent);
-        },
-      ),
+      // body: _getWebView(webContent),
+      body: body,
     );
+  }
+
+  _getWebView(webContent) {
+    print('lololol');
+    print(webContent);
+    return WebViewPlus(
+      javascriptMode: JavascriptMode.unrestricted,
+      // onWebViewCreated: (WebViewPlusController webViewPlusController) {
+      //   controller = webViewPlusController;
+      // }
+      onWebViewCreated: (controller) {
+        controller.loadString(webContent);
+      },
+    );
+  }
+
+  void _doSomething(String text, WebViewPlusController controller) {
+    // Using the callback State.setState() is the only way to get the build
+    // method to rerun with the updated state value.
+    final binding = Binding();
+    setState(() {
+      if (text == "lol") {
+        webContent = String.fromCharCodes(binding.fetchWebsite(
+            "A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh",
+            "index.html"));
+        print('lol');
+        print(webContent);
+        controller.loadString(webContent);
+      } else {
+        webContent = String.fromCharCodes(binding.fetchWebsite(
+            "A1aMywGBgBywiL6WcbKR4ugxoBtdP9P3waBVi5e713uvj7F1DJL",
+            "index.html"));
+        print('else');
+        print(webContent);
+        controller.loadString(webContent);
+      }
+    });
   }
 }
