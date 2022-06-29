@@ -93,6 +93,8 @@ func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	fmt.Println("Name resolved: " + name + ".massa => " + addr)
+
 	var target string
 	if r.URL.Path == "/" {
 		target = "index.html"
