@@ -13,7 +13,6 @@ import (
 )
 
 func main() {
-
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {

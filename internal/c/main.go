@@ -11,8 +11,7 @@ import (
 
 //export fetchWebsite
 func fetchWebsite(address *C.char, filename *C.char) *C.FetchWebsiteReturn {
-
-	//instanciate here, must be free on caller side
+	// instanciate here, must be free on caller side
 	output := (*C.FetchWebsiteReturn)(C.malloc(C.size_t(C.sizeof_FetchWebsiteReturn)))
 
 	res, err := website.Fetch(C.GoString(address), C.GoString(filename))

@@ -35,18 +35,18 @@ func message(expiry uint64, fee uint64, senderPubKey []byte, operation Operation
 	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
 
-	//fee
+	// fee
 	n := binary.PutUvarint(buf, fee)
 	msg = append(msg, buf[:n]...)
 
-	//expiration
+	// expiration
 	n = binary.PutUvarint(buf, expiry)
 	msg = append(msg, buf[:n]...)
 
-	//public key
+	// public key
 	msg = append(msg, senderPubKey...)
 
-	//operation
+	// operation
 	msg = append(msg, operation.Message()...)
 
 	return msg
@@ -61,7 +61,7 @@ func sign(msg []byte, privKey []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	var signOpts = []schnorr.SignOption{schnorr.CustomNonce(auxBytes)}
+	signOpts := []schnorr.SignOption{schnorr.CustomNonce(auxBytes)}
 
 	pk, _ := btcec.PrivKeyFromBytes(privKey)
 
@@ -86,13 +86,16 @@ func Call(client *node.Client, expiry uint64, fee uint64, op Operation, pubKey [
 		context.Background(),
 		"send_operations",
 		[][]sendOperationsReq{
-			{sendOperationsReq{
-				Content: sendOperationReqContent{
-					ExpirePeriod: int64(expiry),
-					Fee:          fmt.Sprint(fee),
-					Op:           op.Content(),
-					SenderPK:     base58.CheckEncode(pubKey)},
-				Signature: base58.CheckEncode(signature)},
+			{
+				sendOperationsReq{
+					Content: sendOperationReqContent{
+						ExpirePeriod: int64(expiry),
+						Fee:          fmt.Sprint(fee),
+						Op:           op.Content(),
+						SenderPK:     base58.CheckEncode(pubKey),
+					},
+					Signature: base58.CheckEncode(signature),
+				},
 			},
 		})
 	if err != nil {

@@ -7,6 +7,7 @@ package operations
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -85,11 +86,24 @@ type CmdExecuteFunctionBody struct {
 	Gaz *CmdExecuteFunctionParamsBodyGaz `json:"gaz,omitempty"`
 
 	// Defines the key to used to sign the transaction.
-	KeyID string `json:"keyId,omitempty"`
+	KeyID *string `json:"keyId,omitempty"`
 
 	// Function name to call.
 	// Required: true
 	Name *string `json:"name"`
+}
+
+func (o *CmdExecuteFunctionBody) UnmarshalJSON(b []byte) error {
+	type CmdExecuteFunctionBodyAlias CmdExecuteFunctionBody
+	var t CmdExecuteFunctionBodyAlias
+	if err := json.Unmarshal([]byte("{\"args\":\"\",\"at\":\"A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh\",\"coins\":{\"parallel\":0,\"sequential\":0},\"expiry\":3,\"fee\":0,\"gaz\":{\"limit\":700000000,\"price\":0},\"keyId\":\"default\",\"name\":\"test\"}"), &t); err != nil {
+		return err
+	}
+	if err := json.Unmarshal(b, &t); err != nil {
+		return err
+	}
+	*o = CmdExecuteFunctionBody(t)
+	return nil
 }
 
 // Validate validates this cmd execute function body

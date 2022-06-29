@@ -33,8 +33,8 @@ func CheckDecode(input string) (result []byte, err error) {
 	}
 
 	var cksum [4]byte
-	copy(cksum[:], decoded[len(decoded)-4:])
 
+	copy(cksum[:], decoded[len(decoded)-4:])
 	if checksum(decoded[:len(decoded)-4]) != cksum {
 		return nil, errors.New("ErrChecksum")
 	}

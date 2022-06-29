@@ -1,28 +1,48 @@
 package website
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"path"
 	"strings"
 
+	"lukechampine.com/blake3"
+
+	"github.com/massalabs/thyra/pkg/node"
+	"github.com/massalabs/thyra/pkg/node/base58"
+	"github.com/massalabs/thyra/pkg/node/ledger"
 	"github.com/massalabs/thyra/pkg/onchain/storage"
 )
 
+func Resolve(name string) (string, error) {
+	digest := blake3.Sum256([]byte("record" + name))
+	key := base58.CheckEncode(digest[:])
+
+	address := "A12o8tw83tDrA52Lju9BUDDodAhtUp4scHtYr8Fj4iwhDTuWZqHZ"
+
+	c := node.NewClient("https://test.massa.net/api/v2")
+
+	content, err := ledger.Addresses(c, []string{address})
+	if err != nil {
+		return "", err
+	}
+
+	val, ok := content[0].Info.Datastore[key]
+	if ok {
+		return string(val), nil
+	}
+
+	return "", errors.New("name not found")
+}
+
 func Fetch(addr string, filename string) ([]byte, error) {
-	//TODO use a local cache to reduce network bandwidth
+	// TODO use a local cache to reduce network bandwidth
 
 	m, err := storage.Get(addr, "2qbtmxh5pD3TH3McFmZWxvKLTyz2SKDYFSRL8ngQBJ4R6f3Duw")
 	if err != nil {
 		return nil, err
 	}
-
-	/*msg := ""
-	for k := range m {
-		msg = msg + k + ", "
-	}
-
-	fmt.Println("files", msg)*/
 
 	return m[filename], nil
 }
@@ -60,11 +80,6 @@ func handleSubsequentRequest(w http.ResponseWriter, r *http.Request) {
 	w.Write(body)
 }
 
-var dns = map[string]string{
-	"flappy": "A1aMywGBgBywiL6WcbKR4ugxoBtdP9P3waBVi5e713uvj7F1DJL",
-	"blog":   "A1NjcatuB6SLecX8xQp8nF3xMr6eW3YDQ2a9i7gaetK9SskJrBi",
-}
-
 func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
 	i := strings.Index(r.Host, ".massa")
 	if i < 0 {
@@ -73,9 +88,9 @@ func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
 
 	name := r.Host[:i]
 
-	addr, ok := dns[name]
-	if !ok {
-		panic("following name not resolved " + name)
+	addr, err := Resolve(name)
+	if err != nil {
+		panic(err)
 	}
 
 	var target string
@@ -97,7 +112,7 @@ func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
 	} else if strings.Index(target, ".html") > 0 {
 		w.Header().Set("Content-Type", "text/html")
 	}
-	//fmt.Println(target, body)
+	// fmt.Println(target, body)
 
 	w.Write(body)
 }
@@ -114,5 +129,4 @@ func HandlerFunc(handler http.Handler) http.Handler {
 			handler.ServeHTTP(w, r)
 		}
 	})
-
 }

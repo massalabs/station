@@ -47,8 +47,8 @@ type Client struct {
 func NewClient(url string) *Client {
 	return &Client{RPCClient: jsonrpc.NewClientWithOpts(url, &jsonrpc.RPCClientOpts{
 		HTTPClient: &http.Client{Transport: &withLoggingRoundTripper{
-			isEnabled:        true,
-			showResponseBody: true,
+			isEnabled:        false,
+			showResponseBody: false,
 		}},
 	})}
 }

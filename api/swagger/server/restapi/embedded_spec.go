@@ -48,6 +48,22 @@ func init() {
             "required": true,
             "schema": {
               "type": "object",
+              "default": {
+                "args": "",
+                "at": "A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh",
+                "coins": {
+                  "parallel": 0,
+                  "sequential": 0
+                },
+                "expiry": 3,
+                "fee": 0,
+                "gaz": {
+                  "limit": 700000000,
+                  "price": 0
+                },
+                "keyId": "default",
+                "name": "test"
+              },
               "required": [
                 "name",
                 "at"
@@ -107,7 +123,7 @@ func init() {
                 "keyId": {
                   "description": "Defines the key to used to sign the transaction.",
                   "type": "string",
-                  "default": ""
+                  "default": "default"
                 },
                 "name": {
                   "description": "Function name to call.",
@@ -305,6 +321,22 @@ func init() {
             "required": true,
             "schema": {
               "type": "object",
+              "default": {
+                "args": "",
+                "at": "A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh",
+                "coins": {
+                  "parallel": 0,
+                  "sequential": 0
+                },
+                "expiry": 3,
+                "fee": 0,
+                "gaz": {
+                  "limit": 700000000,
+                  "price": 0
+                },
+                "keyId": "default",
+                "name": "test"
+              },
               "required": [
                 "name",
                 "at"
@@ -364,7 +396,7 @@ func init() {
                 "keyId": {
                   "description": "Defines the key to used to sign the transaction.",
                   "type": "string",
-                  "default": ""
+                  "default": "default"
                 },
                 "name": {
                   "description": "Function name to call.",

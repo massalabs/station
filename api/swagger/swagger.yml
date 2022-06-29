@@ -23,6 +23,19 @@ paths:
             required:
               - name
               - at
+            default:
+              name: "test"
+              at: "A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh"
+              args: ""
+              gaz:
+                price: 0
+                limit: 700000000
+              coins:
+                parallel: 0
+                sequential: 0
+              expiry: 3
+              fee: 0
+              keyId: default
             properties:
               name:
                 description: Function name to call.
@@ -69,7 +82,7 @@ paths:
               keyId:
                 description: Defines the key to used to sign the transaction.
                 type: string
-                default: ""
+                default: default
       produces:
       - application/json
       responses:

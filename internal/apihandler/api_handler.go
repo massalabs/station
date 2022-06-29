@@ -9,7 +9,10 @@ import (
 	callSC "github.com/massalabs/thyra/pkg/node/sendoperation/callsc"
 )
 
-const errorCodeSendOperation = "0001"
+const (
+	errorCodeSendOperation = "Execute-0001"
+	errorCodeUnknownKeyID  = "Execute-0002"
+)
 
 func ExecuteFunction(params operations.CmdExecuteFunctionParams) middleware.Responder {
 	addr, err := base58.CheckDecode((*params.Body.At)[1:])
@@ -18,6 +21,16 @@ func ExecuteFunction(params operations.CmdExecuteFunctionParams) middleware.Resp
 	}
 
 	addr = addr[1:]
+
+	if *params.Body.KeyID != "default" {
+		e := errorCodeUnknownKeyID
+		msg := "Error: unknown key id (" + *params.Body.KeyID + ")"
+		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
+			&operations.CmdExecuteFunctionUnprocessableEntityBody{
+				Code:    &e,
+				Message: &msg,
+			})
+	}
 
 	pubKey, err := base58.CheckDecode("zkTGqfwJp43tY4FPgRXC7fr2xML3kDQ8bch15SpnDehuxWiKS")
 	if err != nil {
@@ -46,13 +59,11 @@ func ExecuteFunction(params operations.CmdExecuteFunctionParams) middleware.Resp
 		uint64(params.Body.Fee),
 		callSC,
 		pubKey, privKey)
-
-	//errorCode := "toto"
 	if err != nil {
-		//operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
-		//	&operations.CmdExecuteFunctionInternalServerErrorBody{Code: &errorCode, Message: err.Error()})
-		panic(err)
-
+		e := errorCodeSendOperation
+		msg := "Error: " + err.Error()
+		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
+			&operations.CmdExecuteFunctionInternalServerErrorBody{Code: &e, Message: &msg})
 	}
 
 	return operations.NewCmdExecuteFunctionOK().WithPayload(id)
