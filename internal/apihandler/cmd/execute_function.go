@@ -1,6 +1,8 @@
-package apihandler
+package cmd
 
 import (
+	"sync"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
@@ -8,9 +10,18 @@ import (
 	"github.com/massalabs/thyra/pkg/node/base58"
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	callSC "github.com/massalabs/thyra/pkg/node/sendoperation/callsc"
+	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-func ExecuteFunction(params operations.CmdExecuteFunctionParams) middleware.Responder {
+func NewExecuteFunction(walletStorage *sync.Map) operations.CmdExecuteFunctionHandler {
+	return &functionExecuter{walletStorage: walletStorage}
+}
+
+type functionExecuter struct {
+	walletStorage *sync.Map
+}
+
+func (f *functionExecuter) Handle(params operations.CmdExecuteFunctionParams) middleware.Responder {
 	addr, err := base58.CheckDecode((*params.Body.At)[1:])
 	if err != nil {
 		panic(err)
@@ -18,9 +29,10 @@ func ExecuteFunction(params operations.CmdExecuteFunctionParams) middleware.Resp
 
 	addr = addr[1:]
 
-	if *params.Body.KeyID != "default" {
+	value, ok := f.walletStorage.Load(*params.Body.KeyID)
+	if !ok {
 		e := errorCodeUnknownKeyID
-		msg := "Error: unknown key id (" + *params.Body.KeyID + ")"
+		msg := "Error: unknown wallet id: " + *params.Body.KeyID
 
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
 			&models.Error{
@@ -29,15 +41,14 @@ func ExecuteFunction(params operations.CmdExecuteFunctionParams) middleware.Resp
 			})
 	}
 
-	pubKey, err := base58.CheckDecode("zkTGqfwJp43tY4FPgRXC7fr2xML3kDQ8bch15SpnDehuxWiKS")
-	if err != nil {
-		panic(err)
+	storedWallet, ok := value.(*wallet.Wallet)
+	if !ok {
+		panic("stored value is not a wallet")
 	}
 
-	privKey, err := base58.CheckDecode("25CHWGN5DZemFnEdPyYfDkyYzEwierr3vCuP3Z4tiChfQpBP41")
-	if err != nil {
-		panic(err)
-	}
+	//TODO: storedWallet.KeyPairs[0].Protected shall be false
+	pubKey := storedWallet.KeyPairs[0].PublicKey
+	privKey := storedWallet.KeyPairs[0].PrivateKey
 
 	callSC := callSC.New(
 		addr,

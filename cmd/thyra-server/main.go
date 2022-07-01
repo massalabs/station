@@ -8,7 +8,7 @@ import (
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
-	apiHandler "github.com/massalabs/thyra/internal/apihandler"
+	"github.com/massalabs/thyra/internal/apihandler/cmd"
 	"github.com/massalabs/thyra/internal/apihandler/wallet"
 
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
@@ -47,7 +47,7 @@ func main() {
 
 	var walletStorage sync.Map
 
-	api.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(apiHandler.ExecuteFunction)
+	api.CmdExecuteFunctionHandler = cmd.NewExecuteFunction(&walletStorage)
 
 	api.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
 	api.MgmtWalletImportHandler = wallet.NewImport(&walletStorage)
