@@ -9,6 +9,8 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime"
+
+	"github.com/massalabs/thyra/api/swagger/server/models"
 )
 
 // CmdExecuteFunctionOKCode is the HTTP code returned for type CmdExecuteFunctionOK
@@ -65,7 +67,7 @@ type CmdExecuteFunctionUnprocessableEntity struct {
 	/*
 	  In: Body
 	*/
-	Payload *CmdExecuteFunctionUnprocessableEntityBody `json:"body,omitempty"`
+	Payload *models.Error `json:"body,omitempty"`
 }
 
 // NewCmdExecuteFunctionUnprocessableEntity creates CmdExecuteFunctionUnprocessableEntity with default headers values
@@ -75,13 +77,13 @@ func NewCmdExecuteFunctionUnprocessableEntity() *CmdExecuteFunctionUnprocessable
 }
 
 // WithPayload adds the payload to the cmd execute function unprocessable entity response
-func (o *CmdExecuteFunctionUnprocessableEntity) WithPayload(payload *CmdExecuteFunctionUnprocessableEntityBody) *CmdExecuteFunctionUnprocessableEntity {
+func (o *CmdExecuteFunctionUnprocessableEntity) WithPayload(payload *models.Error) *CmdExecuteFunctionUnprocessableEntity {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the cmd execute function unprocessable entity response
-func (o *CmdExecuteFunctionUnprocessableEntity) SetPayload(payload *CmdExecuteFunctionUnprocessableEntityBody) {
+func (o *CmdExecuteFunctionUnprocessableEntity) SetPayload(payload *models.Error) {
 	o.Payload = payload
 }
 
@@ -109,7 +111,7 @@ type CmdExecuteFunctionInternalServerError struct {
 	/*
 	  In: Body
 	*/
-	Payload *CmdExecuteFunctionInternalServerErrorBody `json:"body,omitempty"`
+	Payload *models.Error `json:"body,omitempty"`
 }
 
 // NewCmdExecuteFunctionInternalServerError creates CmdExecuteFunctionInternalServerError with default headers values
@@ -119,13 +121,13 @@ func NewCmdExecuteFunctionInternalServerError() *CmdExecuteFunctionInternalServe
 }
 
 // WithPayload adds the payload to the cmd execute function internal server error response
-func (o *CmdExecuteFunctionInternalServerError) WithPayload(payload *CmdExecuteFunctionInternalServerErrorBody) *CmdExecuteFunctionInternalServerError {
+func (o *CmdExecuteFunctionInternalServerError) WithPayload(payload *models.Error) *CmdExecuteFunctionInternalServerError {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the cmd execute function internal server error response
-func (o *CmdExecuteFunctionInternalServerError) SetPayload(payload *CmdExecuteFunctionInternalServerErrorBody) {
+func (o *CmdExecuteFunctionInternalServerError) SetPayload(payload *models.Error) {
 	o.Payload = payload
 }
 

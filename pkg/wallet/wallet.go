@@ -24,11 +24,12 @@ type KeyPair struct {
 	PrivateKey []byte   `yaml:",flow"`
 	PublicKey  []byte   `yaml:",flow"`
 	Salt       [16]byte `yaml:",flow"`
-	IV         [16]byte `yaml:",flow"`
+	Nonce      [12]byte `yaml:",flow"`
 	Protected  bool
 }
 
 type Wallet struct {
+	Version  uint8
 	Nickname string
 	Address  string
 	KeyPairs []KeyPair
@@ -42,8 +43,16 @@ func (w *Wallet) Protect(password string, keyPairIndex uint8) error {
 		return err
 	}
 
-	mode := cipher.NewCBCEncrypter(block, w.KeyPairs[keyPairIndex].IV[:])
-	mode.CryptBlocks(w.KeyPairs[keyPairIndex].PrivateKey, w.KeyPairs[keyPairIndex].PrivateKey)
+	aesgcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return err
+	}
+
+	w.KeyPairs[keyPairIndex].PrivateKey = aesgcm.Seal(
+		nil,
+		w.KeyPairs[keyPairIndex].Nonce[:],
+		w.KeyPairs[keyPairIndex].PrivateKey,
+		nil)
 
 	w.KeyPairs[keyPairIndex].Protected = true
 
@@ -58,8 +67,17 @@ func (w *Wallet) Unprotect(password string, keyPairIndex uint8) error {
 		return err
 	}
 
-	mode := cipher.NewCBCDecrypter(block, w.KeyPairs[keyPairIndex].IV[:])
-	mode.CryptBlocks(w.KeyPairs[0].PrivateKey, w.KeyPairs[keyPairIndex].PrivateKey)
+	aesgcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return err
+	}
+
+	pk, err := aesgcm.Open(nil, w.KeyPairs[keyPairIndex].Nonce[:], w.KeyPairs[keyPairIndex].PrivateKey, nil)
+	if err != nil {
+		return err
+	}
+
+	w.KeyPairs[keyPairIndex].PrivateKey = pk
 
 	w.KeyPairs[keyPairIndex].Protected = false
 
@@ -98,21 +116,22 @@ func New(nickname string) (*Wallet, error) {
 		return nil, err
 	}
 
-	var initializationVector [16]byte
+	var nonce [12]byte
 
-	_, err = rand.Read(initializationVector[:])
+	_, err = rand.Read(nonce[:])
 	if err != nil {
 		return nil, err
 	}
 
 	return &Wallet{
+		Version:  0,
 		Nickname: nickname,
 		Address:  "A" + base58.CheckEncode(append(make([]byte, 1), pubKeyBytes...)),
 		KeyPairs: []KeyPair{{
 			PrivateKey: privKeyBytes[:],
 			PublicKey:  pubKeyBytes,
 			Salt:       salt,
-			IV:         initializationVector,
+			Nonce:      nonce,
 		}},
 	}, nil
 }

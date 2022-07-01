@@ -49,11 +49,9 @@ func main() {
 	}
 
 	err = w.Unprotect("WrongPassword", 0)
-	if err != nil {
-		panic(err)
+	if err == nil {
+		panic("using wrong password shall be detected")
 	}
-
-	fmt.Println("wrong password", w.KeyPairs[0].PrivateKey)
 
 	w2, err := wallet.FromYAML(yaml)
 	if err != nil {

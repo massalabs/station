@@ -28,8 +28,8 @@ func main() {
 		}
 	}()
 
-	server.Port = 80
-	server.TLSPort = 443
+	server.Port = 8080
+	server.TLSPort = 8443
 
 	certFilePtr := flag.String("tls-certificate", "", "path to certificate file")
 	keyFilePtr := flag.String("tls-key", "", "path to key file")
@@ -45,8 +45,12 @@ func main() {
 
 	api.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(apiHandler.ExecuteFunction)
 
+	api.MgmtWalletCreateHandler = operations.MgmtWalletCreateHandlerFunc(apiHandler.WalletCreate)
+	api.MgmtWalletImportHandler = operations.MgmtWalletImportHandlerFunc(apiHandler.WalletImport)
+
 	// Start server which listening
 	server.ConfigureAPI()
+
 	if err := server.Serve(); err != nil {
 		log.Fatalln(err)
 	}

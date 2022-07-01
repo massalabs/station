@@ -2,16 +2,12 @@ package apihandler
 
 import (
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	callSC "github.com/massalabs/thyra/pkg/node/sendoperation/callsc"
-)
-
-const (
-	errorCodeSendOperation = "Execute-0001"
-	errorCodeUnknownKeyID  = "Execute-0002"
 )
 
 func ExecuteFunction(params operations.CmdExecuteFunctionParams) middleware.Responder {
@@ -25,8 +21,9 @@ func ExecuteFunction(params operations.CmdExecuteFunctionParams) middleware.Resp
 	if *params.Body.KeyID != "default" {
 		e := errorCodeUnknownKeyID
 		msg := "Error: unknown key id (" + *params.Body.KeyID + ")"
+
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
-			&operations.CmdExecuteFunctionUnprocessableEntityBody{
+			&models.Error{
 				Code:    &e,
 				Message: &msg,
 			})
@@ -53,7 +50,7 @@ func ExecuteFunction(params operations.CmdExecuteFunctionParams) middleware.Resp
 
 	c := node.NewClient("https://test.massa.net/api/v2")
 
-	id, err := sendOperation.Call(
+	operationID, err := sendOperation.Call(
 		c,
 		30903,
 		uint64(params.Body.Fee),
@@ -62,9 +59,10 @@ func ExecuteFunction(params operations.CmdExecuteFunctionParams) middleware.Resp
 	if err != nil {
 		e := errorCodeSendOperation
 		msg := "Error: " + err.Error()
+
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
-			&operations.CmdExecuteFunctionInternalServerErrorBody{Code: &e, Message: &msg})
+			&models.Error{Code: &e, Message: &msg})
 	}
 
-	return operations.NewCmdExecuteFunctionOK().WithPayload(id)
+	return operations.NewCmdExecuteFunctionOK().WithPayload(operationID)
 }

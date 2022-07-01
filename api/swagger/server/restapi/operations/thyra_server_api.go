@@ -48,6 +48,12 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		KpiHandler: KpiHandlerFunc(func(params KpiParams) middleware.Responder {
 			return middleware.NotImplemented("operation Kpi has not yet been implemented")
 		}),
+		MgmtWalletCreateHandler: MgmtWalletCreateHandlerFunc(func(params MgmtWalletCreateParams) middleware.Responder {
+			return middleware.NotImplemented("operation MgmtWalletCreate has not yet been implemented")
+		}),
+		MgmtWalletImportHandler: MgmtWalletImportHandlerFunc(func(params MgmtWalletImportParams) middleware.Responder {
+			return middleware.NotImplemented("operation MgmtWalletImport has not yet been implemented")
+		}),
 	}
 }
 
@@ -88,6 +94,10 @@ type ThyraServerAPI struct {
 	CmdExecuteFunctionHandler CmdExecuteFunctionHandler
 	// KpiHandler sets the operation handler for the kpi operation
 	KpiHandler KpiHandler
+	// MgmtWalletCreateHandler sets the operation handler for the mgmt wallet create operation
+	MgmtWalletCreateHandler MgmtWalletCreateHandler
+	// MgmtWalletImportHandler sets the operation handler for the mgmt wallet import operation
+	MgmtWalletImportHandler MgmtWalletImportHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -170,6 +180,12 @@ func (o *ThyraServerAPI) Validate() error {
 	}
 	if o.KpiHandler == nil {
 		unregistered = append(unregistered, "KpiHandler")
+	}
+	if o.MgmtWalletCreateHandler == nil {
+		unregistered = append(unregistered, "MgmtWalletCreateHandler")
+	}
+	if o.MgmtWalletImportHandler == nil {
+		unregistered = append(unregistered, "MgmtWalletImportHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -267,6 +283,14 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/kpi"] = NewKpi(o.context, o.KpiHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/mgmt/wallet"] = NewMgmtWalletCreate(o.context, o.MgmtWalletCreateHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/mgmt/wallet"] = NewMgmtWalletImport(o.context, o.MgmtWalletImportHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP
