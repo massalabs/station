@@ -34,7 +34,7 @@ type Operation interface {
 func message(expiry uint64, fee uint64, senderPubKey []byte, operation Operation) []byte {
 	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
-
+	fmt.Print("here")
 	// fee
 	n := binary.PutUvarint(buf, fee)
 	msg = append(msg, buf[:n]...)
