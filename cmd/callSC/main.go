@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	//TODO use the wallet generated for PB & PK
+	//TODO https://github.com/massalabs/thyra/issues/27
 	pubKey, privKey, err := ed25519.GenerateKey(nil)
 	if err != nil {
 		panic(err)

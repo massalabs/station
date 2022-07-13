@@ -12,7 +12,6 @@ import (
 	"lukechampine.com/blake3"
 )
 
-type JSONableSlice []uint8
 type sendOperationsReq struct {
 	SerializedContent JSONableSlice `json:"serialized_content"`
 	PublicKey         string        `json:"creator_public_key"`
@@ -23,6 +22,8 @@ type Operation interface {
 	Content() interface{}
 	Message() []byte
 }
+
+type JSONableSlice []uint8
 
 func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 	var result string
@@ -52,22 +53,18 @@ func message(expiry uint64, fee uint64, operation Operation) []byte {
 	return msg
 }
 
-func sign(msg []byte, pubKey []byte, privKey []byte) ([]byte, error) {
-	// digest is the concatenation of pubKey & message
-	digest := blake3.Sum256(append(pubKey, msg...))
-
-	signature := ed25519.Sign(privKey, digest[:])
-
+func sign(msg []byte, privKey []byte) ([]byte, error) {
+	signature := ed25519.Sign(privKey, msg)
 	return signature, nil
 }
 
 func Call(client *node.Client, expiry uint64, fee uint64, op Operation, pubKey []byte, privKey []byte) (string, error) {
-
 	msg := message(expiry, fee, op)
 
+	digest := blake3.Sum256(append(pubKey, msg...))
+
 	signature, err := sign(
-		msg,
-		pubKey,
+		digest[:],
 		privKey,
 	)
 	if err != nil {
