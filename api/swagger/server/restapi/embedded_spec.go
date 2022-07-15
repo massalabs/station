@@ -354,6 +354,55 @@ func init() {
           }
         }
       }
+    },
+    "/mgmt/wallet/{nickname}": {
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "mgmtWalletDelete",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Wallet's short name.",
+            "name": "nickname",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Wallet removed.",
+            "schema": {
+              "$ref": "#/definitions/Wallet"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -702,6 +751,55 @@ func init() {
             }
           },
           "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/mgmt/wallet/{nickname}": {
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "mgmtWalletDelete",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Wallet's short name.",
+            "name": "nickname",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Wallet removed.",
+            "schema": {
+              "$ref": "#/definitions/Wallet"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
             "description": "Bad request.",
             "schema": {
               "$ref": "#/definitions/Error"

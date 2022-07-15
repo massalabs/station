@@ -51,6 +51,7 @@ func main() {
 
 	api.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
 	api.MgmtWalletImportHandler = wallet.NewImport(&walletStorage)
+	api.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage)
 
 	// Start server which listening
 	server.ConfigureAPI()
