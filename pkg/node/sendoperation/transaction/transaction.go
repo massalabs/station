@@ -9,7 +9,7 @@ import (
 
 type OperationDetails struct {
 	Amount           string `json:"amount"`
-	RecipientAddress string `json:"recipient_address"`
+	RecipientAddress []byte `json:"recipient_address"`
 }
 
 type Operation struct {
@@ -17,21 +17,22 @@ type Operation struct {
 }
 
 type Transaction struct {
-	recepientAddress []byte
+	recepientAddress string
 	amount           uint64
 }
 
-func New(recepientAddress []byte, amount uint64) *Transaction {
+func New(recepientAddress string, amount uint64) *Transaction {
 	return &Transaction{
 		recepientAddress: recepientAddress,
-		amount:           amount,
+		amount:           amount * 1e9,
 	}
 }
 
 func (t *Transaction) Content() interface{} {
+	addr, _, _ := base58.VersionedCheckDecode(t.recepientAddress[1:])
 	return &Operation{
 		Transaction: OperationDetails{
-			RecipientAddress: "A" + base58.CheckEncode(append(make([]byte, 1), []byte(t.recepientAddress)...)),
+			RecipientAddress: addr, //"A" + base58.CheckEncode(append(make([]byte, 1), t.recepientAddress...)),
 			Amount:           fmt.Sprint(t.amount * 1e9),
 		},
 	}
@@ -48,7 +49,9 @@ func (t *Transaction) Message() []byte {
 	msg = append(msg, buf[:n]...)
 
 	// receipient address
-	msg = append(msg, t.recepientAddress...)
+	addr, _, _ := base58.VersionedCheckDecode(t.recepientAddress[1:])
+
+	msg = append(msg, addr...)
 
 	// Amount
 	n = binary.PutUvarint(buf, t.amount)
