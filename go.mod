@@ -3,7 +3,6 @@ module github.com/massalabs/thyra
 go 1.18
 
 require (
-	github.com/btcsuite/btcd/btcec/v2 v2.2.0
 	github.com/go-openapi/errors v0.20.2
 	github.com/go-openapi/loads v0.21.1
 	github.com/go-openapi/runtime v0.24.1
