@@ -66,7 +66,8 @@ func (e *ExecuteSC) Message() []byte {
 	msg = append(msg, buf[:n]...)
 
 	// data
+	n = binary.PutUvarint(buf, uint64(len(e.data)))
+	msg = append(msg, buf[:n]...)
 	msg = append(msg, e.data...)
-
 	return msg
 }
