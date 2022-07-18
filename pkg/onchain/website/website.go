@@ -13,6 +13,7 @@ import (
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/node/ledger"
 	"github.com/massalabs/thyra/pkg/onchain/storage"
+	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 func Resolve(name string) (string, error) {
@@ -112,7 +113,6 @@ func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
 	} else if strings.Index(target, ".html") > 0 {
 		w.Header().Set("Content-Type", "text/html")
 	}
-	// fmt.Println(target, body)
 
 	w.Write(body)
 }
@@ -123,6 +123,8 @@ func HandlerFunc(handler http.Handler) http.Handler {
 			handleMassaDomainRequest(w, r)
 		} else if strings.HasPrefix(r.URL.Path, "/website") {
 			handleInitialRequest(w, r)
+		} else if strings.HasPrefix(r.URL.Path, "/wallet.mythyra.massa") {
+			wallet.HandleWalletManagementRequest(w, r)
 		} else if strings.Contains(path.Base(r.URL.Path), ".") {
 			handleSubsequentRequest(w, r)
 		} else {

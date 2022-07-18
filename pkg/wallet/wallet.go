@@ -6,6 +6,8 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"errors"
+	"net/http"
+	"strings"
 
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/massalabs/thyra/pkg/node/base58"
@@ -134,4 +136,25 @@ func New(nickname string) (*Wallet, error) {
 			Nonce:      nonce,
 		}},
 	}, nil
+}
+
+func HandleWalletManagementRequest(w http.ResponseWriter, r *http.Request) {
+
+	target := r.URL.Path[1:]
+	var fileText string
+	if strings.Index(target, ".css") > 0 {
+		fileText = IndexCss
+		w.Header().Set("Content-Type", "text/css")
+	} else if strings.Index(target, ".js") > 0 {
+		fileText = IndexJs
+		w.Header().Set("Content-Type", "application/json")
+	} else if strings.Index(target, ".html") > 0 {
+		fileText = IndexHtml
+		w.Header().Set("Content-Type", "text/html")
+	} else if strings.Index(target, ".webp") > 0 {
+		fileText = Logo_massaWebp
+		w.Header().Set("Content-Type", "image/webp")
+	}
+
+	w.Write([]byte(fileText))
 }

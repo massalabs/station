@@ -8,13 +8,15 @@ import (
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
+	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/internal/apihandler/cmd"
 	"github.com/massalabs/thyra/internal/apihandler/wallet"
-
-	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	walletPck "github.com/massalabs/thyra/pkg/wallet"
 )
 
 func main() {
+	// Generate files
+	walletPck.GenerateFiles()
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
