@@ -11,6 +11,7 @@ import (
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"golang.org/x/crypto/pbkdf2"
 	"gopkg.in/yaml.v3"
+	"lukechampine.com/blake3"
 )
 
 var ErrUnprotectedSerialization = errors.New("private key must be protected before serialization")
@@ -106,6 +107,8 @@ func New(nickname string) (*Wallet, error) {
 		return nil, err
 	}
 
+	addr := blake3.Sum256(pubKey)
+
 	var salt [16]byte
 
 	_, err = rand.Read(salt[:])
@@ -123,7 +126,7 @@ func New(nickname string) (*Wallet, error) {
 	return &Wallet{
 		Version:  0,
 		Nickname: nickname,
-		Address:  "A" + base58.CheckEncode(append(make([]byte, 1), pubKey...)),
+		Address:  "A" + base58.CheckEncode(append(make([]byte, 1), addr[:]...)),
 		KeyPairs: []KeyPair{{
 			PrivateKey: privKey,
 			PublicKey:  pubKey,
