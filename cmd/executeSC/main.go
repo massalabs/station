@@ -11,12 +11,11 @@ import (
 )
 
 func main() {
-	secretKey := "S12wYxP6ovnKkfThA7RBQxbqCUrxz9K7GpXsUHxvas5PdHk7YvLe"
-	w, _ := wallet.NewFromSeed(secretKey)
 
+	w, _ := wallet.New("massa")
 	c := node.NewClient("https://test.massa.net/api/v2")
 	//read smart contrat
-	filePath := "hello.wasm" //replace this with the path to your smart contract
+	filePath := "put here path to your smart contract"
 	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		panic(err)
@@ -24,7 +23,7 @@ func main() {
 
 	exeSC := executesc.New(data, 700000, 2, 20)
 	expirePeriod := uint64(52235) // TODO: obtain this from the network
-	id, err := sendOperation.Call(c, expirePeriod, 0, exeSC, w.GetPublicKey(), w.GetPrivateKey())
+	id, err := sendOperation.Call(c, expirePeriod, 0, exeSC, w.KeyPairs[0].PublicKey, w.KeyPairs[0].PrivateKey)
 	if err != nil {
 		panic(err)
 	}

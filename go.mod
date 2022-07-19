@@ -11,6 +11,7 @@ require (
 	github.com/go-openapi/swag v0.21.1
 	github.com/go-openapi/validate v0.21.0
 	github.com/jessevdk/go-flags v1.5.0
+	github.com/xdg-go/pbkdf2 v1.0.0
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd
 )
 
@@ -37,7 +38,6 @@ require (
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/ybbus/jsonrpc/v3 v3.1.0
 	go.mongodb.org/mongo-driver v1.8.3 // indirect
-	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

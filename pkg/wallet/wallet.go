@@ -9,7 +9,7 @@ import (
 	"errors"
 
 	"github.com/massalabs/thyra/pkg/node/base58"
-	"golang.org/x/crypto/pbkdf2"
+	"github.com/xdg-go/pbkdf2"
 	"gopkg.in/yaml.v3"
 	"lukechampine.com/blake3"
 )

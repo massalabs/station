@@ -5,18 +5,17 @@ import (
 
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/sendoperation"
-	buyrolls "github.com/massalabs/thyra/pkg/node/sendoperation/buyrolls"
+	"github.com/massalabs/thyra/pkg/node/sendoperation/buyrolls"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 func main() {
 
-	secretKey := "S1pAYxBFbwomUUfzdv3yvQt8wPiYriX6VnXdrr87yrhbn91w96m"
-	w, _ := wallet.NewFromSeed(secretKey)
+	w, _ := wallet.New("massa")
 	c := node.NewClient("https://test.massa.net/api/v2")
 	tx := buyrolls.New(1)
 
-	id, err := sendoperation.Call(c, 36981, 0, tx, w.GetPublicKey(), w.GetPrivateKey())
+	id, err := sendoperation.Call(c, 36981, 0, tx, w.KeyPairs[0].PublicKey, w.KeyPairs[0].PrivateKey)
 	if err != nil {
 		panic(err)
 	}

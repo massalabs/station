@@ -11,13 +11,12 @@ import (
 
 func main() {
 
-	secretKey := "S1pAYxBFbwomUUfzdv3yvQt8wPiYriX6VnXdrr87yrhbn91w96m" //make sure you use the key with coins
-	w, _ := wallet.NewFromSeed(secretKey)
+	w, _ := wallet.New("massa")
 	c := node.NewClient("https://test.massa.net/api/v2")
 	rolls := sellrolls.New(1)
 
 	expirePeriod := uint64(36981)
-	id, err := sendoperation.Call(c, expirePeriod, 0, rolls, w.GetPublicKey(), w.GetPrivateKey())
+	id, err := sendoperation.Call(c, expirePeriod, 0, rolls, w.KeyPairs[0].PrivateKey, w.KeyPairs[0].PrivateKey)
 	if err != nil {
 		panic(err)
 	}

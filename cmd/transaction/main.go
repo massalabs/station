@@ -11,19 +11,14 @@ import (
 
 func main() {
 
-	secretKey := "S1pAYxBFbwomUUfzdv3yvQt8wPiYriX6VnXdrr87yrhbn91w96m"
-	w, _ := wallet.NewFromSeed(secretKey)
-	//w.Print()
-	secretKey2 := "S1rRCHbzV3P7SYtTzQDzTasK3PXR94yyA5pvyxcYa4VFj4785AZ"
-	w2, _ := wallet.NewFromSeed(secretKey2)
-	//w2.Print()
-
+	w, _ := wallet.New("massa")
+	w2, _ := wallet.New("massa")
 	c := node.NewClient("https://test.massa.net/api/v2")
-	tx := transaction.New(w2.Address, 5)
+	tx := transaction.New(w2.KeyPairs[0].PublicKey, 5)
 
 	expirePeriod := uint64(37090)
 
-	id, err := sendoperation.Call(c, expirePeriod, 0, tx, w.GetPublicKey(), w.GetPrivateKey())
+	id, err := sendoperation.Call(c, expirePeriod, 0, tx, w.KeyPairs[0].PublicKey, w.KeyPairs[0].PrivateKey)
 	if err != nil {
 		panic(err)
 	}
