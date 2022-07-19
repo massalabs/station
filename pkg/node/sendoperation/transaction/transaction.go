@@ -24,7 +24,7 @@ type Transaction struct {
 func New(recipientAddress []byte, amount uint64) *Transaction {
 	return &Transaction{
 		recipientAddress: recipientAddress,
-		amount:           amount * 1e9,
+		amount:           amount,
 	}
 }
 
@@ -32,7 +32,7 @@ func (t *Transaction) Content() interface{} {
 	return &Operation{
 		Transaction: OperationDetails{
 			RecipientAddress: "A" + base58.CheckEncode(append(make([]byte, 1), t.recipientAddress...)),
-			Amount:           fmt.Sprint(t.amount * 1e9),
+			Amount:           fmt.Sprint(t.amount),
 		},
 	}
 }
