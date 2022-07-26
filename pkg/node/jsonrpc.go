@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httputil"
+	"os"
 
 	"github.com/ybbus/jsonrpc/v3"
 )
@@ -47,8 +48,8 @@ type Client struct {
 func NewClient(url string) *Client {
 	return &Client{RPCClient: jsonrpc.NewClientWithOpts(url, &jsonrpc.RPCClientOpts{
 		HTTPClient: &http.Client{Transport: &withLoggingRoundTripper{
-			isEnabled:        false,
-			showResponseBody: false,
+			isEnabled:        os.Getenv("DEBUG_RPC") == "true",
+			showResponseBody: os.Getenv("DEBUG_RPC") == "true",
 		}},
 	})}
 }
