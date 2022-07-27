@@ -11,12 +11,12 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/internal/apihandler/cmd"
 	"github.com/massalabs/thyra/internal/apihandler/wallet"
-	walletPck "github.com/massalabs/thyra/pkg/wallet"
+	"github.com/massalabs/thyra/pkg/front"
 )
 
 func main() {
 	// Generate files
-	walletPck.GenerateFiles()
+	front.GenerateFiles()
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {

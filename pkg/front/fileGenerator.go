@@ -41,7 +41,7 @@
 //     //go:generate textFileToGoConst -in=lua/set.lua -o=setLua.go -c=setLua
 //     //go:generate textFileToGoConst -in=init.lua github.com/example/goProject
 //
-package wallet
+package front
 
 import (
 	"bytes"
@@ -155,7 +155,7 @@ func generateFile(in string) {
 		writeLine(outFile, "// generated:  "+time.Now().Format(time.UnixDate))
 	}
 	writeLine(outFile, "")
-	writeLine(outFile, "package wallet")
+	writeLine(outFile, "package front")
 	writeLine(outFile, "")
 
 	// constant name by input file name
@@ -178,7 +178,7 @@ func generateFile(in string) {
 	// output file name and location
 
 	if out == "" {
-		out = "../../pkg/wallet/" + filepath.Base(in) + ".go"
+		out = "../../pkg/front/" + filepath.Base(in) + ".go"
 	}
 
 	if filepath.IsAbs(out) == false {
@@ -246,10 +246,15 @@ func isDirectory(name string) bool {
 }
 
 func GenerateFiles() {
-	generateFile("../../pkg/wallet/index.css")
-	generateFile("../../pkg/wallet/index.html")
-	generateFile("../../pkg/wallet/index.js")
-	generateFile("../../pkg/wallet/logo_massa.webp")
+	generateFile("../../pkg/front/wallet.css")
+	generateFile("../../pkg/front/wallet.html")
+	generateFile("../../pkg/front/wallet.js")
+
+	generateFile("../../pkg/front/website.css")
+	generateFile("../../pkg/front/website.html")
+	generateFile("../../pkg/front/website.js")
+
+	generateFile("../../pkg/front/logo_massa.webp")
 }
 
 // go:generate textFileToGoConst -in=get.lua -no-gat

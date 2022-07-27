@@ -66,5 +66,7 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 
 	c.walletStorage.Store(w.Nickname, w)
 
+	wallet.Update(w)
+
 	return operations.NewMgmtWalletImportNoContent()
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 func NewDelete(walletStorage *sync.Map) operations.MgmtWalletDeleteHandler {
@@ -28,19 +29,12 @@ func (c *walletDelete) Handle(params operations.MgmtWalletDeleteParams) middlewa
 			})
 	}
 
-	_, ok := c.walletStorage.Load(params.Nickname)
-	if !ok {
-		e := errorCodeWalletNoWallet
-		msg := "Error: a wallet with the same nickname already exists."
-
-		return operations.NewMgmtWalletDeleteNotFound().WithPayload(
-			&models.Error{
-				Code:    &e,
-				Message: &msg,
-			})
-	}
-
 	c.walletStorage.Delete(params.Nickname)
+
+	err := wallet.Delete(params.Nickname)
+	if err != nil {
+		panic(err)
+	}
 
 	return operations.NewMgmtWalletDeleteNoContent()
 }

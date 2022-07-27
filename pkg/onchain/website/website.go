@@ -9,6 +9,7 @@ import (
 
 	"lukechampine.com/blake3"
 
+	"github.com/massalabs/thyra/pkg/front"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/node/ledger"
@@ -117,18 +118,42 @@ func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
 	w.Write(body)
 }
 
+//TODO Remove GET part with generated swager files
 func HandlerFunc(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.Index(r.Host, ".massa") > 0 {
 			handleMassaDomainRequest(w, r)
 		} else if strings.HasPrefix(r.URL.Path, "/website") {
 			handleInitialRequest(w, r)
+		} else if strings.HasPrefix(r.URL.Path, "/webuploader.mythyra.massa") {
+			HandleWebsiteUploaderManagementRequest(w, r)
 		} else if strings.HasPrefix(r.URL.Path, "/wallet.mythyra.massa") {
 			wallet.HandleWalletManagementRequest(w, r)
-		} else if strings.Contains(path.Base(r.URL.Path), ".") {
-			handleSubsequentRequest(w, r)
+		} else if r.Method == "GET" && strings.HasPrefix(r.URL.Path, "/mgmt/wallet") {
+			wallet.GetWallets(w, r)
 		} else {
 			handler.ServeHTTP(w, r)
 		}
 	})
+}
+
+func HandleWebsiteUploaderManagementRequest(w http.ResponseWriter, r *http.Request) {
+
+	target := r.URL.Path[1:]
+	var fileText string
+	if strings.Index(target, ".css") > 0 {
+		fileText = front.WebsiteCss
+		w.Header().Set("Content-Type", "text/css")
+	} else if strings.Index(target, ".js") > 0 {
+		fileText = front.WebsiteJs
+		w.Header().Set("Content-Type", "application/json")
+	} else if strings.Index(target, ".html") > 0 {
+		fileText = front.WebsiteHtml
+		w.Header().Set("Content-Type", "text/html")
+	} else if strings.Index(target, ".webp") > 0 {
+		fileText = front.Logo_massaWebp
+		w.Header().Set("Content-Type", "image/webp")
+	}
+
+	w.Write([]byte(fileText))
 }
