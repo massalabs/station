@@ -1,4 +1,0 @@
-#Tue Jun 14 18:11:28 CEST 2022
-base.0=/Users/adrien/projects/massapp/build/app/intermediates/dex/release/minifyReleaseWithR8/classes.dex
-renamed.0=classes.dex
-path.0=classes.dex
