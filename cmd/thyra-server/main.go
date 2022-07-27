@@ -11,12 +11,12 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/int/apihandler/cmd"
 	"github.com/massalabs/thyra/int/apihandler/wallet"
-	"github.com/massalabs/thyra/pkg/front"
 )
 
+//TODO Manage file generation in an other way, generateFiles is not working while deployed
 func main() {
 	// Generate files
-	front.GenerateFiles()
+	//front.GenerateFiles()
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
