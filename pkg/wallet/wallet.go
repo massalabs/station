@@ -3,6 +3,7 @@ package wallet
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/json"
@@ -13,11 +14,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/massalabs/thyra/pkg/front"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"golang.org/x/crypto/pbkdf2"
 	"gopkg.in/yaml.v3"
+	"lukechampine.com/blake3"
 )
 
 var ErrUnprotectedSerialization = errors.New("private key must be protected before serialization")
@@ -134,13 +135,12 @@ func GetWallets(w http.ResponseWriter, r *http.Request) ([]Wallet, error) {
 }
 
 func New(nickname string) (*Wallet, error) {
-	privKey, err := btcec.NewPrivateKey()
+	pubKey, privKey, err := ed25519.GenerateKey(nil)
 	if err != nil {
 		return nil, err
 	}
 
-	pubKeyBytes := privKey.PubKey().X().Bytes()
-	privKeyBytes := privKey.Key.Bytes()
+	addr := blake3.Sum256(pubKey)
 
 	var salt [16]byte
 
@@ -159,10 +159,10 @@ func New(nickname string) (*Wallet, error) {
 	wallet := Wallet{
 		Version:  0,
 		Nickname: nickname,
-		Address:  "A" + base58.CheckEncode(append(make([]byte, 1), pubKeyBytes...)),
+		Address:  "A" + base58.CheckEncode(append(make([]byte, 1), addr[:]...)),
 		KeyPairs: []KeyPair{{
-			PrivateKey: privKeyBytes[:],
-			PublicKey:  pubKeyBytes,
+			PrivateKey: privKey,
+			PublicKey:  pubKey,
 			Salt:       salt,
 			Nonce:      nonce,
 		}},

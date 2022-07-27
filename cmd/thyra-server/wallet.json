@@ -1,0 +1,44 @@
+[
+	{
+		"version": 0,
+		"nickname": "azaddz",
+		"address": "A12mKA6d748apxWSs8bTdZm11LjiWTQyTbUBezg3TN8S7XY5DeRb",
+		"keyPairs": [
+			{
+				"PrivateKey": "mLpJGrR2CRB2nh+bOzvU8/NeZzlWYcVk7Rqfyah4aUk=",
+				"PublicKey": "6FB1k9has70U8RXtaLiQtVplMa9uOlvcB4vSzsofu5c=",
+				"Salt": [120, 201, 221, 209, 228, 249, 41, 245, 244, 28, 170, 192, 112, 220, 31, 17],
+				"Nonce": [96, 202, 5, 140, 34, 85, 122, 178, 234, 93, 143, 179],
+				"Protected": false
+			}
+		]
+	},
+	{
+		"version": 0,
+		"nickname": "azaddza",
+		"address": "A12LVMXWCcyAZFuJeCpA81xqjcJCFijyEFKM1pSBxBc4jjtyhqSU",
+		"keyPairs": [
+			{
+				"PrivateKey": "R+YtFcc4i0jMqOKsPlNSZW+nyxVGPy4w1QkCVI10GgY=",
+				"PublicKey": "r/Kr+lB4Sg9zgR7ahVTuxPT2ZqOlVHEDG2Ex9TSPApk=",
+				"Salt": [188, 110, 110, 173, 33, 204, 25, 31, 186, 175, 217, 95, 184, 107, 121, 207],
+				"Nonce": [241, 159, 203, 116, 140, 157, 136, 171, 3, 8, 198, 66],
+				"Protected": false
+			}
+		]
+	},
+	{
+		"version": 0,
+		"nickname": "azaddzartg",
+		"address": "A12SxCULQETRixuKqyeBLxsBSSDW7TQf7R4iTA8AFW52FWMHX4Qn",
+		"keyPairs": [
+			{
+				"PrivateKey": "0m3FvmaCtRGlSgghAg0RKej6Fg/cp2/40d52lGoUKH0=",
+				"PublicKey": "vp9g7xcdsJcNTDePDVhwMsqFwXVHCkSK1ExUY+mAtqk=",
+				"Salt": [110, 184, 205, 60, 116, 2, 112, 84, 22, 189, 222, 51, 120, 221, 69, 32],
+				"Nonce": [239, 228, 125, 189, 90, 170, 112, 48, 211, 50, 121, 183],
+				"Protected": false
+			}
+		]
+	}
+]

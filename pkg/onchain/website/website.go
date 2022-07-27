@@ -7,41 +7,35 @@ import (
 	"path"
 	"strings"
 
-	"lukechampine.com/blake3"
-
 	"github.com/massalabs/thyra/pkg/front"
 	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/node/base58"
-	"github.com/massalabs/thyra/pkg/node/ledger"
 	"github.com/massalabs/thyra/pkg/onchain/storage"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-func Resolve(name string) (string, error) {
-	digest := blake3.Sum256([]byte("record" + name))
-	key := base58.CheckEncode(digest[:])
+func Resolve(client *node.Client, name string) (string, error) {
+	//digest := blake3.Sum256([]byte("record" + name))
+	//key := base58.CheckEncode(digest[:])
 
-	address := "A12o8tw83tDrA52Lju9BUDDodAhtUp4scHtYr8Fj4iwhDTuWZqHZ"
+	address := "A12ew8eiCS7wnY8SkUdwBgDkdD5qwmbJgkJvYLCvVjWWdoFJJLvW"
 
-	c := node.NewClient("https://test.massa.net/api/v2")
+	const dnsPrefix = "record"
 
-	content, err := ledger.Addresses(c, []string{address})
+	entry, err := node.DatastoreEntry(client, address, dnsPrefix+name)
 	if err != nil {
 		return "", err
 	}
 
-	val, ok := content[0].Info.Datastore[key]
-	if ok {
-		return string(val), nil
+	if len(entry.CandidateValue) == 0 {
+		return "", errors.New("name not found")
 	}
 
-	return "", errors.New("name not found")
+	return string(entry.CandidateValue), nil
 }
 
-func Fetch(addr string, filename string) ([]byte, error) {
-	// TODO use a local cache to reduce network bandwidth
-
-	m, err := storage.Get(addr, "2qbtmxh5pD3TH3McFmZWxvKLTyz2SKDYFSRL8ngQBJ4R6f3Duw")
+// TODO use a local cache to reduce network bandwidth.
+func Fetch(c *node.Client, addr string, filename string) ([]byte, error) {
+	m, err := storage.Get(c, addr, "massa_web")
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +45,7 @@ func Fetch(addr string, filename string) ([]byte, error) {
 
 func handleInitialRequest(w http.ResponseWriter, r *http.Request) {
 	addr := r.URL.Query()["url"][0]
-
+	rpcClient := node.NewClient("http://145.239.66.206:33035")
 	cookie := &http.Cookie{
 		Name:   "ocw",
 		Value:  addr,
@@ -59,22 +53,7 @@ func handleInitialRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	http.SetCookie(w, cookie)
 
-	body, err := Fetch(addr, "index.html")
-	if err != nil {
-		panic(err)
-	}
-
-	w.Write(body)
-}
-
-func handleSubsequentRequest(w http.ResponseWriter, r *http.Request) {
-	addr, err := r.Cookie("ocw")
-	if err != nil {
-		fmt.Println("Error reading cookie")
-		panic(err)
-	}
-
-	body, err := Fetch(addr.Value, path.Base(r.URL.Path))
+	body, err := Fetch(rpcClient, addr, "index.html")
 	if err != nil {
 		panic(err)
 	}
@@ -90,7 +69,9 @@ func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
 
 	name := r.Host[:i]
 
-	addr, err := Resolve(name)
+	rpcClient := node.NewClient("http://145.239.66.206:33035")
+
+	addr, err := Resolve(rpcClient, name)
 	if err != nil {
 		panic(err)
 	}
@@ -102,7 +83,7 @@ func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
 		target = r.URL.Path[1:]
 	}
 
-	body, err := Fetch(addr, target)
+	body, err := Fetch(rpcClient, addr, target)
 	if err != nil {
 		panic(err)
 	}
@@ -113,6 +94,23 @@ func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 	} else if strings.Index(target, ".html") > 0 {
 		w.Header().Set("Content-Type", "text/html")
+	}
+
+	w.Write(body)
+}
+
+func handleSubsequentRequest(w http.ResponseWriter, r *http.Request) {
+	addr, err := r.Cookie("ocw")
+	if err != nil {
+		fmt.Println("Error reading cookie")
+		panic(err)
+	}
+
+	rpcClient := node.NewClient("http://145.239.66.206:33035")
+
+	body, err := Fetch(rpcClient, addr.Value, path.Base(r.URL.Path))
+	if err != nil {
+		panic(err)
 	}
 
 	w.Write(body)

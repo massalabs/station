@@ -4,87 +4,33 @@ import (
 	"archive/zip"
 	"bytes"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"io/ioutil"
-	"net/http"
+
+	"github.com/massalabs/thyra/pkg/node"
 )
 
-type ledgerInfo struct {
-	Datastore map[string][]byte
-}
-
-type ledger struct {
-	Info ledgerInfo `json:"candidate_sce_ledger_info"`
-}
-
-type jsonRPCResponse struct {
-	Result *[]ledger
-	Error  *jsonRPCError
-}
-
-type jsonRPCError struct {
-	Code    int64
-	Message string
-}
-
 func readZipFile(z *zip.File) ([]byte, error) {
-	f, err := z.Open()
+	file, err := z.Open()
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
-	return ioutil.ReadAll(f)
+	defer file.Close()
+
+	return ioutil.ReadAll(file)
 }
 
-func Get(address string, key string) (map[string][]byte, error) {
-	body := []byte(`{
-                "jsonrpc": "2.0",
-                "method": "get_addresses",
-                "id": 111,
-                "params": [["`)
-	tail := []byte(`"]]}`)
-
-	body = append(body, address...)
-	body = append(body, tail...)
-
-	req, err := http.NewRequest("POST", "https://test.massa.net/api/v2", bytes.NewBuffer(body))
+func Get(client *node.Client, address string, key string) (map[string][]byte, error) {
+	entry, err := node.DatastoreEntry(client, address, key)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
-
-	c := &http.Client{}
-	res, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-
-	b, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
+	if len(entry.CandidateValue) == 0 {
+		return nil, errors.New("no data in candidate value key")
 	}
 
-	var j jsonRPCResponse
-	err = json.Unmarshal(b, &j)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if j.Result == nil || len(*j.Result) == 0 {
-		return nil, errors.New("no ledger")
-	}
-
-	s, ok := (*j.Result)[0].Info.Datastore[key]
-
-	if !ok {
-		return nil, errors.New("no web site in datastore")
-	}
-
-	b64, err := base64.StdEncoding.DecodeString(string(s))
+	b64, err := base64.StdEncoding.DecodeString(string(entry.CandidateValue))
 	if err != nil {
 		return nil, err
 	}
@@ -105,5 +51,6 @@ func Get(address string, key string) (map[string][]byte, error) {
 
 		m[zipFile.Name] = uzb
 	}
+
 	return m, nil
 }

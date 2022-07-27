@@ -6,7 +6,6 @@ package main
 import "C"
 
 import (
-	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/onchain/website"
 )
 
@@ -15,9 +14,7 @@ func fetchWebsite(address *C.char, filename *C.char) *C.FetchWebsiteReturn {
 	// instanciate here, must be free on caller side
 	output := (*C.FetchWebsiteReturn)(C.malloc(C.size_t(C.sizeof_FetchWebsiteReturn)))
 
-	c := node.NewClient("http://145.239.66.206:33035")
-
-	res, err := website.Fetch(c, C.GoString(address), C.GoString(filename))
+	res, err := website.Fetch(C.GoString(address), C.GoString(filename))
 	if err != nil {
 		output.error = C.CString(err.Error())
 		return output

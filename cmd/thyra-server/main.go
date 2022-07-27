@@ -9,8 +9,8 @@ import (
 	"github.com/jessevdk/go-flags"
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/internal/apihandler/cmd"
-	"github.com/massalabs/thyra/internal/apihandler/wallet"
+	"github.com/massalabs/thyra/int/apihandler/cmd"
+	"github.com/massalabs/thyra/int/apihandler/wallet"
 	"github.com/massalabs/thyra/pkg/front"
 )
 
@@ -57,7 +57,6 @@ func main() {
 
 	// Start server which listening
 	server.ConfigureAPI()
-
 	if err := server.Serve(); err != nil {
 		log.Fatalln(err)
 	}
