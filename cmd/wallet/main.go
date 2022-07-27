@@ -14,14 +14,6 @@ func main() {
 
 	fmt.Println("init", w.KeyPairs[0].PrivateKey)
 
-	// this panic because serialization of unprotected keypair is forbidden
-	/*yaml, err := w.YAML()
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("yaml", string(yaml))*/
-
 	err = w.Protect("MyAwesomePassword", 0)
 	if err != nil {
 		panic(err)

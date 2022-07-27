@@ -113,25 +113,19 @@ func FromYAML(raw []byte) (w Wallet, err error) {
 	return
 }
 
-func readWallets() (wallets []Wallet) {
+func ReadWallets() (wallets []Wallet, e error) {
 	bytesInput, e := ioutil.ReadFile("wallet.json")
 	wallets = []Wallet{}
 	if e != nil {
 		fmt.Print("No wallet dectected, new one created")
 	} else {
-		json.Unmarshal(bytesInput, &wallets)
+		e = json.Unmarshal(bytesInput, &wallets)
+		if e != nil {
+			return nil, e
+		}
 	}
-	return wallets
+	return wallets, nil
 
-}
-
-func GetWallets(w http.ResponseWriter, r *http.Request) ([]Wallet, error) {
-	bytesInput, e := ioutil.ReadFile("wallet.json")
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(bytesInput))
-
-	return readWallets(), e
 }
 
 func New(nickname string) (*Wallet, error) {
@@ -168,30 +162,48 @@ func New(nickname string) (*Wallet, error) {
 		}},
 	}
 
-	wallets := readWallets()
+	wallets, e := ReadWallets()
+	if e != nil {
+		return nil, e
+	}
+
 	wallets = append(wallets, wallet)
 
 	bytesOutput, err := json.Marshal(wallets)
+	if err != nil {
+		return nil, err
+	}
 
-	os.WriteFile("wallet.json", bytesOutput, 0644)
+	err = os.WriteFile("wallet.json", bytesOutput, 0644)
+	if err != nil {
+		return nil, err
+	}
 	return &wallet, nil
 }
 
 func Update(wallet Wallet) (err error) {
-	wallets := readWallets()
-
+	wallets, err := ReadWallets()
+	if err != nil {
+		return err
+	}
 	wallets = append(wallets, wallet)
 	bytesOutput, err := json.Marshal(wallets)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	os.WriteFile("wallet.json", bytesOutput, 0644)
-	return err
+	err = os.WriteFile("wallet.json", bytesOutput, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func Delete(nickname string) (err error) {
-	wallets := readWallets()
+	wallets, err := ReadWallets()
+	if err != nil {
+		return err
+	}
 
 	for index, element := range wallets {
 		if element.Nickname == nickname {
@@ -200,9 +212,15 @@ func Delete(nickname string) (err error) {
 	}
 
 	bytesOutput, err := json.Marshal(wallets)
-	os.WriteFile("wallet.json", bytesOutput, 0644)
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile("wallet.json", bytesOutput, 0644)
+	if err != nil {
+		return err
+	}
 
-	return err
+	return nil
 }
 
 func HandleWalletManagementRequest(w http.ResponseWriter, r *http.Request) {
