@@ -54,6 +54,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		MgmtWalletDeleteHandler: MgmtWalletDeleteHandlerFunc(func(params MgmtWalletDeleteParams) middleware.Responder {
 			return middleware.NotImplemented("operation MgmtWalletDelete has not yet been implemented")
 		}),
+		MgmtWalletGetHandler: MgmtWalletGetHandlerFunc(func(params MgmtWalletGetParams) middleware.Responder {
+			return middleware.NotImplemented("operation MgmtWalletGet has not yet been implemented")
+		}),
 		MgmtWalletImportHandler: MgmtWalletImportHandlerFunc(func(params MgmtWalletImportParams) middleware.Responder {
 			return middleware.NotImplemented("operation MgmtWalletImport has not yet been implemented")
 		}),
@@ -101,6 +104,8 @@ type ThyraServerAPI struct {
 	MgmtWalletCreateHandler MgmtWalletCreateHandler
 	// MgmtWalletDeleteHandler sets the operation handler for the mgmt wallet delete operation
 	MgmtWalletDeleteHandler MgmtWalletDeleteHandler
+	// MgmtWalletGetHandler sets the operation handler for the mgmt wallet get operation
+	MgmtWalletGetHandler MgmtWalletGetHandler
 	// MgmtWalletImportHandler sets the operation handler for the mgmt wallet import operation
 	MgmtWalletImportHandler MgmtWalletImportHandler
 
@@ -191,6 +196,9 @@ func (o *ThyraServerAPI) Validate() error {
 	}
 	if o.MgmtWalletDeleteHandler == nil {
 		unregistered = append(unregistered, "MgmtWalletDeleteHandler")
+	}
+	if o.MgmtWalletGetHandler == nil {
+		unregistered = append(unregistered, "MgmtWalletGetHandler")
 	}
 	if o.MgmtWalletImportHandler == nil {
 		unregistered = append(unregistered, "MgmtWalletImportHandler")
@@ -299,6 +307,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/mgmt/wallet/{nickname}"] = NewMgmtWalletDelete(o.context, o.MgmtWalletDeleteHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/mgmt/wallet"] = NewMgmtWalletGet(o.context, o.MgmtWalletGetHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

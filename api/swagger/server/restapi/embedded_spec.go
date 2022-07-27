@@ -259,6 +259,41 @@ func init() {
       }
     },
     "/mgmt/wallet": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "mgmtWalletGet",
+        "responses": {
+          "200": {
+            "description": "Wallets retrieved",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Wallet"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - wallet.json file is corrupted.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
       "put": {
         "produces": [
           "application/json"
@@ -675,6 +710,41 @@ func init() {
       }
     },
     "/mgmt/wallet": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "mgmtWalletGet",
+        "responses": {
+          "200": {
+            "description": "Wallets retrieved",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Wallet"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - wallet.json file is corrupted.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
       "put": {
         "produces": [
           "application/json"
