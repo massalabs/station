@@ -17,7 +17,7 @@ type walletGet struct {
 	walletStorage *sync.Map
 }
 
-// TODO Clean the struct mapping here + correct KeyPairs not returned
+// TODO Clean the struct mapping here + correct KeyPairs not returned & Panic(error)
 func (c *walletGet) Handle(params operations.MgmtWalletGetParams) middleware.Responder {
 
 	wallets, err := wallet.ReadWallets()

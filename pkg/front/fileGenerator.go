@@ -1,3 +1,4 @@
+// THIS CODE HAS BEEN MODIFIED TO FITS THYRA NEEDS
 //
 // Copyright (c) 2018 Konstantin Ivanov <kostyarin.ivanov@gmail.com>.
 // All rights reserved. This program is free software. It comes without

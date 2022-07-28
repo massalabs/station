@@ -21,6 +21,7 @@ type functionExecuter struct {
 	walletStorage *sync.Map
 }
 
+//TODO Manage the panic(error)
 func (f *functionExecuter) Handle(params operations.CmdExecuteFunctionParams) middleware.Responder {
 	addr, err := base58.CheckDecode((*params.Body.At)[1:])
 	if err != nil {
@@ -29,10 +30,10 @@ func (f *functionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 
 	addr = addr[1:]
 
-	value, ok := f.walletStorage.Load(*params.Body.KeyID)
+	value, ok := f.walletStorage.Load(*params.Body.Name)
 	if !ok {
 		e := errorCodeUnknownKeyID
-		msg := "Error: unknown wallet id: " + *params.Body.KeyID
+		msg := "Error: unknown wallet nickname : " + *params.Body.Name
 
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
 			&models.Error{

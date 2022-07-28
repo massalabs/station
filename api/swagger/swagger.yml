@@ -27,10 +27,6 @@ paths:
           description: Bad request.
           schema:
             $ref: '#/definitions/Error'
-        '422':
-          description: Unprocessable Entity - wallet.json file is corrupted.
-          schema:
-            $ref: '#/definitions/Error'
         '500':
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:

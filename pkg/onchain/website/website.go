@@ -96,7 +96,10 @@ func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
 	}
 
-	w.Write(body)
+	_, err = w.Write(body)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func handleSubsequentRequest(w http.ResponseWriter, r *http.Request) {
@@ -132,6 +135,7 @@ func HandlerFunc(handler http.Handler) http.Handler {
 	})
 }
 
+//TODO Manage panic(err)
 func HandleWebsiteUploaderManagementRequest(w http.ResponseWriter, r *http.Request) {
 
 	target := r.URL.Path[1:]
@@ -149,6 +153,8 @@ func HandleWebsiteUploaderManagementRequest(w http.ResponseWriter, r *http.Reque
 		fileText = front.Logo_massaWebp
 		w.Header().Set("Content-Type", "image/webp")
 	}
-
-	w.Write([]byte(fileText))
+	_, err := w.Write([]byte(fileText))
+	if err != nil {
+		panic(err)
+	}
 }

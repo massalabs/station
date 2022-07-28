@@ -223,6 +223,7 @@ func Delete(nickname string) (err error) {
 	return nil
 }
 
+//TODO Manage panic(err)
 func HandleWalletManagementRequest(w http.ResponseWriter, r *http.Request) {
 
 	target := r.URL.Path[1:]
@@ -241,5 +242,8 @@ func HandleWalletManagementRequest(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/webp")
 	}
 
-	w.Write([]byte(fileText))
+	_, err := w.Write([]byte(fileText))
+	if err != nil {
+		panic(err)
+	}
 }
