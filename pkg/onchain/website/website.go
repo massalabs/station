@@ -121,16 +121,16 @@ func handleSubsequentRequest(w http.ResponseWriter, r *http.Request) {
 
 func HandlerFunc(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.Index(r.Host, ".massa") > 0 {
+		if strings.HasPrefix(r.URL.Path, "/mgmt") {
+			handler.ServeHTTP(w, r)
+		} else if strings.Index(r.Host, "webuploader.mythyra.massa") != -1 {
+			HandleWebsiteUploaderManagementRequest(w, r)
+		} else if strings.Index(r.Host, "wallet.mythyra.massa") != -1 {
+			wallet.HandleWalletManagementRequest(w, r)
+		} else if strings.Index(r.Host, ".massa") > 0 {
 			handleMassaDomainRequest(w, r)
 		} else if strings.HasPrefix(r.URL.Path, "/website") {
 			handleInitialRequest(w, r)
-		} else if strings.HasPrefix(r.URL.Path, "/webuploader.mythyra.massa") {
-			HandleWebsiteUploaderManagementRequest(w, r)
-		} else if strings.HasPrefix(r.URL.Path, "/wallet.mythyra.massa") {
-			wallet.HandleWalletManagementRequest(w, r)
-		} else {
-			handler.ServeHTTP(w, r)
 		}
 	})
 }

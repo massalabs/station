@@ -16,7 +16,7 @@ import (
 
 	"github.com/massalabs/thyra/pkg/front"
 	"github.com/massalabs/thyra/pkg/node/base58"
-	"github.com/xdg-go/pbkdf2"
+	"golang.org/x/crypto/pbkdf2"
 	"gopkg.in/yaml.v3"
 	"lukechampine.com/blake3"
 )
