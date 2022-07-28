@@ -38,7 +38,6 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 func message(expiry uint64, fee uint64, operation Operation) []byte {
 	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
-
 	// fee
 	n := binary.PutUvarint(buf, fee)
 	msg = append(msg, buf[:n]...)
