@@ -7,7 +7,7 @@ import (
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
-	apiHandler "github.com/massalabs/thyra/internal/apihandler"
+	apiHandler "github.com/massalabs/thyra/int/apihandler"
 
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 )
