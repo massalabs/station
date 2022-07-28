@@ -1,20 +1,28 @@
-package apihandler
+package cmd
 
 import (
+	"sync"
+
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	callSC "github.com/massalabs/thyra/pkg/node/sendoperation/callsc"
+	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-const (
-	errorCodeSendOperation = "Execute-0001"
-	errorCodeUnknownKeyID  = "Execute-0002"
-)
+func NewExecuteFunction(walletStorage *sync.Map) operations.CmdExecuteFunctionHandler {
+	return &functionExecuter{walletStorage: walletStorage}
+}
 
-func ExecuteFunction(params operations.CmdExecuteFunctionParams) middleware.Responder {
+type functionExecuter struct {
+	walletStorage *sync.Map
+}
+
+//TODO Manage the panic(error)
+func (f *functionExecuter) Handle(params operations.CmdExecuteFunctionParams) middleware.Responder {
 	addr, err := base58.CheckDecode((*params.Body.At)[1:])
 	if err != nil {
 		panic(err)
@@ -22,25 +30,26 @@ func ExecuteFunction(params operations.CmdExecuteFunctionParams) middleware.Resp
 
 	addr = addr[1:]
 
-	if *params.Body.KeyID != "default" {
+	value, ok := f.walletStorage.Load(*params.Body.Name)
+	if !ok {
 		e := errorCodeUnknownKeyID
-		msg := "Error: unknown key id (" + *params.Body.KeyID + ")"
+		msg := "Error: unknown wallet nickname : " + *params.Body.Name
+
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
-			&operations.CmdExecuteFunctionUnprocessableEntityBody{
+			&models.Error{
 				Code:    &e,
 				Message: &msg,
 			})
 	}
 
-	pubKey, err := base58.CheckDecode("zkTGqfwJp43tY4FPgRXC7fr2xML3kDQ8bch15SpnDehuxWiKS")
-	if err != nil {
-		panic(err)
+	storedWallet, ok := value.(*wallet.Wallet)
+	if !ok {
+		panic("stored value is not a wallet")
 	}
 
-	privKey, err := base58.CheckDecode("25CHWGN5DZemFnEdPyYfDkyYzEwierr3vCuP3Z4tiChfQpBP41")
-	if err != nil {
-		panic(err)
-	}
+	//TODO: storedWallet.KeyPairs[0].Protected shall be false
+	pubKey := storedWallet.KeyPairs[0].PublicKey
+	privKey := storedWallet.KeyPairs[0].PrivateKey
 
 	callSC := callSC.New(
 		addr,
@@ -53,7 +62,7 @@ func ExecuteFunction(params operations.CmdExecuteFunctionParams) middleware.Resp
 
 	c := node.NewClient("https://test.massa.net/api/v2")
 
-	id, err := sendOperation.Call(
+	operationID, err := sendOperation.Call(
 		c,
 		30903,
 		uint64(params.Body.Fee),
@@ -62,9 +71,10 @@ func ExecuteFunction(params operations.CmdExecuteFunctionParams) middleware.Resp
 	if err != nil {
 		e := errorCodeSendOperation
 		msg := "Error: " + err.Error()
+
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
-			&operations.CmdExecuteFunctionInternalServerErrorBody{Code: &e, Message: &msg})
+			&models.Error{Code: &e, Message: &msg})
 	}
 
-	return operations.NewCmdExecuteFunctionOK().WithPayload(id)
+	return operations.NewCmdExecuteFunctionOK().WithPayload(operationID)
 }

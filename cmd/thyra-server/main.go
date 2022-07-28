@@ -3,16 +3,20 @@ package main
 import (
 	"flag"
 	"log"
+	"sync"
 
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
-	apiHandler "github.com/massalabs/thyra/int/apihandler"
-
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/int/apihandler/cmd"
+	"github.com/massalabs/thyra/int/apihandler/wallet"
 )
 
+//TODO Manage file generation in an other way, generateFiles is not working while deployed
 func main() {
+	// Generate files
+	//front.GenerateFiles()
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
@@ -43,7 +47,14 @@ func main() {
 		server.TLSCertificateKey = flags.Filename(*keyFilePtr)
 	}
 
-	api.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(apiHandler.ExecuteFunction)
+	var walletStorage sync.Map
+
+	api.CmdExecuteFunctionHandler = cmd.NewExecuteFunction(&walletStorage)
+
+	api.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
+	api.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
+	api.MgmtWalletImportHandler = wallet.NewImport(&walletStorage)
+	api.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage)
 
 	// Start server which listening
 	server.ConfigureAPI()

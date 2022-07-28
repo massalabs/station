@@ -48,6 +48,18 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		KpiHandler: KpiHandlerFunc(func(params KpiParams) middleware.Responder {
 			return middleware.NotImplemented("operation Kpi has not yet been implemented")
 		}),
+		MgmtWalletCreateHandler: MgmtWalletCreateHandlerFunc(func(params MgmtWalletCreateParams) middleware.Responder {
+			return middleware.NotImplemented("operation MgmtWalletCreate has not yet been implemented")
+		}),
+		MgmtWalletDeleteHandler: MgmtWalletDeleteHandlerFunc(func(params MgmtWalletDeleteParams) middleware.Responder {
+			return middleware.NotImplemented("operation MgmtWalletDelete has not yet been implemented")
+		}),
+		MgmtWalletGetHandler: MgmtWalletGetHandlerFunc(func(params MgmtWalletGetParams) middleware.Responder {
+			return middleware.NotImplemented("operation MgmtWalletGet has not yet been implemented")
+		}),
+		MgmtWalletImportHandler: MgmtWalletImportHandlerFunc(func(params MgmtWalletImportParams) middleware.Responder {
+			return middleware.NotImplemented("operation MgmtWalletImport has not yet been implemented")
+		}),
 	}
 }
 
@@ -88,6 +100,14 @@ type ThyraServerAPI struct {
 	CmdExecuteFunctionHandler CmdExecuteFunctionHandler
 	// KpiHandler sets the operation handler for the kpi operation
 	KpiHandler KpiHandler
+	// MgmtWalletCreateHandler sets the operation handler for the mgmt wallet create operation
+	MgmtWalletCreateHandler MgmtWalletCreateHandler
+	// MgmtWalletDeleteHandler sets the operation handler for the mgmt wallet delete operation
+	MgmtWalletDeleteHandler MgmtWalletDeleteHandler
+	// MgmtWalletGetHandler sets the operation handler for the mgmt wallet get operation
+	MgmtWalletGetHandler MgmtWalletGetHandler
+	// MgmtWalletImportHandler sets the operation handler for the mgmt wallet import operation
+	MgmtWalletImportHandler MgmtWalletImportHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -170,6 +190,18 @@ func (o *ThyraServerAPI) Validate() error {
 	}
 	if o.KpiHandler == nil {
 		unregistered = append(unregistered, "KpiHandler")
+	}
+	if o.MgmtWalletCreateHandler == nil {
+		unregistered = append(unregistered, "MgmtWalletCreateHandler")
+	}
+	if o.MgmtWalletDeleteHandler == nil {
+		unregistered = append(unregistered, "MgmtWalletDeleteHandler")
+	}
+	if o.MgmtWalletGetHandler == nil {
+		unregistered = append(unregistered, "MgmtWalletGetHandler")
+	}
+	if o.MgmtWalletImportHandler == nil {
+		unregistered = append(unregistered, "MgmtWalletImportHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -267,6 +299,22 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/kpi"] = NewKpi(o.context, o.KpiHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/mgmt/wallet"] = NewMgmtWalletCreate(o.context, o.MgmtWalletCreateHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/mgmt/wallet/{nickname}"] = NewMgmtWalletDelete(o.context, o.MgmtWalletDeleteHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/mgmt/wallet"] = NewMgmtWalletGet(o.context, o.MgmtWalletGetHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/mgmt/wallet"] = NewMgmtWalletImport(o.context, o.MgmtWalletImportHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP
