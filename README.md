@@ -1,4 +1,5 @@
 # thyra
+
 An entrance to the Massa blockchain.
 
 ## /!\ WIP
@@ -30,14 +31,18 @@ For instance, to access flappy text stored on the blockchain, click the followin
 ### ... redirect massa Top Level Domain to localhost ?
 
 #### Linux
+
 1- Install dnsmasq
+
 ```shell
 sudo apt install dnsmasq
 ```
+
 2 - Add massa TLD resolution to localhost
 Edit `/etc/dnsmasq.conf` and add `address=/.massa/127.0.0.1`
 
 NOTE : If DNR is globally slow, add the following lines to the same file (`/etc/dnsmasq.conf`):
+
 ```shell
 no-resolv
 server=8.8.8.8
@@ -45,13 +50,21 @@ server=8.8.4.4
 ```
 
 #### MacOS
+
 See: https://www.larry.dev/no-more-etc-hosts-on-mac-with-dnsmasq/
+
+#### Windows
+
+As dnsmasq is not supported on windows, you can use Acrylic.
+
+See: https://serverfault.com/questions/539591/how-to-resolve-all-dev-domains-to-localhost-on-windows#answer-808963
 
 ### ... secure HTTPS configuration ?
 
 Using HTTPS configuration without specifying your own certificate and key triggers a warning: `insecure HTTPS configuration`.
 
 To solve this you need to create your own certificate. You can do so by using openssl:
+
 ```shell
 openssl req -newkey rsa:4096 \
             -x509 \
@@ -62,7 +75,7 @@ openssl req -newkey rsa:4096 \
             -keyout my_thyra.key
 ```
 
-You can now execute a thyra-server using the following command changing *path to ...* to proper values:
+You can now execute a thyra-server using the following command changing _path to ..._ to proper values:
 `thyra-server --tls-certificate <path to my_thyra.crt> --tls-key <path to my_thyra.key>`.
 
 ## Additional information
