@@ -1,16 +1,130 @@
 consumes:
-- application/json
+  - application/json
 info:
   description: Thyra HTTP server API.
   title: thyra-server
   version: 0.0.0
 produces:
-- application/json
+  - application/json
 schemes:
-- http
-- https
-swagger: "2.0"
+  - http
+  - https
+swagger: '2.0'
 paths:
+  /mgmt/wallet:
+    get:
+      operationId: mgmtWalletGet
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Wallets retrieved
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Wallet'
+        '400':
+          description: Bad request.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      operationId: mgmtWalletCreate
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - nickname
+              - password
+            properties:
+              nickname:
+                description: Wallet's short name.
+                type: string
+              password:
+                description: Private key password.
+                type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: New wallet created.
+          schema:
+            $ref: '#/definitions/Wallet'
+        '400':
+          description: Bad request.
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      operationId: mgmtWalletImport
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/Wallet'
+      produces:
+        - application/json
+      responses:
+        '204':
+          description: Wallet imported.
+        '400':
+          description: Bad request.
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: '#/definitions/Error'
+  /mgmt/wallet/{nickname}:
+    delete:
+      operationId: mgmtWalletDelete
+      parameters:
+        - in: path
+          name: nickname
+          type: string
+          required: true
+          description: Wallet's short name.
+      produces:
+        - application/json
+      responses:
+        '204':
+          description: Wallet removed.
+          schema:
+            $ref: '#/definitions/Wallet'
+        '400':
+          description: Bad request.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Bad request.
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: '#/definitions/Error'
   /cmd/executeFunction:
     post:
       operationId: cmdExecuteFunction
@@ -24,9 +138,9 @@ paths:
               - name
               - at
             default:
-              name: "test"
-              at: "A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh"
-              args: ""
+              name: 'test'
+              at: 'A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh'
+              args: ''
               gaz:
                 price: 0
                 limit: 700000000
@@ -46,7 +160,7 @@ paths:
               args:
                 description: Arguments to pass to the function.
                 type: string
-                default: ""
+                default: ''
               gaz:
                 type: object
                 description: Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.
@@ -84,7 +198,7 @@ paths:
                 type: string
                 default: default
       produces:
-      - application/json
+        - application/json
       responses:
         '200':
           description: OK.
@@ -94,40 +208,17 @@ paths:
         '422':
           description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
           schema:
-            type: object
-            description: Error object.
-            required:
-              - code
-              - message
-            properties:
-              code:
-                description: error code.
-                type: string
-              message:
-                description: error message.
-                type: string
+            $ref: '#/definitions/Error'
         '500':
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
-            type: object
-            description: Error object.
-            required:
-              - code
-              - message
-            properties:
-              code:
-                description: error code.
-                type: string
-              message:
-                description: error message.
-                type: string
+            $ref: '#/definitions/Error'
   /kpi:
     get:
       operationId: kpi
       parameters:
         - name: scope
           in: query
-          type: string
           type: array
           minItems: 0
           uniqueItems: true
@@ -136,7 +227,7 @@ paths:
             type: string
             enum: [wallet, node, stacking, blockchain]
       produces:
-      - application/json
+        - application/json
       responses:
         '200':
           description: kpi message.
@@ -186,3 +277,58 @@ paths:
                       type: integer
                     gains:
                       type: number
+definitions:
+  Error:
+    type: object
+    description: Error object.
+    required:
+      - code
+      - message
+    properties:
+      code:
+        description: error code.
+        type: string
+      message:
+        description: error message.
+        type: string
+  Wallet:
+    type: object
+    description: Wallet object (V0).
+    required:
+      - nickname
+      - address
+      - keyPairs
+    properties:
+      nickname:
+        description: wallet's nickname.
+        type: string
+      address:
+        description: wallet's address.
+        type: string
+      keyPairs:
+        description: wallet's key pairs.
+        type: array
+        items:
+          type: object
+          required:
+            - privateKey
+            - publicKey
+            - salt
+            - nonce
+          properties:
+            privateKey:
+              description: Key pair's private key.
+              type: string
+              format: base58check
+            publicKey:
+              description: Key pair's public key.
+              type: string
+              format: base58check
+            salt:
+              description: Salt used by the PBKDF that generates the secret key used to protect the key pair's private key.
+              type: string
+              format: base58check
+            nonce:
+              description: Nonce used by the AES-GCM algorithm used to protect the key pair's private key.
+              type: string
+              format: base58check
