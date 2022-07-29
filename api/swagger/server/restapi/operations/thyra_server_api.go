@@ -7,6 +7,7 @@ package operations
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -41,6 +42,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		JSONConsumer: runtime.JSONConsumer(),
 
 		JSONProducer: runtime.JSONProducer(),
+		MediaTypeProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
+			return errors.NotImplemented("mediaType producer has not yet been implemented")
+		}),
 
 		CmdExecuteFunctionHandler: CmdExecuteFunctionHandlerFunc(func(params CmdExecuteFunctionParams) middleware.Responder {
 			return middleware.NotImplemented("operation CmdExecuteFunction has not yet been implemented")
@@ -59,6 +63,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		}),
 		MgmtWalletImportHandler: MgmtWalletImportHandlerFunc(func(params MgmtWalletImportParams) middleware.Responder {
 			return middleware.NotImplemented("operation MgmtWalletImport has not yet been implemented")
+		}),
+		WebsiteGetHandler: WebsiteGetHandlerFunc(func(params WebsiteGetParams) middleware.Responder {
+			return middleware.NotImplemented("operation WebsiteGet has not yet been implemented")
 		}),
 	}
 }
@@ -95,6 +102,9 @@ type ThyraServerAPI struct {
 	// JSONProducer registers a producer for the following mime types:
 	//   - application/json
 	JSONProducer runtime.Producer
+	// MediaTypeProducer registers a producer for the following mime types:
+	//   - media type
+	MediaTypeProducer runtime.Producer
 
 	// CmdExecuteFunctionHandler sets the operation handler for the cmd execute function operation
 	CmdExecuteFunctionHandler CmdExecuteFunctionHandler
@@ -108,6 +118,8 @@ type ThyraServerAPI struct {
 	MgmtWalletGetHandler MgmtWalletGetHandler
 	// MgmtWalletImportHandler sets the operation handler for the mgmt wallet import operation
 	MgmtWalletImportHandler MgmtWalletImportHandler
+	// WebsiteGetHandler sets the operation handler for the website get operation
+	WebsiteGetHandler WebsiteGetHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -184,6 +196,9 @@ func (o *ThyraServerAPI) Validate() error {
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
 	}
+	if o.MediaTypeProducer == nil {
+		unregistered = append(unregistered, "MediaTypeProducer")
+	}
 
 	if o.CmdExecuteFunctionHandler == nil {
 		unregistered = append(unregistered, "CmdExecuteFunctionHandler")
@@ -202,6 +217,9 @@ func (o *ThyraServerAPI) Validate() error {
 	}
 	if o.MgmtWalletImportHandler == nil {
 		unregistered = append(unregistered, "MgmtWalletImportHandler")
+	}
+	if o.WebsiteGetHandler == nil {
+		unregistered = append(unregistered, "WebsiteGetHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -251,6 +269,8 @@ func (o *ThyraServerAPI) ProducersFor(mediaTypes []string) map[string]runtime.Pr
 		switch mt {
 		case "application/json":
 			result["application/json"] = o.JSONProducer
+		case "media type":
+			result["media type"] = o.MediaTypeProducer
 		}
 
 		if p, ok := o.customProducers[mt]; ok {
@@ -315,6 +335,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/mgmt/wallet"] = NewMgmtWalletImport(o.context, o.MgmtWalletImportHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/website/{address}/{resource}"] = NewWebsiteGet(o.context, o.WebsiteGetHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

@@ -15,6 +15,7 @@
 //
 //  Produces:
 //    - application/json
+//    - media type
 //
 // swagger:meta
 package restapi

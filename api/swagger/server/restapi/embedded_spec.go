@@ -280,12 +280,6 @@ func init() {
               "$ref": "#/definitions/Error"
             }
           },
-          "422": {
-            "description": "Unprocessable Entity - wallet.json file is corrupted.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
           "500": {
             "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
             "schema": {
@@ -426,6 +420,54 @@ func init() {
           },
           "422": {
             "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/website/{address}/{resource}": {
+      "get": {
+        "produces": [
+          "media type"
+        ],
+        "operationId": "websiteGet",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Address containing the website.",
+            "name": "address",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource retrieved."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -731,12 +773,6 @@ func init() {
               "$ref": "#/definitions/Error"
             }
           },
-          "422": {
-            "description": "Unprocessable Entity - wallet.json file is corrupted.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
           "500": {
             "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
             "schema": {
@@ -877,6 +913,54 @@ func init() {
           },
           "422": {
             "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/website/{address}/{resource}": {
+      "get": {
+        "produces": [
+          "media type"
+        ],
+        "operationId": "websiteGet",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Address containing the website.",
+            "name": "address",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource retrieved."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
             "schema": {
               "$ref": "#/definitions/Error"
             }

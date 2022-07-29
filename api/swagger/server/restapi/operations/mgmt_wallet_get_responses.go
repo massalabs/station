@@ -104,50 +104,6 @@ func (o *MgmtWalletGetBadRequest) WriteResponse(rw http.ResponseWriter, producer
 	}
 }
 
-// MgmtWalletGetUnprocessableEntityCode is the HTTP code returned for type MgmtWalletGetUnprocessableEntity
-const MgmtWalletGetUnprocessableEntityCode int = 422
-
-/*MgmtWalletGetUnprocessableEntity Unprocessable Entity - wallet.json file is corrupted.
-
-swagger:response mgmtWalletGetUnprocessableEntity
-*/
-type MgmtWalletGetUnprocessableEntity struct {
-
-	/*
-	  In: Body
-	*/
-	Payload *models.Error `json:"body,omitempty"`
-}
-
-// NewMgmtWalletGetUnprocessableEntity creates MgmtWalletGetUnprocessableEntity with default headers values
-func NewMgmtWalletGetUnprocessableEntity() *MgmtWalletGetUnprocessableEntity {
-
-	return &MgmtWalletGetUnprocessableEntity{}
-}
-
-// WithPayload adds the payload to the mgmt wallet get unprocessable entity response
-func (o *MgmtWalletGetUnprocessableEntity) WithPayload(payload *models.Error) *MgmtWalletGetUnprocessableEntity {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the mgmt wallet get unprocessable entity response
-func (o *MgmtWalletGetUnprocessableEntity) SetPayload(payload *models.Error) {
-	o.Payload = payload
-}
-
-// WriteResponse to the client
-func (o *MgmtWalletGetUnprocessableEntity) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.WriteHeader(422)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
-}
-
 // MgmtWalletGetInternalServerErrorCode is the HTTP code returned for type MgmtWalletGetInternalServerError
 const MgmtWalletGetInternalServerErrorCode int = 500
 

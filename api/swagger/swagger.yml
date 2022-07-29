@@ -277,6 +277,38 @@ paths:
                       type: integer
                     gains:
                       type: number
+  /website/{address}/{resource}:
+    get:
+      operationId: websiteGet
+      parameters:
+        - in: path
+          name: address
+          type: string
+          required: true
+          description: Address containing the website.
+        - in: path
+          name: resource
+          type: string
+          default: index.html
+          required: true
+          description: Website resource.
+      produces:
+        - media type
+      responses:
+        '200':
+          description: Resource retrieved.
+        '400':
+          description: Bad request.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Resource not found.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: '#/definitions/Error'
 definitions:
   Error:
     type: object
