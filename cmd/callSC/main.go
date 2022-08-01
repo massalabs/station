@@ -16,7 +16,7 @@ func main() {
 		panic(err)
 	}
 
-	c := node.NewClient("https://test.massa.net/api/v2")
+	c := node.NewClient()
 
 	callSC := callSC.New(pubKey, "set_dots", make([]byte, 0), 0, 700000000, 0, 0)
 

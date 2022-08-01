@@ -60,7 +60,7 @@ func (f *functionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 		uint64(params.Body.Coins.Sequential),
 		uint64(params.Body.Coins.Parallel))
 
-	c := node.NewClient("https://test.massa.net/api/v2")
+	c := node.NewClient()
 
 	operationID, err := sendOperation.Call(
 		c,

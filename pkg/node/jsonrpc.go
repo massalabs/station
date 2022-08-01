@@ -45,8 +45,13 @@ type Client struct {
 	RPCClient jsonrpc.RPCClient
 }
 
-func NewClient(url string) *Client {
-	return &Client{RPCClient: jsonrpc.NewClientWithOpts(url, &jsonrpc.RPCClientOpts{
+func NewClient() *Client {
+	urlInnoNet := os.Getenv("URL_RPC")
+	if urlInnoNet == "" {
+		urlInnoNet = "http://37.187.156.118/test12"
+	}
+
+	return &Client{RPCClient: jsonrpc.NewClientWithOpts(urlInnoNet, &jsonrpc.RPCClientOpts{
 		HTTPClient: &http.Client{Transport: &withLoggingRoundTripper{
 			isEnabled:        os.Getenv("DEBUG_RPC") == "true",
 			showResponseBody: os.Getenv("DEBUG_RPC") == "true",

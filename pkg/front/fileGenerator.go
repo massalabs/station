@@ -251,9 +251,9 @@ func GenerateFiles() {
 	generateFile("../../pkg/front/wallet.html")
 	generateFile("../../pkg/front/wallet.js")
 
-	generateFile("../../pkg/front/website.css")
-	generateFile("../../pkg/front/website.html")
-	generateFile("../../pkg/front/website.js")
+	generateFile("../../pkg/front/page.css")
+	generateFile("../../pkg/front/page.html")
+	generateFile("../../pkg/front/page.js")
 
 	generateFile("../../pkg/front/logo_massa.webp")
 }

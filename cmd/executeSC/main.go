@@ -13,7 +13,7 @@ import (
 func main() {
 
 	w, _ := wallet.New("massa")
-	c := node.NewClient("https://test.massa.net/api/v2")
+	c := node.NewClient()
 	//read smart contrat
 	filePath := "put here path to your smart contract"
 	data, err := ioutil.ReadFile(filePath)

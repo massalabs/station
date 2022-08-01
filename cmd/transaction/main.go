@@ -13,7 +13,7 @@ func main() {
 
 	w, _ := wallet.New("massa")
 	w2, _ := wallet.New("massa")
-	c := node.NewClient("https://test.massa.net/api/v2")
+	c := node.NewClient()
 	tx := transaction.New(w2.KeyPairs[0].PublicKey, 5)
 
 	expirePeriod := uint64(37090)

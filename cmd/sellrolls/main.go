@@ -12,7 +12,7 @@ import (
 func main() {
 
 	w, _ := wallet.New("massa")
-	c := node.NewClient("https://test.massa.net/api/v2")
+	c := node.NewClient()
 	rolls := sellrolls.New(1)
 
 	expirePeriod := uint64(36981)

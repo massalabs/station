@@ -9,6 +9,7 @@ import (
 
 	"github.com/massalabs/thyra/pkg/front"
 	"github.com/massalabs/thyra/pkg/node"
+	"github.com/massalabs/thyra/pkg/node/getters"
 	"github.com/massalabs/thyra/pkg/onchain/storage"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
@@ -21,7 +22,7 @@ func Resolve(client *node.Client, name string) (string, error) {
 
 	const dnsPrefix = "record"
 
-	entry, err := node.DatastoreEntry(client, address, dnsPrefix+name)
+	entry, err := getters.DatastoreEntry(client, address, dnsPrefix+name)
 	if err != nil {
 		return "", err
 	}
@@ -45,7 +46,7 @@ func Fetch(c *node.Client, addr string, filename string) ([]byte, error) {
 
 func handleInitialRequest(w http.ResponseWriter, r *http.Request) {
 	addr := r.URL.Query()["url"][0]
-	rpcClient := node.NewClient("http://145.239.66.206:33035")
+	rpcClient := node.NewClient()
 	cookie := &http.Cookie{
 		Name:   "ocw",
 		Value:  addr,
@@ -61,28 +62,29 @@ func handleInitialRequest(w http.ResponseWriter, r *http.Request) {
 	w.Write(body)
 }
 
+//TO DO TO Remove
 func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
-	i := strings.Index(r.Host, ".massa")
-	if i < 0 {
-		panic("no .massa in URL")
-	}
+	// i := strings.Index(r.Host, ".massa")
+	// if i < 0 {
+	// 	panic("no .massa in URL")
+	// }
 
-	name := r.Host[:i]
+	// name := r.Host[:i]
 
-	rpcClient := node.NewClient("http://145.239.66.206:33035")
+	addr := r.URL.Query().Get("url")
+	rpcClient := node.NewClient()
 
-	addr, err := Resolve(rpcClient, name)
-	if err != nil {
-		panic(err)
-	}
+	// addr, err := Resolve(rpcClient, name)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	var target string
 	if r.URL.Path == "/" {
 		target = "index.html"
 	} else {
-		target = r.URL.Path[1:]
+		target = strings.Split(r.URL.Path, "/")[2]
 	}
-
 	body, err := Fetch(rpcClient, addr, target)
 	if err != nil {
 		panic(err)
@@ -95,7 +97,6 @@ func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request) {
 	} else if strings.Index(target, ".html") > 0 {
 		w.Header().Set("Content-Type", "text/html")
 	}
-
 	_, err = w.Write(body)
 	if err != nil {
 		panic(err)
@@ -109,7 +110,7 @@ func handleSubsequentRequest(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	rpcClient := node.NewClient("http://145.239.66.206:33035")
+	rpcClient := node.NewClient()
 
 	body, err := Fetch(rpcClient, addr.Value, path.Base(r.URL.Path))
 	if err != nil {
@@ -119,19 +120,31 @@ func handleSubsequentRequest(w http.ResponseWriter, r *http.Request) {
 	w.Write(body)
 }
 
+//TO REWORK
 func HandlerFunc(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.Index(r.Host, ".massa") > 0 {
-			handleMassaDomainRequest(w, r)
+		if strings.HasPrefix(r.URL.Path, "/mgmt/wallet") {
+			handler.ServeHTTP(w, r)
 		} else if strings.HasPrefix(r.URL.Path, "/website") {
-			handleInitialRequest(w, r)
-		} else if strings.HasPrefix(r.URL.Path, "/webuploader.mythyra.massa") {
+			handleMassaDomainRequest(w, r)
+		} else if strings.HasPrefix(r.URL.Path, "/uploadWeb") && r.Method == "POST" {
+			CreateWebsiteDeployer(w, r)
+		} else if strings.HasPrefix(r.URL.Path, "/uploadWeb") && r.Method == "GET" {
+			RefreshDeployers(w, r)
+		} else if strings.HasPrefix(r.URL.Path, "/uploadWeb") && r.Method == "PUT" {
+			UploadWebsite(w, r)
+		} else if strings.HasPrefix(r.Host, "webuploader.mythyra.massa") {
 			HandleWebsiteUploaderManagementRequest(w, r)
-		} else if strings.HasPrefix(r.URL.Path, "/wallet.mythyra.massa") {
+		} else if strings.HasPrefix(r.Host, "wallet.mythyra.massa") {
 			wallet.HandleWalletManagementRequest(w, r)
 		} else {
 			handler.ServeHTTP(w, r)
 		}
+		// else if strings.Index(r.Host, ".massa") > 0 {
+		// 	fmt.Println("aca")
+		// 	handleMassaDomainRequest(w, r)
+		// }
+
 	})
 }
 
@@ -141,13 +154,13 @@ func HandleWebsiteUploaderManagementRequest(w http.ResponseWriter, r *http.Reque
 	target := r.URL.Path[1:]
 	var fileText string
 	if strings.Index(target, ".css") > 0 {
-		fileText = front.WebsiteCss
+		fileText = front.PageCss
 		w.Header().Set("Content-Type", "text/css")
 	} else if strings.Index(target, ".js") > 0 {
-		fileText = front.WebsiteJs
+		fileText = front.PageJs
 		w.Header().Set("Content-Type", "application/json")
 	} else if strings.Index(target, ".html") > 0 {
-		fileText = front.WebsiteHtml
+		fileText = front.PageHtml
 		w.Header().Set("Content-Type", "text/html")
 	} else if strings.Index(target, ".webp") > 0 {
 		fileText = front.Logo_massaWebp

@@ -12,7 +12,7 @@ import (
 func main() {
 
 	w, _ := wallet.New("massa")
-	c := node.NewClient("https://test.massa.net/api/v2")
+	c := node.NewClient()
 	tx := buyrolls.New(1)
 
 	id, err := sendoperation.Call(c, 36981, 0, tx, w.KeyPairs[0].PublicKey, w.KeyPairs[0].PrivateKey)
