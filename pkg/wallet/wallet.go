@@ -10,11 +10,8 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"os"
-	"strings"
 
-	"github.com/massalabs/thyra/pkg/front"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"golang.org/x/crypto/pbkdf2"
 	"gopkg.in/yaml.v3"
@@ -43,7 +40,7 @@ type Wallet struct {
 	KeyPairs []KeyPair `json:"keyPairs"`
 }
 
-type WalletConfig struct {
+type Config struct {
 	// address
 	Wallets []KeyPair `json:"wallets"`
 }
@@ -116,6 +113,7 @@ func FromYAML(raw []byte) (w Wallet, err error) {
 func ReadWallets() (wallets []Wallet, e error) {
 	bytesInput, e := ioutil.ReadFile("wallet.json")
 	wallets = []Wallet{}
+
 	if e != nil {
 		fmt.Print("No wallet dectected, new one created")
 	} else {
@@ -124,8 +122,8 @@ func ReadWallets() (wallets []Wallet, e error) {
 			return nil, e
 		}
 	}
-	return wallets, nil
 
+	return wallets, nil
 }
 
 func New(nickname string) (*Wallet, error) {
@@ -174,10 +172,11 @@ func New(nickname string) (*Wallet, error) {
 		return nil, err
 	}
 
-	err = os.WriteFile("wallet.json", bytesOutput, 0644)
+	err = os.WriteFile("wallet.json", bytesOutput, 0o644)
 	if err != nil {
 		return nil, err
 	}
+
 	return &wallet, nil
 }
 
@@ -186,16 +185,19 @@ func Update(wallet Wallet) (err error) {
 	if err != nil {
 		return err
 	}
+
 	wallets = append(wallets, wallet)
+
 	bytesOutput, err := json.Marshal(wallets)
 	if err != nil {
 		return err
 	}
 
-	err = os.WriteFile("wallet.json", bytesOutput, 0644)
+	err = os.WriteFile("wallet.json", bytesOutput, 0o644)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -215,35 +217,11 @@ func Delete(nickname string) (err error) {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile("wallet.json", bytesOutput, 0644)
+
+	err = os.WriteFile("wallet.json", bytesOutput, 0o644)
 	if err != nil {
 		return err
 	}
 
 	return nil
-}
-
-//TODO Manage panic(err)
-func HandleWalletManagementRequest(w http.ResponseWriter, r *http.Request) {
-
-	target := r.URL.Path[1:]
-	var fileText string
-	if strings.Index(target, ".css") > 0 {
-		fileText = front.WalletCss
-		w.Header().Set("Content-Type", "text/css")
-	} else if strings.Index(target, ".js") > 0 {
-		fileText = front.WalletJs
-		w.Header().Set("Content-Type", "application/json")
-	} else if strings.Index(target, ".html") > 0 {
-		fileText = front.WalletHtml
-		w.Header().Set("Content-Type", "text/html")
-	} else if strings.Index(target, ".webp") > 0 {
-		fileText = front.Logo_massaWebp
-		w.Header().Set("Content-Type", "image/webp")
-	}
-
-	_, err := w.Write([]byte(fileText))
-	if err != nil {
-		panic(err)
-	}
 }

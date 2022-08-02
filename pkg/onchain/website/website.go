@@ -7,9 +7,10 @@ import (
 	"strings"
 
 	"github.com/massalabs/thyra/pkg/front"
+	fwallet "github.com/massalabs/thyra/pkg/front/wallet"
+	"github.com/massalabs/thyra/pkg/front/website"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/onchain/storage"
-	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 func Resolve(client *node.Client, name string) (string, error) {
@@ -62,20 +63,26 @@ func pathNotFound(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Request(w http.ResponseWriter, r *http.Request, c *node.Client, address string, resource string) {
-	body, err := Fetch(c, address, resource)
-	if err != nil {
-		panic(err)
-	}
-
-	switch filepath.Ext(resource) {
+func setContentType(rsc string, w http.ResponseWriter) {
+	switch filepath.Ext(rsc) {
 	case ".css":
 		w.Header().Set("Content-Type", "text/css")
 	case ".js":
 		w.Header().Set("Content-Type", "application/json")
 	case ".html":
 		w.Header().Set("Content-Type", "text/html")
+	case ".webp":
+		w.Header().Set("Content-Type", "text/webp")
 	}
+}
+
+func Request(w http.ResponseWriter, r *http.Request, c *node.Client, address string, resource string) {
+	body, err := Fetch(c, address, resource)
+	if err != nil {
+		panic(err)
+	}
+
+	setContentType(resource, w)
 
 	_, err = w.Write(body)
 	if err != nil {
@@ -137,7 +144,7 @@ func HandlerFunc(handler http.Handler) http.Handler {
 		} else if strings.HasPrefix(r.URL.Path, "/webuploader.mythyra.massa") {
 			HandleWebsiteUploaderManagementRequest(w, r)
 		} else if strings.HasPrefix(r.URL.Path, "/wallet.mythyra.massa") {
-			wallet.HandleWalletManagementRequest(w, r)
+			HandleWalletManagementRequest(w, r)
 		} else {
 			handler.ServeHTTP(w, r)
 		}
@@ -145,23 +152,46 @@ func HandlerFunc(handler http.Handler) http.Handler {
 }
 
 func HandleWebsiteUploaderManagementRequest(w http.ResponseWriter, r *http.Request) {
-	target := r.URL.Path[1:]
+	resource := r.URL.Path[1:]
 
 	var fileText string
 
-	if strings.Index(target, ".css") > 0 {
-		fileText = front.WebsiteCss
-		w.Header().Set("Content-Type", "text/css")
-	} else if strings.Index(target, ".js") > 0 {
-		fileText = front.WebsiteJs
-		w.Header().Set("Content-Type", "application/json")
-	} else if strings.Index(target, ".html") > 0 {
-		fileText = front.WebsiteHtml
-		w.Header().Set("Content-Type", "text/html")
-	} else if strings.Index(target, ".webp") > 0 {
-		fileText = front.Logo_massaWebp
-		w.Header().Set("Content-Type", "image/webp")
+	switch resource {
+	case "website.css":
+		fileText = website.CSS
+	case "website.js":
+		fileText = website.JS
+	case "website.html":
+		fileText = website.HTML
+	case "logo.webp.css":
+		fileText = front.Logo
 	}
+
+	setContentType(resource, w)
+
+	_, err := w.Write([]byte(fileText))
+	if err != nil {
+		panic(err)
+	}
+}
+
+func HandleWalletManagementRequest(w http.ResponseWriter, r *http.Request) {
+	resource := r.URL.Path[1:]
+
+	var fileText string
+
+	switch resource {
+	case "website.css":
+		fileText = fwallet.CSS
+	case "website.js":
+		fileText = fwallet.JS
+	case "website.html":
+		fileText = fwallet.HTML
+	case "logo.webp.css":
+		fileText = front.Logo
+	}
+
+	setContentType(resource, w)
 
 	_, err := w.Write([]byte(fileText))
 	if err != nil {
