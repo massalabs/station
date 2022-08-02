@@ -280,12 +280,6 @@ func init() {
               "$ref": "#/definitions/Error"
             }
           },
-          "422": {
-            "description": "Unprocessable Entity - wallet.json file is corrupted.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
           "500": {
             "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
             "schema": {
@@ -438,6 +432,169 @@ func init() {
           }
         }
       }
+    },
+    "/uploadWeb": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "uploadWebGet",
+        "responses": {
+          "200": {
+            "description": "Websites retrieved",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Websites"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "uploadWebPost",
+        "responses": {
+          "200": {
+            "description": "New website created.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/uploadWeb/{website}": {
+      "put": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "uploadWebPut",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Website's deployer address.",
+            "name": "website",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "file",
+            "description": "The file to upload.",
+            "name": "upfile",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "First website chunk deployed.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/website/{address}/{resource}": {
+      "get": {
+        "produces": [
+          "media type"
+        ],
+        "operationId": "websiteGet",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Address containing the website.",
+            "name": "address",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource retrieved."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -509,6 +666,20 @@ func init() {
         },
         "nickname": {
           "description": "wallet's nickname.",
+          "type": "string"
+        }
+      }
+    },
+    "Websites": {
+      "description": "Websites object (V0).",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Website's address.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Website's name.",
           "type": "string"
         }
       }
@@ -731,12 +902,6 @@ func init() {
               "$ref": "#/definitions/Error"
             }
           },
-          "422": {
-            "description": "Unprocessable Entity - wallet.json file is corrupted.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
           "500": {
             "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
             "schema": {
@@ -877,6 +1042,169 @@ func init() {
           },
           "422": {
             "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/uploadWeb": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "uploadWebGet",
+        "responses": {
+          "200": {
+            "description": "Websites retrieved",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Websites"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "uploadWebPost",
+        "responses": {
+          "200": {
+            "description": "New website created.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/uploadWeb/{website}": {
+      "put": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "uploadWebPut",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Website's deployer address.",
+            "name": "website",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "file",
+            "description": "The file to upload.",
+            "name": "upfile",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "First website chunk deployed.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/website/{address}/{resource}": {
+      "get": {
+        "produces": [
+          "media type"
+        ],
+        "operationId": "websiteGet",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Address containing the website.",
+            "name": "address",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource retrieved."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1053,6 +1381,20 @@ func init() {
           "description": "Salt used by the PBKDF that generates the secret key used to protect the key pair's private key.",
           "type": "string",
           "format": "base58check"
+        }
+      }
+    },
+    "Websites": {
+      "description": "Websites object (V0).",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Website's address.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Website's name.",
+          "type": "string"
         }
       }
     }

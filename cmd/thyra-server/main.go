@@ -11,13 +11,10 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/int/apihandler/cmd"
 	"github.com/massalabs/thyra/int/apihandler/wallet"
-	"github.com/massalabs/thyra/pkg/front"
+	"github.com/massalabs/thyra/int/apihandler/website"
 )
 
-//TODO Manage file generation in an other way, generateFiles is not working while deployed
 func main() {
-	// Generate files
-	front.GenerateFiles()
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
@@ -56,6 +53,10 @@ func main() {
 	api.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
 	api.MgmtWalletImportHandler = wallet.NewImport(&walletStorage)
 	api.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage)
+
+	api.UploadWebGetHandler = website.NewWebsiteGet()
+	api.UploadWebPostHandler = website.NewWebsitePost()
+	api.UploadWebPutHandler = website.NewWebsitePut()
 
 	// Start server which listening
 	server.ConfigureAPI()
