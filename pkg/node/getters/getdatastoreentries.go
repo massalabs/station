@@ -33,6 +33,7 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 }
 
 func DatastoreEntry(client *node.Client, address string, key string) (*DatastoreEntryResponse, error) {
+
 	response, err := client.RPCClient.Call(
 		context.Background(),
 		"get_datastore_entries",
@@ -48,7 +49,6 @@ func DatastoreEntry(client *node.Client, address string, key string) (*Datastore
 	if err != nil {
 		return nil, err
 	}
-
 	if response.Error != nil {
 		return nil, response.Error
 	}

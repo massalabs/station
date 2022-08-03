@@ -2,7 +2,6 @@ package getters
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/massalabs/thyra/pkg/node"
 )
@@ -80,7 +79,16 @@ func GetNodeStatus(client *node.Client) (*getStatusResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println()
 
 	return &entry, nil
+}
+
+func GetExpirePeriod(c *node.Client) (*uint64, error) {
+	status, err := GetNodeStatus(c)
+	if err != nil {
+		return nil, err
+	}
+	expirePeriod := uint64(status.NextSlot.Period + 2)
+	return &expirePeriod, nil
+
 }

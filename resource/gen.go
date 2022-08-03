@@ -8,7 +8,8 @@ package resource
 //go:generate textFileToGoConst -in html/front/website.css -o ../pkg/front/website/css.go -p website -c CSS
 //go:generate textFileToGoConst -in html/front/website.html -o ../pkg/front/website/html.go -p website -c HTML
 //go:generate textFileToGoConst -in html/front/website.js -o ../pkg/front/website/js.go -p website -c JS
-//go:generate textFileToGoConst -in html/front/logo_massa.webp -o ../pkg/front/logo.go -p front -c Logo
+//go:generate textFileToGoConst -in html/front/logo_banner.webp -o ../pkg/front/logoBanner.go -p front -c LogoBanner
+//go:generate textFileToGoConst -in html/front/logo.png -o ../pkg/front/logo.go -p front -c Logo
 
 // API server certificate
 
@@ -17,7 +18,7 @@ package resource
 
 // Contracts
 
-//go:generate textFileToGoConst -in contracts/main-website-deployer.wasm -o ../pkg/contracts/main-website-deployer.go -p server -c WebstiteDeployerContract
+//go:generate textFileToGoConst -in contracts/main-website-deployer.wasm -o ../pkg/contracts/main-website-deployer.go -p contracts -c WebstiteDeployerContract
 
 // API swagger
 

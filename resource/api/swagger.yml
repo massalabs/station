@@ -145,8 +145,15 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: '#/definitions/Error'
+  /uploadWeb/{dnsname}:
     post:
       operationId: uploadWebPost
+      parameters:
+        - in: path
+          name: dnsname
+          type: string
+          required: true
+          description: DNS name without '.', capitals letters and specifics characters.
       produces:
         - application/json
       responses:
@@ -166,22 +173,22 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: '#/definitions/Error'
-  /uploadWeb/{website}:
-    put:
-      operationId: uploadWebPut
+  /fillWeb/{website}:
+    post:
+      operationId: fillWebPost
       consumes:
         - multipart/form-data
       parameters:
-        - in: formData
-          name: upfile
-          type: file
-          required: true
-          description: The file to upload.
-        - in: formData
-          name: note
+        - in: path
+          name: website
           type: string
-          required: false
-          description: Description of file contents.
+          required: true
+          description: Website's short name.
+        - in: formData
+          name: zipfile
+          type: file
+          description: Contents of the ZIP file.
+          x-mimetype: application/zip
       produces:
         - application/json
       responses:

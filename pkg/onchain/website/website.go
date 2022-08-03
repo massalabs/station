@@ -2,7 +2,6 @@ package website
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -16,11 +15,11 @@ import (
 )
 
 func Resolve(client *node.Client, name string) (string, error) {
-	address := "A1Q65NojVV5YPyZruVkeU1CGeS3tjLNwGSzAmZfAJPE5vuvus4C"
+	dnsAddress := "A12jkDPTcdhkqGg9VoKsTwvkBwZeSHQw7wJqQYKrNesKnjnGejuR"
 
 	const dnsPrefix = "record"
 
-	entry, err := getters.DatastoreEntry(client, address, dnsPrefix+name)
+	entry, err := getters.DatastoreEntry(client, dnsAddress, dnsPrefix+name)
 	if err != nil {
 		return "", err
 	}
@@ -75,6 +74,8 @@ func setContentType(rsc string, w http.ResponseWriter) {
 		w.Header().Set("Content-Type", "text/html")
 	case ".webp":
 		w.Header().Set("Content-Type", "text/webp")
+	case ".png":
+		w.Header().Set("Content-Type", "image/png")
 	}
 }
 
@@ -83,7 +84,6 @@ func Request(w http.ResponseWriter, r *http.Request, c *node.Client, address str
 	if err != nil {
 		panic(err)
 	}
-
 	setContentType(resource, w)
 
 	_, err = w.Write(body)
@@ -139,17 +139,15 @@ func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request, index int)
 func HandlerFunc(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		massaTLD := strings.Index(r.Host, ".massa")
-
-		if strings.HasPrefix(r.Host, "webuploader.mythyra.massa") {
+		if strings.HasPrefix(r.Host, "webuploader.mythyra.massa") && strings.Index(r.URL.Path, ".") != -1 {
 			HandleWebsiteUploaderManagementRequest(w, r)
-		} else if strings.HasPrefix(r.Host, "wallet.mythyra.massa") {
+		} else if strings.HasPrefix(r.Host, "wallet.mythyra.massa") && strings.Index(r.URL.Path, ".") != -1 {
 			HandleWalletManagementRequest(w, r)
-		} else if massaTLD > 0 {
+		} else if massaTLD > 0 && strings.Index(r.Host, "mythyra") == -1 {
 			handleMassaDomainRequest(w, r, massaTLD)
 		} else if strings.HasPrefix(r.URL.Path, "/website") {
 			handleAPIRequest(w, r)
 		} else {
-			fmt.Println("zdzd")
 			handler.ServeHTTP(w, r)
 		}
 
@@ -168,7 +166,9 @@ func HandleWebsiteUploaderManagementRequest(w http.ResponseWriter, r *http.Reque
 		fileText = website.JS
 	case "website.html":
 		fileText = website.HTML
-	case "logo_massa.webp":
+	case "logo_banner.webp":
+		fileText = front.LogoBanner
+	case "logo.png":
 		fileText = front.Logo
 	}
 
@@ -191,10 +191,11 @@ func HandleWalletManagementRequest(w http.ResponseWriter, r *http.Request) {
 		fileText = fwallet.JS
 	case "wallet.html":
 		fileText = fwallet.HTML
-	case "logo_massa.webp":
+	case "logo_banner.webp":
+		fileText = front.LogoBanner
+	case "logo.png":
 		fileText = front.Logo
 	}
-
 	setContentType(resource, w)
 
 	_, err := w.Write([]byte(fileText))

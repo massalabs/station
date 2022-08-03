@@ -156,6 +156,59 @@ func init() {
         }
       }
     },
+    "/fillWeb/{website}": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "fillWebPost",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Website's short name.",
+            "name": "website",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "file",
+            "x-mimetype": "application/zip",
+            "description": "Contents of the ZIP file.",
+            "name": "zipfile",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "First website chunk deployed.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/kpi": {
       "get": {
         "produces": [
@@ -462,67 +515,26 @@ func init() {
             }
           }
         }
-      },
+      }
+    },
+    "/uploadWeb/{dnsname}": {
       "post": {
         "produces": [
           "application/json"
         ],
         "operationId": "uploadWebPost",
-        "responses": {
-          "200": {
-            "description": "New website created.",
-            "schema": {
-              "$ref": "#/definitions/Websites"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/uploadWeb/{website}": {
-      "put": {
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "uploadWebPut",
         "parameters": [
           {
             "type": "string",
-            "description": "Website's deployer address.",
-            "name": "website",
+            "description": "DNS name without '.', capitals letters and specifics characters.",
+            "name": "dnsname",
             "in": "path",
             "required": true
-          },
-          {
-            "type": "file",
-            "description": "The file to upload.",
-            "name": "upfile",
-            "in": "formData"
           }
         ],
         "responses": {
           "200": {
-            "description": "First website chunk deployed.",
+            "description": "New website created.",
             "schema": {
               "$ref": "#/definitions/Websites"
             }
@@ -825,6 +837,59 @@ func init() {
         }
       }
     },
+    "/fillWeb/{website}": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "fillWebPost",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Website's short name.",
+            "name": "website",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "file",
+            "x-mimetype": "application/zip",
+            "description": "Contents of the ZIP file.",
+            "name": "zipfile",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "First website chunk deployed.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/kpi": {
       "get": {
         "produces": [
@@ -1084,67 +1149,26 @@ func init() {
             }
           }
         }
-      },
+      }
+    },
+    "/uploadWeb/{dnsname}": {
       "post": {
         "produces": [
           "application/json"
         ],
         "operationId": "uploadWebPost",
-        "responses": {
-          "200": {
-            "description": "New website created.",
-            "schema": {
-              "$ref": "#/definitions/Websites"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/uploadWeb/{website}": {
-      "put": {
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "uploadWebPut",
         "parameters": [
           {
             "type": "string",
-            "description": "Website's deployer address.",
-            "name": "website",
+            "description": "DNS name without '.', capitals letters and specifics characters.",
+            "name": "dnsname",
             "in": "path",
             "required": true
-          },
-          {
-            "type": "file",
-            "description": "The file to upload.",
-            "name": "upfile",
-            "in": "formData"
           }
         ],
         "responses": {
           "200": {
-            "description": "First website chunk deployed.",
+            "description": "New website created.",
             "schema": {
               "$ref": "#/definitions/Websites"
             }

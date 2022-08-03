@@ -12,9 +12,9 @@ import (
 	"strings"
 )
 
-// UploadWebPostURL generates an URL for the upload web post operation
-type UploadWebPostURL struct {
-	Dnsname string
+// FillWebPostURL generates an URL for the fill web post operation
+type FillWebPostURL struct {
+	Website string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -24,7 +24,7 @@ type UploadWebPostURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *UploadWebPostURL) WithBasePath(bp string) *UploadWebPostURL {
+func (o *FillWebPostURL) WithBasePath(bp string) *FillWebPostURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -32,21 +32,21 @@ func (o *UploadWebPostURL) WithBasePath(bp string) *UploadWebPostURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *UploadWebPostURL) SetBasePath(bp string) {
+func (o *FillWebPostURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *UploadWebPostURL) Build() (*url.URL, error) {
+func (o *FillWebPostURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/uploadWeb/{dnsname}"
+	var _path = "/fillWeb/{website}"
 
-	dnsname := o.Dnsname
-	if dnsname != "" {
-		_path = strings.Replace(_path, "{dnsname}", dnsname, -1)
+	website := o.Website
+	if website != "" {
+		_path = strings.Replace(_path, "{website}", website, -1)
 	} else {
-		return nil, errors.New("dnsname is required on UploadWebPostURL")
+		return nil, errors.New("website is required on FillWebPostURL")
 	}
 
 	_basePath := o._basePath
@@ -56,7 +56,7 @@ func (o *UploadWebPostURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *UploadWebPostURL) Must(u *url.URL, err error) *url.URL {
+func (o *FillWebPostURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -67,17 +67,17 @@ func (o *UploadWebPostURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *UploadWebPostURL) String() string {
+func (o *FillWebPostURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *UploadWebPostURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *FillWebPostURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on UploadWebPostURL")
+		return nil, errors.New("scheme is required for a full url on FillWebPostURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on UploadWebPostURL")
+		return nil, errors.New("host is required for a full url on FillWebPostURL")
 	}
 
 	base, err := o.Build()
@@ -91,6 +91,6 @@ func (o *UploadWebPostURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *UploadWebPostURL) StringFull(scheme, host string) string {
+func (o *FillWebPostURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

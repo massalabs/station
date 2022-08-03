@@ -16,51 +16,51 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// UploadWebPutMaxParseMemory sets the maximum size in bytes for
+// FillWebPostMaxParseMemory sets the maximum size in bytes for
 // the multipart form parser for this operation.
 //
 // The default value is 32 MB.
 // The multipart parser stores up to this + 10MB.
-var UploadWebPutMaxParseMemory int64 = 32 << 20
+var FillWebPostMaxParseMemory int64 = 32 << 20
 
-// NewUploadWebPutParams creates a new UploadWebPutParams object
+// NewFillWebPostParams creates a new FillWebPostParams object
 //
 // There are no default values defined in the spec.
-func NewUploadWebPutParams() UploadWebPutParams {
+func NewFillWebPostParams() FillWebPostParams {
 
-	return UploadWebPutParams{}
+	return FillWebPostParams{}
 }
 
-// UploadWebPutParams contains all the bound params for the upload web put operation
+// FillWebPostParams contains all the bound params for the fill web post operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters uploadWebPut
-type UploadWebPutParams struct {
+// swagger:parameters fillWebPost
+type FillWebPostParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*Description of file contents.
-	  In: formData
-	*/
-	File io.ReadCloser
 	/*Website's short name.
 	  Required: true
 	  In: path
 	*/
 	Website string
+	/*Contents of the ZIP file.
+	  In: formData
+	*/
+	Zipfile io.ReadCloser
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewUploadWebPutParams() beforehand.
-func (o *UploadWebPutParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewFillWebPostParams() beforehand.
+func (o *FillWebPostParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
 
-	if err := r.ParseMultipartForm(UploadWebPutMaxParseMemory); err != nil {
+	if err := r.ParseMultipartForm(FillWebPostMaxParseMemory); err != nil {
 		if err != http.ErrNotMultipart {
 			return errors.New(400, "%v", err)
 		} else if err := r.ParseForm(); err != nil {
@@ -68,20 +68,20 @@ func (o *UploadWebPutParams) BindRequest(r *http.Request, route *middleware.Matc
 		}
 	}
 
-	file, fileHeader, err := r.FormFile("file")
-	if err != nil && err != http.ErrMissingFile {
-		res = append(res, errors.New(400, "reading file %q failed: %v", "file", err))
-	} else if err == http.ErrMissingFile {
-		// no-op for missing but optional file parameter
-	} else if err := o.bindFile(file, fileHeader); err != nil {
-		res = append(res, err)
-	} else {
-		o.File = &runtime.File{Data: file, Header: fileHeader}
-	}
-
 	rWebsite, rhkWebsite, _ := route.Params.GetOK("website")
 	if err := o.bindWebsite(rWebsite, rhkWebsite, route.Formats); err != nil {
 		res = append(res, err)
+	}
+
+	zipfile, zipfileHeader, err := r.FormFile("zipfile")
+	if err != nil && err != http.ErrMissingFile {
+		res = append(res, errors.New(400, "reading file %q failed: %v", "zipfile", err))
+	} else if err == http.ErrMissingFile {
+		// no-op for missing but optional file parameter
+	} else if err := o.bindZipfile(zipfile, zipfileHeader); err != nil {
+		res = append(res, err)
+	} else {
+		o.Zipfile = &runtime.File{Data: zipfile, Header: zipfileHeader}
 	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
@@ -89,15 +89,8 @@ func (o *UploadWebPutParams) BindRequest(r *http.Request, route *middleware.Matc
 	return nil
 }
 
-// bindFile binds file parameter File.
-//
-// The only supported validations on files are MinLength and MaxLength
-func (o *UploadWebPutParams) bindFile(file multipart.File, header *multipart.FileHeader) error {
-	return nil
-}
-
 // bindWebsite binds and validates parameter Website from path.
-func (o *UploadWebPutParams) bindWebsite(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *FillWebPostParams) bindWebsite(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -107,5 +100,12 @@ func (o *UploadWebPutParams) bindWebsite(rawData []string, hasKey bool, formats 
 	// Parameter is provided by construction from the route
 	o.Website = raw
 
+	return nil
+}
+
+// bindZipfile binds file parameter Zipfile.
+//
+// The only supported validations on files are MinLength and MaxLength
+func (o *FillWebPostParams) bindZipfile(file multipart.File, header *multipart.FileHeader) error {
 	return nil
 }

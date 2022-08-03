@@ -31,12 +31,11 @@ function errorAlert(error) {
 	}, 5000);
 }
 
-function successDeployWebsite(operationId) {
-	console.log(operationId);
+function successDeployWebsite(contract) {
 	document.getElementsByClassName('alert-primary')[0].style.display = 'block';
 
 	document.getElementsByClassName('alert-primary')[0].innerHTML =
-		'Contract deployed with operation ID : ' + operationId;
+		'Contract deployed to address ' + contract.address;
 
 	setTimeout(function () {
 		document.getElementsByClassName('alert-primary')[0].style.display = 'none';
@@ -86,14 +85,25 @@ async function getWebsiteDeployerSC() {
 }
 
 async function deployWebsiteDeployerSC() {
-	axios
-		.post('/uploadWeb')
-		.then((operation) => {
-			successDeployWebsite(operation.data);
-		})
-		.catch((e) => {
-			errorAlert(e.response.data.code);
-		});
+	const dnsNameInputValue = document.getElementById('websiteName').value;
+
+	if (dnsNameInputValue == '') {
+		console.log(dnsNameInputValue == '');
+		errorAlert('Input a DNS name');
+	} else {
+		document.getElementsByClassName('loading')[0].style.display = 'inline-block';
+		document.getElementsByClassName('loading')[1].style.display = 'inline-block';
+		axios
+			.post('/uploadWeb/' + dnsNameInputValue)
+			.then((operation) => {
+				document.getElementsByClassName('loading')[0].style.display = 'none';
+				document.getElementsByClassName('loading')[1].style.display = 'none';
+				successDeployWebsite(operation.data);
+			})
+			.catch((e) => {
+				errorAlert(e.response.data.code);
+			});
+	}
 }
 
 function tableInsert(resp, count) {
@@ -104,8 +114,8 @@ function tableInsert(resp, count) {
 	const cell1 = row.insertCell();
 	const cell2 = row.insertCell();
 
-	cell0.innerHTML = 'Name';
-	cell1.innerHTML = resp;
+	cell0.innerHTML = resp.name;
+	cell1.innerHTML = resp.address;
 	cell2.innerHTML =
 		"<div><input id='fileid" +
 		count +
@@ -132,8 +142,15 @@ function tableInsert(resp, count) {
 }
 
 function uploadWebsite(file, count) {
+	console.log(file);
+	const formData = new FormData();
+	formData.append('zipfile', file);
 	axios
-		.put(`/uploadWeb/${deployers[count]}`, file)
+		.post(`/fillWeb/${deployers[count].address}`, formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+		})
 		.then((operation) => {
 			console.log('OK');
 		})

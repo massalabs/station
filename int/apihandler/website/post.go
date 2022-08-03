@@ -1,7 +1,10 @@
-package website
+package websites
 
 import (
+	"fmt"
+
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/onchain/website"
 )
@@ -15,9 +18,14 @@ type newWebsitePost struct {
 }
 
 func (c *newWebsitePost) Handle(params operations.UploadWebPostParams) middleware.Responder {
-	_, err := website.CreateWebsiteDeployer()
+	smartContract, err := website.PostWebsite(params.Dnsname)
+
 	if err != nil {
 		return operations.NewUploadWebPostInternalServerError()
 	}
-	return operations.NewUploadWebPostOK()
+	newWebsite := &models.Websites{
+		Name:    params.Dnsname,
+		Address: *smartContract}
+
+	return operations.NewUploadWebPostOK().WithPayload(newWebsite)
 }

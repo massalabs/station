@@ -11,7 +11,7 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/int/apihandler/cmd"
 	"github.com/massalabs/thyra/int/apihandler/wallet"
-	"github.com/massalabs/thyra/int/apihandler/website"
+	websites "github.com/massalabs/thyra/int/apihandler/website"
 )
 
 func main() {
@@ -54,9 +54,9 @@ func main() {
 	api.MgmtWalletImportHandler = wallet.NewImport(&walletStorage)
 	api.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage)
 
-	api.UploadWebGetHandler = website.NewWebsiteGet()
-	api.UploadWebPostHandler = website.NewWebsitePost()
-	api.UploadWebPutHandler = website.NewWebsitePut()
+	api.UploadWebGetHandler = websites.NewWebsiteGet()
+	api.UploadWebPostHandler = websites.NewWebsitePost()
+	api.FillWebPostHandler = websites.NewFillWebsitePost()
 
 	// Start server which listening
 	server.ConfigureAPI()

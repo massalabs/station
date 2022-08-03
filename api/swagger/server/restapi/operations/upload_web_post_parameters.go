@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
 )
 
 // NewUploadWebPostParams creates a new UploadWebPostParams object
@@ -28,6 +29,12 @@ type UploadWebPostParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
+
+	/*DNS name without '.', capitals letters and specifics characters.
+	  Required: true
+	  In: path
+	*/
+	Dnsname string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -39,8 +46,26 @@ func (o *UploadWebPostParams) BindRequest(r *http.Request, route *middleware.Mat
 
 	o.HTTPRequest = r
 
+	rDnsname, rhkDnsname, _ := route.Params.GetOK("dnsname")
+	if err := o.bindDnsname(rDnsname, rhkDnsname, route.Formats); err != nil {
+		res = append(res, err)
+	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// bindDnsname binds and validates parameter Dnsname from path.
+func (o *UploadWebPostParams) bindDnsname(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: true
+	// Parameter is provided by construction from the route
+	o.Dnsname = raw
+
 	return nil
 }

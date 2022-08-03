@@ -50,6 +50,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		CmdExecuteFunctionHandler: CmdExecuteFunctionHandlerFunc(func(params CmdExecuteFunctionParams) middleware.Responder {
 			return middleware.NotImplemented("operation CmdExecuteFunction has not yet been implemented")
 		}),
+		FillWebPostHandler: FillWebPostHandlerFunc(func(params FillWebPostParams) middleware.Responder {
+			return middleware.NotImplemented("operation FillWebPost has not yet been implemented")
+		}),
 		KpiHandler: KpiHandlerFunc(func(params KpiParams) middleware.Responder {
 			return middleware.NotImplemented("operation Kpi has not yet been implemented")
 		}),
@@ -70,9 +73,6 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		}),
 		UploadWebPostHandler: UploadWebPostHandlerFunc(func(params UploadWebPostParams) middleware.Responder {
 			return middleware.NotImplemented("operation UploadWebPost has not yet been implemented")
-		}),
-		UploadWebPutHandler: UploadWebPutHandlerFunc(func(params UploadWebPutParams) middleware.Responder {
-			return middleware.NotImplemented("operation UploadWebPut has not yet been implemented")
 		}),
 		WebsiteGetHandler: WebsiteGetHandlerFunc(func(params WebsiteGetParams) middleware.Responder {
 			return middleware.NotImplemented("operation WebsiteGet has not yet been implemented")
@@ -121,6 +121,8 @@ type ThyraServerAPI struct {
 
 	// CmdExecuteFunctionHandler sets the operation handler for the cmd execute function operation
 	CmdExecuteFunctionHandler CmdExecuteFunctionHandler
+	// FillWebPostHandler sets the operation handler for the fill web post operation
+	FillWebPostHandler FillWebPostHandler
 	// KpiHandler sets the operation handler for the kpi operation
 	KpiHandler KpiHandler
 	// MgmtWalletCreateHandler sets the operation handler for the mgmt wallet create operation
@@ -135,8 +137,6 @@ type ThyraServerAPI struct {
 	UploadWebGetHandler UploadWebGetHandler
 	// UploadWebPostHandler sets the operation handler for the upload web post operation
 	UploadWebPostHandler UploadWebPostHandler
-	// UploadWebPutHandler sets the operation handler for the upload web put operation
-	UploadWebPutHandler UploadWebPutHandler
 	// WebsiteGetHandler sets the operation handler for the website get operation
 	WebsiteGetHandler WebsiteGetHandler
 
@@ -225,6 +225,9 @@ func (o *ThyraServerAPI) Validate() error {
 	if o.CmdExecuteFunctionHandler == nil {
 		unregistered = append(unregistered, "CmdExecuteFunctionHandler")
 	}
+	if o.FillWebPostHandler == nil {
+		unregistered = append(unregistered, "FillWebPostHandler")
+	}
 	if o.KpiHandler == nil {
 		unregistered = append(unregistered, "KpiHandler")
 	}
@@ -245,9 +248,6 @@ func (o *ThyraServerAPI) Validate() error {
 	}
 	if o.UploadWebPostHandler == nil {
 		unregistered = append(unregistered, "UploadWebPostHandler")
-	}
-	if o.UploadWebPutHandler == nil {
-		unregistered = append(unregistered, "UploadWebPutHandler")
 	}
 	if o.WebsiteGetHandler == nil {
 		unregistered = append(unregistered, "WebsiteGetHandler")
@@ -348,6 +348,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/cmd/executeFunction"] = NewCmdExecuteFunction(o.context, o.CmdExecuteFunctionHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/fillWeb/{website}"] = NewFillWebPost(o.context, o.FillWebPostHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -375,11 +379,7 @@ func (o *ThyraServerAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/uploadWeb"] = NewUploadWebPost(o.context, o.UploadWebPostHandler)
-	if o.handlers["PUT"] == nil {
-		o.handlers["PUT"] = make(map[string]http.Handler)
-	}
-	o.handlers["PUT"]["/uploadWeb/{website}"] = NewUploadWebPut(o.context, o.UploadWebPutHandler)
+	o.handlers["POST"]["/uploadWeb/{dnsname}"] = NewUploadWebPost(o.context, o.UploadWebPostHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

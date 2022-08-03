@@ -9,8 +9,19 @@ body {
   background :linear-gradient(90deg,#172230 50.03%,#0c1219 85.82%);
 }
 
-.massa-logo{
+.massa-logo-banner{
 width: 170px;
+}
+
+.massa-logo-spinner{
+  width: 25px;
+}
+.spinner-border{
+  color: transparent;
+}
+
+.loading{
+  display: none;
 }
 
 .title-wallet{
