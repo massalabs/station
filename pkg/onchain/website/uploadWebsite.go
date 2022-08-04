@@ -2,6 +2,8 @@ package website
 
 import (
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
 	"time"
@@ -47,6 +49,11 @@ func deployWebsiteDeployer(c *node.Client, wallet wallet.Wallet, expire uint64) 
 
 }
 
+type websiteDeployer struct {
+	DnsName *string `json:"dnsName"`
+	Address *string `json:"address"`
+}
+
 func PostWebsite(dnsName string) (*string, error) {
 	c := node.NewClient()
 
@@ -80,49 +87,49 @@ func PostWebsite(dnsName string) (*string, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	return smartContract, nil
-}
-
-func RefreshDeployers() (deployers []string, e error) {
-
-	wallets, err := wallet.ReadWallets()
+	deployers, err := GetDeployers()
 	if err != nil {
 		return nil, err
 	}
-	rpcClient := node.NewClient()
-	events, err := getters.GetEvents(rpcClient, nil, nil, nil, &wallets[0].Address, nil)
-	if err != nil {
-		return nil, err
+	dep := websiteDeployer{
+		DnsName: &dnsName,
+		Address: smartContract,
 	}
-	aa := *events
-	for _, element := range aa {
-		if strings.HasPrefix(element.Data, "Website Deployer is deployed at") {
-			deployers = append(deployers, strings.Split(element.Data, ":")[1])
-		}
-	}
+	deployers = append(deployers, dep)
+	fmt.Println(deployers)
+
 	bytesOutput, err := json.Marshal(deployers)
 	if err != nil {
 		return nil, err
 	}
 
-	err = os.WriteFile("deployers.json", bytesOutput, 0644)
+	err = os.WriteFile("deployers.json", bytesOutput, 0o644)
 	if err != nil {
 		return nil, err
 	}
 
+	return smartContract, nil
+}
+
+func GetDeployers() ([]websiteDeployer, error) {
+	bytesInput, err := ioutil.ReadFile("deployers.json")
 	if err != nil {
 		return nil, err
 	}
+	deployers := []websiteDeployer{}
 
+	err = json.Unmarshal(bytesInput, &deployers)
+	if err != nil {
+		return nil, err
+	}
 	return deployers, nil
 }
 
 type Bytes struct {
-	Data []byte `json:"data"`
+	Data string `json:"data"`
 }
 
-func UploadWebsite(websiteData []byte, contractAddress string) (s *string, err error) {
+func UploadWebsite(websiteData string, contractAddress string) (s *string, err error) {
 
 	c := node.NewClient()
 	wallets, err := wallet.ReadWallets()
@@ -139,19 +146,35 @@ func UploadWebsite(websiteData []byte, contractAddress string) (s *string, err e
 		return nil, err
 	}
 
-	var entry Bytes
-
-	entry.Data = websiteData
-	data, err := json.Marshal(entry)
+	d, err := json.Marshal(Bytes{
+		Data: websiteData,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	callSC := callsc.New(address, "initializeWebsite", data, 0, 700000000, 0, 0)
+	callSC := callsc.New(address, "initializeWebsite", d, 0, 700000000, 0, 0)
 	id, err := sendOperation.Call(c, uint64(status.NextSlot.Period+2), 0, callSC, wallets[0].KeyPairs[0].PublicKey, wallets[0].KeyPairs[0].PrivateKey)
 
 	if err != nil {
 		return nil, err
+	}
+	b := false
+	n := 0
+	for n < 3 && !b {
+
+		time.Sleep(15 * time.Second)
+		events, err := getters.GetEvents(c, nil, nil, nil, nil, &id)
+		if err != nil {
+			return nil, err
+		}
+
+		eventsValue := *events
+		if len(eventsValue) > 0 {
+			b = true
+		}
+		n++
+
 	}
 	return &id, nil
 }

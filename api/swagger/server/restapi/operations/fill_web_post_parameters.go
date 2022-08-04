@@ -46,6 +46,7 @@ type FillWebPostParams struct {
 	*/
 	Website string
 	/*Contents of the ZIP file.
+	  Required: true
 	  In: formData
 	*/
 	Zipfile io.ReadCloser
@@ -74,11 +75,10 @@ func (o *FillWebPostParams) BindRequest(r *http.Request, route *middleware.Match
 	}
 
 	zipfile, zipfileHeader, err := r.FormFile("zipfile")
-	if err != nil && err != http.ErrMissingFile {
+	if err != nil {
 		res = append(res, errors.New(400, "reading file %q failed: %v", "zipfile", err))
-	} else if err == http.ErrMissingFile {
-		// no-op for missing but optional file parameter
 	} else if err := o.bindZipfile(zipfile, zipfileHeader); err != nil {
+		// Required: true
 		res = append(res, err)
 	} else {
 		o.Zipfile = &runtime.File{Data: zipfile, Header: zipfileHeader}

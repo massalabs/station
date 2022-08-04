@@ -31,11 +31,10 @@ function errorAlert(error) {
 	}, 5000);
 }
 
-function successDeployWebsite(contract) {
+function successMessage(message) {
 	document.getElementsByClassName('alert-primary')[0].style.display = 'block';
 
-	document.getElementsByClassName('alert-primary')[0].innerHTML =
-		'Contract deployed to address ' + contract.address;
+	document.getElementsByClassName('alert-primary')[0].innerHTML = message;
 
 	setTimeout(function () {
 		document.getElementsByClassName('alert-primary')[0].style.display = 'none';
@@ -98,7 +97,7 @@ async function deployWebsiteDeployerSC() {
 			.then((operation) => {
 				document.getElementsByClassName('loading')[0].style.display = 'none';
 				document.getElementsByClassName('loading')[1].style.display = 'none';
-				successDeployWebsite(operation.data);
+				successMessage('Contract deployed to address ' + operation.data.address);
 			})
 			.catch((e) => {
 				errorAlert(e.response.data.code);
@@ -109,50 +108,53 @@ async function deployWebsiteDeployerSC() {
 function tableInsert(resp, count) {
 	const tBody = document.getElementById('website-deployers-table').getElementsByTagName('tbody')[0];
 	const row = tBody.insertRow(-1);
+	const url = 'http://' + resp.name + '.massa/';
 
 	const cell0 = row.insertCell();
 	const cell1 = row.insertCell();
 	const cell2 = row.insertCell();
+	const cell3 = row.insertCell();
 
 	cell0.innerHTML = resp.name;
 	cell1.innerHTML = resp.address;
-	cell2.innerHTML =
+	cell2.innerHTML = "<a href='" + url + "'>" + url + '</a>';
+	cell3.innerHTML =
 		"<div><input id='fileid" +
 		count +
-		"' type='file' hidden/><button id='updload-website" +
+		"' type='file' hidden/><button id='upload-website" +
 		count +
 		"'" +
-		"class='primary-button' id='buttonid' type='button' value='Upload MB' >Upload</button></div>";
+		"class='primary-button' id='buttonid' type='button' value='Upload MB' >Upload</button><span style='display: none' class='spinner-border loading" +
+		count +
+		"' role='status'><img src='./logo.png' class='massa-logo-spinner' alt='Massa logo' /></span></div> ";
 
-	document.getElementById(`updload-website${count}`).addEventListener('click', function () {
+	document.getElementById(`upload-website${count}`).addEventListener('click', function () {
 		document.getElementById(`fileid${count}`).value = null;
 		document.getElementById(`fileid${count}`).click();
 	});
 
 	document.getElementById(`fileid${count}`).addEventListener('change', function (evt) {
 		let files = evt.target.files; // get files
-		console.log(evt.target.files);
 		let f = files[0];
-		const reader = new FileReader();
-
-		reader.onload = (event) => uploadWebsite(event.target.result, count); // desired file content
-		reader.onerror = (error) => reject(error);
-		reader.readAsText(f);
+		uploadWebsite(f, count);
 	});
 }
 
 function uploadWebsite(file, count) {
-	console.log(file);
-	const formData = new FormData();
-	formData.append('zipfile', file);
-	axios
-		.post(`/fillWeb/${deployers[count].address}`, formData, {
-			headers: {
-				'Content-Type': 'multipart/form-data',
-			},
-		})
+	const bodyFormData = new FormData();
+	bodyFormData.append('zipfile', file);
+	document.getElementsByClassName('loading' + count)[0].style.display = 'inline-block';
+	axios({
+		url: `/fillWeb/${deployers[count].address}`,
+		method: 'POST',
+		data: bodyFormData,
+		headers: {
+			'Content-Type': 'multipart/form-data',
+		},
+	})
 		.then((operation) => {
-			console.log('OK');
+			document.getElementsByClassName('loading' + count)[0].style.display = 'none';
+			successMessage('Website uploaded with operation ID : ' + operation);
 		})
 		.catch((e) => {
 			errorAlert(e.response.data.code);

@@ -187,8 +187,8 @@ paths:
         - in: formData
           name: zipfile
           type: file
+          required: true
           description: Contents of the ZIP file.
-          x-mimetype: application/zip
       produces:
         - application/json
       responses:

@@ -175,10 +175,10 @@ func init() {
           },
           {
             "type": "file",
-            "x-mimetype": "application/zip",
             "description": "Contents of the ZIP file.",
             "name": "zipfile",
-            "in": "formData"
+            "in": "formData",
+            "required": true
           }
         ],
         "responses": {
@@ -856,10 +856,10 @@ func init() {
           },
           {
             "type": "file",
-            "x-mimetype": "application/zip",
             "description": "Contents of the ZIP file.",
             "name": "zipfile",
-            "in": "formData"
+            "in": "formData",
+            "required": true
           }
         ],
         "responses": {

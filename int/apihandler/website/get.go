@@ -8,15 +8,15 @@ import (
 )
 
 func NewWebsiteGet() operations.UploadWebGetHandler {
-	return &newWebsiteGet{as: "a"}
+	return &newWebsiteGet{todelete: "todelete"}
 }
 
 type newWebsiteGet struct {
-	as string
+	todelete string
 }
 
 func (c *newWebsiteGet) Handle(params operations.UploadWebGetParams) middleware.Responder {
-	deployers, err := website.RefreshDeployers()
+	deployers, err := website.GetDeployers()
 	if err != nil {
 		return operations.NewUploadWebGetInternalServerError()
 	}
@@ -25,8 +25,8 @@ func (c *newWebsiteGet) Handle(params operations.UploadWebGetParams) middleware.
 
 	for i := 0; i < len(deployers); i++ {
 		newWebsite := &models.Websites{
-			Name:    "Name",
-			Address: deployers[i]}
+			Name:    *deployers[i].DnsName,
+			Address: *deployers[i].Address}
 		websites = append(websites, newWebsite)
 	}
 	return operations.NewUploadWebGetOK().WithPayload(websites)

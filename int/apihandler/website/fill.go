@@ -1,29 +1,40 @@
 package websites
 
 import (
-	b64 "encoding/base64"
+	"encoding/base64"
+	"io"
+	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/onchain/website"
 )
 
 func NewFillWebsitePost() operations.FillWebPostHandler {
-	return &fillWeb{as: "a"}
+	return &fillWeb{todelete: "todelete"}
 }
 
 type fillWeb struct {
-	as string
+	todelete string
 }
 
 func (c *fillWeb) Handle(params operations.FillWebPostParams) middleware.Responder {
 
-	data := params.HTTPRequest.MultipartForm.Value["zipfile"]
-	sEnc := b64.StdEncoding.EncodeToString([]byte(data[0]))
-	_, err := website.UploadWebsite([]byte(sEnc), params.Website)
+	buf := new(strings.Builder)
+	_, err := io.Copy(buf, params.Zipfile)
+	if err != nil {
+		return operations.NewFillWebPostInternalServerError()
+	}
+	sEnc := base64.StdEncoding.EncodeToString([]byte(buf.String()))
+	_, err = website.UploadWebsite(sEnc, params.Website)
 	if err != nil {
 		return operations.NewFillWebPostInternalServerError()
 	}
 
-	return operations.NewFillWebPostOK()
+	website := &models.Websites{
+		Name:    "Name",
+		Address: params.Website}
+
+	return operations.NewFillWebPostOK().WithPayload(website)
 }
