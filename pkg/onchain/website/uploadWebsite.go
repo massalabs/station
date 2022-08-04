@@ -112,11 +112,11 @@ func PostWebsite(dnsName string) (*string, error) {
 }
 
 func GetDeployers() ([]websiteDeployer, error) {
+	deployers := []websiteDeployer{}
 	bytesInput, err := ioutil.ReadFile("deployers.json")
 	if err != nil {
-		return nil, err
+		return deployers, err
 	}
-	deployers := []websiteDeployer{}
 
 	err = json.Unmarshal(bytesInput, &deployers)
 	if err != nil {
@@ -129,7 +129,7 @@ type Bytes struct {
 	Data string `json:"data"`
 }
 
-func UploadWebsite(websiteData string, contractAddress string) (s *string, err error) {
+func UploadWebsite(websiteData string, contractAddress string) (*string, error) {
 
 	c := node.NewClient()
 	wallets, err := wallet.ReadWallets()
