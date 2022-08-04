@@ -134,7 +134,6 @@ func GetFirstWallet() (*Wallet, error) {
 	}
 	wallet := wallets[0]
 	return &wallet, nil
-
 }
 
 func New(nickname string) (*Wallet, error) {

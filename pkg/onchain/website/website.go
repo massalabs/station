@@ -55,7 +55,6 @@ func removeEmptyStrings(s []string) []string {
 
 func pathNotFound(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
-
 	w.Header().Set("Content-Type", "application/json")
 
 	_, err := w.Write([]byte("{\"code\":404,\"message\":\"path " + r.URL.Path + " was not found\"}"))
