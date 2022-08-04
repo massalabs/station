@@ -115,7 +115,7 @@ func GetDeployers() ([]websiteDeployer, error) {
 	deployers := []websiteDeployer{}
 	bytesInput, err := ioutil.ReadFile("deployers.json")
 	if err != nil {
-		return deployers, err
+		return deployers, nil
 	}
 
 	err = json.Unmarshal(bytesInput, &deployers)
