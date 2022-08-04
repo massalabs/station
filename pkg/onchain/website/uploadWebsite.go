@@ -115,6 +115,7 @@ func GetDeployers() ([]websiteDeployer, error) {
 	deployers := []websiteDeployer{}
 	bytesInput, err := ioutil.ReadFile("deployers.json")
 	if err != nil {
+		println("No deployers file, returns empty array")
 		return deployers, nil
 	}
 
