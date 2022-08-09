@@ -11,6 +11,46 @@ schemes:
   - https
 swagger: '2.0'
 paths:
+  /thyra/wallet/{resource}:
+    get:
+      operationId: thyraWallet
+      produces:
+        - application/json
+        - application/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          type: string
+          default: index.html
+          required: true
+          description: Website resource.
+      responses:
+        '200':
+          description: Page found
+  /thyra/websiteCreator/{resource}:
+    get:
+      operationId: thyraWebsiteCreator
+      produces:
+        - application/json
+        - application/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          type: string
+          default: index.html
+          required: true
+          description: Website resource.
+      responses:
+        '200':
+          description: Page found
   /mgmt/wallet:
     get:
       operationId: mgmtWalletGet
@@ -366,9 +406,15 @@ paths:
                       type: integer
                     gains:
                       type: number
-  /website/{address}/{resource}:
+  /browse/{address}/{resource}:
     get:
-      operationId: websiteGet
+      operationId: browse
+      produces:
+        - application/json
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
       parameters:
         - in: path
           name: address
@@ -381,8 +427,6 @@ paths:
           default: index.html
           required: true
           description: Website resource.
-      produces:
-        - media type
       responses:
         '200':
           description: Resource retrieved.

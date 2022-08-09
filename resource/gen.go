@@ -18,7 +18,7 @@ package resource
 
 // Contracts
 
-//go:generate textFileToGoConst -in contracts/main-website-deployer.wasm -o ../pkg/contracts/main-website-deployer.go -p contracts -c WebstiteDeployerContract
+//go:generate textFileToGoConst -in sc/websiteStorer.wasm -o ../pkg/sc/websiteStorer.go -p sc -c WebsiteStorer
 
 // API swagger
 

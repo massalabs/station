@@ -59,6 +59,11 @@ func main() {
 
 	localAPI.MyDomainsHandler = operations.MyDomainsHandlerFunc(api.DomainsHandler)
 
+	localAPI.BrowseHandler = operations.BrowseHandlerFunc(api.BrowseHandler)
+
+	localAPI.ThyraWalletHandler = operations.ThyraWalletHandlerFunc(api.ThyraWalletHandler)
+	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(api.ThyraWebsiteCreatorHandler)
+
 	// Start server which listening
 	server.ConfigureAPI()
 	if err := server.Serve(); err != nil {

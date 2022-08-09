@@ -35,6 +35,58 @@ func init() {
     "version": "0.0.0"
   },
   "paths": {
+    "/browse/{address}/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "text/html",
+          "text/css",
+          "text/webp",
+          "image/png"
+        ],
+        "operationId": "browse",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Address containing the website.",
+            "name": "address",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource retrieved."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/cmd/executeFunction": {
       "post": {
         "produces": [
@@ -464,20 +516,17 @@ func init() {
         }
       }
     },
-    "/website/{address}/{resource}": {
+    "/thyra/wallet/{resource}": {
       "get": {
         "produces": [
-          "media type"
+          "application/json",
+          "text/html",
+          "text/css",
+          "text/webp",
+          "image/png"
         ],
-        "operationId": "websiteGet",
+        "operationId": "thyraWallet",
         "parameters": [
-          {
-            "type": "string",
-            "description": "Address containing the website.",
-            "name": "address",
-            "in": "path",
-            "required": true
-          },
           {
             "type": "string",
             "default": "index.html",
@@ -489,25 +538,34 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Resource retrieved."
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "Resource not found.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
+            "description": "Page found"
+          }
+        }
+      }
+    },
+    "/thyra/websiteCreator/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "text/html",
+          "text/css",
+          "text/webp",
+          "image/png"
+        ],
+        "operationId": "thyraWebsiteCreator",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
           }
         }
       }
@@ -728,6 +786,58 @@ func init() {
     "version": "0.0.0"
   },
   "paths": {
+    "/browse/{address}/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "image/png",
+          "text/css",
+          "text/html",
+          "text/webp"
+        ],
+        "operationId": "browse",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Address containing the website.",
+            "name": "address",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource retrieved."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/cmd/executeFunction": {
       "post": {
         "produces": [
@@ -1110,20 +1220,17 @@ func init() {
         }
       }
     },
-    "/website/{address}/{resource}": {
+    "/thyra/wallet/{resource}": {
       "get": {
         "produces": [
-          "media type"
+          "application/json",
+          "image/png",
+          "text/css",
+          "text/html",
+          "text/webp"
         ],
-        "operationId": "websiteGet",
+        "operationId": "thyraWallet",
         "parameters": [
-          {
-            "type": "string",
-            "description": "Address containing the website.",
-            "name": "address",
-            "in": "path",
-            "required": true
-          },
           {
             "type": "string",
             "default": "index.html",
@@ -1135,25 +1242,34 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Resource retrieved."
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "Resource not found.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
+            "description": "Page found"
+          }
+        }
+      }
+    },
+    "/thyra/websiteCreator/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "image/png",
+          "text/css",
+          "text/html",
+          "text/webp"
+        ],
+        "operationId": "thyraWebsiteCreator",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
           }
         }
       }

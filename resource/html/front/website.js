@@ -69,7 +69,7 @@ async function getWallets() {
 
 async function getWebsiteDeployerSC() {
 	axios
-		.get('/uploadWeb')
+		.get('/my/domains')
 		.then((websites) => {
 			let count = 0;
 			for (const website of websites.data) {
@@ -93,7 +93,7 @@ async function deployWebsiteDeployerSC() {
 		document.getElementsByClassName('loading')[0].style.display = 'inline-block';
 		document.getElementsByClassName('loading')[1].style.display = 'inline-block';
 		axios
-			.post('/uploadWeb/' + dnsNameInputValue)
+			.put('/websiteCreator/prepare/', { url: dnsNameInputValue })
 			.then((operation) => {
 				document.getElementsByClassName('loading')[0].style.display = 'none';
 				document.getElementsByClassName('loading')[1].style.display = 'none';
@@ -143,9 +143,10 @@ function tableInsert(resp, count) {
 function uploadWebsite(file, count) {
 	const bodyFormData = new FormData();
 	bodyFormData.append('zipfile', file);
+	bodyFormData.append('address', deployers[count].address);
 	document.getElementsByClassName('loading' + count)[0].style.display = 'inline-block';
 	axios({
-		url: `/fillWeb/${deployers[count].address}`,
+		url: `/websiteCreator/upload`,
 		method: 'POST',
 		data: bodyFormData,
 		headers: {

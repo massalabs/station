@@ -40,6 +40,7 @@ func PrepareForUpload(url string) (string, error) {
 	}
 
 	dom.Add(my.Domain{URL: url, Address: scAddress})
+
 	err = dom.Save()
 	if err != nil {
 		return "", err
@@ -52,7 +53,7 @@ type UploadWebsiteParam struct {
 	Data string `json:"data"`
 }
 
-func Upload(at string, content string) (string, error) {
+func Upload(atAddress string, content string) (string, error) {
 	client := node.NewDefaultClient()
 
 	// TODO should use a nickname argument
@@ -61,7 +62,7 @@ func Upload(at string, content string) (string, error) {
 		return "", err
 	}
 
-	addr, _, err := base58.VersionedCheckDecode(at[1:])
+	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
 	if err != nil {
 		return "", err
 	}
