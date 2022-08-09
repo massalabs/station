@@ -8,6 +8,7 @@ import (
 	fwallet "github.com/massalabs/thyra/pkg/front/wallet"
 	"github.com/massalabs/thyra/pkg/front/website"
 	"github.com/massalabs/thyra/pkg/node"
+	"github.com/massalabs/thyra/pkg/onchain/dns"
 )
 
 func handleAPIRequest(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +39,7 @@ func handleMassaDomainRequest(w http.ResponseWriter, r *http.Request, index int)
 
 	rpcClient := node.NewDefaultClient()
 
-	addr, err := Resolve(rpcClient, name)
+	addr, err := dns.Resolve(rpcClient, name)
 	if err != nil {
 		panic(err)
 	}

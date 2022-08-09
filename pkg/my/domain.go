@@ -28,7 +28,7 @@ func (d *Domains) Save() error {
 		return err
 	}
 
-	err = os.WriteFile("deployers.json", cnt, 0o600) // u+r, u+w
+	err = os.WriteFile(d.file, cnt, 0o600) // u+r, u+w
 	if err != nil {
 		return err
 	}
@@ -46,7 +46,7 @@ func NewDomains() (*Domains, error) {
 		return nil, err
 	}
 
-	dom := Domains{file: "deployers.json", domains: []Domain{}}
+	dom := Domains{file: domainFile, domains: []Domain{}}
 
 	err = json.Unmarshal(file, &dom.domains)
 	if err != nil {

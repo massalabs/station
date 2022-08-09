@@ -11,13 +11,13 @@ import (
 )
 
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
-	scAddress, err := website.PrepareForUpload(*params.Body.URL)
+	address, err := website.PrepareForUpload(*params.Body.URL)
 
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
 				&models.Error{
-					Code:    "",
+					Code:    errorCodeWebCreatorPrepare,
 					Message: err.Error(),
 				})
 	}
@@ -26,7 +26,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 		WithPayload(
 			&models.Websites{
 				Name:    *params.Body.URL,
-				Address: scAddress,
+				Address: address,
 			})
 }
 
@@ -35,7 +35,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 	if err != nil {
 		return operations.NewFillWebPostInternalServerError().
 			WithPayload(&models.Error{
-				Code:    "",
+				Code:    errorCodeWebCreatorReadArchive,
 				Message: err.Error(),
 			})
 	}
@@ -46,7 +46,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 	if err != nil {
 		return operations.NewFillWebPostInternalServerError().
 			WithPayload(&models.Error{
-				Code:    "",
+				Code:    errorCodeWebCreatorUpload,
 				Message: err.Error(),
 			})
 	}

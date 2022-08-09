@@ -66,8 +66,8 @@ func Events(client *Client, start *Slot, end *Slot,
 	}
 
 	var resp []Event
-	err = rawResponse.GetObject(&resp)
 
+	err = rawResponse.GetObject(&resp)
 	if err != nil {
 		return nil, err
 	}

@@ -1,30 +1,12 @@
 package website
 
 import (
-	"errors"
 	"net/http"
 	"path/filepath"
 
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/onchain/storage"
 )
-
-func Resolve(client *node.Client, name string) (string, error) {
-	dnsAddress := "A12jkDPTcdhkqGg9VoKsTwvkBwZeSHQw7wJqQYKrNesKnjnGejuR"
-
-	const dnsPrefix = "record"
-
-	entry, err := node.DatastoreEntry(client, dnsAddress, dnsPrefix+name)
-	if err != nil {
-		return "", err
-	}
-
-	if len(entry.CandidateValue) == 0 {
-		return "", errors.New("name not found")
-	}
-
-	return string(entry.CandidateValue), nil
-}
 
 // TODO use a local cache to reduce network bandwidth.
 func Fetch(c *node.Client, addr string, filename string) ([]byte, error) {
