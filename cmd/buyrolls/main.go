@@ -10,14 +10,18 @@ import (
 )
 
 func main() {
-
-	w, _ := wallet.New("massa")
-	c := node.NewClient()
-	tx := buyrolls.New(1)
-
-	id, err := sendoperation.Call(c, 36981, 0, tx, w.KeyPairs[0].PublicKey, w.KeyPairs[0].PrivateKey)
+	wlt, err := wallet.New("massa")
 	if err != nil {
 		panic(err)
 	}
+
+	client := node.NewDefaultClient()
+	BuyRolls := buyrolls.New(1)
+
+	id, err := sendoperation.Call(client, 2, 0, BuyRolls, wlt.KeyPairs[0].PublicKey, wlt.KeyPairs[0].PrivateKey)
+	if err != nil {
+		panic(err)
+	}
+
 	fmt.Println("Execution OK, id is:", id)
 }

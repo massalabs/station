@@ -32,13 +32,10 @@ func (f *functionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 
 	value, ok := f.walletStorage.Load(*params.Body.Name)
 	if !ok {
-		e := errorCodeUnknownKeyID
-		msg := "Error: unknown wallet nickname : " + *params.Body.Name
-
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
 			&models.Error{
-				Code:    &e,
-				Message: &msg,
+				Code:    errorCodeUnknownKeyID,
+				Message: "Error: unknown wallet nickname : " + *params.Body.Name,
 			})
 	}
 
@@ -60,7 +57,7 @@ func (f *functionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 		uint64(params.Body.Coins.Sequential),
 		uint64(params.Body.Coins.Parallel))
 
-	c := node.NewClient()
+	c := node.NewDefaultClient()
 
 	operationID, err := sendOperation.Call(
 		c,
@@ -69,11 +66,8 @@ func (f *functionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 		callSC,
 		pubKey, privKey)
 	if err != nil {
-		e := errorCodeSendOperation
-		msg := "Error: " + err.Error()
-
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
-			&models.Error{Code: &e, Message: &msg})
+			&models.Error{Code: errorCodeSendOperation, Message: "Error: " + err.Error()})
 	}
 
 	return operations.NewCmdExecuteFunctionOK().WithPayload(operationID)

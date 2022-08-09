@@ -2,85 +2,60 @@ package dns
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
-	"github.com/massalabs/thyra/pkg/node/getters"
-	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
-	"github.com/massalabs/thyra/pkg/node/sendoperation/callsc"
+	"github.com/massalabs/thyra/pkg/onchain"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-type setApprovalForAll struct {
+type setApproval struct {
 	Operator string `json:"operator"`
 	Approved bool   `json:"approved"`
 }
-type setResolvers struct {
+
+type setRecord struct {
 	Name    string `json:"name"`
 	Address string `json:"address"`
 }
 
-func SetDnsResolver(c *node.Client, wallet wallet.Wallet, dnsName string, smartContract string, expire uint64) (*string, error) {
-	dnsAddress, _, err := base58.VersionedCheckDecode("A12jkDPTcdhkqGg9VoKsTwvkBwZeSHQw7wJqQYKrNesKnjnGejuR"[1:])
+const dnsRawAddress = "A12ew8eiCS7wnY8SkUdwBgDkdD5qwmbJgkJvYLCvVjWWdoFJJLvW"
+
+func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContract string) (string, error) {
+	addr, _, err := base58.VersionedCheckDecode(dnsRawAddress[1:])
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	setResolvers := &setResolvers{
-		Name:    dnsName,
-		Address: smartContract}
 
-	b, err := json.Marshal(setResolvers)
+	rec := setRecord{
+		Name:    url,
+		Address: smartContract,
+	}
+
+	param, err := json.Marshal(rec)
 	if err != nil {
-		return nil, err
-	}
-	callSC := callsc.New(dnsAddress, "setResolver", b, 0, 700000000, 0, 0)
-	operationId, err := sendOperation.Call(c, expire, 0, callSC, wallet.KeyPairs[0].PublicKey, wallet.KeyPairs[0].PrivateKey)
-	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	// Wait DNS is set through events
-	dnsSet := false
-	n := 0
-	for n < 3 && dnsSet {
-
-		time.Sleep(15 * time.Second)
-		events, err := getters.GetEvents(c, nil, nil, nil, nil, &operationId)
-		if err != nil {
-			return nil, err
-		}
-
-		eventsValue := *events
-		if len(eventsValue) > 0 {
-			dnsSet = true
-		}
-		n++
-	}
-	return &operationId, nil
-
+	return onchain.CallFunction(client, wallet, addr, "setResolver", param)
 }
 
-func SetDnsApproval(c *node.Client, wallet wallet.Wallet, a bool, expire uint64) (*string, error) {
-	dnsAddress, _, err := base58.VersionedCheckDecode("A1Q65NojVV5YPyZruVkeU1CGeS3tjLNwGSzAmZfAJPE5vuvus4C"[1:])
+func SetRecordManager(client *node.Client, wallet wallet.Wallet) (string, error) {
+	addr, _, err := base58.VersionedCheckDecode(dnsRawAddress[1:])
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	// Set Resolver prepare data
-	setApprovalForAll := &setApprovalForAll{
+	appr := &setApproval{
 		Operator: wallet.Address,
-		Approved: true}
-
-	b, err := json.Marshal(setApprovalForAll)
-	if err != nil {
-		return nil, err
+		Approved: true,
 	}
-	callSC := callsc.New(dnsAddress, "setApprovalForAll", b, 0, 700000000, 0, 0)
-	operationId, err := sendOperation.Call(c, expire, 0, callSC, wallet.KeyPairs[0].PublicKey, wallet.KeyPairs[0].PrivateKey)
-	if err != nil {
-		return nil, err
-	}
-	return &operationId, nil
 
+	param, err := json.Marshal(appr)
+	if err != nil {
+		return "", err
+	}
+
+	return onchain.CallFunction(client, wallet, addr, "setApprovalForAll", param)
 }

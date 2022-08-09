@@ -29,7 +29,7 @@ func NewUploadWebPost(ctx *middleware.Context, handler UploadWebPostHandler) *Up
 	return &UploadWebPost{Context: ctx, Handler: handler}
 }
 
-/* UploadWebPost swagger:route POST /uploadWeb/{dnsname} uploadWebPost
+/* UploadWebPost swagger:route POST /uploadWeb/{url} uploadWebPost
 
 UploadWebPost upload web post API
 

@@ -125,14 +125,14 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: '#/definitions/Error'
-  /uploadWeb:
+  /my/domains:
     get:
-      operationId: uploadWebGet
+      operationId: myDomains
       produces:
         - application/json
       responses:
         '200':
-          description: Websites retrieved
+          description: Domains returned. May be empty.
           schema:
             type: array
             items:
@@ -145,15 +145,21 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: '#/definitions/Error'
-  /uploadWeb/{dnsname}:
-    post:
-      operationId: uploadWebPost
+  /websiteCreator/prepare:
+    put:
+      operationId: websiteCreatorPrepare
       parameters:
-        - in: path
-          name: dnsname
-          type: string
+        - in: body
+          name: body
           required: true
-          description: DNS name without '.', capitals letters and specifics characters.
+          schema:
+            type: object
+            required:
+              - url
+            properties:
+              url:
+                description: URL without '.', capitals letters and specifics characters
+                type: string
       produces:
         - application/json
       responses:
@@ -173,27 +179,27 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: '#/definitions/Error'
-  /fillWeb/{website}:
+  /websiteCreator/upload:
     post:
-      operationId: fillWebPost
+      operationId: websiteCreatorUpload
       consumes:
         - multipart/form-data
       parameters:
-        - in: path
-          name: website
+        - in: formData
+          name: address
           type: string
           required: true
-          description: Website's short name.
+          description: Address where to deploy website. The account must have been prepare to receive a website.
         - in: formData
           name: zipfile
           type: file
           required: true
-          description: Contents of the ZIP file.
+          description: Website contents in a ZIP file.
       produces:
         - application/json
       responses:
         '200':
-          description: First website chunk deployed.
+          description: Website's chunk deployed.
           schema:
             $ref: '#/definitions/Websites'
         '400':
@@ -403,9 +409,11 @@ definitions:
       code:
         description: error code.
         type: string
+        x-nullable: false
       message:
         description: error message.
         type: string
+        x-nullable: false
   Wallet:
     type: object
     description: Wallet object (V0).

@@ -9,9 +9,9 @@ import (
 	"github.com/jessevdk/go-flags"
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/int/apihandler/cmd"
-	"github.com/massalabs/thyra/int/apihandler/wallet"
-	websites "github.com/massalabs/thyra/int/apihandler/website"
+	"github.com/massalabs/thyra/int/api"
+	"github.com/massalabs/thyra/int/api/cmd"
+	"github.com/massalabs/thyra/int/api/wallet"
 )
 
 func main() {
@@ -21,8 +21,8 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	api := operations.NewThyraServerAPI(swaggerSpec)
-	server := restapi.NewServer(api)
+	localAPI := operations.NewThyraServerAPI(swaggerSpec)
+	server := restapi.NewServer(localAPI)
 
 	defer func() {
 		if err := server.Shutdown(); err != nil {
@@ -47,16 +47,17 @@ func main() {
 
 	var walletStorage sync.Map
 
-	api.CmdExecuteFunctionHandler = cmd.NewExecuteFunction(&walletStorage)
+	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunction(&walletStorage)
 
-	api.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
-	api.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
-	api.MgmtWalletImportHandler = wallet.NewImport(&walletStorage)
-	api.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage)
+	localAPI.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
+	localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
+	localAPI.MgmtWalletImportHandler = wallet.NewImport(&walletStorage)
+	localAPI.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage)
 
-	api.UploadWebGetHandler = websites.NewWebsiteGet()
-	api.UploadWebPostHandler = websites.NewWebsitePost()
-	api.FillWebPostHandler = websites.NewFillWebsitePost()
+	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(api.PrepareForWebsiteHandler)
+	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(api.UploadWebsiteHandler)
+
+	localAPI.MyDomainsHandler = operations.MyDomainsHandlerFunc(api.DomainsHandler)
 
 	// Start server which listening
 	server.ConfigureAPI()

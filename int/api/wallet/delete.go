@@ -19,13 +19,10 @@ type walletDelete struct {
 
 func (c *walletDelete) Handle(params operations.MgmtWalletDeleteParams) middleware.Responder {
 	if len(params.Nickname) == 0 {
-		e := errorCodeWalletDeleteNoNickname
-		msg := "Error: nickname field is mandatory."
-
 		return operations.NewMgmtWalletDeleteBadRequest().WithPayload(
 			&models.Error{
-				Code:    &e,
-				Message: &msg,
+				Code:    errorCodeWalletDeleteNoNickname,
+				Message: "Error: nickname field is mandatory.",
 			})
 	}
 

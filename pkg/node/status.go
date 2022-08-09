@@ -1,25 +1,19 @@
-package getters
+package node
 
 import (
 	"context"
-
-	"github.com/massalabs/thyra/pkg/node"
 )
 
-type Slott struct {
-	Period int `json:"period"`
-	Thread int `json:"thread"`
-}
-type getStatusResponse struct {
+type State struct {
 	Config         *Config         `json:"config"`
 	ConsensusStats *ConsensusStats `json:"consensus_stats"`
 	CurrentCycle   *uint           `json:"current_cycle"`
 	CurrentTime    *uint           `json:"current_time"`
-	LastSlot       *Slott          `json:"last_slot"`
+	LastSlot       *Slot           `json:"last_slot"`
 	NetworkStats   *NetworkStats   `json:"network_stats"`
-	NextSlot       *Slott          `json:"next_slot"`
-	NodeId         *string         `json:"node_id"`
-	NodeIp         *string         `json:"node_ip"`
+	NextSlot       *Slot           `json:"next_slot"`
+	NodeID         *string         `json:"node_id"`
+	NodeIP         *string         `json:"node_ip"`
 	PoolStats      *PoolStats      `json:"pool_stats"`
 	Version        *string         `json:"version"`
 }
@@ -54,41 +48,31 @@ type NetworkStats struct {
 	KnowPeerCount      *uint `json:"known_peer_count"`
 	OutConnectionCount *uint `json:"out_connection_count"`
 }
+
 type PoolStats struct {
 	EndorsementCount *uint `json:"endorsement_count"`
 	OperationCount   *uint `json:"operation_count"`
 }
 
-func GetNodeStatus(client *node.Client) (*getStatusResponse, error) {
-	response, err := client.RPCClient.Call(
+func Status(client *Client) (*State, error) {
+	rawResponse, err := client.RPCClient.Call(
 		context.Background(),
 		"get_status",
 	)
-
 	if err != nil {
 		return nil, err
 	}
 
-	if response.Error != nil {
-		return nil, response.Error
+	if rawResponse.Error != nil {
+		return nil, rawResponse.Error
 	}
 
-	var entry getStatusResponse
+	var resp State
 
-	err = response.GetObject(&entry)
+	err = rawResponse.GetObject(&resp)
 	if err != nil {
 		return nil, err
 	}
 
-	return &entry, nil
-}
-
-func GetExpirePeriod(c *node.Client) (*uint64, error) {
-	status, err := GetNodeStatus(c)
-	if err != nil {
-		return nil, err
-	}
-	expirePeriod := uint64(status.NextSlot.Period + 2)
-	return &expirePeriod, nil
-
+	return &resp, nil
 }

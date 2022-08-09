@@ -4,6 +4,8 @@ import (
 	"encoding/binary"
 )
 
+const SellRollOpID = 2
+
 type OperationDetails struct {
 	CountRoll uint64 `json:"roll_count"`
 }
@@ -34,14 +36,13 @@ func (b *SellRolls) Message() []byte {
 	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
 
-	sellRollOperationID := uint64(2)
-
 	// operationId
-	n := binary.PutUvarint(buf, sellRollOperationID)
-	msg = append(msg, buf[:n]...)
+	nbBytes := binary.PutUvarint(buf, SellRollOpID)
+	msg = append(msg, buf[:nbBytes]...)
 
 	// count rolls
-	n = binary.PutUvarint(buf, b.countRoll)
-	msg = append(msg, buf[:n]...)
+	nbBytes = binary.PutUvarint(buf, b.countRoll)
+	msg = append(msg, buf[:nbBytes]...)
+
 	return msg
 }

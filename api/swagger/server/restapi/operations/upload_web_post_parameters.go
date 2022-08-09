@@ -34,7 +34,7 @@ type UploadWebPostParams struct {
 	  Required: true
 	  In: path
 	*/
-	Dnsname string
+	URL string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -46,8 +46,8 @@ func (o *UploadWebPostParams) BindRequest(r *http.Request, route *middleware.Mat
 
 	o.HTTPRequest = r
 
-	rDnsname, rhkDnsname, _ := route.Params.GetOK("dnsname")
-	if err := o.bindDnsname(rDnsname, rhkDnsname, route.Formats); err != nil {
+	rURL, rhkURL, _ := route.Params.GetOK("url")
+	if err := o.bindURL(rURL, rhkURL, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
@@ -56,8 +56,8 @@ func (o *UploadWebPostParams) BindRequest(r *http.Request, route *middleware.Mat
 	return nil
 }
 
-// bindDnsname binds and validates parameter Dnsname from path.
-func (o *UploadWebPostParams) bindDnsname(rawData []string, hasKey bool, formats strfmt.Registry) error {
+// bindURL binds and validates parameter URL from path.
+func (o *UploadWebPostParams) bindURL(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -65,7 +65,7 @@ func (o *UploadWebPostParams) bindDnsname(rawData []string, hasKey bool, formats
 
 	// Required: true
 	// Parameter is provided by construction from the route
-	o.Dnsname = raw
+	o.URL = raw
 
 	return nil
 }

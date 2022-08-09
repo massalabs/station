@@ -1,26 +1,33 @@
 package main
 
 import (
-	"crypto/ed25519"
 	"fmt"
 
 	"github.com/massalabs/thyra/pkg/node"
+	"github.com/massalabs/thyra/pkg/node/base58"
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	callSC "github.com/massalabs/thyra/pkg/node/sendoperation/callsc"
+	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 func main() {
-	//TODO https://github.com/massalabs/thyra/issues/27
-	pubKey, privKey, err := ed25519.GenerateKey(nil)
+	rawAddr := "A1JEEbgWPQMt97pJmZ3akxU64yW82wmZRe8EefjnEPxyCHgv1Yn"
+
+	wlt, err := wallet.New("massa")
 	if err != nil {
 		panic(err)
 	}
 
-	c := node.NewClient()
+	client := node.NewDefaultClient()
 
-	callSC := callSC.New(pubKey, "set_dots", make([]byte, 0), 0, 700000000, 0, 0)
+	addr, _, err := base58.VersionedCheckDecode(rawAddr[1:])
+	if err != nil {
+		panic(err)
+	}
 
-	id, err := sendOperation.Call(c, 30903, 0, callSC, pubKey, privKey)
+	callSC := callSC.New(addr, "set_dots", make([]byte, 0), 0, 700000000, 0, 0)
+
+	id, err := sendOperation.Call(client, 2, 0, callSC, wlt.KeyPairs[0].PublicKey, wlt.KeyPairs[0].PrivateKey)
 	if err != nil {
 		panic(err)
 	}

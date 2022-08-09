@@ -8,6 +8,8 @@ import (
 	"github.com/massalabs/thyra/pkg/node/base58"
 )
 
+const CallSCOpID = uint64(4)
+
 type OperationDetails struct {
 	MaxGaz          int64       `json:"max_gas"`
 	GazPrice        string      `json:"gas_price"`
@@ -60,39 +62,37 @@ func (c *CallSC) Message() []byte {
 	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
 
-	callSCOperationID := uint64(4)
-
 	// operationId
-	n := binary.PutUvarint(buf, callSCOperationID)
-	msg = append(msg, buf[:n]...)
+	nbBytes := binary.PutUvarint(buf, CallSCOpID)
+	msg = append(msg, buf[:nbBytes]...)
 
 	// maxGaz
-	n = binary.PutUvarint(buf, c.gazLimit)
-	msg = append(msg, buf[:n]...)
+	nbBytes = binary.PutUvarint(buf, c.gazLimit)
+	msg = append(msg, buf[:nbBytes]...)
 
 	// ParallelCoins
-	n = binary.PutUvarint(buf, c.nbParallelCoins)
-	msg = append(msg, buf[:n]...)
+	nbBytes = binary.PutUvarint(buf, c.nbParallelCoins)
+	msg = append(msg, buf[:nbBytes]...)
 
 	// SequentialCoins
-	n = binary.PutUvarint(buf, c.nbSequentialCoins)
-	msg = append(msg, buf[:n]...)
+	nbBytes = binary.PutUvarint(buf, c.nbSequentialCoins)
+	msg = append(msg, buf[:nbBytes]...)
 
 	// gazPrice
-	n = binary.PutUvarint(buf, c.gazPrice)
-	msg = append(msg, buf[:n]...)
+	nbBytes = binary.PutUvarint(buf, c.gazPrice)
+	msg = append(msg, buf[:nbBytes]...)
 
 	// target address
 	msg = append(msg, c.address...)
 
 	// target function
-	n = binary.PutUvarint(buf, uint64(len([]byte(c.function))))
-	msg = append(msg, buf[:n]...)
+	nbBytes = binary.PutUvarint(buf, uint64(len([]byte(c.function))))
+	msg = append(msg, buf[:nbBytes]...)
 	msg = append(msg, []byte(c.function)...)
 
 	// param
-	n = binary.PutUvarint(buf, uint64(len(c.parameters)))
-	msg = append(msg, buf[:n]...)
+	nbBytes = binary.PutUvarint(buf, uint64(len(c.parameters)))
+	msg = append(msg, buf[:nbBytes]...)
 	msg = append(msg, c.parameters...)
 
 	return msg

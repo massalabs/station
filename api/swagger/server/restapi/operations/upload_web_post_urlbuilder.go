@@ -14,7 +14,7 @@ import (
 
 // UploadWebPostURL generates an URL for the upload web post operation
 type UploadWebPostURL struct {
-	Dnsname string
+	URL string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -40,13 +40,13 @@ func (o *UploadWebPostURL) SetBasePath(bp string) {
 func (o *UploadWebPostURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/uploadWeb/{dnsname}"
+	var _path = "/uploadWeb/{url}"
 
-	dnsname := o.Dnsname
-	if dnsname != "" {
-		_path = strings.Replace(_path, "{dnsname}", dnsname, -1)
+	url := o.URL
+	if url != "" {
+		_path = strings.Replace(_path, "{url}", url, -1)
 	} else {
-		return nil, errors.New("dnsname is required on UploadWebPostURL")
+		return nil, errors.New("url is required on UploadWebPostURL")
 	}
 
 	_basePath := o._basePath

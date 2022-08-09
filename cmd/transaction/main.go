@@ -10,15 +10,21 @@ import (
 )
 
 func main() {
+	wlt, err := wallet.New("massa")
+	if err != nil {
+		panic(err)
+	}
 
-	w, _ := wallet.New("massa")
-	w2, _ := wallet.New("massa")
-	c := node.NewClient()
-	tx := transaction.New(w2.KeyPairs[0].PublicKey, 5)
+	wlt2, err := wallet.New("massa")
+	if err != nil {
+		panic(err)
+	}
 
-	expirePeriod := uint64(37090)
+	client := node.NewDefaultClient()
 
-	id, err := sendoperation.Call(c, expirePeriod, 0, tx, w.KeyPairs[0].PublicKey, w.KeyPairs[0].PrivateKey)
+	transac := transaction.New(wlt2.KeyPairs[0].PublicKey, 5)
+
+	id, err := sendoperation.Call(client, 2, 0, transac, wlt.KeyPairs[0].PublicKey, wlt.KeyPairs[0].PrivateKey)
 	if err != nil {
 		panic(err)
 	}

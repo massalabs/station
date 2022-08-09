@@ -1,23 +1,24 @@
-package getters
+package node
 
 import (
 	"context"
 
-	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/sendoperation/buyrolls"
 	"github.com/massalabs/thyra/pkg/node/sendoperation/callsc"
+	"github.com/massalabs/thyra/pkg/node/sendoperation/executesc"
 	"github.com/massalabs/thyra/pkg/node/sendoperation/sellrolls"
 	"github.com/massalabs/thyra/pkg/node/sendoperation/transaction"
 )
 
-type getOperations struct {
-	Id        *string    `json:"id"`
-	InBlocks  *[]string  `json:"in_blocks"`
-	InPool    bool       `json:"in_pool"`
-	IsFinal   bool       `json:"is_final"`
-	Operation *Operation `json:"operation"`
-}
 type Operation struct {
+	ID       *string  `json:"id"`
+	InBlocks []string `json:"in_blocks"`
+	InPool   bool     `json:"in_pool"`
+	IsFinal  bool     `json:"is_final"`
+	Detail   *Detail  `json:"operation"`
+}
+
+type Detail struct {
 	Content   Content `json:"content"`
 	Signature string  `json:"signature"`
 }
@@ -32,21 +33,15 @@ type Op struct {
 	Transaction *transaction.Transaction `json:"Transaction"`
 	RollBuy     *buyrolls.BuyRolls       `json:"RollBuy"`
 	RollSell    *sellrolls.SellRolls     `json:"RollSell"`
-	ExecuteSC   *ExecuteSC               `json:"ExecuteSC"`
+	ExecuteSC   *executesc.ExecuteSC     `json:"ExecuteSC"`
 	CallSC      *callsc.CallSC           `json:"CallSC"`
 }
 
-type ExecuteSC struct {
-	data     []byte
-	maxGas   uint64
-	gasPrice uint64
-	Coins    string
-}
+func Operations(client *Client, ids []string) ([]Operation, error) {
+	var stringg [][]string // ???
+	stringg = append(stringg, ids)
 
-func GetOperations(client *node.Client, operations []string) (*[]getOperations, error) {
-	var stringg [][]string
-	stringg = append(stringg, operations)
-	response, err := client.RPCClient.Call(
+	rawResponse, err := client.RPCClient.Call(
 		context.Background(),
 		"get_operations",
 		stringg,
@@ -54,13 +49,17 @@ func GetOperations(client *node.Client, operations []string) (*[]getOperations, 
 	if err != nil {
 		return nil, err
 	}
-	if response.Error != nil {
-		return nil, response.Error
+
+	if rawResponse.Error != nil {
+		return nil, rawResponse.Error
 	}
-	var entry *[]getOperations
-	err = response.GetObject(&entry)
+
+	var resp []Operation
+
+	err = rawResponse.GetObject(&resp)
 	if err != nil {
 		return nil, err
 	}
-	return entry, nil
+
+	return resp, nil
 }

@@ -23,13 +23,10 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 
 	_, ok := c.walletStorage.Load(*params.Body.Nickname)
 	if ok {
-		e := errorCodeWalletAlreadyExists
-		msg := "Error: a wallet with the same nickname already exists."
-
 		return operations.NewMgmtWalletImportInternalServerError().WithPayload(
 			&models.Error{
-				Code:    &e,
-				Message: &msg,
+				Code:    errorCodeWalletAlreadyExists,
+				Message: "Error: a wallet with the same nickname already exists.",
 			})
 	}
 

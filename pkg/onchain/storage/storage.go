@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 
 	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/node/getters"
 )
 
 func readZipFile(z *zip.File) ([]byte, error) {
@@ -22,7 +21,7 @@ func readZipFile(z *zip.File) ([]byte, error) {
 }
 
 func Get(client *node.Client, address string, key string) (map[string][]byte, error) {
-	entry, err := getters.DatastoreEntry(client, address, key)
+	entry, err := node.DatastoreEntry(client, address, key)
 	if err != nil {
 		return nil, err
 	}
@@ -45,12 +44,12 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {
-		uzb, err := readZipFile(zipFile)
+		rsc, err := readZipFile(zipFile)
 		if err != nil {
 			return nil, err
 		}
 
-		m[zipFile.Name] = uzb
+		m[zipFile.Name] = rsc
 	}
 
 	return m, nil

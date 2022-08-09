@@ -27,11 +27,13 @@ type JSONableSlice []uint8
 
 func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 	var result string
+
 	if u == nil {
 		result = "null"
 	} else {
 		result = strings.Join(strings.Fields(fmt.Sprintf("%d", u)), ",")
 	}
+
 	return []byte(result), nil
 }
 
@@ -39,12 +41,12 @@ func message(expiry uint64, fee uint64, operation Operation) []byte {
 	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
 	// fee
-	n := binary.PutUvarint(buf, fee)
-	msg = append(msg, buf[:n]...)
+	nbBytes := binary.PutUvarint(buf, fee)
+	msg = append(msg, buf[:nbBytes]...)
 
 	// expiration
-	n = binary.PutUvarint(buf, expiry)
-	msg = append(msg, buf[:n]...)
+	nbBytes = binary.PutUvarint(buf, expiry)
+	msg = append(msg, buf[:nbBytes]...)
 
 	// operation
 	msg = append(msg, operation.Message()...)
@@ -54,11 +56,23 @@ func message(expiry uint64, fee uint64, operation Operation) []byte {
 
 func sign(msg []byte, privKey []byte) ([]byte, error) {
 	signature := ed25519.Sign(privKey, msg)
+
 	return signature, nil
 }
 
-func Call(client *node.Client, expiry uint64, fee uint64, op Operation, pubKey []byte, privKey []byte) (string, error) {
-	msg := message(expiry, fee, op)
+func Call(client *node.Client,
+	expiry uint64, fee uint64,
+	operation Operation,
+	pubKey []byte, privKey []byte,
+) (string, error) {
+	exp, err := node.NextSlot(client)
+	if err != nil {
+		return "", err
+	}
+
+	expiry += exp
+
+	msg := message(expiry, fee, operation)
 
 	digest := blake3.Sum256(append(pubKey, msg...))
 
@@ -70,7 +84,7 @@ func Call(client *node.Client, expiry uint64, fee uint64, op Operation, pubKey [
 		return "", err
 	}
 
-	response, err := client.RPCClient.Call(
+	rawResponse, err := client.RPCClient.Call(
 		context.Background(),
 		"send_operations",
 		[][]sendOperationsReq{
@@ -83,21 +97,20 @@ func Call(client *node.Client, expiry uint64, fee uint64, op Operation, pubKey [
 			},
 		},
 	)
-
 	if err != nil {
 		return "", err
 	}
 
-	if response.Error != nil {
-		return "", response.Error
+	if rawResponse.Error != nil {
+		return "", rawResponse.Error
 	}
 
-	var id []string
+	var resp []string
 
-	err = response.GetObject(&id)
+	err = rawResponse.GetObject(&resp)
 	if err != nil {
 		return "", err
 	}
 
-	return id[0], nil
+	return resp[0], nil
 }

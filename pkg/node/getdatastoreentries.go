@@ -1,12 +1,10 @@
-package getters
+package node
 
 import (
 	"context"
 	"errors"
 	"fmt"
 	"strings"
-
-	"github.com/massalabs/thyra/pkg/node"
 )
 
 type getDatastoreEntries struct {
@@ -32,8 +30,7 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 	return []byte(result), nil
 }
 
-func DatastoreEntry(client *node.Client, address string, key string) (*DatastoreEntryResponse, error) {
-
+func DatastoreEntry(client *Client, address string, key string) (*DatastoreEntryResponse, error) {
 	response, err := client.RPCClient.Call(
 		context.Background(),
 		"get_datastore_entries",
@@ -49,6 +46,7 @@ func DatastoreEntry(client *node.Client, address string, key string) (*Datastore
 	if err != nil {
 		return nil, err
 	}
+
 	if response.Error != nil {
 		return nil, response.Error
 	}

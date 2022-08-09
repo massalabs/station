@@ -156,59 +156,6 @@ func init() {
         }
       }
     },
-    "/fillWeb/{website}": {
-      "post": {
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "fillWebPost",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Website's short name.",
-            "name": "website",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "file",
-            "description": "Contents of the ZIP file.",
-            "name": "zipfile",
-            "in": "formData",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "First website chunk deployed.",
-            "schema": {
-              "$ref": "#/definitions/Websites"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
     "/kpi": {
       "get": {
         "produces": [
@@ -486,15 +433,15 @@ func init() {
         }
       }
     },
-    "/uploadWeb": {
+    "/my/domains": {
       "get": {
         "produces": [
           "application/json"
         ],
-        "operationId": "uploadWebGet",
+        "operationId": "myDomains",
         "responses": {
           "200": {
-            "description": "Websites retrieved",
+            "description": "Domains returned. May be empty.",
             "schema": {
               "type": "array",
               "items": {
@@ -504,49 +451,6 @@ func init() {
           },
           "400": {
             "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/uploadWeb/{dnsname}": {
-      "post": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "uploadWebPost",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "DNS name without '.', capitals letters and specifics characters.",
-            "name": "dnsname",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "New website created.",
-            "schema": {
-              "$ref": "#/definitions/Websites"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -607,6 +511,112 @@ func init() {
           }
         }
       }
+    },
+    "/websiteCreator/prepare": {
+      "put": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "websiteCreatorPrepare",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "url"
+              ],
+              "properties": {
+                "url": {
+                  "description": "URL without '.', capitals letters and specifics characters",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "New website created.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/websiteCreator/upload": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "websiteCreatorUpload",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Address where to deploy website. The account must have been prepare to receive a website.",
+            "name": "address",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "description": "Website contents in a ZIP file.",
+            "name": "zipfile",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Website's chunk deployed.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -620,11 +630,13 @@ func init() {
       "properties": {
         "code": {
           "description": "error code.",
-          "type": "string"
+          "type": "string",
+          "x-nullable": false
         },
         "message": {
           "description": "error message.",
-          "type": "string"
+          "type": "string",
+          "x-nullable": false
         }
       }
     },
@@ -820,59 +832,6 @@ func init() {
             "schema": {
               "description": "Operation id.",
               "type": "string"
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/fillWeb/{website}": {
-      "post": {
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "fillWebPost",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Website's short name.",
-            "name": "website",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "file",
-            "description": "Contents of the ZIP file.",
-            "name": "zipfile",
-            "in": "formData",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "First website chunk deployed.",
-            "schema": {
-              "$ref": "#/definitions/Websites"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
             }
           },
           "422": {
@@ -1120,15 +1079,15 @@ func init() {
         }
       }
     },
-    "/uploadWeb": {
+    "/my/domains": {
       "get": {
         "produces": [
           "application/json"
         ],
-        "operationId": "uploadWebGet",
+        "operationId": "myDomains",
         "responses": {
           "200": {
-            "description": "Websites retrieved",
+            "description": "Domains returned. May be empty.",
             "schema": {
               "type": "array",
               "items": {
@@ -1138,49 +1097,6 @@ func init() {
           },
           "400": {
             "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/uploadWeb/{dnsname}": {
-      "post": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "uploadWebPost",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "DNS name without '.', capitals letters and specifics characters.",
-            "name": "dnsname",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "New website created.",
-            "schema": {
-              "$ref": "#/definitions/Websites"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1241,6 +1157,112 @@ func init() {
           }
         }
       }
+    },
+    "/websiteCreator/prepare": {
+      "put": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "websiteCreatorPrepare",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "url"
+              ],
+              "properties": {
+                "url": {
+                  "description": "URL without '.', capitals letters and specifics characters",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "New website created.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/websiteCreator/upload": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "websiteCreatorUpload",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Address where to deploy website. The account must have been prepare to receive a website.",
+            "name": "address",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "description": "Website contents in a ZIP file.",
+            "name": "zipfile",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Website's chunk deployed.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1286,11 +1308,13 @@ func init() {
       "properties": {
         "code": {
           "description": "error code.",
-          "type": "string"
+          "type": "string",
+          "x-nullable": false
         },
         "message": {
           "description": "error message.",
-          "type": "string"
+          "type": "string",
+          "x-nullable": false
         }
       }
     },

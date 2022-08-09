@@ -20,60 +20,45 @@ type walletCreate struct {
 
 func (c *walletCreate) Handle(params operations.MgmtWalletCreateParams) middleware.Responder {
 	if params.Body.Nickname == nil || len(*params.Body.Nickname) == 0 {
-		e := errorCodeWalletCreateNoNickname
-		msg := "Error: nickname field is mandatory."
-
 		return operations.NewMgmtWalletCreateBadRequest().WithPayload(
 			&models.Error{
-				Code:    &e,
-				Message: &msg,
+				Code:    errorCodeWalletCreateNoNickname,
+				Message: "Error: nickname field is mandatory.",
 			})
 	}
 
 	_, ok := c.walletStorage.Load(*params.Body.Nickname)
 	if ok {
-		e := errorCodeWalletAlreadyExists
-		msg := "Error: a wallet with the same nickname already exists."
-
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{
-				Code:    &e,
-				Message: &msg,
+				Code:    errorCodeWalletAlreadyExists,
+				Message: "Error: a wallet with the same nickname already exists.",
 			})
 	}
 
 	if params.Body.Password == nil || len(*params.Body.Password) == 0 {
-		e := errorCodeWalletCreateNoPassword
-		msg := "Error: password field is mandatory."
-
 		return operations.NewMgmtWalletCreateBadRequest().WithPayload(
 			&models.Error{
-				Code:    &e,
-				Message: &msg,
+				Code:    errorCodeWalletCreateNoPassword,
+				Message: "Error: password field is mandatory.",
 			})
 	}
 
 	newWallet, err := wallet.New(*params.Body.Nickname)
 	if err != nil {
-		e := errorCodeWalletCreateNew
-		msg := err.Error()
-
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{
-				Code:    &e,
-				Message: &msg,
+				Code:    errorCodeWalletCreateNew,
+				Message: err.Error(),
 			})
 	}
 
 	err = newWallet.Protect(*params.Body.Password, 0)
 	if err != nil {
-		e := errorCodeWalletCreateNew
-		msg := err.Error()
-
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{
-				Code:    &e,
-				Message: &msg,
+				Code:    errorCodeWalletCreateNew,
+				Message: err.Error(),
 			})
 	}
 
