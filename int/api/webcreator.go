@@ -42,7 +42,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 
 	b64 := base64.StdEncoding.EncodeToString(archive)
 
-	_, err = website.Upload(b64, params.Address)
+	_, err = website.Upload(params.Address, b64)
 	if err != nil {
 		return operations.NewFillWebPostInternalServerError().
 			WithPayload(&models.Error{
