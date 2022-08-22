@@ -11,7 +11,7 @@ import (
 )
 
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
-	address, err := website.PrepareForUpload(*params.Body.URL)
+	address, err := website.PrepareForUpload(*params.Body.URL, *params.Body.Nickname)
 
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
@@ -42,7 +42,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 
 	b64 := base64.StdEncoding.EncodeToString(archive)
 
-	_, err = website.Upload(params.Address, b64)
+	_, err = website.Upload(params.Address, b64, params.Nickname)
 	if err != nil {
 		return operations.NewFillWebPostInternalServerError().
 			WithPayload(&models.Error{

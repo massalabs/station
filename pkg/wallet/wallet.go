@@ -8,9 +8,9 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"golang.org/x/crypto/pbkdf2"
@@ -110,31 +110,52 @@ func FromYAML(raw []byte) (w Wallet, err error) {
 	return
 }
 
-func ReadWallets() (wallets []Wallet, e error) {
-	bytesInput, e := ioutil.ReadFile("wallet.json")
-	wallets = []Wallet{}
+func ReadWallets() ([]Wallet, error) {
 
-	if e != nil {
-		fmt.Print("No wallet dectected, new one created")
-	} else {
-		e = json.Unmarshal(bytesInput, &wallets)
-		if e != nil {
-			return nil, e
+	wd, err := os.Getwd()
+
+	if err != nil {
+		return nil, err
+	}
+
+	wallets := []Wallet{}
+	files, err := ioutil.ReadDir(wd)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, f := range files {
+		fileName := f.Name()
+
+		if strings.HasPrefix(fileName, "wallet_") && strings.HasSuffix(fileName, ".json") {
+			bytesInput, err := ioutil.ReadFile(fileName)
+			if err != nil {
+				return nil, err
+			}
+			wallet := Wallet{}
+			err = json.Unmarshal(bytesInput, &wallet)
+			if err != nil {
+				return nil, err
+			}
+			wallets = append(wallets, wallet)
 		}
 	}
 
 	return wallets, nil
 }
 
-func FirstWallet() (Wallet, error) {
-	wallets, err := ReadWallets()
+func GetWallet(nickname string) (*Wallet, error) {
+
+	bytesInput, err := ioutil.ReadFile("wallet_" + nickname + ".json")
 	if err != nil {
-		return Wallet{}, err
+		return nil, err
 	}
-
-	wallet := wallets[0]
-
-	return wallet, nil
+	wallet := Wallet{}
+	err = json.Unmarshal(bytesInput, &wallet)
+	if err != nil {
+		return nil, err
+	}
+	return &wallet, nil
 }
 
 func New(nickname string) (*Wallet, error) {
@@ -171,19 +192,12 @@ func New(nickname string) (*Wallet, error) {
 		}},
 	}
 
-	wallets, e := ReadWallets()
-	if e != nil {
-		return nil, e
-	}
-
-	wallets = append(wallets, wallet)
-
-	bytesOutput, err := json.Marshal(wallets)
+	bytesOutput, err := json.Marshal(wallet)
 	if err != nil {
 		return nil, err
 	}
 
-	err = os.WriteFile("wallet.json", bytesOutput, 0o644)
+	err = os.WriteFile("wallet_"+nickname+".json", bytesOutput, 0o644)
 	if err != nil {
 		return nil, err
 	}

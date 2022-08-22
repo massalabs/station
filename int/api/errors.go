@@ -1,7 +1,8 @@
 package api
 
 const (
-	errorCodeDomainsInstatiation = "Domains-0001"
+	errorCodeGetDomainNames     = "Domains-0001"
+	errorCodeGetDomainAddresses = "Domains-0002"
 
 	errorCodeWebCreatorPrepare     = "WebCreator-0001"
 	errorCodeWebCreatorReadArchive = "WebCreator-0002"

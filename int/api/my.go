@@ -4,26 +4,31 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/pkg/my"
+	"github.com/massalabs/thyra/pkg/node"
+	"github.com/massalabs/thyra/pkg/onchain/dns"
 )
 
 func DomainsHandler(params operations.MyDomainsParams) middleware.Responder {
-	myDomains, err := my.NewDomains()
+	client := node.NewDefaultClient()
+
+	myDomainNames, err := dns.GetMyDomainNames(client, params.Nickname)
 	if err != nil {
 		return operations.NewUploadWebGetInternalServerError().
 			WithPayload(
 				&models.Error{
-					Code:    errorCodeDomainsInstatiation,
+					Code:    errorCodeGetDomainNames,
 					Message: err.Error(),
 				})
 	}
 
-	list := myDomains.List()
-
-	response := []*models.Websites{}
-	for i := 0; i < len(list); i++ {
-		response = append(response, &models.Websites{Name: list[i].URL, Address: list[i].Address})
+	myDomains, err := dns.GetOwnedDomains(client, myDomainNames)
+	if err != nil {
+		return operations.NewUploadWebGetInternalServerError().
+			WithPayload(
+				&models.Error{
+					Code:    errorCodeGetDomainAddresses,
+					Message: err.Error(),
+				})
 	}
-
-	return operations.NewMyDomainsOK().WithPayload(response)
+	return operations.NewMyDomainsOK().WithPayload(myDomains)
 }

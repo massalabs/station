@@ -20,6 +20,7 @@
 //    - text/html
 //    - application/json
 //    - text/webp
+//    - application/javascript
 //
 // swagger:meta
 package restapi

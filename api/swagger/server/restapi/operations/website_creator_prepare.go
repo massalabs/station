@@ -65,6 +65,10 @@ func (o *WebsiteCreatorPrepare) ServeHTTP(rw http.ResponseWriter, r *http.Reques
 // swagger:model WebsiteCreatorPrepareBody
 type WebsiteCreatorPrepareBody struct {
 
+	// Wallet's nickname to be used for preparing the website
+	// Required: true
+	Nickname *string `json:"nickname"`
+
 	// URL without '.', capitals letters and specifics characters
 	// Required: true
 	URL *string `json:"url"`
@@ -74,6 +78,10 @@ type WebsiteCreatorPrepareBody struct {
 func (o *WebsiteCreatorPrepareBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := o.validateNickname(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := o.validateURL(formats); err != nil {
 		res = append(res, err)
 	}
@@ -81,6 +89,15 @@ func (o *WebsiteCreatorPrepareBody) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (o *WebsiteCreatorPrepareBody) validateNickname(formats strfmt.Registry) error {
+
+	if err := validate.Required("body"+"."+"nickname", "body", o.Nickname); err != nil {
+		return err
+	}
+
 	return nil
 }
 

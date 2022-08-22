@@ -29,7 +29,7 @@ func NewMyDomains(ctx *middleware.Context, handler MyDomainsHandler) *MyDomains 
 	return &MyDomains{Context: ctx, Handler: handler}
 }
 
-/* MyDomains swagger:route GET /my/domains myDomains
+/* MyDomains swagger:route GET /my/domains/{nickname} myDomains
 
 MyDomains my domains API
 

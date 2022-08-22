@@ -12,23 +12,23 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-func PrepareForUpload(url string) (string, error) {
+func PrepareForUpload(url string, walletNickname string) (string, error) {
 	client := node.NewDefaultClient()
 
 	// TODO should use a nickname argument
-	wallet, err := wallet.FirstWallet()
+	wallet, err := wallet.GetWallet(walletNickname)
 	if err != nil {
 		return "", err
 	}
 
 	// Prepare address to webstorage.
-	scAddress, err := onchain.DeploySC(client, wallet, []byte(sc.WebsiteStorer))
+	scAddress, err := onchain.DeploySC(client, *wallet, []byte(sc.WebsiteStorer))
 	if err != nil {
 		return "", err
 	}
 
 	// Set DNS.
-	_, err = dns.SetRecord(client, wallet, url, scAddress)
+	_, err = dns.SetRecord(client, *wallet, url, scAddress)
 	if err != nil {
 		return "", err
 	}
@@ -53,11 +53,11 @@ type UploadWebsiteParam struct {
 	Data string `json:"data"`
 }
 
-func Upload(atAddress string, content string) (string, error) {
+func Upload(atAddress string, content string, walletNickname string) (string, error) {
 	client := node.NewDefaultClient()
 
 	// TODO should use a nickname argument
-	wallet, err := wallet.FirstWallet()
+	wallet, err := wallet.GetWallet(walletNickname)
 	if err != nil {
 		return "", err
 	}
@@ -74,5 +74,5 @@ func Upload(atAddress string, content string) (string, error) {
 		return "", err
 	}
 
-	return onchain.CallFunction(client, wallet, addr, "initializeWebsite", param)
+	return onchain.CallFunction(client, *wallet, addr, "initializeWebsite", param)
 }

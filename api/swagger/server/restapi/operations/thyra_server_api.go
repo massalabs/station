@@ -53,6 +53,7 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		TextWebpProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
 			return errors.NotImplemented("textWebp producer has not yet been implemented")
 		}),
+		TxtProducer: runtime.TextProducer(),
 
 		BrowseHandler: BrowseHandlerFunc(func(params BrowseParams) middleware.Responder {
 			return middleware.NotImplemented("operation Browse has not yet been implemented")
@@ -71,6 +72,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		}),
 		MgmtWalletGetHandler: MgmtWalletGetHandlerFunc(func(params MgmtWalletGetParams) middleware.Responder {
 			return middleware.NotImplemented("operation MgmtWalletGet has not yet been implemented")
+		}),
+		MgmtWalletGetOneHandler: MgmtWalletGetOneHandlerFunc(func(params MgmtWalletGetOneParams) middleware.Responder {
+			return middleware.NotImplemented("operation MgmtWalletGetOne has not yet been implemented")
 		}),
 		MgmtWalletImportHandler: MgmtWalletImportHandlerFunc(func(params MgmtWalletImportParams) middleware.Responder {
 			return middleware.NotImplemented("operation MgmtWalletImport has not yet been implemented")
@@ -140,6 +144,9 @@ type ThyraServerAPI struct {
 	// TextWebpProducer registers a producer for the following mime types:
 	//   - text/webp
 	TextWebpProducer runtime.Producer
+	// TxtProducer registers a producer for the following mime types:
+	//   - application/javascript
+	TxtProducer runtime.Producer
 
 	// BrowseHandler sets the operation handler for the browse operation
 	BrowseHandler BrowseHandler
@@ -153,6 +160,8 @@ type ThyraServerAPI struct {
 	MgmtWalletDeleteHandler MgmtWalletDeleteHandler
 	// MgmtWalletGetHandler sets the operation handler for the mgmt wallet get operation
 	MgmtWalletGetHandler MgmtWalletGetHandler
+	// MgmtWalletGetOneHandler sets the operation handler for the mgmt wallet get one operation
+	MgmtWalletGetOneHandler MgmtWalletGetOneHandler
 	// MgmtWalletImportHandler sets the operation handler for the mgmt wallet import operation
 	MgmtWalletImportHandler MgmtWalletImportHandler
 	// MyDomainsHandler sets the operation handler for the my domains operation
@@ -256,6 +265,9 @@ func (o *ThyraServerAPI) Validate() error {
 	if o.TextWebpProducer == nil {
 		unregistered = append(unregistered, "TextWebpProducer")
 	}
+	if o.TxtProducer == nil {
+		unregistered = append(unregistered, "TxtProducer")
+	}
 
 	if o.BrowseHandler == nil {
 		unregistered = append(unregistered, "BrowseHandler")
@@ -274,6 +286,9 @@ func (o *ThyraServerAPI) Validate() error {
 	}
 	if o.MgmtWalletGetHandler == nil {
 		unregistered = append(unregistered, "MgmtWalletGetHandler")
+	}
+	if o.MgmtWalletGetOneHandler == nil {
+		unregistered = append(unregistered, "MgmtWalletGetOneHandler")
 	}
 	if o.MgmtWalletImportHandler == nil {
 		unregistered = append(unregistered, "MgmtWalletImportHandler")
@@ -351,6 +366,8 @@ func (o *ThyraServerAPI) ProducersFor(mediaTypes []string) map[string]runtime.Pr
 			result["application/json"] = o.JSONProducer
 		case "text/webp":
 			result["text/webp"] = o.TextWebpProducer
+		case "application/javascript":
+			result["application/javascript"] = o.TxtProducer
 		}
 
 		if p, ok := o.customProducers[mt]; ok {
@@ -415,6 +432,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/mgmt/wallet"] = NewMgmtWalletGet(o.context, o.MgmtWalletGetHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/mgmt/wallet/{nickname}"] = NewMgmtWalletGetOne(o.context, o.MgmtWalletGetOneHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
@@ -422,7 +443,7 @@ func (o *ThyraServerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/my/domains"] = NewMyDomains(o.context, o.MyDomainsHandler)
+	o.handlers["GET"]["/my/domains/{nickname}"] = NewMyDomains(o.context, o.MyDomainsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

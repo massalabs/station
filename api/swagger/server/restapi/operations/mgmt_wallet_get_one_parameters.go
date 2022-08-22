@@ -13,19 +13,19 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewMyDomainsParams creates a new MyDomainsParams object
+// NewMgmtWalletGetOneParams creates a new MgmtWalletGetOneParams object
 //
 // There are no default values defined in the spec.
-func NewMyDomainsParams() MyDomainsParams {
+func NewMgmtWalletGetOneParams() MgmtWalletGetOneParams {
 
-	return MyDomainsParams{}
+	return MgmtWalletGetOneParams{}
 }
 
-// MyDomainsParams contains all the bound params for the my domains operation
+// MgmtWalletGetOneParams contains all the bound params for the mgmt wallet get one operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters myDomains
-type MyDomainsParams struct {
+// swagger:parameters mgmtWalletGetOne
+type MgmtWalletGetOneParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -40,8 +40,8 @@ type MyDomainsParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewMyDomainsParams() beforehand.
-func (o *MyDomainsParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewMgmtWalletGetOneParams() beforehand.
+func (o *MgmtWalletGetOneParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
@@ -57,7 +57,7 @@ func (o *MyDomainsParams) BindRequest(r *http.Request, route *middleware.Matched
 }
 
 // bindNickname binds and validates parameter Nickname from path.
-func (o *MyDomainsParams) bindNickname(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *MgmtWalletGetOneParams) bindNickname(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
