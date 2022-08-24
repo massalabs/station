@@ -192,16 +192,6 @@ func New(nickname string) (*Wallet, error) {
 		}},
 	}
 
-	bytesOutput, err := json.Marshal(wallet)
-	if err != nil {
-		return nil, err
-	}
-
-	err = os.WriteFile("wallet_"+nickname+".json", bytesOutput, 0o644)
-	if err != nil {
-		return nil, err
-	}
-
 	return &wallet, nil
 }
 
@@ -227,26 +217,9 @@ func Update(wallet Wallet) (err error) {
 }
 
 func Delete(nickname string) (err error) {
-	wallets, err := ReadWallets()
+	err = os.Remove("wallet_" + nickname + ".json")
 	if err != nil {
 		return err
 	}
-
-	for index, element := range wallets {
-		if element.Nickname == nickname {
-			wallets = append(wallets[:index], wallets[index+1:]...)
-		}
-	}
-
-	bytesOutput, err := json.Marshal(wallets)
-	if err != nil {
-		return err
-	}
-
-	err = os.WriteFile("wallet.json", bytesOutput, 0o644)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
