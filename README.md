@@ -13,11 +13,13 @@ Everything is this project is WIP prototype.
 ### Install dev dependencies
 
 To develop on this project you will need :
+
 - [go](https://go.dev/doc/install)
 - [textFileToGoConst](https://github.com/logrusorgru/textFileToGoConst) to generate go constants from file contents
 - [swagger](https://github.com/go-swagger/go-swagger) to generate go code from API documentation
 
 Once Golang is installed on your system, you can install the last two dependencies by running the following command outside of a go module directory:
+
 - `go install github.com/logrusorgru/textFileToGoConst@latest`
 - `go install github.com/go-swagger/go-swagger/cmd/swagger@latest`
 
@@ -90,6 +92,20 @@ openssl req -newkey rsa:4096 \
 
 You can now execute a thyra-server using the following command changing _path to ..._ to proper values:
 `thyra-server --tls-certificate <path to my_thyra.crt> --tls-key <path to my_thyra.key>`.
+
+### ... wallet management ?
+
+You can access to Thyra wallet interface at URL : http://my.massa/thyra/wallet/index.html
+By inputing the 'Nickname' & 'Password', you'll be able to create an encrypted wallet locally on your machine.
+
+### ... web on chain ?
+
+You can access to Thyra web hosting interface at URL : http://my.massa/thyra/websiteCreator/index.html
+
+In order to register a website on Thyra you'll need to :
+
+- Deploy a Smart Contract that will handle the storage of your website, your DNS name will fetch the Address of this Smart Contract
+- Upload the build of your application
 
 ## Additional information
 
