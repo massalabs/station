@@ -34,19 +34,78 @@ type UploadWebsiteParam struct {
 }
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, error) {
+	const maxLengthPerBlock = 260000
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
 	if err != nil {
 		return "", err
 	}
+	chunks := splitStringArray(content, maxLengthPerBlock)
 
+	if len(chunks) == 1 {
+		_, err = uploadLight(client, addr, content, wallet)
+	} else {
+		_, err = uploadHeavy(client, addr, chunks, wallet)
+	}
+	if err != nil {
+		return "", err
+	}
+	return "1", nil
+}
+
+func uploadLight(client *node.Client, addr []byte, content string, wallet *wallet.Wallet) (string, error) {
 	param, err := json.Marshal(UploadWebsiteParam{
 		Data: content,
 	})
 	if err != nil {
 		return "", err
 	}
+	op, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", param)
+	if err != nil {
+		return "", err
+	}
+	return op, nil
+}
 
-	return onchain.CallFunction(client, *wallet, addr, "initializeWebsite", param)
+func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) (string, error) {
+	op := ""
+	param, err := json.Marshal(UploadWebsiteParam{
+		Data: chunks[0],
+	})
+	if err != nil {
+		return "", err
+	}
+	_, err = onchain.CallFunction(client, *wallet, addr, "initializeWebsite", param)
+	if err != nil {
+		return "", err
+	}
+	for i := 1; i < len(chunks); i++ {
+
+		param, err = json.Marshal(UploadWebsiteParam{
+			Data: chunks[i],
+		})
+		if err != nil {
+			return "", err
+		}
+		op, err = onchain.CallFunction(client, *wallet, addr, "appendBytesToWebsite", param)
+		if err != nil {
+			return "", err
+		}
+	}
+	return op, nil
+}
+
+func splitStringArray(s string, chunkSize int) (chunks []string) {
+
+	counter := 0
+
+	chunkNumber := len(s)/chunkSize + 1
+	for i := 1; i < chunkNumber; i++ {
+		counter += chunkSize
+		chunks = append(chunks, s[(i-1)*chunkSize:(i)*chunkSize])
+	}
+	chunks = append(chunks, s[(chunkNumber-1)*chunkSize:])
+
+	return chunks
 }
