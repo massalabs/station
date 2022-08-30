@@ -20,7 +20,7 @@ type walletGet struct {
 // TODO Clean the struct mapping here + correct KeyPairs not returned & Panic(error)
 func (c *walletGet) Handle(params operations.MgmtWalletGetParams) middleware.Responder {
 
-	wallets, err := wallet.ReadWallets()
+	wallets, err := wallet.LoadAll()
 	var walll []*models.Wallet
 
 	for i := 0; i < len(wallets); i++ {

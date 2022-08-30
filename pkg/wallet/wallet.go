@@ -110,7 +110,7 @@ func FromYAML(raw []byte) (w Wallet, err error) {
 	return
 }
 
-func ReadWallets() ([]Wallet, error) {
+func LoadAll() ([]Wallet, error) {
 
 	wd, err := os.Getwd()
 
@@ -144,7 +144,7 @@ func ReadWallets() ([]Wallet, error) {
 	return wallets, nil
 }
 
-func GetWallet(nickname string) (*Wallet, error) {
+func Load(nickname string) (*Wallet, error) {
 
 	bytesInput, err := ioutil.ReadFile("wallet_" + nickname + ".json")
 	if err != nil {
@@ -206,7 +206,7 @@ func New(nickname string) (*Wallet, error) {
 }
 
 func Update(wallet Wallet) (err error) {
-	wallets, err := ReadWallets()
+	wallets, err := LoadAll()
 	if err != nil {
 		return err
 	}
@@ -227,7 +227,7 @@ func Update(wallet Wallet) (err error) {
 }
 
 func Delete(nickname string) (err error) {
-	wallets, err := ReadWallets()
+	wallets, err := LoadAll()
 	if err != nil {
 		return err
 	}

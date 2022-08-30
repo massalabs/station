@@ -166,7 +166,7 @@ paths:
           schema:
             $ref: '#/definitions/Error'
     get:
-      operationId: mgmtWalletGetOne
+      operationId: mgmtWalletGetter
       parameters:
         - in: path
           name: nickname
@@ -198,7 +198,7 @@ paths:
             $ref: '#/definitions/Error'
   /my/domains/{nickname}:
     get:
-      operationId: myDomains
+      operationId: myDomainsGetter
       parameters:
         - in: path
           name: nickname

@@ -16,14 +16,9 @@ type Domain struct {
 	Address string `json:"address"`
 }
 
-type Domains struct {
-	file    string
-	domains []Domain
-}
-
-func GetDomains(client *node.Client, nickname string) ([]string, error) {
+func Domains(client *node.Client, nickname string) ([]string, error) {
 	const ownedPrefix = "owned"
-	wallet, err := wallet.GetWallet(nickname)
+	wallet, err := wallet.Load(nickname)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +34,7 @@ func GetDomains(client *node.Client, nickname string) ([]string, error) {
 	return domains, nil
 }
 
-func GetOwnedWebsites(client *node.Client, domainNames []string) ([]*models.Websites, error) {
+func Websites(client *node.Client, domainNames []string) ([]*models.Websites, error) {
 	const recordPrefix = "record"
 
 	params := []node.GetDatastoreEntriesString{}

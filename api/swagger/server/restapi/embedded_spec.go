@@ -441,7 +441,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "mgmtWalletGetOne",
+        "operationId": "mgmtWalletGetter",
         "parameters": [
           {
             "type": "string",
@@ -537,7 +537,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "myDomains",
+        "operationId": "myDomainsGetter",
         "parameters": [
           {
             "type": "string",
@@ -1215,7 +1215,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "mgmtWalletGetOne",
+        "operationId": "mgmtWalletGetter",
         "parameters": [
           {
             "type": "string",
@@ -1311,7 +1311,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "myDomains",
+        "operationId": "myDomainsGetter",
         "parameters": [
           {
             "type": "string",
