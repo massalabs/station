@@ -1,77 +1,133 @@
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #fff;
 
-    background :linear-gradient(90deg,#172230 50.03%,#0c1219 85.82%);
+  background :linear-gradient(90deg,#172230 50.03%,#0c1219 85.82%);
 }
 
-.massa-logo{
-  width: 170px;
+.massa-logo-banner{
+width: 170px;
+}
+
+.massa-logo-spinner{
+  width: 25px;
+}
+.spinner-border{
+  color: transparent;
+}
+
+.loading{
+  display: none;
 }
 
 .title-wallet{
-  margin-bottom: 45px;
+margin-bottom: 45px;
+}
+option{
+background-color: transparent;
+}
+select.form-select:focus{
+background-color :black;
+color :white;
+
 }
 
 .form-control, .form-control:focus{
-  color :white;
-  border-radius: 0;
-  border: none;
-  border-bottom: 2px solid hsla(0,0%,100%,.2);
-  background-color: transparent;
-  box-shadow: none;
+color :white;
+border-radius: 0;
+border: none;
+border-bottom: 2px solid hsla(0,0%,100%,.2);
+background-color: transparent;
+box-shadow: none;
+}
+
+.form-select {
+background-color: transparent;
+color: white;
 }
 
 h1{
-    font-size: 3.5rem;
-    color : hsla(0,0%,100%,.2);
+  font-size: 3.5rem;
+  color : hsla(0,0%,100%,.2);
 }
 h2{
-  color : hsla(0,0%,100%,.2);
+color : hsla(0,0%,100%,.2);
 }
 
 button {
-  border:none;
-  padding: 3px 30px;
-  border-radius: 100px;
-  color: #fff;
+border:none;
+padding: 3px 30px;
+border-radius: 100px;
+color: #fff;
 }
 
 .primary-button {
-  font-size: 1.3rem;
-  background-color: #e74e4e;
-  border: 3px solid #e74e4e;
+font-size: 1.3rem;
+background-color: #e74e4e;
+border: 3px solid #e74e4e;
 
 }
 
-.alert{
-  display: none;
-  position: fixed;
-  top: 20px; 
-  left: 50%;
-  transform: translate(-50%, 0);
-  margin: auto;
-  width: 300px;
-  padding: 10px 0;
-  background-color: #e74e4e;
-  border : none;
-  text-align: center;
-  color:white;
+.alert-danger{
+display: none;
+position: fixed;
+top: 20px; 
+left: 50%;
+transform: translate(-50%, 0);
+margin: auto;
+width: 300px;
+padding: 10px 0;
+background-color: #e74e4e;
+border : none;
+text-align: center;
+color:white;
 }
 
+.alert-primary{
+display: none;
+position: fixed;
+top: 20px; 
+left: 50%;
+transform: translate(-50%, 0);
+margin: auto;
+width: 600px;
+padding: 10px 0;
+background-color: mediumblue;
+border : none;
+text-align: center;
+color:white;
+}
 .clipboard{
-  cursor: pointer;
-  margin-left: 10px;
-  margin-bottom: 4px;
+cursor: pointer;
+margin-left: 10px;
+margin-bottom: 4px;
 }
 
 .quit-button{
-  cursor: pointer;
+cursor: pointer;
 }
 
+#website-deployers-table{
+color: white;
+}
 
+.table{
+color:white;
+}
 
+tbody, td, tfoot, th, thead, tr{
+border-color:rgb(86, 86, 86);
+}
+
+.table>:not(caption)>*>*{
+padding: 18px 1.5rem ;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd)>*{
+background-color: hsla(0,0%,100%,.05);
+color:white;
+}

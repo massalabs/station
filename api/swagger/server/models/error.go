@@ -21,11 +21,11 @@ type Error struct {
 
 	// error code.
 	// Required: true
-	Code *string `json:"code"`
+	Code string `json:"code"`
 
 	// error message.
 	// Required: true
-	Message *string `json:"message"`
+	Message string `json:"message"`
 }
 
 // Validate validates this error
@@ -48,7 +48,7 @@ func (m *Error) Validate(formats strfmt.Registry) error {
 
 func (m *Error) validateCode(formats strfmt.Registry) error {
 
-	if err := validate.Required("code", "body", m.Code); err != nil {
+	if err := validate.RequiredString("code", "body", m.Code); err != nil {
 		return err
 	}
 
@@ -57,7 +57,7 @@ func (m *Error) validateCode(formats strfmt.Registry) error {
 
 func (m *Error) validateMessage(formats strfmt.Registry) error {
 
-	if err := validate.Required("message", "body", m.Message); err != nil {
+	if err := validate.RequiredString("message", "body", m.Message); err != nil {
 		return err
 	}
 

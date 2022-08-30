@@ -5,6 +5,8 @@ import (
 	"fmt"
 )
 
+const ExecuteSCOpID = 3
+
 type OperationDetails struct {
 	Data     []byte `json:"data"`
 	MaxGas   uint64 `json:"max_gas"`
@@ -23,12 +25,12 @@ type ExecuteSC struct {
 	Coins    uint64
 }
 
-func New(data []byte, maxGas uint64, gasPrice uint64, Coins uint64) *ExecuteSC {
+func New(data []byte, maxGas uint64, gasPrice uint64, coins uint64) *ExecuteSC {
 	return &ExecuteSC{
 		data:     data,
 		maxGas:   maxGas,
 		gasPrice: gasPrice,
-		Coins:    Coins,
+		Coins:    coins,
 	}
 }
 
@@ -47,27 +49,26 @@ func (e *ExecuteSC) Message() []byte {
 	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
 
-	ExecuteSCOperationID := uint64(3)
-
 	// operationId
-	n := binary.PutUvarint(buf, ExecuteSCOperationID)
-	msg = append(msg, buf[:n]...)
+	nbBytes := binary.PutUvarint(buf, ExecuteSCOpID)
+	msg = append(msg, buf[:nbBytes]...)
 
 	// maxGas
-	n = binary.PutUvarint(buf, e.maxGas)
-	msg = append(msg, buf[:n]...)
+	nbBytes = binary.PutUvarint(buf, e.maxGas)
+	msg = append(msg, buf[:nbBytes]...)
 
 	// Coins
-	n = binary.PutUvarint(buf, e.Coins)
-	msg = append(msg, buf[:n]...)
+	nbBytes = binary.PutUvarint(buf, e.Coins)
+	msg = append(msg, buf[:nbBytes]...)
 
 	// GasPrice
-	n = binary.PutUvarint(buf, e.gasPrice)
-	msg = append(msg, buf[:n]...)
+	nbBytes = binary.PutUvarint(buf, e.gasPrice)
+	msg = append(msg, buf[:nbBytes]...)
 
 	// data
-	n = binary.PutUvarint(buf, uint64(len(e.data)))
-	msg = append(msg, buf[:n]...)
+	nbBytes = binary.PutUvarint(buf, uint64(len(e.data)))
+	msg = append(msg, buf[:nbBytes]...)
 	msg = append(msg, e.data...)
+
 	return msg
 }

@@ -7,6 +7,8 @@ import (
 	"github.com/massalabs/thyra/pkg/node/base58"
 )
 
+const TransactionOpID = 0
+
 type OperationDetails struct {
 	Amount           string `json:"amount"`
 	RecipientAddress string `json:"recipient_address"`
@@ -41,18 +43,16 @@ func (t *Transaction) Message() []byte {
 	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
 
-	TransactionOperationID := uint64(0)
-
 	// operationId
-	n := binary.PutUvarint(buf, TransactionOperationID)
-	msg = append(msg, buf[:n]...)
+	nbBytes := binary.PutUvarint(buf, TransactionOpID)
+	msg = append(msg, buf[:nbBytes]...)
 
-	// receipient address
+	// recipient address
 	msg = append(msg, t.recipientAddress...)
 
 	// Amount
-	n = binary.PutUvarint(buf, t.amount)
-	msg = append(msg, buf[:n]...)
+	nbBytes = binary.PutUvarint(buf, t.amount)
+	msg = append(msg, buf[:nbBytes]...)
 
 	return msg
 }

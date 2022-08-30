@@ -35,6 +35,58 @@ func init() {
     "version": "0.0.0"
   },
   "paths": {
+    "/browse/{address}/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "text/html",
+          "text/css",
+          "text/webp",
+          "image/png"
+        ],
+        "operationId": "browse",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Address containing the website.",
+            "name": "address",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource retrieved."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/cmd/executeFunction": {
       "post": {
         "produces": [
@@ -433,20 +485,48 @@ func init() {
         }
       }
     },
-    "/website/{address}/{resource}": {
+    "/my/domains": {
       "get": {
         "produces": [
-          "media type"
+          "application/json"
         ],
-        "operationId": "websiteGet",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Address containing the website.",
-            "name": "address",
-            "in": "path",
-            "required": true
+        "operationId": "myDomains",
+        "responses": {
+          "200": {
+            "description": "Domains returned. May be empty.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Websites"
+              }
+            }
           },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/thyra/wallet/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "text/html",
+          "text/css",
+          "text/webp",
+          "image/png"
+        ],
+        "operationId": "thyraWallet",
+        "parameters": [
           {
             "type": "string",
             "default": "index.html",
@@ -458,7 +538,69 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Resource retrieved."
+            "description": "Page found"
+          }
+        }
+      }
+    },
+    "/thyra/websiteCreator/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "text/html",
+          "text/css",
+          "text/webp",
+          "image/png"
+        ],
+        "operationId": "thyraWebsiteCreator",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
+          }
+        }
+      }
+    },
+    "/websiteCreator/prepare": {
+      "put": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "websiteCreatorPrepare",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "url"
+              ],
+              "properties": {
+                "url": {
+                  "description": "URL without '.', capitals letters and specifics characters",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "New website created.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
           },
           "400": {
             "description": "Bad request.",
@@ -466,8 +608,61 @@ func init() {
               "$ref": "#/definitions/Error"
             }
           },
-          "404": {
-            "description": "Resource not found.",
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/websiteCreator/upload": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "websiteCreatorUpload",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Address where to deploy website. The account must have been prepare to receive a website.",
+            "name": "address",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "description": "Website contents in a ZIP file.",
+            "name": "zipfile",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Website's chunk deployed.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -493,11 +688,13 @@ func init() {
       "properties": {
         "code": {
           "description": "error code.",
-          "type": "string"
+          "type": "string",
+          "x-nullable": false
         },
         "message": {
           "description": "error message.",
-          "type": "string"
+          "type": "string",
+          "x-nullable": false
         }
       }
     },
@@ -554,6 +751,20 @@ func init() {
           "type": "string"
         }
       }
+    },
+    "Websites": {
+      "description": "Websites object (V0).",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Website's address.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Website's name.",
+          "type": "string"
+        }
+      }
     }
   }
 }`))
@@ -575,6 +786,58 @@ func init() {
     "version": "0.0.0"
   },
   "paths": {
+    "/browse/{address}/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "image/png",
+          "text/css",
+          "text/html",
+          "text/webp"
+        ],
+        "operationId": "browse",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Address containing the website.",
+            "name": "address",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource retrieved."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/cmd/executeFunction": {
       "post": {
         "produces": [
@@ -926,20 +1189,48 @@ func init() {
         }
       }
     },
-    "/website/{address}/{resource}": {
+    "/my/domains": {
       "get": {
         "produces": [
-          "media type"
+          "application/json"
         ],
-        "operationId": "websiteGet",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Address containing the website.",
-            "name": "address",
-            "in": "path",
-            "required": true
+        "operationId": "myDomains",
+        "responses": {
+          "200": {
+            "description": "Domains returned. May be empty.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Websites"
+              }
+            }
           },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/thyra/wallet/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "image/png",
+          "text/css",
+          "text/html",
+          "text/webp"
+        ],
+        "operationId": "thyraWallet",
+        "parameters": [
           {
             "type": "string",
             "default": "index.html",
@@ -951,7 +1242,69 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Resource retrieved."
+            "description": "Page found"
+          }
+        }
+      }
+    },
+    "/thyra/websiteCreator/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "image/png",
+          "text/css",
+          "text/html",
+          "text/webp"
+        ],
+        "operationId": "thyraWebsiteCreator",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
+          }
+        }
+      }
+    },
+    "/websiteCreator/prepare": {
+      "put": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "websiteCreatorPrepare",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "url"
+              ],
+              "properties": {
+                "url": {
+                  "description": "URL without '.', capitals letters and specifics characters",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "New website created.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
           },
           "400": {
             "description": "Bad request.",
@@ -959,8 +1312,61 @@ func init() {
               "$ref": "#/definitions/Error"
             }
           },
-          "404": {
-            "description": "Resource not found.",
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/websiteCreator/upload": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "websiteCreatorUpload",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Address where to deploy website. The account must have been prepare to receive a website.",
+            "name": "address",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "description": "Website contents in a ZIP file.",
+            "name": "zipfile",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Website's chunk deployed.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1018,11 +1424,13 @@ func init() {
       "properties": {
         "code": {
           "description": "error code.",
-          "type": "string"
+          "type": "string",
+          "x-nullable": false
         },
         "message": {
           "description": "error message.",
-          "type": "string"
+          "type": "string",
+          "x-nullable": false
         }
       }
     },
@@ -1137,6 +1545,20 @@ func init() {
           "description": "Salt used by the PBKDF that generates the secret key used to protect the key pair's private key.",
           "type": "string",
           "format": "base58check"
+        }
+      }
+    },
+    "Websites": {
+      "description": "Websites object (V0).",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Website's address.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Website's name.",
+          "type": "string"
         }
       }
     }

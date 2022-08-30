@@ -126,6 +126,17 @@ func ReadWallets() (wallets []Wallet, e error) {
 	return wallets, nil
 }
 
+func FirstWallet() (Wallet, error) {
+	wallets, err := ReadWallets()
+	if err != nil {
+		return Wallet{}, err
+	}
+
+	wallet := wallets[0]
+
+	return wallet, nil
+}
+
 func New(nickname string) (*Wallet, error) {
 	pubKey, privKey, err := ed25519.GenerateKey(nil)
 	if err != nil {

@@ -9,22 +9,20 @@ import (
 	"github.com/jessevdk/go-flags"
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/int/apihandler/cmd"
-	"github.com/massalabs/thyra/int/apihandler/wallet"
+	"github.com/massalabs/thyra/int/api"
+	"github.com/massalabs/thyra/int/api/cmd"
+	"github.com/massalabs/thyra/int/api/wallet"
 )
 
-//TODO Manage file generation in an other way, generateFiles is not working while deployed
 func main() {
-	// Generate files
-	//front.GenerateFiles()
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	api := operations.NewThyraServerAPI(swaggerSpec)
-	server := restapi.NewServer(api)
+	localAPI := operations.NewThyraServerAPI(swaggerSpec)
+	server := restapi.NewServer(localAPI)
 
 	defer func() {
 		if err := server.Shutdown(); err != nil {
@@ -49,12 +47,22 @@ func main() {
 
 	var walletStorage sync.Map
 
-	api.CmdExecuteFunctionHandler = cmd.NewExecuteFunction(&walletStorage)
+	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunction(&walletStorage)
 
-	api.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
-	api.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
-	api.MgmtWalletImportHandler = wallet.NewImport(&walletStorage)
-	api.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage)
+	localAPI.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
+	localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
+	localAPI.MgmtWalletImportHandler = wallet.NewImport(&walletStorage)
+	localAPI.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage)
+
+	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(api.PrepareForWebsiteHandler)
+	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(api.UploadWebsiteHandler)
+
+	localAPI.MyDomainsHandler = operations.MyDomainsHandlerFunc(api.DomainsHandler)
+
+	localAPI.BrowseHandler = operations.BrowseHandlerFunc(api.BrowseHandler)
+
+	localAPI.ThyraWalletHandler = operations.ThyraWalletHandlerFunc(api.ThyraWalletHandler)
+	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(api.ThyraWebsiteCreatorHandler)
 
 	// Start server which listening
 	server.ConfigureAPI()

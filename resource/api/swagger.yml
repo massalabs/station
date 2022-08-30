@@ -11,6 +11,46 @@ schemes:
   - https
 swagger: '2.0'
 paths:
+  /thyra/wallet/{resource}:
+    get:
+      operationId: thyraWallet
+      produces:
+        - application/json
+        - application/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          type: string
+          default: index.html
+          required: true
+          description: Website resource.
+      responses:
+        '200':
+          description: Page found
+  /thyra/websiteCreator/{resource}:
+    get:
+      operationId: thyraWebsiteCreator
+      produces:
+        - application/json
+        - application/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          type: string
+          default: index.html
+          required: true
+          description: Website resource.
+      responses:
+        '200':
+          description: Page found
   /mgmt/wallet:
     get:
       operationId: mgmtWalletGet
@@ -114,6 +154,95 @@ paths:
           schema:
             $ref: '#/definitions/Error'
         '404':
+          description: Bad request.
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: '#/definitions/Error'
+  /my/domains:
+    get:
+      operationId: myDomains
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Domains returned. May be empty.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Websites'
+        '400':
+          description: Bad request.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: '#/definitions/Error'
+  /websiteCreator/prepare:
+    put:
+      operationId: websiteCreatorPrepare
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - url
+            properties:
+              url:
+                description: URL without '.', capitals letters and specifics characters
+                type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: New website created.
+          schema:
+            $ref: '#/definitions/Websites'
+        '400':
+          description: Bad request.
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: '#/definitions/Error'
+  /websiteCreator/upload:
+    post:
+      operationId: websiteCreatorUpload
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: address
+          type: string
+          required: true
+          description: Address where to deploy website. The account must have been prepare to receive a website.
+        - in: formData
+          name: zipfile
+          type: file
+          required: true
+          description: Website contents in a ZIP file.
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Website's chunk deployed.
+          schema:
+            $ref: '#/definitions/Websites'
+        '400':
           description: Bad request.
           schema:
             $ref: '#/definitions/Error'
@@ -277,9 +406,15 @@ paths:
                       type: integer
                     gains:
                       type: number
-  /website/{address}/{resource}:
+  /browse/{address}/{resource}:
     get:
-      operationId: websiteGet
+      operationId: browse
+      produces:
+        - application/json
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
       parameters:
         - in: path
           name: address
@@ -292,8 +427,6 @@ paths:
           default: index.html
           required: true
           description: Website resource.
-      produces:
-        - media type
       responses:
         '200':
           description: Resource retrieved.
@@ -320,9 +453,11 @@ definitions:
       code:
         description: error code.
         type: string
+        x-nullable: false
       message:
         description: error message.
         type: string
+        x-nullable: false
   Wallet:
     type: object
     description: Wallet object (V0).
@@ -364,3 +499,13 @@ definitions:
               description: Nonce used by the AES-GCM algorithm used to protect the key pair's private key.
               type: string
               format: base58check
+  Websites:
+    type: object
+    description: Websites object (V0).
+    properties:
+      name:
+        description: Website's name.
+        type: string
+      address:
+        description: Website's address.
+        type: string

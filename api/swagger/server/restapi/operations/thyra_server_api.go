@@ -39,13 +39,24 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		APIKeyAuthenticator: security.APIKeyAuth,
 		BearerAuthenticator: security.BearerAuth,
 
-		JSONConsumer: runtime.JSONConsumer(),
+		JSONConsumer:          runtime.JSONConsumer(),
+		MultipartformConsumer: runtime.DiscardConsumer,
 
+		BinProducer: runtime.ByteStreamProducer(),
+		CSSProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
+			return errors.NotImplemented("css producer has not yet been implemented")
+		}),
+		HTMLProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
+			return errors.NotImplemented("html producer has not yet been implemented")
+		}),
 		JSONProducer: runtime.JSONProducer(),
-		MediaTypeProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
-			return errors.NotImplemented("mediaType producer has not yet been implemented")
+		TextWebpProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
+			return errors.NotImplemented("textWebp producer has not yet been implemented")
 		}),
 
+		BrowseHandler: BrowseHandlerFunc(func(params BrowseParams) middleware.Responder {
+			return middleware.NotImplemented("operation Browse has not yet been implemented")
+		}),
 		CmdExecuteFunctionHandler: CmdExecuteFunctionHandlerFunc(func(params CmdExecuteFunctionParams) middleware.Responder {
 			return middleware.NotImplemented("operation CmdExecuteFunction has not yet been implemented")
 		}),
@@ -64,8 +75,20 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		MgmtWalletImportHandler: MgmtWalletImportHandlerFunc(func(params MgmtWalletImportParams) middleware.Responder {
 			return middleware.NotImplemented("operation MgmtWalletImport has not yet been implemented")
 		}),
-		WebsiteGetHandler: WebsiteGetHandlerFunc(func(params WebsiteGetParams) middleware.Responder {
-			return middleware.NotImplemented("operation WebsiteGet has not yet been implemented")
+		MyDomainsHandler: MyDomainsHandlerFunc(func(params MyDomainsParams) middleware.Responder {
+			return middleware.NotImplemented("operation MyDomains has not yet been implemented")
+		}),
+		ThyraWalletHandler: ThyraWalletHandlerFunc(func(params ThyraWalletParams) middleware.Responder {
+			return middleware.NotImplemented("operation ThyraWallet has not yet been implemented")
+		}),
+		ThyraWebsiteCreatorHandler: ThyraWebsiteCreatorHandlerFunc(func(params ThyraWebsiteCreatorParams) middleware.Responder {
+			return middleware.NotImplemented("operation ThyraWebsiteCreator has not yet been implemented")
+		}),
+		WebsiteCreatorPrepareHandler: WebsiteCreatorPrepareHandlerFunc(func(params WebsiteCreatorPrepareParams) middleware.Responder {
+			return middleware.NotImplemented("operation WebsiteCreatorPrepare has not yet been implemented")
+		}),
+		WebsiteCreatorUploadHandler: WebsiteCreatorUploadHandlerFunc(func(params WebsiteCreatorUploadParams) middleware.Responder {
+			return middleware.NotImplemented("operation WebsiteCreatorUpload has not yet been implemented")
 		}),
 	}
 }
@@ -98,14 +121,28 @@ type ThyraServerAPI struct {
 	// JSONConsumer registers a consumer for the following mime types:
 	//   - application/json
 	JSONConsumer runtime.Consumer
+	// MultipartformConsumer registers a consumer for the following mime types:
+	//   - multipart/form-data
+	MultipartformConsumer runtime.Consumer
 
+	// BinProducer registers a producer for the following mime types:
+	//   - image/png
+	BinProducer runtime.Producer
+	// CSSProducer registers a producer for the following mime types:
+	//   - text/css
+	CSSProducer runtime.Producer
+	// HTMLProducer registers a producer for the following mime types:
+	//   - text/html
+	HTMLProducer runtime.Producer
 	// JSONProducer registers a producer for the following mime types:
 	//   - application/json
 	JSONProducer runtime.Producer
-	// MediaTypeProducer registers a producer for the following mime types:
-	//   - media type
-	MediaTypeProducer runtime.Producer
+	// TextWebpProducer registers a producer for the following mime types:
+	//   - text/webp
+	TextWebpProducer runtime.Producer
 
+	// BrowseHandler sets the operation handler for the browse operation
+	BrowseHandler BrowseHandler
 	// CmdExecuteFunctionHandler sets the operation handler for the cmd execute function operation
 	CmdExecuteFunctionHandler CmdExecuteFunctionHandler
 	// KpiHandler sets the operation handler for the kpi operation
@@ -118,8 +155,16 @@ type ThyraServerAPI struct {
 	MgmtWalletGetHandler MgmtWalletGetHandler
 	// MgmtWalletImportHandler sets the operation handler for the mgmt wallet import operation
 	MgmtWalletImportHandler MgmtWalletImportHandler
-	// WebsiteGetHandler sets the operation handler for the website get operation
-	WebsiteGetHandler WebsiteGetHandler
+	// MyDomainsHandler sets the operation handler for the my domains operation
+	MyDomainsHandler MyDomainsHandler
+	// ThyraWalletHandler sets the operation handler for the thyra wallet operation
+	ThyraWalletHandler ThyraWalletHandler
+	// ThyraWebsiteCreatorHandler sets the operation handler for the thyra website creator operation
+	ThyraWebsiteCreatorHandler ThyraWebsiteCreatorHandler
+	// WebsiteCreatorPrepareHandler sets the operation handler for the website creator prepare operation
+	WebsiteCreatorPrepareHandler WebsiteCreatorPrepareHandler
+	// WebsiteCreatorUploadHandler sets the operation handler for the website creator upload operation
+	WebsiteCreatorUploadHandler WebsiteCreatorUploadHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -192,14 +237,29 @@ func (o *ThyraServerAPI) Validate() error {
 	if o.JSONConsumer == nil {
 		unregistered = append(unregistered, "JSONConsumer")
 	}
+	if o.MultipartformConsumer == nil {
+		unregistered = append(unregistered, "MultipartformConsumer")
+	}
 
+	if o.BinProducer == nil {
+		unregistered = append(unregistered, "BinProducer")
+	}
+	if o.CSSProducer == nil {
+		unregistered = append(unregistered, "CSSProducer")
+	}
+	if o.HTMLProducer == nil {
+		unregistered = append(unregistered, "HTMLProducer")
+	}
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
 	}
-	if o.MediaTypeProducer == nil {
-		unregistered = append(unregistered, "MediaTypeProducer")
+	if o.TextWebpProducer == nil {
+		unregistered = append(unregistered, "TextWebpProducer")
 	}
 
+	if o.BrowseHandler == nil {
+		unregistered = append(unregistered, "BrowseHandler")
+	}
 	if o.CmdExecuteFunctionHandler == nil {
 		unregistered = append(unregistered, "CmdExecuteFunctionHandler")
 	}
@@ -218,8 +278,20 @@ func (o *ThyraServerAPI) Validate() error {
 	if o.MgmtWalletImportHandler == nil {
 		unregistered = append(unregistered, "MgmtWalletImportHandler")
 	}
-	if o.WebsiteGetHandler == nil {
-		unregistered = append(unregistered, "WebsiteGetHandler")
+	if o.MyDomainsHandler == nil {
+		unregistered = append(unregistered, "MyDomainsHandler")
+	}
+	if o.ThyraWalletHandler == nil {
+		unregistered = append(unregistered, "ThyraWalletHandler")
+	}
+	if o.ThyraWebsiteCreatorHandler == nil {
+		unregistered = append(unregistered, "ThyraWebsiteCreatorHandler")
+	}
+	if o.WebsiteCreatorPrepareHandler == nil {
+		unregistered = append(unregistered, "WebsiteCreatorPrepareHandler")
+	}
+	if o.WebsiteCreatorUploadHandler == nil {
+		unregistered = append(unregistered, "WebsiteCreatorUploadHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -252,6 +324,8 @@ func (o *ThyraServerAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Co
 		switch mt {
 		case "application/json":
 			result["application/json"] = o.JSONConsumer
+		case "multipart/form-data":
+			result["multipart/form-data"] = o.MultipartformConsumer
 		}
 
 		if c, ok := o.customConsumers[mt]; ok {
@@ -267,10 +341,16 @@ func (o *ThyraServerAPI) ProducersFor(mediaTypes []string) map[string]runtime.Pr
 	result := make(map[string]runtime.Producer, len(mediaTypes))
 	for _, mt := range mediaTypes {
 		switch mt {
+		case "image/png":
+			result["image/png"] = o.BinProducer
+		case "text/css":
+			result["text/css"] = o.CSSProducer
+		case "text/html":
+			result["text/html"] = o.HTMLProducer
 		case "application/json":
 			result["application/json"] = o.JSONProducer
-		case "media type":
-			result["media type"] = o.MediaTypeProducer
+		case "text/webp":
+			result["text/webp"] = o.TextWebpProducer
 		}
 
 		if p, ok := o.customProducers[mt]; ok {
@@ -311,6 +391,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/browse/{address}/{resource}"] = NewBrowse(o.context, o.BrowseHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -338,7 +422,23 @@ func (o *ThyraServerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/website/{address}/{resource}"] = NewWebsiteGet(o.context, o.WebsiteGetHandler)
+	o.handlers["GET"]["/my/domains"] = NewMyDomains(o.context, o.MyDomainsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/thyra/wallet/{resource}"] = NewThyraWallet(o.context, o.ThyraWalletHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/thyra/websiteCreator/{resource}"] = NewThyraWebsiteCreator(o.context, o.ThyraWebsiteCreatorHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/websiteCreator/prepare"] = NewWebsiteCreatorPrepare(o.context, o.WebsiteCreatorPrepareHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/websiteCreator/upload"] = NewWebsiteCreatorUpload(o.context, o.WebsiteCreatorUploadHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

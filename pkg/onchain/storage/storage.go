@@ -44,12 +44,12 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {
-		uzb, err := readZipFile(zipFile)
+		rsc, err := readZipFile(zipFile)
 		if err != nil {
 			return nil, err
 		}
 
-		m[zipFile.Name] = uzb
+		m[zipFile.Name] = rsc
 	}
 
 	return m, nil

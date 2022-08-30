@@ -12,10 +12,14 @@
 //
 //  Consumes:
 //    - application/json
+//    - multipart/form-data
 //
 //  Produces:
+//    - image/png
+//    - text/css
+//    - text/html
 //    - application/json
-//    - media type
+//    - text/webp
 //
 // swagger:meta
 package restapi
