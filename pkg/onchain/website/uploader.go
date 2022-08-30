@@ -2,8 +2,8 @@ package website
 
 import (
 	"encoding/json"
+	"fmt"
 
-	"github.com/massalabs/thyra/pkg/my"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/onchain"
@@ -24,25 +24,14 @@ func PrepareForUpload(url string, walletNickname string) (string, error) {
 	// Prepare address to webstorage.
 	scAddress, err := onchain.DeploySC(client, *wallet, []byte(sc.WebsiteStorer))
 	if err != nil {
+		fmt.Println(err)
 		return "", err
 	}
 
 	// Set DNS.
 	_, err = dns.SetRecord(client, *wallet, url, scAddress)
 	if err != nil {
-		return "", err
-	}
-
-	// Add new record to my.Domains and save it for next time.
-	dom, err := my.NewDomains()
-	if err != nil {
-		return "", err
-	}
-
-	dom.Add(my.Domain{URL: url, Address: scAddress})
-
-	err = dom.Save()
-	if err != nil {
+		fmt.Println(err)
 		return "", err
 	}
 
