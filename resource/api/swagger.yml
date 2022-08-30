@@ -51,46 +51,6 @@ paths:
       responses:
         '200':
           description: Page found
-  /thyra/wallet/{resource}:
-    get:
-      operationId: thyraWallet
-      produces:
-        - application/json
-        - application/javascript
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
-      parameters:
-        - in: path
-          name: resource
-          type: string
-          default: index.html
-          required: true
-          description: Website resource.
-      responses:
-        '200':
-          description: Page found
-  /thyra/websiteCreator/{resource}:
-    get:
-      operationId: thyraWebsiteCreator
-      produces:
-        - application/json
-        - application/javascript
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
-      parameters:
-        - in: path
-          name: resource
-          type: string
-          default: index.html
-          required: true
-          description: Website resource.
-      responses:
-        '200':
-          description: Page found
   /mgmt/wallet:
     get:
       operationId: mgmtWalletGet
