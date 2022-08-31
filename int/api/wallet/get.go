@@ -17,23 +17,26 @@ type walletGet struct {
 	walletStorage *sync.Map
 }
 
-// TODO Clean the struct mapping here + correct KeyPairs not returned & Panic(error)
+// TODO Clean the struct mapping here
 func (c *walletGet) Handle(params operations.MgmtWalletGetParams) middleware.Responder {
 
 	wallets, err := wallet.ReadWallets()
-	var walll []*models.Wallet
+	if err != nil {
+		return operations.NewMgmtWalletGetInternalServerError().WithPayload(
+			&models.Error{
+				Code:    errorCodeWalletGetWallets,
+				Message: err.Error(),
+			})
+	}
+	var wal []*models.Wallet
 
 	for i := 0; i < len(wallets); i++ {
 		walletss := &models.Wallet{
 			Nickname: &wallets[i].Nickname,
 			Address:  &wallets[i].Address,
 			KeyPairs: []*models.WalletKeyPairsItems0{}}
-		walll = append(walll, walletss)
+		wal = append(wal, walletss)
 	}
 
-	if err != nil {
-		panic(err)
-	}
-
-	return operations.NewMgmtWalletGetOK().WithPayload(walll)
+	return operations.NewMgmtWalletGetOK().WithPayload(wal)
 }
