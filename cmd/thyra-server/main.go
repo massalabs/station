@@ -30,8 +30,9 @@ func main() {
 		}
 	}()
 
-	server.Port = 80
-	server.TLSPort = 443
+	flag.IntVar(&server.Port, "http-port", 80, "HTTP port to listen to")
+
+	flag.IntVar(&server.TLSPort, "https-port", 443, "HTTPS port to listen to")
 
 	certFilePtr := flag.String("tls-certificate", "", "path to certificate file")
 	keyFilePtr := flag.String("tls-key", "", "path to key file")
