@@ -7,7 +7,6 @@ let nextFileToUpload;
 getWallets();
 getWebsiteDeployerSC();
 initializeDefaultWallet();
-setupModal();
 
 // Write the default wallet text in wallet popover component
 async function getWebsiteDeployerSC() {
@@ -26,7 +25,7 @@ async function getWebsiteDeployerSC() {
 			deployers = websites.data;
 		})
 		.catch((e) => {
-			errorAlert(e.response.data.code);
+			errorAlert(e.response.data.message);
 		});
 }
 
@@ -50,28 +49,6 @@ function getDefaultWallet() {
 		}
 	});
 	return defaultWallet;
-}
-
-function setupModal() {
-	$('#passwordModal').on('shown.bs.modal', function () {
-		$('#passwordModal').trigger('focus');
-	});
-}
-
-function setTxType(txType) {
-	actualTxType = txType;
-}
-
-async function callTx() {
-	const passwordValue = $('#walletPassword').val();
-
-	if (actualTxType === 'deployWebsiteCreator') {
-		deployWebsiteDeployerSC(passwordValue);
-	}
-	if (actualTxType.includes('uploadWebsiteCreator')) {
-		const websiteIndex = actualTxType.split('uploadWebsiteCreator')[1];
-		uploadWebsite(nextFileToUpload, websiteIndex, passwordValue);
-	}
 }
 
 // open file upload
@@ -147,7 +124,7 @@ async function getWallets() {
 		});
 }
 
-async function deployWebsiteDeployerSC(password) {
+async function deployWebsiteDeployerSC() {
 	let defaultWallet = getDefaultWallet();
 	const dnsNameInputValue = document.getElementById('websiteName').value;
 
@@ -156,15 +133,7 @@ async function deployWebsiteDeployerSC(password) {
 	} else {
 		document.getElementsByClassName('loading')[0].style.display = 'inline-block';
 		axios
-			.put(
-				'/websiteCreator/prepare/',
-				{ url: dnsNameInputValue, nickname: defaultWallet },
-				{
-					headers: {
-						Authorization: password,
-					},
-				}
-			)
+			.put('/websiteCreator/prepare/', { url: dnsNameInputValue, nickname: defaultWallet })
 			.then((operation) => {
 				document.getElementsByClassName('loading')[0].style.display = 'none';
 				successMessage('Contract deployed to address ' + operation.data.address);
@@ -172,7 +141,7 @@ async function deployWebsiteDeployerSC(password) {
 			})
 			.catch((e) => {
 				document.getElementsByClassName('loading')[0].style.display = 'none';
-				errorAlert(e.response.data.code);
+				errorAlert(e.response.data.message);
 			});
 	}
 }
@@ -207,13 +176,11 @@ function tableInsert(resp, count) {
 	document.getElementById(`fileid${count}`).addEventListener('change', function (evt) {
 		let files = evt.target.files; // get files
 		nextFileToUpload = files[0];
-
-		setTxType('uploadWebsiteCreator' + count);
-		$('#passwordModal').modal('show');
+		uploadWebsite(nextFileToUpload, count);
 	});
 }
 
-function uploadWebsite(file, count, password) {
+function uploadWebsite(file, count) {
 	let defaultWallet = getDefaultWallet();
 	const bodyFormData = new FormData();
 	bodyFormData.append('zipfile', file);
@@ -224,10 +191,6 @@ function uploadWebsite(file, count, password) {
 		url: `/websiteCreator/upload`,
 		method: 'POST',
 		data: bodyFormData,
-		headers: {
-			'Content-Type': 'multipart/form-data',
-			Authorization: password,
-		},
 	})
 		.then((operation) => {
 			document.getElementsByClassName('loading' + count)[0].style.display = 'none';
@@ -235,6 +198,6 @@ function uploadWebsite(file, count, password) {
 		})
 		.catch((e) => {
 			document.getElementsByClassName('loading' + count)[0].style.display = 'none';
-			errorAlert(e.response.data.code);
+			errorAlert(e.response.data.message);
 		});
 }

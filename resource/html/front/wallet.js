@@ -30,7 +30,7 @@ async function importWallet(wallet) {
 			wallets.push(wallet);
 		})
 		.catch((e) => {
-			errorAlert(e.response.data.code);
+			errorAlert(e.response.data.message);
 		});
 }
 
@@ -67,7 +67,7 @@ function createWallet() {
 			wallets.push(resp.data);
 		})
 		.catch((e) => {
-			errorAlert(e.response.data.code);
+			errorAlert(e.response.data.message);
 		});
 }
 
@@ -124,7 +124,7 @@ function deleteRow(element) {
 			wallets = wallets.filter((wallet) => wallet.nickname != nickname);
 		})
 		.catch((e) => {
-			errorAlert(e.response.data.code);
+			errorAlert(e.response.data.message);
 		});
 
 	document.getElementById('user-wallet-table').deleteRow(rowIndex);

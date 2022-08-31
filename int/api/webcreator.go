@@ -7,6 +7,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/gui"
 	"github.com/massalabs/thyra/pkg/onchain/website"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
@@ -22,8 +23,9 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 					Message: err.Error(),
 				})
 	}
+	password := gui.Password(*params.Body.Nickname)
 
-	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
+	err = wallet.Unprotect(password, 0)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
@@ -62,8 +64,8 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 					Message: err.Error(),
 				})
 	}
-
-	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
+	password := gui.Password(params.Nickname)
+	err = wallet.Unprotect(password, 0)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(

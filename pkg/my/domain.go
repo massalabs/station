@@ -9,8 +9,6 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-const domainFile = "deployers.json"
-
 type Domain struct {
 	URL     string `json:"dnsName"`
 	Address string `json:"address"`
