@@ -11,7 +11,7 @@ import (
 )
 
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
-	address, err := website.PrepareForUpload(*params.Body.URL, *params.Body.Nickname)
+	address, err := website.PrepareForUpload(params.Body.URL, params.Body.Nickname)
 
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
@@ -25,7 +25,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 	return operations.NewWebsiteCreatorPrepareOK().
 		WithPayload(
 			&models.Websites{
-				Name:    *params.Body.URL,
+				Name:    params.Body.URL,
 				Address: address,
 			})
 }

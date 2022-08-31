@@ -50,10 +50,9 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	responses := []*models.Websites{}
 	contractAddresses, err := node.DatastoreEntries(client, params)
 
-	contractAddressess := *contractAddresses
 	for i := 0; i < len(domainNames); i++ {
 		response := models.Websites{
-			Address: string(contractAddressess[i].CandidateValue),
+			Address: string(contractAddresses[i].CandidateValue),
 			Name:    domainNames[i],
 		}
 		responses = append(responses, &response)

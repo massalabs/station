@@ -648,11 +648,13 @@ func init() {
               "properties": {
                 "nickname": {
                   "description": "Wallet's nickname to be used for preparing the website",
-                  "type": "string"
+                  "type": "string",
+                  "x-nullable": false
                 },
                 "url": {
                   "description": "URL without '.', capitals letters and specifics characters",
-                  "type": "string"
+                  "type": "string",
+                  "x-nullable": false
                 }
               }
             }
@@ -1422,11 +1424,13 @@ func init() {
               "properties": {
                 "nickname": {
                   "description": "Wallet's nickname to be used for preparing the website",
-                  "type": "string"
+                  "type": "string",
+                  "x-nullable": false
                 },
                 "url": {
                   "description": "URL without '.', capitals letters and specifics characters",
-                  "type": "string"
+                  "type": "string",
+                  "x-nullable": false
                 }
               }
             }

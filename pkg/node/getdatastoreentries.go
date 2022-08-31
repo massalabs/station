@@ -47,11 +47,11 @@ func DatastoreEntry(client *Client, address string, key string) (*DatastoreEntry
 	if err != nil {
 		return nil, err
 	}
-	result := *(response)
-	return &result[0], nil
+
+	return &response[0], nil
 }
 
-func DatastoreEntries(client *Client, params []GetDatastoreEntriesString) (*[]DatastoreEntryResponse, error) {
+func DatastoreEntries(client *Client, params []GetDatastoreEntriesString) ([]DatastoreEntryResponse, error) {
 	entries := [][]getDatastoreEntries{
 		{},
 	}
@@ -88,5 +88,5 @@ func DatastoreEntries(client *Client, params []GetDatastoreEntriesString) (*[]Da
 		return nil, errors.New("no entry")
 	}
 
-	return &entry, nil
+	return entry, nil
 }
