@@ -25,7 +25,7 @@ async function getWebsiteDeployerSC() {
 			deployers = websites.data;
 		})
 		.catch((e) => {
-			errorAlert(e.response.data.message);
+			errorAlert(getErrorMessage(e.response.data.code));
 		});
 }
 
@@ -120,7 +120,7 @@ async function getWallets() {
 			}
 		})
 		.catch((e) => {
-			errorAlert(e);
+			errorAlert(getErrorMessage(e.response.data.code));
 		});
 }
 
@@ -141,7 +141,7 @@ async function deployWebsiteDeployerSC() {
 			})
 			.catch((e) => {
 				document.getElementsByClassName('loading')[0].style.display = 'none';
-				errorAlert(e.response.data.message);
+				errorAlert(getErrorMessage(e.response.data.code));
 			});
 	}
 }
@@ -198,6 +198,6 @@ function uploadWebsite(file, count) {
 		})
 		.catch((e) => {
 			document.getElementsByClassName('loading' + count)[0].style.display = 'none';
-			errorAlert(e.response.data.message);
+			errorAlert(getErrorMessage(e.response.data.code));
 		});
 }

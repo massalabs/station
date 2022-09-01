@@ -24,6 +24,9 @@ func ThyraWalletHandler(params operations.ThyraWalletParams) middleware.Responde
 		body = front.LogoBanner
 	case "logo.png":
 		body = front.Logo
+	case "errors.js":
+		body = front.Errors
+
 	}
 
 	return NewCustomResponder([]byte(body), contentType(params.Resource), http.StatusOK)
@@ -43,6 +46,8 @@ func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) mid
 		body = front.LogoBanner
 	case "logo.png":
 		body = front.Logo
+	case "errors.js":
+		body = front.Errors
 	}
 
 	return NewCustomResponder([]byte(body), contentType(params.Resource), http.StatusOK)

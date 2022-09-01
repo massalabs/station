@@ -195,27 +195,6 @@ func New(nickname string) (*Wallet, error) {
 	return &wallet, nil
 }
 
-func Update(wallet Wallet) (err error) {
-	wallets, err := ReadWallets()
-	if err != nil {
-		return err
-	}
-
-	wallets = append(wallets, wallet)
-
-	bytesOutput, err := json.Marshal(wallets)
-	if err != nil {
-		return err
-	}
-
-	err = os.WriteFile("wallet.json", bytesOutput, 0o644)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func Delete(nickname string) (err error) {
 	err = os.Remove("wallet_" + nickname + ".json")
 	if err != nil {
