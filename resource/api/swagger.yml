@@ -166,7 +166,7 @@ paths:
           schema:
             $ref: '#/definitions/Error'
     get:
-      operationId: mgmtWalletGetter
+      operationId: mgmtWalletGetOne
       parameters:
         - in: path
           name: nickname
@@ -198,7 +198,7 @@ paths:
             $ref: '#/definitions/Error'
   /my/domains/{nickname}:
     get:
-      operationId: myDomainsGetter
+      operationId: myDomains
       parameters:
         - in: path
           name: nickname
@@ -238,11 +238,9 @@ paths:
               url:
                 description: URL without '.', capitals letters and specifics characters
                 type: string
-                x-nullable: false
               nickname:
                 description: Wallet's nickname to be used for preparing the website
                 type: string
-                x-nullable: false
       produces:
         - application/json
       responses:

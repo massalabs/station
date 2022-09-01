@@ -9,6 +9,14 @@ body {
   background :linear-gradient(90deg,#172230 50.03%,#0c1219 85.82%);
 }
 
+a {
+  color: white;
+}
+
+a:hover {
+  color: rgb(164, 164, 164);
+}
+
 .massa-logo-banner{
 width: 170px;
 }
@@ -95,7 +103,7 @@ transform: translate(-50%, 0);
 margin: auto;
 width: 600px;
 padding: 10px 0;
-background-color: mediumblue;
+background-color: hsla(0,0%,100%,.05);
 border : none;
 text-align: center;
 color:white;
@@ -199,4 +207,16 @@ td,th {
 @-webkit-keyframes spin {
 0%  {-webkit-transform: rotate(0deg);}
 100% {-webkit-transform: rotate(360deg);}	
+}
+
+/* PASSWORD MODAL */
+.modal-content{
+  background: linear-gradient(90deg,#172230 50.03%,#0c1219 85.82%);
+}
+
+.close{
+  background: transparent;
+}
+.modal-footer{
+  border-top: none;
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-func CallFunction(client *node.Client, wallet *wallet.Wallet,
+func CallFunction(client *node.Client, wallet wallet.Wallet,
 	addr []byte, function string, parameter []byte) (string, error) {
 	callSC := callsc.New(addr, function, parameter, 0, 700000000, 0, 0)
 
@@ -44,7 +44,7 @@ func CallFunction(client *node.Client, wallet *wallet.Wallet,
 	return operationID, errors.New("timeout")
 }
 
-func DeploySC(client *node.Client, wallet *wallet.Wallet, contract []byte) (string, error) {
+func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (string, error) {
 	exeSC := executesc.New([]byte(contract), 700000, 0, 0)
 
 	id, err := sendOperation.Call(client, 2, 0, exeSC, wallet.KeyPairs[0].PublicKey, wallet.KeyPairs[0].PrivateKey)

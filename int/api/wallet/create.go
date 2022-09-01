@@ -1,6 +1,8 @@
 package wallet
 
 import (
+	"encoding/json"
+	"os"
 	"sync"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -54,6 +56,24 @@ func (c *walletCreate) Handle(params operations.MgmtWalletCreateParams) middlewa
 	}
 
 	err = newWallet.Protect(*params.Body.Password, 0)
+	if err != nil {
+		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
+			&models.Error{
+				Code:    errorCodeWalletCreateNew,
+				Message: err.Error(),
+			})
+	}
+
+	bytesOutput, err := json.Marshal(newWallet)
+	if err != nil {
+		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
+			&models.Error{
+				Code:    errorCodeWalletCreateNew,
+				Message: err.Error(),
+			})
+	}
+
+	err = os.WriteFile("wallet_"+*params.Body.Nickname+".json", bytesOutput, 0o644)
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{

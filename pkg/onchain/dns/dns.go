@@ -36,7 +36,7 @@ type setRecord struct {
 	Address string `json:"address"`
 }
 
-func SetRecord(client *node.Client, wallet *wallet.Wallet, url string, smartContract string) (string, error) {
+func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContract string) (string, error) {
 	addr, _, err := base58.VersionedCheckDecode(DnsRawAddress[1:])
 	if err != nil {
 		return "", err
@@ -55,7 +55,7 @@ func SetRecord(client *node.Client, wallet *wallet.Wallet, url string, smartCont
 	return onchain.CallFunction(client, wallet, addr, "setResolver", param)
 }
 
-func SetRecordManager(client *node.Client, wallet *wallet.Wallet) (string, error) {
+func SetRecordManager(client *node.Client, wallet wallet.Wallet) (string, error) {
 	addr, _, err := base58.VersionedCheckDecode(DnsRawAddress[1:])
 	if err != nil {
 		return "", err

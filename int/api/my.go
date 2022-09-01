@@ -8,7 +8,7 @@ import (
 	"github.com/massalabs/thyra/pkg/node"
 )
 
-func DomainsHandler(params operations.MyDomainsGetterParams) middleware.Responder {
+func DomainsHandler(params operations.MyDomainsParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
 	myDomainNames, err := my.Domains(client, params.Nickname)

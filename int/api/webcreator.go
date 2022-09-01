@@ -8,11 +8,32 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/onchain/website"
+	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
-	address, err := website.PrepareForUpload(params.Body.URL, params.Body.Nickname)
 
+	wallet, err := wallet.Load(*params.Body.Nickname)
+	if err != nil {
+		return operations.NewWebsiteCreatorPrepareInternalServerError().
+			WithPayload(
+				&models.Error{
+					Code:    errorCodeWebCreatorPrepare,
+					Message: err.Error(),
+				})
+	}
+
+	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
+	if err != nil {
+		return operations.NewWebsiteCreatorPrepareInternalServerError().
+			WithPayload(
+				&models.Error{
+					Code:    errorCodeWalletWrongPassword,
+					Message: err.Error(),
+				})
+	}
+
+	address, err := website.PrepareForUpload(*params.Body.URL, wallet)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
@@ -25,12 +46,32 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 	return operations.NewWebsiteCreatorPrepareOK().
 		WithPayload(
 			&models.Websites{
-				Name:    params.Body.URL,
+				Name:    *params.Body.URL,
 				Address: address,
 			})
 }
 
 func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middleware.Responder {
+
+	wallet, err := wallet.Load(params.Nickname)
+	if err != nil {
+		return operations.NewWebsiteCreatorPrepareInternalServerError().
+			WithPayload(
+				&models.Error{
+					Code:    errorCodeWebCreatorPrepare,
+					Message: err.Error(),
+				})
+	}
+
+	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
+	if err != nil {
+		return operations.NewWebsiteCreatorPrepareInternalServerError().
+			WithPayload(
+				&models.Error{
+					Code:    errorCodeWalletWrongPassword,
+					Message: err.Error(),
+				})
+	}
 	archive, err := ioutil.ReadAll(params.Zipfile)
 	if err != nil {
 		return operations.NewFillWebPostInternalServerError().
@@ -42,7 +83,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 
 	b64 := base64.StdEncoding.EncodeToString(archive)
 
-	_, err = website.Upload(params.Address, b64, params.Nickname)
+	_, err = website.Upload(params.Address, b64, wallet)
 	if err != nil {
 		return operations.NewFillWebPostInternalServerError().
 			WithPayload(&models.Error{
