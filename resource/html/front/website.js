@@ -1,12 +1,31 @@
 getWallets();
 getWebsiteDeployerSC();
+initializeDefaultWallet();
 
-let wallets = [];
+let gWallets = [];
 let deployers = [];
+
+function getDefaultWallet() {
+	let defaultWallet = '';
+	const cookies = document.cookie.split(';');
+	cookies.forEach((cookie) => {
+		const keyValue = cookie.split('=');
+		if (keyValue[0] === 'defaultWallet') {
+			defaultWallet = keyValue[1];
+		}
+	});
+	return defaultWallet;
+}
+function initializeDefaultWallet() {
+	let defaultWallet = getDefaultWallet();
+	if (defaultWallet === '') {
+		defaultWallet = 'Connect';
+	}
+	$('.popover__title').html(defaultWallet);
+}
 
 // open file upload
 function openDialog(count) {
-	console.log(count);
 	document.getElementById('fileid0').value = null;
 	document.getElementById('fileid0').click();
 }
@@ -40,26 +59,37 @@ function successMessage(message) {
 		document.getElementsByClassName('alert-primary')[0].style.display = 'none';
 	}, 5000);
 }
-// Import a wallet through PUT query
-async function feedSelectOption(w) {
-	const formSelect = document.getElementsByClassName('form-select');
-	for (let i = 0; i < w.length; i++) {
-		const opt = document.createElement('option');
-		opt.value = i;
-		opt.text = w[i].nickname;
-		formSelect[0].append(opt);
+
+async function feedWallet(w) {
+	let counter = 0;
+	for (const wallet of w) {
+		$('#wallet-list').append(
+			"<li class='wallet-item'><a class='wallet-link' id='wallet-link-" +
+				counter +
+				"' onclick='changeDefaultWallet(event)' href='#'>" +
+				wallet.nickname +
+				'</a></li>'
+		);
+		counter++;
 	}
 }
 
-// Create a wallet through POST query
+function changeDefaultWallet(event) {
+	const idElementClicked = event.target.id;
+	const newDefaultWalletId = idElementClicked.split('-')[2];
+	const walletName = gWallets[newDefaultWalletId].nickname;
+	document.cookie = 'defaultWallet=' + walletName;
+	$('.popover__title').html(walletName);
+	getWebsiteDeployerSC();
+}
+
 async function getWallets() {
 	axios
 		.get('/mgmt/wallet')
 		.then((resp) => {
 			if (resp) {
-				const data = resp.data;
-				wallets = data;
-				feedSelectOption(wallets);
+				gWallets = resp.data;
+				feedWallet(gWallets);
 			}
 		})
 		.catch((e) => {
@@ -68,8 +98,10 @@ async function getWallets() {
 }
 
 async function getWebsiteDeployerSC() {
+	let defaultWallet = getDefaultWallet();
+	$('#website-deployers-table tbody tr').remove();
 	axios
-		.get('/my/domains')
+		.get('/my/domains/' + defaultWallet)
 		.then((websites) => {
 			let count = 0;
 			for (const website of websites.data) {
@@ -84,6 +116,7 @@ async function getWebsiteDeployerSC() {
 }
 
 async function deployWebsiteDeployerSC() {
+	let defaultWallet = getDefaultWallet();
 	const dnsNameInputValue = document.getElementById('websiteName').value;
 
 	if (dnsNameInputValue == '') {
@@ -93,7 +126,7 @@ async function deployWebsiteDeployerSC() {
 		document.getElementsByClassName('loading')[0].style.display = 'inline-block';
 		document.getElementsByClassName('loading')[1].style.display = 'inline-block';
 		axios
-			.put('/websiteCreator/prepare/', { url: dnsNameInputValue })
+			.put('/websiteCreator/prepare/', { url: dnsNameInputValue, nickname: defaultWallet })
 			.then((operation) => {
 				document.getElementsByClassName('loading')[0].style.display = 'none';
 				document.getElementsByClassName('loading')[1].style.display = 'none';
@@ -123,10 +156,9 @@ function tableInsert(resp, count) {
 		count +
 		"' type='file' hidden/><button id='upload-website" +
 		count +
-		"'" +
-		"class='primary-button' id='buttonid' type='button' value='Upload MB' >Upload</button><span style='display: none' class='spinner-border loading" +
+		"' class='primary-button' id='buttonid' type='button' value='Upload MB' >Upload</button><img src='./logo.png' style='display: none' class='massa-logo-spinner loading" +
 		count +
-		"' role='status'><img src='./logo.png' class='massa-logo-spinner' alt='Massa logo' /></span></div> ";
+		" alt='Massa logo' /></span></div>";
 
 	document.getElementById(`upload-website${count}`).addEventListener('click', function () {
 		document.getElementById(`fileid${count}`).value = null;
@@ -141,9 +173,11 @@ function tableInsert(resp, count) {
 }
 
 function uploadWebsite(file, count) {
+	let defaultWallet = getDefaultWallet();
 	const bodyFormData = new FormData();
 	bodyFormData.append('zipfile', file);
 	bodyFormData.append('address', deployers[count].address);
+	bodyFormData.append('nickname', defaultWallet);
 	document.getElementsByClassName('loading' + count)[0].style.display = 'inline-block';
 	axios({
 		url: `/websiteCreator/upload`,

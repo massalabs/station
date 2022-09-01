@@ -437,6 +437,53 @@ func init() {
       }
     },
     "/mgmt/wallet/{nickname}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "mgmtWalletGetter",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Wallet's short name.",
+            "name": "nickname",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Wallet retrieved.",
+            "schema": {
+              "$ref": "#/definitions/Wallet"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
       "delete": {
         "produces": [
           "application/json"
@@ -485,12 +532,21 @@ func init() {
         }
       }
     },
-    "/my/domains": {
+    "/my/domains/{nickname}": {
       "get": {
         "produces": [
           "application/json"
         ],
-        "operationId": "myDomains",
+        "operationId": "myDomainsGetter",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Wallet's short name.",
+            "name": "nickname",
+            "in": "path",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "Domains returned. May be empty.",
@@ -520,6 +576,7 @@ func init() {
       "get": {
         "produces": [
           "application/json",
+          "application/javascript",
           "text/html",
           "text/css",
           "text/webp",
@@ -547,6 +604,7 @@ func init() {
       "get": {
         "produces": [
           "application/json",
+          "application/javascript",
           "text/html",
           "text/css",
           "text/webp",
@@ -584,12 +642,19 @@ func init() {
             "schema": {
               "type": "object",
               "required": [
-                "url"
+                "url",
+                "nickname"
               ],
               "properties": {
+                "nickname": {
+                  "description": "Wallet's nickname to be used for preparing the website",
+                  "type": "string",
+                  "x-nullable": false
+                },
                 "url": {
                   "description": "URL without '.', capitals letters and specifics characters",
-                  "type": "string"
+                  "type": "string",
+                  "x-nullable": false
                 }
               }
             }
@@ -637,6 +702,13 @@ func init() {
             "type": "string",
             "description": "Address where to deploy website. The account must have been prepare to receive a website.",
             "name": "address",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Wallet's nickname to be used for receiving the website",
+            "name": "nickname",
             "in": "formData",
             "required": true
           },
@@ -1141,6 +1213,53 @@ func init() {
       }
     },
     "/mgmt/wallet/{nickname}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "mgmtWalletGetter",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Wallet's short name.",
+            "name": "nickname",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Wallet retrieved.",
+            "schema": {
+              "$ref": "#/definitions/Wallet"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
       "delete": {
         "produces": [
           "application/json"
@@ -1189,12 +1308,21 @@ func init() {
         }
       }
     },
-    "/my/domains": {
+    "/my/domains/{nickname}": {
       "get": {
         "produces": [
           "application/json"
         ],
-        "operationId": "myDomains",
+        "operationId": "myDomainsGetter",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Wallet's short name.",
+            "name": "nickname",
+            "in": "path",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "Domains returned. May be empty.",
@@ -1223,6 +1351,7 @@ func init() {
     "/thyra/wallet/{resource}": {
       "get": {
         "produces": [
+          "application/javascript",
           "application/json",
           "image/png",
           "text/css",
@@ -1250,6 +1379,7 @@ func init() {
     "/thyra/websiteCreator/{resource}": {
       "get": {
         "produces": [
+          "application/javascript",
           "application/json",
           "image/png",
           "text/css",
@@ -1288,12 +1418,19 @@ func init() {
             "schema": {
               "type": "object",
               "required": [
-                "url"
+                "url",
+                "nickname"
               ],
               "properties": {
+                "nickname": {
+                  "description": "Wallet's nickname to be used for preparing the website",
+                  "type": "string",
+                  "x-nullable": false
+                },
                 "url": {
                   "description": "URL without '.', capitals letters and specifics characters",
-                  "type": "string"
+                  "type": "string",
+                  "x-nullable": false
                 }
               }
             }
@@ -1341,6 +1478,13 @@ func init() {
             "type": "string",
             "description": "Address where to deploy website. The account must have been prepare to receive a website.",
             "name": "address",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Wallet's nickname to be used for receiving the website",
+            "name": "nickname",
             "in": "formData",
             "required": true
           },

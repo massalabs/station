@@ -2,8 +2,11 @@ package my
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"os"
+
+	"github.com/massalabs/thyra/api/swagger/server/models"
+	"github.com/massalabs/thyra/pkg/node"
+	"github.com/massalabs/thyra/pkg/onchain/dns"
+	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 const domainFile = "deployers.json"
@@ -13,45 +16,50 @@ type Domain struct {
 	Address string `json:"address"`
 }
 
-type Domains struct {
-	file    string
-	domains []Domain
-}
-
-func (d *Domains) List() []Domain {
-	return d.domains
-}
-
-func (d *Domains) Save() error {
-	cnt, err := json.Marshal(d.domains)
+func Domains(client *node.Client, nickname string) ([]string, error) {
+	const ownedPrefix = "owned"
+	wallet, err := wallet.Load(nickname)
 	if err != nil {
-		return err
+		return nil, err
+	}
+	domains := []string{}
+	domainsEntry, err := node.DatastoreEntry(client, dns.DnsRawAddress, ownedPrefix+wallet.Address)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(domainsEntry.CandidateValue, &domains)
+	if err != nil {
+		return nil, err
+	}
+	return domains, nil
+}
+
+func Websites(client *node.Client, domainNames []string) ([]*models.Websites, error) {
+	const recordPrefix = "record"
+
+	params := []node.GetDatastoreEntriesString{}
+	for i := 0; i < len(domainNames); i++ {
+		param := node.GetDatastoreEntriesString{
+			Address: dns.DnsRawAddress,
+			Key:     recordPrefix + domainNames[i],
+		}
+		params = append(params, param)
+
 	}
 
-	err = os.WriteFile(d.file, cnt, 0o600) // u+r, u+w
-	if err != nil {
-		return err
+	responses := []*models.Websites{}
+	contractAddresses, err := node.DatastoreEntries(client, params)
+
+	for i := 0; i < len(domainNames); i++ {
+		response := models.Websites{
+			Address: string(contractAddresses[i].CandidateValue),
+			Name:    domainNames[i],
+		}
+		responses = append(responses, &response)
 	}
-
-	return nil
-}
-
-func (d *Domains) Add(dom Domain) {
-	d.domains = append(d.domains, dom)
-}
-
-func NewDomains() (*Domains, error) {
-	file, err := ioutil.ReadFile(domainFile)
 	if err != nil {
 		return nil, err
 	}
 
-	dom := Domains{file: domainFile, domains: []Domain{}}
-
-	err = json.Unmarshal(file, &dom.domains)
-	if err != nil {
-		return nil, err
-	}
-
-	return &dom, nil
+	return responses, nil
 }

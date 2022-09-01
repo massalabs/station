@@ -7,6 +7,11 @@ import (
 	"strings"
 )
 
+type GetDatastoreEntriesString struct {
+	Address string `json:"address"`
+	Key     string `json:"key"`
+}
+
 type getDatastoreEntries struct {
 	Address string        `json:"address"`
 	Key     JSONableSlice `json:"key"`
@@ -31,17 +36,38 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 }
 
 func DatastoreEntry(client *Client, address string, key string) (*DatastoreEntryResponse, error) {
+	entries := []GetDatastoreEntriesString{}
+	entry := GetDatastoreEntriesString{
+		Address: address,
+		Key:     key,
+	}
+	entries = append(entries, entry)
+
+	response, err := DatastoreEntries(client, entries)
+	if err != nil {
+		return nil, err
+	}
+
+	return &response[0], nil
+}
+
+func DatastoreEntries(client *Client, params []GetDatastoreEntriesString) ([]DatastoreEntryResponse, error) {
+	entries := [][]getDatastoreEntries{
+		{},
+	}
+	for i := 0; i < len(params); i++ {
+		entry := getDatastoreEntries{
+			Address: params[i].Address,
+			Key:     []byte(params[i].Key),
+		}
+		entries[0] = append(entries[0], entry)
+	}
+
 	response, err := client.RPCClient.Call(
 		context.Background(),
 		"get_datastore_entries",
-		[][]getDatastoreEntries{
-			{
-				getDatastoreEntries{
-					Address: address,
-					Key:     []byte(key),
-				},
-			},
-		})
+		entries,
+	)
 
 	if err != nil {
 		return nil, err
@@ -62,5 +88,5 @@ func DatastoreEntry(client *Client, address string, key string) (*DatastoreEntry
 		return nil, errors.New("no entry")
 	}
 
-	return &entry[0], nil
+	return entry, nil
 }

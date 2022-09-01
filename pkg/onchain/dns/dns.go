@@ -10,16 +10,15 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-const dnsRawAddress = "A1Q65NojVV5YPyZruVkeU1CGeS3tjLNwGSzAmZfAJPE5vuvus4C"
+const DnsRawAddress = "A12jkDPTcdhkqGg9VoKsTwvkBwZeSHQw7wJqQYKrNesKnjnGejuR"
 
 func Resolve(client *node.Client, name string) (string, error) {
 	const dnsPrefix = "record"
 
-	entry, err := node.DatastoreEntry(client, dnsRawAddress, dnsPrefix+name)
+	entry, err := node.DatastoreEntry(client, DnsRawAddress, dnsPrefix+name)
 	if err != nil {
 		return "", err
 	}
-
 	if len(entry.CandidateValue) == 0 {
 		return "", errors.New("name not found")
 	}
@@ -37,8 +36,8 @@ type setRecord struct {
 	Address string `json:"address"`
 }
 
-func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContract string) (string, error) {
-	addr, _, err := base58.VersionedCheckDecode(dnsRawAddress[1:])
+func SetRecord(client *node.Client, wallet *wallet.Wallet, url string, smartContract string) (string, error) {
+	addr, _, err := base58.VersionedCheckDecode(DnsRawAddress[1:])
 	if err != nil {
 		return "", err
 	}
@@ -56,8 +55,8 @@ func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContr
 	return onchain.CallFunction(client, wallet, addr, "setResolver", param)
 }
 
-func SetRecordManager(client *node.Client, wallet wallet.Wallet) (string, error) {
-	addr, _, err := base58.VersionedCheckDecode(dnsRawAddress[1:])
+func SetRecordManager(client *node.Client, wallet *wallet.Wallet) (string, error) {
+	addr, _, err := base58.VersionedCheckDecode(DnsRawAddress[1:])
 	if err != nil {
 		return "", err
 	}

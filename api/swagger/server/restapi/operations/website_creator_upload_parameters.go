@@ -46,6 +46,11 @@ type WebsiteCreatorUploadParams struct {
 	  In: formData
 	*/
 	Address string
+	/*Wallet's nickname to be used for receiving the website
+	  Required: true
+	  In: formData
+	*/
+	Nickname string
 	/*Website contents in a ZIP file.
 	  Required: true
 	  In: formData
@@ -73,6 +78,11 @@ func (o *WebsiteCreatorUploadParams) BindRequest(r *http.Request, route *middlew
 
 	fdAddress, fdhkAddress, _ := fds.GetOK("address")
 	if err := o.bindAddress(fdAddress, fdhkAddress, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	fdNickname, fdhkNickname, _ := fds.GetOK("nickname")
+	if err := o.bindNickname(fdNickname, fdhkNickname, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -107,6 +117,26 @@ func (o *WebsiteCreatorUploadParams) bindAddress(rawData []string, hasKey bool, 
 		return err
 	}
 	o.Address = raw
+
+	return nil
+}
+
+// bindNickname binds and validates parameter Nickname from formData.
+func (o *WebsiteCreatorUploadParams) bindNickname(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	if !hasKey {
+		return errors.Required("nickname", "formData", rawData)
+	}
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: true
+
+	if err := validate.RequiredString("nickname", "formData", raw); err != nil {
+		return err
+	}
+	o.Nickname = raw
 
 	return nil
 }

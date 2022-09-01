@@ -12,8 +12,8 @@ import (
 	"strings"
 )
 
-// MyDomainsURL generates an URL for the my domains operation
-type MyDomainsURL struct {
+// MyDomainsGetterURL generates an URL for the my domains getter operation
+type MyDomainsGetterURL struct {
 	Nickname string
 
 	_basePath string
@@ -24,7 +24,7 @@ type MyDomainsURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *MyDomainsURL) WithBasePath(bp string) *MyDomainsURL {
+func (o *MyDomainsGetterURL) WithBasePath(bp string) *MyDomainsGetterURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -32,12 +32,12 @@ func (o *MyDomainsURL) WithBasePath(bp string) *MyDomainsURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *MyDomainsURL) SetBasePath(bp string) {
+func (o *MyDomainsGetterURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *MyDomainsURL) Build() (*url.URL, error) {
+func (o *MyDomainsGetterURL) Build() (*url.URL, error) {
 	var _result url.URL
 
 	var _path = "/my/domains/{nickname}"
@@ -46,7 +46,7 @@ func (o *MyDomainsURL) Build() (*url.URL, error) {
 	if nickname != "" {
 		_path = strings.Replace(_path, "{nickname}", nickname, -1)
 	} else {
-		return nil, errors.New("nickname is required on MyDomainsURL")
+		return nil, errors.New("nickname is required on MyDomainsGetterURL")
 	}
 
 	_basePath := o._basePath
@@ -56,7 +56,7 @@ func (o *MyDomainsURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *MyDomainsURL) Must(u *url.URL, err error) *url.URL {
+func (o *MyDomainsGetterURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -67,17 +67,17 @@ func (o *MyDomainsURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *MyDomainsURL) String() string {
+func (o *MyDomainsGetterURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *MyDomainsURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *MyDomainsGetterURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on MyDomainsURL")
+		return nil, errors.New("scheme is required for a full url on MyDomainsGetterURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on MyDomainsURL")
+		return nil, errors.New("host is required for a full url on MyDomainsGetterURL")
 	}
 
 	base, err := o.Build()
@@ -91,6 +91,6 @@ func (o *MyDomainsURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *MyDomainsURL) StringFull(scheme, host string) string {
+func (o *MyDomainsGetterURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

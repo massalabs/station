@@ -53,6 +53,7 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		TextWebpProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
 			return errors.NotImplemented("textWebp producer has not yet been implemented")
 		}),
+		TxtProducer: runtime.TextProducer(),
 
 		BrowseHandler: BrowseHandlerFunc(func(params BrowseParams) middleware.Responder {
 			return middleware.NotImplemented("operation Browse has not yet been implemented")
@@ -72,11 +73,14 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		MgmtWalletGetHandler: MgmtWalletGetHandlerFunc(func(params MgmtWalletGetParams) middleware.Responder {
 			return middleware.NotImplemented("operation MgmtWalletGet has not yet been implemented")
 		}),
+		MgmtWalletGetterHandler: MgmtWalletGetterHandlerFunc(func(params MgmtWalletGetterParams) middleware.Responder {
+			return middleware.NotImplemented("operation MgmtWalletGetter has not yet been implemented")
+		}),
 		MgmtWalletImportHandler: MgmtWalletImportHandlerFunc(func(params MgmtWalletImportParams) middleware.Responder {
 			return middleware.NotImplemented("operation MgmtWalletImport has not yet been implemented")
 		}),
-		MyDomainsHandler: MyDomainsHandlerFunc(func(params MyDomainsParams) middleware.Responder {
-			return middleware.NotImplemented("operation MyDomains has not yet been implemented")
+		MyDomainsGetterHandler: MyDomainsGetterHandlerFunc(func(params MyDomainsGetterParams) middleware.Responder {
+			return middleware.NotImplemented("operation MyDomainsGetter has not yet been implemented")
 		}),
 		ThyraWalletHandler: ThyraWalletHandlerFunc(func(params ThyraWalletParams) middleware.Responder {
 			return middleware.NotImplemented("operation ThyraWallet has not yet been implemented")
@@ -140,6 +144,9 @@ type ThyraServerAPI struct {
 	// TextWebpProducer registers a producer for the following mime types:
 	//   - text/webp
 	TextWebpProducer runtime.Producer
+	// TxtProducer registers a producer for the following mime types:
+	//   - application/javascript
+	TxtProducer runtime.Producer
 
 	// BrowseHandler sets the operation handler for the browse operation
 	BrowseHandler BrowseHandler
@@ -153,10 +160,12 @@ type ThyraServerAPI struct {
 	MgmtWalletDeleteHandler MgmtWalletDeleteHandler
 	// MgmtWalletGetHandler sets the operation handler for the mgmt wallet get operation
 	MgmtWalletGetHandler MgmtWalletGetHandler
+	// MgmtWalletGetterHandler sets the operation handler for the mgmt wallet getter operation
+	MgmtWalletGetterHandler MgmtWalletGetterHandler
 	// MgmtWalletImportHandler sets the operation handler for the mgmt wallet import operation
 	MgmtWalletImportHandler MgmtWalletImportHandler
-	// MyDomainsHandler sets the operation handler for the my domains operation
-	MyDomainsHandler MyDomainsHandler
+	// MyDomainsGetterHandler sets the operation handler for the my domains getter operation
+	MyDomainsGetterHandler MyDomainsGetterHandler
 	// ThyraWalletHandler sets the operation handler for the thyra wallet operation
 	ThyraWalletHandler ThyraWalletHandler
 	// ThyraWebsiteCreatorHandler sets the operation handler for the thyra website creator operation
@@ -256,6 +265,9 @@ func (o *ThyraServerAPI) Validate() error {
 	if o.TextWebpProducer == nil {
 		unregistered = append(unregistered, "TextWebpProducer")
 	}
+	if o.TxtProducer == nil {
+		unregistered = append(unregistered, "TxtProducer")
+	}
 
 	if o.BrowseHandler == nil {
 		unregistered = append(unregistered, "BrowseHandler")
@@ -275,11 +287,14 @@ func (o *ThyraServerAPI) Validate() error {
 	if o.MgmtWalletGetHandler == nil {
 		unregistered = append(unregistered, "MgmtWalletGetHandler")
 	}
+	if o.MgmtWalletGetterHandler == nil {
+		unregistered = append(unregistered, "MgmtWalletGetterHandler")
+	}
 	if o.MgmtWalletImportHandler == nil {
 		unregistered = append(unregistered, "MgmtWalletImportHandler")
 	}
-	if o.MyDomainsHandler == nil {
-		unregistered = append(unregistered, "MyDomainsHandler")
+	if o.MyDomainsGetterHandler == nil {
+		unregistered = append(unregistered, "MyDomainsGetterHandler")
 	}
 	if o.ThyraWalletHandler == nil {
 		unregistered = append(unregistered, "ThyraWalletHandler")
@@ -351,6 +366,8 @@ func (o *ThyraServerAPI) ProducersFor(mediaTypes []string) map[string]runtime.Pr
 			result["application/json"] = o.JSONProducer
 		case "text/webp":
 			result["text/webp"] = o.TextWebpProducer
+		case "application/javascript":
+			result["application/javascript"] = o.TxtProducer
 		}
 
 		if p, ok := o.customProducers[mt]; ok {
@@ -415,6 +432,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/mgmt/wallet"] = NewMgmtWalletGet(o.context, o.MgmtWalletGetHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/mgmt/wallet/{nickname}"] = NewMgmtWalletGetter(o.context, o.MgmtWalletGetterHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
@@ -422,7 +443,7 @@ func (o *ThyraServerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/my/domains"] = NewMyDomains(o.context, o.MyDomainsHandler)
+	o.handlers["GET"]["/my/domains/{nickname}"] = NewMyDomainsGetter(o.context, o.MyDomainsGetterHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
