@@ -11,7 +11,7 @@ import (
 func DomainsHandler(params operations.MyDomainsParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
-	myDomainNames, err := my.GetDomains(client, params.Nickname)
+	myDomainNames, err := my.Domains(client, params.Nickname)
 	if err != nil {
 		return operations.NewUploadWebGetInternalServerError().
 			WithPayload(
@@ -21,7 +21,7 @@ func DomainsHandler(params operations.MyDomainsParams) middleware.Responder {
 				})
 	}
 
-	myDomains, err := my.GetOwnedWebsites(client, myDomainNames)
+	myDomains, err := my.Websites(client, myDomainNames)
 	if err != nil {
 		return operations.NewUploadWebGetInternalServerError().
 			WithPayload(

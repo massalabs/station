@@ -13,7 +13,7 @@ import (
 
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
 
-	wallet, err := wallet.GetWallet(*params.Body.Nickname)
+	wallet, err := wallet.Load(*params.Body.Nickname)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
@@ -53,7 +53,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 
 func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middleware.Responder {
 
-	wallet, err := wallet.GetWallet(params.Nickname)
+	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
