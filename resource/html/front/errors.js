@@ -16,7 +16,7 @@ const errorCodes = new Map([
 		'Error while connecting all your wallets. Reconnect all your wallets and try again',
 	],
 
-	['Domains-1001', 'Error while looking for your domain names'],
+	['Domains-0001', 'Error while looking for your domain names'],
 	['Domains-1002', "Error while connecting your domain and smart contract's address"],
 
 	['WebCreator-0001', 'Error while creating your website container'],
