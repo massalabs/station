@@ -13,7 +13,7 @@ import (
 
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
 
-	wallet, err := wallet.GetWallet(*params.Body.Nickname)
+	wallet, err := wallet.Load(params.Body.Nickname)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
@@ -33,7 +33,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 				})
 	}
 
-	address, err := website.PrepareForUpload(*params.Body.URL, wallet)
+	address, err := website.PrepareForUpload(params.Body.URL, wallet)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
@@ -46,16 +46,16 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 	return operations.NewWebsiteCreatorPrepareOK().
 		WithPayload(
 			&models.Websites{
-				Name:    *params.Body.URL,
+				Name:    params.Body.URL,
 				Address: address,
 			})
 }
 
 func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middleware.Responder {
 
-	wallet, err := wallet.GetWallet(params.Nickname)
+	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
+		return operations.NewWebsiteCreatorUploadInternalServerError().
 			WithPayload(
 				&models.Error{
 					Code:    errorCodeWebCreatorPrepare,
@@ -65,7 +65,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 
 	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
+		return operations.NewWebsiteCreatorUploadInternalServerError().
 			WithPayload(
 				&models.Error{
 					Code:    errorCodeWalletWrongPassword,
@@ -74,7 +74,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 	}
 	archive, err := ioutil.ReadAll(params.Zipfile)
 	if err != nil {
-		return operations.NewFillWebPostInternalServerError().
+		return operations.NewWebsiteCreatorUploadInternalServerError().
 			WithPayload(&models.Error{
 				Code:    errorCodeWebCreatorReadArchive,
 				Message: err.Error(),
@@ -85,14 +85,14 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 
 	_, err = website.Upload(params.Address, b64, wallet)
 	if err != nil {
-		return operations.NewFillWebPostInternalServerError().
+		return operations.NewWebsiteCreatorUploadInternalServerError().
 			WithPayload(&models.Error{
 				Code:    errorCodeWebCreatorUpload,
 				Message: err.Error(),
 			})
 	}
 
-	return operations.NewFillWebPostOK().
+	return operations.NewWebsiteCreatorUploadOK().
 		WithPayload(&models.Websites{
 			Name:    "Name",
 			Address: params.Address})

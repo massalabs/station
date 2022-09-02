@@ -13,41 +13,41 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewWebsiteCreatorPutParams creates a new WebsiteCreatorPutParams object
+// NewMyDomainsGetterParams creates a new MyDomainsGetterParams object
 //
 // There are no default values defined in the spec.
-func NewWebsiteCreatorPutParams() WebsiteCreatorPutParams {
+func NewMyDomainsGetterParams() MyDomainsGetterParams {
 
-	return WebsiteCreatorPutParams{}
+	return MyDomainsGetterParams{}
 }
 
-// WebsiteCreatorPutParams contains all the bound params for the website creator put operation
+// MyDomainsGetterParams contains all the bound params for the my domains getter operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters websiteCreatorPut
-type WebsiteCreatorPutParams struct {
+// swagger:parameters myDomainsGetter
+type MyDomainsGetterParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*DNS name without '.', capitals letters and specifics characters.
+	/*Wallet's short name.
 	  Required: true
 	  In: path
 	*/
-	URL string
+	Nickname string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewWebsiteCreatorPutParams() beforehand.
-func (o *WebsiteCreatorPutParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewMyDomainsGetterParams() beforehand.
+func (o *MyDomainsGetterParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
 
-	rURL, rhkURL, _ := route.Params.GetOK("url")
-	if err := o.bindURL(rURL, rhkURL, route.Formats); err != nil {
+	rNickname, rhkNickname, _ := route.Params.GetOK("nickname")
+	if err := o.bindNickname(rNickname, rhkNickname, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
@@ -56,8 +56,8 @@ func (o *WebsiteCreatorPutParams) BindRequest(r *http.Request, route *middleware
 	return nil
 }
 
-// bindURL binds and validates parameter URL from path.
-func (o *WebsiteCreatorPutParams) bindURL(rawData []string, hasKey bool, formats strfmt.Registry) error {
+// bindNickname binds and validates parameter Nickname from path.
+func (o *MyDomainsGetterParams) bindNickname(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -65,7 +65,7 @@ func (o *WebsiteCreatorPutParams) bindURL(rawData []string, hasKey bool, formats
 
 	// Required: true
 	// Parameter is provided by construction from the route
-	o.URL = raw
+	o.Nickname = raw
 
 	return nil
 }
