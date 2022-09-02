@@ -14,6 +14,7 @@ import (
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
 
 	wallet, err := wallet.Load(params.Body.Nickname)
+
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
@@ -34,6 +35,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 	}
 
 	address, err := website.PrepareForUpload(params.Body.URL, wallet)
+
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
@@ -46,7 +48,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 	return operations.NewWebsiteCreatorPrepareOK().
 		WithPayload(
 			&models.Websites{
-				Name:    params.Body.URL,
+				Name:    *params.Body.URL,
 				Address: address,
 			})
 }
@@ -66,6 +68,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
+
 			WithPayload(
 				&models.Error{
 					Code:    errorCodeWalletWrongPassword,

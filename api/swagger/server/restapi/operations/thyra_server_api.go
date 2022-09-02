@@ -73,14 +73,14 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		MgmtWalletGetHandler: MgmtWalletGetHandlerFunc(func(params MgmtWalletGetParams) middleware.Responder {
 			return middleware.NotImplemented("operation MgmtWalletGet has not yet been implemented")
 		}),
-		MgmtWalletGetterHandler: MgmtWalletGetterHandlerFunc(func(params MgmtWalletGetterParams) middleware.Responder {
-			return middleware.NotImplemented("operation MgmtWalletGetter has not yet been implemented")
+		MgmtWalletGetOneHandler: MgmtWalletGetOneHandlerFunc(func(params MgmtWalletGetOneParams) middleware.Responder {
+			return middleware.NotImplemented("operation MgmtWalletGetOne has not yet been implemented")
 		}),
 		MgmtWalletImportHandler: MgmtWalletImportHandlerFunc(func(params MgmtWalletImportParams) middleware.Responder {
 			return middleware.NotImplemented("operation MgmtWalletImport has not yet been implemented")
 		}),
-		MyDomainsGetterHandler: MyDomainsGetterHandlerFunc(func(params MyDomainsGetterParams) middleware.Responder {
-			return middleware.NotImplemented("operation MyDomainsGetter has not yet been implemented")
+		MyDomainsHandler: MyDomainsHandlerFunc(func(params MyDomainsParams) middleware.Responder {
+			return middleware.NotImplemented("operation MyDomains has not yet been implemented")
 		}),
 		ThyraWalletHandler: ThyraWalletHandlerFunc(func(params ThyraWalletParams) middleware.Responder {
 			return middleware.NotImplemented("operation ThyraWallet has not yet been implemented")
@@ -160,12 +160,12 @@ type ThyraServerAPI struct {
 	MgmtWalletDeleteHandler MgmtWalletDeleteHandler
 	// MgmtWalletGetHandler sets the operation handler for the mgmt wallet get operation
 	MgmtWalletGetHandler MgmtWalletGetHandler
-	// MgmtWalletGetterHandler sets the operation handler for the mgmt wallet getter operation
-	MgmtWalletGetterHandler MgmtWalletGetterHandler
+	// MgmtWalletGetOneHandler sets the operation handler for the mgmt wallet get one operation
+	MgmtWalletGetOneHandler MgmtWalletGetOneHandler
 	// MgmtWalletImportHandler sets the operation handler for the mgmt wallet import operation
 	MgmtWalletImportHandler MgmtWalletImportHandler
-	// MyDomainsGetterHandler sets the operation handler for the my domains getter operation
-	MyDomainsGetterHandler MyDomainsGetterHandler
+	// MyDomainsHandler sets the operation handler for the my domains operation
+	MyDomainsHandler MyDomainsHandler
 	// ThyraWalletHandler sets the operation handler for the thyra wallet operation
 	ThyraWalletHandler ThyraWalletHandler
 	// ThyraWebsiteCreatorHandler sets the operation handler for the thyra website creator operation
@@ -287,14 +287,14 @@ func (o *ThyraServerAPI) Validate() error {
 	if o.MgmtWalletGetHandler == nil {
 		unregistered = append(unregistered, "MgmtWalletGetHandler")
 	}
-	if o.MgmtWalletGetterHandler == nil {
-		unregistered = append(unregistered, "MgmtWalletGetterHandler")
+	if o.MgmtWalletGetOneHandler == nil {
+		unregistered = append(unregistered, "MgmtWalletGetOneHandler")
 	}
 	if o.MgmtWalletImportHandler == nil {
 		unregistered = append(unregistered, "MgmtWalletImportHandler")
 	}
-	if o.MyDomainsGetterHandler == nil {
-		unregistered = append(unregistered, "MyDomainsGetterHandler")
+	if o.MyDomainsHandler == nil {
+		unregistered = append(unregistered, "MyDomainsHandler")
 	}
 	if o.ThyraWalletHandler == nil {
 		unregistered = append(unregistered, "ThyraWalletHandler")
@@ -435,7 +435,7 @@ func (o *ThyraServerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/mgmt/wallet/{nickname}"] = NewMgmtWalletGetter(o.context, o.MgmtWalletGetterHandler)
+	o.handlers["GET"]["/mgmt/wallet/{nickname}"] = NewMgmtWalletGetOne(o.context, o.MgmtWalletGetOneHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
@@ -443,7 +443,7 @@ func (o *ThyraServerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/my/domains/{nickname}"] = NewMyDomainsGetter(o.context, o.MyDomainsGetterHandler)
+	o.handlers["GET"]["/my/domains/{nickname}"] = NewMyDomains(o.context, o.MyDomainsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

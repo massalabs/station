@@ -441,7 +441,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "mgmtWalletGetter",
+        "operationId": "mgmtWalletGetOne",
         "parameters": [
           {
             "type": "string",
@@ -537,7 +537,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "myDomainsGetter",
+        "operationId": "myDomains",
         "parameters": [
           {
             "type": "string",
@@ -648,13 +648,11 @@ func init() {
               "properties": {
                 "nickname": {
                   "description": "Wallet's nickname to be used for preparing the website",
-                  "type": "string",
-                  "x-nullable": false
+                  "type": "string"
                 },
                 "url": {
                   "description": "URL without '.', capitals letters and specifics characters",
-                  "type": "string",
-                  "x-nullable": false
+                  "type": "string"
                 }
               }
             }
@@ -1217,7 +1215,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "mgmtWalletGetter",
+        "operationId": "mgmtWalletGetOne",
         "parameters": [
           {
             "type": "string",
@@ -1313,7 +1311,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "myDomainsGetter",
+        "operationId": "myDomains",
         "parameters": [
           {
             "type": "string",
@@ -1424,13 +1422,11 @@ func init() {
               "properties": {
                 "nickname": {
                   "description": "Wallet's nickname to be used for preparing the website",
-                  "type": "string",
-                  "x-nullable": false
+                  "type": "string"
                 },
                 "url": {
                   "description": "URL without '.', capitals letters and specifics characters",
-                  "type": "string",
-                  "x-nullable": false
+                  "type": "string"
                 }
               }
             }

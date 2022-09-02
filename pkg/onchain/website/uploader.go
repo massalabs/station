@@ -48,6 +48,7 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 	} else {
 		_, err = uploadHeavy(client, addr, chunks, wallet)
 	}
+
 	if err != nil {
 		return "", err
 	}
@@ -108,4 +109,5 @@ func splitStringArray(s string, chunkSize int) (chunks []string) {
 	chunks = append(chunks, s[(chunkNumber-1)*chunkSize:])
 
 	return chunks
+
 }
