@@ -1,9 +1,19 @@
 linters:
   disable:
+    # unwanted
     - nonamedreturns
-    - gci
-    - tagliatelle
-    - wrapcheck # TODO put it back after code cleaning
+    # deprecated
+    - deadcode
+    - exhaustivestruct
+    - golint
+    - ifshort
+    - interfacer
+    - maligned
+    - nosnakecase
+    - scopelint
+    - structcheck
+    - varcheck
+
   presets:
     - bugs
     - comment
