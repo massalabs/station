@@ -26,3 +26,9 @@ linters:
     - performance
     - style
     - unused
+
+run:
+  skip-dirs:
+    - pkg/front
+    - pkg/sc
+    - api/swagger/server
