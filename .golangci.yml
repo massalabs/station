@@ -1,0 +1,34 @@
+linters:
+  disable:
+    # unwanted
+    - nonamedreturns
+    # deprecated
+    - deadcode
+    - exhaustivestruct
+    - golint
+    - ifshort
+    - interfacer
+    - maligned
+    - nosnakecase
+    - scopelint
+    - structcheck
+    - varcheck
+
+  presets:
+    - bugs
+    - comment
+    - complexity
+    - error
+    - format
+    - import
+    - metalinter
+    - module
+    - performance
+    - style
+    - unused
+
+run:
+  skip-dirs:
+    - pkg/front
+    - pkg/sc
+    - api/swagger/server
