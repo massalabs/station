@@ -10,11 +10,18 @@ on:
         description: "Whether it's a draft or not"
         required: true
         type: boolean
+        default: true
+      generate-release-notes:
+        description: "Generate release notes"
+        required: true
+        type: boolean
+        default: true
 
 env:
   GO_VERSION: 1.19
   RELEASE_VERSION: ${{ github.event.inputs.release-version }}
   RELEASE_AS_DRAFT: ${{ github.event.inputs.release-as-draft }}
+  GENERATE_RELEASE_NOTES: ${{ github.event.inputs.generate-release-notes }}
 
 jobs:
   lint:
@@ -38,13 +45,10 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build binary for ${{ matrix.os }} on ${{ matrix.arch}}
         run: GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -o thyra-server_${{ matrix.os }}_${{ matrix.arch }} ./cmd/thyra-server/
-      - name: Upload Go test results
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ matrix.os }}-${{ matrix.arch }}-binary
-          path: thyra-server_${{ matrix.os }}_${{ matrix.arch }}
-      - uses: softprops/action-gh-release@v1
+      - name: Create release and upload binaries
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.RELEASE_VERSION }}
           draft: ${{ env.RELEASE_AS_DRAFT }}
+          generate_release_notes: ${{ env.GENERATE_RELEASE_NOTES }}
           files: thyra-server_${{ matrix.os }}_${{ matrix.arch }}
