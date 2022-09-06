@@ -30,17 +30,13 @@ jobs:
         include:
           - arch: amd64
             os: windows
-            host: windows-latest
           - arch: amd64
             os: linux
-            host: ubuntu-latest
           - arch: amd64
             os: darwin
-            host: macos-latest
           - arch: arm64
             os: darwin
-            host: macos-latest
-    runs-on: ${{ matrix.host }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-go@v3
         with:
