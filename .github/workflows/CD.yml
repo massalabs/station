@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        description: "Version to produce"
+        required: true
+      release-as-draft:
+        description: "Whether it's a draft or not"
+        required: true
+        type: boolean
+
+env:
+  GO_VERSION: 1.19
+  RELEASE_VERSION: ${{ github.event.inputs.release-version }}
+  RELEASE_AS_DRAFT: ${{ github.event.inputs.release-as-draft }}
+
+jobs:
+  lint:
+    name: Build and create release
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            os: windows
+          - arch: amd64
+            os: linux
+          - arch: amd64
+            os: darwin
+          - arch: arm64
+            os: darwin
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - uses: actions/checkout@v3
+      - name: Build binary for ${{ matrix.os }} on ${{ matrix.arch}}
+        run: GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -o thyra-server_${{ matrix.os }}_${{ matrix.arch }} ./cmd/thyra-server/
+      - name: Upload Go test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.os }}-${{ matrix.arch }}-binary
+          path: thyra-server_${{ matrix.os }}_${{ matrix.arch }}
+      - uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          draft: ${{ env.RELEASE_AS_DRAFT }}
+          files: ${{ matrix.os }}-${{ matrix.arch }}-binary
