@@ -47,4 +47,4 @@ jobs:
         with:
           tag_name: ${{ env.RELEASE_VERSION }}
           draft: ${{ env.RELEASE_AS_DRAFT }}
-          files: ${{ matrix.os }}-${{ matrix.arch }}-binary
+          files: thyra-server_${{ matrix.os }}_${{ matrix.arch }}
