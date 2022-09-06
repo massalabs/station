@@ -1,4 +1,4 @@
-name: ${{ github.event.inputs.release-version }} deployment
+name: CD
 
 on:
   workflow_dispatch:
@@ -24,7 +24,7 @@ env:
   GENERATE_RELEASE_NOTES: ${{ github.event.inputs.generate-release-notes }}
 
 jobs:
-  lint:
+  build-release:
     name: Build and create release
     strategy:
       matrix:
