@@ -42,7 +42,7 @@ jobs:
         with:
           go-version: 1.19
       - uses: actions/checkout@v3
-      - name: Build binary for ${{ matrix.os }}
+      - name: Build binary for ${{ matrix.os }} on ${{ matrix.arch}}
         run: GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -o thyra-server_${{ matrix.os }}_${{ matrix.arch }} ./cmd/thyra-server/
       - name: Upload Go test results
         uses: actions/upload-artifact@v3
