@@ -67,11 +67,11 @@ type WebsiteCreatorPrepareBody struct {
 
 	// Wallet's nickname to be used for preparing the website
 	// Required: true
-	Nickname *string `json:"nickname"`
+	Nickname string `json:"nickname"`
 
 	// URL without '.', capitals letters and specifics characters
 	// Required: true
-	URL *string `json:"url"`
+	URL string `json:"url"`
 }
 
 // Validate validates this website creator prepare body
@@ -94,7 +94,7 @@ func (o *WebsiteCreatorPrepareBody) Validate(formats strfmt.Registry) error {
 
 func (o *WebsiteCreatorPrepareBody) validateNickname(formats strfmt.Registry) error {
 
-	if err := validate.Required("body"+"."+"nickname", "body", o.Nickname); err != nil {
+	if err := validate.RequiredString("body"+"."+"nickname", "body", o.Nickname); err != nil {
 		return err
 	}
 
@@ -103,7 +103,7 @@ func (o *WebsiteCreatorPrepareBody) validateNickname(formats strfmt.Registry) er
 
 func (o *WebsiteCreatorPrepareBody) validateURL(formats strfmt.Registry) error {
 
-	if err := validate.Required("body"+"."+"url", "body", o.URL); err != nil {
+	if err := validate.RequiredString("body"+"."+"url", "body", o.URL); err != nil {
 		return err
 	}
 

@@ -20,7 +20,7 @@ type walletGet struct {
 // TODO Clean the struct mapping here
 func (c *walletGet) Handle(params operations.MgmtWalletGetParams) middleware.Responder {
 
-	wallets, err := wallet.ReadWallets()
+	wallets, err := wallet.LoadAll()
 	if err != nil {
 		return operations.NewMgmtWalletGetInternalServerError().WithPayload(
 			&models.Error{

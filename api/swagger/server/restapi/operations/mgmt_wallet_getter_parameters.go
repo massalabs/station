@@ -13,41 +13,41 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewUploadWebPostParams creates a new UploadWebPostParams object
+// NewMgmtWalletGetterParams creates a new MgmtWalletGetterParams object
 //
 // There are no default values defined in the spec.
-func NewUploadWebPostParams() UploadWebPostParams {
+func NewMgmtWalletGetterParams() MgmtWalletGetterParams {
 
-	return UploadWebPostParams{}
+	return MgmtWalletGetterParams{}
 }
 
-// UploadWebPostParams contains all the bound params for the upload web post operation
+// MgmtWalletGetterParams contains all the bound params for the mgmt wallet getter operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters uploadWebPost
-type UploadWebPostParams struct {
+// swagger:parameters mgmtWalletGetter
+type MgmtWalletGetterParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*DNS name without '.', capitals letters and specifics characters.
+	/*Wallet's short name.
 	  Required: true
 	  In: path
 	*/
-	URL string
+	Nickname string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewUploadWebPostParams() beforehand.
-func (o *UploadWebPostParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewMgmtWalletGetterParams() beforehand.
+func (o *MgmtWalletGetterParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
 
-	rURL, rhkURL, _ := route.Params.GetOK("url")
-	if err := o.bindURL(rURL, rhkURL, route.Formats); err != nil {
+	rNickname, rhkNickname, _ := route.Params.GetOK("nickname")
+	if err := o.bindNickname(rNickname, rhkNickname, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
@@ -56,8 +56,8 @@ func (o *UploadWebPostParams) BindRequest(r *http.Request, route *middleware.Mat
 	return nil
 }
 
-// bindURL binds and validates parameter URL from path.
-func (o *UploadWebPostParams) bindURL(rawData []string, hasKey bool, formats strfmt.Registry) error {
+// bindNickname binds and validates parameter Nickname from path.
+func (o *MgmtWalletGetterParams) bindNickname(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -65,7 +65,7 @@ func (o *UploadWebPostParams) bindURL(rawData []string, hasKey bool, formats str
 
 	// Required: true
 	// Parameter is provided by construction from the route
-	o.URL = raw
+	o.Nickname = raw
 
 	return nil
 }

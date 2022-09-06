@@ -8,12 +8,12 @@ import (
 	"github.com/massalabs/thyra/pkg/node"
 )
 
-func DomainsHandler(params operations.MyDomainsParams) middleware.Responder {
+func DomainsHandler(params operations.MyDomainsGetterParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
-	myDomainNames, err := my.GetDomains(client, params.Nickname)
+	myDomainNames, err := my.Domains(client, params.Nickname)
 	if err != nil {
-		return operations.NewUploadWebGetInternalServerError().
+		return operations.NewMyDomainsGetterInternalServerError().
 			WithPayload(
 				&models.Error{
 					Code:    errorCodeGetDomainNames,
@@ -21,14 +21,14 @@ func DomainsHandler(params operations.MyDomainsParams) middleware.Responder {
 				})
 	}
 
-	myDomains, err := my.GetOwnedWebsites(client, myDomainNames)
+	myDomains, err := my.Websites(client, myDomainNames)
 	if err != nil {
-		return operations.NewUploadWebGetInternalServerError().
+		return operations.NewMyDomainsGetterInternalServerError().
 			WithPayload(
 				&models.Error{
 					Code:    errorCodeGetDomainAddresses,
 					Message: err.Error(),
 				})
 	}
-	return operations.NewMyDomainsOK().WithPayload(myDomains)
+	return operations.NewMyDomainsGetterOK().WithPayload(myDomains)
 }

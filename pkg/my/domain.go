@@ -16,14 +16,9 @@ type Domain struct {
 	Address string `json:"address"`
 }
 
-type Domains struct {
-	file    string
-	domains []Domain
-}
-
-func GetDomains(client *node.Client, nickname string) ([]string, error) {
+func Domains(client *node.Client, nickname string) ([]string, error) {
 	const ownedPrefix = "owned"
-	wallet, err := wallet.GetWallet(nickname)
+	wallet, err := wallet.Load(nickname)
 	if err != nil {
 		return nil, err
 	}
@@ -39,12 +34,12 @@ func GetDomains(client *node.Client, nickname string) ([]string, error) {
 	return domains, nil
 }
 
-func GetOwnedWebsites(client *node.Client, domainNames []string) ([]*models.Websites, error) {
+func Websites(client *node.Client, domainNames []string) ([]*models.Websites, error) {
 	const recordPrefix = "record"
 
-	params := []node.GetDatastoreEntriesString{}
+	params := []node.DatastoreEntriesKeysAsString{}
 	for i := 0; i < len(domainNames); i++ {
-		param := node.GetDatastoreEntriesString{
+		param := node.DatastoreEntriesKeysAsString{
 			Address: dns.DnsRawAddress,
 			Key:     recordPrefix + domainNames[i],
 		}
@@ -55,10 +50,9 @@ func GetOwnedWebsites(client *node.Client, domainNames []string) ([]*models.Webs
 	responses := []*models.Websites{}
 	contractAddresses, err := node.DatastoreEntries(client, params)
 
-	contractAddressess := *contractAddresses
 	for i := 0; i < len(domainNames); i++ {
 		response := models.Websites{
-			Address: string(contractAddressess[i].CandidateValue),
+			Address: string(contractAddresses[i].CandidateValue),
 			Name:    domainNames[i],
 		}
 		responses = append(responses, &response)
