@@ -1,4 +1,4 @@
-name: CD
+name: ${{ github.event.inputs.release-version }} deployment
 
 on:
   workflow_dispatch:
