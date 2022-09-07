@@ -222,25 +222,28 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: '#/definitions/Error'
+ 
   /websiteCreator/prepare:
     put:
       operationId: websiteCreatorPrepare
+      consumes:
+        - multipart/form-data
       parameters:
-        - in: body
-          name: body
+        - in: formData
+          name: url
+          type: string
           required: true
-          schema:
-            type: object
-            required:
-              - url
-              - nickname
-            properties:
-              url:
-                description: URL without '.', capitals letters and specifics characters
-                type: string
-              nickname:
-                description: Wallet's nickname to be used for preparing the website
-                type: string
+          description: URL without '.', capitals letters and specifics characters
+        - in: formData
+          name: nickname
+          type: string
+          required: true
+          description: Wallet's nickname to be used for receiving the website
+        - in: formData
+          name: zipfile
+          type: file
+          required: true
+          description: Website contents in a ZIP file.
       produces:
         - application/json
       responses:
