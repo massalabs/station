@@ -441,7 +441,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "mgmtWalletGetOne",
+        "operationId": "mgmtWalletGetter",
         "parameters": [
           {
             "type": "string",
@@ -537,7 +537,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "myDomains",
+        "operationId": "myDomainsGetter",
         "parameters": [
           {
             "type": "string",
@@ -630,32 +630,34 @@ func init() {
     },
     "/websiteCreator/prepare": {
       "put": {
+        "consumes": [
+          "multipart/form-data"
+        ],
         "produces": [
           "application/json"
         ],
         "operationId": "websiteCreatorPrepare",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "url",
-                "nickname"
-              ],
-              "properties": {
-                "nickname": {
-                  "description": "Wallet's nickname to be used for preparing the website",
-                  "type": "string"
-                },
-                "url": {
-                  "description": "URL without '.', capitals letters and specifics characters",
-                  "type": "string"
-                }
-              }
-            }
+            "type": "string",
+            "description": "URL without '.', capitals letters and specifics characters",
+            "name": "url",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Wallet's nickname to be used for receiving the website",
+            "name": "nickname",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "description": "Website contents in a ZIP file.",
+            "name": "zipfile",
+            "in": "formData",
+            "required": true
           }
         ],
         "responses": {
@@ -1215,7 +1217,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "mgmtWalletGetOne",
+        "operationId": "mgmtWalletGetter",
         "parameters": [
           {
             "type": "string",
@@ -1311,7 +1313,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "myDomains",
+        "operationId": "myDomainsGetter",
         "parameters": [
           {
             "type": "string",
@@ -1404,32 +1406,34 @@ func init() {
     },
     "/websiteCreator/prepare": {
       "put": {
+        "consumes": [
+          "multipart/form-data"
+        ],
         "produces": [
           "application/json"
         ],
         "operationId": "websiteCreatorPrepare",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "url",
-                "nickname"
-              ],
-              "properties": {
-                "nickname": {
-                  "description": "Wallet's nickname to be used for preparing the website",
-                  "type": "string"
-                },
-                "url": {
-                  "description": "URL without '.', capitals letters and specifics characters",
-                  "type": "string"
-                }
-              }
-            }
+            "type": "string",
+            "description": "URL without '.', capitals letters and specifics characters",
+            "name": "url",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Wallet's nickname to be used for receiving the website",
+            "name": "nickname",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "description": "Website contents in a ZIP file.",
+            "name": "zipfile",
+            "in": "formData",
+            "required": true
           }
         ],
         "responses": {
