@@ -109,4 +109,5 @@ func chunk(s string, chunkSize int) (chunks []string) {
 	chunks = append(chunks, s[(chunkNumber-1)*chunkSize:])
 
 	return chunks
+
 }
