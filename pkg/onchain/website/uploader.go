@@ -31,6 +31,7 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 
 type UploadWebsiteParam struct {
 	Data string `json:"data"`
+	TotalChunks string `json:"totalChunks"`
 }
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, error) {
@@ -58,6 +59,7 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 func uploadLight(client *node.Client, addr []byte, content string, wallet *wallet.Wallet) (string, error) {
 	param, err := json.Marshal(UploadWebsiteParam{
 		Data: content,
+		TotalChunks: "1",
 	})
 	if err != nil {
 		return "", err
@@ -73,6 +75,7 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 	op := ""
 	param, err := json.Marshal(UploadWebsiteParam{
 		Data: chunks[0],
+		TotalChunks: string(len(chunks)),
 	})
 	if err != nil {
 		return "", err
@@ -85,6 +88,7 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 
 		param, err = json.Marshal(UploadWebsiteParam{
 			Data: chunks[i],
+			TotalChunks: string(len(chunks)),
 		})
 		if err != nil {
 			return "", err
