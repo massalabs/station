@@ -12,7 +12,7 @@ on:
         type: boolean
         default: true
       release-as-prerelease:
-        description: "Whether it's a prerlease or not"
+        description: "Whether it's a prerelease or not"
         required: true
         type: boolean
         default: false
