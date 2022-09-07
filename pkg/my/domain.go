@@ -37,9 +37,9 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 func Websites(client *node.Client, domainNames []string) ([]*models.Websites, error) {
 	const recordPrefix = "record"
 
-	params := []node.GetDatastoreEntriesString{}
+	params := []node.DatastoreEntriesKeysAsString{}
 	for i := 0; i < len(domainNames); i++ {
-		param := node.GetDatastoreEntriesString{
+		param := node.DatastoreEntriesKeysAsString{
 			Address: dns.DnsRawAddress,
 			Key:     recordPrefix + domainNames[i],
 		}

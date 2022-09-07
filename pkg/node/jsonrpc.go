@@ -9,7 +9,7 @@ import (
 	"github.com/ybbus/jsonrpc/v3"
 )
 
-const InnoNetServer = "https://inno.massa.net/test12" // current version of the InnoNet
+const InnoNetServer = "https://inno.massa.net/test13" // current version of the InnoNet
 
 type withLoggingRoundTripper struct {
 	isEnabled        bool

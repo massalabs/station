@@ -191,6 +191,17 @@ func New(nickname string) (*Wallet, error) {
 		}},
 	}
 
+	bytesOutput, err := json.Marshal(wallet)
+	if err != nil {
+		return nil, err
+	}
+
+	err = os.WriteFile("wallet_"+nickname+".json", bytesOutput, 0o644)
+	if err != nil {
+		return nil, err
+	}
+
+
 	return &wallet, nil
 }
 
