@@ -639,6 +639,7 @@ func init() {
         "operationId": "websiteCreatorPrepare",
         "parameters": [
           {
+
             "type": "string",
             "description": "URL without '.', capitals letters and specifics characters",
             "name": "url",
@@ -658,6 +659,7 @@ func init() {
             "name": "zipfile",
             "in": "formData",
             "required": true
+
           }
         ],
         "responses": {
@@ -1415,6 +1417,7 @@ func init() {
         "operationId": "websiteCreatorPrepare",
         "parameters": [
           {
+
             "type": "string",
             "description": "URL without '.', capitals letters and specifics characters",
             "name": "url",
@@ -1434,6 +1437,7 @@ func init() {
             "name": "zipfile",
             "in": "formData",
             "required": true
+
           }
         ],
         "responses": {

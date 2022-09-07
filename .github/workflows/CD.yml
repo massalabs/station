@@ -1,0 +1,61 @@
+name: CD
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        description: "Version to produce"
+        required: true
+      release-as-draft:
+        description: "Whether it's a draft or not"
+        required: true
+        type: boolean
+        default: true
+      release-as-prerelease:
+        description: "Whether it's a prerelease or not"
+        required: true
+        type: boolean
+        default: false
+      generate-release-notes:
+        description: "Generate release notes"
+        required: true
+        type: boolean
+        default: true
+
+env:
+  GO_VERSION: 1.19
+  RELEASE_VERSION: ${{ github.event.inputs.release-version }}
+  RELEASE_AS_DRAFT: ${{ github.event.inputs.release-as-draft }}
+  RELEASE_AS_PRERELEASE: ${{ github.event.inputs.release-as-prerelease }}
+  GENERATE_RELEASE_NOTES: ${{ github.event.inputs.generate-release-notes }}
+
+jobs:
+  build-release:
+    name: Build and create release
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            os: windows
+          - arch: amd64
+            os: linux
+          - arch: amd64
+            os: darwin
+          - arch: arm64
+            os: darwin
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - uses: actions/checkout@v3
+      - name: Build binary for ${{ matrix.os }} on ${{ matrix.arch}}
+        run: GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -o thyra-server_${{ matrix.os }}_${{ matrix.arch }} ./cmd/thyra-server/
+      - name: Create release and upload binaries
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          draft: ${{ env.RELEASE_AS_DRAFT }}
+          prerelease: ${{ env.RELEASE_AS_PRERELEASE }}
+          generate_release_notes: ${{ env.GENERATE_RELEASE_NOTES }}
+          files: thyra-server_${{ matrix.os }}_${{ matrix.arch }}

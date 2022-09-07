@@ -54,3 +54,78 @@ func (o *WebsiteCreatorPrepare) ServeHTTP(rw http.ResponseWriter, r *http.Reques
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }
+
+
+// WebsiteCreatorPrepareBody website creator prepare body
+//
+// swagger:model WebsiteCreatorPrepareBody
+type WebsiteCreatorPrepareBody struct {
+
+	// Wallet's nickname to be used for preparing the website
+	// Required: true
+	Nickname string `json:"nickname"`
+
+	// URL without '.', capitals letters and specifics characters
+	// Required: true
+	URL string `json:"url"`
+}
+
+// Validate validates this website creator prepare body
+func (o *WebsiteCreatorPrepareBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateNickname(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateURL(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *WebsiteCreatorPrepareBody) validateNickname(formats strfmt.Registry) error {
+
+	if err := validate.RequiredString("body"+"."+"nickname", "body", o.Nickname); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *WebsiteCreatorPrepareBody) validateURL(formats strfmt.Registry) error {
+
+	if err := validate.RequiredString("body"+"."+"url", "body", o.URL); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this website creator prepare body based on context it is used
+func (o *WebsiteCreatorPrepareBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *WebsiteCreatorPrepareBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *WebsiteCreatorPrepareBody) UnmarshalBinary(b []byte) error {
+	var res WebsiteCreatorPrepareBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+

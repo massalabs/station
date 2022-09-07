@@ -30,7 +30,11 @@ func (c *walletDelete) Handle(params operations.MgmtWalletDeleteParams) middlewa
 
 	err := wallet.Delete(params.Nickname)
 	if err != nil {
-		panic(err)
+		return operations.NewMgmtWalletDeleteInternalServerError().WithPayload(
+			&models.Error{
+				Code:    errorCodeWalletDeleteFile,
+				Message: err.Error(),
+			})
 	}
 
 	return operations.NewMgmtWalletDeleteNoContent()

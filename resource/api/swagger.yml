@@ -232,6 +232,7 @@ paths:
           name: url
           type: string
           required: true
+
           description: URL without '.', capitals letters and specifics characters
         - in: formData
           name: nickname
@@ -243,6 +244,7 @@ paths:
           type: file
           required: true
           description: Website contents in a ZIP file.
+
       produces:
         - application/json
       responses:

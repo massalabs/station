@@ -34,19 +34,23 @@ type UploadWebsiteParam struct {
 }
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, error) {
-	const maxLengthPerBlock = 260000
+
+	const blockLength = 260000
+
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
 	if err != nil {
 		return "", err
 	}
-	chunks := splitStringArray(content, maxLengthPerBlock)
 
-	if len(chunks) == 1 {
+	blocks := chunk(content, blockLength)
+
+	if len(blocks) == 1 {
 		_, err = uploadLight(client, addr, content, wallet)
 	} else {
-		_, err = uploadHeavy(client, addr, chunks, wallet)
+		_, err = uploadHeavy(client, addr, blocks, wallet)
+
 	}
 
 	if err != nil {
@@ -97,7 +101,9 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 	return op, nil
 }
 
-func splitStringArray(s string, chunkSize int) (chunks []string) {
+
+func chunk(s string, chunkSize int) (chunks []string) {
+
 
 	counter := 0
 
