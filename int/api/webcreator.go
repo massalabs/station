@@ -19,7 +19,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
 				&models.Error{
-					Code:    errorCodeWebCreatorPrepare,
+					Code:    errorCodeGetWallet,
 					Message: err.Error(),
 				})
 	}
@@ -60,7 +60,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 		return operations.NewWebsiteCreatorUploadInternalServerError().
 			WithPayload(
 				&models.Error{
-					Code:    errorCodeWebCreatorPrepare,
+					Code:    errorCodeGetWallet,
 					Message: err.Error(),
 				})
 	}
