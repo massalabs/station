@@ -95,6 +95,7 @@ func init() {
         "operationId": "cmdExecuteFunction",
         "parameters": [
           {
+            "x-nullable": false,
             "name": "body",
             "in": "body",
             "required": true,
@@ -347,6 +348,7 @@ func init() {
         "operationId": "mgmtWalletImport",
         "parameters": [
           {
+            "x-nullable": false,
             "name": "body",
             "in": "body",
             "required": true,
@@ -386,6 +388,7 @@ func init() {
         "operationId": "mgmtWalletCreate",
         "parameters": [
           {
+            "x-nullable": false,
             "name": "body",
             "in": "body",
             "required": true,
@@ -639,8 +642,9 @@ func init() {
         "operationId": "websiteCreatorPrepare",
         "parameters": [
           {
-
+            "pattern": "^[a-z0-9]+$",
             "type": "string",
+            "x-nullable": false,
             "description": "URL without '.', capitals letters and specifics characters",
             "name": "url",
             "in": "formData",
@@ -648,6 +652,7 @@ func init() {
           },
           {
             "type": "string",
+            "x-nullable": false,
             "description": "Wallet's nickname to be used for receiving the website",
             "name": "nickname",
             "in": "formData",
@@ -655,11 +660,11 @@ func init() {
           },
           {
             "type": "file",
+            "x-nullable": false,
             "description": "Website contents in a ZIP file.",
             "name": "zipfile",
             "in": "formData",
             "required": true
-
           }
         ],
         "responses": {
@@ -702,6 +707,7 @@ func init() {
         "parameters": [
           {
             "type": "string",
+            "x-nullable": false,
             "description": "Address where to deploy website. The account must have been prepare to receive a website.",
             "name": "address",
             "in": "formData",
@@ -709,6 +715,7 @@ func init() {
           },
           {
             "type": "string",
+            "x-nullable": false,
             "description": "Wallet's nickname to be used for receiving the website",
             "name": "nickname",
             "in": "formData",
@@ -716,6 +723,7 @@ func init() {
           },
           {
             "type": "file",
+            "x-nullable": false,
             "description": "Website contents in a ZIP file.",
             "name": "zipfile",
             "in": "formData",
@@ -920,6 +928,7 @@ func init() {
         "operationId": "cmdExecuteFunction",
         "parameters": [
           {
+            "x-nullable": false,
             "name": "body",
             "in": "body",
             "required": true,
@@ -1125,6 +1134,7 @@ func init() {
         "operationId": "mgmtWalletImport",
         "parameters": [
           {
+            "x-nullable": false,
             "name": "body",
             "in": "body",
             "required": true,
@@ -1164,6 +1174,7 @@ func init() {
         "operationId": "mgmtWalletCreate",
         "parameters": [
           {
+            "x-nullable": false,
             "name": "body",
             "in": "body",
             "required": true,
@@ -1417,8 +1428,9 @@ func init() {
         "operationId": "websiteCreatorPrepare",
         "parameters": [
           {
-
+            "pattern": "^[a-z0-9]+$",
             "type": "string",
+            "x-nullable": false,
             "description": "URL without '.', capitals letters and specifics characters",
             "name": "url",
             "in": "formData",
@@ -1426,6 +1438,7 @@ func init() {
           },
           {
             "type": "string",
+            "x-nullable": false,
             "description": "Wallet's nickname to be used for receiving the website",
             "name": "nickname",
             "in": "formData",
@@ -1433,11 +1446,11 @@ func init() {
           },
           {
             "type": "file",
+            "x-nullable": false,
             "description": "Website contents in a ZIP file.",
             "name": "zipfile",
             "in": "formData",
             "required": true
-
           }
         ],
         "responses": {
@@ -1480,6 +1493,7 @@ func init() {
         "parameters": [
           {
             "type": "string",
+            "x-nullable": false,
             "description": "Address where to deploy website. The account must have been prepare to receive a website.",
             "name": "address",
             "in": "formData",
@@ -1487,6 +1501,7 @@ func init() {
           },
           {
             "type": "string",
+            "x-nullable": false,
             "description": "Wallet's nickname to be used for receiving the website",
             "name": "nickname",
             "in": "formData",
@@ -1494,6 +1509,7 @@ func init() {
           },
           {
             "type": "file",
+            "x-nullable": false,
             "description": "Website contents in a ZIP file.",
             "name": "zipfile",
             "in": "formData",
