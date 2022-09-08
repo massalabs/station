@@ -100,7 +100,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 			Address: params.Address})
 }
 
-func GetUploadStateHandler(params operations.WebsiteCreatorGetterStatusParams) middleware.Responder {
+func UploadStatusHandler(params operations.WebsiteCreatorGetterStatusParams) middleware.Responder {
 
 	state, err := website.Status(params.ContractAddress)
 	if err != nil {

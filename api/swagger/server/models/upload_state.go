@@ -7,9 +7,12 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // UploadState Upload state
@@ -21,6 +24,7 @@ type UploadState struct {
 	LastChunk int64 `json:"lastChunk,omitempty"`
 
 	// Upload action status
+	// Enum: [NOT_STARTED IN_PROGRESS COMPLETED]
 	Status string `json:"status,omitempty"`
 
 	// Total chunk number
@@ -29,6 +33,60 @@ type UploadState struct {
 
 // Validate validates this upload state
 func (m *UploadState) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var uploadStateTypeStatusPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["NOT_STARTED","IN_PROGRESS","COMPLETED"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		uploadStateTypeStatusPropEnum = append(uploadStateTypeStatusPropEnum, v)
+	}
+}
+
+const (
+
+	// UploadStateStatusNOTSTARTED captures enum value "NOT_STARTED"
+	UploadStateStatusNOTSTARTED string = "NOT_STARTED"
+
+	// UploadStateStatusINPROGRESS captures enum value "IN_PROGRESS"
+	UploadStateStatusINPROGRESS string = "IN_PROGRESS"
+
+	// UploadStateStatusCOMPLETED captures enum value "COMPLETED"
+	UploadStateStatusCOMPLETED string = "COMPLETED"
+)
+
+// prop value enum
+func (m *UploadState) validateStatusEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, uploadStateTypeStatusPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *UploadState) validateStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateStatusEnum("status", "body", m.Status); err != nil {
+		return err
+	}
+
 	return nil
 }
 

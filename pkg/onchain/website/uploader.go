@@ -73,15 +73,15 @@ func Status(websiteCreator string) (*models.UploadState, error) {
 
 	actualChunk, err := strconv.Atoi(string(actualChunkEntry.CandidateValue))
 	if err != nil {
-		return nil, err
+		actualChunk = -1
 	}
 	totalChunks, err := strconv.Atoi(string(totalChunksEntry.CandidateValue))
 	if err != nil {
-		return nil, err
+		totalChunks = -1
 	}
 
 	var status string
-	if actualChunk == 0 && totalChunks == 0 {
+	if actualChunk == -1 && totalChunks == -1 {
 		status = "NOT_STARTED"
 	} else if actualChunk == totalChunks {
 		status = "COMPLETED"

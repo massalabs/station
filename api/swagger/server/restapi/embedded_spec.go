@@ -690,6 +690,7 @@ func init() {
     },
     "/websiteCreator/state/{contractAddress}": {
       "get": {
+        "description": "Returns the deployment status of the ` + "`" + `WebsiteCreator` + "`" + ` contract in parameter",
         "produces": [
           "application/json"
         ],
@@ -697,6 +698,7 @@ func init() {
         "parameters": [
           {
             "type": "string",
+            "x-nullable": false,
             "description": "Website creator contract's address",
             "name": "contractAddress",
             "in": "path",
@@ -817,7 +819,12 @@ func init() {
         },
         "status": {
           "description": "Upload action status",
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "NOT_STARTED",
+            "IN_PROGRESS",
+            "COMPLETED"
+          ]
         },
         "totalChunk": {
           "description": "Total chunk number",
@@ -1521,6 +1528,7 @@ func init() {
     },
     "/websiteCreator/state/{contractAddress}": {
       "get": {
+        "description": "Returns the deployment status of the ` + "`" + `WebsiteCreator` + "`" + ` contract in parameter",
         "produces": [
           "application/json"
         ],
@@ -1528,6 +1536,7 @@ func init() {
         "parameters": [
           {
             "type": "string",
+            "x-nullable": false,
             "description": "Website creator contract's address",
             "name": "contractAddress",
             "in": "path",
@@ -1726,7 +1735,12 @@ func init() {
         },
         "status": {
           "description": "Upload action status",
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "NOT_STARTED",
+            "IN_PROGRESS",
+            "COMPLETED"
+          ]
         },
         "totalChunk": {
           "description": "Total chunk number",

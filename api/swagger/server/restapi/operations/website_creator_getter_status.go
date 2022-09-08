@@ -31,7 +31,7 @@ func NewWebsiteCreatorGetterStatus(ctx *middleware.Context, handler WebsiteCreat
 
 /* WebsiteCreatorGetterStatus swagger:route GET /websiteCreator/state/{contractAddress} websiteCreatorGetterStatus
 
-WebsiteCreatorGetterStatus website creator getter status API
+Returns the deployment status of the `WebsiteCreator` contract in parameter
 
 */
 type WebsiteCreatorGetterStatus struct {

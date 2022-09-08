@@ -224,12 +224,14 @@ paths:
             $ref: '#/definitions/Error'
   /websiteCreator/state/{contractAddress}:
     get:
+      description: Returns the deployment status of the `WebsiteCreator` contract in parameter
       operationId: websiteCreatorGetterStatus
       parameters:
         - in: path
           name: contractAddress
           type: string
           required: true
+          x-nullable: false
           description: Website creator contract's address
       produces:
         - application/json
@@ -594,3 +596,4 @@ definitions:
       status:
         description: Upload action status
         type: string
+        enum: [NOT_STARTED, IN_PROGRESS, COMPLETED]
