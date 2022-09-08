@@ -2,7 +2,9 @@ package website
 
 import (
 	"encoding/json"
+	"strconv"
 
+	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/onchain"
@@ -30,7 +32,8 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 }
 
 type UploadWebsiteParam struct {
-	Data string `json:"data"`
+	Data        string `json:"data"`
+	TotalChunks string `json:"totalChunks"`
 }
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, error) {
@@ -55,6 +58,42 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 	return "1", nil
 }
 
+func Status(websiteCreator string) (*models.UploadState, error) {
+	client := node.NewDefaultClient()
+
+	actualChunkEntry, err := node.DatastoreEntry(client, websiteCreator, "actual_chunk")
+	if err != nil {
+		return nil, err
+	}
+
+	totalChunksEntry, err := node.DatastoreEntry(client, websiteCreator, "total_chunks")
+	if err != nil {
+		return nil, err
+	}
+
+	actualChunk, err := strconv.Atoi(string(actualChunkEntry.CandidateValue))
+	if err != nil {
+		return nil, err
+	}
+	totalChunks, err := strconv.Atoi(string(totalChunksEntry.CandidateValue))
+	if err != nil {
+		return nil, err
+	}
+
+	var status string
+	if actualChunk == 0 && totalChunks == 0 {
+		status = "NOT_STARTED"
+	} else if actualChunk == totalChunks {
+		status = "COMPLETED"
+	} else {
+		status = "IN_PROGRESS"
+	}
+
+	result := models.UploadState{LastChunk: int64(actualChunk), TotalChunk: int64(totalChunks), Status: status}
+
+	return &result, nil
+}
+
 func uploadLight(client *node.Client, addr []byte, content string, wallet *wallet.Wallet) (string, error) {
 	param, err := json.Marshal(UploadWebsiteParam{
 		Data: content,
@@ -72,7 +111,8 @@ func uploadLight(client *node.Client, addr []byte, content string, wallet *walle
 func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) (string, error) {
 	op := ""
 	param, err := json.Marshal(UploadWebsiteParam{
-		Data: chunks[0],
+		Data:        chunks[0],
+		TotalChunks: strconv.FormatInt(int64(len(chunks)), 10),
 	})
 	if err != nil {
 		return "", err
@@ -97,8 +137,9 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 	return op, nil
 }
 
-func chunk(s string, chunkSize int) (chunks []string) {
+func chunk(s string, chunkSize int) []string {
 
+	chunks := []string{}
 	counter := 0
 
 	chunkNumber := len(s)/chunkSize + 1

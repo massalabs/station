@@ -99,3 +99,17 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 			Name:    "Name",
 			Address: params.Address})
 }
+
+func GetUploadStateHandler(params operations.WebsiteCreatorGetterStatusParams) middleware.Responder {
+
+	state, err := website.Status(params.ContractAddress)
+	if err != nil {
+		return operations.NewWebsiteCreatorGetterStatusInternalServerError().
+			WithPayload(
+				&models.Error{
+					Code:    errorCodeWebGetUploadStatus,
+					Message: err.Error(),
+				})
+	}
+	return operations.NewWebsiteCreatorGetterStatusOK().WithPayload(state)
+}

@@ -222,6 +222,30 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: '#/definitions/Error'
+  /websiteCreator/state/{contractAddress}:
+    get:
+      operationId: websiteCreatorGetterStatus
+      parameters:
+        - in: path
+          name: contractAddress
+          type: string
+          required: true
+          description: Website creator contract's address
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Website creator status retrieved.
+          schema:
+            $ref: '#/definitions/UploadState'
+        '400':
+          description: Bad request.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: '#/definitions/Error'
   /websiteCreator/prepare:
     put:
       operationId: websiteCreatorPrepare
@@ -556,4 +580,17 @@ definitions:
         type: string
       address:
         description: Website's address.
+        type: string
+  UploadState:
+    type: object
+    description: Upload state
+    properties:
+      lastChunk:
+        description: Last uploaded chunk id
+        type: integer
+      totalChunk:
+        description: Total chunk number
+        type: integer
+      status:
+        description: Upload action status
         type: string

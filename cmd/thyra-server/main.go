@@ -57,6 +57,7 @@ func main() {
 
 	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(api.PrepareForWebsiteHandler)
 	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(api.UploadWebsiteHandler)
+	localAPI.WebsiteCreatorGetterStatusHandler = operations.WebsiteCreatorGetterStatusHandlerFunc(api.GetUploadStateHandler)
 
 	localAPI.MyDomainsGetterHandler = operations.MyDomainsGetterHandlerFunc(api.DomainsHandler)
 

@@ -688,6 +688,43 @@ func init() {
         }
       }
     },
+    "/websiteCreator/state/{contractAddress}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "websiteCreatorGetterStatus",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Website creator contract's address",
+            "name": "contractAddress",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Website creator status retrieved.",
+            "schema": {
+              "$ref": "#/definitions/UploadState"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/websiteCreator/upload": {
       "post": {
         "consumes": [
@@ -767,6 +804,24 @@ func init() {
           "description": "error message.",
           "type": "string",
           "x-nullable": false
+        }
+      }
+    },
+    "UploadState": {
+      "description": "Upload state",
+      "type": "object",
+      "properties": {
+        "lastChunk": {
+          "description": "Last uploaded chunk id",
+          "type": "integer"
+        },
+        "status": {
+          "description": "Upload action status",
+          "type": "string"
+        },
+        "totalChunk": {
+          "description": "Total chunk number",
+          "type": "integer"
         }
       }
     },
@@ -1464,6 +1519,43 @@ func init() {
         }
       }
     },
+    "/websiteCreator/state/{contractAddress}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "websiteCreatorGetterStatus",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Website creator contract's address",
+            "name": "contractAddress",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Website creator status retrieved.",
+            "schema": {
+              "$ref": "#/definitions/UploadState"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/websiteCreator/upload": {
       "post": {
         "consumes": [
@@ -1620,6 +1712,24 @@ func init() {
           "type": "integer"
         },
         "slashing": {
+          "type": "integer"
+        }
+      }
+    },
+    "UploadState": {
+      "description": "Upload state",
+      "type": "object",
+      "properties": {
+        "lastChunk": {
+          "description": "Last uploaded chunk id",
+          "type": "integer"
+        },
+        "status": {
+          "description": "Upload action status",
+          "type": "string"
+        },
+        "totalChunk": {
+          "description": "Total chunk number",
           "type": "integer"
         }
       }

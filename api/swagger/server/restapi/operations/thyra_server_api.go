@@ -88,6 +88,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		ThyraWebsiteCreatorHandler: ThyraWebsiteCreatorHandlerFunc(func(params ThyraWebsiteCreatorParams) middleware.Responder {
 			return middleware.NotImplemented("operation ThyraWebsiteCreator has not yet been implemented")
 		}),
+		WebsiteCreatorGetterStatusHandler: WebsiteCreatorGetterStatusHandlerFunc(func(params WebsiteCreatorGetterStatusParams) middleware.Responder {
+			return middleware.NotImplemented("operation WebsiteCreatorGetterStatus has not yet been implemented")
+		}),
 		WebsiteCreatorPrepareHandler: WebsiteCreatorPrepareHandlerFunc(func(params WebsiteCreatorPrepareParams) middleware.Responder {
 			return middleware.NotImplemented("operation WebsiteCreatorPrepare has not yet been implemented")
 		}),
@@ -170,6 +173,8 @@ type ThyraServerAPI struct {
 	ThyraWalletHandler ThyraWalletHandler
 	// ThyraWebsiteCreatorHandler sets the operation handler for the thyra website creator operation
 	ThyraWebsiteCreatorHandler ThyraWebsiteCreatorHandler
+	// WebsiteCreatorGetterStatusHandler sets the operation handler for the website creator getter status operation
+	WebsiteCreatorGetterStatusHandler WebsiteCreatorGetterStatusHandler
 	// WebsiteCreatorPrepareHandler sets the operation handler for the website creator prepare operation
 	WebsiteCreatorPrepareHandler WebsiteCreatorPrepareHandler
 	// WebsiteCreatorUploadHandler sets the operation handler for the website creator upload operation
@@ -301,6 +306,9 @@ func (o *ThyraServerAPI) Validate() error {
 	}
 	if o.ThyraWebsiteCreatorHandler == nil {
 		unregistered = append(unregistered, "ThyraWebsiteCreatorHandler")
+	}
+	if o.WebsiteCreatorGetterStatusHandler == nil {
+		unregistered = append(unregistered, "WebsiteCreatorGetterStatusHandler")
 	}
 	if o.WebsiteCreatorPrepareHandler == nil {
 		unregistered = append(unregistered, "WebsiteCreatorPrepareHandler")
@@ -452,6 +460,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/thyra/websiteCreator/{resource}"] = NewThyraWebsiteCreator(o.context, o.ThyraWebsiteCreatorHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/websiteCreator/state/{contractAddress}"] = NewWebsiteCreatorGetterStatus(o.context, o.WebsiteCreatorGetterStatusHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
