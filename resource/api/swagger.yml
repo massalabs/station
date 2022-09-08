@@ -9,7 +9,7 @@ produces:
 schemes:
   - http
   - https
-swagger: '2.0'
+swagger: "2.0"
 paths:
   /thyra/wallet/{resource}:
     get:
@@ -29,7 +29,7 @@ paths:
           required: true
           description: Website resource.
       responses:
-        '200':
+        "200":
           description: Page found
   /thyra/websiteCreator/{resource}:
     get:
@@ -49,7 +49,7 @@ paths:
           required: true
           description: Website resource.
       responses:
-        '200':
+        "200":
           description: Page found
   /mgmt/wallet:
     get:
@@ -57,26 +57,27 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Wallets retrieved
           schema:
             type: array
             items:
-              $ref: '#/definitions/Wallet'
-        '400':
+              $ref: "#/definitions/Wallet"
+        "400":
           description: Bad request.
           schema:
-            $ref: '#/definitions/Error'
-        '500':
+            $ref: "#/definitions/Error"
+        "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: "#/definitions/Error"
     post:
       operationId: mgmtWalletCreate
       parameters:
         - in: body
           name: body
           required: true
+          x-nullable: false
           schema:
             type: object
             required:
@@ -92,47 +93,48 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: New wallet created.
           schema:
-            $ref: '#/definitions/Wallet'
-        '400':
+            $ref: "#/definitions/Wallet"
+        "400":
           description: Bad request.
           schema:
-            $ref: '#/definitions/Error'
-        '422':
+            $ref: "#/definitions/Error"
+        "422":
           description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
           schema:
-            $ref: '#/definitions/Error'
-        '500':
+            $ref: "#/definitions/Error"
+        "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: "#/definitions/Error"
     put:
       operationId: mgmtWalletImport
       parameters:
         - in: body
           name: body
           required: true
+          x-nullable: false
           schema:
-            $ref: '#/definitions/Wallet'
+            $ref: "#/definitions/Wallet"
       produces:
         - application/json
       responses:
-        '204':
+        "204":
           description: Wallet imported.
-        '400':
+        "400":
           description: Bad request.
           schema:
-            $ref: '#/definitions/Error'
-        '422':
+            $ref: "#/definitions/Error"
+        "422":
           description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
           schema:
-            $ref: '#/definitions/Error'
-        '500':
+            $ref: "#/definitions/Error"
+        "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: "#/definitions/Error"
   /mgmt/wallet/{nickname}:
     delete:
       operationId: mgmtWalletDelete
@@ -145,26 +147,26 @@ paths:
       produces:
         - application/json
       responses:
-        '204':
+        "204":
           description: Wallet removed.
           schema:
-            $ref: '#/definitions/Wallet'
-        '400':
+            $ref: "#/definitions/Wallet"
+        "400":
           description: Bad request.
           schema:
-            $ref: '#/definitions/Error'
-        '404':
+            $ref: "#/definitions/Error"
+        "404":
           description: Bad request.
           schema:
-            $ref: '#/definitions/Error'
-        '422':
+            $ref: "#/definitions/Error"
+        "422":
           description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
           schema:
-            $ref: '#/definitions/Error'
-        '500':
+            $ref: "#/definitions/Error"
+        "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: "#/definitions/Error"
     get:
       operationId: mgmtWalletGetter
       parameters:
@@ -176,26 +178,26 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Wallet retrieved.
           schema:
-            $ref: '#/definitions/Wallet'
-        '400':
+            $ref: "#/definitions/Wallet"
+        "400":
           description: Bad request.
           schema:
-            $ref: '#/definitions/Error'
-        '404':
+            $ref: "#/definitions/Error"
+        "404":
           description: Bad request.
           schema:
-            $ref: '#/definitions/Error'
-        '422':
+            $ref: "#/definitions/Error"
+        "422":
           description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
           schema:
-            $ref: '#/definitions/Error'
-        '500':
+            $ref: "#/definitions/Error"
+        "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: "#/definitions/Error"
   /my/domains/{nickname}:
     get:
       operationId: myDomainsGetter
@@ -208,60 +210,65 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Domains returned. May be empty.
           schema:
             type: array
             items:
-              $ref: '#/definitions/Websites'
-        '400':
+              $ref: "#/definitions/Websites"
+        "400":
           description: Bad request.
           schema:
-            $ref: '#/definitions/Error'
-        '500':
+            $ref: "#/definitions/Error"
+        "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: "#/definitions/Error"
   /websiteCreator/prepare:
     put:
       operationId: websiteCreatorPrepare
+      consumes:
+        - multipart/form-data
       parameters:
-        - in: body
-          name: body
+        - in: formData
+          name: url
+          type: string
+          pattern: "^[a-z0-9]+$"
           required: true
-          schema:
-            type: object
-            required:
-              - url
-              - nickname
-            properties:
-              url:
-                description: URL without '.', capitals letters and specifics characters
-                type: string
-                x-nullable: false
-              nickname:
-                description: Wallet's nickname to be used for preparing the website
-                type: string
-                x-nullable: false
+          x-nullable: false
+          description: URL without '.', capitals letters and specifics characters
+        - in: formData
+          name: nickname
+          type: string
+          required: true
+          x-nullable: false
+          description: Wallet's nickname to be used for receiving the website
+        - in: formData
+          name: zipfile
+          type: file
+          required: true
+          x-nullable: false
+          description: Website contents in a ZIP file.
+
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: New website created.
           schema:
-            $ref: '#/definitions/Websites'
-        '400':
+            $ref: "#/definitions/Websites"
+        "400":
           description: Bad request.
           schema:
-            $ref: '#/definitions/Error'
-        '422':
+            $ref: "#/definitions/Error"
+        "422":
           description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
           schema:
-            $ref: '#/definitions/Error'
-        '500':
+            $ref: "#/definitions/Error"
+        "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: "#/definitions/Error"
   /websiteCreator/upload:
     post:
       operationId: websiteCreatorUpload
@@ -272,36 +279,39 @@ paths:
           name: address
           type: string
           required: true
+          x-nullable: false
           description: Address where to deploy website. The account must have been prepare to receive a website.
         - in: formData
           name: nickname
           type: string
           required: true
+          x-nullable: false
           description: Wallet's nickname to be used for receiving the website
         - in: formData
           name: zipfile
           type: file
           required: true
+          x-nullable: false
           description: Website contents in a ZIP file.
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Website's chunk deployed.
           schema:
-            $ref: '#/definitions/Websites'
-        '400':
+            $ref: "#/definitions/Websites"
+        "400":
           description: Bad request.
           schema:
-            $ref: '#/definitions/Error'
-        '422':
+            $ref: "#/definitions/Error"
+        "422":
           description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
           schema:
-            $ref: '#/definitions/Error'
-        '500':
+            $ref: "#/definitions/Error"
+        "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: "#/definitions/Error"
   /cmd/executeFunction:
     post:
       operationId: cmdExecuteFunction
@@ -309,15 +319,16 @@ paths:
         - in: body
           name: body
           required: true
+          x-nullable: false
           schema:
             type: object
             required:
               - name
               - at
             default:
-              name: 'test'
-              at: 'A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh'
-              args: ''
+              name: "test"
+              at: "A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh"
+              args: ""
               gaz:
                 price: 0
                 limit: 700000000
@@ -337,7 +348,7 @@ paths:
               args:
                 description: Arguments to pass to the function.
                 type: string
-                default: ''
+                default: ""
               gaz:
                 type: object
                 description: Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.
@@ -377,19 +388,19 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: OK.
           schema:
             type: string
             description: Operation id.
-        '422':
+        "422":
           description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
           schema:
-            $ref: '#/definitions/Error'
-        '500':
+            $ref: "#/definitions/Error"
+        "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: "#/definitions/Error"
   /kpi:
     get:
       operationId: kpi
@@ -406,7 +417,7 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: kpi message.
           schema:
             type: object
@@ -476,20 +487,20 @@ paths:
           required: true
           description: Website resource.
       responses:
-        '200':
+        "200":
           description: Resource retrieved.
-        '400':
+        "400":
           description: Bad request.
           schema:
-            $ref: '#/definitions/Error'
-        '404':
+            $ref: "#/definitions/Error"
+        "404":
           description: Resource not found.
           schema:
-            $ref: '#/definitions/Error'
-        '500':
+            $ref: "#/definitions/Error"
+        "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: "#/definitions/Error"
 definitions:
   Error:
     type: object

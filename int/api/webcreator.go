@@ -13,7 +13,7 @@ import (
 
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
 
-	wallet, err := wallet.Load(params.Body.Nickname)
+	wallet, err := wallet.Load(params.Nickname)
 
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
@@ -34,7 +34,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 				})
 	}
 
-	address, err := website.PrepareForUpload(params.Body.URL, wallet)
+	address, err := website.PrepareForUpload(params.URL, wallet)
 
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
@@ -45,12 +45,35 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 				})
 	}
 
+	archive, err := ioutil.ReadAll(params.Zipfile)
+	if err != nil {
+		return operations.NewWebsiteCreatorPrepareInternalServerError().
+			WithPayload(&models.Error{
+				Code:    errorCodeWebCreatorReadArchive,
+				Message: err.Error(),
+			})
+	}
+
+	b64 := base64.StdEncoding.EncodeToString(archive)
+
+	_, err = website.Upload(address, b64, wallet)
+	if err != nil {
+		return operations.NewWebsiteCreatorPrepareInternalServerError().
+			WithPayload(&models.Error{
+				Code:    errorCodeWebCreatorUpload,
+				Message: err.Error(),
+			})
+	}
+
 	return operations.NewWebsiteCreatorPrepareOK().
 		WithPayload(
 			&models.Websites{
-				Name:    params.Body.URL,
+
+				Name: params.URL,
+
 				Address: address,
 			})
+
 }
 
 func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middleware.Responder {
