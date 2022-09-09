@@ -48,6 +48,7 @@ type WebsiteCreatorPrepareParams struct {
 	Nickname string
 	/*URL without '.', capitals letters and specifics characters
 	  Required: true
+	  Pattern: ^[a-z0-9]+$
 	  In: formData
 	*/
 	URL string
@@ -137,6 +138,20 @@ func (o *WebsiteCreatorPrepareParams) bindURL(rawData []string, hasKey bool, for
 		return err
 	}
 	o.URL = raw
+
+	if err := o.validateURL(formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateURL carries on validations for parameter URL
+func (o *WebsiteCreatorPrepareParams) validateURL(formats strfmt.Registry) error {
+
+	if err := validate.Pattern("url", "formData", o.URL, `^[a-z0-9]+$`); err != nil {
+		return err
+	}
 
 	return nil
 }

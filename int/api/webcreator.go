@@ -13,9 +13,7 @@ import (
 
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
 
-
 	wallet, err := wallet.Load(params.Nickname)
-
 
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
@@ -37,7 +35,6 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 	}
 
 	address, err := website.PrepareForUpload(params.URL, wallet)
-
 
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
@@ -72,7 +69,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 		WithPayload(
 			&models.Websites{
 
-				Name:    params.URL,
+				Name: params.URL,
 
 				Address: address,
 			})
@@ -125,66 +122,3 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 			Name:    "Name",
 			Address: params.Address})
 }
-
-// func PrepareAndUploadWebsiteHandler(params operations.WebsiteCreatorPrepareAndUploadParams) middleware.Responder {
-
-// 	wallet, err := wallet.Load(params.Nickname)
-
-// 	if err != nil {
-// 		return operations.NewWebsiteCreatorPrepareAndUploadInternalServerError().
-// 			WithPayload(
-// 				&models.Error{
-// 					Code:    errorCodeWebCreatorPrepare,
-// 					Message: err.Error(),
-// 				})
-// 	}
-
-// 	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
-// 	if err != nil {
-// 		return operations.NewWebsiteCreatorPrepareAndUploadInternalServerError().
-// 			WithPayload(
-// 				&models.Error{
-// 					Code:    errorCodeWalletWrongPassword,
-// 					Message: err.Error(),
-// 				})
-// 	}
-
-// 	address, err := website.PrepareForUpload(params.URL, wallet)
-
-// 	if err != nil {
-// 		return operations.NewWebsiteCreatorPrepareAndUploadInternalServerError().
-// 			WithPayload(
-// 				&models.Error{
-// 					Code:    errorCodeWebCreatorPrepare,
-// 					Message: err.Error(),
-// 				})
-// 	}
-
-// 	archive, err := ioutil.ReadAll(params.Zipfile)
-// 	if err != nil {
-// 		return operations.NewWebsiteCreatorPrepareAndUploadInternalServerError().
-// 			WithPayload(&models.Error{
-// 				Code:    errorCodeWebCreatorReadArchive,
-// 				Message: err.Error(),
-// 			})
-// 	}
-
-// 	b64 := base64.StdEncoding.EncodeToString(archive)
-
-// 	_, err = website.Upload(address, b64, wallet)
-// 	if err != nil {
-// 		return operations.NewWebsiteCreatorPrepareAndUploadInternalServerError().
-// 			WithPayload(&models.Error{
-// 				Code:    errorCodeWebCreatorUpload,
-// 				Message: err.Error(),
-// 			})
-// 	}
-
-// 	return operations.NewWebsiteCreatorPrepareAndUploadOK().
-// 		WithPayload(
-// 			&models.Websites{
-// 				Name:    params.URL,
-// 				Address: address,
-// 			})
-
-// }

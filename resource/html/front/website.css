@@ -1,12 +1,12 @@
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #fff;
 
-  background :linear-gradient(90deg,#172230 50.03%,#0c1219 85.82%);
+  background: linear-gradient(90deg, #172230 50.03%, #0c1219 85.82%);
 }
 
 a {
@@ -17,57 +17,60 @@ a:hover {
   color: rgb(164, 164, 164);
 }
 
-.massa-logo-banner{
-width: 170px;
+.massa-logo-banner {
+  width: 170px;
 }
 
-.massa-logo-spinner{
+.massa-logo-spinner {
   width: 25px;
 }
-.spinner-border{
+.spinner-border {
   color: transparent;
 }
 
-.loading{
+.loading {
   display: none;
 }
 
-.title-wallet{
-margin-bottom: 45px;
+.title-wallet {
+  margin-bottom: 45px;
 }
-option{
-background-color: transparent;
+option {
+  background-color: transparent;
 }
-select.form-select:focus{
-background-color :black;
-color :white;
+select.form-select:focus {
+  background-color: black;
+  color: white;
+}
 
+.form-control,
+.form-control:focus {
+  color: white;
+  border-radius: 0;
+  border: none;
+  border-bottom: 2px solid hsla(0, 0%, 100%, 0.2);
+  background-color: transparent;
+  box-shadow: none;
 }
-
-.form-control, .form-control:focus{
-color :white;
-border-radius: 0;
-border: none;
-border-bottom: 2px solid hsla(0,0%,100%,.2);
-background-color: transparent;
-box-shadow: none;
+.form-control:hover {
+  cursor: pointer;
 }
 
 .form-select {
-background-color: transparent;
-color: white;
+  background-color: transparent;
+  color: white;
 }
 
-h1{
+h1 {
   font-size: 3.5rem;
-  color : hsla(0,0%,100%,.2);
+  color: hsla(0, 0%, 100%, 0.2);
 }
-h2{
-color : hsla(0,0%,100%,.2);
+h2 {
+  color: hsla(0, 0%, 100%, 0.2);
 }
 
 button {
-  border:none;
+  border: none;
   padding: 3px 30px;
   border-radius: 100px;
   color: #fff;
@@ -79,82 +82,91 @@ button {
   border: 3px solid #e74e4e;
 }
 
-.alert-danger{
+.primary-button:hover {
+  background-color: #501313;
+  border: 3px solid #501313;
+  transform: scale(1.05);
+  transition: 0.5s;
+}
+
+.alert-danger {
   display: none;
   position: fixed;
-  top: 20px; 
+  top: 20px;
   left: 50%;
   transform: translate(-50%, 0);
   margin: auto;
   width: 300px;
   padding: 10px 0;
   background-color: #e74e4e;
-  border : none;
+  border: none;
   text-align: center;
-  color:white;
+  color: white;
 }
 
-.alert-primary{
-display: none;
-position: fixed;
-top: 20px; 
-left: 50%;
-transform: translate(-50%, 0);
-margin: auto;
-width: 600px;
-padding: 10px 0;
-background-color: hsla(0,0%,100%,.05);
-border : none;
-text-align: center;
-color:white;
+.alert-primary {
+  display: none;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  margin: auto;
+  width: 600px;
+  padding: 10px 0;
+  background-color: hsla(0, 0%, 100%, 0.05);
+  border: none;
+  text-align: center;
+  color: white;
 }
-.clipboard{
-cursor: pointer;
-margin-left: 10px;
-margin-bottom: 4px;
-}
-
-.quit-button{
-cursor: pointer;
+.clipboard {
+  cursor: pointer;
+  margin-left: 10px;
+  margin-bottom: 4px;
 }
 
-#website-deployers-table{
-color: white;
+.quit-button {
+  cursor: pointer;
 }
 
-.table{
-color:white;
+#website-deployers-table {
+  color: white;
 }
 
-tbody, td, tfoot, th, thead, tr{
-border-color:rgb(86, 86, 86);
+.table {
+  color: white;
 }
 
-.table>:not(caption)>*>*{
-padding: 18px 1.5rem ;
+tbody,
+td,
+tfoot,
+th,
+thead,
+tr {
+  border-color: rgb(86, 86, 86);
 }
 
-.table-striped>tbody>tr:nth-of-type(odd)>*{
-background-color: hsla(0,0%,100%,.05);
-color:white;
+.table > :not(caption) > * > * {
+  padding: 18px 1.5rem;
 }
 
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: hsla(0, 0%, 100%, 0.05);
+  color: white;
+}
 
 /* Popover css */
 
-.popover__wrapper{
+.popover__wrapper {
   right: 20px;
-  top : 70px;
+  top: 70px;
   position: fixed;
   width: 150px;
   text-align: center;
   text-decoration: none;
 }
 
-.wallet_button{
+.wallet_button {
   text-decoration: none;
-
-  
 }
 .popover__title {
   text-align: center;
@@ -169,7 +181,7 @@ color:white;
   opacity: 0;
   display: none;
   background-color: #e74e4e;
-  width:130px;
+  width: 130px;
 }
 .popover__content:before {
   z-index: -1;
@@ -181,42 +193,93 @@ color:white;
   display: inline-block;
 }
 
-.wallet-item{
+.wallet-item {
   padding: 2px 3px;
 }
 
-.wallet-link{
+.wallet-link {
   text-decoration: none;
-  color : white;
+  color: white;
 }
 
-#wallet-list{
+#wallet-list {
   list-style-type: none;
   padding: 0px;
 }
 
-td,th {
+td,
+th {
   text-align: center;
   vertical-align: middle;
 }
-.massa-logo-spinner { 
+.massa-logo-spinner {
   width: 25px;
   animation: spin 2s infinite linear;
   -webkit-animation: spin 2s infinite linear;
 }
 @-webkit-keyframes spin {
-0%  {-webkit-transform: rotate(0deg);}
-100% {-webkit-transform: rotate(360deg);}	
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
 }
 
 /* PASSWORD MODAL */
-.modal-content{
-  background: linear-gradient(90deg,#172230 50.03%,#0c1219 85.82%);
+.modal-content {
+  background: linear-gradient(90deg, #172230 50.03%, #0c1219 85.82%);
 }
 
-.close{
+.close {
   background: transparent;
 }
-.modal-footer{
+.modal-footer {
   border-top: none;
+}
+
+/* Website creation  */
+
+.website-card {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+  background: grey;
+  border: 1px solid lightgray;
+  border-radius: 32px;
+  padding: 16px;
+  width: 500px;
+}
+
+.website-line {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  margin-top: 16px;
+  width: 80%;
+}
+
+.popover__wrapper-website {
+  width: 150px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.website-card-label {
+  font-size: 1.2em;
+  color: black;
+  text-align: left;
+  margin-right: 16px;
+  margin-top: 8px;
+}
+
+.website-file-input {
+  position: absolute;
+  z-index: -1;
+  height: 1px;
+  width: 1px;
+}
+
+.spacer {
+  margin-top: 16px;
 }
