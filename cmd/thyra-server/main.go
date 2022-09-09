@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 	"sync"
 
 	"github.com/go-openapi/loads"
@@ -36,6 +37,7 @@ func main() {
 
 	certFilePtr := flag.String("tls-certificate", "", "path to certificate file")
 	keyFilePtr := flag.String("tls-key", "", "path to key file")
+	massaNetworkAddressPtr := flag.String("network", "", "IP address of the chosen massa network")
 	flag.Parse()
 
 	if *certFilePtr != "" {
@@ -44,6 +46,19 @@ func main() {
 
 	if *keyFilePtr != "" {
 		server.TLSCertificateKey = flags.Filename(*keyFilePtr)
+	}
+
+	if *massaNetworkAddressPtr != "" {
+		if *massaNetworkAddressPtr == "TESTNET" {
+			*massaNetworkAddressPtr = "https://test.massa.net/v1/"
+		} else if *massaNetworkAddressPtr == "LABNET" {
+			*massaNetworkAddressPtr = "https://labnet.massa.net/"
+		} else if *massaNetworkAddressPtr == "INNONET" {
+			*massaNetworkAddressPtr = "https://inno.massa.net/test13"
+		} else if *massaNetworkAddressPtr == "LOCALHOST" {
+			*massaNetworkAddressPtr = "http://127.0.0.1"
+		}
+		os.Setenv("MASSA_URL_RPC", *massaNetworkAddressPtr)
 	}
 
 	var walletStorage sync.Map
