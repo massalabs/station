@@ -2,6 +2,7 @@ package ledger
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/massalabs/thyra/pkg/node"
 )
@@ -11,7 +12,7 @@ type ledgerInfo struct {
 }
 
 type Address struct {
-	Info ledgerInfo `json:"candidate_sce_ledger_info"`
+	CandidateSCELedgerInfo ledgerInfo `json:"candidate_sce_ledger_info"`
 }
 
 func Addresses(client *node.Client, addr []string) ([]Address, error) {
@@ -20,7 +21,7 @@ func Addresses(client *node.Client, addr []string) ([]Address, error) {
 		"get_addresses",
 		[1][]string{addr})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("calling get_addresses with '%+v': %w", [1][]string{addr}, err)
 	}
 
 	if response.Error != nil {
@@ -31,7 +32,7 @@ func Addresses(client *node.Client, addr []string) ([]Address, error) {
 
 	err = response.GetObject(&content)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parsing get_addresses jsonrpc response '%+v': %w", response, err)
 	}
 
 	return content, nil

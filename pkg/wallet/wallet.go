@@ -8,6 +8,7 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -21,10 +22,12 @@ import (
 var ErrUnprotectedSerialization = errors.New("private key must be protected before serialization")
 
 const (
-	SecretKeyLength = 32
-	PBKDF2NbRound   = 10000
+	SecretKeyLength           = 32
+	PBKDF2NbRound             = 10000
+	FileModeUserReadWriteOnly = 0o600
 )
 
+//nolint:tagliatelle
 type KeyPair struct {
 	PrivateKey []byte   `yaml:",flow"`
 	PublicKey  []byte   `yaml:",flow"`
@@ -33,6 +36,7 @@ type KeyPair struct {
 	Protected  bool
 }
 
+//nolint:tagliatelle
 type Wallet struct {
 	Version  uint8     `json:"version"`
 	Nickname string    `json:"nickname"`
@@ -50,12 +54,12 @@ func (w *Wallet) Protect(password string, keyPairIndex uint8) error {
 
 	block, err := aes.NewCipher(secretKey)
 	if err != nil {
-		return err
+		return fmt.Errorf("intializing block ciphering: %w", err)
 	}
 
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
-		return err
+		return fmt.Errorf("intializing the AES block cipher wrapped in a Gallois Counter Mode ciphering: %w", err)
 	}
 
 	w.KeyPairs[keyPairIndex].PrivateKey = aesgcm.Seal(
@@ -74,17 +78,17 @@ func (w *Wallet) Unprotect(password string, keyPairIndex uint8) error {
 
 	block, err := aes.NewCipher(secretKey)
 	if err != nil {
-		return err
+		return fmt.Errorf("intializing block ciphering: %w", err)
 	}
 
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
-		return err
+		return fmt.Errorf("intializing the AES block cipher wrapped in a Gallois Counter Mode ciphering: %w", err)
 	}
 
 	pk, err := aesgcm.Open(nil, w.KeyPairs[keyPairIndex].Nonce[:], w.KeyPairs[keyPairIndex].PrivateKey, nil)
 	if err != nil {
-		return err
+		return fmt.Errorf("opening the cipher seal: %w", err)
 	}
 
 	w.KeyPairs[keyPairIndex].PrivateKey = pk
@@ -94,6 +98,7 @@ func (w *Wallet) Unprotect(password string, keyPairIndex uint8) error {
 	return nil
 }
 
+//nolint:wrapcheck
 func (w *Wallet) YAML() ([]byte, error) {
 	for _, v := range w.KeyPairs {
 		if !v.Protected {
@@ -113,14 +118,14 @@ func FromYAML(raw []byte) (w Wallet, err error) {
 func LoadAll() (wallets []Wallet, e error) {
 	wallets = []Wallet{}
 
-	wd, err := os.Getwd()
+	workingDir, err := os.Getwd()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("returning working directory: %w", err)
 	}
 
-	files, err := ioutil.ReadDir(wd)
+	files, err := ioutil.ReadDir(workingDir)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("reading working directory '%s': %w", workingDir, err)
 	}
 
 	for _, f := range files {
@@ -129,13 +134,16 @@ func LoadAll() (wallets []Wallet, e error) {
 		if strings.HasPrefix(fileName, "wallet_") && strings.HasSuffix(fileName, ".json") {
 			bytesInput, err := ioutil.ReadFile(fileName)
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("reading file '%s': %w", fileName, err)
 			}
-			wallet := Wallet{}
+
+			wallet := Wallet{} //nolint:exhaustruct
+
 			err = json.Unmarshal(bytesInput, &wallet)
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("unmarshaling file '%s': %w", fileName, err)
 			}
+
 			wallets = append(wallets, wallet)
 		}
 	}
@@ -144,23 +152,25 @@ func LoadAll() (wallets []Wallet, e error) {
 }
 
 func Load(nickname string) (*Wallet, error) {
-
 	bytesInput, err := ioutil.ReadFile("wallet_" + nickname + ".json")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("reading file 'wallet_%s.json': %w", nickname, err)
 	}
-	wallet := Wallet{}
+
+	wallet := Wallet{} //nolint:exhaustruct
+
 	err = json.Unmarshal(bytesInput, &wallet)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unmarshaling file 'wallet_%s.json': %w", nickname, err)
 	}
+
 	return &wallet, nil
 }
 
 func New(nickname string) (*Wallet, error) {
 	pubKey, privKey, err := ed25519.GenerateKey(nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("generating ed25519 keypair: %w", err)
 	}
 
 	addr := blake3.Sum256(pubKey)
@@ -169,14 +179,14 @@ func New(nickname string) (*Wallet, error) {
 
 	_, err = rand.Read(salt[:])
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("generating random salt: %w", err)
 	}
 
 	var nonce [12]byte
 
 	_, err = rand.Read(nonce[:])
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("generating random nonce: %w", err)
 	}
 
 	wallet := Wallet{
@@ -193,43 +203,22 @@ func New(nickname string) (*Wallet, error) {
 
 	bytesOutput, err := json.Marshal(wallet)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("marshalling wallet: %w", err)
 	}
 
-	err = os.WriteFile("wallet_"+nickname+".json", bytesOutput, 0o644)
+	err = os.WriteFile("wallet_"+nickname+".json", bytesOutput, FileModeUserReadWriteOnly)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("writing wallet to 'wallet_%s.json': %w", nickname, err)
 	}
-
 
 	return &wallet, nil
-}
-
-func Update(wallet Wallet) (err error) {
-	wallets, err := LoadAll()
-	if err != nil {
-		return err
-	}
-
-	wallets = append(wallets, wallet)
-
-	bytesOutput, err := json.Marshal(wallets)
-	if err != nil {
-		return err
-	}
-
-	err = os.WriteFile("wallet.json", bytesOutput, 0o644)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func Delete(nickname string) (err error) {
 	err = os.Remove("wallet_" + nickname + ".json")
 	if err != nil {
-		return err
+		return fmt.Errorf("deleting wallet 'wallet_%s.json': %w", nickname, err)
 	}
+
 	return nil
 }

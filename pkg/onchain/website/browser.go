@@ -1,6 +1,7 @@
 package website
 
 import (
+	"fmt"
 	"net/http"
 	"path/filepath"
 
@@ -8,11 +9,10 @@ import (
 	"github.com/massalabs/thyra/pkg/onchain/storage"
 )
 
-// TODO use a local cache to reduce network bandwidth.
 func Fetch(c *node.Client, addr string, filename string) ([]byte, error) {
 	m, err := storage.Get(c, addr, "massa_web")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("fetching the '%s' web resource at '%s': %w", filename, addr, err)
 	}
 
 	return m[filename], nil

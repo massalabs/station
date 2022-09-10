@@ -2,6 +2,7 @@ package node
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/massalabs/thyra/pkg/node/sendoperation/buyrolls"
 	"github.com/massalabs/thyra/pkg/node/sendoperation/callsc"
@@ -10,6 +11,7 @@ import (
 	"github.com/massalabs/thyra/pkg/node/sendoperation/transaction"
 )
 
+//nolint:tagliatelle
 type Operation struct {
 	ID       *string  `json:"id"`
 	InBlocks []string `json:"in_blocks"`
@@ -29,6 +31,7 @@ type Content struct {
 	Op           Op     `json:"op"`
 }
 
+//nolint:tagliatelle
 type Op struct {
 	Transaction *transaction.Transaction `json:"Transaction"`
 	RollBuy     *buyrolls.BuyRolls       `json:"RollBuy"`
@@ -38,16 +41,13 @@ type Op struct {
 }
 
 func Operations(client *Client, ids []string) ([]Operation, error) {
-	var stringg [][]string // ???
-	stringg = append(stringg, ids)
-
 	rawResponse, err := client.RPCClient.Call(
 		context.Background(),
 		"get_operations",
-		stringg,
+		append([][]string{}, ids),
 	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("calling get_operations with '%+v': %w", append([][]string{}, ids), err)
 	}
 
 	if rawResponse.Error != nil {
@@ -58,7 +58,7 @@ func Operations(client *Client, ids []string) ([]Operation, error) {
 
 	err = rawResponse.GetObject(&resp)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parsing get_operations jsonrpc response '%+v': %w", rawResponse, err)
 	}
 
 	return resp, nil

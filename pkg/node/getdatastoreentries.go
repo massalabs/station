@@ -55,6 +55,7 @@ func DatastoreEntries(client *Client, params []DatastoreEntriesKeysAsString) ([]
 	entries := [][]getDatastoreEntries{
 		{},
 	}
+
 	for i := 0; i < len(params); i++ {
 		entry := getDatastoreEntries{
 			Address: params[i].Address,
@@ -68,9 +69,8 @@ func DatastoreEntries(client *Client, params []DatastoreEntriesKeysAsString) ([]
 		"get_datastore_entries",
 		entries,
 	)
-
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
 	}
 
 	if response.Error != nil {
@@ -81,7 +81,7 @@ func DatastoreEntries(client *Client, params []DatastoreEntriesKeysAsString) ([]
 
 	err = response.GetObject(&entry)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parsing get_datastore_entries jsonrpc response '%+v': %w", response, err)
 	}
 
 	if len(entry) < 1 {

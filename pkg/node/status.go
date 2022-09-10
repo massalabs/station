@@ -2,6 +2,7 @@ package node
 
 import (
 	"context"
+	"fmt"
 )
 
 type State struct {
@@ -17,6 +18,8 @@ type State struct {
 	PoolStats      *PoolStats      `json:"pool_stats"`
 	Version        *string         `json:"version"`
 }
+
+//nolint:tagliatelle
 type Config struct {
 	BlockReward             *string `json:"block_reward"`
 	DeltaF0                 *uint   `json:"delta_f0"`
@@ -41,6 +44,7 @@ type ConsensusStats struct {
 	StartTimespan       *uint `json:"start_timespan"`
 }
 
+//nolint:tagliatelle
 type NetworkStats struct {
 	ActiveNodeCount    *uint `json:"active_node_count"`
 	BannedPeerCount    *uint `json:"banned_peer_count"`
@@ -60,7 +64,7 @@ func Status(client *Client) (*State, error) {
 		"get_status",
 	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("calling get_status: %w", err)
 	}
 
 	if rawResponse.Error != nil {
@@ -71,7 +75,7 @@ func Status(client *Client) (*State, error) {
 
 	err = rawResponse.GetObject(&resp)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parsing get_status jsonrpc response '%+v': %w", rawResponse, err)
 	}
 
 	return &resp, nil
