@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -123,7 +122,7 @@ func LoadAll() (wallets []Wallet, e error) {
 		return nil, fmt.Errorf("returning working directory: %w", err)
 	}
 
-	files, err := ioutil.ReadDir(workingDir)
+	files, err := os.ReadDir(workingDir)
 	if err != nil {
 		return nil, fmt.Errorf("reading working directory '%s': %w", workingDir, err)
 	}
@@ -132,7 +131,7 @@ func LoadAll() (wallets []Wallet, e error) {
 		fileName := f.Name()
 
 		if strings.HasPrefix(fileName, "wallet_") && strings.HasSuffix(fileName, ".json") {
-			bytesInput, err := ioutil.ReadFile(fileName)
+			bytesInput, err := os.ReadFile(fileName)
 			if err != nil {
 				return nil, fmt.Errorf("reading file '%s': %w", fileName, err)
 			}
@@ -152,7 +151,7 @@ func LoadAll() (wallets []Wallet, e error) {
 }
 
 func Load(nickname string) (*Wallet, error) {
-	bytesInput, err := ioutil.ReadFile("wallet_" + nickname + ".json")
+	bytesInput, err := os.ReadFile("wallet_" + nickname + ".json")
 	if err != nil {
 		return nil, fmt.Errorf("reading file 'wallet_%s.json': %w", nickname, err)
 	}

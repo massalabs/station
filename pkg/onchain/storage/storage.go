@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 
 	"github.com/massalabs/thyra/pkg/node"
 )
@@ -18,7 +18,7 @@ func readZipFile(z *zip.File) ([]byte, error) {
 	}
 	defer file.Close()
 
-	content, err := ioutil.ReadAll(file)
+	content, err := io.ReadAll(file)
 	if err != nil {
 		return nil, fmt.Errorf("reading zip content: %w", err)
 	}

@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/base64"
-	"io/ioutil"
+	"io"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -73,7 +73,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 				})
 	}
 
-	archive, err := ioutil.ReadAll(params.Zipfile)
+	archive, err := io.ReadAll(params.Zipfile)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
 			WithPayload(&models.Error{
