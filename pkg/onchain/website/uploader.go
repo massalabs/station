@@ -96,7 +96,8 @@ func Status(websiteCreator string) (*models.UploadState, error) {
 
 func uploadLight(client *node.Client, addr []byte, content string, wallet *wallet.Wallet) (string, error) {
 	param, err := json.Marshal(UploadWebsiteParam{
-		Data: content,
+		Data:        content,
+		TotalChunks: "1",
 	})
 	if err != nil {
 		return "", err

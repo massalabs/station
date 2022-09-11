@@ -31,6 +31,15 @@ async function getWebsiteDeployerSC() {
 }
 
 // Write the default wallet text in wallet popover component
+async function getWebsiteDeployerState(address) {
+	try {
+		return await axios.get('/websiteCreator/state/' + address);
+	} catch (err) {
+		console.error(err);
+	}
+}
+
+// Write the default wallet text in wallet popover component
 function initializeDefaultWallet() {
 	let defaultWallet = getDefaultWallet();
 	if (defaultWallet === '') {
@@ -216,10 +225,13 @@ function tableInsert(resp, count) {
 function uploadWebsite(file, count, password) {
 	let defaultWallet = getDefaultWallet();
 	const bodyFormData = new FormData();
+	const address = deployers[count].address;
 	bodyFormData.append('zipfile', file);
-	bodyFormData.append('address', deployers[count].address);
+	bodyFormData.append('address', address);
 	bodyFormData.append('nickname', defaultWallet);
 	document.getElementsByClassName('loading' + count)[0].style.display = 'inline-block';
+	stepper(address);
+	getWebsiteDeployerState(address);
 	axios({
 		url: `/websiteCreator/upload`,
 		method: 'POST',
@@ -237,4 +249,57 @@ function uploadWebsite(file, count, password) {
 			document.getElementsByClassName('loading' + count)[0].style.display = 'none';
 			errorAlert(getErrorMessage(e.response.data.code));
 		});
+}
+
+const checkStatus = (contractAddress) =>
+	new Promise(async (resolve) => {
+		setTimeout(async () => resolve(await getWebsiteDeployerState(contractAddress)), 1000);
+	});
+
+const stepper = async (contractAddress) => {
+	let actualStep = 1;
+	$('.deployer-form').hide();
+	$('.stepper').show();
+
+	$('.circle').eq(0).empty();
+	$('.circle').eq(0).append('<i class="bi bi-check">');
+
+	$('.circle').eq(1).empty();
+	$('.circle').eq(1).append('<i class="bi bi-check">');
+
+	$('.stepper-title').html('Deployment of ' + contractAddress);
+
+	while (true) {
+		const status = await checkStatus(contractAddress);
+		const statusData = status.data;
+		$('.title').eq(2).addClass('loading-dots');
+		if (statusData.lastChunk > 0 && statusData.lastChunk != statusData.totalChunk) {
+			actualStep = 2;
+			$('.circle').eq(2).empty();
+			$('.circle').eq(2).append('<i class="bi bi-check">');
+
+			$('.title')
+				.eq(2)
+				.html('Chunk upload ' + statusData.lastChunk + ' on ' + statusData.totalChunk);
+		} else if (actualStep == 2 && statusData.lastChunk == statusData.totalChunk) {
+			$('.title')
+				.eq(2)
+				.html('Chunk upload ' + statusData.lastChunk + ' on ' + statusData.totalChunk);
+			break;
+		}
+	}
+	resetStepper();
+	$('.stepper').hide();
+	$('.deployer-form').show();
+};
+
+function resetStepper() {
+	$('.circle').empty();
+	$('.circle').eq(0).html('1');
+	$('.circle').eq(1).html('2');
+	$('.circle').eq(2).html('3');
+
+	$('.title').eq(2).html('Chunk upload');
+
+	$('.title').eq(2).removeClass('loading-dots');
 }

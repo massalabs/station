@@ -169,7 +169,7 @@ color:white;
   opacity: 0;
   display: none;
   background-color: #e74e4e;
-  width:130px;
+  width: 130px;
 }
 .popover__content:before {
   z-index: -1;
@@ -220,3 +220,125 @@ td,th {
 .modal-footer{
   border-top: none;
 }
+
+
+
+/* -------------------------------------------------------------------------
+  VERTICAL STEPPER
+-------------------------------------------------------------------------- */
+
+.stepper{
+  display: none;
+  background-color: #33506A;
+  padding : 50px;
+  border : 3px solid #808080;
+  border-radius: 30px;
+  width:60%;
+  max-width: 720px;
+  margin:auto;
+}
+
+
+/* Steps */
+.step {
+  position: relative;
+  min-height: 2em;
+}
+.step + .step {
+  margin-top: 2em
+}
+.step > div:first-child {
+  position: static;
+  height: 0;
+}
+.step > div:not(:first-child) {
+  margin-left: 3em;
+  padding-left: 1em;
+}
+.step.step-active {
+  color: #808080
+}
+.step.step-active .circle {
+  background-color: #808080;
+}
+
+/* Circle */
+.circle {
+  background: #808080;
+  position: relative;
+  top:7px;
+  width: 2.5em;
+  height: 2.5em;
+  line-height: 2.5em;
+  border-radius: 100%;
+  color: white;
+  text-align: center;
+}
+
+/* Vertical Line */
+.circle:after {
+  content: '';
+  position: absolute;
+  display: block;
+  top: 1px;
+  right: 50%;
+  bottom: 1px;
+  left: 50%;
+  height: 90%;
+  width: 2px;
+  transform: scale(1, 2);
+  transform-origin: 50% -100%;
+  background-color: #808080;
+  z-index: 0;
+  font-size: 28px;
+}
+
+.bi-check{
+  font-size: 28px;
+}
+
+.step:last-child .circle:after {
+  display: none
+}
+
+.step:first-child .circle:after {
+  height: 95%;
+  z-index: 0;
+}
+
+/* Stepper Titles */
+.title {
+  position: relative;
+  color:#E6E6E6;
+  line-height: 2.5em;
+  font-weight: bold;
+  font-size: 22px;
+}
+
+
+
+/* loading dots */
+
+.loading-dots:after {
+  content: ' .';
+  animation: dots 1s steps(5, end) infinite;}
+
+@keyframes dots {
+  0%, 20% {
+    color: rgba(0,0,0,0);
+    text-shadow:
+      .25em 0 0 rgba(0,0,0,0),
+      .5em 0 0 rgba(0,0,0,0);}
+  40% {
+    color: white;
+    text-shadow:
+      .25em 0 0 rgba(0,0,0,0),
+      .5em 0 0 rgba(0,0,0,0);}
+  60% {
+    text-shadow:
+      .25em 0 0 white,
+      .5em 0 0 rgba(0,0,0,0);}
+  80%, 100% {
+    text-shadow:
+      .25em 0 0 white,
+      .5em 0 0 white;}}
