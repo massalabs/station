@@ -54,7 +54,6 @@ func VersionedCheckEncode(input []byte, version byte) string {
 }
 
 // VersionedCheckDecode decodes a string that was encoded with VersionedCheckEncode and verifies the checksum.
-//nolint:wrapcheck
 func VersionedCheckDecode(input string) (result []byte, version byte, err error) {
-	return base58.CheckDecode(input)
+	return base58.CheckDecode(input) //nolint:wrapcheck
 }
