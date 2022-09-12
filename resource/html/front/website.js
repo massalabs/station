@@ -198,7 +198,12 @@ function tableInsert(resp, count) {
 
   cell0.innerHTML = resp.name;
   cell1.innerHTML = resp.address;
-  cell2.innerHTML = "<a href='" + url + "'>" + url + "</a>";
+  cell2.innerHTML =
+    "<a href='" +
+    url +
+    "'target = '_blank' rel='noopener noreferrer'>" +
+    url +
+    "</a>";
   cell3.innerHTML =
     "<div><input id='fileid" +
     count +
@@ -320,7 +325,6 @@ function deployWebsiteAndUpload(password) {
     const dnsNameInputValue = document.getElementById("websiteName").value;
 
     const file = document.querySelector(".upload input").files[0];
-    console.log(file);
     const bodyFormData = new FormData();
     bodyFormData.append("url", dnsNameInputValue);
     bodyFormData.append("nickname", defaultWallet);
@@ -349,6 +353,5 @@ function deployWebsiteAndUpload(password) {
         errorAlert(getErrorMessage(e.response.data.code));
       });
   } else {
-    console.log("resolve inputs error first");
   }
 }
