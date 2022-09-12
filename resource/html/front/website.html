@@ -32,13 +32,24 @@
 						<li class="nav-item">
 							<a class="nav-link" href="#">Pricing</a>
 						</li>
+						<li>
+							<div class="popover__wrapper">
+								<a class="wallet_button" href="#">
+									<h2 class="popover__title"></h2>
+								</a>
+								<div class="popover__content">
+									<ul id="wallet-list">
+									</ul>
+								</div>
+							</div>
+						</li>
 					</ul>
 				</div>
 		</div>
 	</nav>
 
 	<!-- WALLET POPOVER -->
-	<div class="popover__wrapper">
+	<!-- <div class="popover__wrapper">
 		<a class="wallet_button" href="#">
 			<h2 class="popover__title"></h2>
 		</a>
@@ -46,7 +57,7 @@
 			<ul id="wallet-list">
 			</ul>
 		</div>
-	</div>
+	</div> -->
 
 	<!-- Modal -->
 	<div class="modal fade" id="passwordModal" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel"
@@ -84,48 +95,57 @@
 
 	<!-- DEPLOY WEBSITE CREATOR FORM-->
 	<div class="container">
+		<div class="website-centering">
+			<h2 class="mb-4 mt-5">Decentralized website storing</h2>
 
-		<h2 class="mb-4 mt-5">Decentralized website storing</h2>
 
-		<div class="website-card">
 
-			<div class="website-line">
-				<h4 class="website-card-label">On wallet</h4>
-				<div class="popover__wrapper-website">
-					<a class="wallet_button" href="#">
-						<h2 class="popover__title"></h2>
-					</a>
-					<div class="popover__content">
-						<ul id="wallet-list">
-						</ul>
+			<div class="website-card">
+
+				<div class="website-line">
+					<h4 class="website-card-label">On wallet</h4>
+
+					<h2 class="popover__title" style="font-size: 24px; background-color: darkblue;"></h2>
+
+
+				</div>
+
+				<div class="website-line">
+					<h4 class="website-card-label">Website Name</h4>
+
+					<div class="website-dns">
+						<input class="form-control" id="websiteName" name="websiteName" type="text" />
 					</div>
 				</div>
-			</div>
+				<h4 class="dns-error">Website Name must be only lowercase letters and numbers</h4>
+				<div class="website-line">
+					<h4 class="website-card-label">Website File</h4>
+					<button class="primary-button" style="background-color : darkblue ; border : none"
+						id="file-select-button">
+						Import From
 
-			<div class="website-line">
-				<h4 class="website-card-label">Website Name</h4> <input class="form-control" id="websiteName"
-					name="websiteName" type="text" />
-			</div>
+					</button>
 
-			<div class="website-line" id="website-upload">
-				<h4 class="website-card-label">Website File</h4>
-				<button class="primary-button" id="file-select-button">
-					Import From
+					<div class="upload">
+						<input class="website-file-input" type="file" accept=".zip" />
+					</div>
 
-				</button>
-				<div class="upload">
-					<input class="website-file-input" type="file" accept=".zip" />
+					<h4 class="fileError">File type needs to be .zip only</h4>
 				</div>
-			</div>
-			<div class="spacer">
-				<button class="primary-button" id="website-upload" onClick="setTxType('deployWebsiteAndUpload')"
-					class="primary-button me-5" type='button' value='Upload MB' data-bs-toggle="modal"
-					data-bs-target="#passwordModal">Upload</button>
+				<div class="spacer">
+					<button class="primary-button" id="website-upload" onClick="setTxType('deployWebsiteAndUpload')"
+						class="primary-button me-5" type='button' value='Upload MB' data-bs-toggle="modal"
+						data-bs-target="#passwordModal">Upload</button>
+
+					<button class="primary-button" id="website-upload-refuse">Upload</button>
+
+					<img src="./logo.png" class="massa-logo-spinner loading" alt="Massa logo" />
+				</div>
+
 			</div>
 
 		</div>
-
-		<div class='row justify-content-md-center align-items-center mt-5'>
+		<!-- <div class='row justify-content-md-center align-items-center mt-5'>
 			<div class='col-4'>
 				<div id="create-form ">
 
@@ -143,7 +163,7 @@
 				<img src="./logo.png" class="massa-logo-spinner loading" alt="Massa logo" />
 			</div>
 
-		</div>
+		</div> -->
 
 		<div class='row mt-5'>
 			<div class='col'>

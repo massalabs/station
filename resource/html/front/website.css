@@ -157,12 +157,13 @@ tr {
 /* Popover css */
 
 .popover__wrapper {
-  right: 20px;
-  top: 70px;
-  position: fixed;
-  width: 150px;
+  /* right: 20px;
+  top: 50px;
+  position: fixed; */
+  width: 100px;
   text-align: center;
   text-decoration: none;
+  margin-left: 16px;
 }
 
 .wallet_button {
@@ -170,7 +171,7 @@ tr {
 }
 .popover__title {
   text-align: center;
-  font-size: 24px;
+  font-size: 14px;
   color: white;
   border-radius: 100px;
   padding: 7px 0px;
@@ -245,7 +246,8 @@ th {
   align-items: center;
   text-align: center;
   flex-direction: column;
-  background: grey;
+  background: rgba(255, 255, 255, 0.274);
+
   border: 1px solid lightgray;
   border-radius: 32px;
   padding: 16px;
@@ -265,6 +267,15 @@ th {
   text-decoration: none;
 }
 
+.popover-title-website {
+  text-align: center;
+  font-size: 24px;
+  color: white;
+  border-radius: 100px;
+  padding: 7px 0px;
+  background-color: #e74e4e;
+}
+
 .website-card-label {
   font-size: 1.2em;
   color: black;
@@ -282,4 +293,36 @@ th {
 
 .spacer {
   margin-top: 16px;
+}
+
+.website-centering {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+  margin: auto auto;
+}
+
+.fileError {
+  display: none;
+  font-size: 14px;
+  color: red;
+}
+
+.dns-error {
+  display: none;
+  font-size: 14px;
+  color: red;
+}
+
+#website-upload-refuse {
+  background-color: #501313;
+  border: none;
+  display: none;
+}
+
+#website-upload-refuse:hover {
+  cursor: default;
+  transform: scale(1);
 }

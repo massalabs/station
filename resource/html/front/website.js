@@ -2,6 +2,7 @@ let gWallets = [];
 let deployers = [];
 let actualTxType = "";
 let nextFileToUpload;
+let uploadable = false;
 
 // INIT
 getWallets();
@@ -247,6 +248,7 @@ function uploadWebsite(file, count, password) {
         "none";
       successMessage("Website uploaded to address : " + operation.data.address);
     })
+
     .catch((e) => {
       document.getElementsByClassName("loading" + count)[0].style.display =
         "none";
@@ -256,45 +258,89 @@ function uploadWebsite(file, count, password) {
 
 $("#file-select-button").click(function () {
   $(".upload input").click();
-
-  console.log("file select button html", $("#file-select-button").html());
-  console.log("upload html", $(".upload input").val());
 });
 
+// change button text with file name
 $(".upload input").on("change", function () {
-  $("#file-select-button").html($(".upload input").val());
+  let str = $(".upload input").val();
+
+  let n = str.lastIndexOf("\\");
+
+  let result = str.substring(n + 1);
+
+  $("#file-select-button").html(result);
 });
 
-// $("#website-upload").click(async function (password) {
-//   await deployWebsiteDeployerSC(password);
-// });
+//check if file is .zip
+$(".upload input").on("change", function () {
+  let str = $(".upload input").val();
 
-async function deployWebsiteAndUpload(file, password) {
-  let defaultWallet = getDefaultWallet();
-  const dnsNameInputValue = document.getElementById("websiteName").value;
+  let n = str.lastIndexOf(".");
 
-  const bodyFormData = new FormData();
+  let result = str.substring(n + 1);
 
-  bodyFormData.append("url", document.getElementById("websiteName").value);
-  bodyFormData.append("nickname", defaultWallet);
-  bodyFormData.append("zipfile", file);
+  if (result != "zip" && $(".upload input").val() != "") {
+    uploadable = false;
 
-  if (dnsNameInputValue == "") {
-    errorAlert("Input a DNS name");
+    document.getElementsByClassName("fileError")[0].style.display = "flex";
+    document.getElementById("website-upload").style.display = "none";
+    document.getElementById("website-upload-refuse").style.display = "flex";
   } else {
+    uploadable = true;
+    document.getElementsByClassName("fileError")[0].style.display = "none";
+    document.getElementById("website-upload").style.display = "flex";
+    document.getElementById("website-upload-refuse").style.display = "none";
+  }
+});
+
+//check if input string is valid
+$(".website-dns input").on("change", function () {
+  let str = $(".website-dns input").val();
+  let pattern = new RegExp("^[a-z0-9]+$");
+  let tesPattern = true;
+  testPattern = pattern.test(str);
+
+  if (testPattern == false) {
+    uploadable = false;
+
+    document.getElementsByClassName("dns-error")[0].style.display = "flex";
+    document.getElementById("website-upload").style.display = "none";
+    document.getElementById("website-upload-refuse").style.display = "flex";
+  } else {
+    uploadable = true;
+    document.getElementsByClassName("dns-error")[0].style.display = "none";
+    document.getElementById("website-upload").style.display = "flex";
+    document.getElementById("website-upload-refuse").style.display = "none";
+  }
+});
+
+function deployWebsiteAndUpload(password) {
+  if (uploadable == true) {
+    let defaultWallet = getDefaultWallet();
+    const dnsNameInputValue = document.getElementById("websiteName").value;
+
+    const file = document.querySelector(".upload input").files[0];
+    console.log(file);
+    const bodyFormData = new FormData();
+    bodyFormData.append("url", dnsNameInputValue);
+    bodyFormData.append("nickname", defaultWallet);
+    bodyFormData.append("zipfile", file);
+
     document.getElementsByClassName("loading")[0].style.display =
       "inline-block";
-
-    await axios
-      .put("/websiteCreator/prepare/", bodyFormData, {
-        headers: {
-          Authorization: password,
-        },
-      })
+    axios({
+      url: `/websiteCreator/prepare`,
+      method: "put",
+      data: bodyFormData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: password,
+      },
+    })
       .then((operation) => {
         document.getElementsByClassName("loading")[0].style.display = "none";
         successMessage(
-          "Contract deployed to address " + operation.data.address
+          "Website uploaded to address : " + operation.data.address
         );
         getWebsiteDeployerSC();
       })
@@ -302,24 +348,7 @@ async function deployWebsiteAndUpload(file, password) {
         document.getElementsByClassName("loading")[0].style.display = "none";
         errorAlert(getErrorMessage(e.response.data.code));
       });
+  } else {
+    console.log("resolve inputs error first");
   }
-
-  // document.getElementsByClassName('loading' + count)[0].style.display = 'inline-block';
-  // axios({
-  // 	url: `/websiteCreator/upload`,
-  // 	method: 'POST',
-  // 	data: bodyFormData,
-  // 	headers: {
-  // 		'Content-Type': 'multipart/form-data',
-  // 		Authorization: password,
-  // 	},
-  // })
-  // 	.then((operation) => {
-  // 		document.getElementsByClassName('loading' + count)[0].style.display = 'none';
-  // 		successMessage('Website uploaded to address : ' + operation.data.address);
-  // 	})
-  // 	.catch((e) => {
-  // 		document.getElementsByClassName('loading' + count)[0].style.display = 'none';
-  // 		errorAlert(getErrorMessage(e.response.data.code));
-  // 	});
 }
