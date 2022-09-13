@@ -83,7 +83,7 @@ func Call(client *node.Client,
 
 	digest := blake3.Sum256(append(pubKey, msg...))
 
-	signature := ed25519.Sign(digest[:], privKey)
+	signature := ed25519.Sign(privKey, digest[:])
 
 	rawResponse, err := client.RPCClient.Call(
 		context.Background(),
