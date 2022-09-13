@@ -250,8 +250,8 @@ th {
 
   border: 1px solid lightgray;
   border-radius: 32px;
-  padding: 16px;
-  width: 500px;
+  padding: 24px;
+  width: 700px;
 }
 
 .website-line {
@@ -282,6 +282,8 @@ th {
   text-align: left;
   margin-right: 16px;
   margin-top: 8px;
+  display: flex;
+  flex-direction: row;
 }
 
 .website-file-input {
@@ -325,4 +327,16 @@ th {
 #website-upload-refuse:hover {
   cursor: default;
   transform: scale(1);
+}
+
+#website-info-display {
+  display: none;
+  font-size: 14px;
+  position: absolute;
+  bottom: 370px;
+  z-index: 99;
+}
+
+.website-info:hover {
+  display: flex;
 }

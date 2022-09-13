@@ -355,3 +355,11 @@ function deployWebsiteAndUpload(password) {
   } else {
   }
 }
+
+const displayInfo = () => {
+  document.getElementById("website-info-display").style.display = "flex";
+};
+
+const hideInfo = () => {
+  document.getElementById("website-info-display").style.display = "none";
+};

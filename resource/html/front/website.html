@@ -94,16 +94,24 @@
 
 				<div class="website-line">
 					<h4 class="website-card-label">On wallet</h4>
-
-					<h2 class="popover__title" style="font-size: 24px; background-color: darkblue;"></h2>
-
+					<div style="width: 100px">
+						<h2 class="popover__title" style="font-size: 16px; background-color:  rgb(137, 137, 169)"></h2>
+					</div>
 
 				</div>
 
 				<div class="website-line">
-					<h4 class="website-card-label">Website Name</h4>
+					<div class="website-line">
+						<h4 onmouseover="displayInfo()" onmouseout="hideInfo()" class="website-card-label">Website Name
 
-					<div class="website-dns">
+							<img class="website-info" src="./info.png" alt="info" style="width: 10px; height : 7px " />
+						</h4>
+
+
+
+						<p id="website-info-display">Use alphanumerical characters and lowercase</p>
+					</div>
+					<div class=" website-dns">
 						<input class="form-control" id="websiteName" name="websiteName" type="text" />
 					</div>
 				</div>
@@ -128,8 +136,9 @@
 						data-bs-target="#passwordModal">Upload</button>
 
 					<button class="primary-button" id="website-upload-refuse">Upload</button>
-
-					<img src="./logo.png" class="massa-logo-spinner loading" alt="Massa logo" />
+					<div class="spacer">
+						<img src="./logo.png" class="massa-logo-spinner loading" alt="Massa logo" />
+					</div>
 				</div>
 
 			</div>

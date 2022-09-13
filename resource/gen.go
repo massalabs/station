@@ -11,6 +11,7 @@ package resource
 //go:generate textFileToGoConst -in html/front/errors.js -o ../pkg/front/errors.go -p front -c Errors
 //go:generate textFileToGoConst -in html/front/logo_banner.webp -o ../pkg/front/logoBanner.go -p front -c LogoBanner
 //go:generate textFileToGoConst -in html/front/logo.png -o ../pkg/front/logo.go -p front -c Logo
+//go:generate textFileToGoConst -in html/front/info.png -o ../pkg/front/info.go -p front -c InfoWebsite
 
 // API server certificate
 

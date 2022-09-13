@@ -48,6 +48,8 @@ func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) mid
 		body = front.Logo
 	case "errors.js":
 		body = front.Errors
+	case "info.png":
+		body = front.InfoWebsite
 	}
 
 	return NewCustomResponder([]byte(body), contentType(params.Resource), http.StatusOK)
