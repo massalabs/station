@@ -42,8 +42,6 @@ func setContentType(rsc string, writer http.ResponseWriter) {
 		writer.Header().Set("Content-Type", "text/webp")
 	case ".png":
 		writer.Header().Set("Content-Type", "image/png")
-	case ".svg":
-		writer.Header().Set("Content-Type", "image/svg+xml")
 
 	}
 
