@@ -209,7 +209,7 @@ function tableInsert(resp, count) {
     count +
     "' type='file' hidden/><button id='upload-website" +
     count +
-    "' class='primary-button' id='buttonid' type='button' value='Upload MB' >Upload</button><img src='./logo.png' style='display: none' class='massa-logo-spinner loading" +
+    "' class='primary-button' id='buttonid' type='button' value='Upload MB' >Edit</button><img src='./logo.png' style='display: none' class='massa-logo-spinner loading" +
     count +
     " alt='Massa logo' /></span></div>";
 

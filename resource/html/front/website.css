@@ -246,9 +246,9 @@ th {
   align-items: center;
   text-align: center;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.274);
+  background: rgba(255, 255, 255, 0.122);
 
-  border: 1px solid lightgray;
+  /* border: 1px solid lightgray; */
   border-radius: 32px;
   padding: 24px;
   width: 700px;
@@ -318,6 +318,10 @@ th {
   color: red;
 }
 
+#website-upload {
+  margin-top: 32px;
+}
+
 #website-upload-refuse {
   background-color: #501313;
   border: none;
@@ -332,11 +336,17 @@ th {
 #website-info-display {
   display: none;
   font-size: 14px;
-  position: absolute;
-  bottom: 370px;
-  z-index: 99;
 }
 
 .website-info:hover {
   display: flex;
+}
+
+.align-right {
+  width: 100%;
+  text-align: right;
+  justify-content: right;
+  align-items: right;
+  display: flex;
+  padding-right: 60px;
 }
