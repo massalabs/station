@@ -157,9 +157,6 @@ tr {
 /* Popover css */
 
 .popover__wrapper {
-  /* right: 20px;
-  top: 50px;
-  position: fixed; */
   width: 100px;
   text-align: center;
   text-decoration: none;
@@ -175,6 +172,12 @@ tr {
   color: white;
   border-radius: 100px;
   padding: 7px 0px;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  text-overflow: ellipsis;
+  padding-left: 14px;
+  padding-right: 14px;
   background-color: #e74e4e;
 }
 
@@ -196,6 +199,10 @@ tr {
 
 .wallet-item {
   padding: 2px 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  text-overflow: ellipsis;
 }
 
 .wallet-link {
@@ -205,7 +212,8 @@ tr {
 
 #wallet-list {
   list-style-type: none;
-  padding: 0px;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 td,
@@ -248,7 +256,6 @@ th {
   flex-direction: column;
   background: rgba(255, 255, 255, 0.122);
 
-  /* border: 1px solid lightgray; */
   border-radius: 32px;
   padding: 24px;
   width: 700px;
@@ -265,15 +272,6 @@ th {
   width: 150px;
   text-align: center;
   text-decoration: none;
-}
-
-.popover-title-website {
-  text-align: center;
-  font-size: 24px;
-  color: white;
-  border-radius: 100px;
-  padding: 7px 0px;
-  background-color: #e74e4e;
 }
 
 .website-card-label {
@@ -316,6 +314,7 @@ th {
   display: none;
   font-size: 14px;
   color: red;
+  margin-top: -20px;
 }
 
 #website-upload {
@@ -334,8 +333,15 @@ th {
 }
 
 #website-info-display {
-  display: none;
-  font-size: 14px;
+  display: flex;
+  font-size: 11px;
+  margin-top: -5px;
+  color: grey;
+}
+
+::placeholder {
+  color: blue;
+  font-size: 13px;
 }
 
 .website-info:hover {
@@ -349,4 +355,33 @@ th {
   align-items: right;
   display: flex;
   padding-right: 60px;
+}
+
+#website-wallet {
+  font-size: 16px;
+  background-color: #6c757d;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  text-overflow: ellipsis;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+.file-select-button-text {
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  text-overflow: ellipsis;
+}
+
+.website-dns {
+  margin-top: 10px;
+}
+
+#file-select-button {
+  background-color: darkblue;
+  border: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

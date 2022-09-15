@@ -92,25 +92,18 @@
 
 
 			<div class="website-card">
-				<h2 class="mb-4 ">Upload your website</h2>
+				<h2 class="mb-4 " style="font-size : 1.8em">Upload your website</h2>
 				<div class="website-line">
 					<h4 class="website-card-label">On wallet</h4>
-					<div style=" width: 100px;">
-						<h2 class="popover__title" style="font-size: 16px; background-color:  #6c757d"></h2>
+					<div style=" width: 150px; ">
+						<h2 class="popover__title" id="website-wallet"></h2>
 					</div>
 
 				</div>
 
 				<div class="website-line">
 					<div class="website-line">
-						<h4 onmouseover="displayInfo()" onmouseout="hideInfo()" class="website-card-label">Website Name
-
-							<img class="website-info" src="./info.png" alt="info" style="width: 20px; height : 14px " />
-						</h4>
-
-
-
-
+						<h4 class="website-card-label">Website Name</h4>
 					</div>
 					<div class=" website-dns">
 						<input class="form-control" id="websiteName" name="websiteName" type="text" />
@@ -119,13 +112,15 @@
 
 				</div>
 				<div class="align-right">
+
 					<p id="website-info-display">Use alphanumerical characters and lowercase</p>
 				</div>
-				<h4 class="dns-error">Website Name must be only lowercase letters and numbers</h4>
+				<div class="align-right">
+					<h4 class="dns-error">Website Name must be only lowercase letters and numbers</h4>
+				</div>
 				<div class="website-line">
 					<h4 class="website-card-label">Website File</h4>
-					<button class="primary-button" style="background-color : darkblue ; border : none"
-						id="file-select-button">
+					<button class="primary-button" id="file-select-button">
 						Import From
 
 					</button>

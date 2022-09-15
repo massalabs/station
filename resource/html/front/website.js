@@ -298,6 +298,11 @@ $(".upload input").on("change", function () {
   }
 });
 
+//remove label of input website name on focus
+$(".website-dns input").on("focus", function () {
+  document.getElementById("website-info-display").style.visibility = "hidden";
+});
+
 //check if input string is valid
 $(".website-dns input").on("change", function () {
   let str = $(".website-dns input").val();
@@ -355,11 +360,3 @@ function deployWebsiteAndUpload(password) {
   } else {
   }
 }
-
-const displayInfo = () => {
-  document.getElementById("website-info-display").style.display = "flex";
-};
-
-const hideInfo = () => {
-  document.getElementById("website-info-display").style.display = "none";
-};
