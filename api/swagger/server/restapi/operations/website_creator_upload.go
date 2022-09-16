@@ -29,10 +29,10 @@ func NewWebsiteCreatorUpload(ctx *middleware.Context, handler WebsiteCreatorUplo
 	return &WebsiteCreatorUpload{Context: ctx, Handler: handler}
 }
 
-/* WebsiteCreatorUpload swagger:route POST /websiteCreator/upload websiteCreatorUpload
+/*
+	WebsiteCreatorUpload swagger:route POST /websiteCreator/upload websiteCreatorUpload
 
 WebsiteCreatorUpload website creator upload API
-
 */
 type WebsiteCreatorUpload struct {
 	Context *middleware.Context
