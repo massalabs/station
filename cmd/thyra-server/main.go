@@ -37,7 +37,7 @@ func main() {
 
 	certFilePtr := flag.String("tls-certificate", "", "path to certificate file")
 	keyFilePtr := flag.String("tls-key", "", "path to key file")
-	massaNetworkAddressPtr := flag.String("network", "", "IP address of the chosen massa network")
+	massaNodeServerPtr := flag.String("node-server", "", "IP address of the chosen massa node")
 	flag.Parse()
 
 	if *certFilePtr != "" {
@@ -48,17 +48,17 @@ func main() {
 		server.TLSCertificateKey = flags.Filename(*keyFilePtr)
 	}
 
-	if *massaNetworkAddressPtr != "" {
-		if *massaNetworkAddressPtr == "TESTNET" {
-			*massaNetworkAddressPtr = "https://test.massa.net/v1/"
-		} else if *massaNetworkAddressPtr == "LABNET" {
-			*massaNetworkAddressPtr = "https://labnet.massa.net/"
-		} else if *massaNetworkAddressPtr == "INNONET" {
-			*massaNetworkAddressPtr = "https://inno.massa.net/test13"
-		} else if *massaNetworkAddressPtr == "LOCALHOST" {
-			*massaNetworkAddressPtr = "http://127.0.0.1"
+	if *massaNodeServerPtr != "" {
+		if *massaNodeServerPtr == "TESTNET" {
+			*massaNodeServerPtr = "https://test.massa.net/v1/"
+		} else if *massaNodeServerPtr == "LABNET" {
+			*massaNodeServerPtr = "https://labnet.massa.net/"
+		} else if *massaNodeServerPtr == "INNONET" {
+			*massaNodeServerPtr = "https://inno.massa.net/test13"
+		} else if *massaNodeServerPtr == "LOCALHOST" {
+			*massaNodeServerPtr = "http://127.0.0.1"
 		}
-		os.Setenv("MASSA_URL_RPC", *massaNetworkAddressPtr)
+		os.Setenv("MASSA_URL_RPC", *massaNodeServerPtr)
 	}
 
 	var walletStorage sync.Map
