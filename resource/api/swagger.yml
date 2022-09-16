@@ -236,13 +236,13 @@ paths:
           pattern: "^[a-z0-9]+$"
           required: true
           x-nullable: false
-          description: URL without '.', capitals letters and specifics characters
+          description: URL without dot (.), upper case and special characters
         - in: formData
           name: nickname
           type: string
           required: true
           x-nullable: false
-          description: Wallet's nickname to be used for receiving the website
+          description: Name of the Wallet in which the website will be deployed.
         - in: formData
           name: zipfile
           type: file
