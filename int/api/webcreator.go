@@ -15,7 +15,6 @@ import (
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
 
 	wallet, err := wallet.Load(params.Nickname)
-
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
@@ -36,7 +35,6 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 	}
 
 	address, err := website.PrepareForUpload(params.URL, wallet)
-
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
@@ -69,12 +67,9 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 	return operations.NewWebsiteCreatorPrepareOK().
 		WithPayload(
 			&models.Websites{
-
-				Name: params.URL,
-
+				Name:    params.URL,
 				Address: address,
 			})
-
 }
 
 //nolint:nolintlint,ireturn
