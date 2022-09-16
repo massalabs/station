@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/base64"
 	"io"
-	"io/ioutil"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -14,7 +13,7 @@ import (
 
 //nolint:nolintlint,ireturn
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
-	wallet, err := wallet.Load(params.Body.Nickname)
+	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
@@ -34,7 +33,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 				})
 	}
 
-	address, err := website.PrepareForUpload(params.Body.URL, wallet)
+	address, err := website.PrepareForUpload(params.URL, wallet)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
@@ -44,7 +43,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 				})
 	}
 
-	archive, err := ioutil.ReadAll(params.Zipfile)
+	archive, err := io.ReadAll(params.Zipfile)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(&models.Error{
