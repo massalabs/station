@@ -121,5 +121,6 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 	return operations.NewWebsiteCreatorUploadOK().
 		WithPayload(&models.Websites{
 			Name:    "Name",
-			Address: params.Address})
+			Address: params.Address,
+		})
 }
