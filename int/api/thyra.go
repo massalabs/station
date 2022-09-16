@@ -10,6 +10,7 @@ import (
 	"github.com/massalabs/thyra/pkg/front/website"
 )
 
+//nolint:nolintlint,ireturn
 func ThyraWalletHandler(params operations.ThyraWalletParams) middleware.Responder {
 	var body string
 
@@ -26,12 +27,12 @@ func ThyraWalletHandler(params operations.ThyraWalletParams) middleware.Responde
 		body = front.Logo
 	case "errors.js":
 		body = front.Errors
-
 	}
 
 	return NewCustomResponder([]byte(body), contentType(params.Resource), http.StatusOK)
 }
 
+//nolint:nolintlint,ireturn
 func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) middleware.Responder {
 	var body string
 

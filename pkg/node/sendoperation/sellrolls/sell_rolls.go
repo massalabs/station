@@ -6,10 +6,12 @@ import (
 
 const SellRollOpID = 2
 
+//nolint:tagliatelle
 type OperationDetails struct {
 	CountRoll uint64 `json:"roll_count"`
 }
 
+//nolint:tagliatelle
 type Operation struct {
 	SellRolls OperationDetails `json:"SellRolls"`
 }

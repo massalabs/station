@@ -12,6 +12,7 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
+//nolint:nolintlint,ireturn
 func NewCreate(walletStorage *sync.Map) operations.MgmtWalletCreateHandler {
 	return &walletCreate{walletStorage: walletStorage}
 }
@@ -20,6 +21,7 @@ type walletCreate struct {
 	walletStorage *sync.Map
 }
 
+//nolint:nolintlint,ireturn,funlen
 func (c *walletCreate) Handle(params operations.MgmtWalletCreateParams) middleware.Responder {
 	if params.Body.Nickname == nil || len(*params.Body.Nickname) == 0 {
 		return operations.NewMgmtWalletCreateBadRequest().WithPayload(
@@ -73,7 +75,7 @@ func (c *walletCreate) Handle(params operations.MgmtWalletCreateParams) middlewa
 			})
 	}
 
-	err = os.WriteFile("wallet_"+*params.Body.Nickname+".json", bytesOutput, 0o644)
+	err = os.WriteFile("wallet_"+*params.Body.Nickname+".json", bytesOutput, fileModeUserRW)
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{

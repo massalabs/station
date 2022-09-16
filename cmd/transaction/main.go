@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/node/sendoperation"
+	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/node/sendoperation/transaction"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
@@ -22,13 +22,17 @@ func main() {
 
 	client := node.NewDefaultClient()
 
-	transac := transaction.New(wlt2.KeyPairs[0].PublicKey, 5)
+	trx := transaction.New(wlt2.KeyPairs[0].PublicKey, 1)
 
-	id, err := sendoperation.Call(client, 2, 0, transac, wlt.KeyPairs[0].PublicKey, wlt.KeyPairs[0].PrivateKey)
+	opID, err := sendOperation.Call(
+		client,
+		sendOperation.DefaultSlotsDuration, sendOperation.NoFee,
+		trx,
+		wlt.KeyPairs[0].PublicKey, wlt.KeyPairs[0].PrivateKey)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("Execution OK, id is:", id)
-
+	//nolint:forbidigo
+	fmt.Println("Execution OK, id is:", opID)
 }

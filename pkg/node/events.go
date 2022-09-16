@@ -2,6 +2,7 @@ package node
 
 import (
 	"context"
+	"fmt"
 )
 
 type EventSearchCriteria struct {
@@ -18,12 +19,12 @@ type Event struct {
 }
 
 type Context struct {
-	Slot                *Slot     `json:"slot"`
-	Block               *string   `json:"block"`
-	CallStack           *[]string `json:"call_stack"`
-	ReadOnly            *bool     `json:"read_only"`
-	IndexInSlot         *uint     `json:"index_in_slot"`
-	OriginalOperationID *string   `json:"origin_operation_id"`
+	Slot              *Slot     `json:"slot"`
+	Block             *string   `json:"block"`
+	CallStack         *[]string `json:"call_stack"`
+	ReadOnly          *bool     `json:"read_only"`
+	IndexInSlot       *uint     `json:"index_in_slot"`
+	OriginOperationID *string   `json:"origin_operation_id"`
 }
 
 /**
@@ -58,7 +59,16 @@ func Events(client *Client, start *Slot, end *Slot,
 		},
 	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("calling endpoint get_filtered_sc_output_event with '%+v': %w",
+			[]EventSearchCriteria{
+				{
+					Start:                 start,
+					End:                   end,
+					EmitterAddress:        trigger,
+					OriginalCallerAddress: originator,
+					OriginalOperationID:   operationID,
+				},
+			}, err)
 	}
 
 	if rawResponse.Error != nil {
@@ -69,7 +79,7 @@ func Events(client *Client, start *Slot, end *Slot,
 
 	err = rawResponse.GetObject(&resp)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parsing get_filtered_sc_output_event jsonrpc response '%+v': %w", rawResponse, err)
 	}
 
 	return resp, nil
