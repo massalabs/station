@@ -17,9 +17,7 @@ type DatastoreEntryResponse struct {
 	FinalValue     []byte `json:"final_value"`
 }
 
-
 type DatastoreEntriesKeysAsString struct {
-
 	Address string `json:"address"`
 	Key     string `json:"key"`
 }

@@ -66,12 +66,9 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 	return operations.NewWebsiteCreatorPrepareOK().
 		WithPayload(
 			&models.Websites{
-
-				Name: params.URL,
-
+				Name:    params.URL,
 				Address: address,
 			})
-
 }
 
 //nolint:nolintlint,ireturn
