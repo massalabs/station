@@ -2,6 +2,7 @@ package website
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
@@ -17,13 +18,13 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	// Prepare address to webstorage.
 	scAddress, err := onchain.DeploySC(client, *wallet, []byte(sc.WebsiteStorer))
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("deploying webstorage SC: %w", err)
 	}
 
 	// Set DNS.
 	_, err = dns.SetRecord(client, *wallet, url, scAddress)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("adding DNS record '%s' => '%s': %w", url, scAddress, err)
 	}
 
 	return scAddress, nil
@@ -35,12 +36,14 @@ type UploadWebsiteParam struct {
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, error) {
 	const blockLength = 260000
+
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("decoding address '%s': %w", atAddress[1:], err)
 	}
+
 	blocks := chunk(content, blockLength)
 
 	if len(blocks) == 1 {
@@ -52,6 +55,7 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 	if err != nil {
 		return "", err
 	}
+
 	return "1", nil
 }
 
@@ -60,54 +64,62 @@ func uploadLight(client *node.Client, addr []byte, content string, wallet *walle
 		Data: content,
 	})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: content}, err)
 	}
+
 	op, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", param)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 	}
+
 	return op, nil
 }
 
 func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) (string, error) {
-	op := ""
 	param, err := json.Marshal(UploadWebsiteParam{
 		Data: chunks[0],
 	})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[0]}, err)
 	}
+
 	_, err = onchain.CallFunction(client, *wallet, addr, "initializeWebsite", param)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 	}
-	for i := 1; i < len(chunks); i++ {
 
+	var opID string
+
+	for i := 1; i < len(chunks); i++ {
 		param, err = json.Marshal(UploadWebsiteParam{
 			Data: chunks[i],
 		})
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[i]}, err)
 		}
-		op, err = onchain.CallFunction(client, *wallet, addr, "appendBytesToWebsite", param)
+
+		opID, err = onchain.CallFunction(client, *wallet, addr, "appendBytesToWebsite", param)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 		}
 	}
-	return op, nil
+
+	return opID, nil
 }
 
-func chunk(s string, chunkSize int) (chunks []string) {
-
+func chunk(data string, chunkSize int) []string {
 	counter := 0
 
-	chunkNumber := len(s)/chunkSize + 1
+	chunkNumber := len(data)/chunkSize + 1
+
+	var chunks []string
+
 	for i := 1; i < chunkNumber; i++ {
 		counter += chunkSize
-		chunks = append(chunks, s[(i-1)*chunkSize:(i)*chunkSize])
+		chunks = append(chunks, data[(i-1)*chunkSize:(i)*chunkSize])
 	}
-	chunks = append(chunks, s[(chunkNumber-1)*chunkSize:])
+
+	chunks = append(chunks, data[(chunkNumber-1)*chunkSize:])
 
 	return chunks
-
 }

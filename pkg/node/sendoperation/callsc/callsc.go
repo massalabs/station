@@ -10,6 +10,7 @@ import (
 
 const CallSCOpID = uint64(4)
 
+//nolint:tagliatelle
 type OperationDetails struct {
 	MaxGaz          int64       `json:"max_gas"`
 	GazPrice        string      `json:"gas_price"`
@@ -20,6 +21,7 @@ type OperationDetails struct {
 	Param           interface{} `json:"param"`
 }
 
+//nolint:tagliatelle
 type Operation struct {
 	CallSC OperationDetails `json:"CallSC"`
 }

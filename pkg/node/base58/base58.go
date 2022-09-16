@@ -15,9 +15,11 @@ func checksum(input []byte) (cksum [4]byte) {
 	return
 }
 
+const checkHeaderLength = 4
+
 // CheckEncode encodes a byte array to base58 with a checksum but without a version.
 func CheckEncode(input []byte) string {
-	b := make([]byte, 0, len(input)+4)
+	b := make([]byte, 0, len(input)+checkHeaderLength)
 	b = append(b, input...)
 	cksum := checksum(b)
 	b = append(b, cksum[:]...)
@@ -28,13 +30,14 @@ func CheckEncode(input []byte) string {
 // CheckDecode decodes a string that was encoded with CheckEncode and verifies the checksum.
 func CheckDecode(input string) (result []byte, err error) {
 	decoded := base58.Decode(input)
-	if len(decoded) < 5 {
+	if len(decoded) <= checkHeaderLength {
 		return nil, errors.New("ErrInvalidFormat")
 	}
 
 	var cksum [4]byte
 
 	copy(cksum[:], decoded[len(decoded)-4:])
+
 	if checksum(decoded[:len(decoded)-4]) != cksum {
 		return nil, errors.New("ErrChecksum")
 	}
@@ -52,5 +55,5 @@ func VersionedCheckEncode(input []byte, version byte) string {
 
 // VersionedCheckDecode decodes a string that was encoded with VersionedCheckEncode and verifies the checksum.
 func VersionedCheckDecode(input string) (result []byte, version byte, err error) {
-	return base58.CheckDecode(input)
+	return base58.CheckDecode(input) //nolint:wrapcheck
 }

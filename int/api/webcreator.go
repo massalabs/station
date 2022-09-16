@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/base64"
-	"io/ioutil"
+	"io"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -11,10 +11,9 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
+//nolint:nolintlint,ireturn
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
-
 	wallet, err := wallet.Load(params.Body.Nickname)
-
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
@@ -35,7 +34,6 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 	}
 
 	address, err := website.PrepareForUpload(params.Body.URL, wallet)
-
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
 			WithPayload(
@@ -53,8 +51,8 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 			})
 }
 
+//nolint:nolintlint,ireturn
 func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middleware.Responder {
-
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
@@ -74,7 +72,8 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 					Message: err.Error(),
 				})
 	}
-	archive, err := ioutil.ReadAll(params.Zipfile)
+
+	archive, err := io.ReadAll(params.Zipfile)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
 			WithPayload(&models.Error{
@@ -97,5 +96,6 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 	return operations.NewWebsiteCreatorUploadOK().
 		WithPayload(&models.Websites{
 			Name:    "Name",
-			Address: params.Address})
+			Address: params.Address,
+		})
 }

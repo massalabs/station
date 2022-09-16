@@ -30,9 +30,13 @@ func main() {
 		}
 	}()
 
-	flag.IntVar(&server.Port, "http-port", 80, "HTTP port to listen to")
+	const httpPort = 80
 
-	flag.IntVar(&server.TLSPort, "https-port", 443, "HTTPS port to listen to")
+	const httpsPort = 443
+
+	flag.IntVar(&server.Port, "http-port", httpPort, "HTTP port to listen to")
+
+	flag.IntVar(&server.TLSPort, "https-port", httpsPort, "HTTPS port to listen to")
 
 	certFilePtr := flag.String("tls-certificate", "", "path to certificate file")
 	keyFilePtr := flag.String("tls-key", "", "path to key file")
@@ -65,9 +69,10 @@ func main() {
 	localAPI.ThyraWalletHandler = operations.ThyraWalletHandlerFunc(api.ThyraWalletHandler)
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(api.ThyraWebsiteCreatorHandler)
 
-	// Start server which listening
 	server.ConfigureAPI()
+
 	if err := server.Serve(); err != nil {
+		//nolint:gocritic
 		log.Fatalln(err)
 	}
 }

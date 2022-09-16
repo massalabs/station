@@ -8,23 +8,24 @@ import (
 )
 
 func contentType(rsc string) map[string]string {
-	var ct map[string]string
+	var contentType map[string]string
+
 	switch filepath.Ext(rsc) {
 	case ".css":
-		ct = map[string]string{"Content-Type": "text/css"}
+		contentType = map[string]string{"Content-Type": "text/css"}
 	case ".js":
-		ct = map[string]string{"Content-Type": "application/javascript"}
+		contentType = map[string]string{"Content-Type": "application/javascript"}
 	case ".html":
-		ct = map[string]string{"Content-Type": "text/html"}
+		contentType = map[string]string{"Content-Type": "text/html"}
 	case ".webp":
-		ct = map[string]string{"Content-Type": "text/webp"}
+		contentType = map[string]string{"Content-Type": "text/webp"}
 	case ".png":
-		ct = map[string]string{"Content-Type": "image/png"}
+		contentType = map[string]string{"Content-Type": "image/png"}
 	default:
-		ct = map[string]string{}
+		contentType = map[string]string{}
 	}
 
-	return ct
+	return contentType
 }
 
 type CustomResponder struct {
@@ -51,9 +52,15 @@ func NewCustomResponder(body []byte, header map[string]string, statusCode int) *
 }
 
 func NewNotFoundResponder() *CustomResponder {
-	return NewCustomResponder([]byte("Page not found"), map[string]string{"Content-Type": "text/html"}, http.StatusNotFound)
+	return NewCustomResponder(
+		[]byte("Page not found"),
+		map[string]string{"Content-Type": "text/html"},
+		http.StatusNotFound)
 }
 
 func NewInternalServerErrorResponder(err error) *CustomResponder {
-	return NewCustomResponder([]byte(err.Error()), map[string]string{"Content-Type": "text/html"}, http.StatusInternalServerError)
+	return NewCustomResponder(
+		[]byte(err.Error()),
+		map[string]string{"Content-Type": "text/html"},
+		http.StatusInternalServerError)
 }

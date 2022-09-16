@@ -12,6 +12,19 @@ import (
 	"lukechampine.com/blake3"
 )
 
+const DefaultGazLimit = 700000000
+
+const DefaultSlotsDuration = 2
+
+const NoGazFee = 0
+
+const NoFee = 0
+
+const NoSequentialCoin = 0
+
+const NoParallelCoin = 0
+
+//nolint:tagliatelle
 type sendOperationsReq struct {
 	SerializedContent JSONableSlice `json:"serialized_content"`
 	PublicKey         string        `json:"creator_public_key"`
@@ -54,12 +67,6 @@ func message(expiry uint64, fee uint64, operation Operation) []byte {
 	return msg
 }
 
-func sign(msg []byte, privKey []byte) ([]byte, error) {
-	signature := ed25519.Sign(privKey, msg)
-
-	return signature, nil
-}
-
 func Call(client *node.Client,
 	expiry uint64, fee uint64,
 	operation Operation,
@@ -67,7 +74,7 @@ func Call(client *node.Client,
 ) (string, error) {
 	exp, err := node.NextSlot(client)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("calling NextSlot: %w", err)
 	}
 
 	expiry += exp
@@ -76,13 +83,7 @@ func Call(client *node.Client,
 
 	digest := blake3.Sum256(append(pubKey, msg...))
 
-	signature, err := sign(
-		digest[:],
-		privKey,
-	)
-	if err != nil {
-		return "", err
-	}
+	signature := ed25519.Sign(privKey, digest[:])
 
 	rawResponse, err := client.RPCClient.Call(
 		context.Background(),
@@ -98,7 +99,17 @@ func Call(client *node.Client,
 		},
 	)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("calling send_operations jsonrpc with '%+v': %w",
+			[][]sendOperationsReq{
+				{
+					sendOperationsReq{
+						SerializedContent: msg,
+						Signature:         base58.CheckEncode(signature),
+						PublicKey:         "P" + base58.VersionedCheckEncode(pubKey, 0),
+					},
+				},
+			},
+			err)
 	}
 
 	if rawResponse.Error != nil {
@@ -109,7 +120,7 @@ func Call(client *node.Client,
 
 	err = rawResponse.GetObject(&resp)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("parsing send_operations jsonrpc response '%+v': %w", rawResponse, err)
 	}
 
 	return resp[0], nil
