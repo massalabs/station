@@ -13,7 +13,6 @@ import (
 
 //nolint:nolintlint,ireturn
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
-
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
@@ -77,11 +76,10 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeGetWallet,
-					Message: err.Error(),
-				})
+			WithPayload(&models.Error{
+				Code:    errorCodeGetWallet,
+				Message: err.Error(),
+			})
 	}
 
 	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
