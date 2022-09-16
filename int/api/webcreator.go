@@ -11,6 +11,7 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
+//nolint:nolintlint,ireturn
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
 
 	wallet, err := wallet.Load(params.Nickname)
@@ -76,8 +77,8 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 
 }
 
+//nolint:nolintlint,ireturn
 func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middleware.Responder {
-
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
@@ -121,5 +122,6 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 		WithPayload(&models.Websites{
 			Name:    "Name",
 			Address: params.Address,
+		,
 		})
 }
