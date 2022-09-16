@@ -35,7 +35,6 @@ type UploadWebsiteParam struct {
 }
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, error) {
-
 	const blockLength = 260000
 
 	client := node.NewDefaultClient()
@@ -51,7 +50,6 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 		_, err = uploadLight(client, addr, content, wallet)
 	} else {
 		_, err = uploadHeavy(client, addr, blocks, wallet)
-
 	}
 
 	if err != nil {

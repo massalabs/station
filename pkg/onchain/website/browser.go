@@ -42,9 +42,7 @@ func setContentType(rsc string, writer http.ResponseWriter) {
 		writer.Header().Set("Content-Type", "text/webp")
 	case ".png":
 		writer.Header().Set("Content-Type", "image/png")
-
 	}
-
 }
 
 func Request(writer http.ResponseWriter, reader *http.Request, client *node.Client, address string, resource string) {
