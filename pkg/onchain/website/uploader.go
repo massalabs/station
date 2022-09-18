@@ -100,7 +100,6 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 		//nolint:exhaustruct
 		param, err = json.Marshal(UploadWebsiteParam{
 			Data: chunks[index],
-			// TODO Remove the totalchunk from the append call
 		})
 		if err != nil {
 			//nolint:exhaustruct
