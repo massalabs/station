@@ -25,12 +25,19 @@ func main() {
 		panic(err)
 	}
 
-	callSC := callSC.New(addr, "set_dots", make([]byte, 0), 0, 700000000, 0, 0)
+	NoArgument := make([]byte, 0)
 
-	id, err := sendOperation.Call(client, 2, 0, callSC, wlt.KeyPairs[0].PublicKey, wlt.KeyPairs[0].PrivateKey)
+	callSC := callSC.New(
+		addr, "set_dots", NoArgument,
+		sendOperation.NoGazFee, sendOperation.DefaultGazLimit,
+		sendOperation.NoSequentialCoin, sendOperation.NoParallelCoin)
+
+	opID, err := sendOperation.Call(client, sendOperation.DefaultSlotsDuration, sendOperation.NoFee, callSC,
+		wlt.KeyPairs[0].PublicKey, wlt.KeyPairs[0].PrivateKey)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("Execution OK, id is:", id)
+	//nolint:forbidigo
+	fmt.Println("Execution OK, id is:", opID)
 }

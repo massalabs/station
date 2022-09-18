@@ -572,6 +572,47 @@ func init() {
         }
       }
     },
+    "/thyra/events/{str}/{caller}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "thyraEventsGetter",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Data content of the event.",
+            "name": "str",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Creator of the transaction that triggered the event.",
+            "name": "caller",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event retrieved"
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/wallet/{resource}": {
       "get": {
         "produces": [
@@ -675,45 +716,6 @@ func init() {
           },
           "422": {
             "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/websiteCreator/state/{contractAddress}": {
-      "get": {
-        "description": "Returns the deployment status of the ` + "`" + `WebsiteCreator` + "`" + ` contract in parameter",
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "websiteCreatorGetterStatus",
-        "parameters": [
-          {
-            "type": "string",
-            "x-nullable": false,
-            "description": "Website creator contract's address",
-            "name": "contractAddress",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Website creator status retrieved.",
-            "schema": {
-              "$ref": "#/definitions/UploadState"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1410,6 +1412,47 @@ func init() {
         }
       }
     },
+    "/thyra/events/{str}/{caller}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "thyraEventsGetter",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Data content of the event.",
+            "name": "str",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Creator of the transaction that triggered the event.",
+            "name": "caller",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event retrieved"
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/wallet/{resource}": {
       "get": {
         "produces": [
@@ -1513,45 +1556,6 @@ func init() {
           },
           "422": {
             "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/websiteCreator/state/{contractAddress}": {
-      "get": {
-        "description": "Returns the deployment status of the ` + "`" + `WebsiteCreator` + "`" + ` contract in parameter",
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "websiteCreatorGetterStatus",
-        "parameters": [
-          {
-            "type": "string",
-            "x-nullable": false,
-            "description": "Website creator contract's address",
-            "name": "contractAddress",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Website creator status retrieved.",
-            "schema": {
-              "$ref": "#/definitions/UploadState"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
             "schema": {
               "$ref": "#/definitions/Error"
             }

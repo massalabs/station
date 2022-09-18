@@ -9,14 +9,15 @@ import (
 	"github.com/massalabs/thyra/pkg/onchain/website"
 )
 
+//nolint:nolintlint,ireturn
 func BrowseHandler(params operations.BrowseParams) middleware.Responder {
 	body, err := website.Fetch(node.NewDefaultClient(), params.Address, params.Resource)
 	if err != nil {
 		if err.Error() == "no data in candidate value key" {
 			return NewNotFoundResponder()
-		} else {
-			return NewInternalServerErrorResponder(err)
 		}
+
+		return NewInternalServerErrorResponder(err)
 	}
 
 	return NewCustomResponder(body, contentType(params.Resource), http.StatusOK)

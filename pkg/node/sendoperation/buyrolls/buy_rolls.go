@@ -4,12 +4,14 @@ import (
 	"encoding/binary"
 )
 
-const BuyRollOpID = 1
+const OpID = 1
 
+//nolint:tagliatelle
 type OperationDetails struct {
 	CountRoll uint64 `json:"roll_count"`
 }
 
+//nolint:tagliatelle
 type Operation struct {
 	BuyRolls OperationDetails `json:"BuyRolls"`
 }
@@ -37,7 +39,7 @@ func (b *BuyRolls) Message() []byte {
 	buf := make([]byte, binary.MaxVarintLen64)
 
 	// operationId
-	nbBytes := binary.PutUvarint(buf, BuyRollOpID)
+	nbBytes := binary.PutUvarint(buf, OpID)
 	msg = append(msg, buf[:nbBytes]...)
 
 	// count rolls

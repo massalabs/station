@@ -13,6 +13,7 @@ linters:
     - scopelint
     - structcheck
     - varcheck
+    - goerr113 # we should decide first on how we would like to handle error internally
 
   presets:
     - bugs
@@ -32,3 +33,16 @@ run:
     - pkg/front
     - pkg/sc
     - api/swagger/server
+    - resource
+
+linters-settings:
+  tagliatelle:
+    # Check the struck tag name case.
+    case:
+      # Use the struct field name to check the name of the struct tag.
+      # Default: false
+      use-field-name: true
+      rules:
+        # Any struct tag type can be used.
+        # Support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
+        json:     snake

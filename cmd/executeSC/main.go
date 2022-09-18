@@ -18,12 +18,19 @@ func main() {
 
 	client := node.NewDefaultClient()
 
-	exeSC := executesc.New([]byte(sc.WebsiteStorer), 700000, 2, 20)
+	exeSC := executesc.New([]byte(sc.WebsiteStorer),
+		sendOperation.DefaultGazLimit, sendOperation.NoGazFee,
+		sendOperation.NoParallelCoin)
 
-	id, err := sendOperation.Call(client, 2, 0, exeSC, wlt.KeyPairs[0].PublicKey, wlt.KeyPairs[0].PrivateKey)
+	opID, err := sendOperation.Call(
+		client,
+		sendOperation.DefaultSlotsDuration, sendOperation.NoFee,
+		exeSC,
+		wlt.KeyPairs[0].PublicKey, wlt.KeyPairs[0].PrivateKey)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("Execution OK, id is:", id)
+	//nolint:forbidigo
+	fmt.Println("Execution OK, id is:", opID)
 }

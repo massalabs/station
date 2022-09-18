@@ -14,6 +14,7 @@ type OperationDetails struct {
 	RecipientAddress string `json:"recipient_address"`
 }
 
+//nolint:tagliatelle
 type Operation struct {
 	Transaction OperationDetails `json:"Transaction"`
 }

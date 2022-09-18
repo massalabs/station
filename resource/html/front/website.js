@@ -9,6 +9,8 @@ getWebsiteDeployerSC();
 initializeDefaultWallet();
 setupModal();
 
+const eventManager = new EventManager();
+
 // Write the default wallet text in wallet popover component
 async function getWebsiteDeployerSC() {
 	let defaultWallet = getDefaultWallet();
@@ -31,15 +33,6 @@ async function getWebsiteDeployerSC() {
 }
 
 // Write the default wallet text in wallet popover component
-async function getWebsiteDeployerState(address) {
-	try {
-		return await axios.get('/websiteCreator/state/' + address);
-	} catch (err) {
-		console.error(err);
-	}
-}
-
-// Write the default wallet text in wallet popover component
 function initializeDefaultWallet() {
 	let defaultWallet = getDefaultWallet();
 	if (defaultWallet === '') {
@@ -59,6 +52,14 @@ function getDefaultWallet() {
 		}
 	});
 	return defaultWallet;
+}
+
+function getWallet(nickname) {
+	return gWallets.find((w) => w.nickname === nickname);
+}
+
+function getDeployer(contractAddress) {
+	return deployers.find((c) => c.address === contractAddress);
 }
 
 function setupModal() {
@@ -222,42 +223,84 @@ function tableInsert(resp, count) {
 	});
 }
 
-function uploadWebsite(file, count, password) {
+async function uploadWebsite(file, count, password) {
 	let defaultWallet = getDefaultWallet();
 	const bodyFormData = new FormData();
 	const address = deployers[count].address;
 	bodyFormData.append('zipfile', file);
 	bodyFormData.append('address', address);
 	bodyFormData.append('nickname', defaultWallet);
-	document.getElementsByClassName('loading' + count)[0].style.display = 'inline-block';
-	stepper(address);
-	getWebsiteDeployerState(address);
-	axios({
-		url: `/websiteCreator/upload`,
-		method: 'POST',
-		data: bodyFormData,
-		headers: {
-			'Content-Type': 'multipart/form-data',
-			Authorization: password,
-		},
-	})
-		.then((operation) => {
-			document.getElementsByClassName('loading' + count)[0].style.display = 'none';
-			successMessage('Website uploaded to address : ' + operation.data.address);
+
+	const reader = new FileReader();
+	reader.readAsDataURL(file);
+	reader.onloadend = (_) => {
+		const result = reader.result.length;
+
+		const chunkSize = Math.floor(result / 260_000) + 1;
+
+		stepper(address, chunkSize);
+
+		axios({
+			url: `/websiteCreator/upload`,
+			method: 'POST',
+			data: bodyFormData,
+			headers: {
+				'Content-Type': 'multipart/form-data',
+				Authorization: password,
+			},
 		})
-		.catch((e) => {
-			document.getElementsByClassName('loading' + count)[0].style.display = 'none';
-			errorAlert(getErrorMessage(e.response.data.code));
-		});
+			.then((operation) => {
+				document.getElementsByClassName('loading' + count)[0].style.display = 'none';
+				successMessage('Website uploaded to address : ' + operation.data.address);
+			})
+			.catch((e) => {
+				document.getElementsByClassName('loading' + count)[0].style.display = 'none';
+				errorAlert(getErrorMessage(e.response.data.code));
+			});
+	};
 }
 
-const checkStatus = (contractAddress) =>
-	new Promise(async (resolve) => {
-		setTimeout(async () => resolve(await getWebsiteDeployerState(contractAddress)), 1000);
-	});
+async function stepper(contractAddress, totalChunk) {
+	initStepper(contractAddress);
+	let actualChunk = 0;
+	for (let i = 1; i <= totalChunk; i++) {
+		if (i === 1) {
+			eventManager.subscribe(
+				`First chunk deployed to ${contractAddress}`,
+				getWallet(getDefaultWallet()).address,
+				() => {
+					actualChunk++;
+					$('.title')
+						.eq(2)
+						.text('Chunk upload ' + actualChunk);
+					$('.title').eq(2).addClass('loading-dots');
+				}
+			);
+		} else if (i == totalChunk) {
+			eventManager.subscribe(
+				`Append chunk deployed to ${contractAddress} : ${totalChunk}`,
+				getWallet(getDefaultWallet()).address,
+				() => {
+					resetStepper();
+				}
+			);
+		} else {
+			eventManager.subscribe(
+				`Append chunk deployed to ${contractAddress} : ${i}`,
+				getWallet(getDefaultWallet()).address,
+				() => {
+					actualChunk++;
+					$('.title')
+						.eq(2)
+						.text('Chunk upload ' + actualChunk + ' on ' + totalChunk);
+					$('.title').eq(2).addClass('loading-dots');
+				}
+			);
+		}
+	}
+}
 
-const stepper = async (contractAddress) => {
-	let actualStep = 1;
+function initStepper(contractAddress) {
 	$('.deployer-form').hide();
 	$('.stepper').show();
 
@@ -267,33 +310,14 @@ const stepper = async (contractAddress) => {
 	$('.circle').eq(1).empty();
 	$('.circle').eq(1).append('<i class="bi bi-check">');
 
-	$('.stepper-title').html('Deployment of ' + contractAddress);
-
-	while (true) {
-		const status = await checkStatus(contractAddress);
-		const statusData = status.data;
-		$('.title').eq(2).addClass('loading-dots');
-		if (statusData.lastChunk > 0 && statusData.lastChunk != statusData.totalChunk) {
-			actualStep = 2;
-			$('.circle').eq(2).empty();
-			$('.circle').eq(2).append('<i class="bi bi-check">');
-
-			$('.title')
-				.eq(2)
-				.html('Chunk upload ' + statusData.lastChunk + ' on ' + statusData.totalChunk);
-		} else if (actualStep == 2 && statusData.lastChunk == statusData.totalChunk) {
-			$('.title')
-				.eq(2)
-				.html('Chunk upload ' + statusData.lastChunk + ' on ' + statusData.totalChunk);
-			break;
-		}
-	}
-	resetStepper();
-	$('.stepper').hide();
-	$('.deployer-form').show();
-};
+	$('.stepper-title').html('Deployment of ' + getDeployer(contractAddress).name);
+	$('.title').eq(2).addClass('loading-dots');
+}
 
 function resetStepper() {
+	$('.deployer-form').show();
+	$('.stepper').hide();
+
 	$('.circle').empty();
 	$('.circle').eq(0).html('1');
 	$('.circle').eq(1).html('2');

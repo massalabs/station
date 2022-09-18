@@ -51,6 +51,33 @@ paths:
       responses:
         '200':
           description: Page found
+  /thyra/events/{str}/{caller}:
+    get:
+      operationId: thyraEventsGetter
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: str
+          type: string
+          required: true
+          description: Data content of the event.
+        - in: path
+          name: caller
+          type: string
+          required: true
+          description: Creator of the transaction that triggered the event.
+      responses:
+        '200':
+          description: Event retrieved
+        '400':
+          description: Bad request.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: '#/definitions/Error'
   /mgmt/wallet:
     get:
       operationId: mgmtWalletGet
@@ -214,32 +241,6 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Websites'
-        '400':
-          description: Bad request.
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: '#/definitions/Error'
-  /websiteCreator/state/{contractAddress}:
-    get:
-      description: Returns the deployment status of the `WebsiteCreator` contract in parameter
-      operationId: websiteCreatorGetterStatus
-      parameters:
-        - in: path
-          name: contractAddress
-          type: string
-          required: true
-          x-nullable: false
-          description: Website creator contract's address
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Website creator status retrieved.
-          schema:
-            $ref: '#/definitions/UploadState'
         '400':
           description: Bad request.
           schema:
