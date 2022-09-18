@@ -10,6 +10,7 @@ import (
 	"github.com/massalabs/thyra/pkg/node"
 )
 
+//nolint:nolintlint,ireturn
 func EventChecker(params operations.ThyraEventsGetterParams) middleware.Responder {
 	const periodsBefore = 2
 
