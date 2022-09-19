@@ -46,7 +46,7 @@ Thyra accepts different options that you can specify when you start the program.
 In this section you will find a non-exhaustive list of such options and examples of how you can use them.
 
 --node-server : Specify which Massa network Thyra will communicate with while runnning.
-Accepts a constant or a custom IP address, like below :
+Accepts a URL, an IP address or one of the following values :
 
  - TESTNET : Uses Massa's testnet
  - LABNET : Uses Massa's labnet

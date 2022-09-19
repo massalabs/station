@@ -48,7 +48,7 @@ type Client struct {
 }
 
 func NewDefaultClient() *Client {
-	defaultServer := os.Getenv("MASSA_URL_RPC")
+	defaultServer := os.Getenv("MASSA_NODE_URL")
 	if defaultServer == "" {
 		defaultServer = InnoNetServer
 	}

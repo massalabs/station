@@ -22,7 +22,9 @@ func parseFlags(server *restapi.Server) {
 
 	certFilePtr := flag.String("tls-certificate", "", "path to certificate file")
 	keyFilePtr := flag.String("tls-key", "", "path to key file")
-	massaNodeServerPtr := flag.String("node-server", "", "IP address of the chosen massa node")
+	massaNodeServerPtr := flag.String("node-server", "", `Massa node that Thyra connects to. 
+	Can be an IP address, a URL or one of the following values: 'TESTNET', 'LABNET', 'INNONET' or LOCALHOST`)
+
 	flag.Parse()
 
 	if *certFilePtr != "" {
@@ -37,20 +39,20 @@ func parseFlags(server *restapi.Server) {
 }
 
 func parseNetworkFlag(massaNodeServerPtr *string) {
-	if *massaNodeServerPtr != "" {
-		switch *massaNodeServerPtr {
-		case "TESTNET":
-			*massaNodeServerPtr = "https://test.massa.net/v1/"
-		case "LABNET":
-			*massaNodeServerPtr = "https://labnet.massa.net/"
-		case "INNONET":
-			*massaNodeServerPtr = "https://inno.massa.net/test13"
-		case "LOCALHOST":
-			*massaNodeServerPtr = "http://127.0.0.1"
-		}
-
-		os.Setenv("MASSA_URL_RPC", *massaNodeServerPtr)
+	switch *massaNodeServerPtr {
+	case "TESTNET":
+		*massaNodeServerPtr = "https://test.massa.net/v1/"
+	case "LABNET":
+		*massaNodeServerPtr = "https://labnet.massa.net/"
+	case "INNONET":
+		*massaNodeServerPtr = "https://inno.massa.net/test13"
+	case "LOCALHOST":
+		*massaNodeServerPtr = "http://127.0.0.1"
+	case "":
+		*massaNodeServerPtr = "https://inno.massa.net/test13"
 	}
+
+	os.Setenv("MASSA_NODE_URL", *massaNodeServerPtr)
 }
 
 func main() {
