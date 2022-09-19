@@ -15,6 +15,23 @@ import (
 	"github.com/massalabs/thyra/int/api/wallet"
 )
 
+func parseNetworkFlag(massaNodeServerPtr *string) {
+	if *massaNodeServerPtr != "" {
+		switch *massaNodeServerPtr {
+		case "TESTNET":
+			*massaNodeServerPtr = "https://test.massa.net/v1/"
+		case "LABNET":
+			*massaNodeServerPtr = "https://labnet.massa.net/"
+		case "INNONET":
+			*massaNodeServerPtr = "https://inno.massa.net/test13"
+		case "LOCALHOST":
+			*massaNodeServerPtr = "http://127.0.0.1"
+		}
+
+		os.Setenv("MASSA_URL_RPC", *massaNodeServerPtr)
+	}
+}
+
 func main() {
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
@@ -48,18 +65,7 @@ func main() {
 		server.TLSCertificateKey = flags.Filename(*keyFilePtr)
 	}
 
-	if *massaNodeServerPtr != "" {
-		if *massaNodeServerPtr == "TESTNET" {
-			*massaNodeServerPtr = "https://test.massa.net/v1/"
-		} else if *massaNodeServerPtr == "LABNET" {
-			*massaNodeServerPtr = "https://labnet.massa.net/"
-		} else if *massaNodeServerPtr == "INNONET" {
-			*massaNodeServerPtr = "https://inno.massa.net/test13"
-		} else if *massaNodeServerPtr == "LOCALHOST" {
-			*massaNodeServerPtr = "http://127.0.0.1"
-		}
-		os.Setenv("MASSA_URL_RPC", *massaNodeServerPtr)
-	}
+	parseNetworkFlag(massaNodeServerPtr)
 
 	var walletStorage sync.Map
 
