@@ -9,6 +9,8 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime"
+
+	"github.com/massalabs/thyra/api/swagger/server/models"
 )
 
 // ThyraWebsiteCreatorOKCode is the HTTP code returned for type ThyraWebsiteCreatorOK
@@ -33,4 +35,48 @@ func (o *ThyraWebsiteCreatorOK) WriteResponse(rw http.ResponseWriter, producer r
 	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
 
 	rw.WriteHeader(200)
+}
+
+// ThyraWebsiteCreatorNotFoundCode is the HTTP code returned for type ThyraWebsiteCreatorNotFound
+const ThyraWebsiteCreatorNotFoundCode int = 404
+
+/*ThyraWebsiteCreatorNotFound Resource not found.
+
+swagger:response thyraWebsiteCreatorNotFound
+*/
+type ThyraWebsiteCreatorNotFound struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.Error `json:"body,omitempty"`
+}
+
+// NewThyraWebsiteCreatorNotFound creates ThyraWebsiteCreatorNotFound with default headers values
+func NewThyraWebsiteCreatorNotFound() *ThyraWebsiteCreatorNotFound {
+
+	return &ThyraWebsiteCreatorNotFound{}
+}
+
+// WithPayload adds the payload to the thyra website creator not found response
+func (o *ThyraWebsiteCreatorNotFound) WithPayload(payload *models.Error) *ThyraWebsiteCreatorNotFound {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the thyra website creator not found response
+func (o *ThyraWebsiteCreatorNotFound) SetPayload(payload *models.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *ThyraWebsiteCreatorNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(404)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }

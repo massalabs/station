@@ -599,6 +599,12 @@ func init() {
         "responses": {
           "200": {
             "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -627,6 +633,12 @@ func init() {
         "responses": {
           "200": {
             "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -645,7 +657,7 @@ func init() {
             "pattern": "^[a-z0-9]+$",
             "type": "string",
             "x-nullable": false,
-            "description": "URL without '.', capitals letters and specifics characters",
+            "description": "URL without dot (.), upper case and special characters",
             "name": "url",
             "in": "formData",
             "required": true
@@ -653,7 +665,7 @@ func init() {
           {
             "type": "string",
             "x-nullable": false,
-            "description": "Wallet's nickname to be used for receiving the website",
+            "description": "Name of the Wallet in which the website will be deployed.",
             "name": "nickname",
             "in": "formData",
             "required": true
@@ -1385,6 +1397,12 @@ func init() {
         "responses": {
           "200": {
             "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -1413,6 +1431,12 @@ func init() {
         "responses": {
           "200": {
             "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -1431,7 +1455,7 @@ func init() {
             "pattern": "^[a-z0-9]+$",
             "type": "string",
             "x-nullable": false,
-            "description": "URL without '.', capitals letters and specifics characters",
+            "description": "URL without dot (.), upper case and special characters",
             "name": "url",
             "in": "formData",
             "required": true
@@ -1439,7 +1463,7 @@ func init() {
           {
             "type": "string",
             "x-nullable": false,
-            "description": "Wallet's nickname to be used for receiving the website",
+            "description": "Name of the Wallet in which the website will be deployed.",
             "name": "nickname",
             "in": "formData",
             "required": true

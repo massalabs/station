@@ -1,55 +1,44 @@
 package api
 
 import (
+	"embed"
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/pkg/front"
-	"github.com/massalabs/thyra/pkg/front/wallet"
-	"github.com/massalabs/thyra/pkg/front/website"
 )
+
+//go:embed html/front
+var content embed.FS
 
 //nolint:nolintlint,ireturn
 func ThyraWalletHandler(params operations.ThyraWalletParams) middleware.Responder {
-	var body string
-
-	switch params.Resource {
-	case "wallet.css":
-		body = wallet.CSS
-	case "wallet.js":
-		body = wallet.JS
-	case "index.html":
-		body = wallet.HTML
-	case "logo_banner.webp":
-		body = front.LogoBanner
-	case "logo.png":
-		body = front.Logo
-	case "errors.js":
-		body = front.Errors
+	basePath := "html/front/"
+	file := params.Resource
+	if params.Resource == "index.html" {
+		file = "wallet.html"
 	}
 
-	return NewCustomResponder([]byte(body), contentType(params.Resource), http.StatusOK)
+	resource, err := content.ReadFile(basePath + file)
+	if err != nil {
+		return operations.NewThyraWalletNotFound()
+	}
+
+	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)
 }
 
 //nolint:nolintlint,ireturn
 func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) middleware.Responder {
-	var body string
-
-	switch params.Resource {
-	case "website.css":
-		body = website.CSS
-	case "website.js":
-		body = website.JS
-	case "index.html":
-		body = website.HTML
-	case "logo_banner.webp":
-		body = front.LogoBanner
-	case "logo.png":
-		body = front.Logo
-	case "errors.js":
-		body = front.Errors
+	basePath := "html/front/"
+	file := params.Resource
+	if params.Resource == "index.html" {
+		file = "website.html"
 	}
 
-	return NewCustomResponder([]byte(body), contentType(params.Resource), http.StatusOK)
+	resource, err := content.ReadFile(basePath + file)
+	if err != nil {
+		return operations.NewThyraWebsiteCreatorNotFound()
+	}
+
+	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)
 }

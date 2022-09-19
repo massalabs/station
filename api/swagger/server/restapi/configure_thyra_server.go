@@ -4,6 +4,7 @@ package restapi
 
 import (
 	"crypto/tls"
+	"embed"
 	"fmt"
 	"net/http"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
-	"github.com/massalabs/thyra/api/swagger/server"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/onchain/website"
 )
@@ -59,8 +59,23 @@ func configureAPI(api *operations.ThyraServerAPI) http.Handler {
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
 }
 
+//go:embed resource
+var content embed.FS
+
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
+	basePath := "resource/certificate/"
+
+	unsecureCertificate, err := content.ReadFile(basePath + "unsecure.crt")
+	if err != nil {
+		panic(err)
+	}
+
+	unsecureKey, err := content.ReadFile(basePath + "unsecure.key")
+	if err != nil {
+		panic(err)
+	}
+
 	if len(tlsConfig.Certificates) == 0 {
 		fmt.Println("warning: insecure HTTPS configuration.")
 		fmt.Println("	To fix this, use your own .crt and .key files using `--tls-certificate` and `--tls-key` flags")
@@ -68,7 +83,7 @@ func configureTLS(tlsConfig *tls.Config) {
 		var err error
 
 		tlsConfig.Certificates = make([]tls.Certificate, 1)
-		tlsConfig.Certificates[0], err = tls.X509KeyPair([]byte(server.UnsecureCertificate), []byte(server.UnsecureKey))
+		tlsConfig.Certificates[0], err = tls.X509KeyPair(unsecureCertificate, unsecureKey)
 
 		if err != nil {
 			panic(err)

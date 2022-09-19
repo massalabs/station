@@ -1,6 +1,7 @@
 package website
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
 
@@ -8,15 +9,24 @@ import (
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/onchain"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
-	"github.com/massalabs/thyra/pkg/sc"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
+
+//go:embed sc
+var content embed.FS
 
 func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	client := node.NewDefaultClient()
 
+	basePath := "sc/"
+
+	websiteStorer, err := content.ReadFile(basePath + "websiteStorer.wasm")
+	if err != nil {
+		return "", fmt.Errorf("SC file not retrieved: %w", err)
+	}
+
 	// Prepare address to webstorage.
-	scAddress, err := onchain.DeploySC(client, *wallet, []byte(sc.WebsiteStorer))
+	scAddress, err := onchain.DeploySC(client, *wallet, websiteStorer)
 	if err != nil {
 		return "", fmt.Errorf("deploying webstorage SC: %w", err)
 	}

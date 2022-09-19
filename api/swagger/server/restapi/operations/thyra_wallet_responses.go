@@ -9,6 +9,8 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime"
+
+	"github.com/massalabs/thyra/api/swagger/server/models"
 )
 
 // ThyraWalletOKCode is the HTTP code returned for type ThyraWalletOK
@@ -33,4 +35,48 @@ func (o *ThyraWalletOK) WriteResponse(rw http.ResponseWriter, producer runtime.P
 	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
 
 	rw.WriteHeader(200)
+}
+
+// ThyraWalletNotFoundCode is the HTTP code returned for type ThyraWalletNotFound
+const ThyraWalletNotFoundCode int = 404
+
+/*ThyraWalletNotFound Resource not found.
+
+swagger:response thyraWalletNotFound
+*/
+type ThyraWalletNotFound struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.Error `json:"body,omitempty"`
+}
+
+// NewThyraWalletNotFound creates ThyraWalletNotFound with default headers values
+func NewThyraWalletNotFound() *ThyraWalletNotFound {
+
+	return &ThyraWalletNotFound{}
+}
+
+// WithPayload adds the payload to the thyra wallet not found response
+func (o *ThyraWalletNotFound) WithPayload(payload *models.Error) *ThyraWalletNotFound {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the thyra wallet not found response
+func (o *ThyraWalletNotFound) SetPayload(payload *models.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *ThyraWalletNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(404)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }
