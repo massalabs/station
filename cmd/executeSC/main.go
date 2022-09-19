@@ -1,14 +1,18 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 
 	"github.com/massalabs/thyra/pkg/node"
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/node/sendoperation/executesc"
-	"github.com/massalabs/thyra/pkg/sc"
+
 	"github.com/massalabs/thyra/pkg/wallet"
 )
+
+//go:embed sc
+var content embed.FS
 
 func main() {
 	wlt, err := wallet.New("massa")
@@ -18,7 +22,14 @@ func main() {
 
 	client := node.NewDefaultClient()
 
-	exeSC := executesc.New([]byte(sc.WebsiteStorer),
+	basePath := "sc/"
+
+	websiteStorer, err := content.ReadFile(basePath + "websiteStorer.wasm")
+	if err != nil {
+		panic(err)
+	}
+
+	exeSC := executesc.New(websiteStorer,
 		sendOperation.DefaultGazLimit, sendOperation.NoGazFee,
 		sendOperation.NoParallelCoin)
 

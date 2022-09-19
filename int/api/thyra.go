@@ -14,6 +14,7 @@ var content embed.FS
 //nolint:nolintlint,ireturn
 func ThyraWalletHandler(params operations.ThyraWalletParams) middleware.Responder {
 	basePath := "html/front/"
+
 	file := params.Resource
 	if params.Resource == "index.html" {
 		file = "wallet.html"
@@ -30,6 +31,7 @@ func ThyraWalletHandler(params operations.ThyraWalletParams) middleware.Responde
 //nolint:nolintlint,ireturn
 func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) middleware.Responder {
 	basePath := "html/front/"
+
 	file := params.Resource
 	if params.Resource == "index.html" {
 		file = "website.html"
