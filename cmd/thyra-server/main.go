@@ -15,6 +15,27 @@ import (
 	"github.com/massalabs/thyra/int/api/wallet"
 )
 
+func parseFlags(server *restapi.Server) {
+	flag.IntVar(&server.Port, "http-port", 80, "HTTP port to listen to")
+
+	flag.IntVar(&server.TLSPort, "https-port", 443, "HTTPS port to listen to")
+
+	certFilePtr := flag.String("tls-certificate", "", "path to certificate file")
+	keyFilePtr := flag.String("tls-key", "", "path to key file")
+	massaNodeServerPtr := flag.String("node-server", "", "IP address of the chosen massa node")
+	flag.Parse()
+
+	if *certFilePtr != "" {
+		server.TLSCertificate = flags.Filename(*certFilePtr)
+	}
+
+	if *keyFilePtr != "" {
+		server.TLSCertificateKey = flags.Filename(*keyFilePtr)
+	}
+
+	parseNetworkFlag(massaNodeServerPtr)
+}
+
 func parseNetworkFlag(massaNodeServerPtr *string) {
 	if *massaNodeServerPtr != "" {
 		switch *massaNodeServerPtr {
@@ -48,24 +69,7 @@ func main() {
 		}
 	}()
 
-	flag.IntVar(&server.Port, "http-port", 80, "HTTP port to listen to")
-
-	flag.IntVar(&server.TLSPort, "https-port", 443, "HTTPS port to listen to")
-
-	certFilePtr := flag.String("tls-certificate", "", "path to certificate file")
-	keyFilePtr := flag.String("tls-key", "", "path to key file")
-	massaNodeServerPtr := flag.String("node-server", "", "IP address of the chosen massa node")
-	flag.Parse()
-
-	if *certFilePtr != "" {
-		server.TLSCertificate = flags.Filename(*certFilePtr)
-	}
-
-	if *keyFilePtr != "" {
-		server.TLSCertificateKey = flags.Filename(*keyFilePtr)
-	}
-
-	parseNetworkFlag(massaNodeServerPtr)
+	parseFlags(server)
 
 	var walletStorage sync.Map
 
