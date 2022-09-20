@@ -203,8 +203,9 @@ function uploadWebsite(file, count, password) {
 	let defaultWallet = getDefaultWallet();
 	const bodyFormData = new FormData();
 
+	const address = deployers[count].address;
 	bodyFormData.append('zipfile', file);
-	bodyFormData.append('address', deployers[count].address);
+	bodyFormData.append('address', address);
 	bodyFormData.append('nickname', defaultWallet);
 
 	const reader = new FileReader();
@@ -400,6 +401,10 @@ function step3(contractAddress, totalChunk) {
 						.eq(2)
 						.text('Chunk upload ' + actualChunk + ' on ' + totalChunk);
 					$('.title').eq(2).addClass('loading-dots');
+
+					if (totalChunk === 1) {
+						resetStepper();
+					}
 				}
 			);
 		} else if (i == totalChunk - 1) {
