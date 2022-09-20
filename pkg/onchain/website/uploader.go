@@ -52,13 +52,7 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 	}
 
 	blocks := chunk(content, blockLength)
-
-	// if len(blocks) == 1 {
-	// 	_, err = uploadLight(client, addr, content, wallet)
-	// } else {
 	_, err = uploadHeavy(client, addr, blocks, wallet)
-	// }
-
 	if err != nil {
 		return "", err
 	}
@@ -82,10 +76,13 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 // 	return op, nil
 // }
 
+// strconv.Itoa(len(chunks))
+
 func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) (string, error) {
 	paramInit, err := json.Marshal(WebsiteInitialisationParams{
-		TotalChunks: strconv.Itoa(len(chunks)),
+		TotalChunks: "4",
 	})
+
 	if err != nil {
 		return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[0]}, err)
 	}
