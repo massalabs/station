@@ -63,7 +63,7 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 		return "", err
 	}
 
-	return "1", nil
+	return "Website deployed", nil
 }
 
 // func uploadLight(client *node.Client, addr []byte, content string, wallet *wallet.Wallet) (string, error) {
