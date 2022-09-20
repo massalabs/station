@@ -14,7 +14,8 @@ import (
 // ThyraWebsiteCreatorOKCode is the HTTP code returned for type ThyraWebsiteCreatorOK
 const ThyraWebsiteCreatorOKCode int = 200
 
-/*ThyraWebsiteCreatorOK Page found
+/*
+ThyraWebsiteCreatorOK Page found
 
 swagger:response thyraWebsiteCreatorOK
 */

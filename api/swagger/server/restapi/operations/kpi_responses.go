@@ -14,7 +14,8 @@ import (
 // KpiOKCode is the HTTP code returned for type KpiOK
 const KpiOKCode int = 200
 
-/*KpiOK kpi message.
+/*
+KpiOK kpi message.
 
 swagger:response kpiOK
 */

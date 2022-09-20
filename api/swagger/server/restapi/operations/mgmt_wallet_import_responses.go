@@ -16,7 +16,8 @@ import (
 // MgmtWalletImportNoContentCode is the HTTP code returned for type MgmtWalletImportNoContent
 const MgmtWalletImportNoContentCode int = 204
 
-/*MgmtWalletImportNoContent Wallet imported.
+/*
+MgmtWalletImportNoContent Wallet imported.
 
 swagger:response mgmtWalletImportNoContent
 */
@@ -40,7 +41,8 @@ func (o *MgmtWalletImportNoContent) WriteResponse(rw http.ResponseWriter, produc
 // MgmtWalletImportBadRequestCode is the HTTP code returned for type MgmtWalletImportBadRequest
 const MgmtWalletImportBadRequestCode int = 400
 
-/*MgmtWalletImportBadRequest Bad request.
+/*
+MgmtWalletImportBadRequest Bad request.
 
 swagger:response mgmtWalletImportBadRequest
 */
@@ -84,7 +86,8 @@ func (o *MgmtWalletImportBadRequest) WriteResponse(rw http.ResponseWriter, produ
 // MgmtWalletImportUnprocessableEntityCode is the HTTP code returned for type MgmtWalletImportUnprocessableEntity
 const MgmtWalletImportUnprocessableEntityCode int = 422
 
-/*MgmtWalletImportUnprocessableEntity Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+/*
+MgmtWalletImportUnprocessableEntity Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
 
 swagger:response mgmtWalletImportUnprocessableEntity
 */
@@ -128,7 +131,8 @@ func (o *MgmtWalletImportUnprocessableEntity) WriteResponse(rw http.ResponseWrit
 // MgmtWalletImportInternalServerErrorCode is the HTTP code returned for type MgmtWalletImportInternalServerError
 const MgmtWalletImportInternalServerErrorCode int = 500
 
-/*MgmtWalletImportInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
+/*
+MgmtWalletImportInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
 
 swagger:response mgmtWalletImportInternalServerError
 */
