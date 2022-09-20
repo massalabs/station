@@ -56,6 +56,47 @@ func CallFunction(client *node.Client, wallet wallet.Wallet,
 	return operationID, errors.New("timeout")
 }
 
+func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet,
+	addr []byte, function string, parameter []byte,
+) (string, error) {
+	callSC := callsc.New(addr, function, parameter,
+		sendOperation.NoGazFee, sendOperation.DefaultGazLimit,
+		sendOperation.NoSequentialCoin, sendOperation.NoParallelCoin)
+
+	operationID, err := sendOperation.Call(
+		client,
+		sendOperation.DefaultSlotsDuration, sendOperation.NoFee,
+		callSC,
+		wallet.KeyPairs[0].PublicKey, wallet.KeyPairs[0].PrivateKey)
+	if err != nil {
+		return "", fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
+	}
+
+	counter := 0
+
+	ticker := time.NewTicker(time.Minute)
+
+	for ; true; <-ticker.C {
+		counter++
+
+		if counter > maxWaitingTimeInSeconds {
+			break
+		}
+
+		events, err := node.Events(client, nil, nil, nil, nil, &operationID)
+		if err != nil {
+			return operationID,
+				fmt.Errorf("waiting execution of function '%s' at '%s' with id '%s': %w", function, addr, operationID, err)
+		}
+
+		if len(events) > 0 {
+			return operationID, nil
+		}
+	}
+
+	return operationID, errors.New("timeout")
+}
+
 func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (string, error) {
 	exeSC := executesc.New(contract,
 		sendOperation.DefaultGazLimit, sendOperation.NoGazFee,
