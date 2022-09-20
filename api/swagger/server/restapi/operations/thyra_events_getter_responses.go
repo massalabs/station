@@ -21,6 +21,11 @@ const ThyraEventsGetterOKCode int = 200
 swagger:response thyraEventsGetterOK
 */
 type ThyraEventsGetterOK struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.Events `json:"body,omitempty"`
 }
 
 // NewThyraEventsGetterOK creates ThyraEventsGetterOK with default headers values
@@ -29,12 +34,27 @@ func NewThyraEventsGetterOK() *ThyraEventsGetterOK {
 	return &ThyraEventsGetterOK{}
 }
 
+// WithPayload adds the payload to the thyra events getter o k response
+func (o *ThyraEventsGetterOK) WithPayload(payload *models.Events) *ThyraEventsGetterOK {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the thyra events getter o k response
+func (o *ThyraEventsGetterOK) SetPayload(payload *models.Events) {
+	o.Payload = payload
+}
+
 // WriteResponse to the client
 func (o *ThyraEventsGetterOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
 	rw.WriteHeader(200)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }
 
 // ThyraEventsGetterBadRequestCode is the HTTP code returned for type ThyraEventsGetterBadRequest

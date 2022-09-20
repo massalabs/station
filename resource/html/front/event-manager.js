@@ -6,8 +6,8 @@ class EventManager {
 			url: `/thyra/events/${str}/${address}`,
 			method: 'GET',
 		})
-			.then((_) => {
-				callback();
+			.then((resp) => {
+				callback(resp);
 			})
 			.catch((e) => {
 				// TODO Implement retry mechanism here

@@ -68,16 +68,18 @@ paths:
           required: true
           description: Creator of the transaction that triggered the event.
       responses:
-        '200':
+        "200":
           description: Event retrieved
-        '400':
+          schema:
+            $ref: "#/definitions/Events"
+        "400":
           description: Bad request.
           schema:
-            $ref: '#/definitions/Error'
-        '500':
+            $ref: "#/definitions/Error"
+        "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: "#/definitions/Error"
   /mgmt/wallet:
     get:
       operationId: mgmtWalletGet
@@ -609,3 +611,13 @@ definitions:
         description: Upload action status
         type: string
         enum: [NOT_STARTED, IN_PROGRESS, COMPLETED]
+  Events:
+    type: object
+    description: Events object (V0)
+    properties:
+      data:
+        description: Event data.
+        type: string
+      address:
+        description: Event caller.
+        type: string

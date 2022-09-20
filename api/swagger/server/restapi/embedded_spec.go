@@ -599,7 +599,10 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Event retrieved"
+            "description": "Event retrieved",
+            "schema": {
+              "$ref": "#/definitions/Events"
+            }
           },
           "400": {
             "description": "Bad request.",
@@ -686,7 +689,7 @@ func init() {
             "pattern": "^[a-z0-9]+$",
             "type": "string",
             "x-nullable": false,
-            "description": "URL without '.', capitals letters and specifics characters",
+            "description": "URL without dot (.), upper case and special characters",
             "name": "url",
             "in": "formData",
             "required": true
@@ -694,7 +697,7 @@ func init() {
           {
             "type": "string",
             "x-nullable": false,
-            "description": "Wallet's nickname to be used for receiving the website",
+            "description": "Name of the Wallet in which the website will be deployed.",
             "name": "nickname",
             "in": "formData",
             "required": true
@@ -818,6 +821,20 @@ func init() {
           "description": "error message.",
           "type": "string",
           "x-nullable": false
+        }
+      }
+    },
+    "Events": {
+      "description": "Events object (V0)",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Event caller.",
+          "type": "string"
+        },
+        "data": {
+          "description": "Event data.",
+          "type": "string"
         }
       }
     },
@@ -1449,7 +1466,10 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Event retrieved"
+            "description": "Event retrieved",
+            "schema": {
+              "$ref": "#/definitions/Events"
+            }
           },
           "400": {
             "description": "Bad request.",
@@ -1536,7 +1556,7 @@ func init() {
             "pattern": "^[a-z0-9]+$",
             "type": "string",
             "x-nullable": false,
-            "description": "URL without '.', capitals letters and specifics characters",
+            "description": "URL without dot (.), upper case and special characters",
             "name": "url",
             "in": "formData",
             "required": true
@@ -1544,7 +1564,7 @@ func init() {
           {
             "type": "string",
             "x-nullable": false,
-            "description": "Wallet's nickname to be used for receiving the website",
+            "description": "Name of the Wallet in which the website will be deployed.",
             "name": "nickname",
             "in": "formData",
             "required": true
@@ -1700,6 +1720,20 @@ func init() {
           "description": "error message.",
           "type": "string",
           "x-nullable": false
+        }
+      }
+    },
+    "Events": {
+      "description": "Events object (V0)",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Event caller.",
+          "type": "string"
+        },
+        "data": {
+          "description": "Event data.",
+          "type": "string"
         }
       }
     },

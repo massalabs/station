@@ -11,7 +11,7 @@ import (
 )
 
 //nolint:nolintlint,ireturn
-func EventChecker(params operations.ThyraEventsGetterParams) middleware.Responder {
+func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.Responder {
 	const periodsBefore = 2
 
 	client := node.NewDefaultClient()
@@ -33,6 +33,8 @@ func EventChecker(params operations.ThyraEventsGetterParams) middleware.Responde
 
 	ticker := time.NewTicker(time.Second)
 
+	var event node.Event
+
 	for ; true; <-ticker.C {
 		trigger := false
 
@@ -46,9 +48,10 @@ func EventChecker(params operations.ThyraEventsGetterParams) middleware.Responde
 					})
 		}
 
-		for _, s := range events {
-			if strings.Contains(s.Data, params.Str) {
+		for _, e := range events {
+			if strings.Contains(e.Data, params.Str) {
 				trigger = true
+				event = e
 			}
 		}
 
@@ -57,5 +60,8 @@ func EventChecker(params operations.ThyraEventsGetterParams) middleware.Responde
 		}
 	}
 
-	return operations.NewThyraEventsGetterOK()
+	return operations.NewThyraEventsGetterOK().WithPayload(&models.Events{
+		Address: params.Caller,
+		Data:    event.Data,
+	})
 }

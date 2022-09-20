@@ -50,7 +50,7 @@ func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) mid
 	case "errors.js":
 		body = front.Errors
 	case "event-manager.js":
-		body = front.EventManager
+		body = front.EventListener
 	}
 
 	return NewCustomResponder([]byte(body), contentType(params.Resource), http.StatusOK)

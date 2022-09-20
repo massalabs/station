@@ -2,6 +2,7 @@ let gWallets = [];
 let deployers = [];
 let actualTxType = '';
 let nextFileToUpload;
+let uploadable = false;
 
 // INIT
 getWallets();
@@ -58,8 +59,12 @@ function getWallet(nickname) {
 	return gWallets.find((w) => w.nickname === nickname);
 }
 
-function getDeployer(contractAddress) {
+function getDeployerByAddress(contractAddress) {
 	return deployers.find((c) => c.address === contractAddress);
+}
+
+function getDeployerByDns(dns) {
+	return deployers.find((c) => c.name === dns);
 }
 
 function setupModal() {
@@ -75,8 +80,8 @@ function setTxType(txType) {
 async function callTx() {
 	const passwordValue = $('#walletPassword').val();
 
-	if (actualTxType === 'deployWebsiteCreator') {
-		deployWebsiteDeployerSC(passwordValue);
+	if (actualTxType === 'deployWebsiteAndUpload') {
+		deployWebsiteAndUpload(passwordValue);
 	}
 	if (actualTxType.includes('uploadWebsiteCreator')) {
 		const websiteIndex = actualTxType.split('uploadWebsiteCreator')[1];
@@ -157,36 +162,6 @@ async function getWallets() {
 		});
 }
 
-async function deployWebsiteDeployerSC(password) {
-	let defaultWallet = getDefaultWallet();
-	const dnsNameInputValue = document.getElementById('websiteName').value;
-
-	if (dnsNameInputValue == '') {
-		errorAlert('Input a DNS name');
-	} else {
-		document.getElementsByClassName('loading')[0].style.display = 'inline-block';
-		axios
-			.put(
-				'/websiteCreator/prepare/',
-				{ url: dnsNameInputValue, nickname: defaultWallet },
-				{
-					headers: {
-						Authorization: password,
-					},
-				}
-			)
-			.then((operation) => {
-				document.getElementsByClassName('loading')[0].style.display = 'none';
-				successMessage('Contract deployed to address ' + operation.data.address);
-				getWebsiteDeployerSC();
-			})
-			.catch((e) => {
-				document.getElementsByClassName('loading')[0].style.display = 'none';
-				errorAlert(getErrorMessage(e.response.data.code));
-			});
-	}
-}
-
 function tableInsert(resp, count) {
 	const tBody = document.getElementById('website-deployers-table').getElementsByTagName('tbody')[0];
 	const row = tBody.insertRow(-1);
@@ -199,13 +174,14 @@ function tableInsert(resp, count) {
 
 	cell0.innerHTML = resp.name;
 	cell1.innerHTML = resp.address;
-	cell2.innerHTML = "<a href='" + url + "'>" + url + '</a>';
+	cell2.innerHTML =
+		"<a href='" + url + "'target = '_blank' rel='noopener noreferrer'>" + url + '</a>';
 	cell3.innerHTML =
 		"<div><input id='fileid" +
 		count +
 		"' type='file' hidden/><button id='upload-website" +
 		count +
-		"' class='primary-button' id='buttonid' type='button' value='Upload MB' >Upload</button><img src='./logo.png' style='display: none' class='massa-logo-spinner loading" +
+		"' class='primary-button' id='buttonid' type='button' value='Upload MB' >Edit</button><img src='./logo.png' style='display: none' class='massa-logo-spinner loading" +
 		count +
 		" alt='Massa logo' /></span></div>";
 
@@ -223,12 +199,12 @@ function tableInsert(resp, count) {
 	});
 }
 
-async function uploadWebsite(file, count, password) {
+function uploadWebsite(file, count, password) {
 	let defaultWallet = getDefaultWallet();
 	const bodyFormData = new FormData();
-	const address = deployers[count].address;
+
 	bodyFormData.append('zipfile', file);
-	bodyFormData.append('address', address);
+	bodyFormData.append('address', deployers[count].address);
 	bodyFormData.append('nickname', defaultWallet);
 
 	const reader = new FileReader();
@@ -238,7 +214,7 @@ async function uploadWebsite(file, count, password) {
 
 		const chunkSize = Math.floor(result / 260_000) + 1;
 
-		stepper(address, chunkSize);
+		stepper(getDeployerByAddress(address).name, chunkSize, false);
 
 		axios({
 			url: `/websiteCreator/upload`,
@@ -253,6 +229,7 @@ async function uploadWebsite(file, count, password) {
 				document.getElementsByClassName('loading' + count)[0].style.display = 'none';
 				successMessage('Website uploaded to address : ' + operation.data.address);
 			})
+
 			.catch((e) => {
 				document.getElementsByClassName('loading' + count)[0].style.display = 'none';
 				errorAlert(getErrorMessage(e.response.data.code));
@@ -260,27 +237,176 @@ async function uploadWebsite(file, count, password) {
 	};
 }
 
-async function stepper(contractAddress, totalChunk) {
-	initStepper(contractAddress);
-	let actualChunk = 0;
-	for (let i = 1; i <= totalChunk; i++) {
-		if (i === 1) {
+$('#file-select-button').click(function () {
+	$('.upload input').click();
+});
+
+// change button text with file name
+$('.upload input').on('change', function () {
+	let str = $('.upload input').val();
+
+	let n = str.lastIndexOf('\\');
+
+	let result = str.substring(n + 1);
+
+	$('#file-select-button').html(result);
+});
+
+//check if file is .zip
+$('.upload input').on('change', function () {
+	let str = $('.upload input').val();
+
+	let n = str.lastIndexOf('.');
+
+	let result = str.substring(n + 1);
+
+	if (result != 'zip' && $('.upload input').val() != '') {
+		uploadable = false;
+
+		document.getElementsByClassName('fileError')[0].style.display = 'flex';
+		document.getElementById('website-upload').style.display = 'none';
+		document.getElementById('website-upload-refuse').style.display = 'flex';
+	} else {
+		uploadable = true;
+		document.getElementsByClassName('fileError')[0].style.display = 'none';
+		document.getElementById('website-upload').style.display = 'flex';
+		document.getElementById('website-upload-refuse').style.display = 'none';
+	}
+});
+
+//remove label of input website name on focus
+$('.website-dns input').on('focus', function () {
+	document.getElementById('website-info-display').style.visibility = 'hidden';
+});
+
+//check if input string is valid
+$('.website-dns input').on('change', function () {
+	let str = $('.website-dns input').val();
+	let pattern = new RegExp('^[a-z0-9]+$');
+	let testPattern = pattern.test(str);
+
+	if (testPattern == false) {
+		uploadable = false;
+		document.getElementsByClassName('dns-error')[0].style.display = 'flex';
+		document.getElementById('website-upload').style.display = 'none';
+		document.getElementById('website-upload-refuse').style.display = 'flex';
+	} else {
+		uploadable = true;
+		document.getElementsByClassName('dns-error')[0].style.display = 'none';
+		document.getElementById('website-upload').style.display = 'flex';
+		document.getElementById('website-upload-refuse').style.display = 'none';
+	}
+});
+
+function deployWebsiteAndUpload(password) {
+	if (uploadable == true) {
+		let defaultWallet = getDefaultWallet();
+		const dnsNameInputValue = document.getElementById('websiteName').value;
+
+		const file = document.querySelector('.upload input').files[0];
+		const bodyFormData = new FormData();
+		bodyFormData.append('url', dnsNameInputValue);
+		bodyFormData.append('nickname', defaultWallet);
+		bodyFormData.append('zipfile', file);
+
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onloadend = (_) => {
+			const result = reader.result.length;
+
+			const chunkSize = Math.floor(result / 260_000) + 1;
+
+			stepper(dnsNameInputValue, chunkSize, true);
+
+			axios({
+				url: `/websiteCreator/prepare`,
+				method: 'put',
+				data: bodyFormData,
+				headers: {
+					'Content-Type': 'multipart/form-data',
+					Authorization: password,
+				},
+			})
+				.then((operation) => {
+					successMessage('Website uploaded to address : ' + operation.data.address);
+					getWebsiteDeployerSC();
+				})
+				.catch((e) => {
+					errorAlert(getErrorMessage(e.response.data.code));
+				});
+		};
+	}
+}
+
+async function stepper(dnsName, totalChunk, isFullProcess) {
+	initStepper(dnsName, totalChunk);
+	if (isFullProcess) {
+		step1(dnsName, totalChunk);
+	} else {
+		$('.circle').eq(0).empty();
+		$('.circle').eq(0).append('<i class="bi bi-check">');
+		$('.title').eq(0).removeClass('loading-dots');
+		step3(getDeployerByDns(dnsName).address, totalChunk);
+	}
+}
+
+function initStepper(dnsName, totalChunk) {
+	$('.website-card').hide();
+	$('.stepper').show();
+
+	$('.stepper-title').html('Deployment of ' + dnsName);
+	$('.title').eq(0).addClass('loading-dots');
+
+	$('.title')
+		.eq(2)
+		.text('Chunk upload ' + 1 + ' on ' + totalChunk);
+}
+
+function step1(dnsName, totalChunk) {
+	eventManager.subscribe(
+		`Website Deployer is deployed at :`,
+		getWallet(getDefaultWallet()).address,
+		(resp) => step2(dnsName, resp.data.data.split(':')[1], totalChunk)
+	);
+}
+
+function step2(dnsName, contractAddress, totalChunk) {
+	eventManager.subscribe(
+		`Resolver set to record key :record${dnsName}at address `,
+		getWallet(getDefaultWallet()).address,
+		(_) => {
+			step3(contractAddress, totalChunk);
+		}
+	);
+
+	$('.circle').eq(0).empty();
+	$('.circle').eq(0).append('<i class="bi bi-check">');
+
+	$('.title').eq(0).removeClass('loading-dots');
+	$('.title').eq(1).addClass('loading-dots');
+}
+
+function step3(contractAddress, totalChunk) {
+	let actualChunk = 1;
+
+	for (let i = 0; i < totalChunk; i++) {
+		if (i === 0) {
 			eventManager.subscribe(
 				`First chunk deployed to ${contractAddress}`,
 				getWallet(getDefaultWallet()).address,
-				() => {
+				(_) => {
 					actualChunk++;
 					$('.title')
 						.eq(2)
-						.text('Chunk upload ' + actualChunk);
+						.text('Chunk upload ' + actualChunk + ' on ' + totalChunk);
 					$('.title').eq(2).addClass('loading-dots');
 				}
 			);
-		} else if (i == totalChunk) {
+		} else if (i == totalChunk - 1) {
 			eventManager.subscribe(
-				`Append chunk deployed to ${contractAddress} : ${totalChunk}`,
+				`Append chunk deployed to ${contractAddress} : ${totalChunk - 1}`,
 				getWallet(getDefaultWallet()).address,
-				() => {
+				(_) => {
 					resetStepper();
 				}
 			);
@@ -288,7 +414,7 @@ async function stepper(contractAddress, totalChunk) {
 			eventManager.subscribe(
 				`Append chunk deployed to ${contractAddress} : ${i}`,
 				getWallet(getDefaultWallet()).address,
-				() => {
+				(_) => {
 					actualChunk++;
 					$('.title')
 						.eq(2)
@@ -298,24 +424,16 @@ async function stepper(contractAddress, totalChunk) {
 			);
 		}
 	}
-}
-
-function initStepper(contractAddress) {
-	$('.deployer-form').hide();
-	$('.stepper').show();
-
-	$('.circle').eq(0).empty();
-	$('.circle').eq(0).append('<i class="bi bi-check">');
 
 	$('.circle').eq(1).empty();
 	$('.circle').eq(1).append('<i class="bi bi-check">');
 
-	$('.stepper-title').html('Deployment of ' + getDeployer(contractAddress).name);
+	$('.title').eq(1).removeClass('loading-dots');
 	$('.title').eq(2).addClass('loading-dots');
 }
 
 function resetStepper() {
-	$('.deployer-form').show();
+	$('.website-card').show();
 	$('.stepper').hide();
 
 	$('.circle').empty();

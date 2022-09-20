@@ -2,25 +2,25 @@
 
 // Package restapi thyra-server
 //
-//	Thyra HTTP server API.
-//	Schemes:
-//	  http
-//	  https
-//	Host: localhost
-//	BasePath: /
-//	Version: 0.0.0
+//  Thyra HTTP server API.
+//  Schemes:
+//    http
+//    https
+//  Host: localhost
+//  BasePath: /
+//  Version: 0.0.0
 //
-//	Consumes:
-//	  - application/json
-//	  - multipart/form-data
+//  Consumes:
+//    - application/json
+//    - multipart/form-data
 //
-//	Produces:
-//	  - image/png
-//	  - text/css
-//	  - text/html
-//	  - application/json
-//	  - text/webp
-//	  - application/javascript
+//  Produces:
+//    - image/png
+//    - text/css
+//    - text/html
+//    - application/json
+//    - text/webp
+//    - application/javascript
 //
 // swagger:meta
 package restapi
