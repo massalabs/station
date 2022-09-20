@@ -27,6 +27,7 @@ async function getWebsiteDeployerSC() {
       deployers = websites.data;
     })
     .catch((e) => {
+      console.error(e);
       errorAlert(getErrorMessage(e.response.data.code));
     });
 }

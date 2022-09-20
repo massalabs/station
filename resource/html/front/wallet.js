@@ -48,6 +48,7 @@ async function getWallets() {
 			}
 		})
 		.catch((e) => {
+			console.error(e);
 			errorAlert(getErrorMessage(e.response.data.code));
 		});
 }
