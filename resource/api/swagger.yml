@@ -597,20 +597,6 @@ definitions:
       address:
         description: Website's address.
         type: string
-  UploadState:
-    type: object
-    description: Upload state
-    properties:
-      lastChunk:
-        description: Last uploaded chunk id
-        type: integer
-      totalChunk:
-        description: Total chunk number
-        type: integer
-      status:
-        description: Upload action status
-        type: string
-        enum: [NOT_STARTED, IN_PROGRESS, COMPLETED]
   Events:
     type: object
     description: Events object (V0)
