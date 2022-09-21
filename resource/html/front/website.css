@@ -74,6 +74,7 @@ button {
   padding: 3px 30px;
   border-radius: 100px;
   color: #fff;
+  width: fit-content;
 }
 
 .primary-button {
