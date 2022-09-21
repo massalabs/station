@@ -27,6 +27,8 @@ func ThyraWalletHandler(params operations.ThyraWalletParams) middleware.Responde
 		body = front.Logo
 	case "errors.js":
 		body = front.Errors
+	case "common.js":
+		body = front.Common
 	}
 
 	return NewCustomResponder([]byte(body), contentType(params.Resource), http.StatusOK)
@@ -49,6 +51,8 @@ func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) mid
 		body = front.Logo
 	case "errors.js":
 		body = front.Errors
+	case "common.js":
+		body = front.Common
 	}
 
 	return NewCustomResponder([]byte(body), contentType(params.Resource), http.StatusOK)
