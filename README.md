@@ -29,9 +29,16 @@ Once Golang is installed on your system, you can install the last two dependenci
 
 ## How to ...
 
-### ... get the last version of `thyra-server` ?
+### ... install Thyra on my computer ?
 
-To install the last version of the `thyra-server` application you need to:
+Follow the instructions for your computer in the wiki:
+- [MacOS](https://github.com/massalabs/thyra/wiki/Installation#macos)
+- [Linux](https://github.com/massalabs/thyra/wiki/Installation#linux)
+- [Windows](https://github.com/massalabs/thyra/wiki/Installation#windows)
+
+### ... get the latest dev version of `thyra-server` ?
+
+To install the latest dev version of the `thyra-server` application you need to:
 
 - [install go](https://go.dev/doc/install)
 - execute `go install github.com/massalabs/thyra/cmd/thyra-server@main` in your terminal
@@ -46,37 +53,6 @@ Prerequisite: Having a running thyra-server application on your machine.
 
 To access the website you need to go to http://localhost:8080/website?url=<address of the website>.
 For instance, to access flappy text stored on the blockchain, click the following link: http://localhost:8080/website?url=A1aMywGBgBywiL6WcbKR4ugxoBtdP9P3waBVi5e713uvj7F1DJL.
-
-### ... redirect massa Top Level Domain to localhost ?
-
-#### Linux
-
-1- Install dnsmasq
-
-```shell
-sudo apt install dnsmasq
-```
-
-2 - Add massa TLD resolution to localhost
-Edit `/etc/dnsmasq.conf` and add `address=/.massa/127.0.0.1`
-
-NOTE : If DNR is globally slow, add the following lines to the same file (`/etc/dnsmasq.conf`):
-
-```shell
-no-resolv
-server=8.8.8.8
-server=8.8.4.4
-```
-
-#### MacOS
-
-See: https://www.larry.dev/no-more-etc-hosts-on-mac-with-dnsmasq/
-
-#### Windows
-
-As dnsmasq is not supported on windows, you can use Acrylic.
-
-See: https://serverfault.com/questions/539591/how-to-resolve-all-dev-domains-to-localhost-on-windows#answer-808963
 
 ### ... secure HTTPS configuration ?
 
