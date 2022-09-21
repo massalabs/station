@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"fmt"
-	"strconv"
 
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
@@ -76,11 +75,11 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 // 	return op, nil
 // }
 
-// strconv.Itoa(len(chunks))
+// TotalChunks: strconv.Itoa(len(chunks)),
 
 func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) (string, error) {
 	paramInit, err := json.Marshal(WebsiteInitialisationParams{
-		TotalChunks: "4",
+		TotalChunks: "1",
 	})
 
 	if err != nil {
@@ -94,18 +93,21 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 
 	var opID string
 
+	// Data:    chunks[i],
+	// ChunkID: strconv.Itoa(i),
+
 	for i := 0; i < len(chunks); i++ {
 
 		param, err := json.Marshal(UploadWebsiteParam{
-			Data:    chunks[i],
-			ChunkID: strconv.Itoa(i),
+			Data:    chunks[1],
+			ChunkID: "1",
 		})
 
 		if err != nil {
 			return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[i]}, err)
 		}
 
-		opID, err = onchain.CallFunction(client, *wallet, addr, "appendBytesToWebsite", param)
+		opID, err = onchain.CallFunctionUnwaited(client, *wallet, addr, "appendBytesToWebsite", param)
 
 		if err != nil {
 			return "", fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
