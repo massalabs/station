@@ -413,6 +413,10 @@ th {
   flex-direction: row;
 }
 
+.website-format-info {
+  font-size: 0.95 em;
+}
+
 .website-file-input {
   position: absolute;
   z-index: -1;
