@@ -8,6 +8,7 @@ import (
 	"github.com/massalabs/thyra/pkg/node"
 )
 
+//nolint:nolintlint,ireturn
 func DomainsHandler(params operations.MyDomainsGetterParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
@@ -30,5 +31,6 @@ func DomainsHandler(params operations.MyDomainsGetterParams) middleware.Responde
 					Message: err.Error(),
 				})
 	}
+
 	return operations.NewMyDomainsGetterOK().WithPayload(myDomains)
 }

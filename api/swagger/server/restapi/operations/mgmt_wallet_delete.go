@@ -29,10 +29,10 @@ func NewMgmtWalletDelete(ctx *middleware.Context, handler MgmtWalletDeleteHandle
 	return &MgmtWalletDelete{Context: ctx, Handler: handler}
 }
 
-/* MgmtWalletDelete swagger:route DELETE /mgmt/wallet/{nickname} mgmtWalletDelete
+/*
+	MgmtWalletDelete swagger:route DELETE /mgmt/wallet/{nickname} mgmtWalletDelete
 
 MgmtWalletDelete mgmt wallet delete API
-
 */
 type MgmtWalletDelete struct {
 	Context *middleware.Context

@@ -22,13 +22,13 @@ func (t *withLoggingRoundTripper) RoundTrip(request *http.Request) (*http.Respon
 		if err != nil {
 			panic(fmt.Errorf("unexpecting that httputil.DumpRequestOut would panic: %w", err))
 		}
-
+		//nolint:forbidigo
 		fmt.Println("JSON-RPC request\n" + string(requestDump))
 	}
 
 	response, err := http.DefaultTransport.RoundTrip(request)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("sending http request '%+v': %w", request, err)
 	}
 
 	if t.isEnabled {
@@ -36,7 +36,7 @@ func (t *withLoggingRoundTripper) RoundTrip(request *http.Request) (*http.Respon
 		if err != nil {
 			panic(fmt.Errorf("unexpecting that httputil.DumpRequestOut would panic: %w", err))
 		}
-
+		//nolint:forbidigo
 		fmt.Println("JSON-RPC response\n" + string(responseDump))
 	}
 
@@ -56,11 +56,16 @@ func NewDefaultClient() *Client {
 	return NewClient(defaultServer)
 }
 
+//nolint:exhaustruct
 func NewClient(url string) *Client {
-	return &Client{RPCClient: jsonrpc.NewClientWithOpts(url, &jsonrpc.RPCClientOpts{
-		HTTPClient: &http.Client{Transport: &withLoggingRoundTripper{
-			isEnabled:        os.Getenv("DEBUG_RPC") == "true",
-			showResponseBody: os.Getenv("DEBUG_RPC") == "true",
-		}},
-	})}
+	return &Client{
+		RPCClient: jsonrpc.NewClientWithOpts(
+			url,
+			&jsonrpc.RPCClientOpts{
+				HTTPClient: &http.Client{Transport: &withLoggingRoundTripper{
+					isEnabled:        os.Getenv("DEBUG_RPC") == "true",
+					showResponseBody: os.Getenv("DEBUG_RPC") == "true",
+				}},
+			}),
+	}
 }

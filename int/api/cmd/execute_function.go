@@ -13,16 +13,16 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-func NewExecuteFunction(walletStorage *sync.Map) operations.CmdExecuteFunctionHandler {
-	return &functionExecuter{walletStorage: walletStorage}
+func NewExecuteFunction(walletStorage *sync.Map) *FunctionExecuter {
+	return &FunctionExecuter{walletStorage: walletStorage}
 }
 
-type functionExecuter struct {
+type FunctionExecuter struct {
 	walletStorage *sync.Map
 }
 
-//TODO Manage the panic(error)
-func (f *functionExecuter) Handle(params operations.CmdExecuteFunctionParams) middleware.Responder {
+//nolint:nolintlint,ireturn
+func (f *FunctionExecuter) Handle(params operations.CmdExecuteFunctionParams) middleware.Responder {
 	addr, err := base58.CheckDecode((*params.Body.At)[1:])
 	if err != nil {
 		panic(err)
@@ -30,8 +30,8 @@ func (f *functionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 
 	addr = addr[1:]
 
-	value, ok := f.walletStorage.Load(*params.Body.Name)
-	if !ok {
+	value, exists := f.walletStorage.Load(*params.Body.Name)
+	if !exists {
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
 			&models.Error{
 				Code:    errorCodeUnknownKeyID,
@@ -39,12 +39,11 @@ func (f *functionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 			})
 	}
 
-	storedWallet, ok := value.(*wallet.Wallet)
-	if !ok {
+	storedWallet, exists := value.(*wallet.Wallet)
+	if !exists {
 		panic("stored value is not a wallet")
 	}
 
-	//TODO: storedWallet.KeyPairs[0].Protected shall be false
 	pubKey := storedWallet.KeyPairs[0].PublicKey
 	privKey := storedWallet.KeyPairs[0].PrivateKey
 
@@ -61,7 +60,7 @@ func (f *functionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 
 	operationID, err := sendOperation.Call(
 		c,
-		30903,
+		sendOperation.DefaultSlotsDuration,
 		uint64(params.Body.Fee),
 		callSC,
 		pubKey, privKey)

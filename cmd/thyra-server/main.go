@@ -94,9 +94,10 @@ func main() {
 	localAPI.ThyraWalletHandler = operations.ThyraWalletHandlerFunc(api.ThyraWalletHandler)
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(api.ThyraWebsiteCreatorHandler)
 
-	// Start server which listening
 	server.ConfigureAPI()
+
 	if err := server.Serve(); err != nil {
+		//nolint:gocritic
 		log.Fatalln(err)
 	}
 }

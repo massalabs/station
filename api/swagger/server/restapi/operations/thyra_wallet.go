@@ -29,10 +29,10 @@ func NewThyraWallet(ctx *middleware.Context, handler ThyraWalletHandler) *ThyraW
 	return &ThyraWallet{Context: ctx, Handler: handler}
 }
 
-/* ThyraWallet swagger:route GET /thyra/wallet/{resource} thyraWallet
+/*
+	ThyraWallet swagger:route GET /thyra/wallet/{resource} thyraWallet
 
 ThyraWallet thyra wallet API
-
 */
 type ThyraWallet struct {
 	Context *middleware.Context

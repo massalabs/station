@@ -7,55 +7,61 @@ import (
 )
 
 func main() {
-	w, err := wallet.New("testing")
+	wlt, err := wallet.New("testing")
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("init", w.KeyPairs[0].PrivateKey)
+	//nolint:forbidigo
+	fmt.Println("init", wlt.KeyPairs[0].PrivateKey)
 
-	err = w.Protect("MyAwesomePassword", 0)
+	err = wlt.Protect("MyAwesomePassword", 0)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("protected", w.KeyPairs[0].PrivateKey)
+	//nolint:forbidigo
+	fmt.Println("protected", wlt.KeyPairs[0].PrivateKey)
 
-	yaml, err := w.YAML()
+	yaml, err := wlt.YAML()
 	if err != nil {
 		panic(err)
 	}
 
+	//nolint:forbidigo
 	fmt.Println("yaml", string(yaml))
 
-	err = w.Unprotect("MyAwesomePassword", 0)
+	err = wlt.Unprotect("MyAwesomePassword", 0)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("unprotected", w.KeyPairs[0].PrivateKey)
+	//nolint:forbidigo
+	fmt.Println("unprotected", wlt.KeyPairs[0].PrivateKey)
 
-	err = w.Protect("MyAwesomePassword", 0)
+	err = wlt.Protect("MyAwesomePassword", 0)
 	if err != nil {
 		panic(err)
 	}
 
-	err = w.Unprotect("WrongPassword", 0)
+	err = wlt.Unprotect("WrongPassword", 0)
 	if err == nil {
 		panic("using wrong password shall be detected")
 	}
 
-	w2, err := wallet.FromYAML(yaml)
+	wlt2, err := wallet.FromYAML(yaml)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("unserialized", w2.KeyPairs[0].PrivateKey)
+	//nolint:forbidigo
+	fmt.Println("unserialized", wlt2.KeyPairs[0].PrivateKey)
 
-	err = w2.Unprotect("MyAwesomePassword", 0)
+	err = wlt2.Unprotect("MyAwesomePassword", 0)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("unserialized and unprotected", w2.KeyPairs[0].PrivateKey)
+	//nolint:forbidigo
+	fmt.Println("unserialized and unprotected", wlt2.KeyPairs[0].PrivateKey)
 }

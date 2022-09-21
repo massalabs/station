@@ -12,6 +12,9 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
+const fileModeUserRW = 0o600
+
+//nolint:nolintlint,ireturn
 func NewImport(walletStorage *sync.Map) operations.MgmtWalletImportHandler {
 	return &wImport{walletStorage: walletStorage}
 }
@@ -20,6 +23,7 @@ type wImport struct {
 	walletStorage *sync.Map
 }
 
+//nolint:nolintlint,ireturn,funlen
 func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Responder {
 	var err error
 
@@ -33,35 +37,40 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 	}
 
 	keyPairs := make([]wallet.KeyPair, len(params.Body.KeyPairs))
-	for i := 0; i < len(params.Body.KeyPairs); i++ {
-		keyPairs[i].PrivateKey, err = base58.CheckDecode(*params.Body.KeyPairs[i].PrivateKey)
+	for index := 0; index < len(params.Body.KeyPairs); index++ {
+		keyPairs[index].PrivateKey, err = base58.CheckDecode(*params.Body.KeyPairs[index].PrivateKey)
 		if err != nil {
 			return operations.NewMgmtWalletCreateUnprocessableEntity()
 		}
 
-		keyPairs[i].PublicKey, err = base58.CheckDecode(*params.Body.KeyPairs[i].PublicKey)
+		keyPairs[index].PublicKey, err = base58.CheckDecode(*params.Body.KeyPairs[index].PublicKey)
 		if err != nil {
 			return operations.NewMgmtWalletCreateUnprocessableEntity()
 		}
 
-		salt, err := base58.CheckDecode(*params.Body.KeyPairs[i].Salt)
+		salt, err := base58.CheckDecode(*params.Body.KeyPairs[index].Salt)
 		if err != nil {
 			return operations.NewMgmtWalletCreateUnprocessableEntity()
 		}
 
-		copy(keyPairs[i].Salt[:], salt)
+		copy(keyPairs[index].Salt[:], salt)
 
-		nonce, err := base58.CheckDecode(*params.Body.KeyPairs[i].Nonce)
+		nonce, err := base58.CheckDecode(*params.Body.KeyPairs[index].Nonce)
 		if err != nil {
 			return operations.NewMgmtWalletCreateUnprocessableEntity()
 		}
 
-		copy(keyPairs[i].Nonce[:], nonce)
+		copy(keyPairs[index].Nonce[:], nonce)
 
-		keyPairs[i].Protected = true
+		keyPairs[index].Protected = true
 	}
 
-	newWallet := wallet.Wallet{Version: 0, Nickname: *params.Body.Nickname, Address: *params.Body.Address, KeyPairs: keyPairs}
+	newWallet := wallet.Wallet{
+		Version:  0,
+		Nickname: *params.Body.Nickname,
+		Address:  *params.Body.Address,
+		KeyPairs: keyPairs,
+	}
 
 	c.walletStorage.Store(newWallet.Nickname, newWallet)
 
@@ -74,7 +83,7 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 			})
 	}
 
-	err = os.WriteFile("wallet_"+*params.Body.Nickname+".json", bytesOutput, 0o644)
+	err = os.WriteFile("wallet_"+*params.Body.Nickname+".json", bytesOutput, fileModeUserRW)
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{

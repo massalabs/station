@@ -29,10 +29,10 @@ func NewMgmtWalletImport(ctx *middleware.Context, handler MgmtWalletImportHandle
 	return &MgmtWalletImport{Context: ctx, Handler: handler}
 }
 
-/* MgmtWalletImport swagger:route PUT /mgmt/wallet mgmtWalletImport
+/*
+	MgmtWalletImport swagger:route PUT /mgmt/wallet mgmtWalletImport
 
 MgmtWalletImport mgmt wallet import API
-
 */
 type MgmtWalletImport struct {
 	Context *middleware.Context

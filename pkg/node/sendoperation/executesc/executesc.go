@@ -14,6 +14,7 @@ type OperationDetails struct {
 	Coins    string `json:"coins"`
 }
 
+//nolint:tagliatelle
 type Operation struct {
 	ExecuteSC OperationDetails `json:"ExecuteSC"`
 }
