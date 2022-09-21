@@ -16,13 +16,17 @@ import (
 )
 
 func parseFlags(server *restapi.Server) {
-	flag.IntVar(&server.Port, "http-port", 80, "HTTP port to listen to")
+	const httpPort = 80
 
-	flag.IntVar(&server.TLSPort, "https-port", 443, "HTTPS port to listen to")
+	const httpsPort = 443
+
+	flag.IntVar(&server.Port, "http-port", httpPort, "HTTP port to listen to")
+
+	flag.IntVar(&server.TLSPort, "https-port", httpsPort, "HTTPS port to listen to")
 
 	certFilePtr := flag.String("tls-certificate", "", "path to certificate file")
 	keyFilePtr := flag.String("tls-key", "", "path to key file")
-	massaNodeServerPtr := flag.String("node-server", "https://inno.massa.net/test13", `Massa node that Thyra connects to. 
+	massaNodeServerPtr := flag.String("node-server", "INNONET", `Massa node that Thyra connects to. 
 	Can be an IP address, a URL or one of the following values: 'TESTNET', 'LABNET', 'INNONET' or LOCALHOST`)
 
 	flag.Parse()
