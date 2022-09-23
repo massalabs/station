@@ -11,6 +11,8 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
+const maxArchiveSize = 1500000
+
 //nolint:nolintlint,ireturn
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
 	wallet, err := wallet.Load(params.Nickname)
@@ -49,6 +51,14 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 			WithPayload(&models.Error{
 				Code:    errorCodeWebCreatorReadArchive,
 				Message: err.Error(),
+			})
+	}
+
+	if len(archive) > maxArchiveSize {
+		return operations.NewBrowseBadRequest().
+			WithPayload(&models.Error{
+				Code:    errorCodeWebCreatorArchiveSize,
+				Message: errorCodeWebCreatorArchiveSize,
 			})
 	}
 
