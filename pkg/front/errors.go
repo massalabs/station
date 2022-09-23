@@ -12,7 +12,7 @@ const Errors = `const errorCodes = new Map([
 	['Wallet-1001', 'Enter a wallet nickname'],
 	['Wallet-1002', 'Enter a wallet password'],
 	['Wallet-1003', 'Error while creating your wallet. Try again'],
-	['Wallet-2001', 'Select a wallet to delete’'],
+	['Wallet-2001', 'Select a wallet to delete'],
 	[
 		'Wallet-2002',
 		'Error while deleting that wallet. Close all programs using this wallet and try again',
