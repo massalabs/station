@@ -110,6 +110,7 @@ const HTML = `<!DOCTYPE html>
 						>
 							Call
 						</button>
+						<p><a href="https://github.com/massalabs/thyra#upload-a-webstite" target="_blank">Format info</a></p>
 					</div>
 				</div>
 			</div>
