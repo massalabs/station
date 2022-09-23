@@ -129,6 +129,14 @@ In order to register a website on Thyra you'll need to :
 - Deploy a Smart Contract that will handle the storage of your website, your DNS name will fetch the Address of this Smart Contract
 - Upload the build of your application
 
+## Usage
+
+### Upload a webstite
+
+With Thyra you can upload a website. It will be hosted on the Massa blockchain and available as a `.massa` URL. You can access this URL through Tyhra.
+
+For this to work, the file you upload must be a zip archive (file ending with `.zip`). This archive must contain a `index.html` file at the root.
+
 ## Additional information
 
 ### Why this name ?
