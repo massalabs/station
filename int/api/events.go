@@ -12,7 +12,6 @@ import (
 
 //nolint:nolintlint,ireturn
 func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.Responder {
-
 	client := node.NewDefaultClient()
 
 	status, err := node.Status(client)
