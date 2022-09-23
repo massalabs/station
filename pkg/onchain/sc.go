@@ -72,29 +72,7 @@ func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet,
 		return "", fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
 	}
 
-	counter := 0
-
-	ticker := time.NewTicker(time.Minute)
-
-	for ; true; <-ticker.C {
-		counter++
-
-		if counter > maxWaitingTimeInSeconds {
-			break
-		}
-
-		events, err := node.Events(client, nil, nil, nil, nil, &operationID)
-		if err != nil {
-			return operationID,
-				fmt.Errorf("waiting execution of function '%s' at '%s' with id '%s': %w", function, addr, operationID, err)
-		}
-
-		if len(events) > 0 {
-			return operationID, nil
-		}
-	}
-
-	return operationID, errors.New("timeout")
+	return operationID, nil
 }
 
 func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (string, error) {

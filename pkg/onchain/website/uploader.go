@@ -2,6 +2,8 @@ package website
 
 import (
 	"encoding/json"
+	"strconv"
+	"time"
 
 	"fmt"
 
@@ -41,7 +43,9 @@ type WebsiteInitialisationParams struct {
 }
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, error) {
-	const blockLength = 260000
+	//const blockLength = 260000
+
+	const blockLength = 5000
 
 	client := node.NewDefaultClient()
 
@@ -79,7 +83,7 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 
 func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) (string, error) {
 	paramInit, err := json.Marshal(WebsiteInitialisationParams{
-		TotalChunks: "1",
+		TotalChunks: strconv.Itoa(len(chunks)),
 	})
 
 	if err != nil {
@@ -93,14 +97,11 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 
 	var opID string
 
-	// Data:    chunks[i],
-	// ChunkID: strconv.Itoa(i),
-
 	for i := 0; i < len(chunks); i++ {
 
 		param, err := json.Marshal(UploadWebsiteParam{
-			Data:    chunks[1],
-			ChunkID: "1",
+			Data:    chunks[i],
+			ChunkID: strconv.Itoa(i),
 		})
 
 		if err != nil {
@@ -113,6 +114,7 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 			return "", fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 		}
 
+		time.Sleep(100 * time.Millisecond)
 	}
 
 	return opID, nil

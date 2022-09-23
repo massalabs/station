@@ -36,6 +36,12 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 		return nil, errors.New("no data in candidate value key")
 	}
 
+	// entryStr := string(entry.CandidateValue)
+	// fmt.Println("entry str", entryStr)
+	// entryStrArray := strings.Split(entryStr, ",")
+	// fmt.Println("entry array", entryStrArray)
+	// entryProcessed := strings.Join(entryStrArray, "")
+
 	b64, err := base64.StdEncoding.DecodeString(string(entry.CandidateValue))
 	if err != nil {
 		return nil, fmt.Errorf("base64 decoding datastore entry '%s' at '%s': %w", address, key, err)
