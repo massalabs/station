@@ -84,7 +84,8 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 			})
 }
 
-func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middleware.Responder { //nolint:nolintlint,ireturn
+//nolint:nolintlint,ireturn
+func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middleware.Responder {
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
