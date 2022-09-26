@@ -8,4 +8,5 @@ const (
 	errorCodeWebCreatorPrepare     = "WebCreator-0001"
 	errorCodeWebCreatorReadArchive = "WebCreator-1001"
 	errorCodeWebCreatorUpload      = "WebCreator-1002"
+	errorCodeWebCreatorFileType    = "WebCreator-1003"
 )

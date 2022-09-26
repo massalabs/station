@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/base64"
 	"io"
+	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -33,16 +34,6 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 				})
 	}
 
-	address, err := website.PrepareForUpload(params.URL, wallet)
-	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeWebCreatorPrepare,
-					Message: err.Error(),
-				})
-	}
-
 	archive, err := io.ReadAll(params.Zipfile)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
@@ -52,7 +43,29 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 			})
 	}
 
+	contentType := http.DetectContentType(archive)
+
+	if contentType != "application/zip" {
+		{
+			return operations.NewWebsiteCreatorPrepareInternalServerError().
+				WithPayload(&models.Error{
+					Code:    errorCodeWebCreatorFileType,
+					Message: err.Error(),
+				})
+		}
+	}
+
 	b64 := base64.StdEncoding.EncodeToString(archive)
+
+	address, err := website.PrepareForUpload(params.URL, wallet)
+	if err != nil {
+		return operations.NewWebsiteCreatorPrepareInternalServerError().
+			WithPayload(
+				&models.Error{
+					Code:    errorCodeWebCreatorPrepare,
+					Message: err.Error(),
+				})
+	}
 
 	_, err = website.Upload(address, b64, wallet)
 	if err != nil {
@@ -100,6 +113,18 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 				Code:    errorCodeWebCreatorReadArchive,
 				Message: err.Error(),
 			})
+	}
+
+	contentType := http.DetectContentType(archive)
+
+	if contentType != "application/zip" {
+		{
+			return operations.NewWebsiteCreatorPrepareInternalServerError().
+				WithPayload(&models.Error{
+					Code:    errorCodeWebCreatorFileType,
+					Message: err.Error(),
+				})
+		}
 	}
 
 	b64 := base64.StdEncoding.EncodeToString(archive)
