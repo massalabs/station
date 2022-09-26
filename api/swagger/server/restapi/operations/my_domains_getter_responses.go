@@ -16,8 +16,7 @@ import (
 // MyDomainsGetterOKCode is the HTTP code returned for type MyDomainsGetterOK
 const MyDomainsGetterOKCode int = 200
 
-/*
-MyDomainsGetterOK Domains returned. May be empty.
+/*MyDomainsGetterOK Domains returned. May be empty.
 
 swagger:response myDomainsGetterOK
 */
@@ -64,8 +63,7 @@ func (o *MyDomainsGetterOK) WriteResponse(rw http.ResponseWriter, producer runti
 // MyDomainsGetterBadRequestCode is the HTTP code returned for type MyDomainsGetterBadRequest
 const MyDomainsGetterBadRequestCode int = 400
 
-/*
-MyDomainsGetterBadRequest Bad request.
+/*MyDomainsGetterBadRequest Bad request.
 
 swagger:response myDomainsGetterBadRequest
 */
@@ -109,8 +107,7 @@ func (o *MyDomainsGetterBadRequest) WriteResponse(rw http.ResponseWriter, produc
 // MyDomainsGetterInternalServerErrorCode is the HTTP code returned for type MyDomainsGetterInternalServerError
 const MyDomainsGetterInternalServerErrorCode int = 500
 
-/*
-MyDomainsGetterInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
+/*MyDomainsGetterInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
 
 swagger:response myDomainsGetterInternalServerError
 */
