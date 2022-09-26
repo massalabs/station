@@ -45,7 +45,7 @@ const HTML = `<!DOCTYPE html>
 							<a class="nav-link" href="/thyra/websiteCreator/index.html">Websites</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#">Pricing</a>
+							<a class="nav-link" href="/thyra/registry/index.html">Registry</a>
 						</li>
 					</ul>
 				</div>

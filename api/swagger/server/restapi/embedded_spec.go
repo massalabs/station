@@ -650,6 +650,34 @@ func init() {
         }
       }
     },
+    "/thyra/registry/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "application/javascript",
+          "text/html",
+          "text/css",
+          "text/webp",
+          "image/png"
+        ],
+        "operationId": "thyraRegistry",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
+          }
+        }
+      }
+    },
     "/thyra/wallet/{resource}": {
       "get": {
         "produces": [
@@ -1543,6 +1571,34 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          }
+        }
+      }
+    },
+    "/thyra/registry/{resource}": {
+      "get": {
+        "produces": [
+          "application/javascript",
+          "application/json",
+          "image/png",
+          "text/css",
+          "text/html",
+          "text/webp"
+        ],
+        "operationId": "thyraRegistry",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
           }
         }
       }
