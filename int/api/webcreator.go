@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/base64"
-	"fmt"
 	"io"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -23,7 +22,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 					Message: err.Error(),
 				})
 	}
-	fmt.Println("hiii")
+
 	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
@@ -33,7 +32,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 					Message: err.Error(),
 				})
 	}
-	fmt.Println("hzuuuu")
+
 	address, err := website.PrepareForUpload(params.URL, wallet)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
@@ -43,7 +42,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 					Message: err.Error(),
 				})
 	}
-	fmt.Println("hey")
+
 	archive, err := io.ReadAll(params.Zipfile)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
@@ -54,7 +53,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 	}
 
 	b64 := base64.StdEncoding.EncodeToString(archive)
-	fmt.Println("ho")
+
 	_, err = website.Upload(address, b64, wallet)
 	if err != nil {
 		return operations.NewWebsiteCreatorPrepareInternalServerError().
