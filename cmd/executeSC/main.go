@@ -7,7 +7,6 @@ import (
 	"github.com/massalabs/thyra/pkg/node"
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/node/sendoperation/executesc"
-
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
