@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 	"sync"
 
 	"github.com/go-openapi/loads"
@@ -13,6 +14,48 @@ import (
 	"github.com/massalabs/thyra/int/api/cmd"
 	"github.com/massalabs/thyra/int/api/wallet"
 )
+
+func parseFlags(server *restapi.Server) {
+	const httpPort = 80
+
+	const httpsPort = 443
+
+	flag.IntVar(&server.Port, "http-port", httpPort, "HTTP port to listen to")
+
+	flag.IntVar(&server.TLSPort, "https-port", httpsPort, "HTTPS port to listen to")
+
+	certFilePtr := flag.String("tls-certificate", "", "path to certificate file")
+	keyFilePtr := flag.String("tls-key", "", "path to key file")
+	massaNodeServerPtr := flag.String("node-server", "INNONET", `Massa node that Thyra connects to. 
+	Can be an IP address, a URL or one of the following values: 'TESTNET', 'LABNET', 'INNONET' or LOCALHOST`)
+
+	flag.Parse()
+
+	if *certFilePtr != "" {
+		server.TLSCertificate = flags.Filename(*certFilePtr)
+	}
+
+	if *keyFilePtr != "" {
+		server.TLSCertificateKey = flags.Filename(*keyFilePtr)
+	}
+
+	parseNetworkFlag(massaNodeServerPtr)
+}
+
+func parseNetworkFlag(massaNodeServerPtr *string) {
+	switch *massaNodeServerPtr {
+	case "TESTNET":
+		*massaNodeServerPtr = "https://test.massa.net/v1/"
+	case "LABNET":
+		*massaNodeServerPtr = "https://labnet.massa.net/"
+	case "INNONET":
+		*massaNodeServerPtr = "https://inno.massa.net/test13"
+	case "LOCALHOST":
+		*massaNodeServerPtr = "http://127.0.0.1"
+	}
+
+	os.Setenv("MASSA_NODE_URL", *massaNodeServerPtr)
+}
 
 func main() {
 	// Initialize Swagger
@@ -30,25 +73,7 @@ func main() {
 		}
 	}()
 
-	const httpPort = 80
-
-	const httpsPort = 443
-
-	flag.IntVar(&server.Port, "http-port", httpPort, "HTTP port to listen to")
-
-	flag.IntVar(&server.TLSPort, "https-port", httpsPort, "HTTPS port to listen to")
-
-	certFilePtr := flag.String("tls-certificate", "", "path to certificate file")
-	keyFilePtr := flag.String("tls-key", "", "path to key file")
-	flag.Parse()
-
-	if *certFilePtr != "" {
-		server.TLSCertificate = flags.Filename(*certFilePtr)
-	}
-
-	if *keyFilePtr != "" {
-		server.TLSCertificateKey = flags.Filename(*keyFilePtr)
-	}
+	parseFlags(server)
 
 	var walletStorage sync.Map
 
