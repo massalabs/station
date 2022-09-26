@@ -61,9 +61,9 @@ func main() {
 
 	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(api.PrepareForWebsiteHandler)
 	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(api.UploadWebsiteHandler)
-
 	localAPI.MyDomainsGetterHandler = operations.MyDomainsGetterHandlerFunc(api.DomainsHandler)
 
+	localAPI.ThyraEventsGetterHandler = operations.ThyraEventsGetterHandlerFunc(api.EventListenerHandler)
 	localAPI.BrowseHandler = operations.BrowseHandlerFunc(api.BrowseHandler)
 
 	localAPI.ThyraWalletHandler = operations.ThyraWalletHandlerFunc(api.ThyraWalletHandler)

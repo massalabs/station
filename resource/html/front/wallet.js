@@ -72,16 +72,6 @@ function createWallet() {
 		});
 }
 
-function errorAlert(error) {
-	document.getElementsByClassName('alert-danger')[0].style.display = 'block';
-
-	document.getElementsByClassName('alert-danger')[0].innerHTML = error;
-
-	setTimeout(function () {
-		document.getElementsByClassName('alert-danger')[0].style.display = 'none';
-	}, 5000);
-}
-
 function tableInsert(resp) {
 	const tBody = document.getElementById('user-wallet-table').getElementsByTagName('tbody')[0];
 	const row = tBody.insertRow(-1);
