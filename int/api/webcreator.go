@@ -17,60 +17,33 @@ const maxArchiveSize = 1500000
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeGetWallet,
-					Message: err.Error(),
-				})
+		return createInternalServerError(errorCodeGetWallet, err.Error())
 	}
 
 	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeWalletWrongPassword,
-					Message: err.Error(),
-				})
+		return createInternalServerError(errorCodeWalletWrongPassword, err.Error())
 	}
 
 	address, err := website.PrepareForUpload(params.URL, wallet)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeWebCreatorPrepare,
-					Message: err.Error(),
-				})
+		return createInternalServerError(errorCodeWebCreatorPrepare, err.Error())
 	}
 
 	archive, err := io.ReadAll(params.Zipfile)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(&models.Error{
-				Code:    errorCodeWebCreatorReadArchive,
-				Message: err.Error(),
-			})
+		return createInternalServerError(errorCodeWebCreatorReadArchive, err.Error())
 	}
 
 	if len(archive) > maxArchiveSize {
-		return operations.NewBrowseBadRequest().
-			WithPayload(&models.Error{
-				Code:    errorCodeWebCreatorArchiveSize,
-				Message: errorCodeWebCreatorArchiveSize,
-			})
+		return createInternalServerError(errorCodeWebCreatorArchiveSize, errorCodeWebCreatorArchiveSize)
 	}
 
 	b64 := base64.StdEncoding.EncodeToString(archive)
 
 	_, err = website.Upload(address, b64, wallet)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(&models.Error{
-				Code:    errorCodeWebCreatorUpload,
-				Message: err.Error(),
-			})
+		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
 
 	return operations.NewWebsiteCreatorPrepareOK().
@@ -78,6 +51,16 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 			&models.Websites{
 				Name:    params.URL,
 				Address: address,
+			})
+}
+
+//nolint:nolintlint,ireturn
+func createInternalServerError(errorCode string, errorMessage string) middleware.Responder {
+	return operations.NewWebsiteCreatorPrepareInternalServerError().
+		WithPayload(
+			&models.Error{
+				Code:    errorCode,
+				Message: errorMessage,
 			})
 }
 
