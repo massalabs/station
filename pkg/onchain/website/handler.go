@@ -31,7 +31,7 @@ func handleMassaDomainRequest(writer http.ResponseWriter, reader *http.Request, 
 func TopMiddleware(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		req := RedirectToDefaultResourceInterceptor(
-			MassaTLDInterceptor(&Interceptor{writer: w, reader: r}))
+			MassaTLDInterceptor(&Interceptor{writer: w, reader: r})) //nolint:contextcheck
 		if req != nil {
 			handler.ServeHTTP(w, r)
 		}

@@ -82,6 +82,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		MyDomainsGetterHandler: MyDomainsGetterHandlerFunc(func(params MyDomainsGetterParams) middleware.Responder {
 			return middleware.NotImplemented("operation MyDomainsGetter has not yet been implemented")
 		}),
+		ThyraEventsGetterHandler: ThyraEventsGetterHandlerFunc(func(params ThyraEventsGetterParams) middleware.Responder {
+			return middleware.NotImplemented("operation ThyraEventsGetter has not yet been implemented")
+		}),
 		ThyraWalletHandler: ThyraWalletHandlerFunc(func(params ThyraWalletParams) middleware.Responder {
 			return middleware.NotImplemented("operation ThyraWallet has not yet been implemented")
 		}),
@@ -166,6 +169,8 @@ type ThyraServerAPI struct {
 	MgmtWalletImportHandler MgmtWalletImportHandler
 	// MyDomainsGetterHandler sets the operation handler for the my domains getter operation
 	MyDomainsGetterHandler MyDomainsGetterHandler
+	// ThyraEventsGetterHandler sets the operation handler for the thyra events getter operation
+	ThyraEventsGetterHandler ThyraEventsGetterHandler
 	// ThyraWalletHandler sets the operation handler for the thyra wallet operation
 	ThyraWalletHandler ThyraWalletHandler
 	// ThyraWebsiteCreatorHandler sets the operation handler for the thyra website creator operation
@@ -295,6 +300,9 @@ func (o *ThyraServerAPI) Validate() error {
 	}
 	if o.MyDomainsGetterHandler == nil {
 		unregistered = append(unregistered, "MyDomainsGetterHandler")
+	}
+	if o.ThyraEventsGetterHandler == nil {
+		unregistered = append(unregistered, "ThyraEventsGetterHandler")
 	}
 	if o.ThyraWalletHandler == nil {
 		unregistered = append(unregistered, "ThyraWalletHandler")
@@ -444,6 +452,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/my/domains/{nickname}"] = NewMyDomainsGetter(o.context, o.MyDomainsGetterHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/thyra/events/{str}/{caller}"] = NewThyraEventsGetter(o.context, o.ThyraEventsGetterHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

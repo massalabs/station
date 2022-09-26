@@ -575,6 +575,50 @@ func init() {
         }
       }
     },
+    "/thyra/events/{str}/{caller}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "thyraEventsGetter",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Data content of the event.",
+            "name": "str",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Creator of the transaction that triggered the event.",
+            "name": "caller",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event retrieved",
+            "schema": {
+              "$ref": "#/definitions/Events"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/wallet/{resource}": {
       "get": {
         "produces": [
@@ -789,6 +833,20 @@ func init() {
           "description": "error message.",
           "type": "string",
           "x-nullable": false
+        }
+      }
+    },
+    "Events": {
+      "description": "Events object (V0)",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Event caller.",
+          "type": "string"
+        },
+        "data": {
+          "description": "Event data.",
+          "type": "string"
         }
       }
     },
@@ -1373,6 +1431,50 @@ func init() {
         }
       }
     },
+    "/thyra/events/{str}/{caller}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "thyraEventsGetter",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Data content of the event.",
+            "name": "str",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Creator of the transaction that triggered the event.",
+            "name": "caller",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event retrieved",
+            "schema": {
+              "$ref": "#/definitions/Events"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/wallet/{resource}": {
       "get": {
         "produces": [
@@ -1619,6 +1721,20 @@ func init() {
           "description": "error message.",
           "type": "string",
           "x-nullable": false
+        }
+      }
+    },
+    "Events": {
+      "description": "Events object (V0)",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Event caller.",
+          "type": "string"
+        },
+        "data": {
+          "description": "Event data.",
+          "type": "string"
         }
       }
     },

@@ -41,12 +41,12 @@ type WebsiteCreatorPrepareParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*Wallet's nickname to be used for receiving the website
+	/*Name of the Wallet in which the website will be deployed.
 	  Required: true
 	  In: formData
 	*/
 	Nickname string
-	/*URL without '.', capitals letters and specifics characters
+	/*URL without dot (.), upper case and special characters
 	  Required: true
 	  Pattern: ^[a-z0-9]+$
 	  In: formData

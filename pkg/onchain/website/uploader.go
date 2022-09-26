@@ -4,6 +4,7 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
@@ -41,7 +42,8 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 }
 
 type UploadWebsiteParam struct {
-	Data string `json:"data"`
+	Data        string `json:"data"`
+	TotalChunks string `json:"total_chunks"`
 }
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, error) {
@@ -71,10 +73,11 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 
 func uploadLight(client *node.Client, addr []byte, content string, wallet *wallet.Wallet) (string, error) {
 	param, err := json.Marshal(UploadWebsiteParam{
-		Data: content,
+		Data:        content,
+		TotalChunks: "1",
 	})
 	if err != nil {
-		return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: content}, err)
+		return "", fmt.Errorf("marshaling '%s': %w", param, err)
 	}
 
 	op, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", param)
@@ -86,11 +89,14 @@ func uploadLight(client *node.Client, addr []byte, content string, wallet *walle
 }
 
 func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) (string, error) {
+	const baseFormatInt = 10
+
 	param, err := json.Marshal(UploadWebsiteParam{
-		Data: chunks[0],
+		Data:        chunks[0],
+		TotalChunks: strconv.FormatInt(int64(len(chunks)), baseFormatInt),
 	})
 	if err != nil {
-		return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[0]}, err)
+		return "", fmt.Errorf("marshaling '%s': %w", param, err)
 	}
 
 	_, err = onchain.CallFunction(client, *wallet, addr, "initializeWebsite", param)
@@ -100,12 +106,14 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 
 	var opID string
 
-	for i := 1; i < len(chunks); i++ {
+	for index := 1; index < len(chunks); index++ {
+		//nolint:exhaustruct
 		param, err = json.Marshal(UploadWebsiteParam{
-			Data: chunks[i],
+			Data: chunks[index],
 		})
 		if err != nil {
-			return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[i]}, err)
+			//nolint:exhaustruct
+			return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[index]}, err)
 		}
 
 		opID, err = onchain.CallFunction(client, *wallet, addr, "appendBytesToWebsite", param)
