@@ -90,6 +90,10 @@ button {
   transition: 0.5s;
 }
 
+.small-button {
+  font-size: 16px;
+}
+
 .alert-danger {
   display: none;
   position: fixed;
@@ -499,6 +503,7 @@ th {
   overflow: hidden;
   display: block;
   text-overflow: ellipsis;
+  width: 150px;
 }
 
 .website-dns {
@@ -510,4 +515,5 @@ th {
   border: none;
   overflow: hidden;
   text-overflow: ellipsis;
+  height: 36px;
 }
