@@ -458,7 +458,7 @@ th {
   transform: scale(1);
 }
 
-#website-info-display {
+.website-info-display {
   display: flex;
   font-size: 11px;
   margin-top: -5px;
