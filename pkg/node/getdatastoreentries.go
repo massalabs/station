@@ -51,7 +51,7 @@ func DatastoreEntry(client *Client, address string, key string) (*DatastoreEntry
 	return &response[0], nil
 }
 
-//TODO need help to find name for this, this function prevent us to build the DatastoreEntriesKeysAsString if we are calling the same contract
+// TODO need help to find name for this, this function prevent us to build the DatastoreEntriesKeysAsString if we are calling the same contract
 func DatastoreEntriesOnSameContract(client *Client, address string, keys []string) ([]DatastoreEntryResponse, error) {
 	entries := []DatastoreEntriesKeysAsString{}
 

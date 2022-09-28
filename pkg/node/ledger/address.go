@@ -8,18 +8,14 @@ import (
 	"github.com/massalabs/thyra/pkg/node"
 )
 
-type ledgerInfo struct {
-	Datastore map[string][]byte
-}
-
 type Address struct {
-	Address               string   `json:"address"`
-	BlockDraws            []string `json:"block_draws"`
-	BlokcsCreated         []string `json:"blocks_created"`
-	CandidateBalanceInfo  string   `json:"candidate_balance_info"`
-	CandidateDatastoreKey [][]byte `json:"candidate_datastore_keys"`
-	FinalBalanceInfo      string   `json:"final_balance_info"`
-	FinalDatastoreKeys    [][]byte `json:"final_datastore_keys"`
+	Address                string   `json:"address"`
+	BlockDraws             []string `json:"block_draws"`
+	BlocksCreated          []string `json:"blocks_created"`
+	CandidateBalanceInfo   string   `json:"candidate_balance_info"`
+	CandidateDatastoreKeys [][]byte `json:"candidate_datastore_keys"`
+	FinalBalanceInfo       string   `json:"final_balance_info"`
+	FinalDatastoreKeys     [][]byte `json:"final_datastore_keys"`
 }
 
 type JSONableSlice []uint8
@@ -60,7 +56,6 @@ func Addresses(client *node.Client, addr []string) ([]Address, error) {
 }
 
 func KeysFiltered(client *node.Client, scAddress string, keyPrefix string) ([]string, error) {
-
 	results, err := Addresses(client, []string{scAddress})
 
 	if err != nil {
@@ -69,7 +64,7 @@ func KeysFiltered(client *node.Client, scAddress string, keyPrefix string) ([]st
 
 	var filteredKeys []string
 
-	for _, candidateDatastoreKey := range results[0].CandidateDatastoreKey {
+	for _, candidateDatastoreKey := range results[0].CandidateDatastoreKeys {
 		if strings.Index(string(candidateDatastoreKey), keyPrefix) == 0 {
 			filteredKeys = append(filteredKeys, string(candidateDatastoreKey))
 		}

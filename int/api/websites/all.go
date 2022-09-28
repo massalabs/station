@@ -35,7 +35,7 @@ func RegistryHandler(params operations.AllDomainsGetterParams) middleware.Respon
 				})
 	}
 
-	results, err := Registry(client, addressesResult[0].CandidateDatastoreKey)
+	results, err := Registry(client, addressesResult[0].CandidateDatastoreKeys)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().
 			WithPayload(
@@ -49,12 +49,11 @@ func RegistryHandler(params operations.AllDomainsGetterParams) middleware.Respon
 }
 
 type dateOnChain struct {
-	CreatedDate int64 `json:"create_date"`
-	UpdateDate  int64 `json:"update_date"`
+	CreateDate int64 `json:"create_date"`
+	UpdateDate int64 `json:"update_date"`
 }
 
 func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.Registry, error) {
-
 	recordKeys, err := ledger.KeysFiltered(client, dns.DNSRawAddress, recordKey)
 	if err != nil {
 		return nil, fmt.Errorf("filtering keys with '%+v' failed : %w", recordKey, err)
@@ -66,10 +65,10 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 	}
 
 	var metadataKeys []node.DatastoreEntriesKeysAsString
-	for _, record := range recordResult {
-		metadataKeys = append(metadataKeys, node.DatastoreEntriesKeysAsString{
+	for index, record := range recordResult {
+		metadataKeys[index] = node.DatastoreEntriesKeysAsString{
 			Address: string(record.CandidateValue), Key: metaKey,
-		})
+		}
 	}
 
 	metadatas, err := node.DatastoreEntries(client, metadataKeys)
@@ -78,22 +77,23 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 	}
 
 	var dates []dateOnChain
-	for _, metadata := range metadatas {
+
+	for index, metadata := range metadatas {
 		var date dateOnChain
+
 		_ = json.Unmarshal(metadata.CandidateValue, &date)
-		dates = append(dates, date)
+		dates[index] = date
 	}
 
 	var registryResult []*models.Registry
-	for index, date := range dates {
-		registryResult = append(registryResult,
-			&models.Registry{
-				Name:      strings.Split(recordKeys[index], recordKey)[1],
-				Address:   metadataKeys[index].Address,
-				CreatedAt: time.Unix(date.CreatedDate/secondsToMilliCoeff, 0).Format(dateFormat),
-				UpdatedAt: time.Unix(date.UpdateDate/secondsToMilliCoeff, 0).Format(dateFormat),
-			})
 
+	for index, date := range dates {
+		registryResult[index] = &models.Registry{
+			Name:      strings.Split(recordKeys[index], recordKey)[1],
+			Address:   metadataKeys[index].Address,
+			CreatedAt: time.Unix(date.CreateDate/secondsToMilliCoeff, 0).Format(dateFormat),
+			UpdatedAt: time.Unix(date.UpdateDate/secondsToMilliCoeff, 0).Format(dateFormat),
+		}
 	}
 
 	return registryResult, nil
