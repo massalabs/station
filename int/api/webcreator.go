@@ -140,13 +140,3 @@ func checkContentType(archive []byte, fileType string) bool {
 	}
 	return true
 }
-
-//nolint:nolintlint,ireturn
-func createInternalServerError(errorCode string, errorMessage string) middleware.Responder {
-	return operations.NewWebsiteCreatorPrepareInternalServerError().
-		WithPayload(
-			&models.Error{
-				Code:    errorCode,
-				Message: errorMessage,
-			})
-}
