@@ -35,7 +35,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 		return createInternalServerError(errorCodeWebCreatorArchiveSize, errorCodeWebCreatorArchiveSize)
 	}
 
-	if checkContentType(archive, "application/zip") == false {
+	if !checkContentType(archive, "application/zip") {
 		{
 			return operations.NewWebsiteCreatorPrepareInternalServerError().
 				WithPayload(&models.Error{
@@ -106,7 +106,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 			})
 	}
 
-	if checkContentType(archive, "application/zip") == false {
+	if !checkContentType(archive, "application/zip") {
 		{
 			return operations.NewWebsiteCreatorPrepareInternalServerError().
 				WithPayload(&models.Error{
