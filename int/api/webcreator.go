@@ -12,7 +12,7 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-//nolint:nolintlint,ireturn
+//nolint:nolintlint,ireturn,funlen
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
