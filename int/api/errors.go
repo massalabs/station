@@ -11,4 +11,5 @@ const (
 	errorCodeWebCreatorFileType    = "WebCreator-1003"
 	errorCodeWebCreatorArchiveSize = "WebCreator-1004"
 	errorCodeWebGetUploadStatus    = "WebCreator-2001"
+	errorCodeWebCreatorArchiveSize = "WebCreator-1003"
 )

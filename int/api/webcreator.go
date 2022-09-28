@@ -54,11 +54,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 
 	_, err = website.Upload(address, b64, wallet)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(&models.Error{
-				Code:    errorCodeWebCreatorUpload,
-				Message: err.Error(),
-			})
+		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
 
 	return operations.NewWebsiteCreatorPrepareOK().
@@ -66,6 +62,16 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 			&models.Websites{
 				Name:    params.URL,
 				Address: address,
+			})
+}
+
+//nolint:nolintlint,ireturn
+func createInternalServerError(errorCode string, errorMessage string) middleware.Responder {
+	return operations.NewWebsiteCreatorPrepareInternalServerError().
+		WithPayload(
+			&models.Error{
+				Code:    errorCode,
+				Message: errorMessage,
 			})
 }
 
