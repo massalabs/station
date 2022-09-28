@@ -5,6 +5,7 @@ const errorCodes = new Map([
   ["Wallet-1001", "Enter a wallet nickname"],
   ["Wallet-1002", "Enter a wallet password"],
   ["Wallet-1003", "Error while creating your wallet. Try again"],
+
   ["Wallet-2001", "Select a wallet to delete’"],
   [
     "Wallet-2002",
@@ -26,6 +27,7 @@ const errorCodes = new Map([
   ["WebCreator-1001", "Impossible to read you ZIP file. Try again"],
   ["WebCreator-1002", "The upload of your ZIP file failed. Try again"],
   ["WebCreator-1003", "File is not a ZIP file"],
+  ["WebCreator-1004", "ZIP file size exceed max size"],
 ]);
 
 function getErrorMessage(errorCode) {

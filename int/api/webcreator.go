@@ -12,35 +12,27 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
+const maxArchiveSize = 1500000
+
 //nolint:nolintlint,ireturn,funlen
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeGetWallet,
-					Message: err.Error(),
-				})
+		return createInternalServerError(errorCodeGetWallet, err.Error())
 	}
 
 	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeWalletWrongPassword,
-					Message: err.Error(),
-				})
+		return createInternalServerError(errorCodeWalletWrongPassword, err.Error())
 	}
 
 	archive, err := io.ReadAll(params.Zipfile)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(&models.Error{
-				Code:    errorCodeWebCreatorReadArchive,
-				Message: err.Error(),
-			})
+		return createInternalServerError(errorCodeWebCreatorReadArchive, err.Error())
+	}
+
+	if len(archive) > maxArchiveSize {
+		return createInternalServerError(errorCodeWebCreatorArchiveSize, errorCodeWebCreatorArchiveSize)
 	}
 
 	if checkContentType(archive, "application/zip") == false {
@@ -57,12 +49,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 
 	address, err := website.PrepareForUpload(params.URL, wallet)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeWebCreatorPrepare,
-					Message: err.Error(),
-				})
+		return createInternalServerError(errorCodeWebCreatorPrepare, err.Error())
 	}
 
 	_, err = website.Upload(address, b64, wallet)
@@ -127,11 +114,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 
 	_, err = website.Upload(params.Address, b64, wallet)
 	if err != nil {
-		return operations.NewWebsiteCreatorUploadInternalServerError().
-			WithPayload(&models.Error{
-				Code:    errorCodeWebCreatorUpload,
-				Message: err.Error(),
-			})
+		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
 
 	return operations.NewWebsiteCreatorUploadOK().
@@ -150,4 +133,14 @@ func checkContentType(archive []byte, fileType string) bool {
 		}
 	}
 	return true
+}
+
+//nolint:nolintlint,ireturn
+func createInternalServerError(errorCode string, errorMessage string) middleware.Responder {
+	return operations.NewWebsiteCreatorPrepareInternalServerError().
+		WithPayload(
+			&models.Error{
+				Code:    errorCode,
+				Message: errorMessage,
+			})
 }
