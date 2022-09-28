@@ -43,9 +43,7 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 			})
 	}
 
-	contentType := http.DetectContentType(archive)
-
-	if contentType != "application/zip" {
+	if checkContentType(archive, "application/zip") == false {
 		{
 			return operations.NewWebsiteCreatorPrepareInternalServerError().
 				WithPayload(&models.Error{
@@ -115,9 +113,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 			})
 	}
 
-	contentType := http.DetectContentType(archive)
-
-	if contentType != "application/zip" {
+	if checkContentType(archive, "application/zip") == false {
 		{
 			return operations.NewWebsiteCreatorPrepareInternalServerError().
 				WithPayload(&models.Error{
@@ -143,4 +139,16 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 			Name:    "Name",
 			Address: params.Address,
 		})
+}
+
+func checkContentType(archive []byte, fileType string) bool {
+	contentType := http.DetectContentType(archive)
+
+	if contentType != fileType {
+		{
+			return false
+		}
+
+	}
+	return true
 }
