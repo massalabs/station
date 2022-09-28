@@ -32,9 +32,9 @@ Once Golang is installed on your system, you can install the last two dependenci
 ### ... install Thyra on my computer ?
 
 Follow the instructions for your computer in the wiki:
-- [MacOS](https://github.com/massalabs/thyra/wiki/Installation#macos)
-- [Linux](https://github.com/massalabs/thyra/wiki/Installation#linux)
-- [Windows](https://github.com/massalabs/thyra/wiki/Installation#windows)
+- [MacOS](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#macos)
+- [Linux](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#linux)
+- [Windows](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#windows)
 
 ### ... get the latest dev version of `thyra-server` ?
 
