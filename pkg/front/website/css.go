@@ -97,6 +97,10 @@ button {
   transition: 0.5s;
 }
 
+.small-button {
+  font-size: 16px;
+}
+
 .alert-danger {
   display: none;
   position: fixed;
@@ -408,6 +412,10 @@ th {
   flex-direction: row;
 }
 
+.website-format-info {
+  font-size: 0.95 em;
+}
+
 .website-file-input {
   position: absolute;
   z-index: -1;
@@ -457,7 +465,7 @@ th {
   transform: scale(1);
 }
 
-#website-info-display {
+.website-info-display {
   display: flex;
   font-size: 11px;
   margin-top: -5px;
@@ -498,6 +506,7 @@ th {
   overflow: hidden;
   display: block;
   text-overflow: ellipsis;
+  width: 150px;
 }
 
 .website-dns {
@@ -510,5 +519,6 @@ th {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 400px;
+  height: 36px;
 }
 `

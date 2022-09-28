@@ -53,7 +53,7 @@
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="passwordModalLabel">Input your password</h5>
+					<h5 class="modal-title" id="passwordModalLabel">Enter the password</h5>
 					<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -62,9 +62,9 @@
 					<div class="col-6">
 						<div id="password-form">
 							<div class="form-floating">
-								<input class="form-control" placeholder="Wallet Password" id="walletPassword"
+								<input class="form-control" placeholder="Wallet password" id="walletPassword"
 									name="walletPassword" type="password" />
-								<label for="wallet-password">Wallet Password</label>
+								<label for="wallet-password">Wallet password</label>
 							</div>
 						</div>
 					</div>
@@ -72,7 +72,7 @@
 				<div class="modal-footer">
 					<button type="button" data-bs-dismiss="modal" onClick="callTx('deployWebsiteCreator')"
 						class="primary-button process-post-modal">
-						Call
+						Ok
 					</button>
 				</div>
 			</div>
@@ -88,7 +88,7 @@
 		<h2 class="mb-4 mt-5">Decentralized website storage</h2>
 		<div class="website-centering">
 			<div class="website-card">
-				<h2 class="mb-4" style="font-size: 1.8em">Upload your website</h2>
+				<h2 class="mb-4" style="font-size: 1.8em">Upload a website</h2>
 				<div class="website-line">
 					<h4 class="website-card-label">On wallet</h4>
 					<div style="width: 150px">
@@ -122,13 +122,14 @@
 					<h4 id="fileError" class="fileSizeError">Max Zip size needs to be 1.5Mo</h4>
 				</div>
 
-				<button class="primary-button primary-button me-5" id="website-upload"
+				<button class="primary-button primary-button me-5 small-button" id="website-upload"
 					onClick="setTxType('deployWebsiteAndUpload')" type="button" value="Upload MB" data-bs-toggle="modal"
 					data-bs-target="#passwordModal">
-					Upload
+					Deploy to massa blockchain
 				</button>
 
-				<button class="primary-button" id="website-upload-refuse">Upload</button>
+				<button class="primary-button small-button" id="website-upload-refuse">Deploy to massa
+					blockchain</button>
 			</div>
 		</div>
 
@@ -165,9 +166,9 @@
 				<table id="website-deployers-table" class="table table-striped">
 					<thead>
 						<tr>
-							<th scope="col">Name</th>
+							<th scope="col">Website name</th>
 							<th scope="col">Address</th>
-							<th scope="col">Url</th>
+							<th scope="col">URL</th>
 							<th scope="col"></th>
 						</tr>
 					</thead>
