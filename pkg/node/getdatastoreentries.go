@@ -51,6 +51,26 @@ func DatastoreEntry(client *Client, address string, key string) (*DatastoreEntry
 	return &response[0], nil
 }
 
+//TODO need help to find name for this, this function prevent us to build the DatastoreEntriesKeysAsString if we are calling the same contract
+func DatastoreEntriesOnSameContract(client *Client, address string, keys []string) ([]DatastoreEntryResponse, error) {
+	entries := []DatastoreEntriesKeysAsString{}
+
+	for i := 0; i < len(keys); i++ {
+		entry := DatastoreEntriesKeysAsString{
+			Address: address,
+			Key:     keys[i],
+		}
+		entries = append(entries, entry)
+	}
+
+	response, err := DatastoreEntries(client, entries)
+	if err != nil {
+		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
+	}
+
+	return response, nil
+}
+
 func DatastoreEntries(client *Client, params []DatastoreEntriesKeysAsString) ([]DatastoreEntryResponse, error) {
 	entries := [][]getDatastoreEntries{
 		{},

@@ -35,6 +35,37 @@ func init() {
     "version": "0.0.0"
   },
   "paths": {
+    "/all/domains": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "allDomainsGetter",
+        "responses": {
+          "200": {
+            "description": "All domains returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Registry"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/browse/{address}/{resource}": {
       "get": {
         "produces": [
@@ -838,26 +869,25 @@ func init() {
         }
       }
     },
-    "UploadState": {
-      "description": "Upload state",
+    "Registry": {
+      "description": "Registry object (V0).",
       "type": "object",
       "properties": {
-        "lastChunk": {
-          "description": "Last uploaded chunk id",
-          "type": "integer"
+        "address": {
+          "description": "Website's address.",
+          "type": "string"
         },
-        "status": {
-          "description": "Upload action status",
-          "type": "string",
-          "enum": [
-            "NOT_STARTED",
-            "IN_PROGRESS",
-            "COMPLETED"
-          ]
+        "created_at": {
+          "description": "Creation date of the website.",
+          "type": "string"
         },
-        "totalChunk": {
-          "description": "Total chunk number",
-          "type": "integer"
+        "name": {
+          "description": "Website's name.",
+          "type": "string"
+        },
+        "updated_at": {
+          "description": "Update date of the website.",
+          "type": "string"
         }
       }
     },
@@ -949,6 +979,37 @@ func init() {
     "version": "0.0.0"
   },
   "paths": {
+    "/all/domains": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "allDomainsGetter",
+        "responses": {
+          "200": {
+            "description": "All domains returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Registry"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/browse/{address}/{resource}": {
       "get": {
         "produces": [
@@ -1766,6 +1827,28 @@ func init() {
         }
       }
     },
+    "Registry": {
+      "description": "Registry object (V0).",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Website's address.",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "Creation date of the website.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Website's name.",
+          "type": "string"
+        },
+        "updated_at": {
+          "description": "Update date of the website.",
+          "type": "string"
+        }
+      }
+    },
     "StackingItems0": {
       "type": "object",
       "properties": {
@@ -1779,29 +1862,6 @@ func init() {
           "type": "integer"
         },
         "slashing": {
-          "type": "integer"
-        }
-      }
-    },
-    "UploadState": {
-      "description": "Upload state",
-      "type": "object",
-      "properties": {
-        "lastChunk": {
-          "description": "Last uploaded chunk id",
-          "type": "integer"
-        },
-        "status": {
-          "description": "Upload action status",
-          "type": "string",
-          "enum": [
-            "NOT_STARTED",
-            "IN_PROGRESS",
-            "COMPLETED"
-          ]
-        },
-        "totalChunk": {
-          "description": "Total chunk number",
           "type": "integer"
         }
       }

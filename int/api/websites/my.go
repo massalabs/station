@@ -1,4 +1,4 @@
-package api
+package websites
 
 import (
 	"github.com/go-openapi/runtime/middleware"

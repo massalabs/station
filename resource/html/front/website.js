@@ -360,7 +360,7 @@ function step1(dnsName, totalChunk) {
 // Step 2, wait for DNS setting
 function step2(dnsName, contractAddress, totalChunk) {
 	eventManager.subscribe(
-		`Resolver set to record key :record${dnsName}at address `,
+		`Resolver set to record key : record${dnsName} at address `,
 		getWallet(getDefaultWallet()).address,
 		(_) => {
 			step3(contractAddress, totalChunk);

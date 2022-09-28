@@ -19,7 +19,7 @@ func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.
 		return operations.NewThyraEventsGetterInternalServerError().
 			WithPayload(
 				&models.Error{
-					Code:    errorCodeGetDomainNames,
+					Code:    errorCodeEventListenter,
 					Message: err.Error(),
 				})
 	}
@@ -41,7 +41,7 @@ func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.
 			return operations.NewThyraEventsGetterInternalServerError().
 				WithPayload(
 					&models.Error{
-						Code:    errorCodeGetDomainNames,
+						Code:    errorCodeEventListenter,
 						Message: err.Error(),
 					})
 		}
