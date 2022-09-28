@@ -138,5 +138,6 @@ func checkContentType(archive []byte, fileType string) bool {
 			return false
 		}
 	}
+
 	return true
 }
