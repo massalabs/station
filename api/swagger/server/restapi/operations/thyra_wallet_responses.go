@@ -14,8 +14,7 @@ import (
 // ThyraWalletOKCode is the HTTP code returned for type ThyraWalletOK
 const ThyraWalletOKCode int = 200
 
-/*
-ThyraWalletOK Page found
+/*ThyraWalletOK Page found
 
 swagger:response thyraWalletOK
 */

@@ -16,8 +16,7 @@ import (
 // MgmtWalletCreateOKCode is the HTTP code returned for type MgmtWalletCreateOK
 const MgmtWalletCreateOKCode int = 200
 
-/*
-MgmtWalletCreateOK New wallet created.
+/*MgmtWalletCreateOK New wallet created.
 
 swagger:response mgmtWalletCreateOK
 */
@@ -61,8 +60,7 @@ func (o *MgmtWalletCreateOK) WriteResponse(rw http.ResponseWriter, producer runt
 // MgmtWalletCreateBadRequestCode is the HTTP code returned for type MgmtWalletCreateBadRequest
 const MgmtWalletCreateBadRequestCode int = 400
 
-/*
-MgmtWalletCreateBadRequest Bad request.
+/*MgmtWalletCreateBadRequest Bad request.
 
 swagger:response mgmtWalletCreateBadRequest
 */
@@ -106,8 +104,7 @@ func (o *MgmtWalletCreateBadRequest) WriteResponse(rw http.ResponseWriter, produ
 // MgmtWalletCreateUnprocessableEntityCode is the HTTP code returned for type MgmtWalletCreateUnprocessableEntity
 const MgmtWalletCreateUnprocessableEntityCode int = 422
 
-/*
-MgmtWalletCreateUnprocessableEntity Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+/*MgmtWalletCreateUnprocessableEntity Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
 
 swagger:response mgmtWalletCreateUnprocessableEntity
 */
@@ -151,8 +148,7 @@ func (o *MgmtWalletCreateUnprocessableEntity) WriteResponse(rw http.ResponseWrit
 // MgmtWalletCreateInternalServerErrorCode is the HTTP code returned for type MgmtWalletCreateInternalServerError
 const MgmtWalletCreateInternalServerErrorCode int = 500
 
-/*
-MgmtWalletCreateInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
+/*MgmtWalletCreateInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
 
 swagger:response mgmtWalletCreateInternalServerError
 */
