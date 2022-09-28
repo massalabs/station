@@ -442,6 +442,7 @@ th {
   background-color: #501313;
   border: none;
   display: none;
+  margin-top: 32px;
 }
 
 #website-upload-refuse:hover {
