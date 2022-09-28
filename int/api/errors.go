@@ -9,4 +9,5 @@ const (
 	errorCodeWebCreatorReadArchive = "WebCreator-1001"
 	errorCodeWebCreatorUpload      = "WebCreator-1002"
 	errorCodeWebGetUploadStatus    = "WebCreator-2001"
+	errorCodeWebCreatorArchiveSize = "WebCreator-1003"
 )
