@@ -271,10 +271,7 @@ function postUpload(bodyFormData, password) {
 		.catch((e) => {
 			errorAlert(getErrorMessage(e.response.data.code));
 			resetStepper();
-		})
-		.finally(() => {
-			document.getElementById('wallet-popover').classList.remove('popover__disabled');
-	    });
+		});
 }
 
 function putUpload(bodyFormData, password) {
@@ -294,10 +291,7 @@ function putUpload(bodyFormData, password) {
 		.catch((e) => {
 			errorAlert(getErrorMessage(e.response.data.code));
 			resetStepper();
-		})
-		.finally(() => {
-			document.getElementById('wallet-popover').classList.remove('popover__disabled');
-	    });
+		});
 }
 
 // Full deployment process
@@ -443,4 +437,5 @@ function resetStepper() {
 
 	$('.title').eq(2).removeClass('loading-dots');
 	getWebsiteDeployerSC();
+	document.getElementById('wallet-popover').classList.remove('popover__disabled');
 }
