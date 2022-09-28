@@ -241,6 +241,7 @@ $('.website-dns input').on('change', function () {
 });
 
 function uploadProcess(file, dnsName, isFullProcess, bodyFormData, callback) {
+	document.getElementById('wallet-popover').classList.add('popover__disabled');
 	const reader = new FileReader();
 	reader.readAsDataURL(file);
 	reader.onloadend = (_) => {
@@ -267,11 +268,13 @@ function postUpload(bodyFormData, password) {
 		.then((operation) => {
 			successMessage('Website uploaded to address : ' + operation.data.address);
 		})
-
 		.catch((e) => {
 			errorAlert(getErrorMessage(e.response.data.code));
 			resetStepper();
-		});
+		})
+		.finally(() => {
+			document.getElementById('wallet-popover').classList.remove('popover__disabled');
+	    });
 }
 
 function putUpload(bodyFormData, password) {
@@ -291,7 +294,10 @@ function putUpload(bodyFormData, password) {
 		.catch((e) => {
 			errorAlert(getErrorMessage(e.response.data.code));
 			resetStepper();
-		});
+		})
+		.finally(() => {
+			document.getElementById('wallet-popover').classList.remove('popover__disabled');
+	    });
 }
 
 // Full deployment process
