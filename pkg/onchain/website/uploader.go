@@ -32,7 +32,7 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 }
 
 type UploadWebsiteParam struct {
-	Data    string `json:"data"`    //nolint:all
+	Data    string `json:"data"`
 	chunkID string `json:"chunkID"` //nolint:all
 }
 
