@@ -55,6 +55,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		}),
 		TxtProducer: runtime.TextProducer(),
 
+		AllDomainsGetterHandler: AllDomainsGetterHandlerFunc(func(params AllDomainsGetterParams) middleware.Responder {
+			return middleware.NotImplemented("operation AllDomainsGetter has not yet been implemented")
+		}),
 		BrowseHandler: BrowseHandlerFunc(func(params BrowseParams) middleware.Responder {
 			return middleware.NotImplemented("operation Browse has not yet been implemented")
 		}),
@@ -151,6 +154,8 @@ type ThyraServerAPI struct {
 	//   - application/javascript
 	TxtProducer runtime.Producer
 
+	// AllDomainsGetterHandler sets the operation handler for the all domains getter operation
+	AllDomainsGetterHandler AllDomainsGetterHandler
 	// BrowseHandler sets the operation handler for the browse operation
 	BrowseHandler BrowseHandler
 	// CmdExecuteFunctionHandler sets the operation handler for the cmd execute function operation
@@ -274,6 +279,9 @@ func (o *ThyraServerAPI) Validate() error {
 		unregistered = append(unregistered, "TxtProducer")
 	}
 
+	if o.AllDomainsGetterHandler == nil {
+		unregistered = append(unregistered, "AllDomainsGetterHandler")
+	}
 	if o.BrowseHandler == nil {
 		unregistered = append(unregistered, "BrowseHandler")
 	}
@@ -416,6 +424,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/all/domains"] = NewAllDomainsGetter(o.context, o.AllDomainsGetterHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

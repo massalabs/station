@@ -13,6 +13,7 @@ import (
 	"github.com/massalabs/thyra/int/api"
 	"github.com/massalabs/thyra/int/api/cmd"
 	"github.com/massalabs/thyra/int/api/wallet"
+	"github.com/massalabs/thyra/int/api/websites"
 )
 
 func parseFlags(server *restapi.Server) {
@@ -84,9 +85,10 @@ func main() {
 	localAPI.MgmtWalletImportHandler = wallet.NewImport(&walletStorage)
 	localAPI.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage)
 
-	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(api.PrepareForWebsiteHandler)
-	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(api.UploadWebsiteHandler)
-	localAPI.MyDomainsGetterHandler = operations.MyDomainsGetterHandlerFunc(api.DomainsHandler)
+	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(websites.PrepareForWebsiteHandler)
+	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(websites.UploadWebsiteHandler)
+	localAPI.MyDomainsGetterHandler = operations.MyDomainsGetterHandlerFunc(websites.DomainsHandler)
+	localAPI.AllDomainsGetterHandler = operations.AllDomainsGetterHandlerFunc(websites.RegistryHandler)
 
 	localAPI.ThyraEventsGetterHandler = operations.ThyraEventsGetterHandlerFunc(api.EventListenerHandler)
 	localAPI.BrowseHandler = operations.BrowseHandlerFunc(api.BrowseHandler)

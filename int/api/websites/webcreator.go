@@ -1,4 +1,4 @@
-package api
+package websites
 
 import (
 	"encoding/base64"
