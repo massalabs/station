@@ -51,6 +51,7 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 	}
 
 	blocks := chunk(content, blockLength)
+
 	_, err = uploadHeavy(client, addr, blocks, wallet)
 	if err != nil {
 		return "", err
@@ -64,7 +65,7 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 		TotalChunks: strconv.Itoa(len(chunks)),
 	})
 	if err != nil {
-		return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[0]}, err)
+		return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[0], ChunkID: "0"}, err)
 	}
 
 	_, err = onchain.CallFunction(client, *wallet, addr, "initializeWebsite", paramInit)
@@ -80,7 +81,7 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 			ChunkID: strconv.Itoa(i),
 		})
 		if err != nil {
-			return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[i]}, err)
+			return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[i], ChunkID: strconv.Itoa(i)}, err)
 		}
 
 		opID, err = onchain.CallFunctionUnwaited(client, *wallet, addr, "appendBytesToWebsite", param)

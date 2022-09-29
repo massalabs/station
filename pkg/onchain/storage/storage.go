@@ -42,7 +42,7 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 
 	chunkNumber, err := strconv.Atoi(string(keyNumber.CandidateValue))
 	if err != nil {
-		return nil, fmt.Errorf("Error converting String to Integer")
+		return nil, fmt.Errorf("error converting String to integer")
 	}
 
 	entries := []node.DatastoreEntriesKeysAsString{}
@@ -73,6 +73,7 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 	if err != nil {
 		return nil, fmt.Errorf("instanciating zip reader from decoded datastore entry '%s' at '%s': %w", address, key, err)
 	}
+
 	content := make(map[string][]byte)
 
 	// Read all the files from zip archive
