@@ -36,7 +36,6 @@ func Addresses(client *node.Client, addr []string) ([]Address, error) {
 		context.Background(),
 		"get_addresses",
 		[1][]string{addr})
-
 	if err != nil {
 		return nil, fmt.Errorf("calling get_addresses with '%+v': %w", [1][]string{addr}, err)
 	}
@@ -57,7 +56,6 @@ func Addresses(client *node.Client, addr []string) ([]Address, error) {
 
 func KeysFiltered(client *node.Client, scAddress string, keyPrefix string) ([]string, error) {
 	results, err := Addresses(client, []string{scAddress})
-
 	if err != nil {
 		return nil, fmt.Errorf("calling get_addresses with '%+v': %w", scAddress, err)
 	}
