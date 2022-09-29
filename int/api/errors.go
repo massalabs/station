@@ -1,7 +1,7 @@
 package api
 
 const (
-	errorCodeEventListenter        = "EventLisntener-0001"
+	errorCodeEventListener        = "EventLisntener-0001"
 	errorCodeWalletWrongPassword   = "Wallet-0002"
 	errorCodeGetWallet             = "Wallet-0003"
 	errorCodeGetDomainNames        = "Domains-0001"
