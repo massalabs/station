@@ -224,5 +224,5 @@ func Delete(nickname string) (err error) {
 }
 
 func AddressChecker(address string) bool {
-	return len(address) != AddressLength
+	return len(address) == AddressLength
 }
