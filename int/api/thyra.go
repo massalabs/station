@@ -6,8 +6,17 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/front"
+	"github.com/massalabs/thyra/pkg/front/registry"
 	"github.com/massalabs/thyra/pkg/front/wallet"
 	"github.com/massalabs/thyra/pkg/front/website"
+)
+
+const (
+	indexHTML  = "index.html"
+	logoBanner = "logo_banner.webp"
+	logoPNG    = "logo.png"
+	errorsJS   = "errors.js"
+	commonJS   = "common.js"
 )
 
 //nolint:nolintlint,ireturn
@@ -19,15 +28,15 @@ func ThyraWalletHandler(params operations.ThyraWalletParams) middleware.Responde
 		body = wallet.CSS
 	case "wallet.js":
 		body = wallet.JS
-	case "index.html":
+	case indexHTML:
 		body = wallet.HTML
-	case "logo_banner.webp":
+	case logoBanner:
 		body = front.LogoBanner
-	case "logo.png":
+	case logoPNG:
 		body = front.Logo
-	case "errors.js":
+	case errorsJS:
 		body = front.Errors
-	case "common.js":
+	case commonJS:
 		body = front.Common
 	}
 
@@ -43,15 +52,41 @@ func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) mid
 		body = website.CSS
 	case "website.js":
 		body = website.JS
-	case "index.html":
+	case indexHTML:
 		body = website.HTML
-	case "logo_banner.webp":
+	case logoBanner:
 		body = front.LogoBanner
-	case "logo.png":
+	case logoPNG:
 		body = front.Logo
-	case "errors.js":
+	case errorsJS:
 		body = front.Errors
-	case "common.js":
+	case commonJS:
+		body = front.Common
+	case "event-manager.js":
+		body = front.EventListener
+	}
+
+	return NewCustomResponder([]byte(body), contentType(params.Resource), http.StatusOK)
+}
+
+//nolint:nolintlint,ireturn
+func ThyraRegistryHandler(params operations.ThyraRegistryParams) middleware.Responder {
+	var body string
+
+	switch params.Resource {
+	case indexHTML:
+		body = registry.HTML
+	case "registry.js":
+		body = registry.JS
+	case "registry.css":
+		body = registry.CSS
+	case logoBanner:
+		body = front.LogoBanner
+	case logoPNG:
+		body = front.Logo
+	case errorsJS:
+		body = front.Errors
+	case commonJS:
 		body = front.Common
 	case "event-manager.js":
 		body = front.EventListener

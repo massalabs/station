@@ -90,6 +90,8 @@ func main() {
 	localAPI.MyDomainsGetterHandler = operations.MyDomainsGetterHandlerFunc(websites.DomainsHandler)
 	localAPI.AllDomainsGetterHandler = operations.AllDomainsGetterHandlerFunc(websites.RegistryHandler)
 
+	localAPI.ThyraRegistryHandler = operations.ThyraRegistryHandlerFunc(api.ThyraRegistryHandler)
+
 	localAPI.ThyraEventsGetterHandler = operations.ThyraEventsGetterHandlerFunc(api.EventListenerHandler)
 	localAPI.BrowseHandler = operations.BrowseHandlerFunc(api.BrowseHandler)
 
