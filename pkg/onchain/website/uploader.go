@@ -32,12 +32,12 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 }
 
 type UploadWebsiteParam struct {
-	Data    string `json:"data"`
-	ChunkID string `json:"chunkID"`
+	Data     string `json:"data"`
+	chunk_ID string `json:"chunkID"`
 }
 
 type WebsiteInitialisationParams struct {
-	TotalChunks string `json:"totalChunks"`
+	total_chunks string `json:"totalChunks"`
 }
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, error) {
@@ -81,6 +81,7 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 			ChunkID: strconv.Itoa(index),
 		})
 		if err != nil {
+			//nolint:nolintlint,ireturn,funlen
 			return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[index], ChunkID: strconv.Itoa(index)}, err)
 		}
 
