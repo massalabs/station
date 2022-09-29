@@ -257,23 +257,20 @@ th {
   border-top: none;
 }
 
-
-
 /* -------------------------------------------------------------------------
   VERTICAL STEPPER
 -------------------------------------------------------------------------- */
 
-.stepper{
+.stepper {
   display: none;
-  background-color: #33506A;
-  padding : 50px;
-  border : 3px solid #808080;
+  background-color: #33506a;
+  padding: 50px;
+  border: 3px solid #808080;
   border-radius: 30px;
-  width:60%;
+  width: 60%;
   max-width: 720px;
-  margin:auto;
+  margin: auto;
 }
-
 
 /* Steps */
 .step {
@@ -281,7 +278,7 @@ th {
   min-height: 2em;
 }
 .step + .step {
-  margin-top: 2em
+  margin-top: 2em;
 }
 .step > div:first-child {
   position: static;
@@ -292,7 +289,7 @@ th {
   padding-left: 1em;
 }
 .step.step-active {
-  color: #808080
+  color: #808080;
 }
 .step.step-active .circle {
   background-color: #808080;
@@ -302,7 +299,7 @@ th {
 .circle {
   background: #808080;
   position: relative;
-  top:7px;
+  top: 7px;
   width: 2.5em;
   height: 2.5em;
   line-height: 2.5em;
@@ -313,7 +310,7 @@ th {
 
 /* Vertical Line */
 .circle:after {
-  content: '';
+  content: "";
   position: absolute;
   display: block;
   top: 1px;
@@ -329,12 +326,12 @@ th {
   font-size: 28px;
 }
 
-.bi-check{
+.bi-check {
   font-size: 28px;
 }
 
 .step:last-child .circle:after {
-  display: none
+  display: none;
 }
 
 .step:first-child .circle:after {
@@ -345,39 +342,37 @@ th {
 /* Stepper Titles */
 .title {
   position: relative;
-  color:#E6E6E6;
+  color: #e6e6e6;
   line-height: 2.5em;
   font-weight: bold;
   font-size: 22px;
 }
 
-
-
 /* loading dots */
 
 .loading-dots:after {
-  content: ' .';
-  animation: dots 1s steps(5, end) infinite;}
+  content: " .";
+  animation: dots 1s steps(5, end) infinite;
+}
 
 @keyframes dots {
-  0%, 20% {
-    color: rgba(0,0,0,0);
-    text-shadow:
-      .25em 0 0 rgba(0,0,0,0),
-      .5em 0 0 rgba(0,0,0,0);}
+  0%,
+  20% {
+    color: rgba(0, 0, 0, 0);
+    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
   40% {
     color: white;
-    text-shadow:
-      .25em 0 0 rgba(0,0,0,0),
-      .5em 0 0 rgba(0,0,0,0);}
+    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
   60% {
-    text-shadow:
-      .25em 0 0 white,
-      .5em 0 0 rgba(0,0,0,0);}
-  80%, 100% {
-    text-shadow:
-      .25em 0 0 white,
-      .5em 0 0 white;}}
+    text-shadow: 0.25em 0 0 white, 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  80%,
+  100% {
+    text-shadow: 0.25em 0 0 white, 0.5em 0 0 white;
+  }
+}
 /* Website creation  */
 
 .website-card {
@@ -385,9 +380,9 @@ th {
   align-items: center;
   text-align: center;
   flex-direction: column;
-  background: #33506A;
+  background: #33506a;
 
-  border : 3px solid #808080;
+  border: 3px solid #808080;
   border-radius: 30px;
   padding: 24px;
   width: 700px;
@@ -439,7 +434,7 @@ th {
   margin: auto auto;
 }
 
-.fileError {
+#fileError {
   display: none;
   font-size: 14px;
   color: red;
@@ -460,6 +455,7 @@ th {
   background-color: #501313;
   border: none;
   display: none;
+  margin-top: 32px;
 }
 
 #website-upload-refuse:hover {
@@ -520,5 +516,6 @@ th {
   border: none;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 400px;
   height: 36px;
 }
