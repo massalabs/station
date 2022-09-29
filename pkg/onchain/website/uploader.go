@@ -32,12 +32,12 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 }
 
 type UploadWebsiteParam struct {
-	Data     string `json:"data"`    //nolint:revive, govet
-	chunk_ID string `json:"chunkID"` //nolint:revive, govet
+	Data    string `json:"data"`    //nolint:revive, govet
+	chunkID string `json:"chunkID"` //nolint:revive, govet
 }
 
 type websiteInitialisationParams struct {
-	total_chunks string `json:"totalChunks"` //nolint:revive, govet
+	totalChunks string `json:"totalChunks"`
 }
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, error) {
@@ -62,10 +62,10 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 
 func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) (string, error) {
 	paramInit, err := json.Marshal(websiteInitialisationParams{ //nolint:staticcheck
-		total_chunks: strconv.Itoa(len(chunks)),
+		totalChunks: strconv.Itoa(len(chunks)),
 	})
 	if err != nil {
-		return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[0], chunk_ID: "0"}, err)
+		return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[0], chunkID: "0"}, err)
 	}
 
 	_, err = onchain.CallFunction(client, *wallet, addr, "initializeWebsite", paramInit)
@@ -77,12 +77,12 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 
 	for index := 0; index < len(chunks); index++ {
 		param, err := json.Marshal(UploadWebsiteParam{
-			Data:     chunks[index],
-			chunk_ID: strconv.Itoa(index),
+			Data:    chunks[index],
+			chunkID: strconv.Itoa(index),
 		})
 		if err != nil {
 			return "",
-				fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[index], chunk_ID: strconv.Itoa(index)}, err)
+				fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[index], chunkID: strconv.Itoa(index)}, err)
 		}
 
 		opID, err = onchain.CallFunctionUnwaited(client, *wallet, addr, "appendBytesToWebsite", param)
