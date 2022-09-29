@@ -75,13 +75,13 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 
 	var opID string
 
-	for i := 0; i < len(chunks); i++ {
+	for index := 0; index < len(chunks); index++ {
 		param, err := json.Marshal(UploadWebsiteParam{
-			Data:    chunks[i],
-			ChunkID: strconv.Itoa(i),
+			Data:    chunks[index],
+			ChunkID: strconv.Itoa(index),
 		})
 		if err != nil {
-			return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[i], ChunkID: strconv.Itoa(i)}, err)
+			return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[index], ChunkID: strconv.Itoa(index)}, err)
 		}
 
 		opID, err = onchain.CallFunctionUnwaited(client, *wallet, addr, "appendBytesToWebsite", param)

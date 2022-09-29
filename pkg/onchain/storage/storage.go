@@ -36,8 +36,12 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 	}
 
 	chunkNumber, err := strconv.Atoi(string(keyNumber.CandidateValue))
+	if err != nil {
+		return nil, fmt.Errorf("error converting String to integer")
+	}
 
 	entries := []node.DatastoreEntriesKeysAsString{}
+
 	for i := 0; i < chunkNumber; i++ {
 		entry := node.DatastoreEntriesKeysAsString{
 			Address: address,
