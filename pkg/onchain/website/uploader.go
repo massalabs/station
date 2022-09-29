@@ -31,12 +31,12 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	return scAddress, nil
 }
 
-type UploadWebsiteParam struct {
+type UploadWebsiteParam struct { //nolint:govet
 	Data     string `json:"data"`
 	chunk_ID string `json:"chunkID"` //nolint:revive
 }
 
-type websiteInitialisationParams struct {
+type websiteInitialisationParams struct { //nolint:govet
 	total_chunks string `json:"totalChunks"` //nolint:revive
 }
 
