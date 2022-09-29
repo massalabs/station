@@ -354,7 +354,7 @@ function initStepper(dnsName, totalChunk) {
 
 	eventManager.subscribe(`ERROR :`, getWallet(getDefaultWallet()).address, (resp) => {
 		resetStepper();
-		errorAlert(resp.data.split(":")[1]);
+		errorAlert(resp.data.data.split(":")[1]);
 	});
 }
 
