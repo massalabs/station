@@ -223,11 +223,11 @@ $(".upload input").on("change", function () {
 });
 
 //check max size file
-function validateSize(input) {
-  const fileSize = input.files[0].size / 1024 / 1024; // in MiB
+$(".upload input").on("change", function () {
+  const fileSize = this.files[0].size / 1024 / 1024; // in MiB
   if (fileSize > 1.5) {
     uploadable = false;
-
+    console.log(fileSize);
     document.getElementsByClassName("fileSizeError")[0].style.display = "flex";
     document.getElementById("website-upload").style.display = "none";
     document.getElementById("website-upload-refuse").style.display = "flex";
@@ -237,7 +237,7 @@ function validateSize(input) {
     document.getElementById("website-upload").style.display = "flex";
     document.getElementById("website-upload-refuse").style.display = "none";
   }
-}
+});
 
 //remove label of input website name on focus
 $(".website-dns input").on("focus", function () {
