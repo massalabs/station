@@ -15,9 +15,9 @@
 ## Introduction
 This document will guide you through the installation process of the latest tagged version of Thyra.
 
-> **_PREREQUISITE:_** Be comfortable with your terminal and have a recent version of MacOS, Windows or Linux.
+> **_PREREQUISITES:_** Be comfortable with your terminal and have a recent version of MacOS, Windows or Linux.
 
-> **_Troubleshooting:_** If you have trouble following this procedure, feel free to [open a question](https://github.com/massalabs/thyra/issues/new) describing your problem. 
+> **_TROUBLESHOOTING:_** If you have trouble following this procedure, feel free to [open a question](https://github.com/massalabs/thyra/issues/new) describing your problem. 
 
 ## Step by step instructions
 
@@ -106,8 +106,7 @@ Congratulation, your version of Thyra is now installed on your system and can be
 >```sh
 >sudo cp /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf_backup_thyra_install && sudo sed -i "s/keyfile/keyfile\ndns=dnsmasq/g" /etc/NetworkManager/NetworkManager.conf
 >```
-
-> **_NOTE:_** your `/etc/NetworkManager/NetworkManager.conf` file has been backed up to `/etc/NetworkManager/NetworkManager.conf_backup_thyra_install` if needed.
+> This command backs up `/etc/NetworkManager/NetworkManager.conf` file to `/etc/NetworkManager/NetworkManager.conf_backup_thyra_install`.
 
 Then we must configure and restart the dnsmasq service:
 
@@ -118,7 +117,7 @@ sudo mv /etc/resolv.conf /etc/resolv.conf_backup_thyra_install && sudo ln -s /va
 sudo systemctl restart NetworkManager
 ```
 
-> **_NOTE:_** your `/etc/resolv.conf` file has been backed up to `/etc/resolv.conf_backup_thyra_install` if needed.
+> **_NOTE:_** your `/etc/resolv.conf` file has been backed up to `/etc/resolv.conf_backup_thyra_install`.
 
 Congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](http://my.massa) right away!
