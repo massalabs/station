@@ -36,13 +36,8 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 	}
 
 	if !checkContentType(archive, "application/zip") {
-		{
-			return operations.NewWebsiteCreatorPrepareInternalServerError().
-				WithPayload(&models.Error{
-					Code:    errorCodeWebCreatorFileType,
-					Message: err.Error(),
-				})
-		}
+
+		return createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
 	}
 
 	b64 := base64.StdEncoding.EncodeToString(archive)
@@ -107,13 +102,7 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 	}
 
 	if !checkContentType(archive, "application/zip") {
-		{
-			return operations.NewWebsiteCreatorPrepareInternalServerError().
-				WithPayload(&models.Error{
-					Code:    errorCodeWebCreatorFileType,
-					Message: err.Error(),
-				})
-		}
+		return createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
 	}
 
 	b64 := base64.StdEncoding.EncodeToString(archive)
@@ -133,11 +122,5 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 func checkContentType(archive []byte, fileType string) bool {
 	contentType := http.DetectContentType(archive)
 
-	if contentType != fileType {
-		{
-			return false
-		}
-	}
-
-	return true
+	return contentType == fileType
 }
