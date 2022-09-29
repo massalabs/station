@@ -351,6 +351,11 @@ function initStepper(dnsName, totalChunk) {
 	$(".title")
 		.eq(2)
 		.text("Chunk upload " + 1 + " on " + totalChunk);
+
+	eventManager.subscribe(`ERROR :`, getWallet(getDefaultWallet()).address, (resp) => {
+		resetStepper();
+		errorAlert(resp.data.split(":")[1]);
+	});
 }
 
 // Step 1, wait for contract deployment
