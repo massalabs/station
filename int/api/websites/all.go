@@ -59,7 +59,7 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 		return nil, fmt.Errorf("filtering keys with '%+v' failed : %w", recordKey, err)
 	}
 
-	recordResult, err := node.DatastoreEntriesOnSameContract(client, dns.DNSRawAddress, recordKeys)
+	recordResult, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, recordKeys)
 	if err != nil {
 		return nil, fmt.Errorf("searching recordAddress failed : %w", err)
 	}
