@@ -22,8 +22,10 @@ const errorCodes = new Map([
 	['WebCreator-0001', 'Error while creating your website container'],
 	['WebCreator-1001', 'Impossible to read you ZIP file. Try again'],
 	['WebCreator-1002', 'The upload of your ZIP file failed. Try again'],
+	['WebCreator-1003', 'File is not a ZIP file'],
+	['WebCreator-1004', 'ZIP file size exceed max size'],
 ]);
 
 function getErrorMessage(errorCode) {
-  return errorCodes.get(errorCode);
+	return errorCodes.get(errorCode);
 }

@@ -8,6 +8,9 @@ package resource
 //go:generate textFileToGoConst -in html/front/website.css -o ../pkg/front/website/css.go -p website -c CSS
 //go:generate textFileToGoConst -in html/front/website.html -o ../pkg/front/website/html.go -p website -c HTML
 //go:generate textFileToGoConst -in html/front/website.js -o ../pkg/front/website/js.go -p website -c JS
+//go:generate textFileToGoConst -in html/front/registry.html -o ../pkg/front/registry/html.go -p registry -c HTML
+//go:generate textFileToGoConst -in html/front/registry.css -o ../pkg/front/registry/css.go -p registry -c CSS
+//go:generate textFileToGoConst -in html/front/registry.js -o ../pkg/front/registry/js.go -p registry -c JS
 //go:generate textFileToGoConst -in html/front/errors.js -o ../pkg/front/errors.go -p front -c Errors
 //go:generate textFileToGoConst -in html/front/common.js -o ../pkg/front/common.go -p front -c Common
 //go:generate textFileToGoConst -in html/front/logo_banner.webp -o ../pkg/front/logoBanner.go -p front -c LogoBanner
