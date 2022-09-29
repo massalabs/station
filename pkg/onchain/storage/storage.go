@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"bytes"
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -36,14 +35,7 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
 	}
 
-	if len(keyNumber.CandidateValue) == 0 {
-		return nil, errors.New("no data in candidate value key")
-	}
-
 	chunkNumber, err := strconv.Atoi(string(keyNumber.CandidateValue))
-	if err != nil {
-		return nil, fmt.Errorf("error converting String to integer")
-	}
 
 	entries := []node.DatastoreEntriesKeysAsString{}
 	for i := 0; i < chunkNumber; i++ {
