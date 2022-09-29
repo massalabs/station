@@ -61,7 +61,7 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 }
 
 func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) (string, error) {
-	paramInit, err := json.Marshal(websiteInitialisationParams{
+	paramInit, err := json.Marshal(websiteInitialisationParams{ //nolint:staticcheck
 		total_chunks: strconv.Itoa(len(chunks)),
 	})
 	if err != nil {
