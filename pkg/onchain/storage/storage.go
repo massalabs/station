@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"strconv"
 
 	"github.com/massalabs/thyra/pkg/node"
@@ -64,6 +65,13 @@ func readZipFile(z *zip.File) ([]byte, error) {
 
 func Get(client *node.Client, address string, key string) (map[string][]byte, error) {
 
+	log.Println("log test")
+
+	type DatastoreEntriesKeysAsString struct {
+		Address string `json:"address"`
+		Key     string `json:"key"`
+	}
+
 	chunkNumberKey := "totalChunks"
 	dataStore := ""
 	keyNumber, err := node.DatastoreEntry(client, address, chunkNumberKey)
@@ -77,27 +85,52 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 
 	chunkNumber, err := strconv.Atoi(string(keyNumber.CandidateValue))
 
-	fmt.Println("chunkNumber ", chunkNumber)
-
-	for i := 0; i < chunkNumber; i++ {
-
-		keyMulti := "massa_web_" + strconv.Itoa(i)
-
-		entry, err := node.DatastoreEntry(client, address, keyMulti)
-		if err != nil {
-			return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, key, err)
-		}
-
-		if len(entry.CandidateValue) == 0 {
-			return nil, errors.New("no data in candidate value key")
-
-		}
-
-		dataStore = dataStore + string(entry.CandidateValue)
-
+	if err != nil {
+		return nil, fmt.Errorf("Error converting String to Integer")
 	}
 
-	fmt.Println("datastore ", dataStore)
+	fmt.Println("chunkNumber ", chunkNumber)
+
+	// for i := 0; i < chunkNumber; i++ {
+
+	entries := []node.DatastoreEntriesKeysAsString{}
+
+	for i := 0; i < chunkNumber; i++ {
+		entry := node.DatastoreEntriesKeysAsString{
+			Address: address,
+			Key:     "massa_web_" + strconv.Itoa(i),
+		}
+		entries = append(entries, entry)
+	}
+
+	response, err := node.DatastoreEntries(client, entries)
+	if err != nil {
+		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
+	}
+
+	//	keyMulti := "massa_web_" + strconv.Itoa(i)
+
+	// entry, err := node.DatastoreEntry(client, address, keyMulti)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, key, err)
+	// }
+
+	// if len(entry.CandidateValue) == 0 {
+	// 	return nil, errors.New("no data in candidate value key")
+
+	// }
+
+	// dataStore = dataStore + string(entry.CandidateValue)
+
+	// }
+
+	// log.Println("response ", response)
+
+	for i := 0; i < chunkNumber; i++ {
+		dataStore = dataStore + string(response[i].CandidateValue)
+	}
+
+	//	log.Println("datastore ", dataStore)
 
 	b64, err := base64.StdEncoding.DecodeString(dataStore)
 	if err != nil {
