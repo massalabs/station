@@ -39,16 +39,20 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 	if len(keyNumber.CandidateValue) == 0 {
 		return nil, errors.New("no data in candidate value key")
 	}
+
 	chunkNumber, err := strconv.Atoi(string(keyNumber.CandidateValue))
+
 	if err != nil {
 		return nil, fmt.Errorf("Error converting String to Integer")
 	}
+
 	entries := []node.DatastoreEntriesKeysAsString{}
 	for i := 0; i < chunkNumber; i++ {
 		entry := node.DatastoreEntriesKeysAsString{
 			Address: address,
 			Key:     "massa_web_" + strconv.Itoa(i),
 		}
+
 		entries = append(entries, entry)
 	}
 	response, err := node.DatastoreEntries(client, entries)

@@ -63,7 +63,6 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 	paramInit, err := json.Marshal(WebsiteInitialisationParams{
 		TotalChunks: strconv.Itoa(len(chunks)),
 	})
-
 	if err != nil {
 		return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[0]}, err)
 	}
@@ -89,7 +88,6 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 		if err != nil {
 			return "", fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 		}
-
 	}
 	return opID, nil
 }
