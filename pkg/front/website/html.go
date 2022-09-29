@@ -54,8 +54,8 @@ const HTML = `<!DOCTYPE html>
 							<a class="nav-link" href="#">Pricing</a>
 						</li>
 						<li>
-							<div class="popover__wrapper">
-								<a class="wallet_button" href="#">
+							<div id="wallet-popover" class="popover__wrapper">
+								<a id="wallet-button" class="wallet_button" href="#">
 									<h2 class="popover__title"></h2>
 								</a>
 								<div class="popover__content">
