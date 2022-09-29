@@ -36,7 +36,7 @@ type UploadWebsiteParam struct {
 	chunk_ID string `json:"chunkID"`
 }
 
-type WebsiteInitialisationParams struct {
+type websiteInitialisationParams struct {
 	total_chunks string `json:"totalChunks"`
 }
 
@@ -61,7 +61,7 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, er
 }
 
 func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) (string, error) {
-	paramInit, err := json.Marshal(WebsiteInitialisationParams{
+	paramInit, err := json.Marshal(websiteInitialisationParams{
 		total_chunks: strconv.Itoa(len(chunks)),
 	})
 	if err != nil {
