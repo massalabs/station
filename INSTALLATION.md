@@ -1,24 +1,23 @@
 # Installation
 
-[Introduction](#introduction)
-[Step by step instructions](#step-by-step-instructions)
-* [MacOS](#macos)
-    - [Thyra installation](#thyra-installation)
-    - [DNS installation](#dns-installation)
-* [Linux](#linux)
-    - [Thyra installation](#thyra-installation-1)
-    - [DNS installation](#dns-installation-1)
-* [Windows](#windows)
-    - [Thyra installation](#thyra-installation-2)
-    - [DNS installation](#dns-installation-2)
-
+* [Introduction](#introduction)
+* [Step by step instructions](#step-by-step-instructions)
+    - [MacOS](#macos)
+        + [Thyra installation](#thyra-installation)
+        + [DNS installation](#dns-installation)
+    - [Linux](#linux)
+        + [Thyra installation](#thyra-installation-1)
+        + [DNS installation](#dns-installation-1)
+    - [Windows](#windows)
+        + [Thyra installation](#thyra-installation-2)
+        + [DNS installation](#dns-installation-2)
 
 ## Introduction
 This document will guide you through the installation process of the latest tagged version of Thyra.
 
-> **Prerequisites:_** Be comfortable with your terminal and have a recent version of MacOS, Windows or Linux.
+> **_PREREQUISITE:_** Be comfortable with your terminal and have a recent version of MacOS, Windows or Linux.
 
-> **Troubleshooting:_** If you have trouble following this procedure, feel free to [open a question](https://github.com/massalabs/thyra/issues/new) describing your problem. 
+> **_Troubleshooting:_** If you have trouble following this procedure, feel free to [open a question](https://github.com/massalabs/thyra/issues/new) describing your problem. 
 
 ## Step by step instructions
 
@@ -54,9 +53,9 @@ Congratulation, your version of Thyra is now installed on your system and can be
 
 #### DNS installation
 
-> **Warning:_** If you already have a DNS service running that is not dnsmasq, you must configure it to redirect .massa to 127.0.0.1 (localhost).
+> **_WARNING:_** If you already have a DNS service running that is not dnsmasq, you must configure it to redirect .massa to 127.0.0.1 (localhost).
 
-> **Prerequisites:_** Have `homebrew` already installed on your system. If not, you can follow the installation instructions [here](https://brew.sh).
+> **_PREREQUISITE:_** Have `homebrew` already installed on your system. If not, you can follow the installation instructions [here](https://brew.sh).
 
 Let's start by installing `dnsmasq`. This step can be safely skipped if it is already installed on your system.
 ```sh
@@ -98,7 +97,7 @@ Congratulation, your version of Thyra is now installed on your system and can be
 
 #### DNS installation
 
-> **Warning:_** If you already have a DNS service running that is not dnsmasq, you must configure it to redirect .massa to 127.0.0.1 (localhost).
+> **_WARNING:_** If you already have a DNS service running that is not dnsmasq, you must configure it to redirect .massa to 127.0.0.1 (localhost).
 
 ##### dnsmasq (default)
 
@@ -138,9 +137,9 @@ Congratulation, your version of Thyra is now installed on your system and can be
 
 #### DNS installation
 
-> **Warning:_** If you already have a DNS service running that is not dnsmasq, you must configure it to redirect .massa to 127.0.0.1 (localhost).
+> **_WARNING:_** If you already have a DNS service running that is not dnsmasq, you must configure it to redirect .massa to 127.0.0.1 (localhost).
 
-> **Prerequisites:_** Have `Acrylic` already installed on your system. If not, you can follow the installation instructions [here](https://mayakron.altervista.org/support/acrylic/Home.htm) and the OS configuration [here](https://mayakron.altervista.org/support/acrylic/Windows10Configuration.htm).
+> **_PREREQUISITE:_** Have `Acrylic` already installed on your system. If not, you can follow the installation instructions [here](https://mayakron.altervista.org/support/acrylic/Home.htm) and the OS configuration [here](https://mayakron.altervista.org/support/acrylic/Windows10Configuration.htm).
 
 Let's start by configuring acrylic to redirect *.massa to locahost:
 1. Open Acrylic config file: Open Acrylic DNS Proxy UI > File > Open Acrylic Hosts
