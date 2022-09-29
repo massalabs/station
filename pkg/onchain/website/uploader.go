@@ -2,9 +2,8 @@ package website
 
 import (
 	"encoding/json"
-	"strconv"
-
 	"fmt"
+	"strconv"
 
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
@@ -77,12 +76,10 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 	var opID string
 
 	for i := 0; i < len(chunks); i++ {
-
 		param, err := json.Marshal(UploadWebsiteParam{
 			Data:    chunks[i],
 			ChunkID: strconv.Itoa(i),
 		})
-
 		if err != nil {
 			return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[i]}, err)
 		}
@@ -94,9 +91,7 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 		}
 
 	}
-
 	return opID, nil
-
 }
 
 func chunk(data string, chunkSize int) []string {

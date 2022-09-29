@@ -27,13 +27,8 @@ func readZipFile(z *zip.File) ([]byte, error) {
 	return content, nil
 }
 
+//nolint:nolintlint,ireturn,funlen
 func Get(client *node.Client, address string, key string) (map[string][]byte, error) {
-
-	type DatastoreEntriesKeysAsString struct {
-		Address string `json:"address"`
-		Key     string `json:"key"`
-	}
-
 	chunkNumberKey := "totalChunks"
 	dataStore := ""
 	keyNumber, err := node.DatastoreEntry(client, address, chunkNumberKey)
@@ -50,9 +45,7 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 	if err != nil {
 		return nil, fmt.Errorf("Error converting String to Integer")
 	}
-
 	entries := []node.DatastoreEntriesKeysAsString{}
-
 	for i := 0; i < chunkNumber; i++ {
 		entry := node.DatastoreEntriesKeysAsString{
 			Address: address,
@@ -67,7 +60,7 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 	}
 
 	for i := 0; i < chunkNumber; i++ {
-		dataStore = dataStore + string(response[i].CandidateValue)
+		dataStore += string(response[i].CandidateValue)
 	}
 
 	b64, err := base64.StdEncoding.DecodeString(dataStore)
