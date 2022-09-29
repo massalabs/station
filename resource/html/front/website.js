@@ -144,7 +144,9 @@ async function getWallets() {
 }
 
 function tableInsert(resp, count) {
-	const tBody = document.getElementById('website-deployers-table').getElementsByTagName('tbody')[0];
+	const tBody = document
+		.getElementById('website-deployers-table')
+		.getElementsByTagName('tbody')[0];
 	const row = tBody.insertRow(-1);
 	const url = 'http://' + resp.name + '.massa/';
 
@@ -205,12 +207,29 @@ $('.upload input').on('change', function () {
 	if (result != 'zip' && $('.upload input').val() != '') {
 		uploadable = false;
 
-		document.getElementsByClassName('fileError')[0].style.display = 'flex';
+		document.getElementsByClassName('fileTypeError')[0].style.display = 'flex';
 		document.getElementById('website-upload').style.display = 'none';
 		document.getElementById('website-upload-refuse').style.display = 'flex';
 	} else {
 		uploadable = true;
-		document.getElementsByClassName('fileError')[0].style.display = 'none';
+		document.getElementsByClassName('fileTypeError')[0].style.display = 'none';
+		document.getElementById('website-upload').style.display = 'flex';
+		document.getElementById('website-upload-refuse').style.display = 'none';
+	}
+});
+
+//check max size file
+$('.upload input').on('change', function () {
+	const fileSize = this.files[0].size / 1024 / 1024; // in MiB
+	if (fileSize > 1.5) {
+		uploadable = false;
+		console.log(fileSize);
+		document.getElementsByClassName('fileSizeError')[0].style.display = 'flex';
+		document.getElementById('website-upload').style.display = 'none';
+		document.getElementById('website-upload-refuse').style.display = 'flex';
+	} else {
+		uploadable = true;
+		document.getElementsByClassName('fileSizeError')[0].style.display = 'none';
 		document.getElementById('website-upload').style.display = 'flex';
 		document.getElementById('website-upload-refuse').style.display = 'none';
 	}
@@ -241,6 +260,7 @@ $('.website-dns input').on('change', function () {
 });
 
 function uploadProcess(file, dnsName, isFullProcess, bodyFormData, callback) {
+	document.getElementById('wallet-popover').classList.add('popover__disabled');
 	const reader = new FileReader();
 	reader.readAsDataURL(file);
 	reader.onloadend = (_) => {
@@ -437,4 +457,5 @@ function resetStepper() {
 
 	$('.title').eq(2).removeClass('loading-dots');
 	getWebsiteDeployerSC();
+	document.getElementById('wallet-popover').classList.remove('popover__disabled');
 }

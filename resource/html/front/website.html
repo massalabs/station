@@ -47,7 +47,7 @@
 							<a class="nav-link" href="#">Pricing</a>
 						</li>
 						<li>
-							<div class="popover__wrapper">
+							<div id="wallet-popover" class="popover__wrapper">
 								<a class="wallet_button" href="#">
 									<h2 class="popover__title"></h2>
 								</a>
@@ -74,7 +74,12 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title" id="passwordModalLabel">Enter the password</h5>
-						<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+						<button
+							type="button"
+							class="close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						>
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>
@@ -130,26 +135,34 @@
 							<h4 class="website-card-label">Website Name</h4>
 						</div>
 						<div class="website-dns">
-							<input class="form-control" id="websiteName" name="websiteName" type="text" />
+							<input
+								class="form-control"
+								id="websiteName"
+								name="websiteName"
+								type="text"
+							/>
 						</div>
 					</div>
 					<div class="align-right">
-						<p id="website-info-display" class="website-info-display">Use alphanumerical characters and lowercase</p>
+						<p id="website-info-display">Use alphanumerical characters and lowercase</p>
 					</div>
 					<div class="align-right">
-						<h4 class="dns-error">Website Name must be only lowercase letters and numbers</h4>
+						<h4 class="dns-error">
+							Website Name must be only lowercase letters and numbers
+						</h4>
 					</div>
 					<div class="website-line">
 						<h4 class="website-card-label">Website File</h4>
-						<button class="primary-button small-button" id="file-select-button">Import From</button>
+						<button id="file-select-button">Import From</button>
+
 						<div class="upload">
 							<input class="website-file-input" type="file" accept=".zip" />
 						</div>
 
-						<h4 class="fileError">File type needs to be .zip only</h4>
-					</div>
-					<div class="align-right">
-						<p id="website-info-display" class="website-info-display"><a href="https://github.com/massalabs/thyra#upload-a-website" target="_blank" class="website-info-display">Format info</a></p>
+						<h4 id="fileError" class="fileTypeError">
+							File type needs to be .zip only
+						</h4>
+						<h4 id="fileError" class="fileSizeError">Max Zip size needs to be 1.5Mo</h4>
 					</div>
 
 					<button
@@ -164,7 +177,9 @@
 						Deploy to massa blockchain
 					</button>
 
-					<button class="primary-button small-button" id="website-upload-refuse">Deploy to massa blockchain</button>
+					<button class="primary-button small-button" id="website-upload-refuse">
+						Deploy to massa blockchain
+					</button>
 				</div>
 			</div>
 
