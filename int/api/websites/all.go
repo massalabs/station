@@ -12,6 +12,7 @@ import (
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/ledger"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
+	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 const (
@@ -65,9 +66,12 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 	}
 
 	var metadataKeys []node.DatastoreEntriesKeysAsString
-	for index, record := range recordResult {
-		metadataKeys[index] = node.DatastoreEntriesKeysAsString{
-			Address: string(record.CandidateValue), Key: metaKey,
+
+	for _, record := range recordResult {
+		if wallet.AddressChecker(string(record.CandidateValue)) {
+			metadataKeys = append(metadataKeys, node.DatastoreEntriesKeysAsString{
+				Address: string(record.CandidateValue), Key: metaKey,
+			})
 		}
 	}
 
@@ -76,7 +80,7 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 		return nil, fmt.Errorf("metadata reaching on dnsContractStorers failed : %w", err)
 	}
 
-	var dates []dateOnChain
+	dates := make([]dateOnChain, len(metadatas))
 
 	for index, metadata := range metadatas {
 		var date dateOnChain
@@ -85,8 +89,7 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 		dates[index] = date
 	}
 
-	var registryResult []*models.Registry
-
+	registryResult := make([]*models.Registry, len(dates))
 	for index, date := range dates {
 		registryResult[index] = &models.Registry{
 			Name:      strings.Split(recordKeys[index], recordKey)[1],
