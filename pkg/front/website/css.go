@@ -178,6 +178,7 @@ tr {
 .wallet_button {
   text-decoration: none;
 }
+
 .popover__title {
   text-align: center;
   font-size: 14px;
@@ -191,6 +192,10 @@ tr {
   padding-left: 14px;
   padding-right: 14px;
   background-color: #e74e4e;
+}
+
+.popover__disabled {
+  pointer-events: none;
 }
 
 .popover__content {

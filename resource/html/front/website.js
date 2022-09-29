@@ -264,6 +264,7 @@ $(".website-dns input").on("change", function () {
 });
 
 function uploadProcess(file, dnsName, isFullProcess, bodyFormData, callback) {
+  document.getElementById("wallet-popover").classList.add("popover__disabled");
   const reader = new FileReader();
   reader.readAsDataURL(file);
   reader.onloadend = (_) => {
@@ -464,4 +465,7 @@ function resetStepper() {
 
   $(".title").eq(2).removeClass("loading-dots");
   getWebsiteDeployerSC();
+  document
+    .getElementById("wallet-popover")
+    .classList.remove("popover__disabled");
 }
