@@ -89,6 +89,7 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 			return "", fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 		}
 	}
+
 	return opID, nil
 }
 
