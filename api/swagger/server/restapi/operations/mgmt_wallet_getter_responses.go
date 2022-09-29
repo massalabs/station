@@ -16,8 +16,7 @@ import (
 // MgmtWalletGetterOKCode is the HTTP code returned for type MgmtWalletGetterOK
 const MgmtWalletGetterOKCode int = 200
 
-/*
-MgmtWalletGetterOK Wallet retrieved.
+/*MgmtWalletGetterOK Wallet retrieved.
 
 swagger:response mgmtWalletGetterOK
 */
@@ -61,8 +60,7 @@ func (o *MgmtWalletGetterOK) WriteResponse(rw http.ResponseWriter, producer runt
 // MgmtWalletGetterBadRequestCode is the HTTP code returned for type MgmtWalletGetterBadRequest
 const MgmtWalletGetterBadRequestCode int = 400
 
-/*
-MgmtWalletGetterBadRequest Bad request.
+/*MgmtWalletGetterBadRequest Bad request.
 
 swagger:response mgmtWalletGetterBadRequest
 */
@@ -106,8 +104,7 @@ func (o *MgmtWalletGetterBadRequest) WriteResponse(rw http.ResponseWriter, produ
 // MgmtWalletGetterNotFoundCode is the HTTP code returned for type MgmtWalletGetterNotFound
 const MgmtWalletGetterNotFoundCode int = 404
 
-/*
-MgmtWalletGetterNotFound Bad request.
+/*MgmtWalletGetterNotFound Bad request.
 
 swagger:response mgmtWalletGetterNotFound
 */
@@ -151,8 +148,7 @@ func (o *MgmtWalletGetterNotFound) WriteResponse(rw http.ResponseWriter, produce
 // MgmtWalletGetterUnprocessableEntityCode is the HTTP code returned for type MgmtWalletGetterUnprocessableEntity
 const MgmtWalletGetterUnprocessableEntityCode int = 422
 
-/*
-MgmtWalletGetterUnprocessableEntity Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+/*MgmtWalletGetterUnprocessableEntity Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
 
 swagger:response mgmtWalletGetterUnprocessableEntity
 */
@@ -196,8 +192,7 @@ func (o *MgmtWalletGetterUnprocessableEntity) WriteResponse(rw http.ResponseWrit
 // MgmtWalletGetterInternalServerErrorCode is the HTTP code returned for type MgmtWalletGetterInternalServerError
 const MgmtWalletGetterInternalServerErrorCode int = 500
 
-/*
-MgmtWalletGetterInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
+/*MgmtWalletGetterInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
 
 swagger:response mgmtWalletGetterInternalServerError
 */

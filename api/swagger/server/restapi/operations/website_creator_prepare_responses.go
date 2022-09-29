@@ -16,8 +16,7 @@ import (
 // WebsiteCreatorPrepareOKCode is the HTTP code returned for type WebsiteCreatorPrepareOK
 const WebsiteCreatorPrepareOKCode int = 200
 
-/*
-WebsiteCreatorPrepareOK New website created.
+/*WebsiteCreatorPrepareOK New website created.
 
 swagger:response websiteCreatorPrepareOK
 */
@@ -61,8 +60,7 @@ func (o *WebsiteCreatorPrepareOK) WriteResponse(rw http.ResponseWriter, producer
 // WebsiteCreatorPrepareBadRequestCode is the HTTP code returned for type WebsiteCreatorPrepareBadRequest
 const WebsiteCreatorPrepareBadRequestCode int = 400
 
-/*
-WebsiteCreatorPrepareBadRequest Bad request.
+/*WebsiteCreatorPrepareBadRequest Bad request.
 
 swagger:response websiteCreatorPrepareBadRequest
 */
@@ -106,8 +104,7 @@ func (o *WebsiteCreatorPrepareBadRequest) WriteResponse(rw http.ResponseWriter, 
 // WebsiteCreatorPrepareUnprocessableEntityCode is the HTTP code returned for type WebsiteCreatorPrepareUnprocessableEntity
 const WebsiteCreatorPrepareUnprocessableEntityCode int = 422
 
-/*
-WebsiteCreatorPrepareUnprocessableEntity Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+/*WebsiteCreatorPrepareUnprocessableEntity Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
 
 swagger:response websiteCreatorPrepareUnprocessableEntity
 */
@@ -151,8 +148,7 @@ func (o *WebsiteCreatorPrepareUnprocessableEntity) WriteResponse(rw http.Respons
 // WebsiteCreatorPrepareInternalServerErrorCode is the HTTP code returned for type WebsiteCreatorPrepareInternalServerError
 const WebsiteCreatorPrepareInternalServerErrorCode int = 500
 
-/*
-WebsiteCreatorPrepareInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
+/*WebsiteCreatorPrepareInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
 
 swagger:response websiteCreatorPrepareInternalServerError
 */

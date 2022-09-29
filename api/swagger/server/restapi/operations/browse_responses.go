@@ -16,8 +16,7 @@ import (
 // BrowseOKCode is the HTTP code returned for type BrowseOK
 const BrowseOKCode int = 200
 
-/*
-BrowseOK Resource retrieved.
+/*BrowseOK Resource retrieved.
 
 swagger:response browseOK
 */
@@ -41,8 +40,7 @@ func (o *BrowseOK) WriteResponse(rw http.ResponseWriter, producer runtime.Produc
 // BrowseBadRequestCode is the HTTP code returned for type BrowseBadRequest
 const BrowseBadRequestCode int = 400
 
-/*
-BrowseBadRequest Bad request.
+/*BrowseBadRequest Bad request.
 
 swagger:response browseBadRequest
 */
@@ -86,8 +84,7 @@ func (o *BrowseBadRequest) WriteResponse(rw http.ResponseWriter, producer runtim
 // BrowseNotFoundCode is the HTTP code returned for type BrowseNotFound
 const BrowseNotFoundCode int = 404
 
-/*
-BrowseNotFound Resource not found.
+/*BrowseNotFound Resource not found.
 
 swagger:response browseNotFound
 */
@@ -131,8 +128,7 @@ func (o *BrowseNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.
 // BrowseInternalServerErrorCode is the HTTP code returned for type BrowseInternalServerError
 const BrowseInternalServerErrorCode int = 500
 
-/*
-BrowseInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
+/*BrowseInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
 
 swagger:response browseInternalServerError
 */

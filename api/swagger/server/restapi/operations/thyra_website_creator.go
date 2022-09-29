@@ -29,10 +29,10 @@ func NewThyraWebsiteCreator(ctx *middleware.Context, handler ThyraWebsiteCreator
 	return &ThyraWebsiteCreator{Context: ctx, Handler: handler}
 }
 
-/*
-	ThyraWebsiteCreator swagger:route GET /thyra/websiteCreator/{resource} thyraWebsiteCreator
+/* ThyraWebsiteCreator swagger:route GET /thyra/websiteCreator/{resource} thyraWebsiteCreator
 
 ThyraWebsiteCreator thyra website creator API
+
 */
 type ThyraWebsiteCreator struct {
 	Context *middleware.Context

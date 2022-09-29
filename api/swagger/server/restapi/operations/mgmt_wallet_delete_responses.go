@@ -16,8 +16,7 @@ import (
 // MgmtWalletDeleteNoContentCode is the HTTP code returned for type MgmtWalletDeleteNoContent
 const MgmtWalletDeleteNoContentCode int = 204
 
-/*
-MgmtWalletDeleteNoContent Wallet removed.
+/*MgmtWalletDeleteNoContent Wallet removed.
 
 swagger:response mgmtWalletDeleteNoContent
 */
@@ -61,8 +60,7 @@ func (o *MgmtWalletDeleteNoContent) WriteResponse(rw http.ResponseWriter, produc
 // MgmtWalletDeleteBadRequestCode is the HTTP code returned for type MgmtWalletDeleteBadRequest
 const MgmtWalletDeleteBadRequestCode int = 400
 
-/*
-MgmtWalletDeleteBadRequest Bad request.
+/*MgmtWalletDeleteBadRequest Bad request.
 
 swagger:response mgmtWalletDeleteBadRequest
 */
@@ -106,8 +104,7 @@ func (o *MgmtWalletDeleteBadRequest) WriteResponse(rw http.ResponseWriter, produ
 // MgmtWalletDeleteNotFoundCode is the HTTP code returned for type MgmtWalletDeleteNotFound
 const MgmtWalletDeleteNotFoundCode int = 404
 
-/*
-MgmtWalletDeleteNotFound Bad request.
+/*MgmtWalletDeleteNotFound Bad request.
 
 swagger:response mgmtWalletDeleteNotFound
 */
@@ -151,8 +148,7 @@ func (o *MgmtWalletDeleteNotFound) WriteResponse(rw http.ResponseWriter, produce
 // MgmtWalletDeleteUnprocessableEntityCode is the HTTP code returned for type MgmtWalletDeleteUnprocessableEntity
 const MgmtWalletDeleteUnprocessableEntityCode int = 422
 
-/*
-MgmtWalletDeleteUnprocessableEntity Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+/*MgmtWalletDeleteUnprocessableEntity Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
 
 swagger:response mgmtWalletDeleteUnprocessableEntity
 */
@@ -196,8 +192,7 @@ func (o *MgmtWalletDeleteUnprocessableEntity) WriteResponse(rw http.ResponseWrit
 // MgmtWalletDeleteInternalServerErrorCode is the HTTP code returned for type MgmtWalletDeleteInternalServerError
 const MgmtWalletDeleteInternalServerErrorCode int = 500
 
-/*
-MgmtWalletDeleteInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
+/*MgmtWalletDeleteInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
 
 swagger:response mgmtWalletDeleteInternalServerError
 */

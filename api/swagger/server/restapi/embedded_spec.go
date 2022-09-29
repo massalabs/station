@@ -575,6 +575,50 @@ func init() {
         }
       }
     },
+    "/thyra/events/{str}/{caller}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "thyraEventsGetter",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Data content of the event.",
+            "name": "str",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Creator of the transaction that triggered the event.",
+            "name": "caller",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event retrieved",
+            "schema": {
+              "$ref": "#/definitions/Events"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/wallet/{resource}": {
       "get": {
         "produces": [
@@ -645,7 +689,7 @@ func init() {
             "pattern": "^[a-z0-9]+$",
             "type": "string",
             "x-nullable": false,
-            "description": "URL without '.', capitals letters and specifics characters",
+            "description": "URL without dot (.), upper case and special characters",
             "name": "url",
             "in": "formData",
             "required": true
@@ -653,7 +697,7 @@ func init() {
           {
             "type": "string",
             "x-nullable": false,
-            "description": "Wallet's nickname to be used for receiving the website",
+            "description": "Name of the Wallet in which the website will be deployed.",
             "name": "nickname",
             "in": "formData",
             "required": true
@@ -777,6 +821,43 @@ func init() {
           "description": "error message.",
           "type": "string",
           "x-nullable": false
+        }
+      }
+    },
+    "Events": {
+      "description": "Events object (V0)",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Event caller.",
+          "type": "string"
+        },
+        "data": {
+          "description": "Event data.",
+          "type": "string"
+        }
+      }
+    },
+    "UploadState": {
+      "description": "Upload state",
+      "type": "object",
+      "properties": {
+        "lastChunk": {
+          "description": "Last uploaded chunk id",
+          "type": "integer"
+        },
+        "status": {
+          "description": "Upload action status",
+          "type": "string",
+          "enum": [
+            "NOT_STARTED",
+            "IN_PROGRESS",
+            "COMPLETED"
+          ]
+        },
+        "totalChunk": {
+          "description": "Total chunk number",
+          "type": "integer"
         }
       }
     },
@@ -1361,6 +1442,50 @@ func init() {
         }
       }
     },
+    "/thyra/events/{str}/{caller}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "thyraEventsGetter",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Data content of the event.",
+            "name": "str",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Creator of the transaction that triggered the event.",
+            "name": "caller",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event retrieved",
+            "schema": {
+              "$ref": "#/definitions/Events"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/wallet/{resource}": {
       "get": {
         "produces": [
@@ -1431,7 +1556,7 @@ func init() {
             "pattern": "^[a-z0-9]+$",
             "type": "string",
             "x-nullable": false,
-            "description": "URL without '.', capitals letters and specifics characters",
+            "description": "URL without dot (.), upper case and special characters",
             "name": "url",
             "in": "formData",
             "required": true
@@ -1439,7 +1564,7 @@ func init() {
           {
             "type": "string",
             "x-nullable": false,
-            "description": "Wallet's nickname to be used for receiving the website",
+            "description": "Name of the Wallet in which the website will be deployed.",
             "name": "nickname",
             "in": "formData",
             "required": true
@@ -1598,6 +1723,20 @@ func init() {
         }
       }
     },
+    "Events": {
+      "description": "Events object (V0)",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Event caller.",
+          "type": "string"
+        },
+        "data": {
+          "description": "Event data.",
+          "type": "string"
+        }
+      }
+    },
     "NodeItems0": {
       "type": "object",
       "properties": {
@@ -1640,6 +1779,29 @@ func init() {
           "type": "integer"
         },
         "slashing": {
+          "type": "integer"
+        }
+      }
+    },
+    "UploadState": {
+      "description": "Upload state",
+      "type": "object",
+      "properties": {
+        "lastChunk": {
+          "description": "Last uploaded chunk id",
+          "type": "integer"
+        },
+        "status": {
+          "description": "Upload action status",
+          "type": "string",
+          "enum": [
+            "NOT_STARTED",
+            "IN_PROGRESS",
+            "COMPLETED"
+          ]
+        },
+        "totalChunk": {
+          "description": "Total chunk number",
           "type": "integer"
         }
       }

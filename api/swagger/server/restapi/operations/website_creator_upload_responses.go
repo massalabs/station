@@ -16,8 +16,7 @@ import (
 // WebsiteCreatorUploadOKCode is the HTTP code returned for type WebsiteCreatorUploadOK
 const WebsiteCreatorUploadOKCode int = 200
 
-/*
-WebsiteCreatorUploadOK Website's chunk deployed.
+/*WebsiteCreatorUploadOK Website's chunk deployed.
 
 swagger:response websiteCreatorUploadOK
 */
@@ -61,8 +60,7 @@ func (o *WebsiteCreatorUploadOK) WriteResponse(rw http.ResponseWriter, producer 
 // WebsiteCreatorUploadBadRequestCode is the HTTP code returned for type WebsiteCreatorUploadBadRequest
 const WebsiteCreatorUploadBadRequestCode int = 400
 
-/*
-WebsiteCreatorUploadBadRequest Bad request.
+/*WebsiteCreatorUploadBadRequest Bad request.
 
 swagger:response websiteCreatorUploadBadRequest
 */
@@ -106,8 +104,7 @@ func (o *WebsiteCreatorUploadBadRequest) WriteResponse(rw http.ResponseWriter, p
 // WebsiteCreatorUploadUnprocessableEntityCode is the HTTP code returned for type WebsiteCreatorUploadUnprocessableEntity
 const WebsiteCreatorUploadUnprocessableEntityCode int = 422
 
-/*
-WebsiteCreatorUploadUnprocessableEntity Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+/*WebsiteCreatorUploadUnprocessableEntity Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
 
 swagger:response websiteCreatorUploadUnprocessableEntity
 */
@@ -151,8 +148,7 @@ func (o *WebsiteCreatorUploadUnprocessableEntity) WriteResponse(rw http.Response
 // WebsiteCreatorUploadInternalServerErrorCode is the HTTP code returned for type WebsiteCreatorUploadInternalServerError
 const WebsiteCreatorUploadInternalServerErrorCode int = 500
 
-/*
-WebsiteCreatorUploadInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
+/*WebsiteCreatorUploadInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
 
 swagger:response websiteCreatorUploadInternalServerError
 */

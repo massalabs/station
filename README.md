@@ -40,6 +40,24 @@ Note: you can change `main` to a tag or a commit value if needed.
 
 That's it, thyra-server is installed in '$HOME/go/bin/' dir and you can use it by executing `thyra-server` in your terminal.
 
+### ... pass options to `thyra-server` ?
+
+Thyra accepts different options that you can specify when you start the program.
+In this section you will find a non-exhaustive list of such options and examples of how you can use them.
+
+--node-server : Specify which Massa network Thyra will communicate with while runnning.
+Accepts a URL, an IP address or one of the following values :
+
+- TESTNET : Uses Massa's testnet
+- LABNET : Uses Massa's labnet
+- INNONET : Uses Massa's innonet
+- LOCALHOST : Expect Massa's network to be hosted at 127.0.0.1
+
+To use this option with a constant, you have to execute :
+`thyra-server node-server=LABNET`
+To use this option with a custom IP address, you have to execute :
+`thyra-server node-server=192.168.X.X`
+
 ### ... access a website stored on the Massa blockchain ?
 
 Prerequisite: Having a running thyra-server application on your machine.
@@ -110,6 +128,14 @@ In order to register a website on Thyra you'll need to :
 
 - Deploy a Smart Contract that will handle the storage of your website, your DNS name will fetch the Address of this Smart Contract
 - Upload the build of your application
+
+## Usage
+
+### Upload a website
+
+With Thyra you can upload a website. It will be hosted on the Massa blockchain and available as a `.massa` URL. You can access this URL through Tyhra.
+
+For this to work, the file you upload must be a zip archive (file ending with `.zip`). This archive must contain a `index.html` file at the root.
 
 ## Additional information
 

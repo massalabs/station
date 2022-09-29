@@ -16,8 +16,7 @@ import (
 // CmdExecuteFunctionOKCode is the HTTP code returned for type CmdExecuteFunctionOK
 const CmdExecuteFunctionOKCode int = 200
 
-/*
-CmdExecuteFunctionOK OK.
+/*CmdExecuteFunctionOK OK.
 
 swagger:response cmdExecuteFunctionOK
 */
@@ -59,8 +58,7 @@ func (o *CmdExecuteFunctionOK) WriteResponse(rw http.ResponseWriter, producer ru
 // CmdExecuteFunctionUnprocessableEntityCode is the HTTP code returned for type CmdExecuteFunctionUnprocessableEntity
 const CmdExecuteFunctionUnprocessableEntityCode int = 422
 
-/*
-CmdExecuteFunctionUnprocessableEntity Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+/*CmdExecuteFunctionUnprocessableEntity Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
 
 swagger:response cmdExecuteFunctionUnprocessableEntity
 */
@@ -104,8 +102,7 @@ func (o *CmdExecuteFunctionUnprocessableEntity) WriteResponse(rw http.ResponseWr
 // CmdExecuteFunctionInternalServerErrorCode is the HTTP code returned for type CmdExecuteFunctionInternalServerError
 const CmdExecuteFunctionInternalServerErrorCode int = 500
 
-/*
-CmdExecuteFunctionInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
+/*CmdExecuteFunctionInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
 
 swagger:response cmdExecuteFunctionInternalServerError
 */

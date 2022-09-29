@@ -16,8 +16,7 @@ import (
 // MgmtWalletGetOKCode is the HTTP code returned for type MgmtWalletGetOK
 const MgmtWalletGetOKCode int = 200
 
-/*
-MgmtWalletGetOK Wallets retrieved
+/*MgmtWalletGetOK Wallets retrieved
 
 swagger:response mgmtWalletGetOK
 */
@@ -64,8 +63,7 @@ func (o *MgmtWalletGetOK) WriteResponse(rw http.ResponseWriter, producer runtime
 // MgmtWalletGetBadRequestCode is the HTTP code returned for type MgmtWalletGetBadRequest
 const MgmtWalletGetBadRequestCode int = 400
 
-/*
-MgmtWalletGetBadRequest Bad request.
+/*MgmtWalletGetBadRequest Bad request.
 
 swagger:response mgmtWalletGetBadRequest
 */
@@ -109,8 +107,7 @@ func (o *MgmtWalletGetBadRequest) WriteResponse(rw http.ResponseWriter, producer
 // MgmtWalletGetInternalServerErrorCode is the HTTP code returned for type MgmtWalletGetInternalServerError
 const MgmtWalletGetInternalServerErrorCode int = 500
 
-/*
-MgmtWalletGetInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
+/*MgmtWalletGetInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
 
 swagger:response mgmtWalletGetInternalServerError
 */

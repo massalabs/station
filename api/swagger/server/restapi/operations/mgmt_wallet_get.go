@@ -29,10 +29,10 @@ func NewMgmtWalletGet(ctx *middleware.Context, handler MgmtWalletGetHandler) *Mg
 	return &MgmtWalletGet{Context: ctx, Handler: handler}
 }
 
-/*
-	MgmtWalletGet swagger:route GET /mgmt/wallet mgmtWalletGet
+/* MgmtWalletGet swagger:route GET /mgmt/wallet mgmtWalletGet
 
 MgmtWalletGet mgmt wallet get API
+
 */
 type MgmtWalletGet struct {
 	Context *middleware.Context
