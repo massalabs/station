@@ -30,7 +30,7 @@ func readZipFile(z *zip.File) ([]byte, error) {
 //nolint:nolintlint,ireturn,funlen
 func Get(client *node.Client, address string, key string) (map[string][]byte, error) {
 	chunkNumberKey := "totalChunks"
-	dataStore := ""
+
 	keyNumber, err := node.DatastoreEntry(client, address, chunkNumberKey)
 	if err != nil {
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
@@ -39,9 +39,7 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 	if len(keyNumber.CandidateValue) == 0 {
 		return nil, errors.New("no data in candidate value key")
 	}
-
 	chunkNumber, err := strconv.Atoi(string(keyNumber.CandidateValue))
-
 	if err != nil {
 		return nil, fmt.Errorf("Error converting String to Integer")
 	}
@@ -53,26 +51,22 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 		}
 		entries = append(entries, entry)
 	}
-
 	response, err := node.DatastoreEntries(client, entries)
 	if err != nil {
 		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
 	}
-
+	dataStore := ""
 	for i := 0; i < chunkNumber; i++ {
 		dataStore += string(response[i].CandidateValue)
 	}
-
 	b64, err := base64.StdEncoding.DecodeString(dataStore)
 	if err != nil {
 		return nil, fmt.Errorf("base64 decoding datastore entry '%s' at '%s': %w", address, key, err)
 	}
-
 	zipReader, err := zip.NewReader(bytes.NewReader(b64), int64(len(b64)))
 	if err != nil {
 		return nil, fmt.Errorf("instanciating zip reader from decoded datastore entry '%s' at '%s': %w", address, key, err)
 	}
-
 	content := make(map[string][]byte)
 
 	// Read all the files from zip archive
