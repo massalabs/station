@@ -64,6 +64,14 @@ function getDeployerByDns(dns) {
 	return deployers.find((c) => c.name === dns);
 }
 
+function getWallet(nickname) {
+  return gWallets.find((w) => w.nickname === nickname);
+}
+
+function getDeployerByDns(dns) {
+  return deployers.find((c) => c.name === dns);
+}
+
 function setupModal() {
 	$('#passwordModal').on('shown.bs.modal', function () {
 		$('#passwordModal').trigger('focus');
@@ -75,13 +83,13 @@ function setTxType(txType) {
 }
 
 async function callTx() {
-	const passwordValue = $('#walletPassword').val();
+	const passwordValue = $("#walletPassword").val();
 
-	if (actualTxType === 'deployWebsiteAndUpload') {
+	if (actualTxType === "deployWebsiteAndUpload") {
 		deployWebsiteAndUpload(passwordValue);
 	}
-	if (actualTxType.includes('uploadWebsiteCreator')) {
-		const websiteIndex = actualTxType.split('uploadWebsiteCreator')[1];
+	if (actualTxType.includes("uploadWebsiteCreator")) {
+		const websiteIndex = actualTxType.split("uploadWebsiteCreator")[1];
 		uploadWebsite(nextFileToUpload, websiteIndex, passwordValue);
 	}
 }
@@ -131,22 +139,24 @@ function changeDefaultWallet(event) {
 
 async function getWallets() {
 	axios
-		.get('/mgmt/wallet')
+	   .get("/mgmt/wallet")
 		.then((resp) => {
-			if (resp) {
-				gWallets = resp.data;
-				feedWallet(gWallets);
-			}
+		if (resp) {
+			gWallets = resp.data;
+			feedWallet(gWallets);
+		}
 		})
 		.catch((e) => {
-			errorAlert(getErrorMessage(e.response.data.code));
+		errorAlert(getErrorMessage(e.response.data.code));
 		});
 }
 
 function tableInsert(resp, count) {
-	const tBody = document.getElementById('website-deployers-table').getElementsByTagName('tbody')[0];
+	const tBody = document
+		.getElementById("website-deployers-table")
+		.getElementsByTagName("tbody")[0];
 	const row = tBody.insertRow(-1);
-	const url = 'http://' + resp.name + '.massa/';
+	const url = "http://" + resp.name + ".massa/";
 
 	const cell0 = row.insertCell();
 	const cell1 = row.insertCell();
@@ -165,22 +175,26 @@ function tableInsert(resp, count) {
 		count +
 		" alt='Massa logo' /></span></div>";
 
-	document.getElementById(`upload-website${count}`).addEventListener('click', function () {
+	document
+		.getElementById(`upload-website${count}`)
+		.addEventListener("click", function () {
 		document.getElementById(`fileid${count}`).value = null;
 		document.getElementById(`fileid${count}`).click();
-	});
+		});
 
-	document.getElementById(`fileid${count}`).addEventListener('change', function (evt) {
+	document
+		.getElementById(`fileid${count}`)
+		.addEventListener("change", function (evt) {
 		let files = evt.target.files; // get files
 		nextFileToUpload = files[0];
 
-		setTxType('uploadWebsiteCreator' + count);
-		$('#passwordModal').modal('show');
-	});
+		setTxType("uploadWebsiteCreator" + count);
+		$("#passwordModal").modal("show");
+		});
 }
 
-$('#file-select-button').click(function () {
-	$('.upload input').click();
+$("#file-select-button").click(function () {
+  $(".upload input").click();
 });
 
 // change button text with file name
@@ -194,26 +208,20 @@ $('.upload input').on('change', function () {
 	$('#file-select-button').html(result);
 });
 
-//check if file is .zip
-$('.upload input').on('change', function () {
-	let str = $('.upload input').val();
-
-	let n = str.lastIndexOf('.');
-
-	let result = str.substring(n + 1);
-
-	if (result != 'zip' && $('.upload input').val() != '') {
-		uploadable = false;
-
-		document.getElementsByClassName('fileError')[0].style.display = 'flex';
-		document.getElementById('website-upload').style.display = 'none';
-		document.getElementById('website-upload-refuse').style.display = 'flex';
-	} else {
-		uploadable = true;
-		document.getElementsByClassName('fileError')[0].style.display = 'none';
-		document.getElementById('website-upload').style.display = 'flex';
-		document.getElementById('website-upload-refuse').style.display = 'none';
-	}
+//check max size file
+$(".upload input").on("change", function () {
+  const fileSize = this.files[0].size / 1024 / 1024; // in MiB
+  if (fileSize > 1.5) {
+    uploadable = false;
+    document.getElementsByClassName("fileSizeError")[0].style.display = "flex";
+    document.getElementById("website-upload").style.display = "none";
+    document.getElementById("website-upload-refuse").style.display = "flex";
+  } else {
+    uploadable = true;
+    document.getElementsByClassName("fileSizeError")[0].style.display = "none";
+    document.getElementById("website-upload").style.display = "flex";
+    document.getElementById("website-upload-refuse").style.display = "none";
+  }
 });
 
 //remove label of input website name on focus
@@ -222,222 +230,227 @@ $('.website-dns input').on('focus', function () {
 });
 
 //check if input string is valid
-$('.website-dns input').on('change', function () {
-	let str = $('.website-dns input').val();
-	let pattern = new RegExp('^[a-z0-9]+$');
-	let testPattern = pattern.test(str);
+$(".website-dns input").on("change", function () {
+  let str = $(".website-dns input").val();
+  let pattern = new RegExp("^[a-z0-9]+$");
+  let testPattern = pattern.test(str);
 
-	if (testPattern == false) {
-		uploadable = false;
-		document.getElementsByClassName('dns-error')[0].style.display = 'flex';
-		document.getElementById('website-upload').style.display = 'none';
-		document.getElementById('website-upload-refuse').style.display = 'flex';
-	} else {
-		uploadable = true;
-		document.getElementsByClassName('dns-error')[0].style.display = 'none';
-		document.getElementById('website-upload').style.display = 'flex';
-		document.getElementById('website-upload-refuse').style.display = 'none';
-	}
+  if (testPattern == false) {
+    uploadable = false;
+    document.getElementsByClassName("dns-error")[0].style.display = "flex";
+    document.getElementById("website-upload").style.display = "none";
+    document.getElementById("website-upload-refuse").style.display = "flex";
+  } else {
+    uploadable = true;
+    document.getElementsByClassName("dns-error")[0].style.display = "none";
+    document.getElementById("website-upload").style.display = "flex";
+    document.getElementById("website-upload-refuse").style.display = "none";
+  }
 });
 
 function uploadProcess(file, dnsName, isFullProcess, bodyFormData, callback) {
-	const reader = new FileReader();
-	reader.readAsDataURL(file);
-	reader.onloadend = (_) => {
-		const result = reader.result.length;
+  document.getElementById("wallet-popover").classList.add("popover__disabled");
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onloadend = (_) => {
+    const result = reader.result.length;
 
-		const chunkSize = Math.floor(result / 260_000) + 1;
+    const chunkSize = Math.floor(result / 260_000) + 1;
 
-		stepper(dnsName, chunkSize, isFullProcess);
+    stepper(dnsName, chunkSize, isFullProcess);
 
-		callback(bodyFormData);
-	};
+    callback(bodyFormData);
+  };
 }
 
 function postUpload(bodyFormData, password) {
-	axios({
-		url: `/websiteCreator/upload`,
-		method: 'POST',
-		data: bodyFormData,
-		headers: {
-			'Content-Type': 'multipart/form-data',
-			Authorization: password,
-		},
-	})
-		.then((operation) => {
-			successMessage('Website uploaded to address : ' + operation.data.address);
-		})
+  axios({
+    url: `/websiteCreator/upload`,
+    method: "POST",
+    data: bodyFormData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: password,
+    },
+  })
+    .then((operation) => {
+      successMessage("Website uploaded to address : " + operation.data.address);
+    })
 
-		.catch((e) => {
-			errorAlert(getErrorMessage(e.response.data.code));
-		});
+    .catch((e) => {
+      errorAlert(getErrorMessage(e.response.data.code));
+      resetStepper();
+    });
 }
 
 function putUpload(bodyFormData, password) {
-	axios({
-		url: `/websiteCreator/prepare`,
-		method: 'put',
-		data: bodyFormData,
-		headers: {
-			'Content-Type': 'multipart/form-data',
-			Authorization: password,
-		},
-	})
-		.then((operation) => {
-			successMessage('Website uploaded to address : ' + operation.data.address);
-			getWebsiteDeployerSC();
-		})
-		.catch((e) => {
-			errorAlert(getErrorMessage(e.response.data.code));
-		});
+  axios({
+    url: `/websiteCreator/prepare`,
+    method: "put",
+    data: bodyFormData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: password,
+    },
+  })
+    .then((operation) => {
+      successMessage("Website uploaded to address : " + operation.data.address);
+      getWebsiteDeployerSC();
+    })
+    .catch((e) => {
+      errorAlert(getErrorMessage(e.response.data.code));
+      resetStepper();
+    });
 }
 
 // Full deployment process
 function deployWebsiteAndUpload(password) {
-	const dnsNameInputValue = document.getElementById('websiteName').value;
+  const dnsNameInputValue = document.getElementById("websiteName").value;
 
-	const file = document.querySelector('.upload input').files[0];
-	const bodyFormData = new FormData();
-	bodyFormData.append('url', dnsNameInputValue);
-	bodyFormData.append('nickname', getDefaultWallet());
-	bodyFormData.append('zipfile', file);
+  const file = document.querySelector(".upload input").files[0];
+  const bodyFormData = new FormData();
+  bodyFormData.append("url", dnsNameInputValue);
+  bodyFormData.append("nickname", getDefaultWallet());
+  bodyFormData.append("zipfile", file);
 
-	uploadProcess(file, dnsNameInputValue, true, bodyFormData, (bodyFormData) =>
-		putUpload(bodyFormData, password)
-	);
+  uploadProcess(file, dnsNameInputValue, true, bodyFormData, (bodyFormData) =>
+    putUpload(bodyFormData, password)
+  );
 }
 
 // Full deployment process
 function uploadWebsite(file, count, password) {
-	const bodyFormData = new FormData();
+  const bodyFormData = new FormData();
 
-	const address = deployers[count].address;
-	bodyFormData.append('zipfile', file);
-	bodyFormData.append('address', address);
-	bodyFormData.append('nickname', getDefaultWallet());
+  const address = deployers[count].address;
+  bodyFormData.append("zipfile", file);
+  bodyFormData.append("address", address);
+  bodyFormData.append("nickname", getDefaultWallet());
 
-	uploadProcess(file, deployers[count].name, false, bodyFormData, (bodyFormData) =>
-		postUpload(bodyFormData, password)
-	);
+  uploadProcess(
+    file,
+    deployers[count].name,
+    false,
+    bodyFormData,
+    (bodyFormData) => postUpload(bodyFormData, password)
+  );
 }
 
 async function stepper(dnsName, totalChunk, isFullProcess) {
-	initStepper(dnsName, totalChunk);
+  initStepper(dnsName, totalChunk);
 
-	if (isFullProcess) {
-		step1(dnsName, totalChunk);
-	} else {
-		$('.circle').eq(0).empty();
-		$('.circle').eq(0).append('<i class="bi bi-check">');
-		$('.title').eq(0).removeClass('loading-dots');
-		step3(getDeployerByDns(dnsName).address, totalChunk);
-	}
+  if (isFullProcess) {
+    step1(dnsName, totalChunk);
+  } else {
+    $(".circle").eq(0).empty();
+    $(".circle").eq(0).append('<i class="bi bi-check">');
+    $(".title").eq(0).removeClass("loading-dots");
+    step3(getDeployerByDns(dnsName).address, totalChunk);
+  }
 }
 
 function initStepper(dnsName, totalChunk) {
-	$('.website-card').hide();
-	$('.stepper').show();
+  $(".website-card").hide();
+  $(".stepper").show();
 
-	$('.stepper-title').html('Deployment of ' + dnsName);
-	$('.title').eq(0).addClass('loading-dots');
+  $(".stepper-title").html("Deployment of " + dnsName);
+  $(".title").eq(0).addClass("loading-dots");
 
-	$('.title')
-		.eq(2)
-		.text('Chunk upload ' + 1 + ' on ' + totalChunk);
-
-	eventManager.subscribe(`ERROR :`, getWallet(getDefaultWallet()).address, (resp) => {
-		resetStepper();
-		errorAlert(resp.data.split(':')[1]);
-	});
+  $(".title")
+    .eq(2)
+    .text("Chunk upload " + 1 + " on " + totalChunk);
 }
 
 // Step 1, wait for contract deployment
 function step1(dnsName, totalChunk) {
-	eventManager.subscribe(
-		`Website Deployer is deployed at :`,
-		getWallet(getDefaultWallet()).address,
-		(resp) => step2(dnsName, resp.data.data.split(':')[1], totalChunk)
-	);
+  eventManager.subscribe(
+    `Website Deployer is deployed at :`,
+    getWallet(getDefaultWallet()).address,
+    (resp) => step2(dnsName, resp.data.data.split(":")[1], totalChunk)
+  );
 }
 
 // Step 2, wait for DNS setting
 function step2(dnsName, contractAddress, totalChunk) {
-	eventManager.subscribe(
-		`Resolver set to record key :record${dnsName}at address `,
-		getWallet(getDefaultWallet()).address,
-		(_) => {
-			step3(contractAddress, totalChunk);
-		}
-	);
+  eventManager.subscribe(
+    `Resolver set to record key :record${dnsName}at address `,
+    getWallet(getDefaultWallet()).address,
+    (_) => {
+      step3(contractAddress, totalChunk);
+    }
+  );
 
-	$('.circle').eq(0).empty();
-	$('.circle').eq(0).append('<i class="bi bi-check">');
+  $(".circle").eq(0).empty();
+  $(".circle").eq(0).append('<i class="bi bi-check">');
 
-	$('.title').eq(0).removeClass('loading-dots');
-	$('.title').eq(1).addClass('loading-dots');
+  $(".title").eq(0).removeClass("loading-dots");
+  $(".title").eq(1).addClass("loading-dots");
 }
 // Step 3, Monitor state of chunk uploding
 function step3(contractAddress, totalChunk) {
-	let actualChunk = 1;
+  let actualChunk = 1;
 
-	for (let i = 0; i < totalChunk; i++) {
-		if (i === 0) {
-			eventManager.subscribe(
-				`First chunk deployed to ${contractAddress}`,
-				getWallet(getDefaultWallet()).address,
-				(_) => {
-					actualChunk++;
-					$('.title')
-						.eq(2)
-						.text('Chunk upload ' + actualChunk + ' on ' + totalChunk);
-					$('.title').eq(2).addClass('loading-dots');
+  for (let i = 0; i < totalChunk; i++) {
+    if (i === 0) {
+      eventManager.subscribe(
+        `First chunk deployed to ${contractAddress}`,
+        getWallet(getDefaultWallet()).address,
+        (_) => {
+          actualChunk++;
+          $(".title")
+            .eq(2)
+            .text("Chunk upload " + actualChunk + " on " + totalChunk);
+          $(".title").eq(2).addClass("loading-dots");
 
-					if (totalChunk === 1) {
-						resetStepper();
-					}
-				}
-			);
-		} else if (i == totalChunk - 1) {
-			eventManager.subscribe(
-				`Append chunk deployed to ${contractAddress} : ${totalChunk - 1}`,
-				getWallet(getDefaultWallet()).address,
-				(_) => {
-					resetStepper();
-				}
-			);
-		} else {
-			eventManager.subscribe(
-				`Append chunk deployed to ${contractAddress} : ${i}`,
-				getWallet(getDefaultWallet()).address,
-				(_) => {
-					actualChunk++;
-					$('.title')
-						.eq(2)
-						.text('Chunk upload ' + actualChunk + ' on ' + totalChunk);
-					$('.title').eq(2).addClass('loading-dots');
-				}
-			);
-		}
-	}
+          if (totalChunk === 1) {
+            resetStepper();
+          }
+        }
+      );
+    } else if (i == totalChunk - 1) {
+      eventManager.subscribe(
+        `Append chunk deployed to ${contractAddress} : ${totalChunk - 1}`,
+        getWallet(getDefaultWallet()).address,
+        (_) => {
+          resetStepper();
+        }
+      );
+    } else {
+      eventManager.subscribe(
+        `Append chunk deployed to ${contractAddress} : ${i}`,
+        getWallet(getDefaultWallet()).address,
+        (_) => {
+          actualChunk++;
+          $(".title")
+            .eq(2)
+            .text("Chunk upload " + actualChunk + " on " + totalChunk);
+          $(".title").eq(2).addClass("loading-dots");
+        }
+      );
+    }
+  }
 
-	$('.circle').eq(1).empty();
-	$('.circle').eq(1).append('<i class="bi bi-check">');
+  $(".circle").eq(1).empty();
+  $(".circle").eq(1).append('<i class="bi bi-check">');
 
-	$('.title').eq(1).removeClass('loading-dots');
-	$('.title').eq(2).addClass('loading-dots');
+  $(".title").eq(1).removeClass("loading-dots");
+  $(".title").eq(2).addClass("loading-dots");
 }
 
 function resetStepper() {
-	$('.website-card').show();
-	$('.stepper').hide();
+  $(".website-card").show();
+  $(".stepper").hide();
 
-	$('.circle').empty();
-	$('.circle').eq(0).html('1');
-	$('.circle').eq(1).html('2');
-	$('.circle').eq(2).html('3');
+  $(".circle").empty();
+  $(".circle").eq(0).html("1");
+  $(".circle").eq(1).html("2");
+  $(".circle").eq(2).html("3");
 
-	$('.title').eq(2).html('Chunk upload');
+  $(".title").eq(2).html("Chunk upload");
 
-	$('.title').eq(2).removeClass('loading-dots');
-	getWebsiteDeployerSC();
+  $(".title").eq(2).removeClass("loading-dots");
+  getWebsiteDeployerSC();
+  document
+    .getElementById("wallet-popover")
+    .classList.remove("popover__disabled");
 }

@@ -12,8 +12,6 @@ import (
 
 //nolint:nolintlint,ireturn
 func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.Responder {
-	const periodsBefore = 2
-
 	client := node.NewDefaultClient()
 
 	status, err := node.Status(client)
@@ -27,7 +25,7 @@ func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.
 	}
 
 	slotStart := node.Slot{
-		Period: status.LastSlot.Period - periodsBefore,
+		Period: status.LastSlot.Period,
 		Thread: 0,
 	}
 

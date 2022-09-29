@@ -90,6 +90,10 @@ button {
   transition: 0.5s;
 }
 
+.small-button {
+  font-size: 16px;
+}
+
 .alert-danger {
   display: none;
   position: fixed;
@@ -167,6 +171,7 @@ tr {
 .wallet_button {
   text-decoration: none;
 }
+
 .popover__title {
   text-align: center;
   font-size: 14px;
@@ -180,6 +185,10 @@ tr {
   padding-left: 14px;
   padding-right: 14px;
   background-color: #e74e4e;
+}
+
+.popover__disabled {
+  pointer-events: none;
 }
 
 .popover__content {
@@ -377,7 +386,6 @@ th {
   text-align: center;
   flex-direction: column;
   background: #33506A;
-
   border : 3px solid #808080;
   border-radius: 30px;
   padding: 24px;
@@ -406,6 +414,10 @@ th {
   flex-direction: row;
 }
 
+.website-format-info {
+  font-size: 0.95 em;
+}
+
 .website-file-input {
   position: absolute;
   z-index: -1;
@@ -426,7 +438,7 @@ th {
   margin: auto auto;
 }
 
-.fileError {
+#fileError {
   display: none;
   font-size: 14px;
   color: red;
@@ -447,6 +459,7 @@ th {
   background-color: #501313;
   border: none;
   display: none;
+  margin-top: 32px;
 }
 
 #website-upload-refuse:hover {
@@ -454,7 +467,7 @@ th {
   transform: scale(1);
 }
 
-#website-info-display {
+.website-info-display {
   display: flex;
   font-size: 11px;
   margin-top: -5px;
@@ -495,6 +508,7 @@ th {
   overflow: hidden;
   display: block;
   text-overflow: ellipsis;
+  width: 150px;
 }
 
 .website-dns {
@@ -506,4 +520,6 @@ th {
   border: none;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 400px;
+  height: 36px;
 }

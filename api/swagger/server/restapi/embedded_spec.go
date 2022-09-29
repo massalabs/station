@@ -838,29 +838,6 @@ func init() {
         }
       }
     },
-    "UploadState": {
-      "description": "Upload state",
-      "type": "object",
-      "properties": {
-        "lastChunk": {
-          "description": "Last uploaded chunk id",
-          "type": "integer"
-        },
-        "status": {
-          "description": "Upload action status",
-          "type": "string",
-          "enum": [
-            "NOT_STARTED",
-            "IN_PROGRESS",
-            "COMPLETED"
-          ]
-        },
-        "totalChunk": {
-          "description": "Total chunk number",
-          "type": "integer"
-        }
-      }
-    },
     "Wallet": {
       "description": "Wallet object (V0).",
       "type": "object",
@@ -1779,29 +1756,6 @@ func init() {
           "type": "integer"
         },
         "slashing": {
-          "type": "integer"
-        }
-      }
-    },
-    "UploadState": {
-      "description": "Upload state",
-      "type": "object",
-      "properties": {
-        "lastChunk": {
-          "description": "Last uploaded chunk id",
-          "type": "integer"
-        },
-        "status": {
-          "description": "Upload action status",
-          "type": "string",
-          "enum": [
-            "NOT_STARTED",
-            "IN_PROGRESS",
-            "COMPLETED"
-          ]
-        },
-        "totalChunk": {
-          "description": "Total chunk number",
           "type": "integer"
         }
       }
