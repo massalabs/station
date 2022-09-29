@@ -81,8 +81,8 @@ func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wall
 			chunk_ID: strconv.Itoa(index),
 		})
 		if err != nil {
-			//nolint:nolintlint,ireturn,funlen
-			return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[index], chunk_ID: strconv.Itoa(index)}, err)
+			return "",
+				fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[index], chunk_ID: strconv.Itoa(index)}, err)
 		}
 
 		opID, err = onchain.CallFunctionUnwaited(client, *wallet, addr, "appendBytesToWebsite", param)
