@@ -1,146 +1,143 @@
 # Installation
 
-Currently, Thyra can be installed using prebuilt binaries. We might support other installation process later.
+## Introduction
+This document will guide you through the installation process of the latest tagged version of Thyra.
+
+Prerequisites: Be comfortable with your terminal and have a recent version of MacOS, Windows or Linux.
+
+Troubleshooting: If you have trouble following this procedure, feel free to [open a question](https://github.com/massalabs/thyra/issues/new) describing your problem. 
+
+## Step by step instructions
+
+The installation will be done in two steps:
+- Thyra installation : obtain the Thyra binary corresponding to your operating system (OS), rename it and make it executable.
+- DNS configuration : install and configure your DNS to resolve the massa top level domain (*.massa) where Thyra runs.
+
+Now, let's move on to your OS section:
+- [Linux](#linux)
+- [Windows](#windows)
+- [MacOS](#macos)
+
 
 ### MacOS
 
-1. Download the MacOS binary corresponding to your system in the *asset* section of the [latest Release](https://github.com/massalabs/thyra/releases/latest).
+#### Thyra installation
 
-Note: if you are using an Intel CPU, you need to download the `amd64` version, if you have an Apple Silicon CPU (M1, M1 Pro, M2...) you need to download the `arm64` version.
+Let's start by downloading the version of Thyra corresponding to your system:
+* If you have an Intel CPU (amd64), you can download your it [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_amd64).
+* If you have an Intel Apple Silicon CPU M1, M1 Pro, M2... (arm64), you can download your it [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_arm64).
 
-2. Install `dnsmasq` using `Homebrew`. If `Homebrew` isn't installed on your computer, install it using the instructions available [here](https://brew.sh).
-* Open a terminal and run the following command:
+Next, let's rename and make the downloaded binary executable by running the following command in your terminal:
+
+```sh
+mv thyra-server* thyra-server && chmod +x ./thyra-server
+```
+
+Note: These commands should be executed directly from the directory where Thyra was downloaded.
+
+Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
+
+Note: If your DNS is already configured to handle the massa TLD, you're free to go. Otherwise, please follow the instructions in the next section.
+
+#### DNS installation
+
+Warning: If you already have a DNS service running that is not dnsmasq, you must configure it to redirect .massa to 127.0.0.1 (localhost).
+
+Prerequisite: Have `homebrew` already installed on your system. If not, you can follow the installation instructions [here]https://brew.sh).
+
+Let's start by installing `dnsmasq`. This step can be safely skipped if it is already installed on your system.
 ```sh
 brew install dnsmasq
 ```
 
-
-From there, paste below cmd on your terminal.
-
-
-3. Create `dnsmasq` config for `*.massa`
+Next, let's configure it to redirect .massa request to locahost:
 
 ```sh
 echo 'address=/.massa/127.0.0.1' >> $(brew --prefix)/etc/dnsmasq.d/massa.conf
-```
-
-4. Add your nameserver to resolvers
-
-```sh
 sudo mkdir -p /etc/resolver
-sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/massa'
-```
+sudo bash -c 'echo "nameserver 127.0.0.1" >> /etc/resolver/massa'
 
-5. Restart `dnsmasq`
-
-```sh
+echo "Now we need you to type in your password to start the dnsmasq service."
 sudo brew services start dnsmasq
 ```
 
-6. Get in the directory you downloaded Thyra and run the following command:
+Congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
+If you want to get down to business, you can start your [Massalian journey](http://my.massa) right away!
 
-For a Mac with an Intel CPU:
-```sh
-chmod +x ./thyra-server_darwin_amd64
-```
-
-And for a Mac with an Apple Silicon CPU:
-```sh
-chmod +x ./thyra-server_darwin_arm64
-```
-
-7. Start Thyra using the binary you downloaded in step 1
-
-For a Mac with an Intel CPU, it should be:
-```sh
-./thyra-server_darwin_amd64
-```
-
-And for a Mac with an Apple Silicon CPU, it should be:
-```sh
-./thyra-server_darwin_arm64
-```
-
-You now should be able to access Thyra using your web browser at `http://my.massa/thyra/wallet/index.html`.
-In case of error, feel free to [open an issue](https://github.com/massalabs/thyra/issues/new) describing your problem. 
 
 ### Linux
 
-#### Disclaimer
-For now, this installation process has been tested on Ubuntu 22.04 and might not work on other distribution. Feel free to [open an issue](https://github.com/massalabs/thyra/issues/new) describing your problem if you face any.
+#### Thyra installation
 
-#### Ubuntu 
+Let's start by downloading the version of Thyra corresponding to your system [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_linux_amd64).
 
-1. Download the Linux binary from the asset section of the [latest Release](https://github.com/massalabs/thyra/releases/latest).
-
-2. Replace the used DNS by `NetworkManager` to use `dnsmasq`
+Next, let's rename and make the downloaded binary executable by running the following command in your terminal:
 
 ```sh
-sudo sed -i "s/keyfile/keyfile\ndns=dnsmasq/g" "/etc/NetworkManager/NetworkManager.conf"
+mv thyra-server* thyra-server && chmod +x ./thyra-server
 ```
 
-3. Make sure `dnsmasq` configuration directory exist
+Note: These commands should be executed directly from the directory where Thyra was downloaded.
+
+Congratulation, your version of Thyra is now installed on your system and can be run by executing `./thyra-server` in your terminal.
+
+Note: If your DNS is already configured to handle the massa TLD, you're free to go. Otherwise, please follow the instructions in the next section.
+
+#### DNS installation
+
+Warning: If you already have a DNS service running that is not dnsmasq, you must configure it to redirect .massa to 127.0.0.1 (localhost).
+
+##### dnsmasq (default)
+
+Note: If you have `NetworkManager` running, you must change its configuration to use `dnsmasq` as your local DNS. You can do this by running the following command:
 
 ```sh
-sudo mkdir -p "/etc/NetworkManager/dnsmasq.d/"
+sudo cp /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf_backup_thyra_install && sudo sed -i "s/keyfile/keyfile\ndns=dnsmasq/g" /etc/NetworkManager/NetworkManager.conf
 ```
 
-4. Create `dnsmasq` config for `*.massa`
+Note: your `/etc/NetworkManager/NetworkManager.conf` file was copied to `/etc/NetworkManager/NetworkManager.conf_backup_thyra_install` if needed.
+
+Then we must configure and restart the dnsmasq service:
 
 ```sh
-echo "address=/.massa/127.0.0.1" | sudo tee /etc/NetworkManager/dnsmasq.d/massa.conf > /dev/null
-```
-
-5. Update `/etc/resolv.conf` simlink to use `NetworkManager`
-
-```sh
-sudo rm "/etc/resolv.conf"
-sudo ln -s "/var/run/NetworkManager/resolv.conf" "/etc/resolv.conf"
-```
-
-6. Restart NetworkManager
-
-```sh
+sudo mkdir -p /etc/NetworkManager/dnsmasq.d/
+echo "address=/.massa/127.0.0.1" >> /etc/NetworkManager/dnsmasq.d/massa.conf
+sudo mv /etc/resolv.conf /etc/resolv.conf_backup_thyra_install && sudo ln -s /var/run/NetworkManager/resolv.conf /etc/resolv.conf
 sudo systemctl restart NetworkManager
 ```
 
-7. Get in the directory you downloaded Thyra and run the following command:
+Note: your `/etc/resolv.conf` file was copied to `/etc/resolv.conf_backup_thyra_install` if needed.
 
-```sh
-chmod +x ./thyra-server_linux_amd64
-```
-
-8. start Thyra using the binary you downloaded in step 1
-
-```sh
-./thyra-server_linux_amd64
-```
-
-If you get the following error: `listen tcp :80: bind: permission denied`, you might need to run the previous command as `sudo` or change the http port using the `-http-port` and https port using the `-https-port` arguments.
-
-You now should be able to access Thyra using your web browser at `http://my.massa/thyra/wallet/index.html`.
-In case of error, feel free to [open an issue](https://github.com/massalabs/thyra/issues/new) describing your problem. 
+Congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
+If you want to get down to business, you can start your [Massalian journey](http://my.massa) right away!
 
 ### Windows
 
-1. Download the Windows binary from the asset section of the [latest Release](https://github.com/massalabs/thyra/releases/latest).
+#### Thyra installation
 
-2. [Install Acrylic](https://mayakron.altervista.org/support/acrylic/Home.htm)
+Let's start by downloading the version of Thyra corresponding to your system [here](https://github.com/massalabs/thyra/releases/download/v0.0.2/thyra-server_windows_amd64).
 
-3. [Configure Acrylic DNS Proxy](https://mayakron.altervista.org/support/acrylic/Windows10Configuration.htm)
+Next, you must rename it to thyra-server.
 
-4. Open Acrylic config file: Open Acrylic DNS Proxy UI > File > Open Acrylic Hosts
+Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server`.
 
-5. Add `*.massa` top level domain to `AcrylicHosts.txt`: 
+Note: If your DNS is already configured to handle the massa TLD, you're free to go. Otherwise, please follow the instructions in the next section.
+
+#### DNS installation
+
+Warning: If you already have a DNS service running that is not dnsmasq, you must configure it to redirect .massa to 127.0.0.1 (localhost).
+
+Prerequisite: Have `Acrylic` already installed on your system. If not, you can follow the installation instructions [here](https://mayakron.altervista.org/support/acrylic/Home.htm) and the OS configuration [here](https://mayakron.altervista.org/support/acrylic/Windows10Configuration.htm).
+
+Let's start by configuring acrylic to redirect *.massa to locahost:
+1. Open Acrylic config file: Open Acrylic DNS Proxy UI > File > Open Acrylic Hosts
+
+2. Add `*.massa` top level domain to `AcrylicHosts.txt`: 
 ```txt
 127.0.0.1   *.massa
 ```
-Make sure to save using CTRL+S.
+3. Save the file and reload Acrylic: Open Acrylic DNS Proxy UI > Actions > Restart Acrylic Service
 
-6. Restart Acrylic: Open Acrylic DNS Proxy UI > Actions > Restart Acrylic Service
-
-7. Start Thyra by executing the binary you downloaded during step 1
-
-You now should be able to access Thyra using your web browser at `http://my.massa/thyra/wallet/index.html`.
-In case of error, feel free to [open an issue](https://github.com/massalabs/thyra/issues/new) describing your problem. 
+Congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
+If you want to get down to business, you can start your [Massalian journey](http://my.massa) right away!
 
