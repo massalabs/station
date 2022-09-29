@@ -77,7 +77,7 @@ func Call(client *node.Client,
 		return "", fmt.Errorf("calling NextSlot: %w", err)
 	}
 
-	expiry += exp + 10
+	expiry += exp
 
 	msg := message(expiry, fee, operation)
 
