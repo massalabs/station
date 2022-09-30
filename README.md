@@ -65,13 +65,6 @@ To use this option with a constant, you have to execute :
 To use this option with a custom IP address, you have to execute :
 `thyra-server node-server=192.168.X.X`
 
-### ... access a website stored on the Massa blockchain ?
-
-Prerequisite: Having a running thyra-server application on your machine.
-
-To access the website you need to go to http://localhost:8080/website?url=<address of the website>.
-For instance, to access flappy text stored on the blockchain, click the following link: http://localhost:8080/website?url=A1aMywGBgBywiL6WcbKR4ugxoBtdP9P3waBVi5e713uvj7F1DJL.
-
 ### ... secure HTTPS configuration ?
 
 Using HTTPS configuration without specifying your own certificate and key triggers a warning: `insecure HTTPS configuration`.
