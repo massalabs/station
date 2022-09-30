@@ -33,11 +33,11 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 
 type UploadWebsiteParam struct {
 	Data    string `json:"data"`
-	chunkID string `json:"chunkID"` //nolint:all
+	chunkID string `json:"chunk_ID"` //nolint:all
 }
 
 type websiteInitialisationParams struct {
-	totalChunks string `json:"totalChunks"` //nolint:all
+	totalChunks string `json:"total_chunks"` //nolint:all
 }
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, error) {

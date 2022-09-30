@@ -28,7 +28,7 @@ func readZipFile(z *zip.File) ([]byte, error) {
 
 //nolint:nolintlint,ireturn,funlen
 func Get(client *node.Client, address string, key string) (map[string][]byte, error) {
-	chunkNumberKey := "totalChunks"
+	chunkNumberKey := "total_chunks"
 
 	keyNumber, err := node.DatastoreEntry(client, address, chunkNumberKey)
 	if err != nil {
