@@ -1,14 +1,14 @@
-const CREATED_AT = "CreatedAt"
-const ADDRESS = "Address"
-const NAME = "Name"
-const UPDATED_AT = "UpdatedAt"
+const CREATED_AT = "created_at"
+const ADDRESS = "address"
+const NAME = "name"
+const UPDATED_AT = "updated_at"
 
 fetchWebsites()
 
 function fetchWebsites() {
-	axios.get("all/domains")
+	axios.get("/all/domains")
 	.then((resp => {
-		handleResp(resp)
+		handleResp(resp.data)
 	}))
 	.catch(err => {
 		console.error(err)
