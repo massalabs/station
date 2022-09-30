@@ -193,13 +193,25 @@ $("#file-select-button").click(function () {
 	$(".upload input").click();
 });
 
-// change button text with file name
 $(".upload input").on("change", function () {
 	let str = $(".upload input").val();
 
-	let n = str.lastIndexOf("\\");
+	let n = str.lastIndexOf(".");
 
 	let result = str.substring(n + 1);
+
+	if (result != "zip" && $(".upload input").val() != "") {
+		uploadable = false;
+
+		document.getElementsByClassName("fileTypeError")[0].style.display = "flex";
+		document.getElementById("website-upload").style.display = "none";
+		document.getElementById("website-upload-refuse").style.display = "flex";
+	} else {
+		uploadable = true;
+		document.getElementsByClassName("fileTypeError")[0].style.display = "none";
+		document.getElementById("website-upload").style.display = "flex";
+		document.getElementById("website-upload-refuse").style.display = "none";
+	}
 
 	$("#file-select-button").html(result);
 });
