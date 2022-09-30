@@ -74,7 +74,7 @@ sudo brew services start dnsmasq
 ```
 
 Congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](http://my.massa) right away!
+If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
 
 ### Linux
@@ -120,7 +120,7 @@ sudo systemctl restart NetworkManager
 > **_NOTE:_** your `/etc/resolv.conf` file has been backed up to `/etc/resolv.conf_backup_thyra_install`.
 
 Congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](http://my.massa) right away!
+If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
 ### Windows
 
@@ -150,5 +150,5 @@ Let's start by configuring acrylic to redirect *.massa to locahost:
 3. Save the file and reload Acrylic: Open Acrylic DNS Proxy UI > Actions > Restart Acrylic Service
 
 Congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](http://my.massa) right away!
+If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
