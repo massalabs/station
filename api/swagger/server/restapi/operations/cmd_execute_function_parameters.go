@@ -6,6 +6,7 @@ package operations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"io"
 	"net/http"
 
@@ -63,7 +64,7 @@ func (o *CmdExecuteFunctionParams) BindRequest(r *http.Request, route *middlewar
 				res = append(res, err)
 			}
 
-			ctx := validate.WithOperationRequest(r.Context())
+			ctx := validate.WithOperationRequest(context.Background())
 			if err := body.ContextValidate(ctx, route.Formats); err != nil {
 				res = append(res, err)
 			}
