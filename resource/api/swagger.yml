@@ -51,6 +51,26 @@ paths:
       responses:
         "200":
           description: Page found
+  /thyra/registry/{resource}:
+    get:
+      operationId: thyraRegistry
+      produces:
+        - application/json
+        - application/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          type: string
+          default: index.html
+          required: true
+          description: Website resource.
+      responses:
+        "200":
+          description: Page found
   /thyra/events/{str}/{caller}:
     get:
       operationId: thyraEventsGetter
@@ -530,6 +550,26 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /all/domains:
+    get:
+      operationId: allDomainsGetter
+      produces:
+          - application/json
+      responses:
+        '200':
+            description: All domains returned.
+            schema:
+                type: array
+                items:
+                    $ref: '#/definitions/Registry'
+        '400':
+            description: Bad request.
+            schema:
+                $ref: '#/definitions/Error'
+        '500':
+            description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+            schema:
+                $ref: '#/definitions/Error'
 definitions:
   Error:
     type: object
@@ -607,3 +647,19 @@ definitions:
       address:
         description: Event caller.
         type: string
+  Registry:
+    type: object
+    description: Registry object (V0).
+    properties:
+      name:
+            description: Website's name.
+            type: string
+      address:
+            description: Website's address.
+            type: string
+      created_at:
+            description: Creation date of the website.
+            type: string
+      updated_at:
+            description: Update date of the website.
+            type: string

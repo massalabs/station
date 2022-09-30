@@ -55,6 +55,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		}),
 		TxtProducer: runtime.TextProducer(),
 
+		AllDomainsGetterHandler: AllDomainsGetterHandlerFunc(func(params AllDomainsGetterParams) middleware.Responder {
+			return middleware.NotImplemented("operation AllDomainsGetter has not yet been implemented")
+		}),
 		BrowseHandler: BrowseHandlerFunc(func(params BrowseParams) middleware.Responder {
 			return middleware.NotImplemented("operation Browse has not yet been implemented")
 		}),
@@ -84,6 +87,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		}),
 		ThyraEventsGetterHandler: ThyraEventsGetterHandlerFunc(func(params ThyraEventsGetterParams) middleware.Responder {
 			return middleware.NotImplemented("operation ThyraEventsGetter has not yet been implemented")
+		}),
+		ThyraRegistryHandler: ThyraRegistryHandlerFunc(func(params ThyraRegistryParams) middleware.Responder {
+			return middleware.NotImplemented("operation ThyraRegistry has not yet been implemented")
 		}),
 		ThyraWalletHandler: ThyraWalletHandlerFunc(func(params ThyraWalletParams) middleware.Responder {
 			return middleware.NotImplemented("operation ThyraWallet has not yet been implemented")
@@ -151,6 +157,8 @@ type ThyraServerAPI struct {
 	//   - application/javascript
 	TxtProducer runtime.Producer
 
+	// AllDomainsGetterHandler sets the operation handler for the all domains getter operation
+	AllDomainsGetterHandler AllDomainsGetterHandler
 	// BrowseHandler sets the operation handler for the browse operation
 	BrowseHandler BrowseHandler
 	// CmdExecuteFunctionHandler sets the operation handler for the cmd execute function operation
@@ -171,6 +179,8 @@ type ThyraServerAPI struct {
 	MyDomainsGetterHandler MyDomainsGetterHandler
 	// ThyraEventsGetterHandler sets the operation handler for the thyra events getter operation
 	ThyraEventsGetterHandler ThyraEventsGetterHandler
+	// ThyraRegistryHandler sets the operation handler for the thyra registry operation
+	ThyraRegistryHandler ThyraRegistryHandler
 	// ThyraWalletHandler sets the operation handler for the thyra wallet operation
 	ThyraWalletHandler ThyraWalletHandler
 	// ThyraWebsiteCreatorHandler sets the operation handler for the thyra website creator operation
@@ -274,6 +284,9 @@ func (o *ThyraServerAPI) Validate() error {
 		unregistered = append(unregistered, "TxtProducer")
 	}
 
+	if o.AllDomainsGetterHandler == nil {
+		unregistered = append(unregistered, "AllDomainsGetterHandler")
+	}
 	if o.BrowseHandler == nil {
 		unregistered = append(unregistered, "BrowseHandler")
 	}
@@ -303,6 +316,9 @@ func (o *ThyraServerAPI) Validate() error {
 	}
 	if o.ThyraEventsGetterHandler == nil {
 		unregistered = append(unregistered, "ThyraEventsGetterHandler")
+	}
+	if o.ThyraRegistryHandler == nil {
+		unregistered = append(unregistered, "ThyraRegistryHandler")
 	}
 	if o.ThyraWalletHandler == nil {
 		unregistered = append(unregistered, "ThyraWalletHandler")
@@ -419,6 +435,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/all/domains"] = NewAllDomainsGetter(o.context, o.AllDomainsGetterHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/browse/{address}/{resource}"] = NewBrowse(o.context, o.BrowseHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
@@ -456,6 +476,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/thyra/events/{str}/{caller}"] = NewThyraEventsGetter(o.context, o.ThyraEventsGetterHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/thyra/registry/{resource}"] = NewThyraRegistry(o.context, o.ThyraRegistryHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
