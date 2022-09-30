@@ -288,9 +288,6 @@ function postUpload(bodyFormData, password) {
       Authorization: password,
     },
   })
-    .then((operation) => {
-      successMessage("Website uploaded to address : " + operation.data.address);
-    })
 
     .catch((e) => {
       errorAlert(getErrorMessage(e.response.data.code));
@@ -308,10 +305,6 @@ function putUpload(bodyFormData, password) {
       Authorization: password,
     },
   })
-    .then((operation) => {
-      successMessage("Website uploaded to address : " + operation.data.address);
-      getWebsiteDeployerSC();
-    })
     .catch((e) => {
       errorAlert(getErrorMessage(e.response.data.code));
       resetStepper();
@@ -388,7 +381,7 @@ function step1(dnsName, totalChunk) {
 // Step 2, wait for DNS setting
 function step2(dnsName, contractAddress, totalChunk) {
   eventManager.subscribe(
-    `Resolver set to record key :record${dnsName}at address `,
+    `Resolver set to record key : record${dnsName} at address `,
     getWallet(getDefaultWallet()).address,
     (_) => {
       step3(contractAddress, totalChunk);
@@ -406,23 +399,8 @@ function step3(contractAddress, totalChunk) {
   let actualChunk = 1;
 
   for (let i = 0; i < totalChunk; i++) {
-    if (i === 0) {
-      eventManager.subscribe(
-        `Website initialized on ${contractAddress}`,
-        getWallet(getDefaultWallet()).address,
-        (_) => {
-          actualChunk++;
-          $(".title")
-            .eq(2)
-            .text("Chunk upload " + actualChunk + " on " + totalChunk);
-          $(".title").eq(2).addClass("loading-dots");
 
-          if (totalChunk === 1) {
-            resetStepper();
-          }
-        }
-      );
-    } else if (i == totalChunk - 1) {
+    if (i == totalChunk - 1) {
       eventManager.subscribe(
         `Chunk ${i} of Website deployed to ${contractAddress}`,
         getWallet(getDefaultWallet()).address,
@@ -430,19 +408,20 @@ function step3(contractAddress, totalChunk) {
           resetStepper();
         }
       );
-    } else {
-      eventManager.subscribe(
-        `Chunk ${i} of Website deployed to ${contractAddress}`,
-        getWallet(getDefaultWallet()).address,
-        (_) => {
-          actualChunk++;
-          $(".title")
-            .eq(2)
-            .text("Chunk upload " + actualChunk + " on " + totalChunk);
-          $(".title").eq(2).addClass("loading-dots");
-        }
-      );
-    }
+    } 
+    else {
+        eventManager.subscribe(
+          `Chunk ${i} of Website deployed to ${contractAddress}`,
+          getWallet(getDefaultWallet()).address,
+          (_) => {
+            actualChunk++;
+            $(".title")
+              .eq(2)
+              .text("Chunk upload " + actualChunk + " on " + totalChunk);
+            $(".title").eq(2).addClass("loading-dots");
+          }
+        );
+      }
   }
 
   $(".circle").eq(1).empty();

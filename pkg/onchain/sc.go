@@ -15,6 +15,8 @@ import (
 
 const maxWaitingTimeInSeconds = 45
 
+const evenHeartbeat = 2
+
 func CallFunction(client *node.Client, wallet wallet.Wallet,
 	addr []byte, function string, parameter []byte,
 ) (string, error) {
@@ -33,12 +35,12 @@ func CallFunction(client *node.Client, wallet wallet.Wallet,
 
 	counter := 0
 
-	ticker := time.NewTicker(time.Minute)
+	ticker := time.NewTicker(time.Second * evenHeartbeat)
 
 	for ; true; <-ticker.C {
 		counter++
 
-		if counter > maxWaitingTimeInSeconds {
+		if counter > maxWaitingTimeInSeconds*evenHeartbeat {
 			break
 		}
 
@@ -65,7 +67,7 @@ func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet,
 
 	operationID, err := sendOperation.Call(
 		client,
-		sendOperation.DefaultSlotsDuration, sendOperation.NoFee,
+		sendOperation.SlotDurationBatch, sendOperation.NoFee,
 		callSC,
 		wallet.KeyPairs[0].PublicKey, wallet.KeyPairs[0].PrivateKey)
 	if err != nil {
@@ -92,12 +94,12 @@ func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (strin
 
 	counter := 0
 
-	ticker := time.NewTicker(time.Minute)
+	ticker := time.NewTicker(time.Second * evenHeartbeat)
 
 	for ; true; <-ticker.C {
 		counter++
 
-		if counter > maxWaitingTimeInSeconds {
+		if counter > maxWaitingTimeInSeconds*evenHeartbeat {
 			break
 		}
 

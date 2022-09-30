@@ -31,68 +31,72 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	return scAddress, nil
 }
 
-type UploadWebsiteParam struct {
+type InitialisationParams struct {
+	TotalChunks string `json:"total_chunks"`
+}
+type AppendParams struct {
 	Data    string `json:"data"`
-	chunkID string `json:"chunk_ID"` //nolint:all
+	ChunkID string `json:"chunk_id"`
 }
 
-type websiteInitialisationParams struct {
-	totalChunks string `json:"total_chunks"` //nolint:all
-}
-
-func Upload(atAddress string, content string, wallet *wallet.Wallet) (string, error) {
+func Upload(atAddress string, content string, wallet *wallet.Wallet) (*[]string, error) {
 	const blockLength = 260000
 
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
 	if err != nil {
-		return "", fmt.Errorf("decoding address '%s': %w", atAddress[1:], err)
+		return nil, fmt.Errorf("decoding address '%s': %w", atAddress[1:], err)
 	}
 
 	blocks := chunk(content, blockLength)
 
-	_, err = uploadHeavy(client, addr, blocks, wallet)
+	operations, err := upload(client, addr, blocks, wallet)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return "Website deployed", nil
+	return operations, nil
 }
 
-func uploadHeavy(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) (string, error) {
-	paramInit, err := json.Marshal(websiteInitialisationParams{ //nolint:staticcheck
-		totalChunks: strconv.Itoa(len(chunks)),
+func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) (*[]string, error) {
+	operations := make([]string, len(chunks)+1)
+
+	paramInit, err := json.Marshal(InitialisationParams{
+		TotalChunks: strconv.Itoa(len(chunks)),
 	})
 	if err != nil {
-		return "", fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[0], chunkID: "0"}, err)
+		return nil, fmt.Errorf("marshaling '%s': %w", InitialisationParams{TotalChunks: strconv.Itoa(len(chunks))}, err)
 	}
 
-	_, err = onchain.CallFunction(client, *wallet, addr, "initializeWebsite", paramInit)
+	opID, err := onchain.CallFunctionUnwaited(client, *wallet, addr, "initializeWebsite", paramInit)
+
 	if err != nil {
-		return "", fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
+		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 	}
 
-	var opID string
+	operations[0] = opID
 
 	for index := 0; index < len(chunks); index++ {
-		param, err := json.Marshal(UploadWebsiteParam{
+		param, err := json.Marshal(AppendParams{
 			Data:    chunks[index],
-			chunkID: strconv.Itoa(index),
+			ChunkID: strconv.Itoa(index),
 		})
 		if err != nil {
-			return "",
-				fmt.Errorf("marshaling '%s': %w", UploadWebsiteParam{Data: chunks[index], chunkID: strconv.Itoa(index)}, err)
+			return nil,
+				fmt.Errorf("marshaling '%s': %w", AppendParams{Data: chunks[index], ChunkID: strconv.Itoa(index)}, err)
 		}
 
 		opID, err = onchain.CallFunctionUnwaited(client, *wallet, addr, "appendBytesToWebsite", param)
 
 		if err != nil {
-			return "", fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
+			return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 		}
+
+		operations[index+1] = opID
 	}
 
-	return opID, nil
+	return &operations, nil
 }
 
 func chunk(data string, chunkSize int) []string {
