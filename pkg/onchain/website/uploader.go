@@ -70,7 +70,6 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 	}
 
 	opID, err := onchain.CallFunctionUnwaited(client, *wallet, addr, "initializeWebsite", paramInit)
-
 	if err != nil {
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 	}
