@@ -408,7 +408,7 @@ function step3(contractAddress, totalChunk) {
   for (let i = 0; i < totalChunk; i++) {
     if (i === 0) {
       eventManager.subscribe(
-        `First chunk deployed to ${contractAddress}`,
+        `Website initialized on ${contractAddress}`,
         getWallet(getDefaultWallet()).address,
         (_) => {
           actualChunk++;
@@ -424,7 +424,7 @@ function step3(contractAddress, totalChunk) {
       );
     } else if (i == totalChunk - 1) {
       eventManager.subscribe(
-        `Append chunk deployed to ${contractAddress} : ${totalChunk - 1}`,
+        `Chunk ${i} of Website deployed to ${contractAddress}`,
         getWallet(getDefaultWallet()).address,
         (_) => {
           resetStepper();
@@ -432,7 +432,7 @@ function step3(contractAddress, totalChunk) {
       );
     } else {
       eventManager.subscribe(
-        `Append chunk deployed to ${contractAddress} : ${i}`,
+        `Chunk ${i} of Website deployed to ${contractAddress}`,
         getWallet(getDefaultWallet()).address,
         (_) => {
           actualChunk++;
