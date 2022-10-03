@@ -251,11 +251,6 @@ $(".website-dns input").on("focus", function () {
   document.getElementById("website-info-display").style.visibility = "hidden";
 });
 
-//remove label of input file on focus
-$(".upload input").on("focus", function () {
-  document.getElementById("website-size-display").style.visibility = "hidden";
-});
-
 //check if input string is valid
 $(".website-dns input").on("change", function () {
   let str = $(".website-dns input").val();
