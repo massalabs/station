@@ -78,7 +78,7 @@ func main() {
 
 	var walletStorage sync.Map
 
-	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunction(&walletStorage)
+	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunction()
 
 	localAPI.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
 	localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)

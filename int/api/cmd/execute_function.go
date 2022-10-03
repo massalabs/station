@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"sync"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
@@ -13,13 +11,11 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-func NewExecuteFunction(walletStorage *sync.Map) *FunctionExecuter {
-	return &FunctionExecuter{walletStorage: walletStorage}
+func NewExecuteFunction() *FunctionExecuter {
+	return &FunctionExecuter{}
 }
 
-type FunctionExecuter struct {
-	walletStorage *sync.Map
-}
+type FunctionExecuter struct{}
 
 //nolint:nolintlint,ireturn
 func (f *FunctionExecuter) Handle(params operations.CmdExecuteFunctionParams) middleware.Responder {
@@ -30,8 +26,8 @@ func (f *FunctionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 
 	addr = addr[1:]
 
-	value, exists := f.walletStorage.Load(*params.Body.Name)
-	if !exists {
+	wallet, err := wallet.Load(*params.Body.Name)
+	if err != nil {
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
 			&models.Error{
 				Code:    errorCodeUnknownKeyID,
@@ -39,13 +35,10 @@ func (f *FunctionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 			})
 	}
 
-	storedWallet, exists := value.(*wallet.Wallet)
-	if !exists {
+	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
+	if err != nil {
 		panic("stored value is not a wallet")
 	}
-
-	pubKey := storedWallet.KeyPairs[0].PublicKey
-	privKey := storedWallet.KeyPairs[0].PrivateKey
 
 	callSC := callSC.New(
 		addr,
@@ -63,7 +56,7 @@ func (f *FunctionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 		sendOperation.DefaultSlotsDuration,
 		uint64(params.Body.Fee),
 		callSC,
-		pubKey, privKey)
+		wallet.KeyPairs[0].PublicKey, wallet.KeyPairs[0].PrivateKey)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
 			&models.Error{Code: errorCodeSendOperation, Message: "Error: " + err.Error()})
