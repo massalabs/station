@@ -151,7 +151,7 @@ const HTML = `<!DOCTYPE html>
 						</div>
 					</div>
 					<div class="align-right">
-						<p id="website-info-display">Use alphanumerical characters and lowercase</p>
+						<p id="website-info-display" class="website-info-display">Use alphanumerical characters and lowercase</p>
 					</div>
 					<div class="align-right">
 						<h4 class="dns-error">
