@@ -193,6 +193,17 @@ $("#file-select-button").click(function () {
 	$(".upload input").click();
 });
 
+// change button text with file name
+$(".upload input").on("change", function () {
+  let str = $(".upload input").val();
+
+  let n = str.lastIndexOf("\\");
+
+  let result = str.substring(n + 1);
+
+  $("#file-select-button").html(result);
+});
+
 $(".upload input").on("change", function () {
 	let str = $(".upload input").val();
 
@@ -272,43 +283,36 @@ function uploadProcess(file, dnsName, isFullProcess, bodyFormData, callback) {
 }
 
 function postUpload(bodyFormData, password) {
-	axios({
-		url: `/websiteCreator/upload`,
-		method: "POST",
-		data: bodyFormData,
-		headers: {
-			"Content-Type": "multipart/form-data",
-			Authorization: password,
-		},
-	})
-		.then((operation) => {
-			successMessage("Website uploaded to address : " + operation.data.address);
-		})
+  axios({
+    url: `/websiteCreator/upload`,
+    method: "POST",
+    data: bodyFormData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: password,
+    },
+  })
 
-		.catch((e) => {
-			errorAlert(getErrorMessage(e.response.data.code));
-			resetStepper();
-		});
+    .catch((e) => {
+      errorAlert(getErrorMessage(e.response.data.code));
+      resetStepper();
+    });
 }
 
 function putUpload(bodyFormData, password) {
-	axios({
-		url: `/websiteCreator/prepare`,
-		method: "put",
-		data: bodyFormData,
-		headers: {
-			"Content-Type": "multipart/form-data",
-			Authorization: password,
-		},
-	})
-		.then((operation) => {
-			successMessage("Website uploaded to address : " + operation.data.address);
-			getWebsiteDeployerSC();
-		})
-		.catch((e) => {
-			errorAlert(getErrorMessage(e.response.data.code));
-			resetStepper();
-		});
+  axios({
+    url: `/websiteCreator/prepare`,
+    method: "put",
+    data: bodyFormData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: password,
+    },
+  })
+    .catch((e) => {
+      errorAlert(getErrorMessage(e.response.data.code));
+      resetStepper();
+    });
 }
 
 // Full deployment process
@@ -381,69 +385,49 @@ function step1(dnsName, totalChunk) {
 
 // Step 2, wait for DNS setting
 function step2(dnsName, contractAddress, totalChunk) {
-	eventManager.subscribe(
-		`Resolver set to record key : record${dnsName} at address `,
-		getWallet(getDefaultWallet()).address,
-		(_) => {
-			step3(contractAddress, totalChunk);
-		}
-	);
+  eventManager.subscribe(
+    `Resolver set to record key : record${dnsName} at address `,
+    getWallet(getDefaultWallet()).address,
+    (_) => {
+      step3(contractAddress, totalChunk);
+    }
+  );
 
-	$(".circle").eq(0).empty();
-	$(".circle").eq(0).append('<i class="bi bi-check">');
+  $(".circle").eq(0).empty();
+  $(".circle").eq(0).append('<i class="bi bi-check">');
 
-	$(".title").eq(0).removeClass("loading-dots");
-	$(".title").eq(1).addClass("loading-dots");
+  $(".title").eq(0).removeClass("loading-dots");
+  $(".title").eq(1).addClass("loading-dots");
 }
 // Step 3, Monitor state of chunk uploding
 function step3(contractAddress, totalChunk) {
-	let actualChunk = 1;
+  let actualChunk = 1;
 
-	for (let i = 0; i < totalChunk; i++) {
-		if (i === 0) {
-			eventManager.subscribe(
-				`First chunk deployed to ${contractAddress}`,
-				getWallet(getDefaultWallet()).address,
-				(_) => {
-					actualChunk++;
-					$(".title")
-						.eq(2)
-						.text("Chunk upload " + actualChunk + " on " + totalChunk);
-					$(".title").eq(2).addClass("loading-dots");
+  for (let i = 0; i < totalChunk; i++) {
 
-					if (totalChunk === 1) {
-						resetStepper();
-					}
-				}
-			);
-		} else if (i == totalChunk - 1) {
-			eventManager.subscribe(
-				`Append chunk deployed to ${contractAddress} : ${totalChunk - 1}`,
-				getWallet(getDefaultWallet()).address,
-				(_) => {
-					resetStepper();
-				}
-			);
-		} else {
-			eventManager.subscribe(
-				`Append chunk deployed to ${contractAddress} : ${i}`,
-				getWallet(getDefaultWallet()).address,
-				(_) => {
-					actualChunk++;
-					$(".title")
-						.eq(2)
-						.text("Chunk upload " + actualChunk + " on " + totalChunk);
-					$(".title").eq(2).addClass("loading-dots");
-				}
-			);
-		}
-	}
+        eventManager.subscribe(
+          `Chunk of Website deployed to ${contractAddress}`,
+          getWallet(getDefaultWallet()).address,
+          (_) => {
+            actualChunk++;
+            $(".title")
+              .eq(2)
+              .text("Chunk upload " + actualChunk + " on " + totalChunk);
+            $(".title").eq(2).addClass("loading-dots");
 
-	$(".circle").eq(1).empty();
-	$(".circle").eq(1).append('<i class="bi bi-check">');
+            if(actualChunk - 1 == totalChunk){
+              resetStepper()
+            }
+          }
+        );
+      
+  }
 
-	$(".title").eq(1).removeClass("loading-dots");
-	$(".title").eq(2).addClass("loading-dots");
+  $(".circle").eq(1).empty();
+  $(".circle").eq(1).append('<i class="bi bi-check">');
+
+  $(".title").eq(1).removeClass("loading-dots");
+  $(".title").eq(2).addClass("loading-dots");
 }
 
 function resetStepper() {

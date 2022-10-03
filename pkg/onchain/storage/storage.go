@@ -4,9 +4,9 @@ import (
 	"archive/zip"
 	"bytes"
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/massalabs/thyra/pkg/node"
 )
@@ -26,17 +26,41 @@ func readZipFile(z *zip.File) ([]byte, error) {
 	return content, nil
 }
 
+//nolint:nolintlint,ireturn,funlen
 func Get(client *node.Client, address string, key string) (map[string][]byte, error) {
-	entry, err := node.DatastoreEntry(client, address, key)
+	chunkNumberKey := "total_chunks"
+
+	keyNumber, err := node.DatastoreEntry(client, address, chunkNumberKey)
 	if err != nil {
-		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, key, err)
+		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
 	}
 
-	if len(entry.CandidateValue) == 0 {
-		return nil, errors.New("no data in candidate value key")
+	chunkNumber, err := strconv.Atoi(string(keyNumber.CandidateValue))
+	if err != nil {
+		return nil, fmt.Errorf("error converting String to integer")
 	}
 
-	b64, err := base64.StdEncoding.DecodeString(string(entry.CandidateValue))
+	entries := []node.DatastoreEntriesKeysAsString{}
+
+	for i := 0; i < chunkNumber; i++ {
+		entry := node.DatastoreEntriesKeysAsString{
+			Address: address,
+			Key:     "massa_web_" + strconv.Itoa(i),
+		}
+		entries = append(entries, entry)
+	}
+
+	response, err := node.DatastoreEntries(client, entries)
+	if err != nil {
+		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
+	}
+
+	dataStore := ""
+	for i := 0; i < chunkNumber; i++ {
+		dataStore += string(response[i].CandidateValue)
+	}
+
+	b64, err := base64.StdEncoding.DecodeString(dataStore)
 	if err != nil {
 		return nil, fmt.Errorf("base64 decoding datastore entry '%s' at '%s': %w", address, key, err)
 	}

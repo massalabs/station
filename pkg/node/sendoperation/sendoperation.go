@@ -16,6 +16,8 @@ const DefaultGazLimit = 700000000
 
 const DefaultSlotsDuration = 2
 
+const SlotDurationBatch = 15
+
 const NoGazFee = 0
 
 const NoFee = 0

@@ -15,6 +15,8 @@ import (
 
 const maxWaitingTimeInSeconds = 45
 
+const evenHeartbeat = 2
+
 func CallFunction(client *node.Client, wallet wallet.Wallet,
 	addr []byte, function string, parameter []byte,
 ) (string, error) {
@@ -33,12 +35,12 @@ func CallFunction(client *node.Client, wallet wallet.Wallet,
 
 	counter := 0
 
-	ticker := time.NewTicker(time.Minute)
+	ticker := time.NewTicker(time.Second * evenHeartbeat)
 
 	for ; true; <-ticker.C {
 		counter++
 
-		if counter > maxWaitingTimeInSeconds {
+		if counter > maxWaitingTimeInSeconds*evenHeartbeat {
 			break
 		}
 
@@ -54,6 +56,25 @@ func CallFunction(client *node.Client, wallet wallet.Wallet,
 	}
 
 	return operationID, errors.New("timeout")
+}
+
+func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet,
+	addr []byte, function string, parameter []byte,
+) (string, error) {
+	callSC := callsc.New(addr, function, parameter,
+		sendOperation.NoGazFee, sendOperation.DefaultGazLimit,
+		sendOperation.NoSequentialCoin, sendOperation.NoParallelCoin)
+
+	operationID, err := sendOperation.Call(
+		client,
+		sendOperation.SlotDurationBatch, sendOperation.NoFee,
+		callSC,
+		wallet.KeyPairs[0].PublicKey, wallet.KeyPairs[0].PrivateKey)
+	if err != nil {
+		return "", fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
+	}
+
+	return operationID, nil
 }
 
 func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (string, error) {
@@ -73,12 +94,12 @@ func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (strin
 
 	counter := 0
 
-	ticker := time.NewTicker(time.Minute)
+	ticker := time.NewTicker(time.Second * evenHeartbeat)
 
 	for ; true; <-ticker.C {
 		counter++
 
-		if counter > maxWaitingTimeInSeconds {
+		if counter > maxWaitingTimeInSeconds*evenHeartbeat {
 			break
 		}
 
