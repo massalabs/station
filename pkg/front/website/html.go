@@ -178,6 +178,10 @@ const HTML = `<!DOCTYPE html>
 						</p>
 					</div>
 
+					<div class="align-right">
+						<p class="website-info-display">Zip only max size 1.5Mo</p>
+					</div>
+
 					<button
 						class="primary-button primary-button me-5 small-button"
 						id="website-upload"
