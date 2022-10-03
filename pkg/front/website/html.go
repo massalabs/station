@@ -151,7 +151,7 @@ const HTML = `<!DOCTYPE html>
 						</div>
 					</div>
 					<div class="align-right">
-						<p id="website-info-display">Use alphanumerical characters and lowercase</p>
+						<p id="website-info-display" class="website-info-display">Use alphanumerical characters and lowercase</p>
 					</div>
 					<div class="align-right">
 						<h4 class="dns-error">
@@ -170,6 +170,12 @@ const HTML = `<!DOCTYPE html>
 							File type needs to be .zip only
 						</h4>
 						<h4 id="fileError" class="fileSizeError">Max Zip size needs to be 1.5Mo</h4>
+					</div>
+
+					<div class="align-right">
+						<p>
+							<a href="https://github.com/massalabs/thyra#upload-a-website" target="_blank" class="website-info-display">Format info</a>
+						</p>
 					</div>
 
 					<button
