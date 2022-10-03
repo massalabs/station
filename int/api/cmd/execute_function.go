@@ -21,7 +21,8 @@ type FunctionExecuter struct{}
 func (f *FunctionExecuter) Handle(params operations.CmdExecuteFunctionParams) middleware.Responder {
 	addr, err := base58.CheckDecode((*params.Body.At)[1:])
 	if err != nil {
-		panic(err)
+		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
+			&models.Error{Code: errorCodeUnknownKeyID, Message: "Error: cannot decode Smart contract address : " + err.Error()})
 	}
 
 	addr = addr[1:]
@@ -37,7 +38,8 @@ func (f *FunctionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 
 	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
 	if err != nil {
-		panic("stored value is not a wallet")
+		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
+			&models.Error{Code: errorCodeWalletWrongPassword, Message: "Error: " + err.Error()})
 	}
 
 	callSC := callSC.New(
