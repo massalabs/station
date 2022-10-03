@@ -4,8 +4,8 @@ package main
 //#include <stdint.h>
 //#include <stdlib.h>
 // typedef struct  { void* message; int size; char* error; } FetchWebsiteReturn;
-import "C"
-
+import "C" //nolint:gci,nolintlint
+//nolint:gci,nolintlint
 import (
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/onchain/website"
