@@ -9,6 +9,7 @@ import (
 )
 
 const indexHTML = "index.html"
+
 const basePath = "html/front/"
 
 //go:embed html/front
