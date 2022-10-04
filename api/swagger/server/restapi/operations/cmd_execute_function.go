@@ -35,10 +35,10 @@ func NewCmdExecuteFunction(ctx *middleware.Context, handler CmdExecuteFunctionHa
 	return &CmdExecuteFunction{Context: ctx, Handler: handler}
 }
 
-/* CmdExecuteFunction swagger:route POST /cmd/executeFunction cmdExecuteFunction
+/*
+	CmdExecuteFunction swagger:route POST /cmd/executeFunction cmdExecuteFunction
 
 CmdExecuteFunction cmd execute function API
-
 */
 type CmdExecuteFunction struct {
 	Context *middleware.Context
@@ -91,12 +91,16 @@ type CmdExecuteFunctionBody struct {
 	// Function name to call.
 	// Required: true
 	Name *string `json:"name"`
+
+	// Wallet's short name.
+	// Required: true
+	Nickname *string `json:"nickname"`
 }
 
 func (o *CmdExecuteFunctionBody) UnmarshalJSON(b []byte) error {
 	type CmdExecuteFunctionBodyAlias CmdExecuteFunctionBody
 	var t CmdExecuteFunctionBodyAlias
-	if err := json.Unmarshal([]byte("{\"args\":\"\",\"at\":\"A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh\",\"coins\":{\"parallel\":0,\"sequential\":0},\"expiry\":3,\"fee\":0,\"gaz\":{\"limit\":700000000,\"price\":0},\"keyId\":\"default\",\"name\":\"test\"}"), &t); err != nil {
+	if err := json.Unmarshal([]byte("{\"args\":\"\",\"at\":\"A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh\",\"coins\":{\"parallel\":0,\"sequential\":0},\"expiry\":3,\"fee\":0,\"gaz\":{\"limit\":700000000,\"price\":0},\"keyId\":\"default\",\"name\":\"test\",\"nickname\":\"test\"}"), &t); err != nil {
 		return err
 	}
 	if err := json.Unmarshal(b, &t); err != nil {
@@ -123,6 +127,10 @@ func (o *CmdExecuteFunctionBody) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := o.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateNickname(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -182,6 +190,15 @@ func (o *CmdExecuteFunctionBody) validateGaz(formats strfmt.Registry) error {
 func (o *CmdExecuteFunctionBody) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("body"+"."+"name", "body", o.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CmdExecuteFunctionBody) validateNickname(formats strfmt.Registry) error {
+
+	if err := validate.Required("body"+"."+"nickname", "body", o.Nickname); err != nil {
 		return err
 	}
 

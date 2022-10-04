@@ -146,9 +146,11 @@ func init() {
                   "price": 0
                 },
                 "keyId": "default",
-                "name": "test"
+                "name": "test",
+                "nickname": "test"
               },
               "required": [
+                "nickname",
                 "name",
                 "at"
               ],
@@ -211,6 +213,10 @@ func init() {
                 },
                 "name": {
                   "description": "Function name to call.",
+                  "type": "string"
+                },
+                "nickname": {
+                  "description": "Wallet's short name.",
                   "type": "string"
                 }
               }
@@ -1118,9 +1124,11 @@ func init() {
                   "price": 0
                 },
                 "keyId": "default",
-                "name": "test"
+                "name": "test",
+                "nickname": "test"
               },
               "required": [
+                "nickname",
                 "name",
                 "at"
               ],
@@ -1183,6 +1191,10 @@ func init() {
                 },
                 "name": {
                   "description": "Function name to call.",
+                  "type": "string"
+                },
+                "nickname": {
+                  "description": "Wallet's short name.",
                   "type": "string"
                 }
               }
