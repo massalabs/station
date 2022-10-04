@@ -372,9 +372,11 @@ paths:
           schema:
             type: object
             required:
+              - nickname
               - name
               - at
             default:
+              nickname: "test"
               name: "test"
               at: "A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh"
               args: ""
@@ -388,6 +390,9 @@ paths:
               fee: 0
               keyId: default
             properties:
+              nickname:
+                description: Wallet's short name.
+                type: string
               name:
                 description: Function name to call.
                 type: string

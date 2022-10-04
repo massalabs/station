@@ -27,12 +27,12 @@ func (f *FunctionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 
 	addr = addr[1:]
 
-	wallet, err := wallet.Load(*params.Body.Name)
+	wallet, err := wallet.Load(*params.Body.Nickname)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
 			&models.Error{
 				Code:    errorCodeUnknownKeyID,
-				Message: "Error: unknown wallet nickname : " + *params.Body.Name,
+				Message: "Error: unknown wallet nickname : " + *params.Body.Nickname,
 			})
 	}
 
