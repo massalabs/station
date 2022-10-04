@@ -126,7 +126,7 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 #### Thyra installation
 
-Let's start by downloading the version of Thyra corresponding to your system [here](https://github.com/massalabs/thyra/releases/download/latest/thyra-server_windows_amd64).
+Let's start by downloading the version of Thyra corresponding to your system [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64).
 
 Next, you must rename it to `thyra-server.exe`.
 
