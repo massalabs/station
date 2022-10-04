@@ -44,3 +44,20 @@ func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) mid
 
 	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)
 }
+
+//nolint:nolintlint,ireturn
+func ThyraRegistryHandler(params operations.ThyraRegistryParams) middleware.Responder {
+	basePath := "html/front/"
+
+	file := params.Resource
+	if params.Resource == "index.html" {
+		file = "registry.html"
+	}
+
+	resource, err := content.ReadFile(basePath + file)
+	if err != nil {
+		return operations.NewThyraWebsiteCreatorNotFound()
+	}
+
+	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)
+}

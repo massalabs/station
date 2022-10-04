@@ -35,6 +35,37 @@ func init() {
     "version": "0.0.0"
   },
   "paths": {
+    "/all/domains": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "allDomainsGetter",
+        "responses": {
+          "200": {
+            "description": "All domains returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Registry"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/browse/{address}/{resource}": {
       "get": {
         "produces": [
@@ -619,6 +650,34 @@ func init() {
         }
       }
     },
+    "/thyra/registry/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "application/javascript",
+          "text/html",
+          "text/css",
+          "text/webp",
+          "image/png"
+        ],
+        "operationId": "thyraRegistry",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
+          }
+        }
+      }
+    },
     "/thyra/wallet/{resource}": {
       "get": {
         "produces": [
@@ -850,6 +909,28 @@ func init() {
         }
       }
     },
+    "Registry": {
+      "description": "Registry object (V0).",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Website's address.",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "Creation date of the website.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Website's name.",
+          "type": "string"
+        },
+        "updated_at": {
+          "description": "Update date of the website.",
+          "type": "string"
+        }
+      }
+    },
     "Wallet": {
       "description": "Wallet object (V0).",
       "type": "object",
@@ -938,6 +1019,37 @@ func init() {
     "version": "0.0.0"
   },
   "paths": {
+    "/all/domains": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "allDomainsGetter",
+        "responses": {
+          "200": {
+            "description": "All domains returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Registry"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/browse/{address}/{resource}": {
       "get": {
         "produces": [
@@ -1475,6 +1587,34 @@ func init() {
         }
       }
     },
+    "/thyra/registry/{resource}": {
+      "get": {
+        "produces": [
+          "application/javascript",
+          "application/json",
+          "image/png",
+          "text/css",
+          "text/html",
+          "text/webp"
+        ],
+        "operationId": "thyraRegistry",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
+          }
+        }
+      }
+    },
     "/thyra/wallet/{resource}": {
       "get": {
         "produces": [
@@ -1764,6 +1904,28 @@ func init() {
           "items": {
             "type": "number"
           }
+        }
+      }
+    },
+    "Registry": {
+      "description": "Registry object (V0).",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Website's address.",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "Creation date of the website.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Website's name.",
+          "type": "string"
+        },
+        "updated_at": {
+          "description": "Update date of the website.",
+          "type": "string"
         }
       }
     },

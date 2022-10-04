@@ -1,8 +1,9 @@
-package api
+package websites
 
 import (
 	"encoding/base64"
 	"io"
+	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -11,56 +12,43 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-//nolint:nolintlint,ireturn
+const maxArchiveSize = 1500000
+
+//nolint:nolintlint,ireturn,funlen
 func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeGetWallet,
-					Message: err.Error(),
-				})
+		return createInternalServerError(errorCodeGetWallet, err.Error())
 	}
 
 	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeWalletWrongPassword,
-					Message: err.Error(),
-				})
-	}
-
-	address, err := website.PrepareForUpload(params.URL, wallet)
-	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeWebCreatorPrepare,
-					Message: err.Error(),
-				})
+		return createInternalServerError(errorCodeWalletWrongPassword, err.Error())
 	}
 
 	archive, err := io.ReadAll(params.Zipfile)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(&models.Error{
-				Code:    errorCodeWebCreatorReadArchive,
-				Message: err.Error(),
-			})
+		return createInternalServerError(errorCodeWebCreatorReadArchive, err.Error())
+	}
+
+	if len(archive) > maxArchiveSize {
+		return createInternalServerError(errorCodeWebCreatorArchiveSize, errorCodeWebCreatorArchiveSize)
+	}
+
+	if !checkContentType(archive, "application/zip") {
+		return createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
 	}
 
 	b64 := base64.StdEncoding.EncodeToString(archive)
 
+	address, err := website.PrepareForUpload(params.URL, wallet)
+	if err != nil {
+		return createInternalServerError(errorCodeWebCreatorPrepare, err.Error())
+	}
+
 	_, err = website.Upload(address, b64, wallet)
 	if err != nil {
-		return operations.NewWebsiteCreatorPrepareInternalServerError().
-			WithPayload(&models.Error{
-				Code:    errorCodeWebCreatorUpload,
-				Message: err.Error(),
-			})
+		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
 
 	return operations.NewWebsiteCreatorPrepareOK().
@@ -68,6 +56,16 @@ func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) mid
 			&models.Websites{
 				Name:    params.URL,
 				Address: address,
+			})
+}
+
+//nolint:nolintlint,ireturn
+func createInternalServerError(errorCode string, errorMessage string) middleware.Responder {
+	return operations.NewWebsiteCreatorPrepareInternalServerError().
+		WithPayload(
+			&models.Error{
+				Code:    errorCode,
+				Message: errorMessage,
 			})
 }
 
@@ -102,15 +100,15 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 			})
 	}
 
+	if !checkContentType(archive, "application/zip") {
+		return createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
+	}
+
 	b64 := base64.StdEncoding.EncodeToString(archive)
 
 	_, err = website.Upload(params.Address, b64, wallet)
 	if err != nil {
-		return operations.NewWebsiteCreatorUploadInternalServerError().
-			WithPayload(&models.Error{
-				Code:    errorCodeWebCreatorUpload,
-				Message: err.Error(),
-			})
+		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
 
 	return operations.NewWebsiteCreatorUploadOK().
@@ -118,4 +116,10 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 			Name:    "Name",
 			Address: params.Address,
 		})
+}
+
+func checkContentType(archive []byte, fileType string) bool {
+	contentType := http.DetectContentType(archive)
+
+	return contentType == fileType
 }
