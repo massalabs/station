@@ -1,4 +1,4 @@
-//nolint:gci,nlreturn
+//nolint:nlreturn
 package main
 
 //#include <stdint.h>
