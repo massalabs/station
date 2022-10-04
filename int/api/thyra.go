@@ -8,15 +8,16 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 )
 
+const indexHTML = "index.html"
+const basePath = "html/front/"
+
 //go:embed html/front
 var content embed.FS
 
 //nolint:nolintlint,ireturn
 func ThyraWalletHandler(params operations.ThyraWalletParams) middleware.Responder {
-	basePath := "html/front/"
-
 	file := params.Resource
-	if params.Resource == "index.html" {
+	if params.Resource == indexHTML {
 		file = "wallet.html"
 	}
 
@@ -30,10 +31,8 @@ func ThyraWalletHandler(params operations.ThyraWalletParams) middleware.Responde
 
 //nolint:nolintlint,ireturn
 func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) middleware.Responder {
-	basePath := "html/front/"
-
 	file := params.Resource
-	if params.Resource == "index.html" {
+	if params.Resource == indexHTML {
 		file = "website.html"
 	}
 
@@ -47,10 +46,8 @@ func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) mid
 
 //nolint:nolintlint,ireturn
 func ThyraRegistryHandler(params operations.ThyraRegistryParams) middleware.Responder {
-	basePath := "html/front/"
-
 	file := params.Resource
-	if params.Resource == "index.html" {
+	if params.Resource == indexHTML {
 		file = "registry.html"
 	}
 
