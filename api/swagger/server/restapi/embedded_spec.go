@@ -708,6 +708,12 @@ func init() {
         "responses": {
           "200": {
             "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -736,6 +742,12 @@ func init() {
         "responses": {
           "200": {
             "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -1639,6 +1651,12 @@ func init() {
         "responses": {
           "200": {
             "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -1667,6 +1685,12 @@ func init() {
         "responses": {
           "200": {
             "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }

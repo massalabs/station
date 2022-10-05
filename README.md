@@ -19,12 +19,10 @@ Everything is this project is WIP prototype.
 To develop on this project you will need :
 
 - [go](https://go.dev/doc/install)
-- [textFileToGoConst](https://github.com/logrusorgru/textFileToGoConst) to generate go constants from file contents
 - [swagger](https://github.com/go-swagger/go-swagger) to generate go code from API documentation
 
 Once Golang is installed on your system, you can install the last two dependencies by running the following command outside of a go module directory:
 
-- `go install github.com/logrusorgru/textFileToGoConst@latest`
 - `go install github.com/go-swagger/go-swagger/cmd/swagger@latest`
 
 ## How to ...

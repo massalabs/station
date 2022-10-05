@@ -31,6 +31,10 @@ paths:
       responses:
         "200":
           description: Page found
+        "404":
+          description: Resource not found.
+          schema:
+            $ref: "#/definitions/Error"
   /thyra/websiteCreator/{resource}:
     get:
       operationId: thyraWebsiteCreator
@@ -51,6 +55,10 @@ paths:
       responses:
         "200":
           description: Page found
+        "404":
+          description: Resource not found.
+          schema:
+            $ref: "#/definitions/Error"
   /thyra/registry/{resource}:
     get:
       operationId: thyraRegistry

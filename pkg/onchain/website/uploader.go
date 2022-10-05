@@ -1,6 +1,7 @@
 package website
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -9,15 +10,24 @@ import (
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/onchain"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
-	"github.com/massalabs/thyra/pkg/sc"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
+
+//go:embed sc
+var content embed.FS
 
 func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	client := node.NewDefaultClient()
 
+	basePath := "sc/"
+
+	websiteStorer, err := content.ReadFile(basePath + "websiteStorer.wasm")
+	if err != nil {
+		return "", fmt.Errorf("SC file not retrieved: %w", err)
+	}
+
 	// Prepare address to webstorage.
-	scAddress, err := onchain.DeploySC(client, *wallet, []byte(sc.WebsiteStorer))
+	scAddress, err := onchain.DeploySC(client, *wallet, websiteStorer)
 	if err != nil {
 		return "", fmt.Errorf("deploying webstorage SC: %w", err)
 	}
@@ -69,7 +79,7 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 		return nil, fmt.Errorf("marshaling '%s': %w", InitialisationParams{TotalChunks: strconv.Itoa(len(chunks))}, err)
 	}
 
-	opID, err := onchain.CallFunctionUnwaited(client, *wallet, addr, "initializeWebsite", paramInit)
+	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", paramInit)
 	if err != nil {
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 	}

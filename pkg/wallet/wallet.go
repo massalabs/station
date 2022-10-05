@@ -24,7 +24,7 @@ const (
 	SecretKeyLength           = 32
 	PBKDF2NbRound             = 10000
 	FileModeUserReadWriteOnly = 0o600
-	AddressLength             = 52
+	MinAddressLength          = 49
 )
 
 //nolint:tagliatelle
@@ -224,5 +224,5 @@ func Delete(nickname string) (err error) {
 }
 
 func AddressChecker(address string) bool {
-	return len(address) == AddressLength
+	return len(address) > MinAddressLength
 }
