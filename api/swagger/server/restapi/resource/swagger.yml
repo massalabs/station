@@ -401,12 +401,15 @@ paths:
               nickname:
                 description: Wallet's short name.
                 type: string
+                x-nullable: false
               name:
                 description: Function name to call.
                 type: string
+                x-nullable: false
               at:
                 description: Smart contract address exporting the function to call.
                 type: string
+                x-nullable: false
               args:
                 description: Arguments to pass to the function.
                 type: string
@@ -567,22 +570,22 @@ paths:
     get:
       operationId: allDomainsGetter
       produces:
-          - application/json
+        - application/json
       responses:
-        '200':
-            description: All domains returned.
-            schema:
-                type: array
-                items:
-                    $ref: '#/definitions/Registry'
-        '400':
-            description: Bad request.
-            schema:
-                $ref: '#/definitions/Error'
-        '500':
-            description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-            schema:
-                $ref: '#/definitions/Error'
+        "200":
+          description: All domains returned.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Registry"
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
 definitions:
   Error:
     type: object
@@ -665,14 +668,14 @@ definitions:
     description: Registry object (V0).
     properties:
       name:
-            description: Website's name.
-            type: string
+        description: Website's name.
+        type: string
       address:
-            description: Website's address.
-            type: string
+        description: Website's address.
+        type: string
       created_at:
-            description: Creation date of the website.
-            type: string
+        description: Creation date of the website.
+        type: string
       updated_at:
-            description: Update date of the website.
-            type: string
+        description: Update date of the website.
+        type: string

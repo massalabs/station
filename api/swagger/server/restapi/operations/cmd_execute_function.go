@@ -35,10 +35,10 @@ func NewCmdExecuteFunction(ctx *middleware.Context, handler CmdExecuteFunctionHa
 	return &CmdExecuteFunction{Context: ctx, Handler: handler}
 }
 
-/*
-	CmdExecuteFunction swagger:route POST /cmd/executeFunction cmdExecuteFunction
+/* CmdExecuteFunction swagger:route POST /cmd/executeFunction cmdExecuteFunction
 
 CmdExecuteFunction cmd execute function API
+
 */
 type CmdExecuteFunction struct {
 	Context *middleware.Context
@@ -71,7 +71,7 @@ type CmdExecuteFunctionBody struct {
 
 	// Smart contract address exporting the function to call.
 	// Required: true
-	At *string `json:"at"`
+	At string `json:"at"`
 
 	// coins
 	Coins *CmdExecuteFunctionParamsBodyCoins `json:"coins,omitempty"`
@@ -90,11 +90,11 @@ type CmdExecuteFunctionBody struct {
 
 	// Function name to call.
 	// Required: true
-	Name *string `json:"name"`
+	Name string `json:"name"`
 
 	// Wallet's short name.
 	// Required: true
-	Nickname *string `json:"nickname"`
+	Nickname string `json:"nickname"`
 }
 
 func (o *CmdExecuteFunctionBody) UnmarshalJSON(b []byte) error {
@@ -142,7 +142,7 @@ func (o *CmdExecuteFunctionBody) Validate(formats strfmt.Registry) error {
 
 func (o *CmdExecuteFunctionBody) validateAt(formats strfmt.Registry) error {
 
-	if err := validate.Required("body"+"."+"at", "body", o.At); err != nil {
+	if err := validate.RequiredString("body"+"."+"at", "body", o.At); err != nil {
 		return err
 	}
 
@@ -189,7 +189,7 @@ func (o *CmdExecuteFunctionBody) validateGaz(formats strfmt.Registry) error {
 
 func (o *CmdExecuteFunctionBody) validateName(formats strfmt.Registry) error {
 
-	if err := validate.Required("body"+"."+"name", "body", o.Name); err != nil {
+	if err := validate.RequiredString("body"+"."+"name", "body", o.Name); err != nil {
 		return err
 	}
 
@@ -198,7 +198,7 @@ func (o *CmdExecuteFunctionBody) validateName(formats strfmt.Registry) error {
 
 func (o *CmdExecuteFunctionBody) validateNickname(formats strfmt.Registry) error {
 
-	if err := validate.Required("body"+"."+"nickname", "body", o.Nickname); err != nil {
+	if err := validate.RequiredString("body"+"."+"nickname", "body", o.Nickname); err != nil {
 		return err
 	}
 

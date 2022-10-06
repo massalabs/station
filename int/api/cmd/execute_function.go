@@ -11,40 +11,34 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-func NewExecuteFunction() *FunctionExecuter {
-	return &FunctionExecuter{}
-}
-
-type FunctionExecuter struct{}
-
 //nolint:nolintlint,ireturn
-func (f *FunctionExecuter) Handle(params operations.CmdExecuteFunctionParams) middleware.Responder {
-	addr, err := base58.CheckDecode((*params.Body.At)[1:])
+func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams) middleware.Responder {
+	addr, err := base58.CheckDecode(params.Body.At[1:])
 	if err != nil {
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
-			&models.Error{Code: errorCodeUnknownKeyID, Message: "Error: cannot decode Smart contract address : " + err.Error()})
+			&models.Error{Code: errorCodeUnknownKeyID, Message: "Error : cannot decode Smart contract address : " + err.Error()})
 	}
 
 	addr = addr[1:]
 
-	wallet, err := wallet.Load(*params.Body.Nickname)
+	wallet, err := wallet.Load(params.Body.Nickname)
 	if err != nil {
-		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
+		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
 			&models.Error{
-				Code:    errorCodeUnknownKeyID,
-				Message: "Error: unknown wallet nickname : " + *params.Body.Nickname,
+				Code:    errorCodeGetWallet,
+				Message: "Error cannot load wallet : " + err.Error(),
 			})
 	}
 
 	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
-			&models.Error{Code: errorCodeWalletWrongPassword, Message: "Error: " + err.Error()})
+			&models.Error{Code: errorCodeWalletWrongPassword, Message: "Error : cannot uncipher the wallet : " + err.Error()})
 	}
 
 	callSC := callSC.New(
 		addr,
-		*params.Body.Name,
+		params.Body.Name,
 		[]byte(params.Body.Args),
 		uint64(params.Body.Gaz.Price),
 		uint64(*params.Body.Gaz.Limit),
@@ -61,7 +55,7 @@ func (f *FunctionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 		wallet.KeyPairs[0].PublicKey, wallet.KeyPairs[0].PrivateKey)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
-			&models.Error{Code: errorCodeSendOperation, Message: "Error: " + err.Error()})
+			&models.Error{Code: errorCodeSendOperation, Message: "Error : callSC operations not sent " + err.Error()})
 	}
 
 	return operations.NewCmdExecuteFunctionOK().WithPayload(operationID)
