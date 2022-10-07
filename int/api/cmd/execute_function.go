@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"sync"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
@@ -13,43 +11,34 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-func NewExecuteFunction(walletStorage *sync.Map) *FunctionExecuter {
-	return &FunctionExecuter{walletStorage: walletStorage}
-}
-
-type FunctionExecuter struct {
-	walletStorage *sync.Map
-}
-
 //nolint:nolintlint,ireturn
-func (f *FunctionExecuter) Handle(params operations.CmdExecuteFunctionParams) middleware.Responder {
-	addr, err := base58.CheckDecode((*params.Body.At)[1:])
+func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams) middleware.Responder {
+	addr, err := base58.CheckDecode(params.Body.At[1:])
 	if err != nil {
-		panic(err)
+		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
+			&models.Error{Code: errorCodeUnknownKeyID, Message: "Error : cannot decode Smart contract address : " + err.Error()})
 	}
 
 	addr = addr[1:]
 
-	value, exists := f.walletStorage.Load(*params.Body.Name)
-	if !exists {
-		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
+	wallet, err := wallet.Load(params.Body.Nickname)
+	if err != nil {
+		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
 			&models.Error{
-				Code:    errorCodeUnknownKeyID,
-				Message: "Error: unknown wallet nickname : " + *params.Body.Name,
+				Code:    errorCodeGetWallet,
+				Message: "Error cannot load wallet : " + err.Error(),
 			})
 	}
 
-	storedWallet, exists := value.(*wallet.Wallet)
-	if !exists {
-		panic("stored value is not a wallet")
+	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
+	if err != nil {
+		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
+			&models.Error{Code: errorCodeWalletWrongPassword, Message: "Error : cannot uncipher the wallet : " + err.Error()})
 	}
-
-	pubKey := storedWallet.KeyPairs[0].PublicKey
-	privKey := storedWallet.KeyPairs[0].PrivateKey
 
 	callSC := callSC.New(
 		addr,
-		*params.Body.Name,
+		params.Body.Name,
 		[]byte(params.Body.Args),
 		uint64(params.Body.Gaz.Price),
 		uint64(*params.Body.Gaz.Limit),
@@ -63,10 +52,10 @@ func (f *FunctionExecuter) Handle(params operations.CmdExecuteFunctionParams) mi
 		sendOperation.DefaultSlotsDuration,
 		uint64(params.Body.Fee),
 		callSC,
-		pubKey, privKey)
+		wallet.KeyPairs[0].PublicKey, wallet.KeyPairs[0].PrivateKey)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
-			&models.Error{Code: errorCodeSendOperation, Message: "Error: " + err.Error()})
+			&models.Error{Code: errorCodeSendOperation, Message: "Error : callSC operations not sent " + err.Error()})
 	}
 
 	return operations.NewCmdExecuteFunctionOK().WithPayload(operationID)
