@@ -87,6 +87,9 @@ jobs:
   create-release:
     runs-on: ubuntu-latest
     name: Create release
+    needs:
+      - build_windows_linux
+      - build_macos
     strategy:
       matrix:
         include:
