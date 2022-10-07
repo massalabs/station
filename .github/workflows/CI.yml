@@ -48,6 +48,7 @@ jobs:
           files: coverage.coverprofile
 
   build_windows_linux:
+    if: ${{ github.ref == 'refs/heads/main' }}
     name: build and upload linux and windows artifacts
     strategy:
       matrix:
@@ -77,6 +78,7 @@ jobs:
           path: thyra-server_${{ matrix.os }}_${{ matrix.arch }}
 
   build_macos:
+    if: ${{ github.ref == 'refs/heads/main' }}
     name: build and upload macos artifacts
     strategy:
       matrix:
