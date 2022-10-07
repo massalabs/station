@@ -3,9 +3,9 @@
 BINARY_URL="https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin"
 SCRIPT="MacOS"
 
-green () { echo -e "\e[01;32m$1:\e[0m $2"; }
+green () { echo -e "\033[01;32m$1:\033[0m $2"; }
 
-fatal () { echo -e "\e[01;31m[$SCRIPT]ERROR:\e[0m $1" >&2; exit 1; }
+fatal () { echo -e "\033[01;31m[$SCRIPT]ERROR:\033[0m $1" >&2; exit 1; }
 
 architecture_version () {
     case $(uname -m) in
@@ -32,8 +32,8 @@ configure_start_dnsmasq () {
 }
 
 set_local_dns () {
-    case $(sudo lsof -i :53 | sed -n 2p | sed 's/\s.*$//') in
-        "")         brew install dnsmasq || fatal "dnsmasq installation failed." ;;&
+    case $(sudo lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//') in
+        "")         (brew install dnsmasq || fatal "dnsmasq installation failed.") && configure_start_dnsmasq || exit -1 ;;
         dnsmasq)    configure_start_dnsmasq || exit -1 ;;
         *)          fatal "local DNS application unsupported." ;;
     esac
