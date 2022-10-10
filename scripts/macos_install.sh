@@ -20,7 +20,7 @@ install_thyra () {
     curl -s -L "${BINARY_URL}_${arch}" -o thyra-server || fatal "binary download failed."
 
     chmod +x thyra-server || fatal "change to executable failed."
-    sudo mv thyra-server /usr/local/bin || fatal "move to /usr/local/bin failed."
+    sudo mv thyra-server /usr/local/bin/ || fatal "move to /usr/local/bin/ failed."
 }
 
 configure_start_dnsmasq () {
@@ -45,9 +45,7 @@ green "INFO" "This installation script will install the last release of Thyra an
 
 install_thyra || exit 1
 
-if [[ "$(dig test.massa +short)" == "" ]]; then
-    set_local_dns || exit 1
-fi
+ping -c test.massa || set_local_dns || exit 1
 
 green "SUCCESS" "Thyra is installed and the .massa TLD resolution is configured. You're free to go!!!"
 
