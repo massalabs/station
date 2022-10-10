@@ -30,86 +30,50 @@ env:
   GENERATE_RELEASE_NOTES: ${{ github.event.inputs.generate-release-notes }}
 
 jobs:
-  build_windows_linux:
+  build-release:
     name: build and upload linux and windows artifacts
     strategy:
       matrix:
         include:
-          - arch: amd64
-            os: windows
+          - os: ubuntu-latest
+            arch: amd64
+            target: windows
             cc: x86_64-w64-mingw32-gcc
             cxx: CXX=x86_64-w64-mingw32-g++
-          - arch: amd64
-            os: linux
+          - os: ubuntu-latest
+            arch: amd64
+            target: linux
             cc: gcc
             cxx: g++
-    runs-on: ubuntu-latest
+          - os: macos-latest
+            arch: amd64
+            target: darwin
+            cc: ""
+            cxx: ""
+          - os: macos-latest
+            arch: arm64
+            target: darwin
+            cc: ""
+            cxx: ""
+    runs-on: ${{ matrix.os }} 
     steps:
       - name: installing dependencies
+        if: startsWith(matrix.os, 'ubuntu-')
         run: sudo apt install -y libgl1-mesa-dev xorg-dev gcc-mingw-w64-x86-64
-      - uses: actions/setup-go@v3
-        with:
-          go-version: ${{ env.GO_VERSION }}
-      - uses: actions/checkout@v3
-      - name: Build binary for ${{ matrix.os }} on ${{ matrix.arch}}
-        run: GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-server_${{ matrix.os }}_${{ matrix.arch }} ./cmd/thyra-server/
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ matrix.os }}-${{ matrix.arch }}-binary
-          path: thyra-server_${{ matrix.os }}_${{ matrix.arch }}
-
-  build_macos:
-    name: build and upload macos artifacts
-    strategy:
-      matrix:
-        include:
-          - arch: amd64
-            os: darwin
-          - arch: arm64
-            os: darwin
-    runs-on: macos-latest
-    steps:
       - name: Select the latest version of Xcode
+        if: startsWith(matrix.os, 'macos-')
         uses: devbotsxyz/xcode-select@v1
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
       - uses: actions/checkout@v3
-      - name: Build binary for ${{ matrix.os }} on ${{ matrix.arch}}
-        run: GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 go build -o thyra-server_${{ matrix.os }}_${{ matrix.arch }} ./cmd/thyra-server/
+      - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
+        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.os }}-${{ matrix.arch }}-binary
-          path: thyra-server_${{ matrix.os }}_${{ matrix.arch }}
-
-  create-release:
-    runs-on: ubuntu-latest
-    name: Create release
-    needs:
-      - build_windows_linux
-      - build_macos
-    strategy:
-      matrix:
-        include:
-          - arch: amd64
-            os: windows
-            cc: x86_64-w64-mingw32-gcc
-            cxx: CXX=x86_64-w64-mingw32-g++
-          - arch: amd64
-            os: linux
-            cc: gcc
-            cxx: g++
-          - arch: amd64
-            os: darwin
-          - arch: arm64
-            os: darwin
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
-        with:
-          name: ${{ matrix.os }}-${{ matrix.arch }}-binary
+          name: ${{ matrix.target }}-${{ matrix.arch }}-binary
+          path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
       - name: Create release and upload binaries
         uses: softprops/action-gh-release@v1
         with:
@@ -117,4 +81,4 @@ jobs:
           draft: ${{ env.RELEASE_AS_DRAFT }}
           prerelease: ${{ env.RELEASE_AS_PRERELEASE }}
           generate_release_notes: ${{ env.GENERATE_RELEASE_NOTES }}
-          files: thyra-server_${{ matrix.os }}_${{ matrix.arch }}
+          files: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
