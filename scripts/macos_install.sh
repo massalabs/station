@@ -28,7 +28,7 @@ configure_start_dnsmasq () {
     sudo mkdir -p /etc/resolver  || fatal "resolver directory creation failed."
     sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/massa'  || fatal "resolver configuration failed."
 
-    sudo brew services start dnsmasq || fatal "dnsmasq service failed to start."
+    sudo brew services restart dnsmasq || fatal "dnsmasq service failed to start."
 }
 
 set_local_dns () {
