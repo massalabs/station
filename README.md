@@ -20,6 +20,7 @@ To develop on this project you will need :
 
 - [go](https://go.dev/doc/install)
 - [swagger](https://github.com/go-swagger/go-swagger) to generate go code from API documentation
+- [a C compiler](https://developer.fyne.io/started/) to use the GUI, follow the instructions depending of your OS 
 
 Once Golang is installed on your system, you can install the last two dependencies by running the following command outside of a go module directory:
 
