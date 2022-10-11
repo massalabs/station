@@ -108,4 +108,5 @@ func StartServer(app *fyne.App) {
 		//nolint:gocritic
 		log.Fatalln(err)
 	}
+	(*app).Quit()
 }
