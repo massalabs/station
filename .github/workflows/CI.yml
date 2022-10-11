@@ -18,6 +18,8 @@ jobs:
     name: lint
     runs-on: ubuntu-latest
     steps:
+      - name: installing dependencies
+        run: sudo apt install -y libgl1-mesa-dev xorg-dev
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
@@ -26,12 +28,16 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           version: v1.50.0
+          skip-cache: true
+          args: --timeout=3m
         continue-on-error: false
 
   test:
     name: test
     runs-on: ubuntu-latest
     steps:
+      - name: installing dependencies
+        run: sudo apt install -y libgl1-mesa-dev xorg-dev
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
@@ -42,28 +48,74 @@ jobs:
           files: coverage.coverprofile
 
   build:
+    if: ${{ github.ref == 'refs/heads/main' }}
     name: build and upload artifacts
+    env:
+      BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+      P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+      BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      AC_USERNAME: ${{ secrets.AC_USERNAME }}
     strategy:
       matrix:
         include:
-          - arch: amd64
-            os: windows
-          - arch: amd64
-            os: linux
-          - arch: amd64
-            os: darwin
-          - arch: arm64
-            os: darwin
-    runs-on: ubuntu-latest
+          - os: ubuntu-latest
+            arch: amd64
+            target: windows
+            cc: x86_64-w64-mingw32-gcc
+            cxx: CXX=x86_64-w64-mingw32-g++
+          - os: ubuntu-latest
+            arch: amd64
+            target: linux
+            cc: gcc
+            cxx: g++
+          - os: macos-latest
+            arch: amd64
+            target: darwin
+            cc: ""
+            cxx: ""
+          - os: macos-latest
+            arch: arm64
+            target: darwin
+            cc: ""
+            cxx: ""
+    runs-on: ${{ matrix.os }} 
     steps:
+      - name: installing dependencies
+        if: startsWith(matrix.os, 'ubuntu-')
+        run: sudo apt install -y libgl1-mesa-dev xorg-dev gcc-mingw-w64-x86-64
+      - name: Select the latest version of Xcode
+        if: startsWith(matrix.os, 'macos-')
+        uses: devbotsxyz/xcode-select@v1
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
       - uses: actions/checkout@v3
-      - name: Build binary for ${{ matrix.os }} on ${{ matrix.arch}}
-        run: GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -o thyra-server_${{ matrix.os }}_${{ matrix.arch }} ./cmd/thyra-server/
-      - name: Upload Go test results
+      - name: Install the Apple certificate and provisioning profile
+        if: startsWith(matrix.os, 'macos-')
+        run: |
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output $CERTIFICATE_PATH
+          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode --output $PP_PATH
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          security find-identity -v
+          brew tap mitchellh/gon
+          brew install mitchellh/gon/gon
+      - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
+        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
+      - name: Sign macos application
+        if: startsWith(matrix.os, 'macos-')
+        run: gon -log-level=debug -log-json ./gon_${{ matrix.arch }}.json
+      - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.os }}-${{ matrix.arch }}-binary
-          path: thyra-server_${{ matrix.os }}_${{ matrix.arch }}
+          name: ${{ matrix.target }}-${{ matrix.arch }}-binary
+          path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}

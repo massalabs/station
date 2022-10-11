@@ -18,28 +18,29 @@ Everything is this project is WIP prototype.
 
 To develop on this project you will need :
 
-- [go](https://go.dev/doc/install)
-- [swagger](https://github.com/go-swagger/go-swagger) to generate go code from API documentation
+-   [go](https://go.dev/doc/install)
+-   [swagger](https://github.com/go-swagger/go-swagger) to generate go code from API documentation
 
 Once Golang is installed on your system, you can install the last two dependencies by running the following command outside of a go module directory:
 
-- `go install github.com/go-swagger/go-swagger/cmd/swagger@latest`
+-   `go install github.com/go-swagger/go-swagger/cmd/swagger@latest`
 
 ## How to ...
 
 ### ... install Thyra on my computer ?
 
 Follow the instructions for your computer in the wiki:
-- [MacOS](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#macos)
-- [Linux](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#linux)
-- [Windows](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#windows)
+
+-   [MacOS](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#macos)
+-   [Linux](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#linux)
+-   [Windows](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#windows)
 
 ### ... get the latest dev version of `thyra-server` ?
 
 To install the latest dev version of the `thyra-server` application you need to:
 
-- [install go](https://go.dev/doc/install)
-- execute `go install github.com/massalabs/thyra/cmd/thyra-server@main` in your terminal
+-   [install go](https://go.dev/doc/install)
+-   execute `go install github.com/massalabs/thyra/cmd/thyra-server@main` in your terminal
 
 Note: you can change `main` to a tag or a commit value if needed.
 
@@ -53,10 +54,10 @@ In this section you will find a non-exhaustive list of such options and examples
 --node-server : Specify which Massa network Thyra will communicate with while runnning.
 Accepts a URL, an IP address or one of the following values :
 
-- TESTNET : Uses Massa's testnet
-- LABNET : Uses Massa's labnet
-- INNONET : Uses Massa's innonet
-- LOCALHOST : Expect Massa's network to be hosted at 127.0.0.1
+-   TESTNET : Uses Massa's testnet
+-   LABNET : Uses Massa's labnet
+-   INNONET : Uses Massa's innonet
+-   LOCALHOST : Expect Massa's network to be hosted at 127.0.0.1
 
 To use this option with a constant, you have to execute :
 `thyra-server node-server=LABNET`
@@ -93,8 +94,8 @@ You can access to Thyra web hosting interface at URL : http://my.massa/thyra/web
 
 In order to register a website on Thyra you'll need to :
 
-- Deploy a Smart Contract that will handle the storage of your website, your DNS name will fetch the Address of this Smart Contract
-- Upload the build of your application
+-   Deploy a Smart Contract that will handle the storage of your website, your DNS name will fetch the Address of this Smart Contract
+-   Upload the build of your application
 
 ## Usage
 

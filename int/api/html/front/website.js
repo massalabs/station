@@ -8,9 +8,13 @@ let uploadable = false;
 getWallets();
 getWebsiteDeployerSC();
 initializeDefaultWallet();
-setupModal();
 
 const eventManager = new EventManager();
+
+async function onSubmitDeploy(txType = 'deployWebsiteAndUpload') {
+	setTxType(txType);
+	callTx();
+}
 
 // Write the default wallet text in wallet popover component
 async function getWebsiteDeployerSC() {
@@ -72,26 +76,18 @@ function getDeployerByDns(dns) {
     return deployers.find((c) => c.name === dns);
 }
 
-function setupModal() {
-    $("#passwordModal").on("shown.bs.modal", function () {
-        $("#passwordModal").trigger("focus");
-    });
-}
-
 function setTxType(txType) {
     actualTxType = txType;
 }
 
 async function callTx() {
-    const passwordValue = $("#walletPassword").val();
-
-    if (actualTxType === "deployWebsiteAndUpload") {
-        deployWebsiteAndUpload(passwordValue);
-    }
-    if (actualTxType.includes("uploadWebsiteCreator")) {
-        const websiteIndex = actualTxType.split("uploadWebsiteCreator")[1];
-        uploadWebsite(nextFileToUpload, websiteIndex, passwordValue);
-    }
+	if (actualTxType === "deployWebsiteAndUpload") {
+		deployWebsiteAndUpload();
+	}
+	if (actualTxType.includes("uploadWebsiteCreator")) {
+		const websiteIndex = actualTxType.split("uploadWebsiteCreator")[1];
+		uploadWebsite(nextFileToUpload, websiteIndex);
+	}
 }
 
 // open file upload
@@ -184,8 +180,7 @@ function tableInsert(resp, count) {
         let files = evt.target.files; // get files
         nextFileToUpload = files[0];
 
-        setTxType("uploadWebsiteCreator" + count);
-        $("#passwordModal").modal("show");
+		onSubmitDeploy("uploadWebsiteCreator" + count);
     });
 }
 
@@ -282,14 +277,13 @@ function uploadProcess(file, dnsName, isFullProcess, bodyFormData, callback) {
     };
 }
 
-function postUpload(bodyFormData, password) {
+function postUpload(bodyFormData) {
     axios({
         url: `/websiteCreator/upload`,
         method: "POST",
         data: bodyFormData,
         headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: password,
         },
     }).catch((e) => {
         errorAlert(getErrorMessage(e.response.data.code));
@@ -297,14 +291,13 @@ function postUpload(bodyFormData, password) {
     });
 }
 
-function putUpload(bodyFormData, password) {
+function putUpload(bodyFormData) {
     axios({
         url: `/websiteCreator/prepare`,
         method: "put",
         data: bodyFormData,
         headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: password,
         },
     }).catch((e) => {
         errorAlert(getErrorMessage(e.response.data.code));
@@ -313,7 +306,7 @@ function putUpload(bodyFormData, password) {
 }
 
 // Full deployment process
-function deployWebsiteAndUpload(password) {
+function deployWebsiteAndUpload() {
     const dnsNameInputValue = document.getElementById("websiteName").value;
 
     const file = document.querySelector(".upload input").files[0];
@@ -323,12 +316,12 @@ function deployWebsiteAndUpload(password) {
     bodyFormData.append("zipfile", file);
 
     uploadProcess(file, dnsNameInputValue, true, bodyFormData, (bodyFormData) =>
-        putUpload(bodyFormData, password)
+        putUpload(bodyFormData)
     );
 }
 
 // Full deployment process
-function uploadWebsite(file, count, password) {
+function uploadWebsite(file, count) {
     const bodyFormData = new FormData();
 
     const address = deployers[count].address;
@@ -337,7 +330,7 @@ function uploadWebsite(file, count, password) {
     bodyFormData.append("nickname", getDefaultWallet());
 
     uploadProcess(file, deployers[count].name, false, bodyFormData, (bodyFormData) =>
-        postUpload(bodyFormData, password)
+        postUpload(bodyFormData)
     );
 }
 

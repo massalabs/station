@@ -5,23 +5,35 @@ import (
 	"io"
 	"net/http"
 
+	"fyne.io/fyne/v2"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/gui"
 	"github.com/massalabs/thyra/pkg/onchain/website"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 const maxArchiveSize = 1500000
 
+func CreatePrepareForWebsiteHandler(
+	app *fyne.App,
+) func(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
+	return func(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
+		return prepareForWebsiteHandler(params, app)
+	}
+}
+
 //nolint:nolintlint,ireturn,funlen
-func PrepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
+func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app *fyne.App) middleware.Responder {
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
 		return createInternalServerError(errorCodeGetWallet, err.Error())
 	}
 
-	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
+	password := askPassword(wallet.Nickname, app)
+
+	err = wallet.Unprotect(password, 0)
 	if err != nil {
 		return createInternalServerError(errorCodeWalletWrongPassword, err.Error())
 	}
@@ -69,8 +81,14 @@ func createInternalServerError(errorCode string, errorMessage string) middleware
 			})
 }
 
+func CreateUploadWebsiteHandler(app *fyne.App) func(params operations.WebsiteCreatorUploadParams) middleware.Responder {
+	return func(params operations.WebsiteCreatorUploadParams) middleware.Responder {
+		return uploadWebsiteHandler(params, app)
+	}
+}
+
 //nolint:nolintlint,ireturn
-func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middleware.Responder {
+func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyne.App) middleware.Responder {
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
@@ -81,7 +99,9 @@ func UploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 				})
 	}
 
-	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
+	password := askPassword(wallet.Nickname, app)
+
+	err = wallet.Unprotect(password, 0)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
 			WithPayload(
@@ -122,4 +142,8 @@ func checkContentType(archive []byte, fileType string) bool {
 	contentType := http.DetectContentType(archive)
 
 	return contentType == fileType
+}
+
+func askPassword(nickname string, app *fyne.App) string {
+	return gui.Password(nickname, app)
 }

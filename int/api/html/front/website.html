@@ -61,59 +61,7 @@
             </div>
         </nav>
 
-        <!-- Modal -->
-        <div
-            class="modal fade"
-            id="passwordModal"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="passwordModalLabel"
-            aria-hidden="true"
-        >
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="passwordModalLabel">Enter the password</h5>
-                        <button
-                            type="button"
-                            class="close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"
-                        >
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="col-6">
-                            <div id="password-form">
-                                <div class="form-floating">
-                                    <input
-                                        class="form-control"
-                                        placeholder="Wallet password"
-                                        id="walletPassword"
-                                        name="walletPassword"
-                                        type="password"
-                                    />
-                                    <label for="wallet-password">Wallet password</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button
-                            type="button"
-                            data-bs-dismiss="modal"
-                            onClick="callTx('deployWebsiteCreator')"
-                            class="primary-button process-post-modal"
-                        >
-                            Ok
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
         <!-- ALERTS -->
-
         <div class="alert alert-danger" role="alert"></div>
         <div class="alert alert-primary" role="alert"></div>
 
@@ -185,11 +133,9 @@
                     <button
                         class="primary-button primary-button me-5 small-button"
                         id="website-upload"
-                        onClick="setTxType('deployWebsiteAndUpload')"
+			onClick="onSubmitDeploy()"
                         type="button"
                         value="Upload MB"
-                        data-bs-toggle="modal"
-                        data-bs-target="#passwordModal"
                     >
                         Deploy to massa blockchain
                     </button>
