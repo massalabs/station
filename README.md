@@ -21,7 +21,7 @@ To develop on this project you will need :
 -   [go](https://go.dev/doc/install)
 -   [swagger](https://github.com/go-swagger/go-swagger) to generate go code from API documentation
 
-Once Golang is installed on your system, you can install the last two dependencies by running the following command outside of a go module directory:
+Once Golang is installed on your system, you can install the swagger dependency by running the following command outside of a go module directory:
 
 -   `go install github.com/go-swagger/go-swagger/cmd/swagger@latest`
 
