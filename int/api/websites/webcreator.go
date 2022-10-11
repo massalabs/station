@@ -31,7 +31,7 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 		return createInternalServerError(errorCodeGetWallet, err.Error())
 	}
 
-	password := askPassword(wallet.Nickname, app)
+	password := gui.AskPassword(wallet.Nickname, app)
 
 	err = wallet.Unprotect(password, 0)
 	if err != nil {
@@ -99,7 +99,7 @@ func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyn
 				})
 	}
 
-	password := askPassword(wallet.Nickname, app)
+	password := gui.AskPassword(wallet.Nickname, app)
 
 	err = wallet.Unprotect(password, 0)
 	if err != nil {
@@ -142,8 +142,4 @@ func checkContentType(archive []byte, fileType string) bool {
 	contentType := http.DetectContentType(archive)
 
 	return contentType == fileType
-}
-
-func askPassword(nickname string, app *fyne.App) string {
-	return gui.Password(nickname, app)
 }

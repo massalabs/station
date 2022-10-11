@@ -5,6 +5,10 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
+func AskPassword(nickname string, app *fyne.App) string {
+	return Password(nickname, app)
+}
+
 // inspired by https://hackernoon.com/asyncawait-in-golang-an-introductory-guide-ol1e34sg
 
 // Thyra password input dialog.

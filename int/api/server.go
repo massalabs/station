@@ -78,7 +78,7 @@ func StartServer(app *fyne.App) {
 
 	var walletStorage sync.Map
 
-	localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(cmd.ExecuteFunctionHandler)
+	localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(cmd.CreateExecuteFunctionHandler(app))
 
 	localAPI.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
 	localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
