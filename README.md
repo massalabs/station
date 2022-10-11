@@ -25,6 +25,12 @@ Once Golang is installed on your system, you can install the swagger dependency 
 
 -   `go install github.com/go-swagger/go-swagger/cmd/swagger@latest`
 
+### Setup code formatting tool
+
+Use prettrier to format de code. We recommend to install IDE prettier extension to format on save.
+
+For go code, we use the formatter included in https://marketplace.visualstudio.com/items?itemName=golang.go.
+
 ## How to ...
 
 ### ... install Thyra on my computer ?
