@@ -33,7 +33,7 @@ For go code, we use the formatter included in https://marketplace.visualstudio.c
 
 ## How to ...
 
-### ... install Thyra on my computer ?
+### ... install Thyra on my computer?
 
 Follow the instructions for your computer in the wiki:
 
@@ -41,7 +41,7 @@ Follow the instructions for your computer in the wiki:
 -   [Linux](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#linux)
 -   [Windows](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#windows)
 
-### ... get the latest dev version of `thyra-server` ?
+### ... get the latest dev version of `thyra-server`?
 
 To install the latest dev version of the `thyra-server` application you need to:
 
@@ -52,7 +52,7 @@ Note: you can change `main` to a tag or a commit value if needed.
 
 That's it, thyra-server is installed in '$HOME/go/bin/' dir and you can use it by executing `thyra-server` in your terminal.
 
-### ... pass options to `thyra-server` ?
+### ... pass options to `thyra-server`?
 
 Thyra accepts different options that you can specify when you start the program.
 In this section you will find a non-exhaustive list of such options and examples of how you can use them.
@@ -70,7 +70,7 @@ To use this option with a constant, you have to execute :
 To use this option with a custom IP address, you have to execute :
 `thyra-server node-server=192.168.X.X`
 
-### ... secure HTTPS configuration ?
+### ... secure HTTPS configuration?
 
 Using HTTPS configuration without specifying your own certificate and key triggers a warning: `insecure HTTPS configuration`.
 
@@ -89,12 +89,12 @@ openssl req -newkey rsa:4096 \
 You can now execute a thyra-server using the following command changing _path to ..._ to proper values:
 `thyra-server --tls-certificate <path to my_thyra.crt> --tls-key <path to my_thyra.key>`.
 
-### ... wallet management ?
+### ... wallet management?
 
 You can access to Thyra wallet interface at URL : http://my.massa/thyra/wallet/index.html
 By inputing the 'Nickname' & 'Password', you'll be able to create an encrypted wallet locally on your machine.
 
-### ... web on chain ?
+### ... web on chain?
 
 You can access to Thyra web hosting interface at URL : http://my.massa/thyra/websiteCreator/index.html
 
@@ -113,10 +113,10 @@ For this to work, the file you upload must be a zip archive (file ending with `.
 
 ## Additional information
 
-### Why this name ?
+### Why this name?
 
 θύρα (thýra) in ancient Greek means door, entrance. This is exactly what this project is: an entrance to the Massa blockchain.
 
-### How to pronounce it ?
+### How to pronounce it?
 
 See https://www.youtube.com/watch?v=_0BQ7sSJMTw.
