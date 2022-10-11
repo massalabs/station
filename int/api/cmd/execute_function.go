@@ -1,9 +1,11 @@
 package cmd
 
 import (
+	"fyne.io/fyne/v2"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/gui"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
@@ -11,8 +13,14 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
+func CreateExecuteFunctionHandler(app *fyne.App) func(params operations.CmdExecuteFunctionParams) middleware.Responder {
+	return func(params operations.CmdExecuteFunctionParams) middleware.Responder {
+		return ExecuteFunctionHandler(params, app)
+	}
+}
+
 //nolint:nolintlint,ireturn
-func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams) middleware.Responder {
+func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyne.App) middleware.Responder {
 	addr, err := base58.CheckDecode(params.Body.At[1:])
 	if err != nil {
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
@@ -30,7 +38,9 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams) middlewa
 			})
 	}
 
-	err = wallet.Unprotect(params.HTTPRequest.Header.Get("Authorization"), 0)
+	password := gui.AskPassword(wallet.Nickname, app)
+
+	err = wallet.Unprotect(password, 0)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
 			&models.Error{Code: errorCodeWalletWrongPassword, Message: "Error : cannot uncipher the wallet : " + err.Error()})

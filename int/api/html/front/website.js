@@ -11,9 +11,9 @@ initializeDefaultWallet();
 
 const eventManager = new EventManager();
 
-async function onSubmitDeploy(txType = 'deployWebsiteAndUpload') {
-	setTxType(txType);
-	callTx();
+async function onSubmitDeploy(txType = "deployWebsiteAndUpload") {
+    setTxType(txType);
+    callTx();
 }
 
 // Write the default wallet text in wallet popover component
@@ -81,13 +81,13 @@ function setTxType(txType) {
 }
 
 async function callTx() {
-	if (actualTxType === "deployWebsiteAndUpload") {
-		deployWebsiteAndUpload();
-	}
-	if (actualTxType.includes("uploadWebsiteCreator")) {
-		const websiteIndex = actualTxType.split("uploadWebsiteCreator")[1];
-		uploadWebsite(nextFileToUpload, websiteIndex);
-	}
+    if (actualTxType === "deployWebsiteAndUpload") {
+        deployWebsiteAndUpload();
+    }
+    if (actualTxType.includes("uploadWebsiteCreator")) {
+        const websiteIndex = actualTxType.split("uploadWebsiteCreator")[1];
+        uploadWebsite(nextFileToUpload, websiteIndex);
+    }
 }
 
 // open file upload
@@ -180,7 +180,7 @@ function tableInsert(resp, count) {
         let files = evt.target.files; // get files
         nextFileToUpload = files[0];
 
-		onSubmitDeploy("uploadWebsiteCreator" + count);
+        onSubmitDeploy("uploadWebsiteCreator" + count);
     });
 }
 
