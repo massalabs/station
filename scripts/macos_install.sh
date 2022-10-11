@@ -46,7 +46,7 @@ green "INFO" "This installation script will install the last release of Thyra an
 
 install_thyra || exit 1
 
-ping -c test.massa || set_local_dns || exit 1
+ping -c 1 -t 1 test.massa  || set_local_dns || exit 1
 
 green "SUCCESS" "Thyra is installed and the .massa TLD resolution is configured. You're free to go!!!"
 
