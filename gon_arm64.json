@@ -6,12 +6,5 @@
     },
     "sign" :{
         "application_identity" : "Apple Development: thykof@protonmail.ch (PDN579G6R6)"
-    },
-    "dmg" :{
-        "output_path":  "thyra-server_darwin_arm64.dmg",
-        "volume_name":  "thyra-server"
-    },
-    "zip" :{
-        "output_path" : "thyra-server_darwin_arm64.zip"
     }
 }
