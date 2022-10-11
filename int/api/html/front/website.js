@@ -13,7 +13,6 @@ const eventManager = new EventManager();
 
 async function onSubmitDeploy(txType = 'deployWebsiteAndUpload') {
 	setTxType(txType);
-	console.log("16");
 	callTx();
 }
 
