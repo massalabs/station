@@ -20,11 +20,12 @@ install_thyra () {
     curl -s -L "${BINARY_URL}_${arch}" -o thyra-server || fatal "binary download failed."
 
     chmod +x thyra-server || fatal "change to executable failed."
+    $(ls /usr/local/bin/ || sudo mkdir /usr/local/bin) || fatal "/usr/local/bin creation failed."
     sudo mv thyra-server /usr/local/bin/ || fatal "move to /usr/local/bin/ failed."
 }
 
 configure_start_dnsmasq () {
-    sudo bash -c 'echo "address=/.massa/127.0.0.1" > $(brew --prefix)/etc/dnsmasq.d/massa.conf' || fatal "dnsmas configuration failed."
+    sudo bash -c 'echo "address=/.massa/127.0.0.1" > $(brew --prefix)/etc/dnsmasq.d/massa.conf' || fatal "dnsmasq configuration failed."
     sudo mkdir -p /etc/resolver  || fatal "resolver directory creation failed."
     sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/massa'  || fatal "resolver configuration failed."
 
@@ -45,7 +46,7 @@ green "INFO" "This installation script will install the last release of Thyra an
 
 install_thyra || exit 1
 
-ping -c test.massa || set_local_dns || exit 1
+ping -c 1 -t 1 test.massa  || set_local_dns || exit 1
 
 green "SUCCESS" "Thyra is installed and the .massa TLD resolution is configured. You're free to go!!!"
 
