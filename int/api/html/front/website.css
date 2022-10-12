@@ -513,8 +513,9 @@ th {
 #file-select-button {
     background-color: #808080;
     border: none;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 400px;
+    max-width: 256px;
     height: 36px;
 }
