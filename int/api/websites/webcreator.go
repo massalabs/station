@@ -14,7 +14,7 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-const maxArchiveSize = 1500000
+const maxArchiveSize = 4000000
 
 func CreatePrepareForWebsiteHandler(
 	app *fyne.App,
