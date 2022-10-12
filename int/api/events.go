@@ -10,7 +10,7 @@ import (
 	"github.com/massalabs/thyra/pkg/node"
 )
 
-//nolint:nolintlint,ireturn
+//nolint:nolintlint,ireturn,funlen
 func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
