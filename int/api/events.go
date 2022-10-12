@@ -10,18 +10,17 @@ import (
 	"github.com/massalabs/thyra/pkg/node"
 )
 
-//nolint:nolintlint,ireturn,funlen
+//nolint:nolintlint,ireturn
 func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
 	status, err := node.Status(client)
 	if err != nil {
-		return operations.NewThyraEventsGetterInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeEventListener,
-					Message: err.Error(),
-				})
+		return operations.NewThyraEventsGetterInternalServerError().WithPayload(
+			&models.Error{
+				Code:    errorCodeEventListener,
+				Message: err.Error(),
+			})
 	}
 
 	slotStart := node.Slot{
@@ -59,18 +58,14 @@ func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.
 
 		status, err := node.Status(client)
 		if err != nil {
-			return operations.NewThyraEventsGetterInternalServerError().
-				WithPayload(
-					&models.Error{
-						Code:    errorCodeEventListener,
-						Message: err.Error(),
-					})
+			return operations.NewThyraEventsGetterInternalServerError().WithPayload(
+				&models.Error{
+					Code:    errorCodeEventListener,
+					Message: err.Error(),
+				})
 		}
 
-		slotStart = node.Slot{
-			Period: status.LastSlot.Period,
-			Thread: 0,
-		}
+		slotStart.Period = status.LastSlot.Period
 	}
 
 	return operations.NewThyraEventsGetterOK().WithPayload(&models.Events{
