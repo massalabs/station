@@ -200,41 +200,47 @@ $(".upload input").on("change", function () {
 });
 
 $(".upload input").on("change", function () {
-    let str = $(".upload input").val();
+    let filepath = $(".upload input").val();
+    var filename = filepath.replace(/^.*[\\\/]/, "");
+    let n = filename.lastIndexOf(".");
+    let fileExtension = filename.substring(n + 1);
 
-    let n = str.lastIndexOf(".");
-
-    let result = str.substring(n + 1);
-
-    if (result != "zip" && $(".upload input").val() != "") {
+    if (fileExtension != "zip" && filename != "") {
         uploadable = false;
-
         document.getElementsByClassName("fileTypeError")[0].style.display = "flex";
         document.getElementById("website-upload").style.display = "none";
         document.getElementById("website-upload-refuse").style.display = "flex";
+        $("#file-select-button").html(filename);
+    } else if (filename == "") {
+        uploadable = false;
+        document.getElementsByClassName("fileTypeError")[0].style.display = "none";
+        document.getElementById("website-upload").style.display = "none";
+        document.getElementById("website-upload-refuse").style.display = "flex";
+        $("#file-select-button").html("Import From");
     } else {
         uploadable = true;
         document.getElementsByClassName("fileTypeError")[0].style.display = "none";
         document.getElementById("website-upload").style.display = "flex";
         document.getElementById("website-upload-refuse").style.display = "none";
+        $("#file-select-button").html(filename);
     }
-
-    $("#file-select-button").html(result);
 });
 
 //check max size file
 $(".upload input").on("change", function () {
-    const fileSize = this.files[0].size / 1024 / 1024; // in MiB
-    if (fileSize > 4) {
-        uploadable = false;
-        document.getElementsByClassName("fileSizeError")[0].style.display = "flex";
-        document.getElementById("website-upload").style.display = "none";
-        document.getElementById("website-upload-refuse").style.display = "flex";
-    } else {
-        uploadable = true;
-        document.getElementsByClassName("fileSizeError")[0].style.display = "none";
-        document.getElementById("website-upload").style.display = "flex";
-        document.getElementById("website-upload-refuse").style.display = "none";
+    if (this.files[0]) {
+        const fileSize = this.files[0].size / 1024 / 1024; // in MiB
+        if (fileSize > 4) {
+            uploadable = false;
+            document.getElementsByClassName("fileSizeError")[0].style.display = "flex";
+            document.getElementById("website-upload").style.display = "none";
+            document.getElementById("website-upload-refuse").style.display = "flex";
+        } else {
+            uploadable = true;
+            document.getElementsByClassName("fileSizeError")[0].style.display = "none";
+            document.getElementById("website-upload").style.display = "flex";
+            document.getElementById("website-upload-refuse").style.display = "none";
+        }
     }
 });
 
