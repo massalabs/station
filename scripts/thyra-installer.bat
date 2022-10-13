@@ -33,7 +33,7 @@ IF NOT EXIST %ACRYLIC_PATH%\AcrylicHosts.txt (
 
     CALL "InstallAcrylicService.bat"
 
-    @REM Allows for variable value assertion inside for loops at runtime
+    @REM ENABLEDELAYEDEXPANSION Allows for variable value assertion inside for loops at runtime
     @REM This for loop iterate over all connected network adapters and set their DNS.
     @REM Data is forwarded in another for loop to automatically clean wmic output of trailing <CR> tags
     SETLOCAL ENABLEDELAYEDEXPANSION
