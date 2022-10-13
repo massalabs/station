@@ -146,9 +146,11 @@ func init() {
                   "price": 0
                 },
                 "keyId": "default",
-                "name": "test"
+                "name": "test",
+                "nickname": "test"
               },
               "required": [
+                "nickname",
                 "name",
                 "at"
               ],
@@ -160,7 +162,8 @@ func init() {
                 },
                 "at": {
                   "description": "Smart contract address exporting the function to call.",
-                  "type": "string"
+                  "type": "string",
+                  "x-nullable": false
                 },
                 "coins": {
                   "description": "Coins to be send from caller to smart contract address.",
@@ -211,7 +214,13 @@ func init() {
                 },
                 "name": {
                   "description": "Function name to call.",
-                  "type": "string"
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "nickname": {
+                  "description": "Wallet's short name.",
+                  "type": "string",
+                  "x-nullable": false
                 }
               }
             }
@@ -1130,9 +1139,11 @@ func init() {
                   "price": 0
                 },
                 "keyId": "default",
-                "name": "test"
+                "name": "test",
+                "nickname": "test"
               },
               "required": [
+                "nickname",
                 "name",
                 "at"
               ],
@@ -1144,7 +1155,8 @@ func init() {
                 },
                 "at": {
                   "description": "Smart contract address exporting the function to call.",
-                  "type": "string"
+                  "type": "string",
+                  "x-nullable": false
                 },
                 "coins": {
                   "description": "Coins to be send from caller to smart contract address.",
@@ -1195,7 +1207,13 @@ func init() {
                 },
                 "name": {
                   "description": "Function name to call.",
-                  "type": "string"
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "nickname": {
+                  "description": "Wallet's short name.",
+                  "type": "string",
+                  "x-nullable": false
                 }
               }
             }
