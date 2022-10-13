@@ -16,12 +16,11 @@ func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.
 
 	status, err := node.Status(client)
 	if err != nil {
-		return operations.NewThyraEventsGetterInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeEventListener,
-					Message: err.Error(),
-				})
+		return operations.NewThyraEventsGetterInternalServerError().WithPayload(
+			&models.Error{
+				Code:    errorCodeEventListener,
+				Message: err.Error(),
+			})
 	}
 
 	slotStart := node.Slot{
@@ -56,6 +55,17 @@ func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.
 		if trigger {
 			break
 		}
+
+		status, err := node.Status(client)
+		if err != nil {
+			return operations.NewThyraEventsGetterInternalServerError().WithPayload(
+				&models.Error{
+					Code:    errorCodeEventListener,
+					Message: err.Error(),
+				})
+		}
+
+		slotStart.Period = status.LastSlot.Period
 	}
 
 	return operations.NewThyraEventsGetterOK().WithPayload(&models.Events{

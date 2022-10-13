@@ -389,13 +389,14 @@ function step2(dnsName, contractAddress, totalChunk) {
     $(".title").eq(0).removeClass("loading-dots");
     $(".title").eq(1).addClass("loading-dots");
 }
+
 // Step 3, Monitor state of chunk uploding
 function step3(contractAddress, totalChunk) {
     let actualChunk = 1;
 
     for (let i = 0; i < totalChunk; i++) {
         eventManager.subscribe(
-            `Chunk of Website deployed to ${contractAddress}`,
+            `Chunk of Website deployed to ${contractAddress} on key massa_web_${i}`,
             getWallet(getDefaultWallet()).address,
             (_) => {
                 actualChunk++;
