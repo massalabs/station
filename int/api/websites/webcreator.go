@@ -18,6 +18,8 @@ import (
 
 const UploadMaxSize = "UPLOAD_MAX_SIZE"
 
+const defaultMaxArchiveSize = 15000
+
 func CreatePrepareForWebsiteHandler(
 	app *fyne.App,
 ) func(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
@@ -77,6 +79,10 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 
 func GetMaxArchiveSize() int {
 	strVar := os.Getenv(UploadMaxSize)
+
+	if strVar == "" {
+		return defaultMaxArchiveSize
+	}
 
 	intVar, err := strconv.Atoi(strVar)
 	if err != nil {

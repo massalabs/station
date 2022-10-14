@@ -229,8 +229,8 @@ $(".upload input").on("change", function () {
 //check max size file
 $(".upload input").on("change", function () {
     if (this.files[0]) {
-        const fileSize = this.files[0].size / 1024 / 1024; // in MiB
-        if (fileSize > 4) {
+        const fileSize = this.files[0].size;
+        if (fileSize > document.getElementById("UploadMaxSize").innerHTML) {
             uploadable = false;
             document.getElementsByClassName("fileSizeError")[0].style.display = "flex";
             document.getElementById("website-upload").style.display = "none";

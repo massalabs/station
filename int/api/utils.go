@@ -1,6 +1,7 @@
 package api
 
 import (
+	"html/template"
 	"net/http"
 	"path/filepath"
 
@@ -49,6 +50,25 @@ func (c *CustomResponder) WriteResponse(writer http.ResponseWriter, producer run
 
 func NewCustomResponder(body []byte, header map[string]string, statusCode int) *CustomResponder {
 	return &CustomResponder{Body: body, Header: header, StatusCode: statusCode}
+}
+
+type TemplateResponder struct {
+	filename string
+	Header   map[string]string
+	data     any
+}
+
+func (t *TemplateResponder) WriteResponse(writer http.ResponseWriter, producer runtime.Producer) {
+	tmpl := template.Must(template.ParseFiles(t.filename))
+
+	err := tmpl.Execute(writer, t.data)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func NewTemplateResponder(filename string, header map[string]string, data any) *TemplateResponder {
+	return &TemplateResponder{filename: filename, Header: header, data: data}
 }
 
 func NewNotFoundResponder() *CustomResponder {

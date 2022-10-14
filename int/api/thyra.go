@@ -6,11 +6,14 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/int/api/websites"
 )
 
 const indexHTML = "index.html"
 
 const basePath = "html/front/"
+
+const pathFromRoot = "int/api/" + basePath
 
 //go:embed html/front
 var content embed.FS
@@ -30,11 +33,19 @@ func ThyraWalletHandler(params operations.ThyraWalletParams) middleware.Responde
 	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)
 }
 
+type WebSiteCreatorData struct {
+	UploadMaxSize int
+}
+
 //nolint:nolintlint,ireturn
 func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) middleware.Responder {
 	file := params.Resource
 	if params.Resource == indexHTML {
 		file = "website.html"
+		filename := pathFromRoot + file
+		maxArchiveSize := websites.GetMaxArchiveSize()
+
+		return NewTemplateResponder(filename, contentType(params.Resource), WebSiteCreatorData{maxArchiveSize})
 	}
 
 	resource, err := content.ReadFile(basePath + file)
