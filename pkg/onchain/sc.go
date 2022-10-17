@@ -58,7 +58,7 @@ func CallFunction(client *node.Client, wallet wallet.Wallet,
 	return operationID, errors.New("timeout")
 }
 
-func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet,
+func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet, expiryDelta uint64,
 	addr []byte, function string, parameter []byte,
 ) (string, error) {
 	callSC := callsc.New(addr, function, parameter,
@@ -67,7 +67,7 @@ func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet,
 
 	operationID, err := sendOperation.Call(
 		client,
-		sendOperation.SlotDurationBatch, sendOperation.NoFee,
+		expiryDelta, sendOperation.NoFee,
 		callSC,
 		wallet.KeyPairs[0].PublicKey, wallet.KeyPairs[0].PrivateKey)
 	if err != nil {
