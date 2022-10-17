@@ -35,15 +35,12 @@ type CustomResponder struct {
 }
 
 func (c *CustomResponder) WriteResponse(writer http.ResponseWriter, producer runtime.Producer) {
-	writer.WriteHeader(c.StatusCode)
 
 	for k, v := range c.Header {
-		if len(writer.Header().Values(k)) == 1 {
-			writer.Header().Set(k, v)
-		} else {
-			writer.Header().Add(k, v)
-		}
+		writer.Header().Set(k, v)
 	}
+
+	writer.WriteHeader(c.StatusCode)
 
 	_, err := writer.Write(c.Body)
 	if err != nil {
