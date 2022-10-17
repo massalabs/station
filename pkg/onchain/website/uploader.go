@@ -16,6 +16,10 @@ import (
 //go:embed sc
 var content embed.FS
 
+const baseOffset = 5
+
+const multiplicator = 2
+
 func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	client := node.NewDefaultClient()
 
@@ -96,8 +100,7 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 				fmt.Errorf("marshaling '%s': %w", AppendParams{Data: chunks[index], ChunkID: strconv.Itoa(index)}, err)
 		}
 
-		opID, err = onchain.CallFunctionUnwaited(client, *wallet, addr, "appendBytesToWebsite", param)
-
+		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", param)
 		if err != nil {
 			return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 		}
