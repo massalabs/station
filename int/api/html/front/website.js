@@ -5,6 +5,8 @@ let nextFileToUpload;
 let uploadable = false;
 
 // INIT
+const uploadMaxSize = document.getElementById("UploadMaxSize").innerHTML;
+setMaxSizeLabel();
 getWallets();
 getWebsiteDeployerSC();
 initializeDefaultWallet();
@@ -230,7 +232,7 @@ $(".upload input").on("change", function () {
 $(".upload input").on("change", function () {
     if (this.files[0]) {
         const fileSize = this.files[0].size;
-        if (fileSize > document.getElementById("UploadMaxSize").innerHTML) {
+        if (fileSize > uploadMaxSize) {
             uploadable = false;
             document.getElementsByClassName("fileSizeError")[0].style.display = "flex";
             document.getElementById("website-upload").style.display = "none";
@@ -439,4 +441,11 @@ function resetStepper() {
     $(".title").eq(2).removeClass("loading-dots");
     getWebsiteDeployerSC();
     document.getElementById("wallet-popover").classList.remove("popover__disabled");
+}
+
+function setMaxSizeLabel() {
+    const spans = document.getElementsByClassName("UploadMaxSizeLabel");
+    for (let span of spans) {
+        span.innerHTML = uploadMaxSize / 1000 + "Mo";
+    }
 }
