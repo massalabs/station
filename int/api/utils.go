@@ -38,7 +38,11 @@ func (c *CustomResponder) WriteResponse(writer http.ResponseWriter, producer run
 	writer.WriteHeader(c.StatusCode)
 
 	for k, v := range c.Header {
-		writer.Header().Add(k, v)
+		if len(writer.Header().Values(k)) == 1 {
+			writer.Header().Set(k, v)
+		} else {
+			writer.Header().Add(k, v)
+		}
 	}
 
 	_, err := writer.Write(c.Body)
