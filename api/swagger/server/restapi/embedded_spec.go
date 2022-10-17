@@ -663,7 +663,7 @@ func init() {
       "get": {
         "produces": [
           "application/json",
-          "application/javascript",
+          "text/javascript",
           "text/html",
           "text/css",
           "text/webp",
@@ -691,7 +691,7 @@ func init() {
       "get": {
         "produces": [
           "application/json",
-          "application/javascript",
+          "text/javascript",
           "text/html",
           "text/css",
           "text/webp",
@@ -725,7 +725,7 @@ func init() {
       "get": {
         "produces": [
           "application/json",
-          "application/javascript",
+          "text/javascript",
           "text/html",
           "text/css",
           "text/webp",
@@ -1608,11 +1608,11 @@ func init() {
     "/thyra/registry/{resource}": {
       "get": {
         "produces": [
-          "application/javascript",
           "application/json",
           "image/png",
           "text/css",
           "text/html",
+          "text/javascript",
           "text/webp"
         ],
         "operationId": "thyraRegistry",
@@ -1636,11 +1636,11 @@ func init() {
     "/thyra/wallet/{resource}": {
       "get": {
         "produces": [
-          "application/javascript",
           "application/json",
           "image/png",
           "text/css",
           "text/html",
+          "text/javascript",
           "text/webp"
         ],
         "operationId": "thyraWallet",
@@ -1670,11 +1670,11 @@ func init() {
     "/thyra/websiteCreator/{resource}": {
       "get": {
         "produces": [
-          "application/javascript",
           "application/json",
           "image/png",
           "text/css",
           "text/html",
+          "text/javascript",
           "text/webp"
         ],
         "operationId": "thyraWebsiteCreator",
