@@ -100,6 +100,7 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 				fmt.Errorf("marshaling '%s': %w", AppendParams{Data: chunks[index], ChunkID: strconv.Itoa(index)}, err)
 		}
 
+		//nolint:lll
 		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", param)
 		if err != nil {
 			return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
