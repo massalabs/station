@@ -14,7 +14,7 @@ func contentType(rsc string) map[string]string {
 	case ".css":
 		contentType = map[string]string{"Content-Type": "text/css"}
 	case ".js":
-		contentType = map[string]string{"Content-Type": "application/javascript"}
+		contentType = map[string]string{"Content-Type": "text/javascript"}
 	case ".html":
 		contentType = map[string]string{"Content-Type": "text/html"}
 	case ".webp":
