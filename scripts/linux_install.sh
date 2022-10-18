@@ -1,0 +1,63 @@
+#!/bin/bash +x
+
+BINARY_URL="https://github.com/massalabs/thyra/releases/latest/download/thyra-server_linux"
+SCRIPT="Linux"
+
+green () { echo -e "\033[01;32m$1:\033[0m $2"; }
+
+fatal () { echo -e "\033[01;31m[$SCRIPT]ERROR:\033[0m $1" >&2; exit 1; }
+
+architecture_version () {
+    case $(uname -m) in
+        x86_64) echo "amd64" ;;
+        # arm64)  echo "arm64" ;; ARM64 is unsupported on Linux for now
+        *)      fatal "$(uname -m) unsupported." ;;
+    esac
+}
+
+install_thyra () {
+    arch="$(architecture_version)" || exit 1
+    curl -s -L "${BINARY_URL}_${arch}" -o thyra-server || fatal "binary download failed."
+
+    chmod +x thyra-server || fatal "change to executable failed."
+    (ls /usr/local/bin/ > /dev/null || sudo mkdir -p /usr/local/bin) || fatal "/usr/local/bin creation failed."
+    sudo mv thyra-server /usr/local/bin/ || fatal "move to /usr/local/bin/ failed."
+}
+
+configure_network_manager () {
+    sudo cp /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf_backup_thyra_install || fatal "couldn't create NetworkManager backup"
+    local dns="$(grep '^dns=' /etc/NetworkManager/NetworkManager.conf | sed 's/^dns=//')"
+    case $dns in
+        dnsmasq);;
+        "") sudo sed -i 's/^\[main\]$/\[main\]\ndns=dnsmasq/g' /etc/NetworkManager/NetworkManager.conf || fatal "couldn't set dnsmasq as dns in NetworkManager";;
+        *) sudo sed -i 's/^dns=.*$/dns=dnsmasq/g' /etc/NetworkManager/NetworkManager.conf || fatal "couldn't set dnsmasq as dns in NetworkManager";;
+    esac
+}
+
+configure_start_dnsmasq () {
+    sudo mkdir -p /etc/NetworkManager/dnsmasq.d/ || fatal "couln't create dnsmasq config directory"
+    sudo bash -c 'echo "address=/.massa/127.0.0.1" > /etc/NetworkManager/dnsmasq.d/massa.conf'
+    sudo mv /etc/resolv.conf /etc/resolv.conf_backup_thyra_install || fatal "couldn't make /etc/resolv.conf backup"
+    sudo ln -s /var/run/NetworkManager/resolv.conf /etc/resolv.conf || fatal "couln't make link NetworkManager resolver to /etc/resolv.conf"
+    sudo systemctl restart NetworkManager || fatal "dnsmasq service failed to restart"
+}
+
+set_local_dns () {
+    case $(sudo lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//') in
+        "")         (configure_network_manager || fatal "couldn't set dnsmasq as dns") && configure_start_dnsmasq || exit -1 ;;
+        dnsmasq)    configure_start_dnsmasq || exit -1 ;;
+        *)          fatal "local DNS application unsupported." ;;
+    esac
+}
+
+echo ""
+
+green "INFO" "This installation script will install the last release of Thyra and will configure your local DNS to resolve .massa if needed."
+
+install_thyra || exit 1
+
+ping -c 1 -t 1 test.massa > /dev/null || set_local_dns || exit 1
+
+green "SUCCESS" "Thyra is installed and the .massa TLD resolution is configured. You're free to go!!!"
+
+echo ""
