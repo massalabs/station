@@ -78,18 +78,18 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 }
 
 func GetMaxArchiveSize() int {
-	strVar := os.Getenv(UploadMaxSize)
+	uploadMaxSizeStr := os.Getenv(UploadMaxSize)
 
-	if strVar == "" {
+	if uploadMaxSizeStr == "" {
 		return defaultMaxArchiveSize
 	}
 
-	intVar, err := strconv.Atoi(strVar)
+	uploadMaxSizeInt, err := strconv.Atoi(uploadMaxSizeStr)
 	if err != nil {
 		panic(err)
 	}
 
-	return intVar
+	return uploadMaxSizeInt
 }
 
 //nolint:nolintlint,ireturn
