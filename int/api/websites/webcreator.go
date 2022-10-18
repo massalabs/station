@@ -86,7 +86,7 @@ func GetMaxArchiveSize() int {
 
 	uploadMaxSizeInt, err := strconv.Atoi(uploadMaxSizeStr)
 	if err != nil {
-		panic(err)
+		return defaultMaxArchiveSize
 	}
 
 	return uploadMaxSizeInt
