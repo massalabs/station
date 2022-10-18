@@ -18,7 +18,7 @@ import (
 
 const UploadMaxSize = "UPLOAD_MAX_SIZE"
 
-const defaultMaxArchiveSize = 15000
+const defaultMaxArchiveSize = 1500000
 
 func CreatePrepareForWebsiteHandler(
 	app *fyne.App,
