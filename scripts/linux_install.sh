@@ -17,6 +17,10 @@ architecture_version () {
     esac
 }
 
+check_supported_distro () {
+    grep '^ID.*=.*ubuntu' /etc/os-release &> /dev/null || fatal "Aborting: You are using an unsupported distribution."
+}
+
 install_thyra () {
     arch="$(architecture_version)" || exit 1
     curl -s -L "${BINARY_URL}_${arch}" -o thyra-server || fatal "binary download failed."
@@ -61,6 +65,8 @@ set_local_dns () {
 echo ""
 
 green "INFO" "This installation script will install the last release of Thyra and will configure your local DNS to resolve .massa if needed."
+
+check_supported_distro || exit 1
 
 install_thyra || exit 1
 
