@@ -5,6 +5,8 @@ SCRIPT="Linux"
 
 green () { echo -e "\033[01;32m$1:\033[0m $2"; }
 
+warn () { echo -e "\033[01;33m[$SCRIPT]WARNING:\033[0m $1"; }
+
 fatal () { echo -e "\033[01;31m[$SCRIPT]ERROR:\033[0m $1" >&2; exit 1; }
 
 architecture_version () {
@@ -46,6 +48,12 @@ set_local_dns () {
     case $(sudo lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//') in
         "")         (configure_network_manager || fatal "couldn't set dnsmasq as dns") && configure_start_dnsmasq || exit -1 ;;
         dnsmasq)    configure_start_dnsmasq || exit -1 ;;
+        systemd-r)  warn "Your computer has systemd-resolver as a DNS resolver. Thyra needs dnsmasq to redirect .massa website." && \
+                    read -p "Do you agree to install dnsmasq in place of systemd-resolver ? [y/n]" yn
+                    if [ "$yn" != "y" ] && [ "$yn" != "yes" ]; then
+                        fatal "Aborting."
+                    fi
+                    (configure_network_manager || fatal "couldn't set dnsmasq as dns") && configure_start_dnsmasq || exit -1 ;;
         *)          fatal "local DNS application unsupported." ;;
     esac
 }
