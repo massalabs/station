@@ -35,7 +35,6 @@ type CustomResponder struct {
 }
 
 func (c *CustomResponder) WriteResponse(writer http.ResponseWriter, producer runtime.Producer) {
-
 	for k, v := range c.Header {
 		writer.Header().Set(k, v)
 	}
