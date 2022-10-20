@@ -13,8 +13,6 @@ const indexHTML = "index.html"
 
 const basePath = "html/front/"
 
-const pathFromRoot = "int/api/" + basePath
-
 //go:embed html/front
 var content embed.FS
 
@@ -40,17 +38,20 @@ type WebSiteCreatorData struct {
 //nolint:nolintlint,ireturn
 func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) middleware.Responder {
 	file := params.Resource
+
 	if params.Resource == indexHTML {
 		file = "website.html"
-		filename := pathFromRoot + file
-		maxArchiveSize := websites.GetMaxArchiveSize()
-
-		return NewTemplateResponder(filename, contentType(params.Resource), WebSiteCreatorData{maxArchiveSize})
 	}
 
 	resource, err := content.ReadFile(basePath + file)
 	if err != nil {
 		return operations.NewThyraWebsiteCreatorNotFound()
+	}
+
+	if params.Resource == indexHTML {
+		maxArchiveSize := websites.GetMaxArchiveSize()
+
+		return NewTemplateResponder(string(resource), contentType(params.Resource), WebSiteCreatorData{maxArchiveSize})
 	}
 
 	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)

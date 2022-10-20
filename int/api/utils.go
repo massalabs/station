@@ -53,22 +53,22 @@ func NewCustomResponder(body []byte, header map[string]string, statusCode int) *
 }
 
 type TemplateResponder struct {
-	filename string
+	template string
 	Header   map[string]string
 	data     any
 }
 
 func (t *TemplateResponder) WriteResponse(writer http.ResponseWriter, producer runtime.Producer) {
-	tmpl := template.Must(template.ParseFiles(t.filename))
+	tmpl := template.Must(template.New("templateName").Parse(t.template))
 
-	err := tmpl.Execute(writer, t.data)
+	err := tmpl.ExecuteTemplate(writer, "templateName", t.data)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func NewTemplateResponder(filename string, header map[string]string, data any) *TemplateResponder {
-	return &TemplateResponder{filename: filename, Header: header, data: data}
+func NewTemplateResponder(template string, header map[string]string, data any) *TemplateResponder {
+	return &TemplateResponder{template: template, Header: header, data: data}
 }
 
 func NewNotFoundResponder() *CustomResponder {
