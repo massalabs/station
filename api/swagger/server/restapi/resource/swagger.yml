@@ -16,7 +16,7 @@ paths:
       operationId: thyraWallet
       produces:
         - application/json
-        - application/javascript
+        - text/javascript
         - text/html
         - text/css
         - text/webp
@@ -40,7 +40,7 @@ paths:
       operationId: thyraWebsiteCreator
       produces:
         - application/json
-        - application/javascript
+        - text/javascript
         - text/html
         - text/css
         - text/webp
@@ -64,7 +64,7 @@ paths:
       operationId: thyraRegistry
       produces:
         - application/json
-        - application/javascript
+        - text/javascript
         - text/html
         - text/css
         - text/webp

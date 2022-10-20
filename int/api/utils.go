@@ -14,7 +14,7 @@ func contentType(rsc string) map[string]string {
 	case ".css":
 		contentType = map[string]string{"Content-Type": "text/css"}
 	case ".js":
-		contentType = map[string]string{"Content-Type": "application/javascript"}
+		contentType = map[string]string{"Content-Type": "text/javascript"}
 	case ".html":
 		contentType = map[string]string{"Content-Type": "text/html"}
 	case ".webp":
@@ -35,11 +35,11 @@ type CustomResponder struct {
 }
 
 func (c *CustomResponder) WriteResponse(writer http.ResponseWriter, producer runtime.Producer) {
-	writer.WriteHeader(c.StatusCode)
-
 	for k, v := range c.Header {
-		writer.Header().Add(k, v)
+		writer.Header().Set(k, v)
 	}
+
+	writer.WriteHeader(c.StatusCode)
 
 	_, err := writer.Write(c.Body)
 	if err != nil {

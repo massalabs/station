@@ -49,11 +49,13 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		HTMLProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
 			return errors.NotImplemented("html producer has not yet been implemented")
 		}),
+		JsProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
+			return errors.NotImplemented("js producer has not yet been implemented")
+		}),
 		JSONProducer: runtime.JSONProducer(),
 		TextWebpProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
 			return errors.NotImplemented("textWebp producer has not yet been implemented")
 		}),
-		TxtProducer: runtime.TextProducer(),
 
 		AllDomainsGetterHandler: AllDomainsGetterHandlerFunc(func(params AllDomainsGetterParams) middleware.Responder {
 			return middleware.NotImplemented("operation AllDomainsGetter has not yet been implemented")
@@ -147,15 +149,15 @@ type ThyraServerAPI struct {
 	// HTMLProducer registers a producer for the following mime types:
 	//   - text/html
 	HTMLProducer runtime.Producer
+	// JsProducer registers a producer for the following mime types:
+	//   - text/javascript
+	JsProducer runtime.Producer
 	// JSONProducer registers a producer for the following mime types:
 	//   - application/json
 	JSONProducer runtime.Producer
 	// TextWebpProducer registers a producer for the following mime types:
 	//   - text/webp
 	TextWebpProducer runtime.Producer
-	// TxtProducer registers a producer for the following mime types:
-	//   - application/javascript
-	TxtProducer runtime.Producer
 
 	// AllDomainsGetterHandler sets the operation handler for the all domains getter operation
 	AllDomainsGetterHandler AllDomainsGetterHandler
@@ -274,14 +276,14 @@ func (o *ThyraServerAPI) Validate() error {
 	if o.HTMLProducer == nil {
 		unregistered = append(unregistered, "HTMLProducer")
 	}
+	if o.JsProducer == nil {
+		unregistered = append(unregistered, "JsProducer")
+	}
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 	if o.TextWebpProducer == nil {
 		unregistered = append(unregistered, "TextWebpProducer")
-	}
-	if o.TxtProducer == nil {
-		unregistered = append(unregistered, "TxtProducer")
 	}
 
 	if o.AllDomainsGetterHandler == nil {
@@ -386,12 +388,12 @@ func (o *ThyraServerAPI) ProducersFor(mediaTypes []string) map[string]runtime.Pr
 			result["text/css"] = o.CSSProducer
 		case "text/html":
 			result["text/html"] = o.HTMLProducer
+		case "text/javascript":
+			result["text/javascript"] = o.JsProducer
 		case "application/json":
 			result["application/json"] = o.JSONProducer
 		case "text/webp":
 			result["text/webp"] = o.TextWebpProducer
-		case "application/javascript":
-			result["application/javascript"] = o.TxtProducer
 		}
 
 		if p, ok := o.customProducers[mt]; ok {
