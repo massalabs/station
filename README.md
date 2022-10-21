@@ -103,6 +103,12 @@ In order to register a website on Thyra you'll need to :
 -   Deploy a Smart Contract that will handle the storage of your website, your DNS name will fetch the Address of this Smart Contract
 -   Upload the build of your application
 
+### ... code with auto-reload
+
+You can run the application with this command: `air`.
+
+It will generate and reload thyra each time a file is modified.
+
 ## Usage
 
 ### Upload a website
