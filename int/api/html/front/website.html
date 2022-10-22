@@ -16,6 +16,9 @@
     </head>
 
     <body>
+        <!-- put here the value to use it in javascript -->
+        <span id="UploadMaxSize" style="display: none">{{ .UploadMaxSize }}</span>
+
         <!-- NAVIGATION / HEADER -->
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
@@ -112,7 +115,7 @@
                         <h4 id="fileError" class="fileTypeError">
                             File type needs to be .zip only
                         </h4>
-                        <h4 id="fileError" class="fileSizeError">Max Zip size needs to be 4Mo</h4>
+                        <h4 id="fileError" class="fileSizeError">Max Zip size needs to be&nbsp;<span class="UploadMaxSizeLabel"></span></h4>
                     </div>
 
                     <div class="align-right">
@@ -127,7 +130,7 @@
                     </div>
 
                     <div class="align-right">
-                        <p class="website-info-display">Zip only max size 4Mo</p>
+                        <p class="website-info-display">Zip only max size&nbsp;<span class="UploadMaxSizeLabel"></span></p>
                     </div>
 
                     <button

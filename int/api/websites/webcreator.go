@@ -4,6 +4,8 @@ import (
 	"encoding/base64"
 	"io"
 	"net/http"
+	"os"
+	"strconv"
 
 	"fyne.io/fyne/v2"
 	"github.com/go-openapi/runtime/middleware"
@@ -14,7 +16,9 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-const maxArchiveSize = 4000000
+const UploadMaxSize = "UPLOAD_MAX_SIZE"
+
+const defaultMaxArchiveSize = 1500000
 
 func CreatePrepareForWebsiteHandler(
 	app *fyne.App,
@@ -43,6 +47,8 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 		return createInternalServerError(errorCodeWebCreatorReadArchive, err.Error())
 	}
 
+	maxArchiveSize := GetMaxArchiveSize()
+
 	if len(archive) > maxArchiveSize {
 		return createInternalServerError(errorCodeWebCreatorArchiveSize, errorCodeWebCreatorArchiveSize)
 	}
@@ -69,6 +75,21 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 				Name:    params.URL,
 				Address: address,
 			})
+}
+
+func GetMaxArchiveSize() int {
+	uploadMaxSizeStr := os.Getenv(UploadMaxSize)
+
+	if uploadMaxSizeStr == "" {
+		return defaultMaxArchiveSize
+	}
+
+	uploadMaxSizeInt, err := strconv.Atoi(uploadMaxSizeStr)
+	if err != nil {
+		return defaultMaxArchiveSize
+	}
+
+	return uploadMaxSizeInt
 }
 
 //nolint:nolintlint,ireturn

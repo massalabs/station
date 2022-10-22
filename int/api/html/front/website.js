@@ -5,6 +5,8 @@ let nextFileToUpload;
 let uploadable = false;
 
 // INIT
+const uploadMaxSize = document.getElementById("UploadMaxSize").innerHTML;
+setMaxSizeLabel();
 getWallets();
 getWebsiteDeployerSC();
 initializeDefaultWallet();
@@ -229,8 +231,8 @@ $(".upload input").on("change", function () {
 //check max size file
 $(".upload input").on("change", function () {
     if (this.files[0]) {
-        const fileSize = this.files[0].size / 1024 / 1024; // in MiB
-        if (fileSize > 4) {
+        const fileSize = this.files[0].size;
+        if (fileSize > uploadMaxSize) {
             uploadable = false;
             document.getElementsByClassName("fileSizeError")[0].style.display = "flex";
             document.getElementById("website-upload").style.display = "none";
@@ -439,4 +441,27 @@ function resetStepper() {
     $(".title").eq(2).removeClass("loading-dots");
     getWebsiteDeployerSC();
     document.getElementById("wallet-popover").classList.remove("popover__disabled");
+}
+
+function setMaxSizeLabel() {
+    const spans = document.getElementsByClassName("UploadMaxSizeLabel");
+    for (let span of spans) {
+        span.innerHTML = formatBytes(uploadMaxSize);
+    }
+}
+
+function formatBytes(bytes, decimals = 2, isBinary = false) {
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"]; // or ['B', 'KB', 'MB', 'GB', 'TB']
+
+    if (!+bytes) {
+        return `0 ${sizes[0]}`;
+    }
+
+    const inByte = isBinary ? 1024 : 1000;
+    const dm = decimals < 0 ? 0 : decimals;
+
+    const pow = Math.floor(Math.log(bytes) / Math.log(inByte));
+    const maxPow = Math.min(pow, sizes.length - 1);
+
+    return `${parseFloat((bytes / Math.pow(inByte, maxPow)).toFixed(dm))} ${sizes[maxPow]}`;
 }
