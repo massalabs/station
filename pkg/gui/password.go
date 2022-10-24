@@ -83,14 +83,14 @@ func PasswordDeleteDialog(nickname string, app *fyne.App) chan string {
 		SubmitText: "Delete",
 		CancelText: "Cancel",
 	}
-
-	text1 := widget.NewLabel("Delete " + nickname + " Wallet ?")
-	title := container.New(layout.NewHBoxLayout(), layout.NewSpacer(), text1, layout.NewSpacer())
+	spacer := layout.NewSpacer()
+	text1 := widget.NewLabel(`Delete "` + nickname + `" Wallet ?`)
+	title := container.New(layout.NewHBoxLayout(), spacer, text1, spacer)
 	text2 := widget.NewLabel("If you delete a wallet, you will lose your MAS associated to it and ")
 	text3 := widget.NewLabel("won't be able to edit websites linked to this wallet anymore ")
-	content := container.New(layout.NewVBoxLayout(), text2, layout.NewSpacer(), text3)
-	centeredForm := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), form, layout.NewSpacer())
-	window.SetContent(container.New(layout.NewVBoxLayout(), title, layout.NewSpacer(), content, layout.NewSpacer(), centeredForm, layout.NewSpacer()))
+	content := container.New(layout.NewVBoxLayout(), text2, text3, spacer)
+	centeredForm := container.New(layout.NewVBoxLayout(), spacer, form, spacer)
+	window.SetContent(container.New(layout.NewVBoxLayout(), title, spacer, content, spacer, centeredForm, spacer))
 	window.CenterOnScreen()
 	window.Canvas().Focus(password)
 	window.Show()
