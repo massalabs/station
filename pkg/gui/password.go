@@ -16,7 +16,6 @@ func AskPassword(nickname string, app *fyne.App) string {
 
 func AskPasswordDeleteWallet(nickname string, app *fyne.App) string {
 	return PasswordDeleteWallet(nickname, app)
-
 }
 
 // inspired by https://hackernoon.com/asyncawait-in-golang-an-introductory-guide-ol1e34sg
@@ -24,9 +23,7 @@ func AskPasswordDeleteWallet(nickname string, app *fyne.App) string {
 // Thyra password input dialog.
 func PasswordDialog(nickname string, app *fyne.App) chan string {
 	passwordText := make(chan string)
-
 	window := (*app).NewWindow("Massa - Thyra")
-
 	width := 250.0
 	height := 90.0
 
@@ -89,6 +86,7 @@ func PasswordDeleteDialog(nickname string, app *fyne.App) chan string {
 		SubmitText: "Delete",
 		CancelText: "Cancel",
 	}
+	//nolint:gomnd
 	black := color.NRGBA{R: 0, G: 0, B: 0, A: 255}
 
 	text1 := canvas.NewText("Delete Wallet ?", black)
@@ -96,13 +94,9 @@ func PasswordDeleteDialog(nickname string, app *fyne.App) chan string {
 	title := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), text1, layout.NewSpacer())
 	text2 := canvas.NewText("If you delete a wallet, you will lose your MAS associated to it and ", black)
 	text3 := canvas.NewText("won't be able to edit websites linked to this wallet anymore", black)
-
 	content := container.New(layout.NewVBoxLayout(), text2, layout.NewSpacer(), text3)
-
 	centeredForm := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), form, layout.NewSpacer())
 	window.SetContent(container.New(layout.NewVBoxLayout(), title, content, centeredForm))
-
-	//window.SetContent(content)
 	window.CenterOnScreen()
 	window.Canvas().Focus(password)
 	window.Show()

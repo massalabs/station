@@ -11,6 +11,7 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
+//nolint:nolintlint,ireturn
 func NewDelete(walletStorage *sync.Map, app *fyne.App) operations.MgmtWalletDeleteHandler {
 	return &walletDelete{walletStorage: walletStorage, app: app}
 }
@@ -22,7 +23,6 @@ type walletDelete struct {
 
 //nolint:nolintlint,ireturn
 func (c *walletDelete) Handle(params operations.MgmtWalletDeleteParams) middleware.Responder {
-
 	walletLoaded, err := wallet.Load(params.Nickname)
 	if err != nil {
 		return createInternalServerError(errorCodeGetWallet, err.Error())
@@ -48,7 +48,6 @@ func (c *walletDelete) Handle(params operations.MgmtWalletDeleteParams) middlewa
 	err = wallet.Delete(params.Nickname)
 	if err != nil {
 		return createInternalServerError(errorCodeWalletDeleteFile, err.Error())
-
 	}
 
 	return operations.NewMgmtWalletDeleteNoContent()
