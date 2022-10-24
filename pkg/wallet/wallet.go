@@ -19,12 +19,12 @@ import (
 )
 
 var ErrUnprotectedSerialization = errors.New("private key must be protected before serialization")
-var WalletDirectory = os.Getenv("HOME") + "/.config/thyra/"
 
 const (
 	SecretKeyLength           = 32
 	PBKDF2NbRound             = 10000
 	FileModeUserReadWriteOnly = 0o600
+	WalletDirectoryPermission = 0o755
 	MinAddressLength          = 49
 )
 
@@ -48,12 +48,6 @@ type Wallet struct {
 type Config struct {
 	// address
 	Wallets []KeyPair `json:"wallets"`
-}
-
-func init() {
-	if _, err := os.Stat(WalletDirectory); os.IsNotExist(err) {
-		os.MkdirAll(WalletDirectory, 0755)
-	}
 }
 
 func (w *Wallet) Protect(password string, keyPairIndex uint8) error {
@@ -122,19 +116,30 @@ func FromYAML(raw []byte) (w Wallet, err error) {
 	return
 }
 
+func GetWalletDirectory() string {
+	walletDirectory := os.Getenv("HOME") + "/.config/thyra/"
+	if _, err := os.Stat(walletDirectory); os.IsNotExist(err) {
+		if os.MkdirAll(walletDirectory, WalletDirectoryPermission) != nil {
+			walletDirectory = ""
+		}
+	}
+
+	return walletDirectory
+}
+
 func LoadAll() (wallets []Wallet, e error) {
 	wallets = []Wallet{}
 
-	files, err := os.ReadDir(WalletDirectory)
+	files, err := os.ReadDir(GetWalletDirectory())
 	if err != nil {
-		return nil, fmt.Errorf("reading wallet directory '%s': %w", WalletDirectory, err)
+		return nil, fmt.Errorf("reading wallet directory '%s': %w", GetWalletDirectory(), err)
 	}
 
 	for _, f := range files {
 		fileName := f.Name()
 
 		if strings.HasPrefix(fileName, "wallet_") && strings.HasSuffix(fileName, ".json") {
-			bytesInput, err := os.ReadFile(WalletDirectory + fileName)
+			bytesInput, err := os.ReadFile(GetWalletDirectory() + fileName)
 			if err != nil {
 				return nil, fmt.Errorf("reading file '%s': %w", fileName, err)
 			}
@@ -154,7 +159,7 @@ func LoadAll() (wallets []Wallet, e error) {
 }
 
 func Load(nickname string) (*Wallet, error) {
-	bytesInput, err := os.ReadFile(WalletDirectory + "wallet_" + nickname + ".json")
+	bytesInput, err := os.ReadFile(GetWalletDirectory() + "wallet_" + nickname + ".json")
 	if err != nil {
 		return nil, fmt.Errorf("reading file 'wallet_%s.json': %w", nickname, err)
 	}
@@ -208,7 +213,7 @@ func New(nickname string) (*Wallet, error) {
 		return nil, fmt.Errorf("marshalling wallet: %w", err)
 	}
 
-	err = os.WriteFile(WalletDirectory+"wallet_"+nickname+".json", bytesOutput, FileModeUserReadWriteOnly)
+	err = os.WriteFile(GetWalletDirectory()+"wallet_"+nickname+".json", bytesOutput, FileModeUserReadWriteOnly)
 	if err != nil {
 		return nil, fmt.Errorf("writing wallet to 'wallet_%s.json': %w", nickname, err)
 	}
@@ -217,7 +222,7 @@ func New(nickname string) (*Wallet, error) {
 }
 
 func Delete(nickname string) (err error) {
-	err = os.Remove(WalletDirectory + "wallet_" + nickname + ".json")
+	err = os.Remove(GetWalletDirectory() + "wallet_" + nickname + ".json")
 	if err != nil {
 		return fmt.Errorf("deleting wallet 'wallet_%s.json': %w", nickname, err)
 	}
