@@ -98,10 +98,9 @@ function deleteRow(element) {
         .delete("/mgmt/wallet/" + nickname)
         .then((_) => {
             wallets = wallets.filter((wallet) => wallet.nickname != nickname);
+            document.getElementById("user-wallet-table").deleteRow(rowIndex);
         })
         .catch((e) => {
             errorAlert(getErrorMessage(e.response.data.code));
         });
-
-    document.getElementById("user-wallet-table").deleteRow(rowIndex);
 }

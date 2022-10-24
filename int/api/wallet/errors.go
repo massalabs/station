@@ -2,6 +2,9 @@ package wallet
 
 const (
 	errorCodeWalletAlreadyExists    = "Wallet-0001"
+	errorCodeWalletWrongPassword    = "Wallet-0002"
+	errorCodeGetWallet              = "Wallet-0003"
+	errorCodeCanceled               = "Wallet-0004"
 	errorCodeWalletCreateNoNickname = "Wallet-1001"
 	errorCodeWalletCreateNoPassword = "Wallet-1002"
 	errorCodeWalletCreateNew        = "Wallet-1003"
