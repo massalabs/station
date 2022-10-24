@@ -1,10 +1,7 @@
 package gui
 
 import (
-	"image/color"
-
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
@@ -63,7 +60,7 @@ func PasswordDeleteDialog(nickname string, app *fyne.App) chan string {
 	window := (*app).NewWindow("Massa - Thyra")
 
 	width := 250.0
-	height := 250.0
+	height := 80.0
 
 	window.Resize(fyne.Size{Width: float32(width), Height: float32(height)})
 
@@ -86,17 +83,14 @@ func PasswordDeleteDialog(nickname string, app *fyne.App) chan string {
 		SubmitText: "Delete",
 		CancelText: "Cancel",
 	}
-	//nolint:gomnd
-	black := color.NRGBA{R: 0, G: 0, B: 0, A: 255}
 
-	text1 := canvas.NewText("Delete Wallet ?", black)
-	text1.TextSize = 25
-	title := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), text1, layout.NewSpacer())
-	text2 := canvas.NewText("If you delete a wallet, you will lose your MAS associated to it and ", black)
-	text3 := canvas.NewText("won't be able to edit websites linked to this wallet anymore", black)
+	text1 := widget.NewLabel("Delete " + nickname + " Wallet ?")
+	title := container.New(layout.NewHBoxLayout(), layout.NewSpacer(), text1, layout.NewSpacer())
+	text2 := widget.NewLabel("If you delete a wallet, you will lose your MAS associated to it and ")
+	text3 := widget.NewLabel("won't be able to edit websites linked to this wallet anymore ")
 	content := container.New(layout.NewVBoxLayout(), text2, layout.NewSpacer(), text3)
 	centeredForm := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), form, layout.NewSpacer())
-	window.SetContent(container.New(layout.NewVBoxLayout(), title, content, centeredForm))
+	window.SetContent(container.New(layout.NewVBoxLayout(), title, layout.NewSpacer(), content, layout.NewSpacer(), centeredForm, layout.NewSpacer()))
 	window.CenterOnScreen()
 	window.Canvas().Focus(password)
 	window.Show()
