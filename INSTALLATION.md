@@ -124,6 +124,11 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 ### Windows
 
+### One click script installation
+
+Open a terminal as administrator , run the script [here](https://github.com/massalabs/thyra/blob/main/scripts/thyra-installer.bat)
+Script will install Thyra and Acrylic.
+
 #### Thyra installation
 
 Let's start by downloading the version of Thyra corresponding to your system [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64).
