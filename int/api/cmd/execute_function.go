@@ -5,6 +5,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/gui"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
@@ -38,8 +39,14 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyn
 			})
 	}
 
-	password := gui.AskPassword(wallet.Nickname, app)
-
+	password, status := gui.AskPassword(wallet.Nickname, app)
+	if !status {
+		return createInternalServerError(websites.ErrorCodeWalletCanceledAction, websites.ErrorCodeWalletCanceledAction)
+	}
+	err = wallet.Unprotect(password, 0)
+	if len(password) == 0 {
+		return createInternalServerError(websites.ErrorCodeWalletPasswordEmpty, err.Error())
+	}
 	err = wallet.Unprotect(password, 0)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
@@ -69,4 +76,12 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyn
 	}
 
 	return operations.NewCmdExecuteFunctionOK().WithPayload(operationID)
+}
+func createInternalServerError(errorCode string, errorMessage string) middleware.Responder {
+	return operations.NewCmdExecuteFunctionInternalServerError().
+		WithPayload(
+			&models.Error{
+				Code:    errorCode,
+				Message: errorMessage,
+			})
 }
