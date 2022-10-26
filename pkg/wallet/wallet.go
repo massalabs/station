@@ -82,7 +82,7 @@ func (w *Wallet) Unprotect(password string, keyPairIndex uint8) error {
 	}
 	// length control on password
 	if len(password) == 0 {
-		return fmt.Errorf("Password is Empty. Try again %w", errors.New("Password is Empty. Try again"))
+		return fmt.Errorf("password is empty. try again %w", errors.New("password is empty. try again"))
 	}
 
 	aesgcm, err := cipher.NewGCM(block)
