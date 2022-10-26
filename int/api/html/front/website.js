@@ -39,7 +39,7 @@ async function getWebsiteDeployerSC() {
             deployers = websites.data;
         })
         .catch((e) => {
-            console.error(e.response.data)
+            console.error(e.response.data);
             errorAlert(getErrorMessage(e.response.data.code));
         });
 }
@@ -149,7 +149,7 @@ async function getWallets() {
             }
         })
         .catch((e) => {
-            console.error(e.response.data)
+            console.error(e.response.data);
             errorAlert(getErrorMessage(e.response.data.code));
         });
 }
@@ -299,7 +299,7 @@ function postUpload(bodyFormData) {
             "Content-Type": "multipart/form-data",
         },
     }).catch((e) => {
-        console.error(e.response.data)
+        console.error(e.response.data);
         errorAlert(getErrorMessage(e.response.data.code));
         resetStepper();
     });
@@ -314,7 +314,7 @@ function putUpload(bodyFormData) {
             "Content-Type": "multipart/form-data",
         },
     }).catch((e) => {
-        console.error(e.response.data)
+        console.error(e.response.data);
         errorAlert(getErrorMessage(e.response.data.code));
         resetStepper();
     });
