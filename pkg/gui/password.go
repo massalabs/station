@@ -55,5 +55,6 @@ func PasswordDialog(nickname string, app *fyne.App) (chan string, chan bool) {
 // This function is blocking, it returns when the user submit or cancel the form.
 func Password(nickname string, app *fyne.App) (string, bool) {
 	passwordText, isSubmitted := PasswordDialog(nickname, app)
+
 	return <-passwordText, <-isSubmitted
 }

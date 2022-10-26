@@ -39,7 +39,9 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 	if !status {
 		return createInternalServerError(ErrorCodeWalletCanceledAction, ErrorCodeWalletCanceledAction)
 	}
+
 	err = wallet.Unprotect(password, 0)
+
 	if len(password) == 0 {
 		return createInternalServerError(ErrorCodeWalletPasswordEmpty, err.Error())
 	}

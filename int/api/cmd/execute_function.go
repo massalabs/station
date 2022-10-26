@@ -43,11 +43,13 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyn
 	if !status {
 		return createInternalServerError(websites.ErrorCodeWalletCanceledAction, websites.ErrorCodeWalletCanceledAction)
 	}
+
 	err = wallet.Unprotect(password, 0)
+
 	if len(password) == 0 {
 		return createInternalServerError(websites.ErrorCodeWalletPasswordEmpty, err.Error())
 	}
-	err = wallet.Unprotect(password, 0)
+
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
 			&models.Error{Code: errorCodeWalletWrongPassword, Message: "Error : cannot uncipher the wallet : " + err.Error()})
@@ -77,6 +79,8 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyn
 
 	return operations.NewCmdExecuteFunctionOK().WithPayload(operationID)
 }
+
+// nolint:nolintlint,ireturn
 func createInternalServerError(errorCode string, errorMessage string) middleware.Responder {
 	return operations.NewCmdExecuteFunctionInternalServerError().
 		WithPayload(
