@@ -34,7 +34,7 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 	if err != nil {
 		return createInternalServerError(errorCodeGetWallet, err.Error())
 	}
-	// submited := bool
+
 	password, status := gui.AskPassword(wallet.Nickname, app)
 	if !status {
 		return createInternalServerError(ErrorCodeWalletCanceledAction, ErrorCodeWalletCanceledAction)

@@ -80,10 +80,6 @@ func (w *Wallet) Unprotect(password string, keyPairIndex uint8) error {
 	if err != nil {
 		return fmt.Errorf("intializing block ciphering: %w", err)
 	}
-	// length control on password
-	if len(password) == 0 {
-		return fmt.Errorf("password is empty. try again %w", errors.New("password is empty. try again"))
-	}
 
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
