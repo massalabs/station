@@ -39,7 +39,7 @@ async function getWebsiteDeployerSC() {
             deployers = websites.data;
         })
         .catch((e) => {
-            console.error(e);
+            console.error(e.response.data)
             errorAlert(getErrorMessage(e.response.data.code));
         });
 }
@@ -149,6 +149,7 @@ async function getWallets() {
             }
         })
         .catch((e) => {
+            console.error(e.response.data)
             errorAlert(getErrorMessage(e.response.data.code));
         });
 }
@@ -298,6 +299,7 @@ function postUpload(bodyFormData) {
             "Content-Type": "multipart/form-data",
         },
     }).catch((e) => {
+        console.error(e.response.data)
         errorAlert(getErrorMessage(e.response.data.code));
         resetStepper();
     });
@@ -312,6 +314,7 @@ function putUpload(bodyFormData) {
             "Content-Type": "multipart/form-data",
         },
     }).catch((e) => {
+        console.error(e.response.data)
         errorAlert(getErrorMessage(e.response.data.code));
         resetStepper();
     });
@@ -372,6 +375,7 @@ function initStepper(dnsName, totalChunk) {
 
     eventManager.subscribe(`ERROR :`, getWallet(getDefaultWallet()).address, (resp) => {
         resetStepper();
+        console.error(resp.data);
         errorAlert(resp.data.data.split(":")[1]);
     });
 }
