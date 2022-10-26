@@ -20,10 +20,7 @@ func AskPasswordDeleteWallet(nickname string, app *fyne.App) string {
 // Thyra password input dialog.
 func PasswordDialog(nickname string, app *fyne.App) (chan string, chan bool) {
 	passwordText := make(chan string)
-
 	isSubmitted := make(chan bool)
-
-
 	window := (*app).NewWindow("Massa - Thyra")
 	width := 250.0
 	height := 90.0
