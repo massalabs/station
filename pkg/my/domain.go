@@ -31,6 +31,10 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 		return nil, fmt.Errorf("reading entry '%s' at '%s': %w", dns.DNSRawAddress, ownedPrefix+wallet.Address, err)
 	}
 
+	if len(domainsEntry.CandidateValue) == 0 {
+		return domains, nil
+	}
+
 	err = json.Unmarshal(domainsEntry.CandidateValue, &domains)
 	if err != nil {
 		return nil, fmt.Errorf("parsing json '%s': %w", domainsEntry.CandidateValue, err)
