@@ -21,6 +21,10 @@ async function onSubmitDeploy(txType = "deployWebsiteAndUpload") {
 // Write the default wallet text in wallet popover component
 async function getWebsiteDeployerSC() {
     let defaultWallet = getDefaultWallet();
+    if (defaultWallet === "") {
+        errorAlert(getErrorMessage("Wallet-4002"));
+        return;
+    }
 
     $("#website-deployers-table tbody tr").remove();
 
