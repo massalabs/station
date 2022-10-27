@@ -112,7 +112,7 @@ Then we must configure and restart the dnsmasq service:
 
 ```sh
 sudo mkdir -p /etc/NetworkManager/dnsmasq.d/
-echo "address=/.massa/127.0.0.1" >> /etc/NetworkManager/dnsmasq.d/massa.conf
+echo "address=/.massa/127.0.0.1" | sudo tee -a /etc/NetworkManager/dnsmasq.d/massa.conf > /dev/null
 sudo mv /etc/resolv.conf /etc/resolv.conf_backup_thyra_install && sudo ln -s /var/run/NetworkManager/resolv.conf /etc/resolv.conf
 sudo systemctl restart NetworkManager
 ```
