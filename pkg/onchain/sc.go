@@ -78,10 +78,16 @@ func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet, expiryDelta
 }
 
 func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (string, error) {
+	datastore := make(map[[50]uint8][50]uint8)
+	datastore[[50]uint8{1}] = [50]uint8{1}
+	for k, v := range datastore {
+		fmt.Println("key:", k, "value:", v)
+	}
 	exeSC := executesc.New(contract,
 		sendOperation.DefaultGazLimit, sendOperation.NoGazFee,
-		sendOperation.NoParallelCoin)
+		datastore)
 
+	fmt.Print("Deploying SC...\n")
 	opID, err := sendOperation.Call(
 		client,
 		sendOperation.DefaultSlotsDuration,
