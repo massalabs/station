@@ -24,6 +24,7 @@ const (
 	SecretKeyLength           = 32
 	PBKDF2NbRound             = 10000
 	FileModeUserReadWriteOnly = 0o600
+	WalletDirectoryPermission = 0o755
 	MinAddressLength          = 49
 )
 
@@ -115,24 +116,30 @@ func FromYAML(raw []byte) (w Wallet, err error) {
 	return
 }
 
+func GetWalletDirectory() string {
+	walletDirectory := os.Getenv("HOME") + "/.config/thyra/"
+	if _, err := os.Stat(walletDirectory); os.IsNotExist(err) {
+		if os.MkdirAll(walletDirectory, WalletDirectoryPermission) != nil {
+			walletDirectory = ""
+		}
+	}
+
+	return walletDirectory
+}
+
 func LoadAll() (wallets []Wallet, e error) {
 	wallets = []Wallet{}
 
-	workingDir, err := os.Getwd()
+	files, err := os.ReadDir(GetWalletDirectory())
 	if err != nil {
-		return nil, fmt.Errorf("returning working directory: %w", err)
-	}
-
-	files, err := os.ReadDir(workingDir)
-	if err != nil {
-		return nil, fmt.Errorf("reading working directory '%s': %w", workingDir, err)
+		return nil, fmt.Errorf("reading wallet directory '%s': %w", GetWalletDirectory(), err)
 	}
 
 	for _, f := range files {
 		fileName := f.Name()
 
 		if strings.HasPrefix(fileName, "wallet_") && strings.HasSuffix(fileName, ".json") {
-			bytesInput, err := os.ReadFile(fileName)
+			bytesInput, err := os.ReadFile(GetWalletDirectory() + fileName)
 			if err != nil {
 				return nil, fmt.Errorf("reading file '%s': %w", fileName, err)
 			}
@@ -152,7 +159,7 @@ func LoadAll() (wallets []Wallet, e error) {
 }
 
 func Load(nickname string) (*Wallet, error) {
-	bytesInput, err := os.ReadFile("wallet_" + nickname + ".json")
+	bytesInput, err := os.ReadFile(GetWalletDirectory() + "wallet_" + nickname + ".json")
 	if err != nil {
 		return nil, fmt.Errorf("reading file 'wallet_%s.json': %w", nickname, err)
 	}
@@ -206,7 +213,7 @@ func New(nickname string) (*Wallet, error) {
 		return nil, fmt.Errorf("marshalling wallet: %w", err)
 	}
 
-	err = os.WriteFile("wallet_"+nickname+".json", bytesOutput, FileModeUserReadWriteOnly)
+	err = os.WriteFile(GetWalletDirectory()+"wallet_"+nickname+".json", bytesOutput, FileModeUserReadWriteOnly)
 	if err != nil {
 		return nil, fmt.Errorf("writing wallet to 'wallet_%s.json': %w", nickname, err)
 	}
@@ -215,7 +222,7 @@ func New(nickname string) (*Wallet, error) {
 }
 
 func Delete(nickname string) (err error) {
-	err = os.Remove("wallet_" + nickname + ".json")
+	err = os.Remove(GetWalletDirectory() + "wallet_" + nickname + ".json")
 	if err != nil {
 		return fmt.Errorf("deleting wallet 'wallet_%s.json': %w", nickname, err)
 	}
