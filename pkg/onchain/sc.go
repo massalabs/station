@@ -85,6 +85,7 @@ func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (strin
 		sendOperation.DefaultGazLimit, sendOperation.NoGazFee,
 		sendOperation.NoCoin, datastore)
 
+	fmt.Print("Deploying SC...\n")
 	opID, err := sendOperation.Call(
 		client,
 		sendOperation.DefaultSlotsDuration,
