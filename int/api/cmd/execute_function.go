@@ -39,16 +39,16 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyn
 			})
 	}
 
-	password, status := gui.AskPassword(wallet.Nickname, app)
-	if !status {
+	password := gui.AskPassword(wallet.Nickname, app)
+	if password.Err != nil {
 		return createInternalServerError(websites.ErrorCodeWalletCanceledAction, websites.ErrorCodeWalletCanceledAction)
 	}
 
-	err = wallet.Unprotect(password, 0)
-
-	if len(password) == 0 {
-		return createInternalServerError(websites.ErrorCodeWalletPasswordEmpty, err.Error())
+	if len(password.ClearPassword) == 0 {
+		return createInternalServerError(websites.ErrorCodeWalletPasswordEmptyExecuteFct, websites.ErrorCodeWalletPasswordEmptyExecuteFct)
 	}
+
+	err = wallet.Unprotect(password.ClearPassword, 0)
 
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(

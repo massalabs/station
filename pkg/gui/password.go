@@ -1,13 +1,21 @@
 package gui
 
 import (
+	"errors"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 )
 
-func AskPassword(nickname string, app *fyne.App) (string, bool) {
+// Struct to return the password and an error to know if the user submitted or canceled the form.
+type PasswordEntry struct {
+	ClearPassword string
+	Err           error
+}
+
+func AskPassword(nickname string, app *fyne.App) PasswordEntry {
 	return Password(nickname, app)
 }
 
@@ -18,9 +26,9 @@ func AskPasswordDeleteWallet(nickname string, app *fyne.App) string {
 // inspired by https://hackernoon.com/asyncawait-in-golang-an-introductory-guide-ol1e34sg
 
 // Thyra password input dialog.
-func PasswordDialog(nickname string, app *fyne.App) (chan string, chan bool) {
-	passwordText := make(chan string)
-	isSubmitted := make(chan bool)
+func PasswordDialog(nickname string, app *fyne.App) chan PasswordEntry {
+
+	passwordEntry := make(chan PasswordEntry)
 	window := (*app).NewWindow("Massa - Thyra")
 	width := 250.0
 	height := 90.0
@@ -37,13 +45,11 @@ func PasswordDialog(nickname string, app *fyne.App) (chan string, chan bool) {
 		Items: items,
 		OnSubmit: func() {
 			window.Hide()
-			passwordText <- password.Text
-			isSubmitted <- true
+			passwordEntry <- PasswordEntry{password.Text, nil}
 		},
 		OnCancel: func() {
-			passwordText <- ""
+			passwordEntry <- PasswordEntry{password.Text, errors.New("Canceled by user")}
 			window.Hide()
-			isSubmitted <- false
 		},
 		SubmitText: "Submit",
 		CancelText: "Cancel transaction",
@@ -54,7 +60,7 @@ func PasswordDialog(nickname string, app *fyne.App) (chan string, chan bool) {
 	window.Canvas().Focus(password)
 	window.Show()
 
-	return passwordText, isSubmitted
+	return passwordEntry
 }
 
 func PasswordDeleteDialog(nickname string, app *fyne.App) chan string {
@@ -102,10 +108,10 @@ func PasswordDeleteDialog(nickname string, app *fyne.App) chan string {
 }
 
 // This function is blocking, it returns when the user submit or cancel the form.
-func Password(nickname string, app *fyne.App) (string, bool) {
-	passwordText, isSubmitted := PasswordDialog(nickname, app)
+func Password(nickname string, app *fyne.App) PasswordEntry {
+	PasswordEntry := PasswordDialog(nickname, app)
 
-	return <-passwordText, <-isSubmitted
+	return <-PasswordEntry
 }
 
 func PasswordDeleteWallet(nickname string, app *fyne.App) string {
