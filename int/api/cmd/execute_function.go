@@ -41,11 +41,13 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyn
 
 	password := gui.AskPassword(wallet.Nickname, app)
 	if password.Err != nil {
-		return createInternalServerError(websites.ErrorCodeWalletCanceledAction, websites.ErrorCodeWalletCanceledAction)
+		return createInternalServerError(websites.ErrorCodeWalletCanceledAction,
+			websites.ErrorCodeWalletCanceledAction)
 	}
 
 	if len(password.ClearPassword) == 0 {
-		return createInternalServerError(websites.ErrorCodeWalletPasswordEmptyExecuteFct, websites.ErrorCodeWalletPasswordEmptyExecuteFct)
+		return createInternalServerError(websites.ErrorCodeWalletPasswordEmptyExecuteFct,
+			websites.ErrorCodeWalletPasswordEmptyExecuteFct)
 	}
 
 	err = wallet.Unprotect(password.ClearPassword, 0)

@@ -27,7 +27,6 @@ func AskPasswordDeleteWallet(nickname string, app *fyne.App) string {
 
 // Thyra password input dialog.
 func PasswordDialog(nickname string, app *fyne.App) chan PasswordEntry {
-
 	passwordEntry := make(chan PasswordEntry)
 	window := (*app).NewWindow("Massa - Thyra")
 	width := 250.0
@@ -48,7 +47,7 @@ func PasswordDialog(nickname string, app *fyne.App) chan PasswordEntry {
 			passwordEntry <- PasswordEntry{password.Text, nil}
 		},
 		OnCancel: func() {
-			passwordEntry <- PasswordEntry{password.Text, errors.New("Canceled by user")}
+			passwordEntry <- PasswordEntry{password.Text, errors.New("canceled by user")}
 			window.Hide()
 		},
 		SubmitText: "Submit",
