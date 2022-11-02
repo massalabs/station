@@ -29,3 +29,24 @@ const errorCodes = new Map([
 function getErrorMessage(errorCode) {
     return errorCodes.get(errorCode);
 }
+
+function handleAPIError(error) {
+    if (error.response) {
+        if (error.response.data) {
+            if (error.response.data.code) {
+                errorAlert(getErrorMessage(error.response.data.code));
+            }
+            console.error("Thyra error:", error.response.data);
+        } else {
+            console.error(error.response);
+        }
+    } else if (error.request) {
+        // The request was made but no response was received
+        console.error(error.request);
+    } else if (error.message) {
+        // Something happened in setting up the request that triggered an Error
+        console.error(error.message);
+    } else {
+        console.error(error);
+    }
+}

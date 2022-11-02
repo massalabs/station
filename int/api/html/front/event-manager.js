@@ -11,7 +11,7 @@ class EventManager {
             })
             .catch((e) => {
                 // TODO Implement retry mechanism here
-                console.error(e.response.data);
+                handleAPIError(e);
             });
     }
 }

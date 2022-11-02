@@ -39,8 +39,7 @@ async function getWebsiteDeployerSC() {
             deployers = websites.data;
         })
         .catch((e) => {
-            console.error(e.response.data);
-            errorAlert(getErrorMessage(e.response.data.code));
+            handleAPIError(e);
         });
 }
 
@@ -155,8 +154,7 @@ async function getWallets() {
             }
         })
         .catch((e) => {
-            console.error(e.response.data);
-            errorAlert(getErrorMessage(e.response.data.code));
+            handleAPIError(e);
         });
 }
 
@@ -300,8 +298,7 @@ function postUpload(bodyFormData) {
             "Content-Type": "multipart/form-data",
         },
     }).catch((e) => {
-        console.error(e.response.data);
-        errorAlert(getErrorMessage(e.response.data.code));
+        handleAPIError(e);
         resetStepper();
     });
 }
@@ -315,8 +312,7 @@ function putUpload(bodyFormData) {
             "Content-Type": "multipart/form-data",
         },
     }).catch((e) => {
-        console.error(e.response.data);
-        errorAlert(getErrorMessage(e.response.data.code));
+        handleAPIError(e);
         resetStepper();
     });
 }
