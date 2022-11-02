@@ -1002,6 +1002,10 @@ func init() {
           "description": "Website's address.",
           "type": "string"
         },
+        "hasBrokenChunk": {
+          "description": "True if website contains a broken chunk preventing the website to load.",
+          "type": "boolean"
+        },
         "name": {
           "description": "Website's name.",
           "type": "string"
@@ -2039,6 +2043,10 @@ func init() {
         "address": {
           "description": "Website's address.",
           "type": "string"
+        },
+        "hasBrokenChunk": {
+          "description": "True if website contains a broken chunk preventing the website to load.",
+          "type": "boolean"
         },
         "name": {
           "description": "Website's name.",

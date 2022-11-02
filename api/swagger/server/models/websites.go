@@ -20,6 +20,9 @@ type Websites struct {
 	// Website's address.
 	Address string `json:"address,omitempty"`
 
+	// True if website contains a broken chunk preventing the website to load.
+	HasBrokenChunk bool `json:"hasBrokenChunk,omitempty"`
+
 	// Website's name.
 	Name string `json:"name,omitempty"`
 }

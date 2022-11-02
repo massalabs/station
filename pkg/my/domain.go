@@ -3,6 +3,7 @@ package my
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/pkg/node"
@@ -60,12 +61,57 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	}
 
 	for i := 0; i < len(domainNames); i++ {
+		contractAddress := string(contractAddresses[i].CandidateValue)
+		hasBrokenChuck, err := checkChunkIntegrity(client, contractAddress)
+		if err != nil {
+			return nil, fmt.Errorf("checking chunk integrity: %w", err)
+		}
+
 		response := models.Websites{
-			Address: string(contractAddresses[i].CandidateValue),
-			Name:    domainNames[i],
+			Address:        contractAddress,
+			Name:           domainNames[i],
+			HasBrokenChunk: hasBrokenChuck,
 		}
 		responses = append(responses, &response)
 	}
 
 	return responses, nil
+}
+
+// Check website chunks and return true if one of them is broken
+func checkChunkIntegrity(client *node.Client, address string) (bool, error) {
+	chunkNumberKey := "total_chunks"
+
+	keyNumber, err := node.DatastoreEntry(client, address, chunkNumberKey)
+	if err != nil {
+		return false, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
+	}
+
+	chunkNumber, err := strconv.Atoi(string(keyNumber.CandidateValue))
+	if err != nil {
+		return false, fmt.Errorf("error converting String to integer")
+	}
+
+	entries := []node.DatastoreEntriesKeysAsString{}
+
+	for i := 0; i < chunkNumber; i++ {
+		entry := node.DatastoreEntriesKeysAsString{
+			Address: address,
+			Key:     "massa_web_" + strconv.Itoa(i),
+		}
+		entries = append(entries, entry)
+	}
+
+	response, err := node.DatastoreEntries(client, entries)
+	if err != nil {
+		return false, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
+	}
+
+	for i := 0; i < chunkNumber; i++ {
+		if string(response[i].CandidateValue) == "" {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }

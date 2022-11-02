@@ -653,6 +653,9 @@ definitions:
       address:
         description: Website's address.
         type: string
+      hasBrokenChunk:
+        description: True if website contains a broken chunk preventing the website to load.
+        type: boolean
   Events:
     type: object
     description: Events object (V0)
