@@ -15,7 +15,7 @@ type PasswordEntry struct {
 	Err           error
 }
 
-func AskPassword(nickname string, app *fyne.App) PasswordEntry {
+func AskPassword(nickname string, app *fyne.App) (string, error) {
 	return Password(nickname, app)
 }
 
@@ -47,7 +47,7 @@ func PasswordDialog(nickname string, app *fyne.App) chan PasswordEntry {
 			passwordEntry <- PasswordEntry{password.Text, nil}
 		},
 		OnCancel: func() {
-			passwordEntry <- PasswordEntry{password.Text, errors.New("canceled by user")}
+			passwordEntry <- PasswordEntry{ClearPassword: "", Err: errors.New("password entry cancelled by the user")}
 			window.Hide()
 		},
 		SubmitText: "Submit",
@@ -107,10 +107,10 @@ func PasswordDeleteDialog(nickname string, app *fyne.App) chan string {
 }
 
 // This function is blocking, it returns when the user submit or cancel the form.
-func Password(nickname string, app *fyne.App) PasswordEntry {
-	PasswordEntry := PasswordDialog(nickname, app)
+func Password(nickname string, app *fyne.App) (string, error) {
+	PasswordEntry := <-PasswordDialog(nickname, app)
 
-	return <-PasswordEntry
+	return PasswordEntry.ClearPassword, PasswordEntry.Err
 }
 
 func PasswordDeleteWallet(nickname string, app *fyne.App) string {

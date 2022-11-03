@@ -2,7 +2,6 @@ const errorCodes = new Map([
     ["Wallet-0001", "That nickname is taken. Try Another"],
     ["Wallet-0002", "Wrong password. Try again"],
     ["Wallet-0003", "Error while retrieving that wallet. Try again"],
-
     ["Wallet-0004", "Wallet not canceled"],
     ["Wallet-0005", "You just canceled your action. Try again"],    
     ["Wallet-0006", "Password is Empty. Try again"],

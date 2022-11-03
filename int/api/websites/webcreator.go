@@ -35,16 +35,16 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 		return createInternalServerError(errorCodeGetWallet, err.Error())
 	}
 
-	password := gui.AskPassword(wallet.Nickname, app)
-	if password.Err != nil {
-		return createInternalServerError(ErrorCodeWalletCanceledAction, password.Err.Error())
+	clearPassword, err := gui.AskPassword(wallet.Nickname, app)
+	if err != nil {
+		return createInternalServerError(ErrorCodeWalletCanceledAction, err.Error())
 	}
 
-	if len(password.ClearPassword) == 0 {
+	if len(clearPassword) == 0 {
 		return createInternalServerError(ErrorCodeWalletPasswordEmptyWebCreator, ErrorCodeWalletPasswordEmptyWebCreator)
 	}
 
-	err = wallet.Unprotect(password.ClearPassword, 0)
+	err = wallet.Unprotect(clearPassword, 0)
 
 	if err != nil {
 		return createInternalServerError(errorCodeWalletWrongPassword, err.Error())
@@ -128,8 +128,8 @@ func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyn
 				})
 	}
 
-	password := gui.AskPassword(wallet.Nickname, app)
-	if password.Err != nil {
+	clearPassword, err := gui.AskPassword(wallet.Nickname, app)
+	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
 			WithPayload(
 				&models.Error{
@@ -138,7 +138,7 @@ func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyn
 				})
 	}
 
-	err = wallet.Unprotect(password.ClearPassword, 0)
+	err = wallet.Unprotect(clearPassword, 0)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
 			WithPayload(
