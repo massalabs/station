@@ -3,14 +3,20 @@
 * [Introduction](#introduction)
 * [Step by step instructions](#step-by-step-instructions)
     - [MacOS](#macos)
-        + [Thyra installation](#thyra-installation)
-        + [DNS installation](#dns-installation)
+        + [Automatically](#automatically)
+        + [Manually](#manually)
+            + [Thyra installation](#thyra-installation)
+            + [DNS installation](#dns-installation)
     - [Linux](#linux)
-        + [Thyra installation](#thyra-installation-1)
-        + [DNS installation](#dns-installation-1)
+        + [Automatically](#automatically)
+        + [Manually](#manually)
+            + [Thyra installation](#thyra-installation-1)
+            + [DNS installation](#dns-installation-1)
     - [Windows](#windows)
-        + [Thyra installation](#thyra-installation-2)
-        + [DNS installation](#dns-installation-2)
+       + [Automatically](#automatically)
+       + [Manually](#manually)
+            + [Thyra installation](#thyra-installation-2)
+            + [DNS installation](#dns-installation-2)
 
 ## Introduction
 This document will guide you through the installation process of the latest tagged version of Thyra.
@@ -21,9 +27,11 @@ This document will guide you through the installation process of the latest tagg
 
 ## Step by step instructions
 
-The installation will be done in two steps:
+Two steps are required to use our web on-chain product:
 - Thyra installation : obtain the Thyra binary corresponding to your operating system (OS), rename it and make it executable.
 - DNS configuration : install and configure your DNS to resolve the massa top level domain (*.massa) where Thyra runs.
+
+You can either perform these two steps automatically, using an installation script, or manually using the binaries and command lines.
 
 Now, let's move on to your OS section:
 - [Linux](#linux)
@@ -33,7 +41,16 @@ Now, let's move on to your OS section:
 
 ### MacOS
 
-#### Thyra installation
+#### Automatically
+Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
+Once the installation is finished, congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
+If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
+
+Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/macos_install.sh)
+
+#### Manually
+
+##### Thyra installation
 
 Let's start by downloading the version of Thyra corresponding to your system:
 * If you have an Intel CPU (amd64), you can download your it [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_amd64).
@@ -78,6 +95,16 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 
 ### Linux
+#### Automatically
+Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
+Once the installation is finished, congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
+If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
+
+Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/linux_install.sh)
+
+> **_NOTE:_** Only Linux Ubuntu is currently supported.
+
+#### Manually
 
 #### Thyra installation
 
@@ -123,6 +150,13 @@ Congratulations, you can now browse the **websites on-chain** seamlessly. If you
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
 ### Windows
+#### Automatically
+Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
+Once the installation is finished, congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
+If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
+
+Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/thyra-installer.bat)
+
 
 #### Thyra installation
 
