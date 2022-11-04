@@ -1,0 +1,94 @@
+@startuml
+participant "End user" as user
+participant "WebInterface" as ui
+participant "Thyra server" as thyra
+participant "Wallet" as w
+participant "Node (API)" as node
+
+
+user -> ui: click on install 'Wallet' plug-in
+ui -> thyra: POST /plugin/wallet
+thyra -> w: POST /plugin/wallet/
+w -> thyra: OK response
+thyra -> ui: display landing page wallet.massa
+ui -> user: display landing page wallet.massa
+
+user -> ui: enter nickname and password (CREATE request)
+ui -> thyra: POST /plugin/wallet
+thyra -> w: POST /plugin/wallet
+w -> w: is there a correct nickname entry?
+w -> thyra: KO reponse - Wallet-1001
+thyra -> ui: display Wallet-1001 error
+ui -> user: Error Wallet-1001 displayed
+w -> w: is there a password entry?
+w -> thyra: KO response - Wallet-1002
+thyra -> ui: display Wallet-1002 error
+ui -> user: Error Wallet-1002 displayed
+w -> w: does this nickname exist?
+w -> thyra: KO response - Wallet-0001
+thyra -> ui: display Wallet-0001 error
+ui -> user: Error Wallet-0001 displayed
+w -> w: are key pair generated?
+w -> thyra: KO reponse - Wallet-1003
+thyra -> ui: display Wallet-1003 error
+ui -> user: Error Wallet-1003 displayed
+w -> thyra: OK response - success
+thyra -> ui: display wallet info
+ui -> user: wallet info displayed
+
+user -> ui: open the wallet page (READ request)
+ui -> thyra: GET /plugin/wallet
+thyra -> w: GET /plugin/wallet
+w -> w: is there any wallet for this user?
+w -> thyra: KO response - Wallet-4001
+thyra -> ui: display Wallet-4001 error
+ui -> user: Error Wallet-4001 displayed
+w -> thyra: OK response - list of wallets
+thyra -> ui: display list of wallets 
+ui -> user: list of wallets displayed
+
+user -> ui: LOAD a wallet request 
+ui -> thyra: POST /plugin/wallet
+thyra -> w: POST /plugin/wallet
+w -> thyra: KO reponse - Wallet-3001
+thyra -> ui: display Wallet-3001 error
+ui -> user: Error Wallet-3001 displayed
+w -> thyra: OK response - success
+thyra -> ui: display wallet info
+thyra -> user: wallet info displayed
+
+user -> thyra: DELETE a wallet request 
+thyra -> w: DELETE /plugin/wallet/{nickname}
+w -> w: does this nickname exist? 
+w -> thyra: KO response - Wallet-2001
+thyra -> ui: display Wallet-2001 error 
+ui -> user: Error Wallet-2001 displayed
+w -> w: are key pair deleted? 
+w -> thyra: KO response - Wallet-2002 error
+thyra -> ui: display Wallet-2002 error
+ui -> user: Error Wallet-2002 displayed
+w -> thyra: OK response - success
+thyra -> ui: delete wallet info
+ui -> user: wallet info deleted
+
+user -> thyra: SIGN request
+thyra -> w: POST plugin/cmd/executeFunction/operationId/{nickname}
+w -> thyra: password request
+thyra -> user: GUI password request
+user -> thyra: password entry
+thyra -> w: GET /plugin/wallet/operationId/{nickname}
+w -> w: is password correct?
+w -> thyra: KO response - Wallet-0002
+thyra -> ui: display error Wallet-0002
+ui -> user: error Wallet-0002 displayed
+w -> node: ok response - callSC(xxx)
+node -> node: SC xx execution
+node -> w: KO reponse - Wallet-XXXX
+w -> thyra: KO reponse - Wallet-XXXX
+thyra -> ui: display Wallet-XXXX error
+ui -> user: Error Wallet-XXXX displayed
+node -> w: OK response - success
+thyra -> ui: tx signed
+ui -> user: tx signed - action performed
+
+@enduml
