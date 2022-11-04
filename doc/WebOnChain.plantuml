@@ -113,12 +113,12 @@ node -> node: ExecuteSC
 em -> node: GET /plugin/webOnchain/events/container//operationId/{caller}
 node -> node: is the containder deployed?
 node -> storage: KO reponse - WebCreator-XXXX
-storate -> web: KO response - WebCreator-XXXX
+storage -> web: KO response - WebCreator-XXXX
 web -> thyra: KO response - WebCreator-XXXX
 thyra -> ui: display WebCreator-XXXX error
 ui -> user: Error WebCreator-XXXX displayed
 node -> storage: OK reponse 
-storate -> web: OK response
+storage -> web: OK response
 web -> thyra: OK response
 thyra -> ui: display "success message"
 ui -> user: "Contrainer deployes" message displayed
