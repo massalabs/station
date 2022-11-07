@@ -104,10 +104,10 @@ func StartServer(app *fyne.App) {
 
 	server.ConfigureAPI()
 
+	defer (*app).Quit()
+
 	if err := server.Serve(); err != nil {
 		//nolint:gocritic
 		log.Fatalln(err)
 	}
-
-	(*app).Quit()
 }
