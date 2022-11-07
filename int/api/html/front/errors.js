@@ -32,8 +32,7 @@ function getErrorMessage(errorCode) {
 
 // If the error is from Thyra, we display the error to the user and log the details in the console.
 // Otherwise, we simply display the details in the console.
-function handleAjaxError(error) {
-
+function handleAPIError(error) {
     if (error.response && error.response.data) {
             if (error.response.data.code) {
                 errorAlert(getErrorMessage(error.response.data.code));
