@@ -8,7 +8,7 @@ participant "DNS" as dns
 participant "Event Manager" as em
 participant "Storage" as storage
 participant "Node (API)" as node
-
+title "= **Website hosting on blockchain**"
 user -> ui: click on install 'Web on-chain' plug-in
 ui -> thyra: GET /plugin/webOnChain
 thyra -> web: GET /plugin/webOnChain
