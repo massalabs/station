@@ -56,7 +56,7 @@ IF NOT EXIST %ACRYLIC_PATH%\AcrylicHosts.txt (
     CD %STARTING_WORKING_DIR%
 )
 
-@REM Ideally before doing this whe should check that "127.0.0.1 *.massa" is not already written in the file
+@REM Ideally before doing this we should check that "127.0.0.1 *.massa" is not already written in the file
 ECHO: >> %ACRYLIC_PATH%\AcrylicHosts.txt
 ECHO 127.0.0.1 *.massa >> %ACRYLIC_PATH%\AcrylicHosts.txt
 
