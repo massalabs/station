@@ -4,7 +4,7 @@ participant "Browser" as ui
 participant "Thyra server" as thyra
 participant "Wallet" as w
 participant "Node (API)" as node
-
+title "= **Wallet plugin**"
 
 user -> ui: click on install 'Wallet' plug-in
 ui -> thyra: POST /plugin/wallet
