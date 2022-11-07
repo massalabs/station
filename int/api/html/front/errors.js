@@ -18,7 +18,7 @@ const errorCodes = new Map([
     ],
 
     ["Domains-0001", "Error while looking for your domain names"],
-    ["Domains-0002", "Error while connecting your domain and smart contract’s address"],
+    ["Domains-0002", "Error while connecting your domain and smart contract's address"],
 
     ["WebCreator-0001", "Error while creating your website container"],
     ["WebCreator-1001", "Impossible to read you ZIP file. Try again"],
