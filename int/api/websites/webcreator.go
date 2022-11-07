@@ -72,8 +72,9 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 	return operations.NewWebsiteCreatorPrepareOK().
 		WithPayload(
 			&models.Websites{
-				Name:    params.URL,
-				Address: address,
+				Name:           params.URL,
+				Address:        address,
+				HasBrokenChunk: false,
 			})
 }
 
@@ -154,8 +155,9 @@ func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyn
 
 	return operations.NewWebsiteCreatorUploadOK().
 		WithPayload(&models.Websites{
-			Name:    "Name",
-			Address: params.Address,
+			Name:           "Name",
+			Address:        params.Address,
+			HasBrokenChunk: false,
 		})
 }
 
