@@ -6,11 +6,11 @@
 
 An entrance to the Massa blockchain.
 
-## /!\ WIP
+## ⚠️ WIP
 
 Everything is this project is WIP prototype.
 
-/!\ Breaking changes ahead /!\
+⚠️ Breaking changes ahead ⚠️
 
 ## Contribute
 
