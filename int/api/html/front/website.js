@@ -38,9 +38,7 @@ async function getWebsiteDeployerSC() {
             }
             deployers = websites.data;
         })
-        .catch((e) => {
-            handleAPIError(e);
-        });
+        .catch(handleAPIError);
 }
 
 // Write the default wallet text in wallet popover component
@@ -153,9 +151,7 @@ async function getWallets() {
                 feedWallet(gWallets);
             }
         })
-        .catch((e) => {
-            handleAPIError(e);
-        });
+        .catch(handleAPIError);
 }
 
 function tableInsert(resp, count) {

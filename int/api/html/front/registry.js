@@ -11,9 +11,7 @@ function fetchWebsites() {
         .then((resp) => {
             handleResp(resp.data);
         })
-        .catch((e) => {
-            handleAPIError(e);
-        });
+        .catch(handleAPIError);
 }
 
 function handleResp(resp) {
