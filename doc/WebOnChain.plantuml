@@ -22,11 +22,14 @@ thyra -> web: GET /plugin/wallet
 web -> thyra: GET /plugin/wallet/{status}
 thyra -> w: GET /plugin/wallet/{status}
 w -> w: is wallet status active?
-w -> thyra: KO response - inactive status
-thyra -> web: KO response - inactive status
-web -> ui: display KO response - inactive status
-ui -> user: Error "Connect to your wallet" displayed
-w -> thyra: OK response
+alt wallet is inactive
+    w -> thyra: KO response - inactive status
+    thyra -> web: KO response - inactive status
+    web -> ui: display KO response - inactive status
+    ui -> user: Error "Connect to your wallet" displayed
+else wallet is active
+    w -> thyra: OK response
+end
 web -> w: GET /plugin/wallet/
 w -> w: is there any wallet?
 w -> web: KO response - Wallet-4001 error
