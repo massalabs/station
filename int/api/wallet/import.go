@@ -83,7 +83,7 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 			})
 	}
 
-	err = os.WriteFile("wallet_"+*params.Body.Nickname+".json", bytesOutput, fileModeUserRW)
+	err = os.WriteFile(wallet.GetWalletDirectory()+"wallet_"+*params.Body.Nickname+".json", bytesOutput, fileModeUserRW)
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{

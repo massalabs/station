@@ -83,7 +83,7 @@ func StartServer(app *fyne.App) {
 	localAPI.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
 	localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
 	localAPI.MgmtWalletImportHandler = wallet.NewImport(&walletStorage)
-	localAPI.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage)
+	localAPI.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage, app)
 
 	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(
 		websites.CreatePrepareForWebsiteHandler(app),
