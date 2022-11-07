@@ -1,0 +1,18 @@
+@startuml
+participant "End user" as user
+participant "Browser" as ui
+participant "Thyra server" as thyra
+participant "Wallet" as w
+participant "Node (API)" as node
+title "= **Wallet plugin, LOAD request**"
+
+user -> ui: LOAD a wallet request 
+ui -> thyra: POST /plugin/wallet
+thyra -> w: POST /plugin/wallet
+w -> thyra: KO reponse - Wallet-3001
+thyra -> ui: display Wallet-3001 error
+ui -> user: Error Wallet-3001 displayed
+w -> thyra: OK response - success
+thyra -> ui: display wallet info
+thyra -> user: wallet info displayed
+@enduml
