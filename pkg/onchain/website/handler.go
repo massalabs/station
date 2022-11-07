@@ -76,7 +76,8 @@ func MassaTLDInterceptor(req *Interceptor) *Interceptor {
 	}
 
 	massaIndex := strings.Index(req.reader.Host, ".massa")
-	if massaIndex > 0 && req.reader.Host != "my.massa" {
+
+	if massaIndex > 0 && !strings.HasPrefix(req.reader.Host, "my.massa") {
 		handleMassaDomainRequest(req.writer, req.reader, massaIndex)
 
 		return nil
