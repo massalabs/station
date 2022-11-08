@@ -2,7 +2,6 @@ package node
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 )
@@ -101,10 +100,6 @@ func DatastoreEntries(client *Client, params []DatastoreEntriesKeysAsString) ([]
 	err = response.GetObject(&entry)
 	if err != nil {
 		return nil, fmt.Errorf("parsing get_datastore_entries jsonrpc response '%+v': %w", response, err)
-	}
-
-	if len(entry) < 1 {
-		return nil, errors.New("no entry")
 	}
 
 	return entry, nil
