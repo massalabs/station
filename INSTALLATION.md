@@ -2,57 +2,61 @@
 
 * [Introduction](#introduction)
 * [Step by step instructions](#step-by-step-instructions)
-    - [MacOS](#macos)
-        + [Automatically](#automatically)
-        + [Manually](#manually)
-            + [Thyra installation](#thyra-installation)
-            + [DNS installation](#dns-installation)
-    - [Linux](#linux)
-        + [Automatically](#automatically)
-        + [Manually](#manually)
-            + [Thyra installation](#thyra-installation-1)
-            + [DNS installation](#dns-installation-1)
-    - [Windows](#windows)
-       + [Automatically](#automatically)
-       + [Manually](#manually)
-            + [Thyra installation](#thyra-installation-2)
-            + [DNS installation](#dns-installation-2)
+  * [MacOS](#macos)
+    * [Automatically](#automatically)
+    * [Manually](#manually)
+      * [Thyra installation](#thyra-installation)
+      * [DNS installation](#dns-installation)
+  * [Linux](#linux)
+    * [Automatically](#automatically)
+    * [Manually](#manually)
+      * [Thyra installation](#thyra-installation-1)
+      * [DNS installation](#dns-installation-1)
+  * [Windows](#windows)
+    * [Automatically](#automatically)
+    * [Manually](#manually)
+      * [Thyra installation](#thyra-installation-2)
+      * [DNS installation](#dns-installation-2)
 
 ## Introduction
+
 This document will guide you through the installation process of the latest tagged version of Thyra.
 
 > **_PREREQUISITES:_** Be comfortable with your terminal and have a recent version of MacOS, Windows or Linux.
 
-> **_TROUBLESHOOTING:_** If you have trouble following this procedure, feel free to [open a question](https://github.com/massalabs/thyra/issues/new) describing your problem. 
+> **_TROUBLESHOOTING:_** If you have trouble following this procedure, feel free to [open a question](https://github.com/massalabs/thyra/issues/new) describing your problem.
 
 ## Step by step instructions
 
 Two steps are required to use our web on-chain product:
-- Thyra installation : obtain the Thyra binary corresponding to your operating system (OS), rename it and make it executable.
-- DNS configuration : install and configure your DNS to resolve the massa top level domain (*.massa) where Thyra runs.
+
+* Thyra installation : obtain the Thyra binary corresponding to your operating system (OS), rename it and make it executable.
+* DNS configuration : install and configure your DNS to resolve the massa top level domain (*.massa) where Thyra runs.
 
 You can either perform these two steps automatically, using an installation script, or manually using the binaries and command lines.
 
 Now, let's move on to your OS section:
-- [Linux](#linux)
-- [Windows](#windows)
-- [MacOS](#macos)
 
+* [Linux](#linux)
+* [Windows](#windows)
+* [MacOS](#macos)
 
 ### MacOS
 
 #### Automatically
+
 Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
 Once the installation is finished, congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
-Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/macos_install.sh)
+Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/macos_install.sh).
 
 #### Manually
 
 ##### Thyra installation
 
 Let's start by downloading the version of Thyra corresponding to your system:
+
 * If you have an Intel CPU (amd64), you can download your it [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_amd64).
 * If you have an Intel Apple Silicon CPU M1, M1 Pro, M2... (arm64), you can download your it [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_arm64).
 
@@ -75,6 +79,7 @@ Congratulation, your version of Thyra is now installed on your system and can be
 > **_PREREQUISITE:_** Have `homebrew` already installed on your system. If not, you can follow the installation instructions [here](https://brew.sh).
 
 Let's start by installing `dnsmasq`. This step can be safely skipped if it is already installed on your system.
+
 ```sh
 brew install dnsmasq
 ```
@@ -93,14 +98,15 @@ sudo brew services start dnsmasq
 Congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
-
 ### Linux
+
 #### Automatically
+
 Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
 Once the installation is finished, congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
-Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/linux_install.sh)
+Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/linux_install.sh).
 
 > **_NOTE:_** Only Linux Ubuntu is currently supported.
 
@@ -133,6 +139,7 @@ Congratulation, your version of Thyra is now installed on your system and can be
 >```sh
 >sudo cp /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf_backup_thyra_install && sudo sed -i "s/keyfile/keyfile\ndns=dnsmasq/g" /etc/NetworkManager/NetworkManager.conf
 >```
+>
 > This command backs up `/etc/NetworkManager/NetworkManager.conf` file to `/etc/NetworkManager/NetworkManager.conf_backup_thyra_install`.
 
 Then we must configure and restart the dnsmasq service:
@@ -150,13 +157,14 @@ Congratulations, you can now browse the **websites on-chain** seamlessly. If you
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
 ### Windows
+
 #### Automatically
+
 Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
 Once the installation is finished, congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
-Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/thyra-installer.bat)
-
+Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/thyra-installer.bat).
 
 #### Thyra installation
 
@@ -175,14 +183,16 @@ Congratulation, your version of Thyra is now installed on your system and can be
 > **_PREREQUISITE:_** Have `Acrylic` already installed on your system. If not, you can follow the installation instructions [here](https://mayakron.altervista.org/support/acrylic/Home.htm) and the OS configuration [here](https://mayakron.altervista.org/support/acrylic/Windows10Configuration.htm).
 
 Let's start by configuring acrylic to redirect *.massa to locahost:
+
 1. Open Acrylic config file: Open Acrylic DNS Proxy UI > File > Open Acrylic Hosts
 
-2. Add `*.massa` top level domain to `AcrylicHosts.txt`: 
+2. Add `*.massa` top level domain to `AcrylicHosts.txt`:
+
 ```txt
 127.0.0.1   *.massa
 ```
+
 3. Save the file and reload Acrylic: Open Acrylic DNS Proxy UI > Actions > Restart Acrylic Service
 
 Congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
-
