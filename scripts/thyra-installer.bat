@@ -1,5 +1,14 @@
 @echo off
 
+@REM Execute a command requiring admin rights that is present on most Windows versions 
+fltmc >nul 2>&1 && (
+    ECHO "Admin rights successfully detected."
+) || (
+  ECHO "Couldn't detect admin rights. Please execute this script as an administator."
+  PAUSE
+  EXIT
+)
+
 curl -L https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64 --output thyra-server.exe
 
 SET ACRYLIC_PATH="C:\Program Files (x86)\Acrylic DNS Proxy"
@@ -22,7 +31,7 @@ IF NOT EXIST %ACRYLIC_PATH%\AcrylicHosts.txt (
 
     MKDIR %ACRYLIC_PATH%
     IF NOT EXIST %ACRYLIC_PATH%\ (
-        ECHO "Couldn't create DNS Acrylic Proxy installation folder. Please execute this script as an administator."
+        ECHO "Couldn't create DNS Acrylic Proxy installation folder. Please make sure this script can access C:\Program Files (x86)."
         PAUSE
         EXIT
     )
@@ -47,7 +56,7 @@ IF NOT EXIST %ACRYLIC_PATH%\AcrylicHosts.txt (
     CD %STARTING_WORKING_DIR%
 )
 
-@REM Ideally before doing this whe should check that "127.0.0.1 *.massa" is not already written the file
+@REM Ideally before doing this we should check that "127.0.0.1 *.massa" is not already written in the file
 ECHO: >> %ACRYLIC_PATH%\AcrylicHosts.txt
 ECHO 127.0.0.1 *.massa >> %ACRYLIC_PATH%\AcrylicHosts.txt
 
