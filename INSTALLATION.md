@@ -57,7 +57,7 @@ Download and open the file [here](https://github.com/massalabs/thyra/blob/main/s
 
 Let's start by downloading the version of Thyra corresponding to your system:
 
-* If you have an Intel CPU (amd64), you can download your it [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_amd64).
+* If you have an Intel CPU (amd64), you can download your executable [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_amd64).
 * If you have an Intel Apple Silicon CPU M1, M1 Pro, M2... (arm64), you can download your executable [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_arm64).
 
 Next, let's rename and make the downloaded binary executable by running the following command in your terminal:
