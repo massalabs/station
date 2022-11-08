@@ -160,7 +160,8 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 #### Automatically
 
-Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
+Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done. 
+Note that you must execute this script as an administrator.
 Once the installation is finished, congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
