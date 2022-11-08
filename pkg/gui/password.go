@@ -1,13 +1,21 @@
 package gui
 
 import (
+	"errors"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 )
 
-func AskPassword(nickname string, app *fyne.App) string {
+// Struct to return the password and an error to know if the user submitted or canceled the form.
+type PasswordEntry struct {
+	ClearPassword string
+	Err           error
+}
+
+func AskPassword(nickname string, app *fyne.App) (string, error) {
 	return Password(nickname, app)
 }
 
@@ -18,8 +26,8 @@ func AskPasswordDeleteWallet(nickname string, app *fyne.App) string {
 // inspired by https://hackernoon.com/asyncawait-in-golang-an-introductory-guide-ol1e34sg
 
 // Thyra password input dialog.
-func PasswordDialog(nickname string, app *fyne.App) chan string {
-	passwordText := make(chan string)
+func PasswordDialog(nickname string, app *fyne.App) chan PasswordEntry {
+	passwordEntry := make(chan PasswordEntry)
 	window := (*app).NewWindow("Massa - Thyra")
 	width := 250.0
 	height := 90.0
@@ -36,10 +44,10 @@ func PasswordDialog(nickname string, app *fyne.App) chan string {
 		Items: items,
 		OnSubmit: func() {
 			window.Hide()
-			passwordText <- password.Text
+			passwordEntry <- PasswordEntry{password.Text, nil}
 		},
 		OnCancel: func() {
-			passwordText <- ""
+			passwordEntry <- PasswordEntry{ClearPassword: "", Err: errors.New("password entry cancelled by the user")}
 			window.Hide()
 		},
 		SubmitText: "Submit",
@@ -51,7 +59,7 @@ func PasswordDialog(nickname string, app *fyne.App) chan string {
 	window.Canvas().Focus(password)
 	window.Show()
 
-	return passwordText
+	return passwordEntry
 }
 
 func PasswordDeleteDialog(nickname string, app *fyne.App) chan string {
@@ -99,8 +107,10 @@ func PasswordDeleteDialog(nickname string, app *fyne.App) chan string {
 }
 
 // This function is blocking, it returns when the user submit or cancel the form.
-func Password(nickname string, app *fyne.App) string {
-	return <-PasswordDialog(nickname, app)
+func Password(nickname string, app *fyne.App) (string, error) {
+	PasswordEntry := <-PasswordDialog(nickname, app)
+
+	return PasswordEntry.ClearPassword, PasswordEntry.Err
 }
 
 func PasswordDeleteWallet(nickname string, app *fyne.App) string {

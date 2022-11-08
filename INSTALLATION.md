@@ -166,6 +166,7 @@ Once the installation is finished, congratulations, you can now browse the **web
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
 Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/thyra-installer.bat).
+>>>>>>> 1ba48ec9dca30cfb7655dd3f79d53e0431744bb5
 
 #### Thyra installation
 

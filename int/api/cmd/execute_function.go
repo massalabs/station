@@ -5,6 +5,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/gui"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
@@ -38,9 +39,19 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyn
 			})
 	}
 
-	password := gui.AskPassword(wallet.Nickname, app)
+	clearPassword, err := gui.AskPassword(wallet.Nickname, app)
+	if err != nil {
+		return createInternalServerError(websites.ErrorCodeWalletCanceledAction,
+			websites.ErrorCodeWalletCanceledAction)
+	}
 
-	err = wallet.Unprotect(password, 0)
+	if len(clearPassword) == 0 {
+		return createInternalServerError(websites.ErrorCodeWalletPasswordEmptyExecuteFct,
+			websites.ErrorCodeWalletPasswordEmptyExecuteFct)
+	}
+
+	err = wallet.Unprotect(clearPassword, 0)
+
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
 			&models.Error{Code: errorCodeWalletWrongPassword, Message: "Error : cannot uncipher the wallet : " + err.Error()})
@@ -69,4 +80,14 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyn
 	}
 
 	return operations.NewCmdExecuteFunctionOK().WithPayload(operationID)
+}
+
+// nolint:nolintlint,ireturn
+func createInternalServerError(errorCode string, errorMessage string) middleware.Responder {
+	return operations.NewCmdExecuteFunctionInternalServerError().
+		WithPayload(
+			&models.Error{
+				Code:    errorCode,
+				Message: errorMessage,
+			})
 }
