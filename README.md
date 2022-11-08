@@ -140,6 +140,36 @@ You can run the application with this command: `air`.
 
 It will generate and reload thyra each time a file is modified.
 
+### Plugin installation
+
+Thanks to its modular architecture, it is possible to use third party plugins in Thyra.
+Plugins must be placed in a ```plugins``` folder next to the Thyra binary.
+Some plugins are provided by Massa and the following procedure describe the Playground plugin as an example.
+
+#### Playground plugin installation
+
+Download the plugin:
+
+-   [MacOS](https://github.com/massalabs/thyra-playground-plugin/suites/9125906945/artifacts/423809352)
+-   [Linux](https://github.com/massalabs/thyra-playground-plugin/suites/9125906945/artifacts/423809353)
+-   [Windows](https://drive.google.com/file/d/1vAXZC4eGVJ-TALWj_eyAHSnTsEmiICcw/view?usp=share_link)
+
+create the ```plugins``` directory and unzip the content of the archive in it.
+
+Your plugins directory should look like this:
+```
+  plugins
+    └── playground-plugin
+        ├── manifest.json
+        ├── simulator
+        │   └── massa-sc-tester
+        └── thyra-playground-plugin
+```
+
+For Linux and MacOs users, you have to set the executable permission on binary files:
+
+`chmod +x plugins/playground-plugin/thyra-playground-plugin plugins/playground-plugin/simulator/massa-sc-tester`
+
 ## Usage
 
 ### Upload a website

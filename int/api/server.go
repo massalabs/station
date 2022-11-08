@@ -12,8 +12,10 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/int/api/cmd"
+	"github.com/massalabs/thyra/int/api/plugins"
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
+	pluginManager "github.com/massalabs/thyra/pkg/plugins"
 )
 
 func parseFlags(server *restapi.Server) {
@@ -76,9 +78,14 @@ func StartServer(app *fyne.App) {
 
 	parseFlags(server)
 
+	// Run plugins
+	manager, err := pluginManager.New(server.Port, server.TLSPort)
+
 	var walletStorage sync.Map
 
 	localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(cmd.CreateExecuteFunctionHandler(app))
+
+	localAPI.MgmtPluginsListHandler = plugins.NewGet(manager)
 
 	localAPI.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
 	localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
