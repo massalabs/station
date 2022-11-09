@@ -1,0 +1,68 @@
+@startuml Web hosting upload
+participant "End user" as user
+participant "Browser" as ui
+participant "Thyra server" as thyra
+participant "Hosting websites" as web
+participant "Wallet" as w
+participant "DNS" as dns
+participant "Event Manager" as em
+participant "Storage" as storage
+participant "Node (API)" as node
+title "= **Website hosting on blockchain**"
+
+
+user -> ui: Click on "Websites hosting" page
+ui -> thyra: GET /plugin/web-hosting
+thyra -> web: GET /plugin/web-hosting
+web -> thyra: GET /plugin/type/{wallet}
+thyra -> web: user's wallet plug-in list
+web -> thyra: list of wallet plug-in
+thyra -> ui: list of wallet plug-in
+ui -> user: list of wallet plug-in displayed
+user <-> ui: wallet plug-in selection
+ui -> thyra: GET /plugin/wallet-plugin-name/{status}
+thyra -> w: GET /plugin/wallet-plugin-name/{status}
+w -> w: is wallet status active?
+alt wallet inactive
+    w -> thyra: KO response - inactive status
+    thyra -> web: KO response - inactive status
+    web -> ui: display KO response - inactive status
+    ui -> user: Error "Connect to your wallet" displayed
+end
+w -> w: is there any wallet?
+alt wallet connection fail
+w -> web: KO response - Wallet-4001 error
+web ->thyra: KO response - Wallet-4001 error
+thyra -> ui: display Wallet-4001 error
+ui -> user: Error Wallet-4001 displayed
+end
+w -> thyra: OK response
+thyra -> web: OK response
+web -> ui: list of existing wallet
+ui -> user: display list of wallet
+ui -> thyra: GET /plugin/web-hosting/dns/my/domains/{nickname}
+thyra -> web: GET /plugin/web-hosting/dns/my/domains/{nickname}
+web -> dns: GET /plugin/web-hosting/dns/my/domains/{nickname}
+dns -> node: GET /plugin/web-hosting/dns/dns/my/domain/{nickname}
+node -> node: Does any DNS exist on this address?
+alt DNS name not found
+    node -> dns: KO response
+    dns -> web: KO response - Domain-0001
+    web -> thyra: KO response - Domain-0001
+    thyra -> ui: display Domain-0001 error
+    ui -> user: Error Domain-0001 displayed
+end
+node -> node: Is there any websites linked your SC address?
+alt SC contract & DNS address connection fail
+    node -> dns: KO response
+    dns -> thyra: KO response - Domain-0002
+    thyra -> web: KO response - Domain-0002
+    web -> ui: display Domain-0002 error
+    ui -> user: Error Domain-0002 displayed
+end
+node -> dns: OK response
+dns -> web: OK response 
+web -> thyra: OK response
+thyra -> ui: display list of DNS owned
+ui -> user: list of DNS owned displayed
+@enduml

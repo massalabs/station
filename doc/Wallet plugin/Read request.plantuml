@@ -1,0 +1,18 @@
+@startuml Read request
+participant "End user" as user
+participant "Browser" as ui
+participant "Thyra server" as thyra
+participant "Wallet" as w
+participant "Node (API)" as node
+title "= **Wallet read request**"
+
+user -> ui: READ a wallet request 
+ui -> thyra: GET /plugin/wallet
+thyra -> w: GET /plugin/wallet
+w -> thyra: KO reponse - Wallet-4001
+thyra -> ui: display Wallet-4001 error
+ui -> user: Error Wallet-4001 displayed
+w -> thyra: OK response - success
+thyra -> ui: display wallet info
+ui -> user: wallet info displayed
+@enduml

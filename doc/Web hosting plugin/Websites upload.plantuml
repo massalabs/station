@@ -1,4 +1,4 @@
-@startuml
+@startuml Upload a website
 participant "End user" as user
 participant "Browser" as ui
 participant "Thyra server" as thyra
@@ -10,7 +10,7 @@ participant "Storage" as storage
 participant "Node (API)" as node
 title "= **Website hosting on blockchain, create request**"
 
-user -> ui: click on deploy website to Massa (create request)
+user -> ui: click on deploy website to Massa
 ui -> thyra: PUT /plugin/webOnchain/website/prepare
 thyra -> web: PUT /plugin/webOnchain/website/prepare
 web -> thyra: GET /plugin/wallet/operationId

@@ -1,0 +1,42 @@
+@startuml Create request
+participant "End user" as user
+participant "Browser" as ui
+participant "Thyra server" as thyra
+participant "Plug-in store" as store
+participant "Wallet" as w
+participant "Node (API)" as node
+title "= **Wallet creation**"
+
+
+user -> ui: enter nickname and password
+ui -> thyra: POST /plugin/wallet
+thyra -> w: POST /plugin/wallet
+w -> w: is there a correct nickname entry?
+alt wallet nickname KO
+    w -> thyra: KO response
+    thyra -> ui: display Wallet-1001 error
+    ui -> user: Error Wallet-1001 displayed
+end
+    w -> w: is there a password entry?
+alt missing password
+    w -> thyra: KO response - Wallet-1002
+    thyra -> ui: display Wallet-1002 error
+    ui -> user: Error Wallet-1002 displayed
+end
+w -> w: does this nickname exist?
+    alt nickname already used
+        w -> thyra: KO response - Wallet-0001
+        thyra -> ui: display Wallet-0001 error
+        ui -> user: Error Wallet-0001 displayed
+    end
+w -> w: are key pair generated?
+    alt keys pair generation failed
+        w -> thyra: KO reponse - Wallet-1003
+        thyra -> ui: display Wallet-1003 error
+        ui -> user: Error Wallet-1003 displayed
+    end
+w -> thyra: OK response - success
+thyra -> ui: display wallet info
+ui -> user: wallet info displayed
+
+@enduml

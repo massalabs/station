@@ -1,0 +1,29 @@
+@startuml installation
+participant "End User" as user
+participant "Browser" as ui
+participant "Plug-in store" as store
+participant "Thyra server" as thyra
+participant "Wallet" as w
+participant "Node (API)" as node
+title "= **Plug-in installation**"
+
+
+user -> ui: click on install 'Wallet' plug-in
+ui <-> user: Ask for Wallet plug-in installation
+alt user clicks on install
+    ui -> store: download plug-in packages
+    store -> thyra: download plug-in packages
+    thyra -> w: establish connection
+    w -> w: is the connection established?
+    alt connection failed 
+        w -> thyra: Plugin-XXXX error
+        thyra -> ui: display error message
+        ui -> user: error message displayed 
+        end
+else user clicks on cancel
+    ui -> user:  Plug-in page displayed
+end
+w -> thyra: OK response - package installed
+thyra -> store: OK response - package installed
+store -> ui: display plugin page in Thyra: my.massa/thyra/plugin-name
+ui -> user: my.massa/thyra/plugin-page displayed

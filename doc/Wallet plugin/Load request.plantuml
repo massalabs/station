@@ -1,10 +1,10 @@
-@startuml
+@startuml Load request
 participant "End user" as user
 participant "Browser" as ui
 participant "Thyra server" as thyra
 participant "Wallet" as w
 participant "Node (API)" as node
-title "= **Wallet plugin, READ request**"
+title "= **Wallet load**"
 
 user -> ui: LOAD a wallet request 
 ui -> thyra: POST /plugin/wallet
