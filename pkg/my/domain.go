@@ -82,11 +82,11 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 // Check website chunks and store its ID in an array if one of them is broken.
 func checkChunkIntegrity(client *node.Client, address string) ([]string, error) {
 	chunkNumberKey := "total_chunks"
+
 	var missedChunks []string
 
 	keyNumber, err := node.DatastoreEntry(client, address, chunkNumberKey)
 	if err != nil {
-
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
 	}
 
@@ -115,5 +115,6 @@ func checkChunkIntegrity(client *node.Client, address string) ([]string, error) 
 			missedChunks = append(missedChunks, strconv.Itoa(i))
 		}
 	}
+
 	return missedChunks, nil
 }

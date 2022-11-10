@@ -72,8 +72,9 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 	return operations.NewWebsiteCreatorPrepareOK().
 		WithPayload(
 			&models.Websites{
-				Name:    params.URL,
-				Address: address,
+				Name:           params.URL,
+				Address:        address,
+				HasBrokenChunk: nil,
 			})
 }
 
@@ -154,8 +155,9 @@ func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyn
 
 	return operations.NewWebsiteCreatorUploadOK().
 		WithPayload(&models.Websites{
-			Name:    "Name",
-			Address: params.Address,
+			Name:           "Name",
+			Address:        params.Address,
+			HasBrokenChunk: nil,
 		})
 }
 
@@ -165,12 +167,14 @@ func checkContentType(archive []byte, fileType string) bool {
 	return contentType == fileType
 }
 
+//nolint:lll
 func CreateUploadMissingChunksHandler(app *fyne.App) func(params operations.WebsiteUploadMissingChunksParams) middleware.Responder {
 	return func(params operations.WebsiteUploadMissingChunksParams) middleware.Responder {
 		return websiteUploadMissingChunksHandler(params, app)
 	}
 }
 
+//nolint:lll
 func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChunksParams, app *fyne.App) middleware.Responder {
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
@@ -181,6 +185,7 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 					Message: err.Error(),
 				})
 	}
+
 	password := gui.AskPassword(wallet.Nickname, app)
 
 	err = wallet.Unprotect(password, 0)
@@ -215,7 +220,8 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 
 	return operations.NewWebsiteUploadMissingChunksOK().
 		WithPayload(&models.Websites{
-			Name:    "Name",
-			Address: params.Address,
+			Name:           "Name",
+			Address:        params.Address,
+			HasBrokenChunk: nil,
 		})
 }
