@@ -13,6 +13,7 @@ import (
 	"github.com/massalabs/thyra/pkg/onchain"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
 	"github.com/massalabs/thyra/pkg/wallet"
+	"golang.org/x/text/encoding/unicode"
 )
 
 //go:embed sc
@@ -82,17 +83,24 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 	// })
 	totalChunks := make([]byte, 8)
 	binary.LittleEndian.PutUint64(totalChunks, uint64(len(chunks)))
-	totalChunkString := make([]rune, 16)
+
+	totalChunksRunes := make([]rune, 8)
 
 	for i := 0; i < len(totalChunks); i++ {
-		totalChunkString = append(totalChunkString, 0x0, rune(totalChunks[i]))
+		totalChunksRunes[i] = rune(totalChunks[i])
 	}
 
-	totalChunkString2 := string(totalChunkString)
-	fmt.Println("Len chunks : ", len(chunks), totalChunkString2)
-	fmt.Println("Chunk array : ", []byte(totalChunkString2))
+	totalChunksUTF8 := string(totalChunksRunes)
 
-	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", []byte(totalChunkString2), 1000000000)
+	totalChunksUTF16, err := unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewEncoder().String(totalChunksUTF8)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("%#v", totalChunks, totalChunksRunes, totalChunksUTF8, totalChunksUTF16)
+
+	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", []byte(totalChunksUTF16), 1000000000)
 	if err != nil {
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 	}
