@@ -84,6 +84,7 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", []byte(totalChunksUTF16),
 		sendoperation.OneMassa)
 	if err != nil {
+		fmt.Println(err)
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 	}
 
