@@ -82,8 +82,17 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 	// })
 	totalChunks := make([]byte, 8)
 	binary.LittleEndian.PutUint64(totalChunks, uint64(len(chunks)))
+	totalChunkString := make([]rune, 16)
 
-	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", totalChunks, 1000000000)
+	for i := 0; i < len(totalChunks); i++ {
+		totalChunkString = append(totalChunkString, 0x0, rune(totalChunks[i]))
+	}
+
+	totalChunkString2 := string(totalChunkString)
+	fmt.Println("Len chunks : ", len(chunks), totalChunkString2)
+	fmt.Println("Chunk array : ", []byte(totalChunkString2))
+
+	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", []byte(totalChunkString2), 1000000000)
 	if err != nil {
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 	}
