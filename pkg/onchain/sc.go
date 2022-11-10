@@ -18,11 +18,11 @@ const maxWaitingTimeInSeconds = 45
 const evenHeartbeat = 2
 
 func CallFunction(client *node.Client, wallet wallet.Wallet,
-	addr []byte, function string, parameter []byte,
+	addr []byte, function string, parameter []byte, coins uint64,
 ) (string, error) {
 	callSC := callsc.New(addr, function, parameter,
 		sendOperation.NoGazFee, sendOperation.DefaultGazLimit,
-		sendOperation.NoSequentialCoin, sendOperation.NoParallelCoin)
+		coins)
 
 	operationID, err := sendOperation.Call(
 		client,
@@ -63,7 +63,7 @@ func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet, expiryDelta
 ) (string, error) {
 	callSC := callsc.New(addr, function, parameter,
 		sendOperation.NoGazFee, sendOperation.DefaultGazLimit,
-		sendOperation.NoSequentialCoin, sendOperation.NoParallelCoin)
+		1000000000)
 
 	operationID, err := sendOperation.Call(
 		client,

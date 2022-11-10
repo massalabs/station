@@ -63,8 +63,7 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyn
 		[]byte(params.Body.Args),
 		uint64(params.Body.Gaz.Price),
 		uint64(*params.Body.Gaz.Limit),
-		uint64(params.Body.Coins.Sequential),
-		uint64(params.Body.Coins.Parallel))
+		uint64(params.Body.Coins))
 
 	c := node.NewDefaultClient()
 
