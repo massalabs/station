@@ -79,18 +79,18 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	return responses, nil
 }
 
-// Check website chunks and return true if one of them is broken.
-func checkChunkIntegrity(client *node.Client, address string) (bool, error) {
+// Check website chunks and store its ID in an array if one of them is broken.
+func checkChunkIntegrity(client *node.Client, address string) ([]string, error) {
 	chunkNumberKey := "total_chunks"
-
+	var missedChunks []string
 	keyNumber, err := node.DatastoreEntry(client, address, chunkNumberKey)
 	if err != nil {
-		return false, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
+		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
 	}
 
 	chunkNumber, err := strconv.Atoi(string(keyNumber.CandidateValue))
 	if err != nil {
-		return false, fmt.Errorf("error converting String to integer")
+		return nil, fmt.Errorf("error converting String to integer")
 	}
 
 	entries := []node.DatastoreEntriesKeysAsString{}
@@ -105,14 +105,13 @@ func checkChunkIntegrity(client *node.Client, address string) (bool, error) {
 
 	response, err := node.DatastoreEntries(client, entries)
 	if err != nil {
-		return false, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
+		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
 	}
 
 	for i := 0; i < chunkNumber; i++ {
 		if string(response[i].CandidateValue) == "" {
-			return true, nil
+			missedChunks = append(missedChunks, strconv.Itoa(i))
 		}
 	}
-
-	return false, nil
+	return missedChunks, nil
 }

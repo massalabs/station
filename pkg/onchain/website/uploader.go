@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
@@ -109,6 +110,53 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 		operations[index+1] = opID
 	}
 
+	return &operations, nil
+}
+
+func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet, missedChunks string) (*[]string, error) {
+	const blockLength = 260000
+
+	client := node.NewDefaultClient()
+
+	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
+	if err != nil {
+		return nil, fmt.Errorf("decoding address '%s': %w", atAddress[1:], err)
+	}
+
+	blocks := chunk(content, blockLength)
+
+	operations, err := uploadMissedChunks(client, addr, blocks, missedChunks, wallet)
+	if err != nil {
+		return nil, err
+	}
+
+	return operations, nil
+}
+
+func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, missedChunks string, wallet *wallet.Wallet) (*[]string, error) {
+	operations := make([]string, len(chunks)+1)
+	arrMissedChunks := strings.Split(missedChunks, "")
+	for index := 0; index < len(arrMissedChunks); index++ {
+		chunkID, err := strconv.Atoi(arrMissedChunks[index])
+		if err != nil {
+			return nil,
+				fmt.Errorf("error converting string to integeter", err)
+		}
+		param, err := json.Marshal(AppendParams{
+			Data:    chunks[chunkID],
+			ChunkID: strconv.Itoa(chunkID),
+		})
+		if err != nil {
+			return nil,
+				fmt.Errorf("marshaling '%s': %w", AppendParams{Data: chunks[index], ChunkID: strconv.Itoa(index)}, err)
+		}
+		//nolint:lll
+		opID, err := onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", param)
+		if err != nil {
+			return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
+		}
+		operations[index] = opID
+	}
 	return &operations, nil
 }
 

@@ -369,6 +369,55 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /websiteCreator/uploadMissingChunks:
+    post:
+      operationId: websiteUploadMissingChunks
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: address
+          type: string
+          required: true
+          x-nullable: false
+          description: Address where to deploy website. The account must have been prepare to receive a website.
+        - in: formData
+          name: nickname
+          type: string
+          required: true
+          x-nullable: false
+          description: Wallet's nickname to be used for receiving the website
+        - in: formData
+          name: zipfile
+          type: file
+          required: true
+          x-nullable: false
+          description: Website contents in a ZIP file.
+        - in: formData
+          name: missedChunks
+          type: string
+          required: true
+          x-nullable: false
+          description: Website missing chunks
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Website's chunk deployed.
+          schema:
+            $ref: "#/definitions/Websites"
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
   /cmd/executeFunction:
     post:
       operationId: cmdExecuteFunction
@@ -654,8 +703,10 @@ definitions:
         description: Website's address.
         type: string
       hasBrokenChunk:
-        description: True if website contains a broken chunk preventing the website to load.
-        type: boolean
+        description: Array of empty chunks if website contains preventing the website to load.
+        type: array
+        items:
+          type: string
   Events:
     type: object
     description: Events object (V0)
