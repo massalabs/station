@@ -2,6 +2,7 @@ package website
 
 import (
 	"embed"
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -76,15 +77,13 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) ([]string, 
 
 func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
+	// paramInit, err := json.Marshal(InitialisationParams{
+	// 	TotalChunks: strconv.Itoa(len(chunks)),
+	// })
+	totalChunks := make([]byte, 8)
+	binary.LittleEndian.PutUint64(totalChunks, uint64(len(chunks)))
 
-	paramInit, err := json.Marshal(InitialisationParams{
-		TotalChunks: strconv.Itoa(len(chunks)),
-	})
-	if err != nil {
-		return nil, fmt.Errorf("marshaling '%s': %w", InitialisationParams{TotalChunks: strconv.Itoa(len(chunks))}, err)
-	}
-
-	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", paramInit)
+	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", totalChunks, 1000000000)
 	if err != nil {
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 	}
@@ -92,16 +91,16 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 	operations[0] = opID
 
 	for index := 0; index < len(chunks); index++ {
-		param, err := json.Marshal(appendParams(index, chunks))
-		if err != nil {
-			return nil,
-				fmt.Errorf("marshaling '%s': %w", appendParams(index, chunks), err)
-		}
+
+		params := make([]byte, 8+8+len(chunks[index]))
+		binary.LittleEndian.PutUint64(params, uint64(index))
+		binary.LittleEndian.PutUint64(params, uint64(len(chunks[index])))
+		params = append(params, []byte(chunks[index])...)
 
 		//nolint:lll
-		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", param)
+		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", params)
 		if err != nil {
-			return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
+			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
 
 		operations[index+1] = opID
