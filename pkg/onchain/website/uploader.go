@@ -140,11 +140,10 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, misse
 	arrMissedChunks := strings.Split(missedChunks, "")
 
 	for index := 0; index < len(arrMissedChunks); index++ {
-
 		chunkID, err := strconv.Atoi(arrMissedChunks[index])
 		if err != nil {
 			return nil,
-				fmt.Errorf("error converting string to integeter", err)
+				fmt.Errorf("error converting string to integeter '%s'", err)
 		}
 
 		param, err := json.Marshal(AppendParams{
@@ -165,6 +164,7 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, misse
 	}
 
 	return &operations, nil
+
 }
 
 func chunk(data string, chunkSize int) []string {

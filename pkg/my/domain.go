@@ -86,6 +86,7 @@ func checkChunkIntegrity(client *node.Client, address string) ([]string, error) 
 
 	keyNumber, err := node.DatastoreEntry(client, address, chunkNumberKey)
 	if err != nil {
+
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
 	}
 

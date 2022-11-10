@@ -195,7 +195,11 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 
 	archive, err := io.ReadAll(params.Zipfile)
 	if err != nil {
-		return createInternalServerError(errorCodeWebCreatorReadArchive, err.Error())
+		return operations.NewWebsiteCreatorUploadInternalServerError().
+			WithPayload(&models.Error{
+				Code:    errorCodeWebCreatorReadArchive,
+				Message: err.Error(),
+			})
 	}
 
 	if !checkContentType(archive, "application/zip") {
