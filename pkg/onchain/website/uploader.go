@@ -79,11 +79,9 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) ([]string, 
 
 func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
-	// paramInit, err := json.Marshal(InitialisationParams{
-	// 	TotalChunks: strconv.Itoa(len(chunks)),
-	// })
 	totalChunks := make([]byte, 8)
 	binary.LittleEndian.PutUint64(totalChunks, uint64(len(chunks)))
+	//binary.LittleEndian.PutUint64(totalChunks, 18_446_744_073_709_551_615)
 
 	totalChunksRunes := make([]rune, 8)
 
@@ -93,16 +91,18 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 
 	totalChunksUTF8 := string(totalChunksRunes)
 
-	totalChunksUTF16, err := unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewEncoder().String(totalChunksUTF8)
+	totalChunksUTF16, err := unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM).NewEncoder().String(totalChunksUTF8)
 
 	if err != nil {
 		panic(err)
 	}
 
 	fmt.Println("%#v", totalChunks, totalChunksRunes, totalChunksUTF8, totalChunksUTF16)
+	fmt.Println([]byte(totalChunksUTF16))
 
 	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", []byte(totalChunksUTF16), 1000000000)
 	if err != nil {
+		fmt.Println(err)
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 	}
 
