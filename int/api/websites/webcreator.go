@@ -198,6 +198,7 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 				})
 	}
 
+	//nolint:all
 	archive, err := io.ReadAll(params.Zipfile)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
