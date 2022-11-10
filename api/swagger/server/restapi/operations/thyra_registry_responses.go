@@ -14,7 +14,8 @@ import (
 // ThyraRegistryOKCode is the HTTP code returned for type ThyraRegistryOK
 const ThyraRegistryOKCode int = 200
 
-/*ThyraRegistryOK Page found
+/*
+ThyraRegistryOK Page found
 
 swagger:response thyraRegistryOK
 */

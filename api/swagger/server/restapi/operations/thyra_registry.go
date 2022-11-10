@@ -29,10 +29,10 @@ func NewThyraRegistry(ctx *middleware.Context, handler ThyraRegistryHandler) *Th
 	return &ThyraRegistry{Context: ctx, Handler: handler}
 }
 
-/* ThyraRegistry swagger:route GET /thyra/registry/{resource} thyraRegistry
+/*
+	ThyraRegistry swagger:route GET /thyra/registry/{resource} thyraRegistry
 
 ThyraRegistry thyra registry API
-
 */
 type ThyraRegistry struct {
 	Context *middleware.Context

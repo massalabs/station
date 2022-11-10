@@ -35,10 +35,10 @@ func NewCmdExecuteFunction(ctx *middleware.Context, handler CmdExecuteFunctionHa
 	return &CmdExecuteFunction{Context: ctx, Handler: handler}
 }
 
-/* CmdExecuteFunction swagger:route POST /cmd/executeFunction cmdExecuteFunction
+/*
+	CmdExecuteFunction swagger:route POST /cmd/executeFunction cmdExecuteFunction
 
 CmdExecuteFunction cmd execute function API
-
 */
 type CmdExecuteFunction struct {
 	Context *middleware.Context

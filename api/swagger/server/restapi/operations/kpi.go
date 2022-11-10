@@ -34,10 +34,10 @@ func NewKpi(ctx *middleware.Context, handler KpiHandler) *Kpi {
 	return &Kpi{Context: ctx, Handler: handler}
 }
 
-/* Kpi swagger:route GET /kpi kpi
+/*
+	Kpi swagger:route GET /kpi kpi
 
 Kpi kpi API
-
 */
 type Kpi struct {
 	Context *middleware.Context

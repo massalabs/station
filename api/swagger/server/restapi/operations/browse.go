@@ -29,10 +29,10 @@ func NewBrowse(ctx *middleware.Context, handler BrowseHandler) *Browse {
 	return &Browse{Context: ctx, Handler: handler}
 }
 
-/* Browse swagger:route GET /browse/{address}/{resource} browse
+/*
+	Browse swagger:route GET /browse/{address}/{resource} browse
 
 Browse browse API
-
 */
 type Browse struct {
 	Context *middleware.Context

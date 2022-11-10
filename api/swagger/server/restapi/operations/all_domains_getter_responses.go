@@ -16,7 +16,8 @@ import (
 // AllDomainsGetterOKCode is the HTTP code returned for type AllDomainsGetterOK
 const AllDomainsGetterOKCode int = 200
 
-/*AllDomainsGetterOK All domains returned.
+/*
+AllDomainsGetterOK All domains returned.
 
 swagger:response allDomainsGetterOK
 */
@@ -63,7 +64,8 @@ func (o *AllDomainsGetterOK) WriteResponse(rw http.ResponseWriter, producer runt
 // AllDomainsGetterBadRequestCode is the HTTP code returned for type AllDomainsGetterBadRequest
 const AllDomainsGetterBadRequestCode int = 400
 
-/*AllDomainsGetterBadRequest Bad request.
+/*
+AllDomainsGetterBadRequest Bad request.
 
 swagger:response allDomainsGetterBadRequest
 */
@@ -107,7 +109,8 @@ func (o *AllDomainsGetterBadRequest) WriteResponse(rw http.ResponseWriter, produ
 // AllDomainsGetterInternalServerErrorCode is the HTTP code returned for type AllDomainsGetterInternalServerError
 const AllDomainsGetterInternalServerErrorCode int = 500
 
-/*AllDomainsGetterInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
+/*
+AllDomainsGetterInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
 
 swagger:response allDomainsGetterInternalServerError
 */
