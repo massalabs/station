@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"unicode/utf16"
 
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
@@ -87,7 +88,7 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 	totalChunksRunes := make([]rune, 8)
 
 	for i := 0; i < len(totalChunks); i++ {
-		totalChunksRunes[i] = rune(totalChunks[i])
+		totalChunksRunes[i] = utf16.Decode([]uint16{uint16(totalChunks[i])})[0]
 	}
 
 	totalChunksUTF8 := string(totalChunksRunes)
