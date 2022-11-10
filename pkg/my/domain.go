@@ -83,6 +83,7 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 func checkChunkIntegrity(client *node.Client, address string) ([]string, error) {
 	chunkNumberKey := "total_chunks"
 	var missedChunks []string
+
 	keyNumber, err := node.DatastoreEntry(client, address, chunkNumberKey)
 	if err != nil {
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)

@@ -113,6 +113,7 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 	return &operations, nil
 }
 
+//nolint:lll
 func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet, missedChunks string) (*[]string, error) {
 	const blockLength = 260000
 
@@ -133,15 +134,19 @@ func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet,
 	return operations, nil
 }
 
+//nolint:lll
 func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, missedChunks string, wallet *wallet.Wallet) (*[]string, error) {
 	operations := make([]string, len(chunks)+1)
 	arrMissedChunks := strings.Split(missedChunks, "")
+
 	for index := 0; index < len(arrMissedChunks); index++ {
+
 		chunkID, err := strconv.Atoi(arrMissedChunks[index])
 		if err != nil {
 			return nil,
 				fmt.Errorf("error converting string to integeter", err)
 		}
+
 		param, err := json.Marshal(AppendParams{
 			Data:    chunks[chunkID],
 			ChunkID: strconv.Itoa(chunkID),
@@ -150,6 +155,7 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, misse
 			return nil,
 				fmt.Errorf("marshaling '%s': %w", AppendParams{Data: chunks[index], ChunkID: strconv.Itoa(index)}, err)
 		}
+
 		//nolint:lll
 		opID, err := onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", param)
 		if err != nil {
@@ -157,6 +163,7 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, misse
 		}
 		operations[index] = opID
 	}
+
 	return &operations, nil
 }
 
