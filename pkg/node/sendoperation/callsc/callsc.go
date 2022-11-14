@@ -68,7 +68,6 @@ func (c *CallSC) Message() []byte {
 	msg = append(msg, buf[:nbBytes]...)
 
 	// Coins
-	fmt.Print("Number of coins sent : ", c.coins, "\n")
 	nbBytes = binary.PutUvarint(buf, c.coins)
 	msg = append(msg, buf[:nbBytes]...)
 
