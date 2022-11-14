@@ -135,10 +135,11 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, misse
 	arrMissedChunks := strings.Split(missedChunks, "")
 
 	for index := 0; index < len(arrMissedChunks); index++ {
-		param, err := json.Marshal(appendParams(index, chunks))
+                rawParams := appendParams(index, chunks)
+		param, err := json.Marshal(rawParams)
 		if err != nil {
 			return nil,
-				fmt.Errorf("marshaling '%s': %w", appendParams(index, chunks), err)
+				fmt.Errorf("marshaling '%s': %w", rawParams, err)
 		}
 
 		//nolint:lll
