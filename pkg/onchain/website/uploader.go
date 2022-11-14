@@ -11,10 +11,10 @@ import (
 
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
+	"github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
 	"github.com/massalabs/thyra/pkg/wallet"
-	"golang.org/x/text/encoding/unicode"
 )
 
 //go:embed sc
@@ -79,44 +79,26 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) ([]string, 
 
 func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
-	totalChunks := make([]byte, 8)
-	binary.LittleEndian.PutUint64(totalChunks, uint64(len(chunks)))
-	//binary.LittleEndian.PutUint64(totalChunks, 18_446_744_073_709_551_615)
+	totalChunksUTF16 := encodeUint64ToUTF16String(uint64(len(chunks)))
 
-	totalChunksRunes := make([]rune, 8)
-
-	for i := 0; i < len(totalChunks); i++ {
-		totalChunksRunes[i] = utf16.Decode([]uint16{uint16(totalChunks[i])})[0]
-	}
-
-	totalChunksUTF8 := string(totalChunksRunes)
-
-	totalChunksUTF16, err := unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM).NewEncoder().String(totalChunksUTF8)
-
+	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", []byte(totalChunksUTF16),
+		sendoperation.OneMassa)
 	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("%#v", totalChunks, totalChunksRunes, totalChunksUTF8, totalChunksUTF16)
-	fmt.Println([]byte(totalChunksUTF16))
-
-	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", []byte(totalChunksUTF16), 1000000000)
-	if err != nil {
-		fmt.Println(err)
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 	}
 
 	operations[0] = opID
 
 	for index := 0; index < len(chunks); index++ {
-
-		params := make([]byte, 8+8+len(chunks[index]))
-		binary.LittleEndian.PutUint64(params, uint64(index))
-		binary.LittleEndian.PutUint64(params, uint64(len(chunks[index])))
-		params = append(params, []byte(chunks[index])...)
+		// Chunk ID encoding
+		params := encodeUint64ToUTF16String(uint64(index))
+		// Chunk data length encoding
+		params += encodeUint32ToUTF16String(uint32(len(chunks[index])))
+		// Chunk data encoding
+		params += chunks[index]
 
 		//nolint:lll
-		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", params)
+		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte(params))
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
@@ -191,4 +173,37 @@ func chunk(data string, chunkSize int) []string {
 
 func appendParams(index int, chunks []string) AppendParams {
 	return AppendParams{Data: chunks[index], ChunkID: strconv.Itoa(index)}
+}
+
+// We need to add an interface to this function in order to handle uint64 AND uint32 when we have time.
+func encodeUint64ToUTF16String(numberToEncode uint64) string {
+	//nolint:gomnd
+	buffer := make([]byte, 8)
+	binary.LittleEndian.PutUint64(buffer, numberToEncode)
+	//nolint:gomnd
+	runesBuffer := make([]rune, 8)
+
+	for i := 0; i < len(buffer); i++ {
+		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
+	}
+
+	UTF8String := string(runesBuffer)
+
+	return UTF8String
+}
+
+func encodeUint32ToUTF16String(numberToEncode uint32) string {
+	//nolint:gomnd
+	buffer := make([]byte, 4)
+	binary.LittleEndian.PutUint32(buffer, numberToEncode)
+	//nolint:gomnd
+	runesBuffer := make([]rune, 4)
+
+	for i := 0; i < len(buffer); i++ {
+		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
+	}
+
+	UTF8String := string(runesBuffer)
+
+	return UTF8String
 }

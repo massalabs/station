@@ -63,7 +63,7 @@ func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet, expiryDelta
 ) (string, error) {
 	callSC := callsc.New(addr, function, parameter,
 		sendOperation.NoGazFee, sendOperation.DefaultGazLimit,
-		1000000000)
+		sendOperation.HundredMassa)
 
 	operationID, err := sendOperation.Call(
 		client,
@@ -83,7 +83,7 @@ func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (strin
 	datastore[[3]uint8{1, 2, 3}] = []uint8{1, 2, 3}
 	exeSC := executesc.New(contract,
 		sendOperation.DefaultGazLimit, sendOperation.NoGazFee,
-		sendOperation.NoParallelCoin, datastore)
+		sendOperation.NoCoin, datastore)
 
 	opID, err := sendOperation.Call(
 		client,
