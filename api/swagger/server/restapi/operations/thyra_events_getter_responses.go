@@ -16,7 +16,8 @@ import (
 // ThyraEventsGetterOKCode is the HTTP code returned for type ThyraEventsGetterOK
 const ThyraEventsGetterOKCode int = 200
 
-/*ThyraEventsGetterOK Event retrieved
+/*
+ThyraEventsGetterOK Event retrieved
 
 swagger:response thyraEventsGetterOK
 */
@@ -60,7 +61,8 @@ func (o *ThyraEventsGetterOK) WriteResponse(rw http.ResponseWriter, producer run
 // ThyraEventsGetterBadRequestCode is the HTTP code returned for type ThyraEventsGetterBadRequest
 const ThyraEventsGetterBadRequestCode int = 400
 
-/*ThyraEventsGetterBadRequest Bad request.
+/*
+ThyraEventsGetterBadRequest Bad request.
 
 swagger:response thyraEventsGetterBadRequest
 */
@@ -104,7 +106,8 @@ func (o *ThyraEventsGetterBadRequest) WriteResponse(rw http.ResponseWriter, prod
 // ThyraEventsGetterInternalServerErrorCode is the HTTP code returned for type ThyraEventsGetterInternalServerError
 const ThyraEventsGetterInternalServerErrorCode int = 500
 
-/*ThyraEventsGetterInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
+/*
+ThyraEventsGetterInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
 
 swagger:response thyraEventsGetterInternalServerError
 */

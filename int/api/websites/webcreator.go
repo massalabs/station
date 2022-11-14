@@ -80,8 +80,9 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 	return operations.NewWebsiteCreatorPrepareOK().
 		WithPayload(
 			&models.Websites{
-				Name:    params.URL,
-				Address: address,
+				Name:         params.URL,
+				Address:      address,
+				BrokenChunks: nil,
 			})
 }
 
@@ -170,8 +171,9 @@ func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyn
 
 	return operations.NewWebsiteCreatorUploadOK().
 		WithPayload(&models.Websites{
-			Name:    "Name",
-			Address: params.Address,
+			Name:         "Name",
+			Address:      params.Address,
+			BrokenChunks: nil,
 		})
 }
 
@@ -179,4 +181,63 @@ func checkContentType(archive []byte, fileType string) bool {
 	contentType := http.DetectContentType(archive)
 
 	return contentType == fileType
+}
+
+//nolint:lll
+func CreateUploadMissingChunksHandler(app *fyne.App) func(params operations.WebsiteUploadMissingChunksParams) middleware.Responder {
+	return func(params operations.WebsiteUploadMissingChunksParams) middleware.Responder {
+		return websiteUploadMissingChunksHandler(params, app)
+	}
+}
+
+//nolint:lll
+func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChunksParams, app *fyne.App) middleware.Responder {
+	wallet, err := wallet.Load(params.Nickname)
+	if err != nil {
+		return operations.NewWebsiteCreatorUploadInternalServerError().
+			WithPayload(
+				&models.Error{
+					Code:    errorCodeGetWallet,
+					Message: err.Error(),
+				})
+	}
+
+	password := gui.AskPassword(wallet.Nickname, app)
+
+	err = wallet.Unprotect(password, 0)
+	if err != nil {
+		return operations.NewWebsiteCreatorUploadInternalServerError().
+			WithPayload(
+				&models.Error{
+					Code:    errorCodeWalletWrongPassword,
+					Message: err.Error(),
+				})
+	}
+
+	archive, err := io.ReadAll(params.Zipfile)
+	if err != nil {
+		return operations.NewWebsiteCreatorUploadInternalServerError().
+			WithPayload(&models.Error{ //nolint:all
+				Code:    errorCodeWebCreatorReadArchive,
+				Message: err.Error(),
+			})
+	}
+
+	if !checkContentType(archive, "application/zip") {
+		return createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
+	}
+
+	b64 := base64.StdEncoding.EncodeToString(archive)
+
+	_, err = website.UploadMissedChunks(params.Address, b64, wallet, params.MissedChunks)
+	if err != nil {
+		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
+	}
+
+	return operations.NewWebsiteUploadMissingChunksOK().
+		WithPayload(&models.Websites{
+			Name:         "Name",
+			Address:      params.Address,
+			BrokenChunks: nil,
+		})
 }

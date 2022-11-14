@@ -16,7 +16,8 @@ import (
 // ThyraWebsiteCreatorOKCode is the HTTP code returned for type ThyraWebsiteCreatorOK
 const ThyraWebsiteCreatorOKCode int = 200
 
-/*ThyraWebsiteCreatorOK Page found
+/*
+ThyraWebsiteCreatorOK Page found
 
 swagger:response thyraWebsiteCreatorOK
 */
@@ -40,7 +41,8 @@ func (o *ThyraWebsiteCreatorOK) WriteResponse(rw http.ResponseWriter, producer r
 // ThyraWebsiteCreatorNotFoundCode is the HTTP code returned for type ThyraWebsiteCreatorNotFound
 const ThyraWebsiteCreatorNotFoundCode int = 404
 
-/*ThyraWebsiteCreatorNotFound Resource not found.
+/*
+ThyraWebsiteCreatorNotFound Resource not found.
 
 swagger:response thyraWebsiteCreatorNotFound
 */

@@ -34,10 +34,10 @@ func NewMgmtWalletCreate(ctx *middleware.Context, handler MgmtWalletCreateHandle
 	return &MgmtWalletCreate{Context: ctx, Handler: handler}
 }
 
-/* MgmtWalletCreate swagger:route POST /mgmt/wallet mgmtWalletCreate
+/*
+	MgmtWalletCreate swagger:route POST /mgmt/wallet mgmtWalletCreate
 
 MgmtWalletCreate mgmt wallet create API
-
 */
 type MgmtWalletCreate struct {
 	Context *middleware.Context

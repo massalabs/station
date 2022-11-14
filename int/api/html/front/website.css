@@ -519,3 +519,58 @@ th {
     max-width: 256px;
     height: 36px;
 }
+
+.broken-chunks {
+    display: inline-flex;
+    align-items: center;
+}
+
+.repair-gear {
+    align-self: center;
+    padding: 8px;
+    cursor: pointer;
+}
+
+/* -------------------------------------------------------------------------
+  TOOL TIP
+-------------------------------------------------------------------------- */
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted currentColor;
+    opacity: 1;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    position: absolute;
+    text-align: center;
+    background-color: #555;
+    color: currentColor;
+    width: 256px;
+    border-radius: 6px;
+    padding: 8px 0;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -128px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext:after {
+    content: "";
+    position: absolute;
+    margin-left: -5px;
+    top: 100%;
+    left: 50%;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}

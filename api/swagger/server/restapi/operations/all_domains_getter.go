@@ -29,10 +29,10 @@ func NewAllDomainsGetter(ctx *middleware.Context, handler AllDomainsGetterHandle
 	return &AllDomainsGetter{Context: ctx, Handler: handler}
 }
 
-/* AllDomainsGetter swagger:route GET /all/domains allDomainsGetter
+/*
+	AllDomainsGetter swagger:route GET /all/domains allDomainsGetter
 
 AllDomainsGetter all domains getter API
-
 */
 type AllDomainsGetter struct {
 	Context *middleware.Context

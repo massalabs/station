@@ -16,7 +16,8 @@ import (
 // ThyraWalletOKCode is the HTTP code returned for type ThyraWalletOK
 const ThyraWalletOKCode int = 200
 
-/*ThyraWalletOK Page found
+/*
+ThyraWalletOK Page found
 
 swagger:response thyraWalletOK
 */
@@ -40,7 +41,8 @@ func (o *ThyraWalletOK) WriteResponse(rw http.ResponseWriter, producer runtime.P
 // ThyraWalletNotFoundCode is the HTTP code returned for type ThyraWalletNotFound
 const ThyraWalletNotFoundCode int = 404
 
-/*ThyraWalletNotFound Resource not found.
+/*
+ThyraWalletNotFound Resource not found.
 
 swagger:response thyraWalletNotFound
 */

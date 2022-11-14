@@ -20,6 +20,9 @@ type Websites struct {
 	// Website's address.
 	Address string `json:"address,omitempty"`
 
+	// Array of empty chunks if website contains preventing the website to load.
+	BrokenChunks []string `json:"brokenChunks"`
+
 	// Website's name.
 	Name string `json:"name,omitempty"`
 }

@@ -105,6 +105,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		WebsiteCreatorUploadHandler: WebsiteCreatorUploadHandlerFunc(func(params WebsiteCreatorUploadParams) middleware.Responder {
 			return middleware.NotImplemented("operation WebsiteCreatorUpload has not yet been implemented")
 		}),
+		WebsiteUploadMissingChunksHandler: WebsiteUploadMissingChunksHandlerFunc(func(params WebsiteUploadMissingChunksParams) middleware.Responder {
+			return middleware.NotImplemented("operation WebsiteUploadMissingChunks has not yet been implemented")
+		}),
 	}
 }
 
@@ -191,6 +194,8 @@ type ThyraServerAPI struct {
 	WebsiteCreatorPrepareHandler WebsiteCreatorPrepareHandler
 	// WebsiteCreatorUploadHandler sets the operation handler for the website creator upload operation
 	WebsiteCreatorUploadHandler WebsiteCreatorUploadHandler
+	// WebsiteUploadMissingChunksHandler sets the operation handler for the website upload missing chunks operation
+	WebsiteUploadMissingChunksHandler WebsiteUploadMissingChunksHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -333,6 +338,9 @@ func (o *ThyraServerAPI) Validate() error {
 	}
 	if o.WebsiteCreatorUploadHandler == nil {
 		unregistered = append(unregistered, "WebsiteCreatorUploadHandler")
+	}
+	if o.WebsiteUploadMissingChunksHandler == nil {
+		unregistered = append(unregistered, "WebsiteUploadMissingChunksHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -498,6 +506,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/websiteCreator/upload"] = NewWebsiteCreatorUpload(o.context, o.WebsiteCreatorUploadHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/websiteCreator/uploadMissingChunks"] = NewWebsiteUploadMissingChunks(o.context, o.WebsiteUploadMissingChunksHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

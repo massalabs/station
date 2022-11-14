@@ -29,10 +29,10 @@ func NewWebsiteCreatorPrepare(ctx *middleware.Context, handler WebsiteCreatorPre
 	return &WebsiteCreatorPrepare{Context: ctx, Handler: handler}
 }
 
-/* WebsiteCreatorPrepare swagger:route PUT /websiteCreator/prepare websiteCreatorPrepare
+/*
+	WebsiteCreatorPrepare swagger:route PUT /websiteCreator/prepare websiteCreatorPrepare
 
 WebsiteCreatorPrepare website creator prepare API
-
 */
 type WebsiteCreatorPrepare struct {
 	Context *middleware.Context

@@ -29,10 +29,10 @@ func NewThyraEventsGetter(ctx *middleware.Context, handler ThyraEventsGetterHand
 	return &ThyraEventsGetter{Context: ctx, Handler: handler}
 }
 
-/* ThyraEventsGetter swagger:route GET /thyra/events/{str}/{caller} thyraEventsGetter
+/*
+	ThyraEventsGetter swagger:route GET /thyra/events/{str}/{caller} thyraEventsGetter
 
 ThyraEventsGetter thyra events getter API
-
 */
 type ThyraEventsGetter struct {
 	Context *middleware.Context

@@ -881,6 +881,77 @@ func init() {
           }
         }
       }
+    },
+    "/websiteCreator/uploadMissingChunks": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "websiteUploadMissingChunks",
+        "parameters": [
+          {
+            "type": "string",
+            "x-nullable": false,
+            "description": "Address where to deploy website. The account must have been prepare to receive a website.",
+            "name": "address",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-nullable": false,
+            "description": "Wallet's nickname to be used for receiving the website",
+            "name": "nickname",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "x-nullable": false,
+            "description": "Website contents in a ZIP file.",
+            "name": "zipfile",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-nullable": false,
+            "description": "Website missing chunks",
+            "name": "missedChunks",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Website's chunk deployed.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1001,6 +1072,13 @@ func init() {
         "address": {
           "description": "Website's address.",
           "type": "string"
+        },
+        "brokenChunks": {
+          "description": "Array of empty chunks if website contains preventing the website to load.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "name": {
           "description": "Website's name.",
@@ -1827,6 +1905,77 @@ func init() {
           }
         }
       }
+    },
+    "/websiteCreator/uploadMissingChunks": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "websiteUploadMissingChunks",
+        "parameters": [
+          {
+            "type": "string",
+            "x-nullable": false,
+            "description": "Address where to deploy website. The account must have been prepare to receive a website.",
+            "name": "address",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-nullable": false,
+            "description": "Wallet's nickname to be used for receiving the website",
+            "name": "nickname",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "x-nullable": false,
+            "description": "Website contents in a ZIP file.",
+            "name": "zipfile",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-nullable": false,
+            "description": "Website missing chunks",
+            "name": "missedChunks",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Website's chunk deployed.",
+            "schema": {
+              "$ref": "#/definitions/Websites"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -2039,6 +2188,13 @@ func init() {
         "address": {
           "description": "Website's address.",
           "type": "string"
+        },
+        "brokenChunks": {
+          "description": "Array of empty chunks if website contains preventing the website to load.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "name": {
           "description": "Website's name.",

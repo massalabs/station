@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
@@ -19,6 +20,8 @@ var content embed.FS
 const baseOffset = 5
 
 const multiplicator = 2
+
+const blockLength = 260000
 
 func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	client := node.NewDefaultClient()
@@ -53,9 +56,7 @@ type AppendParams struct {
 	ChunkID string `json:"chunk_id"`
 }
 
-func Upload(atAddress string, content string, wallet *wallet.Wallet) (*[]string, error) {
-	const blockLength = 260000
-
+func Upload(atAddress string, content string, wallet *wallet.Wallet) ([]string, error) {
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
@@ -73,7 +74,7 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (*[]string,
 	return operations, nil
 }
 
-func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) (*[]string, error) {
+func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
 
 	paramInit, err := json.Marshal(InitialisationParams{
@@ -91,13 +92,10 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 	operations[0] = opID
 
 	for index := 0; index < len(chunks); index++ {
-		param, err := json.Marshal(AppendParams{
-			Data:    chunks[index],
-			ChunkID: strconv.Itoa(index),
-		})
+		param, err := json.Marshal(appendParams(index, chunks))
 		if err != nil {
 			return nil,
-				fmt.Errorf("marshaling '%s': %w", AppendParams{Data: chunks[index], ChunkID: strconv.Itoa(index)}, err)
+				fmt.Errorf("marshaling '%s': %w", appendParams(index, chunks), err)
 		}
 
 		//nolint:lll
@@ -109,7 +107,52 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 		operations[index+1] = opID
 	}
 
-	return &operations, nil
+	return operations, nil
+}
+
+//nolint:lll
+func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet, missedChunks string) ([]string, error) {
+	client := node.NewDefaultClient()
+
+	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
+	if err != nil {
+		return nil, fmt.Errorf("decoding address '%s': %w", atAddress[1:], err)
+	}
+
+	blocks := chunk(content, blockLength)
+
+	operations, err := uploadMissedChunks(client, addr, blocks, missedChunks, wallet)
+	if err != nil {
+		return nil, err
+	}
+
+	return operations, nil
+}
+
+//nolint:lll
+func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, missedChunks string, wallet *wallet.Wallet) ([]string, error) {
+	operations := make([]string, len(chunks)+1)
+	arrMissedChunks := strings.Split(missedChunks, "")
+
+	for index := 0; index < len(arrMissedChunks); index++ {
+		rawParams := appendParams(index, chunks)
+
+		param, err := json.Marshal(rawParams)
+		if err != nil {
+			return nil,
+				fmt.Errorf("marshaling '%s': %w", rawParams, err)
+		}
+
+		//nolint:lll
+		opID, err := onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", param)
+		if err != nil {
+			return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
+		}
+
+		operations[index] = opID
+	}
+
+	return operations, nil
 }
 
 func chunk(data string, chunkSize int) []string {
@@ -127,4 +170,8 @@ func chunk(data string, chunkSize int) []string {
 	chunks = append(chunks, data[(chunkNumber-1)*chunkSize:])
 
 	return chunks
+}
+
+func appendParams(index int, chunks []string) AppendParams {
+	return AppendParams{Data: chunks[index], ChunkID: strconv.Itoa(index)}
 }

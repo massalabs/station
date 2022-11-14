@@ -91,6 +91,9 @@ func StartServer(app *fyne.App) {
 	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(
 		websites.CreateUploadWebsiteHandler(app),
 	)
+	localAPI.WebsiteUploadMissingChunksHandler = operations.WebsiteUploadMissingChunksHandlerFunc(
+		websites.CreateUploadMissingChunksHandler(app),
+	)
 	localAPI.MyDomainsGetterHandler = operations.MyDomainsGetterHandlerFunc(websites.DomainsHandler)
 	localAPI.AllDomainsGetterHandler = operations.AllDomainsGetterHandlerFunc(websites.RegistryHandler)
 
