@@ -202,9 +202,12 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 				})
 	}
 
-	password := gui.AskPassword(wallet.Nickname, app)
+	clearPassword, err := gui.AskPassword(wallet.Nickname, app)
+	if err != nil {
+		return createInternalServerError(ErrorCodeWalletCanceledAction, err.Error())
+	}
 
-	err = wallet.Unprotect(password, 0)
+	err = wallet.Unprotect(clearPassword, 0)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
 			WithPayload(
