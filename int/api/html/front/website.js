@@ -390,7 +390,7 @@ function uploadWebsite(file, count) {
     );
 }
 
-// Full deployment process
+// Process Missing Chunks
 function uploadMissingChunks(file, count) {
     const bodyFormData = new FormData();
     const missedChunks = missingChunks[count];

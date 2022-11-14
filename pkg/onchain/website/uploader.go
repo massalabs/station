@@ -56,7 +56,7 @@ type AppendParams struct {
 	ChunkID string `json:"chunk_id"`
 }
 
-func Upload(atAddress string, content string, wallet *wallet.Wallet) (*[]string, error) {
+func Upload(atAddress string, content string, wallet *wallet.Wallet) ([]string, error) {
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
@@ -74,7 +74,7 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) (*[]string,
 	return operations, nil
 }
 
-func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) (*[]string, error) {
+func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
 
 	paramInit, err := json.Marshal(InitialisationParams{
@@ -107,11 +107,11 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 		operations[index+1] = opID
 	}
 
-	return &operations, nil
+	return operations, nil
 }
 
 //nolint:lll
-func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet, missedChunks string) (*[]string, error) {
+func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet, missedChunks string) ([]string, error) {
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
@@ -130,7 +130,7 @@ func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet,
 }
 
 //nolint:lll
-func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, missedChunks string, wallet *wallet.Wallet) (*[]string, error) {
+func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, missedChunks string, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
 	arrMissedChunks := strings.Split(missedChunks, "")
 
@@ -150,7 +150,7 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, misse
 		operations[index] = opID
 	}
 
-	return &operations, nil
+	return operations, nil
 }
 
 func chunk(data string, chunkSize int) []string {
