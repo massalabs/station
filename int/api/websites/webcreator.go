@@ -190,7 +190,7 @@ func CreateUploadMissingChunksHandler(app *fyne.App) func(params operations.Webs
 	}
 }
 
-//nolint:lll
+//nolint:nolintlint,ireturn,lll
 func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChunksParams, app *fyne.App) middleware.Responder {
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
@@ -202,9 +202,12 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 				})
 	}
 
-	password := gui.AskPassword(wallet.Nickname, app)
+	clearPassword, err := gui.AskPassword(wallet.Nickname, app)
+	if err != nil {
+		return createInternalServerError(ErrorCodeWalletCanceledAction, err.Error())
+	}
 
-	err = wallet.Unprotect(password, 0)
+	err = wallet.Unprotect(clearPassword, 0)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
 			WithPayload(
@@ -217,7 +220,7 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 	archive, err := io.ReadAll(params.Zipfile)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
-			WithPayload(&models.Error{ //nolint:all
+			WithPayload(&models.Error{
 				Code:    errorCodeWebCreatorReadArchive,
 				Message: err.Error(),
 			})
