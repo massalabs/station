@@ -92,10 +92,7 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 	operations[0] = opID
 
 	for index := 0; index < len(chunks); index++ {
-		param, err := json.Marshal(AppendParams{
-			Data:    chunks[index],
-			ChunkID: strconv.Itoa(index),
-		})
+		param, err := json.Marshal(appendParams(index, chunks))
 		if err != nil {
 			return nil,
 				fmt.Errorf("marshaling '%s': %w", appendParams(index, chunks), err)
@@ -138,16 +135,8 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, misse
 	arrMissedChunks := strings.Split(missedChunks, "")
 
 	for index := 0; index < len(arrMissedChunks); index++ {
-		chunkID, err := strconv.Atoi(arrMissedChunks[index])
-		if err != nil {
-			return nil,
-				fmt.Errorf("error converting string to integer '%w'", err)
-		}
 
-		param, err := json.Marshal(AppendParams{
-			Data:    chunks[chunkID],
-			ChunkID: strconv.Itoa(chunkID),
-		})
+		param, err := json.Marshal(appendParams(index, chunks))
 		if err != nil {
 			return nil,
 				fmt.Errorf("marshaling '%s': %w", appendParams(index, chunks), err)
