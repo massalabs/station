@@ -21,6 +21,8 @@ const baseOffset = 5
 
 const multiplicator = 2
 
+const blockLength = 260000
+
 func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	client := node.NewDefaultClient()
 
@@ -55,7 +57,6 @@ type AppendParams struct {
 }
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) (*[]string, error) {
-	const blockLength = 260000
 
 	client := node.NewDefaultClient()
 
@@ -98,7 +99,7 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 		})
 		if err != nil {
 			return nil,
-				fmt.Errorf("marshaling '%s': %w", AppendParams{Data: chunks[index], ChunkID: strconv.Itoa(index)}, err)
+				fmt.Errorf("marshaling '%s': %w", appendParams(index, chunks), err)
 		}
 
 		//nolint:lll
@@ -115,7 +116,6 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 
 //nolint:lll
 func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet, missedChunks string) (*[]string, error) {
-	const blockLength = 260000
 
 	client := node.NewDefaultClient()
 
@@ -143,7 +143,7 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, misse
 		chunkID, err := strconv.Atoi(arrMissedChunks[index])
 		if err != nil {
 			return nil,
-				fmt.Errorf("error converting string to integeter '%w'", err)
+				fmt.Errorf("error converting string to integer '%w'", err)
 		}
 
 		param, err := json.Marshal(AppendParams{
@@ -152,7 +152,7 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, misse
 		})
 		if err != nil {
 			return nil,
-				fmt.Errorf("marshaling '%s': %w", AppendParams{Data: chunks[index], ChunkID: strconv.Itoa(index)}, err)
+				fmt.Errorf("marshaling '%s': %w", appendParams(index, chunks), err)
 		}
 
 		//nolint:lll
@@ -182,4 +182,9 @@ func chunk(data string, chunkSize int) []string {
 	chunks = append(chunks, data[(chunkNumber-1)*chunkSize:])
 
 	return chunks
+}
+
+func appendParams(index int, chunks []string) AppendParams {
+
+	return AppendParams{Data: chunks[index], ChunkID: strconv.Itoa(index)}
 }

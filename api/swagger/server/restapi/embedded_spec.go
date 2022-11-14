@@ -1073,7 +1073,7 @@ func init() {
           "description": "Website's address.",
           "type": "string"
         },
-        "hasBrokenChunk": {
+        "brokenChunks": {
           "description": "Array of empty chunks if website contains preventing the website to load.",
           "type": "array",
           "items": {
@@ -2189,7 +2189,7 @@ func init() {
           "description": "Website's address.",
           "type": "string"
         },
-        "hasBrokenChunk": {
+        "brokenChunks": {
           "description": "Array of empty chunks if website contains preventing the website to load.",
           "type": "array",
           "items": {

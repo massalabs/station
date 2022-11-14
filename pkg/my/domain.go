@@ -63,15 +63,15 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	for i := 0; i < len(domainNames); i++ { //nolint:varnamelen
 		contractAddress := string(contractAddresses[i].CandidateValue)
 
-		hasBrokenChuck, err := checkChunkIntegrity(client, contractAddress)
+		brokenChunks, err := getMissingChunkIds(client, contractAddress)
 		if err != nil {
 			return nil, fmt.Errorf("checking chunk integrity: %w", err)
 		}
 
 		response := models.Websites{
-			Address:        contractAddress,
-			Name:           domainNames[i],
-			HasBrokenChunk: hasBrokenChuck,
+			Address:      contractAddress,
+			Name:         domainNames[i],
+			BrokenChunks: brokenChunks,
 		}
 		responses = append(responses, &response)
 	}
@@ -80,7 +80,7 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 }
 
 // Check website chunks and store its ID in an array if one of them is broken.
-func checkChunkIntegrity(client *node.Client, address string) ([]string, error) {
+func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 	chunkNumberKey := "total_chunks"
 
 	var missedChunks []string

@@ -72,9 +72,9 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 	return operations.NewWebsiteCreatorPrepareOK().
 		WithPayload(
 			&models.Websites{
-				Name:           params.URL,
-				Address:        address,
-				HasBrokenChunk: nil,
+				Name:         params.URL,
+				Address:      address,
+				BrokenChunks: nil,
 			})
 }
 
@@ -155,9 +155,9 @@ func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyn
 
 	return operations.NewWebsiteCreatorUploadOK().
 		WithPayload(&models.Websites{
-			Name:           "Name",
-			Address:        params.Address,
-			HasBrokenChunk: nil,
+			Name:         "Name",
+			Address:      params.Address,
+			BrokenChunks: nil,
 		})
 }
 
@@ -220,8 +220,8 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 
 	return operations.NewWebsiteUploadMissingChunksOK().
 		WithPayload(&models.Websites{
-			Name:           "Name",
-			Address:        params.Address,
-			HasBrokenChunk: nil,
+			Name:         "Name",
+			Address:      params.Address,
+			BrokenChunks: nil,
 		})
 }
