@@ -57,7 +57,6 @@ type AppendParams struct {
 }
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) (*[]string, error) {
-
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
@@ -116,7 +115,6 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 
 //nolint:lll
 func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet, missedChunks string) (*[]string, error) {
-
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
@@ -185,6 +183,5 @@ func chunk(data string, chunkSize int) []string {
 }
 
 func appendParams(index int, chunks []string) AppendParams {
-
 	return AppendParams{Data: chunks[index], ChunkID: strconv.Itoa(index)}
 }
