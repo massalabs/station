@@ -30,7 +30,7 @@ func main() {
 
 	exeSC := executesc.New(websiteStorer,
 		sendOperation.DefaultGazLimit, sendOperation.NoGazFee,
-		sendOperation.NoParallelCoin)
+		0, make(map[[3]uint8][]uint8))
 
 	opID, err := sendOperation.Call(
 		client,

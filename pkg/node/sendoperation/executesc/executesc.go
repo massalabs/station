@@ -10,9 +10,10 @@ import (
 const ExecuteSCOpID = 3
 
 type OperationDetails struct {
-	Data      []byte               `json:"data"`
-	MaxGas    uint64               `json:"max_gas"`
-	GasPrice  string               `json:"gas_price"`
+	Data     []byte `json:"data"`
+	MaxGas   uint64 `json:"max_gas"`
+	GasPrice string `json:"gas_price"`
+	//nolint:tagliatelle
 	DataStore map[[3]uint8][]uint8 `json:"datastore"`
 }
 

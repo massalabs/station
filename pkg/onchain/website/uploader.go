@@ -53,10 +53,6 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 type InitialisationParams struct {
 	TotalChunks string `json:"total_chunks"`
 }
-type AppendParams struct {
-	Data    string `json:"data"`
-	ChunkID string `json:"chunk_id"`
-}
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) ([]string, error) {
 	client := node.NewDefaultClient()
@@ -118,7 +114,6 @@ func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet,
 	}
 
 	blocks := chunk(content, blockLength)
-	fmt.Println(blocks, len(blocks))
 
 	operations, err := uploadMissedChunks(client, addr, blocks, missedChunks, wallet)
 	if err != nil {
@@ -136,7 +131,7 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, misse
 	for index := 0; index < len(arrMissedChunks); index++ {
 		chunkID, err := strconv.Atoi(arrMissedChunks[index])
 		if err != nil {
-			return nil, fmt.Errorf("Error while converting chunk ID")
+			return nil, fmt.Errorf("error while converting chunk ID")
 		}
 
 		params := encodeUint64ToUTF16String(uint64(chunkID))
@@ -172,10 +167,6 @@ func chunk(data string, chunkSize int) []string {
 	chunks = append(chunks, data[(chunkNumber-1)*chunkSize:])
 
 	return chunks
-}
-
-func appendParams(index int, chunks []string) AppendParams {
-	return AppendParams{Data: chunks[index], ChunkID: strconv.Itoa(index)}
 }
 
 // We need to add an interface to this function in order to handle uint64 AND uint32 when we have time.
