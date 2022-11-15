@@ -18,11 +18,11 @@ const maxWaitingTimeInSeconds = 45
 const evenHeartbeat = 2
 
 func CallFunction(client *node.Client, wallet wallet.Wallet,
-	addr []byte, function string, parameter []byte,
+	addr []byte, function string, parameter []byte, coins uint64,
 ) (string, error) {
 	callSC := callsc.New(addr, function, parameter,
 		sendOperation.NoGazFee, sendOperation.DefaultGazLimit,
-		sendOperation.NoSequentialCoin, sendOperation.NoParallelCoin)
+		coins)
 
 	operationID, err := sendOperation.Call(
 		client,
@@ -63,7 +63,7 @@ func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet, expiryDelta
 ) (string, error) {
 	callSC := callsc.New(addr, function, parameter,
 		sendOperation.NoGazFee, sendOperation.DefaultGazLimit,
-		sendOperation.NoSequentialCoin, sendOperation.NoParallelCoin)
+		sendOperation.HundredMassa)
 
 	operationID, err := sendOperation.Call(
 		client,
@@ -78,9 +78,12 @@ func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet, expiryDelta
 }
 
 func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (string, error) {
+	datastore := make(map[[3]uint8][]uint8)
+
+	datastore[[3]uint8{1, 2, 3}] = []uint8{1, 2, 3}
 	exeSC := executesc.New(contract,
 		sendOperation.DefaultGazLimit, sendOperation.NoGazFee,
-		sendOperation.NoParallelCoin)
+		sendOperation.NoCoin, datastore)
 
 	opID, err := sendOperation.Call(
 		client,

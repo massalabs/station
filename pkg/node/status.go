@@ -15,7 +15,7 @@ type State struct {
 	NextSlot       *Slot           `json:"next_slot"`
 	NodeID         *string         `json:"node_id"`
 	NodeIP         *string         `json:"node_ip"`
-	PoolStats      *PoolStats      `json:"pool_stats"`
+	PoolStats      *[]uint         `json:"pool_stats"`
 	Version        *string         `json:"version"`
 }
 
@@ -51,11 +51,6 @@ type NetworkStats struct {
 	InConnectionCount  *uint `json:"in_connection_count"`
 	KnowPeerCount      *uint `json:"known_peer_count"`
 	OutConnectionCount *uint `json:"out_connection_count"`
-}
-
-type PoolStats struct {
-	EndorsementCount *uint `json:"endorsement_count"`
-	OperationCount   *uint `json:"operation_count"`
 }
 
 func Status(client *Client) (*State, error) {

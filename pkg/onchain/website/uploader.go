@@ -2,13 +2,15 @@ package website
 
 import (
 	"embed"
-	"encoding/json"
+	"encoding/binary"
 	"fmt"
 	"strconv"
 	"strings"
+	"unicode/utf16"
 
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
+	"github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
 	"github.com/massalabs/thyra/pkg/wallet"
@@ -51,10 +53,6 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 type InitialisationParams struct {
 	TotalChunks string `json:"total_chunks"`
 }
-type AppendParams struct {
-	Data    string `json:"data"`
-	ChunkID string `json:"chunk_id"`
-}
 
 func Upload(atAddress string, content string, wallet *wallet.Wallet) ([]string, error) {
 	client := node.NewDefaultClient()
@@ -76,15 +74,10 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) ([]string, 
 
 func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
+	totalChunksUTF16 := encodeUint64ToUTF16String(uint64(len(chunks)))
 
-	paramInit, err := json.Marshal(InitialisationParams{
-		TotalChunks: strconv.Itoa(len(chunks)),
-	})
-	if err != nil {
-		return nil, fmt.Errorf("marshaling '%s': %w", InitialisationParams{TotalChunks: strconv.Itoa(len(chunks))}, err)
-	}
-
-	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", paramInit)
+	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", []byte(totalChunksUTF16),
+		sendoperation.OneMassa)
 	if err != nil {
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 	}
@@ -92,16 +85,17 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 	operations[0] = opID
 
 	for index := 0; index < len(chunks); index++ {
-		param, err := json.Marshal(appendParams(index, chunks))
-		if err != nil {
-			return nil,
-				fmt.Errorf("marshaling '%s': %w", appendParams(index, chunks), err)
-		}
+		// Chunk ID encoding
+		params := encodeUint64ToUTF16String(uint64(index))
+		// Chunk data length encoding
+		params += encodeUint32ToUTF16String(uint32(len(chunks[index])))
+		// Chunk data encoding
+		params += chunks[index]
 
 		//nolint:lll
-		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", param)
+		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte(params))
 		if err != nil {
-			return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
+			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
 
 		operations[index+1] = opID
@@ -132,21 +126,24 @@ func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet,
 //nolint:lll
 func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, missedChunks string, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
-	arrMissedChunks := strings.Split(missedChunks, "")
+	arrMissedChunks := strings.Split(missedChunks, ",")
 
 	for index := 0; index < len(arrMissedChunks); index++ {
-		rawParams := appendParams(index, chunks)
-
-		param, err := json.Marshal(rawParams)
+		chunkID, err := strconv.Atoi(arrMissedChunks[index])
 		if err != nil {
-			return nil,
-				fmt.Errorf("marshaling '%s': %w", rawParams, err)
+			return nil, fmt.Errorf("error while converting chunk ID")
 		}
 
+		params := encodeUint64ToUTF16String(uint64(chunkID))
+		// Chunk data length encoding
+		params += encodeUint32ToUTF16String(uint32(len(chunks[chunkID])))
+		// Chunk data encoding
+		params += chunks[chunkID]
+
 		//nolint:lll
-		opID, err := onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", param)
+		opID, err := onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte(params))
 		if err != nil {
-			return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
+			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
 
 		operations[index] = opID
@@ -172,6 +169,35 @@ func chunk(data string, chunkSize int) []string {
 	return chunks
 }
 
-func appendParams(index int, chunks []string) AppendParams {
-	return AppendParams{Data: chunks[index], ChunkID: strconv.Itoa(index)}
+// We need to add an interface to this function in order to handle uint64 AND uint32 when we have time.
+func encodeUint64ToUTF16String(numberToEncode uint64) string {
+	//nolint:gomnd
+	buffer := make([]byte, 8)
+	binary.LittleEndian.PutUint64(buffer, numberToEncode)
+	//nolint:gomnd
+	runesBuffer := make([]rune, 8)
+
+	for i := 0; i < len(buffer); i++ {
+		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
+	}
+
+	encodedString := string(runesBuffer)
+
+	return encodedString
+}
+
+func encodeUint32ToUTF16String(numberToEncode uint32) string {
+	//nolint:gomnd
+	buffer := make([]byte, 4)
+	binary.LittleEndian.PutUint32(buffer, numberToEncode)
+	//nolint:gomnd
+	runesBuffer := make([]rune, 4)
+
+	for i := 0; i < len(buffer); i++ {
+		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
+	}
+
+	encodedString := string(runesBuffer)
+
+	return encodedString
 }

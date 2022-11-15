@@ -73,8 +73,8 @@ type CmdExecuteFunctionBody struct {
 	// Required: true
 	At string `json:"at"`
 
-	// coins
-	Coins *CmdExecuteFunctionParamsBodyCoins `json:"coins,omitempty"`
+	// Set the fee amount (in massa) that will be given to the block creator.
+	Coins float64 `json:"coins,omitempty"`
 
 	// Set the expiry duration (in number of slots) of the transaction.
 	Expiry *int64 `json:"expiry,omitempty"`
@@ -100,7 +100,7 @@ type CmdExecuteFunctionBody struct {
 func (o *CmdExecuteFunctionBody) UnmarshalJSON(b []byte) error {
 	type CmdExecuteFunctionBodyAlias CmdExecuteFunctionBody
 	var t CmdExecuteFunctionBodyAlias
-	if err := json.Unmarshal([]byte("{\"args\":\"\",\"at\":\"A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh\",\"coins\":{\"parallel\":0,\"sequential\":0},\"expiry\":3,\"fee\":0,\"gaz\":{\"limit\":700000000,\"price\":0},\"keyId\":\"default\",\"name\":\"test\",\"nickname\":\"test\"}"), &t); err != nil {
+	if err := json.Unmarshal([]byte("{\"args\":\"\",\"at\":\"A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh\",\"coins\":0,\"expiry\":3,\"fee\":0,\"gaz\":{\"limit\":700000000,\"price\":0},\"keyId\":\"default\",\"name\":\"test\",\"nickname\":\"test\"}"), &t); err != nil {
 		return err
 	}
 	if err := json.Unmarshal(b, &t); err != nil {
@@ -115,10 +115,6 @@ func (o *CmdExecuteFunctionBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateAt(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := o.validateCoins(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -144,25 +140,6 @@ func (o *CmdExecuteFunctionBody) validateAt(formats strfmt.Registry) error {
 
 	if err := validate.RequiredString("body"+"."+"at", "body", o.At); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func (o *CmdExecuteFunctionBody) validateCoins(formats strfmt.Registry) error {
-	if swag.IsZero(o.Coins) { // not required
-		return nil
-	}
-
-	if o.Coins != nil {
-		if err := o.Coins.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("body" + "." + "coins")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("body" + "." + "coins")
-			}
-			return err
-		}
 	}
 
 	return nil
@@ -209,10 +186,6 @@ func (o *CmdExecuteFunctionBody) validateNickname(formats strfmt.Registry) error
 func (o *CmdExecuteFunctionBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := o.contextValidateCoins(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := o.contextValidateGaz(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -220,22 +193,6 @@ func (o *CmdExecuteFunctionBody) ContextValidate(ctx context.Context, formats st
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (o *CmdExecuteFunctionBody) contextValidateCoins(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Coins != nil {
-		if err := o.Coins.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("body" + "." + "coins")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("body" + "." + "coins")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -266,46 +223,6 @@ func (o *CmdExecuteFunctionBody) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (o *CmdExecuteFunctionBody) UnmarshalBinary(b []byte) error {
 	var res CmdExecuteFunctionBody
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*o = res
-	return nil
-}
-
-// CmdExecuteFunctionParamsBodyCoins Coins to be send from caller to smart contract address.
-//
-// swagger:model CmdExecuteFunctionParamsBodyCoins
-type CmdExecuteFunctionParamsBodyCoins struct {
-
-	// Number of parallel coins to transfer from the caller to the smart contract address.
-	Parallel float64 `json:"parallel,omitempty"`
-
-	// Number of sequential coins to transfer from the caller to the smart contract address.
-	Sequential float64 `json:"sequential,omitempty"`
-}
-
-// Validate validates this cmd execute function params body coins
-func (o *CmdExecuteFunctionParamsBodyCoins) Validate(formats strfmt.Registry) error {
-	return nil
-}
-
-// ContextValidate validates this cmd execute function params body coins based on context it is used
-func (o *CmdExecuteFunctionParamsBodyCoins) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (o *CmdExecuteFunctionParamsBodyCoins) MarshalBinary() ([]byte, error) {
-	if o == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(o)
-}
-
-// UnmarshalBinary interface implementation
-func (o *CmdExecuteFunctionParamsBodyCoins) UnmarshalBinary(b []byte) error {
-	var res CmdExecuteFunctionParamsBodyCoins
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

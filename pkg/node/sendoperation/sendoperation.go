@@ -22,9 +22,11 @@ const NoGazFee = 0
 
 const NoFee = 0
 
-const NoSequentialCoin = 0
+const NoCoin = 0
 
-const NoParallelCoin = 0
+const HundredMassa = 100000000000
+
+const OneMassa = 1000000000
 
 //nolint:tagliatelle
 type sendOperationsReq struct {

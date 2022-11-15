@@ -1,7 +1,9 @@
 package executesc
 
 import (
+	"bytes"
 	"encoding/binary"
+	"encoding/gob"
 	"fmt"
 )
 
@@ -11,7 +13,8 @@ type OperationDetails struct {
 	Data     []byte `json:"data"`
 	MaxGas   uint64 `json:"max_gas"`
 	GasPrice string `json:"gas_price"`
-	Coins    string `json:"coins"`
+	//nolint:tagliatelle
+	DataStore map[[3]uint8][]uint8 `json:"datastore"`
 }
 
 //nolint:tagliatelle
@@ -20,28 +23,30 @@ type Operation struct {
 }
 
 type ExecuteSC struct {
-	data     []byte
-	maxGas   uint64
-	gasPrice uint64
-	Coins    uint64
+	data      []byte
+	maxGas    uint64
+	gasPrice  uint64
+	dataStore map[[3]uint8][]uint8
 }
 
-func New(data []byte, maxGas uint64, gasPrice uint64, coins uint64) *ExecuteSC {
+func New(data []byte, maxGas uint64, gasPrice uint64, coins uint64, dataStore map[[3]uint8][]uint8) *ExecuteSC {
+	gob.Register(map[[3]uint8]interface{}{})
+
 	return &ExecuteSC{
-		data:     data,
-		maxGas:   maxGas,
-		gasPrice: gasPrice,
-		Coins:    coins,
+		data:      data,
+		maxGas:    maxGas,
+		gasPrice:  gasPrice,
+		dataStore: dataStore,
 	}
 }
 
 func (e *ExecuteSC) Content() interface{} {
 	return &Operation{
 		ExecuteSC: OperationDetails{
-			Data:     e.data,
-			MaxGas:   e.maxGas,
-			GasPrice: fmt.Sprint(e.gasPrice),
-			Coins:    fmt.Sprint(e.Coins),
+			Data:      e.data,
+			MaxGas:    e.maxGas,
+			GasPrice:  fmt.Sprint(e.gasPrice),
+			DataStore: e.dataStore,
 		},
 	}
 }
@@ -58,10 +63,6 @@ func (e *ExecuteSC) Message() []byte {
 	nbBytes = binary.PutUvarint(buf, e.maxGas)
 	msg = append(msg, buf[:nbBytes]...)
 
-	// Coins
-	nbBytes = binary.PutUvarint(buf, e.Coins)
-	msg = append(msg, buf[:nbBytes]...)
-
 	// GasPrice
 	nbBytes = binary.PutUvarint(buf, e.gasPrice)
 	msg = append(msg, buf[:nbBytes]...)
@@ -71,5 +72,32 @@ func (e *ExecuteSC) Message() []byte {
 	msg = append(msg, buf[:nbBytes]...)
 	msg = append(msg, e.data...)
 
+	// datastore
+	// Number of entries in the datastore
+	nbBytes = binary.PutUvarint(buf, uint64(len(e.dataStore)))
+	msg = append(msg, buf[:nbBytes]...)
+
+	for key, value := range e.dataStore {
+		compactAndAppendBytes(&msg, key)
+		compactAndAppendBytes(&msg, value)
+	}
+
 	return msg
+}
+
+func compactAndAppendBytes(msg *[]byte, value interface{}) {
+	buf := make([]byte, binary.MaxVarintLen64)
+	bytesBuffer := new(bytes.Buffer)
+	encoder := gob.NewEncoder(bytesBuffer)
+	err := encoder.Encode(value)
+	//nolint:golang-ci
+	if err != nil {
+		panic(err)
+	}
+
+	nbBytes := binary.PutUvarint(buf, uint64(bytesBuffer.Len()))
+	// Value length
+	*msg = append(*msg, buf[:nbBytes]...)
+	// Value in bytes
+	*msg = append(*msg, bytesBuffer.Bytes()...)
 }

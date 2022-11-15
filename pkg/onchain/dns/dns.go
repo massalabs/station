@@ -7,11 +7,12 @@ import (
 
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
+	"github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-const DNSRawAddress = "A1mgzGvGthnJuScWUgvnYqB4sDcfTixbE1RYeA9tvpP4N4uQjYQ"
+const DNSRawAddress = "A1dLAMrYAwubjiyikhgkU8CBJqPGcJDQBK46JEwF57m56Fnq3H7"
 
 func Resolve(client *node.Client, name string) (string, error) {
 	const dnsPrefix = "record"
@@ -54,7 +55,7 @@ func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContr
 		return "", fmt.Errorf("marshalling '%+v': %w", rec, err)
 	}
 
-	result, err := onchain.CallFunction(client, wallet, addr, "setResolver", param)
+	result, err := onchain.CallFunction(client, wallet, addr, "setResolver", param, sendoperation.OneMassa)
 	if err != nil {
 		return "", fmt.Errorf("calling setResolver with '%+v' at '%s': %w", param, addr, err)
 	}
@@ -79,7 +80,7 @@ func SetRecordManager(client *node.Client, wallet wallet.Wallet) (string, error)
 		return "", fmt.Errorf("marshalling '%+v': %w", appr, err)
 	}
 
-	result, err := onchain.CallFunction(client, wallet, addr, "setApprovalForAll", param)
+	result, err := onchain.CallFunction(client, wallet, addr, "setApprovalForAll", param, sendoperation.OneMassa)
 	if err != nil {
 		return "", fmt.Errorf("calling setApprovalForAll with '%+v' at '%s': %w", param, addr, err)
 	}

@@ -30,7 +30,7 @@ func main() {
 	callSC := callSC.New(
 		addr, "set_dots", NoArgument,
 		sendOperation.NoGazFee, sendOperation.DefaultGazLimit,
-		sendOperation.NoSequentialCoin, sendOperation.NoParallelCoin)
+		0)
 
 	opID, err := sendOperation.Call(client, sendOperation.DefaultSlotsDuration, sendOperation.NoFee, callSC,
 		wlt.KeyPairs[0].PublicKey, wlt.KeyPairs[0].PrivateKey)
