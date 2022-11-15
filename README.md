@@ -23,9 +23,23 @@ To develop on this project you will need :
 
 Once Golang is installed on your system, you can install the swagger dependency by running the following command outside of a go module directory:
 
-- `go install github.com/go-swagger/go-swagger/cmd/swagger@latest`
+```bash
+go install github.com/go-swagger/go-swagger/cmd/swagger@latest
+ ```
 
 ### Setup code formatting tool
+
+#### Linter:
+
+Follow linter setup instructions [here](https://golangci-lint.run/usage/install/).
+Then simply run:
+
+```bash
+ golangci-lint run
+ ```
+
+
+#### Prettier:
 
 Use prettrier to format de code. We recommend to install IDE prettier extension to format on save.
 
