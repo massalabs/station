@@ -131,23 +131,19 @@ func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet,
 //nolint:lll
 func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, missedChunks string, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
-	arrMissedChunks := strings.Split(missedChunks, "")
+	arrMissedChunks := strings.Split(missedChunks, ",")
 
 	for index := 0; index < len(arrMissedChunks); index++ {
-		// rawParams := appendParams(index, chunks)
+		chunkID, err := strconv.Atoi(arrMissedChunks[index])
+		if err != nil {
+			return nil, fmt.Errorf("Error while converting chunk ID")
+		}
 
-		// Chunk ID encoding
-		params := encodeUint64ToUTF16String(uint64(index))
+		params := encodeUint64ToUTF16String(uint64(chunkID))
 		// Chunk data length encoding
-		params += encodeUint32ToUTF16String(uint32(len(arrMissedChunks[index])))
+		params += encodeUint32ToUTF16String(uint32(len(chunks[chunkID])))
 		// Chunk data encoding
-		params += arrMissedChunks[index]
-
-		// param, err := json.Marshal(rawParams)
-		// if err != nil {
-		// 	return nil,
-		// 		fmt.Errorf("marshaling '%s': %w", rawParams, err)
-		// }
+		params += chunks[chunkID]
 
 		//nolint:lll
 		opID, err := onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte(params))
