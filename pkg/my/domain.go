@@ -120,5 +120,7 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 		}
 	}
 
+	fmt.Println(missedChunks)
+
 	return missedChunks, nil
 }

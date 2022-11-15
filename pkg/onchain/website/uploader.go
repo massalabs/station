@@ -3,7 +3,6 @@ package website
 import (
 	"embed"
 	"encoding/binary"
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -98,7 +97,7 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 		params += chunks[index]
 
 		//nolint:lll
-		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte(params))
+		opID, err = onchain.CallFunctionUnwaited(client, *wallet, 0, addr, "appendBytesToWebsite", []byte(params))
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
@@ -134,21 +133,26 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, misse
 	arrMissedChunks := strings.Split(missedChunks, "")
 
 	for index := 0; index < len(arrMissedChunks); index++ {
-		rawParams := appendParams(index, chunks)
 
-		param, err := json.Marshal(rawParams)
+		chunkID, err := strconv.Atoi(arrMissedChunks[index])
 		if err != nil {
-			return nil,
-				fmt.Errorf("marshaling '%s': %w", rawParams, err)
+			return nil, fmt.Errorf("Error while converting chunk ID")
 		}
+		fmt.Println("chunk array ", arrMissedChunks)
+		fmt.Println("chunkID sent ", chunkID)
+		params := encodeUint64ToUTF16String(uint64(chunkID))
+		// Chunk data length encoding
+		params += encodeUint32ToUTF16String(uint32(len(chunks[chunkID])))
+		// Chunk data encoding
+		params += chunks[chunkID]
 
 		//nolint:lll
-		opID, err := onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", param)
+		opID, err := onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte(params))
 		if err != nil {
 			return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 		}
 
-		operations[index] = opID
+		operations[index+1] = opID
 	}
 
 	return operations, nil

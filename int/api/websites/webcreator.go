@@ -202,7 +202,7 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 				})
 	}
 
-	password := gui.AskPassword(wallet.Nickname, app)
+	password, err := gui.AskPassword(wallet.Nickname, app)
 
 	err = wallet.Unprotect(password, 0)
 	if err != nil {
