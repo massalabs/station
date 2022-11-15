@@ -33,7 +33,6 @@ func PasswordDialog(nickname string, app *fyne.App) chan PasswordEntry {
 	height := 90.0
 
 	window.Resize(fyne.Size{Width: float32(width), Height: float32(height)})
-
 	password := widget.NewPasswordEntry()
 	items := []*widget.FormItem{
 		widget.NewFormItem("Password", password),
@@ -108,6 +107,7 @@ func PasswordDeleteDialog(nickname string, app *fyne.App) chan string {
 
 // This function is blocking, it returns when the user submit or cancel the form.
 func Password(nickname string, app *fyne.App) (string, error) {
+
 	PasswordEntry := <-PasswordDialog(nickname, app)
 
 	return PasswordEntry.ClearPassword, PasswordEntry.Err

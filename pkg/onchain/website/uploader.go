@@ -97,7 +97,7 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 		params += chunks[index]
 
 		//nolint:lll
-		opID, err = onchain.CallFunctionUnwaited(client, *wallet, 0, addr, "appendBytesToWebsite", []byte(params))
+		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte(params))
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
@@ -130,16 +130,14 @@ func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet,
 //nolint:lll
 func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, missedChunks string, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
-	arrMissedChunks := strings.Split(missedChunks, "")
+	arrMissedChunks := strings.Split(missedChunks, ",")
 
 	for index := 0; index < len(arrMissedChunks); index++ {
-
 		chunkID, err := strconv.Atoi(arrMissedChunks[index])
 		if err != nil {
 			return nil, fmt.Errorf("Error while converting chunk ID")
 		}
-		fmt.Println("chunk array ", arrMissedChunks)
-		fmt.Println("chunkID sent ", chunkID)
+
 		params := encodeUint64ToUTF16String(uint64(chunkID))
 		// Chunk data length encoding
 		params += encodeUint32ToUTF16String(uint32(len(chunks[chunkID])))
@@ -152,7 +150,7 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, misse
 			return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 		}
 
-		operations[index+1] = opID
+		operations[index] = opID
 	}
 
 	return operations, nil

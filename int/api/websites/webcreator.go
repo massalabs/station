@@ -192,6 +192,7 @@ func CreateUploadMissingChunksHandler(app *fyne.App) func(params operations.Webs
 
 //nolint:lll
 func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChunksParams, app *fyne.App) middleware.Responder {
+
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
 		return operations.NewWebsiteCreatorUploadInternalServerError().
@@ -228,7 +229,6 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 	}
 
 	b64 := base64.StdEncoding.EncodeToString(archive)
-
 	_, err = website.UploadMissedChunks(params.Address, b64, wallet, params.MissedChunks)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
