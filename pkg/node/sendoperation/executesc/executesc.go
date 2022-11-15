@@ -90,7 +90,7 @@ func compactAndAppendBytes(msg *[]byte, value interface{}) {
 	bytesBuffer := new(bytes.Buffer)
 	encoder := gob.NewEncoder(bytesBuffer)
 	err := encoder.Encode(value)
-
+	//nolint:golang-ci
 	if err != nil {
 		panic(err)
 	}

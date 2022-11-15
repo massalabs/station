@@ -181,9 +181,9 @@ func encodeUint64ToUTF16String(numberToEncode uint64) string {
 		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
 	}
 
-	UTF8String := string(runesBuffer)
+	encodedString := string(runesBuffer)
 
-	return UTF8String
+	return encodedString
 }
 
 func encodeUint32ToUTF16String(numberToEncode uint32) string {
@@ -197,7 +197,7 @@ func encodeUint32ToUTF16String(numberToEncode uint32) string {
 		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
 	}
 
-	UTF8String := string(runesBuffer)
+	encodedString := string(runesBuffer)
 
-	return UTF8String
+	return encodedString
 }
