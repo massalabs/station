@@ -52,7 +52,7 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 	case "INNONET":
 		*massaNodeServerPtr = "https://inno.massa.net/test15"
 	case "LOCALHOST":
-		*massaNodeServerPtr = "http://127.0.0.1"
+		*massaNodeServerPtr = "http://127.0.0.1:33035"
 	}
 
 	os.Setenv("MASSA_NODE_URL", *massaNodeServerPtr)
