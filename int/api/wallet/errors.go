@@ -12,4 +12,5 @@ const (
 	errorCodeWalletDeleteFile       = "Wallet-2002"
 	errorCodeWalletImportNew        = "Wallet-3001"
 	errorCodeWalletGetWallets       = "Wallet-4001"
+	errorCodeWalletGetBalance       = "Wallet-4002"
 )
