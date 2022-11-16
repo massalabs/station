@@ -4,6 +4,7 @@ import (
 	"embed"
 	"encoding/binary"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 	"unicode/utf16"
@@ -14,6 +15,7 @@ import (
 	"github.com/massalabs/thyra/pkg/onchain"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
 	"github.com/massalabs/thyra/pkg/wallet"
+	"golang.org/x/text/encoding/unicode"
 )
 
 //go:embed sc
@@ -78,18 +80,23 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) ([]string, 
 
 func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
+	fmt.Println("BEFORE ENCODING")
 	totalChunksUTF16 := encodeUint64ToUTF16String(uint64(len(chunks)))
-
+	fmt.Println("AFTER ENCODING")
+	fmt.Println("BEFORE CALL TO INITWEBSITE")
 	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", []byte(totalChunksUTF16),
 		sendoperation.OneMassa)
 	if err != nil {
+		fmt.Println("ERROR IS : ", err)
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 	}
+	fmt.Println("AFTER CALL TO INITWEBSITE")
 
 	operations[0] = opID
 
 	for index := 0; index < len(chunks); index++ {
 		// Chunk ID encoding
+		fmt.Println("Here")
 		params := encodeUint64ToUTF16String(uint64(index))
 		// Chunk data length encoding
 		params += encodeUint32ToUTF16String(uint32(len(chunks[index])))
@@ -185,6 +192,7 @@ func appendParams(index int, chunks []string) AppendParams {
 // We need to add an interface to this function in order to handle uint64 AND uint32 when we have time.
 func encodeUint64ToUTF16String(numberToEncode uint64) string {
 	//nolint:gomnd
+	numberToEncode = math.MaxUint64
 	buffer := make([]byte, 8)
 	binary.LittleEndian.PutUint64(buffer, numberToEncode)
 	//nolint:gomnd
@@ -193,14 +201,20 @@ func encodeUint64ToUTF16String(numberToEncode uint64) string {
 	for i := 0; i < len(buffer); i++ {
 		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
 	}
-
 	UTF8String := string(runesBuffer)
+	UTF16String, err := unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewEncoder().String(UTF8String)
+	if err != nil {
+		panic(err)
+	}
 
-	return UTF8String
+	fmt.Println("Encoded UINT64 number : ", UTF16String)
+
+	return UTF16String
 }
 
 func encodeUint32ToUTF16String(numberToEncode uint32) string {
 	//nolint:gomnd
+	numberToEncode = math.MaxUint32
 	buffer := make([]byte, 4)
 	binary.LittleEndian.PutUint32(buffer, numberToEncode)
 	//nolint:gomnd
@@ -211,6 +225,13 @@ func encodeUint32ToUTF16String(numberToEncode uint32) string {
 	}
 
 	UTF8String := string(runesBuffer)
+	UTF16String, err := unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewEncoder().String(UTF8String)
 
-	return UTF8String
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Encoded UINT32 number : ", UTF16String)
+
+	return UTF16String
 }

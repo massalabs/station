@@ -63,8 +63,8 @@ func NewClient(url string) *Client {
 			url,
 			&jsonrpc.RPCClientOpts{
 				HTTPClient: &http.Client{Transport: &withLoggingRoundTripper{
-					isEnabled:        os.Getenv("DEBUG_RPC") == "true",
-					showResponseBody: os.Getenv("DEBUG_RPC") == "true",
+					isEnabled:        true,
+					showResponseBody: true,
 				}},
 			}),
 	}
