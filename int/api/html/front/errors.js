@@ -19,6 +19,11 @@ const errorCodes = new Map([
         "Wallet-4001",
         "Error while connecting all your wallets. Reconnect all your wallets and try again",
     ],
+    [
+        "Wallet-4002",
+        "Error while fetching your balance. Reconnect all your wallets and try again",
+    ],
+
     ["Wallet-5001", "Please select a wallet to be able to see your domains"],
     ["Wallet-5002", "Please select a wallet to be able to perform that action"],
 
