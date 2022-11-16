@@ -51,7 +51,9 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/macos_install.sh) or or run the following cmd:
 
-`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/macos_install.sh)"`
+```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/macos_install.sh)"
+`
 
 Congratulation, your version of Thyra is now installed on your system and can be run by executing `./thyra-server` in your terminal.
 
@@ -112,7 +114,9 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 Open and use this file [here](https://github.com/massalabs/thyra/blob/main/scripts/linux_install.sh) or run the following cmd:
 
-`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/linux_install.sh)"`
+```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/linux_install.sh)"
+```
 
 Congratulation, your version of Thyra is now installed on your system and can be run by executing `./thyra-server` in your terminal.
 
@@ -175,7 +179,9 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 Open and use this file [here](https://github.com/massalabs/thyra/blob/main/scripts/thyra-installer.bat) or run the following cmd:
 
-`curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/thyra-installer.bat >> thyra-installer.bat && thyra-installer.bat`
+```sh
+curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/thyra-installer.bat >> thyra-installer.bat && thyra-installer.bat
+```
 
 Congratulation, your version of Thyra is now installed on your system and can be run by executing `./thyra-server` in your terminal.
 
