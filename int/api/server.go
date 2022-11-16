@@ -15,7 +15,7 @@ import (
 	"github.com/massalabs/thyra/int/api/plugins"
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
-	pluginManager "github.com/massalabs/thyra/pkg/plugins"
+	pluginmanager "github.com/massalabs/thyra/pkg/plugins"
 )
 
 func parseFlags(server *restapi.Server) {
@@ -79,7 +79,7 @@ func StartServer(app *fyne.App) {
 	parseFlags(server)
 
 	// Run plugins
-	manager, err := pluginManager.New(server.Port, server.TLSPort)
+	manager, _ := pluginmanager.New(server.Port, server.TLSPort)
 
 	var walletStorage sync.Map
 
