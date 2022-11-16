@@ -34,15 +34,10 @@ func (c *walletGet) Handle(params operations.MgmtWalletGetParams) middleware.Res
 			})
 	}
 
-	var addresses []string = make([]string, len(wallets))
-	for i, wallet := range wallets {
-		addresses[i] = wallet.Address
-	}
-
 	var wal []*models.Wallet
 
-	for i := 0; i < len(wallets); i++ {
-		var address, err = ledger.Addresses(client, []string{wallets[i].Address})
+	for i := 0; i < len(wallets); i++ { //nolint:varnamelen
+		address, err := ledger.Addresses(client, []string{wallets[i].Address})
 		if err != nil {
 			return operations.NewMgmtWalletGetInternalServerError().WithPayload(
 				&models.Error{
@@ -51,12 +46,12 @@ func (c *walletGet) Handle(params operations.MgmtWalletGetParams) middleware.Res
 				})
 		}
 
-		var balance, error = strconv.ParseFloat(address[0].CandidateBalanceInfo, 64)
-		if error != nil {
+		balance, err := strconv.ParseFloat(address[0].CandidateBalance, 64)
+		if err != nil {
 			return operations.NewMgmtWalletGetInternalServerError().WithPayload(
 				&models.Error{
 					Code:    errorCodeWalletGetBalance,
-					Message: error.Error(),
+					Message: err.Error(),
 				})
 		}
 
