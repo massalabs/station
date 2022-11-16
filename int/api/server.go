@@ -46,7 +46,7 @@ func parseFlags(server *restapi.Server) {
 func parseNetworkFlag(massaNodeServerPtr *string) {
 	switch *massaNodeServerPtr {
 	case "TESTNET":
-		*massaNodeServerPtr = "https://test.massa.net/v1/"
+		*massaNodeServerPtr = "https://test.massa.net/api/v2"
 	case "LABNET":
 		*massaNodeServerPtr = "https://labnet.massa.net/"
 	case "INNONET":
