@@ -53,7 +53,7 @@ Download and open the file [here](https://github.com/massalabs/thyra/blob/main/s
 
 ```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/macos_install.sh)"
-`
+```
 
 Congratulation, your version of Thyra is now installed on your system and can be run by executing `./thyra-server` in your terminal.
 
