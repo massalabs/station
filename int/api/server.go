@@ -27,7 +27,7 @@ func parseFlags(server *restapi.Server) {
 
 	certFilePtr := flag.String("tls-certificate", "", "path to certificate file")
 	keyFilePtr := flag.String("tls-key", "", "path to key file")
-	massaNodeServerPtr := flag.String("node-server", "INNONET", `Massa node that Thyra connects to. 
+	massaNodeServerPtr := flag.String("node-server", "TESTNET", `Massa node that Thyra connects to. 
 	Can be an IP address, a URL or one of the following values: 'TESTNET', 'LABNET', 'INNONET' or LOCALHOST`)
 
 	flag.Parse()
