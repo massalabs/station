@@ -101,5 +101,6 @@ func (c *walletCreate) Handle(params operations.MgmtWalletCreateParams) middlewa
 				Salt:       &salt,
 				Nonce:      &nonce,
 			}},
+			Balance: 0,
 		})
 }

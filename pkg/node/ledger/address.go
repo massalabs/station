@@ -12,9 +12,9 @@ type Address struct {
 	Address                string   `json:"address"`
 	BlockDraws             []string `json:"block_draws"`
 	BlocksCreated          []string `json:"blocks_created"`
-	CandidateBalanceInfo   string   `json:"candidate_balance_info"`
+	CandidateBalance       string   `json:"candidate_balance"`
 	CandidateDatastoreKeys [][]byte `json:"candidate_datastore_keys"`
-	FinalBalanceInfo       string   `json:"final_balance_info"`
+	FinalBalance           string   `json:"final_balance"`
 	FinalDatastoreKeys     [][]byte `json:"final_datastore_keys"`
 }
 

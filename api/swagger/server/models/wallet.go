@@ -24,6 +24,9 @@ type Wallet struct {
 	// Required: true
 	Address *string `json:"address"`
 
+	// wallet's balance.
+	Balance float64 `json:"balance,omitempty"`
+
 	// wallet's key pairs.
 	// Required: true
 	KeyPairs []*WalletKeyPairsItems0 `json:"keyPairs"`

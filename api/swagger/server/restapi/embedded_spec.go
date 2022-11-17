@@ -135,10 +135,7 @@ func init() {
               "default": {
                 "args": "",
                 "at": "A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh",
-                "coins": {
-                  "parallel": 0,
-                  "sequential": 0
-                },
+                "coins": 0,
                 "expiry": 3,
                 "fee": 0,
                 "gaz": {
@@ -166,20 +163,9 @@ func init() {
                   "x-nullable": false
                 },
                 "coins": {
-                  "description": "Coins to be send from caller to smart contract address.",
-                  "type": "object",
-                  "properties": {
-                    "parallel": {
-                      "description": "Number of parallel coins to transfer from the caller to the smart contract address.",
-                      "type": "number",
-                      "default": 0
-                    },
-                    "sequential": {
-                      "description": "Number of sequential coins to transfer from the caller to the smart contract address.",
-                      "type": "number",
-                      "default": 0
-                    }
-                  }
+                  "description": "Set the fee amount (in massa) that will be given to the block creator.",
+                  "type": "number",
+                  "default": 0
                 },
                 "expiry": {
                   "description": "Set the expiry duration (in number of slots) of the transaction.",
@@ -1024,6 +1010,10 @@ func init() {
           "description": "wallet's address.",
           "type": "string"
         },
+        "balance": {
+          "description": "wallet's balance.",
+          "type": "number"
+        },
         "keyPairs": {
           "description": "wallet's key pairs.",
           "type": "array",
@@ -1206,10 +1196,7 @@ func init() {
               "default": {
                 "args": "",
                 "at": "A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh",
-                "coins": {
-                  "parallel": 0,
-                  "sequential": 0
-                },
+                "coins": 0,
                 "expiry": 3,
                 "fee": 0,
                 "gaz": {
@@ -1237,20 +1224,9 @@ func init() {
                   "x-nullable": false
                 },
                 "coins": {
-                  "description": "Coins to be send from caller to smart contract address.",
-                  "type": "object",
-                  "properties": {
-                    "parallel": {
-                      "description": "Number of parallel coins to transfer from the caller to the smart contract address.",
-                      "type": "number",
-                      "default": 0
-                    },
-                    "sequential": {
-                      "description": "Number of sequential coins to transfer from the caller to the smart contract address.",
-                      "type": "number",
-                      "default": 0
-                    }
-                  }
+                  "description": "Set the fee amount (in massa) that will be given to the block creator.",
+                  "type": "number",
+                  "default": 0
                 },
                 "expiry": {
                   "description": "Set the expiry duration (in number of slots) of the transaction.",
@@ -1979,22 +1955,6 @@ func init() {
     }
   },
   "definitions": {
-    "CmdExecuteFunctionParamsBodyCoins": {
-      "description": "Coins to be send from caller to smart contract address.",
-      "type": "object",
-      "properties": {
-        "parallel": {
-          "description": "Number of parallel coins to transfer from the caller to the smart contract address.",
-          "type": "number",
-          "default": 0
-        },
-        "sequential": {
-          "description": "Number of sequential coins to transfer from the caller to the smart contract address.",
-          "type": "number",
-          "default": 0
-        }
-      }
-    },
     "CmdExecuteFunctionParamsBodyGaz": {
       "description": "Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.",
       "type": "object",
@@ -2125,6 +2085,10 @@ func init() {
         "address": {
           "description": "wallet's address.",
           "type": "string"
+        },
+        "balance": {
+          "description": "wallet's balance.",
+          "type": "number"
         },
         "keyPairs": {
           "description": "wallet's key pairs.",
