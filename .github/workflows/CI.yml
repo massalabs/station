@@ -91,6 +91,9 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
       - uses: actions/checkout@v3
+      - name: Update version
+        run: |
+          echo -e "package api\n\nconst version_str=\"${GITHUB_REF_NAME}\"" > int/api/server_version.go
       - name: Install the Apple certificate and provisioning profile
         if: startsWith(matrix.os, 'macos-')
         run: |
