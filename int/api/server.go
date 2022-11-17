@@ -79,13 +79,11 @@ func StartServer(app *fyne.App) {
 		}
 	}()
 
-	has_version_flag := parseFlags(server)
+	hasVersionFlag := parseFlags(server)
 
-    if (has_version_flag) {
-
+    if (hasVersionFlag) {
         fmt.Println("Thyra version", version_str)
         defer (*app).Quit()
-
     } else {
 
         var walletStorage sync.Map
