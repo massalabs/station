@@ -55,7 +55,7 @@ Download and open the file [here](https://github.com/massalabs/thyra/blob/main/s
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/macos_install.sh)"
 ```
 
-Congratulation, your version of Thyra is now installed on your system and can be run by executing `./thyra-server` in your terminal.
+Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
 
 #### Manually
 
@@ -118,7 +118,7 @@ Open and use this file [here](https://github.com/massalabs/thyra/blob/main/scrip
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/linux_install.sh)"
 ```
 
-Congratulation, your version of Thyra is now installed on your system and can be run by executing `./thyra-server` in your terminal.
+Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
 
 > **_NOTE:_** Only Linux Ubuntu is currently supported.
 
@@ -136,7 +136,7 @@ mv thyra-server* thyra-server && chmod +x ./thyra-server
 
 > **_NOTE:_** These commands should be executed directly from the directory where Thyra was downloaded.
 
-Congratulation, your version of Thyra is now installed on your system and can be run by executing `./thyra-server` in your terminal.
+Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
 
 > **_NOTE:_** If your DNS is already configured to handle the massa TLD, you're free to go. Otherwise, please follow the instructions in the next section.
 
@@ -183,7 +183,7 @@ Open and use this file [here](https://github.com/massalabs/thyra/blob/main/scrip
 curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/thyra-installer.bat >> thyra-installer.bat && thyra-installer.bat
 ```
 
-Congratulation, your version of Thyra is now installed on your system and can be run by executing `./thyra-server` in your terminal.
+Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
 
 
 #### Thyra installation
