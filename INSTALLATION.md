@@ -74,7 +74,7 @@ mv thyra-server* thyra-server && chmod +x ./thyra-server
 
 > **_NOTE:_** These commands should be executed directly from the directory where Thyra was downloaded.
 
-Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
+Congratulation, your version of Thyra is now installed on your system and can be run by executing `./thyra-server` in your terminal.
 
 > **_NOTE:_** If your DNS is already configured to handle the massa TLD, you're free to go. Otherwise, please follow the instructions in the next section.
 
