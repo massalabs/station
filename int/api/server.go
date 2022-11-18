@@ -83,7 +83,7 @@ func StartServer(app *fyne.App) {
 
 	if hasVersionFlag {
 		//nolint:forbidigo
-		fmt.Println("Thyra version", version_str)
+		fmt.Println("Thyra version", versionStr)
 
 		defer (*app).Quit()
 	} else {
