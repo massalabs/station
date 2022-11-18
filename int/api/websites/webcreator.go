@@ -1,7 +1,10 @@
 package websites
 
 import (
+	"archive/zip"
+	"bytes"
 	"encoding/base64"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -28,8 +31,32 @@ func CreatePrepareForWebsiteHandler(
 	}
 }
 
+func readZipFile(z *zip.File) ([]byte, error) {
+	file, err := z.Open()
+	if err != nil {
+		return nil, fmt.Errorf("opening zip content: %w", err)
+	}
+	defer file.Close()
+
+	content, err := io.ReadAll(file)
+	if err != nil {
+		return nil, fmt.Errorf("reading zip content: %w", err)
+	}
+
+	return content, nil
+}
+func contains(elems []string, v string) bool {
+	for _, s := range elems {
+		if v == s {
+			return true
+		}
+	}
+	return false
+}
+
 //nolint:nolintlint,ireturn,funlen
 func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app *fyne.App) middleware.Responder {
+	list_of_files := []string{}
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
 		return createInternalServerError(errorCodeGetWallet, err.Error())
@@ -55,6 +82,18 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 		return createInternalServerError(errorCodeWebCreatorReadArchive, err.Error())
 	}
 
+	zipReader, err := zip.NewReader(bytes.NewReader(archive), int64(len(archive)))
+	// Read all the files from zip archive
+	for _, zipFile := range zipReader.File {
+		if err != nil {
+			return nil
+		}
+		list_of_files = append(list_of_files, zipFile.Name)
+	}
+	// check if zip archive exist
+	if !contains(list_of_files, "index.html") {
+		return createInternalServerError(errorCodeWebCreatorHtmlNotInSource, err.Error())
+	}
 	maxArchiveSize := GetMaxArchiveSize()
 
 	if len(archive) > maxArchiveSize {
