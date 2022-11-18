@@ -81,14 +81,16 @@ func StartServer(app *fyne.App) {
 	hasVersionFlag := parseFlags(server)
 
 	if hasVersionFlag {
-		//nolint:goforbidigo
+		//nolint:forbidigo
 		fmt.Println("Thyra version", version_str)
+
 		defer (*app).Quit()
 	} else {
 
 		var walletStorage sync.Map
 
-		localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(cmd.CreateExecuteFunctionHandler(app))
+		localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(
+			cmd.CreateExecuteFunctionHandler(app))
 
 		localAPI.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
 		localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
