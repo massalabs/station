@@ -87,7 +87,6 @@ func StartServer(app *fyne.App) {
 
 		defer (*app).Quit()
 	} else {
-
 		var walletStorage sync.Map
 
 		localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(
