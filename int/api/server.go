@@ -62,6 +62,7 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 	os.Setenv("MASSA_NODE_URL", *massaNodeServerPtr)
 }
 
+//nolint:funlen
 func StartServer(app *fyne.App) {
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")

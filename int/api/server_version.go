@@ -1,3 +1,3 @@
 package api
 
-const version_str = "TEST.0.0.0"
+const versionStr = "TEST.0.0.0"
