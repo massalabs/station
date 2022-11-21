@@ -92,7 +92,7 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 	}
 	// check if zip archive exist
 	if !contains(list_of_files, "index.html") {
-		return createInternalServerError(errorCodeWebCreatorHtmlNotInSource, err.Error())
+		return createInternalServerError(errorCodeWebCreatorHTMLNotInSource, err.Error())
 	}
 	maxArchiveSize := GetMaxArchiveSize()
 
