@@ -157,7 +157,7 @@ It will generate and reload thyra each time a file is modified.
 ### Plugin installation
 
 Thanks to its modular architecture, it is possible to use third party plugins in Thyra.
-Plugins must be placed in a ```plugins``` folder next to the Thyra binary.
+Plugins must be placed in a `plugins` folder in the Thyra config directory: `$HOME/.config/thyra`.
 Some plugins are provided by Massa and the following procedure describe the Playground plugin as an example.
 
 #### Playground plugin installation
@@ -168,7 +168,7 @@ Download the plugin:
 -   [Linux](https://github.com/massalabs/thyra-playground-plugin/suites/9125906945/artifacts/423809353)
 -   [Windows](https://drive.google.com/file/d/1vAXZC4eGVJ-TALWj_eyAHSnTsEmiICcw/view?usp=share_link)
 
-create the ```plugins``` directory and unzip the content of the archive in it.
+create the `plugins` directory and unzip the content of the archive in it.
 
 Your plugins directory should look like this:
 ```
