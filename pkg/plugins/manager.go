@@ -3,12 +3,15 @@ package pluginmanager
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
+
+	"github.com/massalabs/thyra/pkg/config"
 )
 
 type PluginManifest struct {
@@ -69,9 +72,6 @@ func DetectPlugin(path string) (*PluginManifest, error) {
 func StartPlugin(plugin PluginItem) {
 	log.Println("Starting plugin '" + plugin.Manifest.Name + "' on port " + strconv.Itoa(plugin.Port))
 
-	defer func() {
-	}()
-
 	cmd := exec.Command(filepath.Join(plugin.Path, plugin.Manifest.Bin),
 		"--port", strconv.Itoa(plugin.Port), "--path", plugin.Path) // #nosec G204
 
@@ -80,9 +80,6 @@ func StartPlugin(plugin PluginItem) {
 	log.Println(err.Error())
 
 	defer func() {
-		log.Println("Defer func!")
-		log.Println(string(stdout))
-		log.Println(err.Error())
 	}()
 }
 
@@ -90,8 +87,13 @@ func New(hostPort int, hostTLSPort int) (*PluginManager, error) {
 	log.Println("Plugin Manager initialization")
 
 	manager := PluginManager{HostPort: hostPort, HostTLSPort: hostTLSPort, plugins: []PluginItem{}}
-	path, _ := os.Getwd()
-	pluginDir := filepath.Join(path, "plugins")
+
+	configDir, err := config.GetConfigDir()
+	if err != nil {
+		return nil, fmt.Errorf("reading config directory '%s': %w", configDir, err)
+	}
+
+	pluginDir := filepath.Join(configDir, "plugins")
 
 	startPort := 4200
 
@@ -120,9 +122,8 @@ func New(hostPort int, hostTLSPort int) (*PluginManager, error) {
 			plugin.Path = pluginPath
 			plugin.Port = startPort
 			startPort++
+
 			// Start plugin as go routine
-
-
 			go StartPlugin(plugin)
 
 			manager.plugins = append(manager.plugins, plugin)

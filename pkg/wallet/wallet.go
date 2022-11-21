@@ -13,6 +13,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"golang.org/x/crypto/pbkdf2"
 	"gopkg.in/yaml.v3"
@@ -25,7 +26,6 @@ const (
 	SecretKeyLength           = 32
 	PBKDF2NbRound             = 10000
 	FileModeUserReadWriteOnly = 0o600
-	WalletDirectoryPermission = 0o755
 	MinAddressLength          = 49
 )
 
@@ -117,30 +117,24 @@ func FromYAML(raw []byte) (w Wallet, err error) {
 	return
 }
 
-func GetWalletDirectory() string {
-	walletDirectory := os.Getenv("HOME") + "/.config/thyra/"
-	if _, err := os.Stat(walletDirectory); os.IsNotExist(err) {
-		if os.MkdirAll(walletDirectory, WalletDirectoryPermission) != nil {
-			walletDirectory = ""
-		}
-	}
-
-	return walletDirectory
-}
-
 func LoadAll() (wallets []Wallet, e error) {
 	wallets = []Wallet{}
 
-	files, err := os.ReadDir(GetWalletDirectory())
+	configDir, err := config.GetConfigDir()
 	if err != nil {
-		return nil, fmt.Errorf("reading wallet directory '%s': %w", GetWalletDirectory(), err)
+		return nil, fmt.Errorf("reading config directory '%s': %w", configDir, err)
+	}
+
+	files, err := os.ReadDir(configDir)
+	if err != nil {
+		return nil, fmt.Errorf("reading wallet directory '%s': %w", configDir, err)
 	}
 
 	for _, f := range files {
 		fileName := f.Name()
 
 		if strings.HasPrefix(fileName, "wallet_") && strings.HasSuffix(fileName, ".json") {
-			bytesInput, err := os.ReadFile(GetWalletDirectory() + fileName)
+			bytesInput, err := os.ReadFile(configDir + fileName)
 			if err != nil {
 				return nil, fmt.Errorf("reading file '%s': %w", fileName, err)
 			}
@@ -160,7 +154,12 @@ func LoadAll() (wallets []Wallet, e error) {
 }
 
 func Load(nickname string) (*Wallet, error) {
-	bytesInput, err := os.ReadFile(GetWalletDirectory() + "wallet_" + nickname + ".json")
+	configDir, err := config.GetConfigDir()
+	if err != nil {
+		return nil, fmt.Errorf("reading config directory '%s': %w", configDir, err)
+	}
+
+	bytesInput, err := os.ReadFile(configDir + "wallet_" + nickname + ".json")
 	if err != nil {
 		return nil, fmt.Errorf("reading file 'wallet_%s.json': %w", nickname, err)
 	}
@@ -246,7 +245,12 @@ func CreateWalletFromKeys(nickname string, privKeyBytes []byte, pubKeyBytes []by
 		return nil, fmt.Errorf("marshalling wallet: %w", err)
 	}
 
-	err = os.WriteFile(GetWalletDirectory()+"wallet_"+nickname+".json", bytesOutput, FileModeUserReadWriteOnly)
+	configDir, err := config.GetConfigDir()
+	if err != nil {
+		return nil, fmt.Errorf("reading config directory '%s': %w", configDir, err)
+	}
+
+	err = os.WriteFile(configDir+"wallet_"+nickname+".json", bytesOutput, FileModeUserReadWriteOnly)
 	if err != nil {
 		return nil, fmt.Errorf("writing wallet to 'wallet_%s.json': %w", nickname, err)
 	}

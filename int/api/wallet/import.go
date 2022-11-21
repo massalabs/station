@@ -7,7 +7,12 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+<<<<<<< HEAD
 	"github.com/massalabs/thyra/pkg/gui"
+=======
+	"github.com/massalabs/thyra/pkg/config"
+	"github.com/massalabs/thyra/pkg/node/base58"
+>>>>>>> Use thyra config dir
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
@@ -60,6 +65,7 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 	}
 
 	newWallet, err := wallet.Imported(walletName, privateKey)
+
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{
