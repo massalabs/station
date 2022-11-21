@@ -13,6 +13,6 @@ const (
 	errorCodeWebCreatorUpload              = "WebCreator-1002"
 	errorCodeWebCreatorArchiveSize         = "WebCreator-1003"
 	errorCodeWebCreatorFileType            = "WebCreator-1004"
-	errorCodeWebCreatorHtmlNotInSource     = "WebCreator-1005"
+	errorCodeWebCreatorHTMLNotInSource     = "WebCreator-1005"
 	errorCodeGetRegistry                   = "Registry-0001"
 )
