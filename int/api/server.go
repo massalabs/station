@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"path"
 	"sync"
 
 	"fyne.io/fyne/v2"
@@ -15,6 +16,7 @@ import (
 	"github.com/massalabs/thyra/int/api/plugin"
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
+	"github.com/massalabs/thyra/pkg/config"
 	pluginmanager "github.com/massalabs/thyra/pkg/plugins"
 )
 
@@ -34,12 +36,26 @@ func parseFlags(server *restapi.Server) {
 
 	flag.Parse()
 
+	configDir, _ := config.GetConfigDir()
+
 	if *certFilePtr != "" {
 		server.TLSCertificate = flags.Filename(*certFilePtr)
+	} else {
+		// Use default certificate
+		certFile := path.Join(configDir, "certs", "cert.pem")
+		if _, err := os.Stat(certFile); err == nil {
+			server.TLSCertificate = flags.Filename(certFile)
+		}
 	}
 
 	if *keyFilePtr != "" {
 		server.TLSCertificateKey = flags.Filename(*keyFilePtr)
+	} else {
+		// Use default certificate
+		keyFile := path.Join(configDir, "certs", "cert-key.pem")
+		if _, err := os.Stat(keyFile); err == nil {
+			server.TLSCertificateKey = flags.Filename(keyFile)
+		}
 	}
 
 	parseNetworkFlag(massaNodeServerPtr)
