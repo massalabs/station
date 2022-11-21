@@ -51,6 +51,7 @@ func contains(elems []string, v string) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
