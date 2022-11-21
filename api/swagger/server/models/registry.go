@@ -20,14 +20,11 @@ type Registry struct {
 	// Website's address.
 	Address string `json:"address,omitempty"`
 
-	// Creation date of the website.
-	CreatedAt string `json:"created_at,omitempty"`
+	// byte array as string including created_at and updated_at values
+	Metadata string `json:"metadata,omitempty"`
 
 	// Website's name.
 	Name string `json:"name,omitempty"`
-
-	// Update date of the website.
-	UpdatedAt string `json:"updated_at,omitempty"`
 }
 
 // Validate validates this registry
