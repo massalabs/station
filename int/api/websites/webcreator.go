@@ -30,21 +30,9 @@ func CreatePrepareForWebsiteHandler(
 	}
 }
 
-func listArchiveContent(params operations.WebsiteCreatorPrepareParams) []string {
-	archive, err := io.ReadAll(params.Zipfile)
+func listArchiveContent(zipReader *zip.Reader) []string {
 	FilesInArchive := []string{}
-
-	if err != nil {
-		return nil
-	}
-
-	zipReader, err := zip.NewReader(bytes.NewReader(archive), int64(len(archive)))
-
 	for _, zipFile := range zipReader.File {
-		if err != nil {
-			return nil
-		}
-
 		FilesInArchive = append(FilesInArchive, zipFile.Name)
 	}
 
@@ -63,8 +51,6 @@ func contains(elems []string, v string) bool {
 
 //nolint:nolintlint,ireturn,funlen
 func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app *fyne.App) middleware.Responder {
-	FilesOfArchive := listArchiveContent(params)
-
 	wallet, err := wallet.Load(params.Nickname)
 	if err != nil {
 		return createInternalServerError(errorCodeGetWallet, err.Error())
@@ -86,15 +72,18 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 	}
 
 	archive, err := io.ReadAll(params.Zipfile)
+	if err != nil {
+		return createInternalServerError(errorCodeWebCreatorReadArchive, err.Error())
+	}
+
 	maxArchiveSize := GetMaxArchiveSize()
 
 	if len(archive) > maxArchiveSize {
 		return createInternalServerError(errorCodeWebCreatorArchiveSize, errorCodeWebCreatorArchiveSize)
 	}
 
-	if !checkContentType(archive, "application/zip") {
-		return createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
-	}
+	zipReader, _ := zip.NewReader(bytes.NewReader(archive), int64(len(archive)))
+	FilesOfArchive := listArchiveContent(zipReader)
 
 	if !contains(FilesOfArchive, "index.html") {
 		return createInternalServerError(errorCodeWebCreatorHTMLNotInSource, err.Error())
