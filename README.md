@@ -46,7 +46,8 @@ Follow the instructions for your computer in the wiki:
 
 You can access to Thyra wallet interface at URL : <http://my.massa/thyra/wallet/index.html>
 By inputing the 'Nickname' & 'Password', you'll be able to create an encrypted wallet locally on your machine.
-To delete your wallet, simply use the interface. ⚠️ If you delete your wallet, you won't be able to edit the website linked to it anymore.
+To delete your wallet, simply use the interface. 
+⚠️ If you delete your wallet, you won't be able to edit the website linked to it anymore.
 
 2. Get coins on your wallet
 
