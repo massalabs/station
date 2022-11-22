@@ -63,7 +63,16 @@ ECHO 127.0.0.1 *.massa >> %ACRYLIC_PATH%\AcrylicHosts.txt
 NET STOP "AcrylicDNSProxySvc"
 NET START "AcrylicDNSProxySvc"
 
-if not exist %homedrive%%homepath%\.config\thyra mkdir %homedrive%%homepath%\.config\thyra
+SET thyraConfigDir=%homedrive%%homepath%\.config\thyra
+if not exist %thyraConfigDir% mkdir %thyraConfigDir%
+
+ECHO Install SSL certificates
+SET certificatePath=%thyraConfigDir%\certs
+curl -L "https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-windows-amd64.exe" -o mkcert.exe
+mkcert --install
+if not exist %certificatePath% mkdir %certificatePath%
+mkcert --cert-file %certificatePath%\cert.pem --key-file %certificatePath%\cert-key.pem my.massa
+DEL /Q mkcert.exe
 
 ECHO Installation and setup successfull
 
