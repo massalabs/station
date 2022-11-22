@@ -86,7 +86,7 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 	FilesOfArchive := listArchiveContent(zipReader)
 
 	if !contains(FilesOfArchive, "index.html") {
-		return createInternalServerError(errorCodeWebCreatorHTMLNotInSource, err.Error())
+		return createInternalServerError(errorCodeWebCreatorHTMLNotInSource, errorCodeWebCreatorHTMLNotInSource)
 	}
 
 	b64 := base64.StdEncoding.EncodeToString(archive)
