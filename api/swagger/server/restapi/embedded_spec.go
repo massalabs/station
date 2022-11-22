@@ -1008,7 +1008,7 @@ func init() {
         },
         "port": {
           "description": "Plugin's port.",
-          "type": "string"
+          "type": "integer"
         }
       }
     },
@@ -2101,7 +2101,7 @@ func init() {
         },
         "port": {
           "description": "Plugin's port.",
-          "type": "string"
+          "type": "integer"
         }
       }
     },

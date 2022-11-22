@@ -7,12 +7,8 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-<<<<<<< HEAD
 	"github.com/massalabs/thyra/pkg/gui"
-=======
-	"github.com/massalabs/thyra/pkg/config"
-	"github.com/massalabs/thyra/pkg/node/base58"
->>>>>>> Use thyra config dir
+
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 

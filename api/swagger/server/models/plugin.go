@@ -21,7 +21,7 @@ type Plugin struct {
 	Name string `json:"name,omitempty"`
 
 	// Plugin's port.
-	Port string `json:"port,omitempty"`
+	Port int64 `json:"port,omitempty"`
 }
 
 // Validate validates this plugin

@@ -8,8 +8,10 @@ import (
 
 func GetConfigDir() (string, error) {
 	confDir := path.Join(os.Getenv("HOME"), ".config", "thyra")
-	if _, err := os.Stat(confDir); os.IsNotExist(err) {
-		return "", errors.New("Unable to find config dir: " + confDir)
+
+	_, err := os.Stat(confDir)
+	if err != nil {
+		return "", errors.New("Unable to read config dir: " + confDir)
 	}
 
 	return confDir, nil

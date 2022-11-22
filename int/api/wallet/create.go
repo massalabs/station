@@ -8,7 +8,6 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
@@ -81,9 +80,7 @@ func CreateNewWallet(nickname *string, password *string, storage *sync.Map, newW
 			})
 	}
 
-	configDir, _ := config.GetConfigDir()
-
-	err = os.WriteFile(configDir+"wallet_"+*nickname+".json", bytesOutput, fileModeUserRW)
+	err = os.WriteFile(wallet.GetWalletFile(*nickname), bytesOutput, fileModeUserRW)
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{

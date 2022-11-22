@@ -42,16 +42,12 @@ func DetectPlugin(path string) (*PluginManifest, error) {
 	manifestPath := filepath.Join(path, manifestFileName)
 
 	if _, err := os.Stat(manifestPath); err != nil {
-		errMsg := "unable to find manifest.json in " + path
-
-		return nil, errors.New(errMsg)
+		return nil, errors.New("unable to find manifest.json in " + path)
 	}
 
 	jsonFile, err := os.Open(manifestPath)
 	if err != nil {
-		errMsg := "unable to open manifest.json in " + path
-
-		return nil, errors.New(errMsg)
+		return nil, errors.New("unable to open manifest.json in " + path)
 	}
 
 	var manifest PluginManifest
@@ -61,9 +57,7 @@ func DetectPlugin(path string) (*PluginManifest, error) {
 	err = json.Unmarshal(jsonBytes, &manifest)
 
 	if err != nil {
-		errMsg := "unable to decode json manifest in " + path
-
-		return nil, errors.New(errMsg)
+		return nil, errors.New("unable to decode json manifest in " + path)
 	}
 
 	return &manifest, nil

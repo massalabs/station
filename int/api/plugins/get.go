@@ -1,8 +1,6 @@
 package plugins
 
 import (
-	"strconv"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
@@ -27,7 +25,7 @@ func (c *pluginsGet) Handle(params operations.MgmtPluginsListParams) middleware.
 	for i := 0; i < len(pluginList); i++ {
 		pluginInfo := &models.Plugin{
 			Name: pluginList[i].Manifest.Name,
-			Port: strconv.Itoa(pluginList[i].Port),
+			Port: int64(pluginList[i].Port),
 		}
 
 		plugin = append(plugin, pluginInfo)

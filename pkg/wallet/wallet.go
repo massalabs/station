@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"reflect"
 	"strings"
 
@@ -134,7 +135,7 @@ func LoadAll() (wallets []Wallet, e error) {
 		fileName := f.Name()
 
 		if strings.HasPrefix(fileName, "wallet_") && strings.HasSuffix(fileName, ".json") {
-			bytesInput, err := os.ReadFile(configDir + fileName)
+			bytesInput, err := os.ReadFile(path.Join(configDir, fileName))
 			if err != nil {
 				return nil, fmt.Errorf("reading file '%s': %w", fileName, err)
 			}
@@ -154,12 +155,7 @@ func LoadAll() (wallets []Wallet, e error) {
 }
 
 func Load(nickname string) (*Wallet, error) {
-	configDir, err := config.GetConfigDir()
-	if err != nil {
-		return nil, fmt.Errorf("reading config directory '%s': %w", configDir, err)
-	}
-
-	bytesInput, err := os.ReadFile(configDir + "wallet_" + nickname + ".json")
+	bytesInput, err := os.ReadFile(GetWalletFile(nickname))
 	if err != nil {
 		return nil, fmt.Errorf("reading file 'wallet_%s.json': %w", nickname, err)
 	}
@@ -201,7 +197,7 @@ func Imported(nickname string, privateKey string) (*Wallet, error) {
 }
 
 func Delete(nickname string) (err error) {
-	err = os.Remove(GetWalletDirectory() + "wallet_" + nickname + ".json")
+	err = os.Remove(GetWalletFile(nickname))
 	if err != nil {
 		return fmt.Errorf("deleting wallet 'wallet_%s.json': %w", nickname, err)
 	}
@@ -245,15 +241,19 @@ func CreateWalletFromKeys(nickname string, privKeyBytes []byte, pubKeyBytes []by
 		return nil, fmt.Errorf("marshalling wallet: %w", err)
 	}
 
-	configDir, err := config.GetConfigDir()
-	if err != nil {
-		return nil, fmt.Errorf("reading config directory '%s': %w", configDir, err)
-	}
-
-	err = os.WriteFile(configDir+"wallet_"+nickname+".json", bytesOutput, FileModeUserReadWriteOnly)
+	err = os.WriteFile(GetWalletFile(nickname), bytesOutput, FileModeUserReadWriteOnly)
 	if err != nil {
 		return nil, fmt.Errorf("writing wallet to 'wallet_%s.json': %w", nickname, err)
 	}
 
 	return &wallet, nil
+}
+
+func GetWalletFile(nickname string) string {
+	configDir, err := config.GetConfigDir()
+	if err != nil {
+		return ""
+	}
+
+	return path.Join(configDir, "wallet_"+nickname+".json")
 }
