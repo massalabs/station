@@ -983,16 +983,13 @@ func init() {
           "description": "Website's address.",
           "type": "string"
         },
-        "created_at": {
-          "description": "Creation date of the website.",
-          "type": "string"
+        "metadata": {
+          "description": "byte array as string including created_at and updated_at values",
+          "type": "string",
+          "format": "byte"
         },
         "name": {
           "description": "Website's name.",
-          "type": "string"
-        },
-        "updated_at": {
-          "description": "Update date of the website.",
           "type": "string"
         }
       }
@@ -2042,16 +2039,13 @@ func init() {
           "description": "Website's address.",
           "type": "string"
         },
-        "created_at": {
-          "description": "Creation date of the website.",
-          "type": "string"
+        "metadata": {
+          "description": "byte array as string including created_at and updated_at values",
+          "type": "string",
+          "format": "byte"
         },
         "name": {
           "description": "Website's name.",
-          "type": "string"
-        },
-        "updated_at": {
-          "description": "Update date of the website.",
           "type": "string"
         }
       }

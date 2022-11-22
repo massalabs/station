@@ -1,10 +1,8 @@
 package websites
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -49,11 +47,6 @@ func RegistryHandler(params operations.AllDomainsGetterParams) middleware.Respon
 	return operations.NewAllDomainsGetterOK().WithPayload(results)
 }
 
-type dateOnChain struct {
-	CreateDate int64 `json:"create_date"`
-	UpdateDate int64 `json:"update_date"`
-}
-
 func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.Registry, error) {
 	recordKeys, err := ledger.KeysFiltered(client, dns.DNSRawAddress, recordKey)
 	if err != nil {
@@ -80,22 +73,13 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 		return nil, fmt.Errorf("metadata reaching on dnsContractStorers failed : %w", err)
 	}
 
-	dates := make([]dateOnChain, len(metadatas))
+	registryResult := make([]*models.Registry, len(metadatas))
 
-	for index, metadata := range metadatas {
-		var date dateOnChain
-
-		_ = json.Unmarshal(metadata.CandidateValue, &date)
-		dates[index] = date
-	}
-
-	registryResult := make([]*models.Registry, len(dates))
-	for index, date := range dates {
+	for index := 0; index < len(metadatas); index++ {
 		registryResult[index] = &models.Registry{
-			Name:      strings.Split(recordKeys[index], recordKey)[1],
-			Address:   metadataKeys[index].Address,
-			CreatedAt: time.Unix(date.CreateDate/secondsToMilliCoeff, 0).Format(dateFormat),
-			UpdatedAt: time.Unix(date.UpdateDate/secondsToMilliCoeff, 0).Format(dateFormat),
+			Name:     strings.Split(recordKeys[index], recordKey)[1],
+			Address:  metadataKeys[index].Address,
+			Metadata: metadatas[index].CandidateValue,
 		}
 	}
 
