@@ -723,3 +723,4 @@ definitions:
       metadata:
         description: byte array as string including created_at and updated_at values
         type: string
+        format: byte

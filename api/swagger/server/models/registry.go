@@ -21,7 +21,8 @@ type Registry struct {
 	Address string `json:"address,omitempty"`
 
 	// byte array as string including created_at and updated_at values
-	Metadata string `json:"metadata,omitempty"`
+	// Format: byte
+	Metadata strfmt.Base64 `json:"metadata,omitempty"`
 
 	// Website's name.
 	Name string `json:"name,omitempty"`

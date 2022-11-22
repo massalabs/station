@@ -985,7 +985,8 @@ func init() {
         },
         "metadata": {
           "description": "byte array as string including created_at and updated_at values",
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "name": {
           "description": "Website's name.",
@@ -2040,7 +2041,8 @@ func init() {
         },
         "metadata": {
           "description": "byte array as string including created_at and updated_at values",
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "name": {
           "description": "Website's name.",

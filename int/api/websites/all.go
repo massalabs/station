@@ -2,7 +2,6 @@ package websites
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -80,19 +79,9 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 		registryResult[index] = &models.Registry{
 			Name:     strings.Split(recordKeys[index], recordKey)[1],
 			Address:  metadataKeys[index].Address,
-			Metadata: ByteArrToString(metadatas[index].CandidateValue),
+			Metadata: metadatas[index].CandidateValue,
 		}
 	}
 
 	return registryResult, nil
-}
-
-// transforms the []byte to string.
-func ByteArrToString(intArr []byte) string {
-	strArr := make([]string, len(intArr))
-	for i, v := range intArr {
-		strArr[i] = strconv.Itoa(int(v))
-	}
-
-	return strings.Join(strArr, ",")
 }
