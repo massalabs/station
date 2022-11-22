@@ -1,728 +1,917 @@
-consumes:
-  - application/json
+openapi: 3.0.3
 info:
-  description: Thyra HTTP server API.
   title: thyra-server
   version: 0.0.0
-produces:
-  - application/json
-schemes:
-  - http
-  - https
-swagger: "2.0"
+  description: Thyra HTTP server API.
 paths:
-  /thyra/wallet/{resource}:
+  '/thyra/wallet/{resource}':
     get:
+      parameters:
+        - name: resource
+          description: Website resource.
+          schema:
+            default: index.html
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Page found
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/css:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/webp:
+              schema:
+                $ref: '#/components/schemas/Error'
+            image/png:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Resource not found.
       operationId: thyraWallet
-      produces:
-        - application/json
-        - text/javascript
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
-      parameters:
-        - in: path
-          name: resource
-          type: string
-          default: index.html
-          required: true
-          description: Website resource.
-      responses:
-        "200":
-          description: Page found
-        "404":
-          description: Resource not found.
-          schema:
-            $ref: "#/definitions/Error"
-  /thyra/websiteCreator/{resource}:
+  '/thyra/websiteCreator/{resource}':
     get:
+      parameters:
+        - name: resource
+          description: Website resource.
+          schema:
+            default: index.html
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Page found
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/css:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/webp:
+              schema:
+                $ref: '#/components/schemas/Error'
+            image/png:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Resource not found.
       operationId: thyraWebsiteCreator
-      produces:
-        - application/json
-        - text/javascript
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
-      parameters:
-        - in: path
-          name: resource
-          type: string
-          default: index.html
-          required: true
-          description: Website resource.
-      responses:
-        "200":
-          description: Page found
-        "404":
-          description: Resource not found.
-          schema:
-            $ref: "#/definitions/Error"
-  /thyra/registry/{resource}:
+  '/thyra/registry/{resource}':
     get:
+      parameters:
+        - name: resource
+          description: Website resource.
+          schema:
+            default: index.html
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Page found
       operationId: thyraRegistry
-      produces:
-        - application/json
-        - text/javascript
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
-      parameters:
-        - in: path
-          name: resource
-          type: string
-          default: index.html
-          required: true
-          description: Website resource.
-      responses:
-        "200":
-          description: Page found
-  /thyra/events/{str}/{caller}:
+  '/thyra/events/{str}/{caller}':
     get:
-      operationId: thyraEventsGetter
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: str
-          type: string
-          required: true
+        - name: str
           description: Data content of the event.
-        - in: path
-          name: caller
-          type: string
+          schema:
+            type: string
+          in: path
           required: true
+        - name: caller
           description: Creator of the transaction that triggered the event.
+          schema:
+            type: string
+          in: path
+          required: true
       responses:
-        "200":
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Events'
           description: Event retrieved
-          schema:
-            $ref: "#/definitions/Events"
-        "400":
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
           description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Internal Server Error - The server has encountered a situation it
+            does not know how to handle.
+      operationId: thyraEventsGetter
   /mgmt/wallet:
     get:
-      operationId: mgmtWalletGet
-      produces:
-        - application/json
       responses:
-        "200":
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Wallet'
           description: Wallets retrieved
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Wallet"
-        "400":
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
           description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-    post:
-      operationId: mgmtWalletCreate
-      parameters:
-        - in: body
-          name: body
-          required: true
-          x-nullable: false
-          schema:
-            type: object
-            required:
-              - nickname
-              - password
-            properties:
-              nickname:
-                description: Wallet's short name.
-                type: string
-              password:
-                description: Private key password.
-                type: string
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: New wallet created.
-          schema:
-            $ref: "#/definitions/Wallet"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Internal Server Error - The server has encountered a situation it
+            does not know how to handle.
+      operationId: mgmtWalletGet
     put:
-      operationId: mgmtWalletImport
-      parameters:
-        - in: body
-          name: body
-          required: true
-          x-nullable: false
-          schema:
-            $ref: "#/definitions/Wallet"
-      produces:
-        - application/json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Wallet'
+        required: true
+        x-nullable: false
       responses:
-        "204":
+        '204':
           description: Wallet imported.
-        "400":
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
           description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-  /mgmt/wallet/{nickname}:
-    delete:
-      operationId: mgmtWalletDelete
-      parameters:
-        - in: path
-          name: nickname
-          type: string
-          required: true
-          description: Wallet's short name.
-      produces:
-        - application/json
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Unprocessable Entity - syntax is correct, but the server was unable
+            to process the contained instructions.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Internal Server Error - The server has encountered a situation it
+            does not know how to handle.
+      operationId: mgmtWalletImport
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - nickname
+                - password
+              type: object
+              properties:
+                nickname:
+                  description: Wallet's short name.
+                  type: string
+                password:
+                  description: Private key password.
+                  type: string
+        required: true
+        x-nullable: false
       responses:
-        "204":
-          description: Wallet removed.
-          schema:
-            $ref: "#/definitions/Wallet"
-        "400":
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+          description: New wallet created.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
           description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "404":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Unprocessable Entity - syntax is correct, but the server was unable
+            to process the contained instructions.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Internal Server Error - The server has encountered a situation it
+            does not know how to handle.
+      operationId: mgmtWalletCreate
+  '/mgmt/wallet/{nickname}':
     get:
-      operationId: mgmtWalletGetter
       parameters:
-        - in: path
-          name: nickname
-          type: string
-          required: true
+        - name: nickname
           description: Wallet's short name.
-      produces:
-        - application/json
+          schema:
+            type: string
+          in: path
+          required: true
       responses:
-        "200":
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
           description: Wallet retrieved.
-          schema:
-            $ref: "#/definitions/Wallet"
-        "400":
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
           description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "404":
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
           description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-  /my/domains/{nickname}:
-    get:
-      operationId: myDomainsGetter
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Unprocessable Entity - syntax is correct, but the server was unable
+            to process the contained instructions.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Internal Server Error - The server has encountered a situation it
+            does not know how to handle.
+      operationId: mgmtWalletGetter
+    delete:
       parameters:
-        - in: path
-          name: nickname
-          type: string
-          required: true
+        - name: nickname
           description: Wallet's short name.
-      produces:
-        - application/json
+          schema:
+            type: string
+          in: path
+          required: true
       responses:
-        "200":
-          description: Domains returned. May be empty.
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Websites"
-        "400":
+        '204':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+          description: Wallet removed.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
           description: Bad request.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request.
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Unprocessable Entity - syntax is correct, but the server was unable
+            to process the contained instructions.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Internal Server Error - The server has encountered a situation it
+            does not know how to handle.
+      operationId: mgmtWalletDelete
+  '/my/domains/{nickname}':
+    get:
+      parameters:
+        - name: nickname
+          description: Wallet's short name.
           schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Websites'
+          description: Domains returned. May be empty.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Internal Server Error - The server has encountered a situation it
+            does not know how to handle.
+      operationId: myDomainsGetter
   /websiteCreator/prepare:
     put:
-      operationId: websiteCreatorPrepare
-      consumes:
-        - multipart/form-data
-      parameters:
-        - in: formData
-          name: url
-          type: string
-          pattern: "^[a-z0-9]+$"
-          required: true
-          x-nullable: false
-          description: URL without dot (.), upper case and special characters
-        - in: formData
-          name: nickname
-          type: string
-          required: true
-          x-nullable: false
-          description: Name of the Wallet in which the website will be deployed.
-        - in: formData
-          name: zipfile
-          type: file
-          required: true
-          x-nullable: false
-          description: Website contents in a ZIP file.
-
-      produces:
-        - application/json
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - url
+                - nickname
+                - zipfile
+              type: object
+              properties:
+                url:
+                  description: 'URL without dot (.), upper case and special characters'
+                  pattern: '^[a-z0-9]+$'
+                  type: string
+                  x-nullable: false
+                nickname:
+                  description: Name of the Wallet in which the website will be deployed.
+                  type: string
+                  x-nullable: false
+                zipfile:
+                  format: binary
+                  description: Website contents in a ZIP file.
+                  type: string
+                  x-nullable: false
       responses:
-        "200":
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Websites'
           description: New website created.
-          schema:
-            $ref: "#/definitions/Websites"
-        "400":
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
           description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Unprocessable Entity - syntax is correct, but the server was unable
+            to process the contained instructions.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Internal Server Error - The server has encountered a situation it
+            does not know how to handle.
+      operationId: websiteCreatorPrepare
   /websiteCreator/upload:
     post:
-      operationId: websiteCreatorUpload
-      consumes:
-        - multipart/form-data
-      parameters:
-        - in: formData
-          name: address
-          type: string
-          required: true
-          x-nullable: false
-          description: Address where to deploy website. The account must have been prepare to receive a website.
-        - in: formData
-          name: nickname
-          type: string
-          required: true
-          x-nullable: false
-          description: Wallet's nickname to be used for receiving the website
-        - in: formData
-          name: zipfile
-          type: file
-          required: true
-          x-nullable: false
-          description: Website contents in a ZIP file.
-      produces:
-        - application/json
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - address
+                - nickname
+                - zipfile
+              type: object
+              properties:
+                address:
+                  description: >-
+                    Address where to deploy website. The account must have been
+                    prepare to receive a website.
+                  type: string
+                  x-nullable: false
+                nickname:
+                  description: Wallet's nickname to be used for receiving the website
+                  type: string
+                  x-nullable: false
+                zipfile:
+                  format: binary
+                  description: Website contents in a ZIP file.
+                  type: string
+                  x-nullable: false
       responses:
-        "200":
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Websites'
           description: Website's chunk deployed.
-          schema:
-            $ref: "#/definitions/Websites"
-        "400":
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
           description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Unprocessable Entity - syntax is correct, but the server was unable
+            to process the contained instructions.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Internal Server Error - The server has encountered a situation it
+            does not know how to handle.
+      operationId: websiteCreatorUpload
   /websiteCreator/uploadMissingChunks:
     post:
-      operationId: websiteUploadMissingChunks
-      consumes:
-        - multipart/form-data
-      parameters:
-        - in: formData
-          name: address
-          type: string
-          required: true
-          x-nullable: false
-          description: Address where to deploy website. The account must have been prepare to receive a website.
-        - in: formData
-          name: nickname
-          type: string
-          required: true
-          x-nullable: false
-          description: Wallet's nickname to be used for receiving the website
-        - in: formData
-          name: zipfile
-          type: file
-          required: true
-          x-nullable: false
-          description: Website contents in a ZIP file.
-        - in: formData
-          name: missedChunks
-          type: string
-          required: true
-          x-nullable: false
-          description: Website missing chunks
-      produces:
-        - application/json
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - address
+                - nickname
+                - zipfile
+                - missedChunks
+              type: object
+              properties:
+                address:
+                  description: >-
+                    Address where to deploy website. The account must have been
+                    prepare to receive a website.
+                  type: string
+                  x-nullable: false
+                nickname:
+                  description: Wallet's nickname to be used for receiving the website
+                  type: string
+                  x-nullable: false
+                zipfile:
+                  format: binary
+                  description: Website contents in a ZIP file.
+                  type: string
+                  x-nullable: false
+                missedChunks:
+                  description: Website missing chunks
+                  type: string
+                  x-nullable: false
       responses:
-        "200":
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Websites'
           description: Website's chunk deployed.
-          schema:
-            $ref: "#/definitions/Websites"
-        "400":
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
           description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Unprocessable Entity - syntax is correct, but the server was unable
+            to process the contained instructions.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Internal Server Error - The server has encountered a situation it
+            does not know how to handle.
+      operationId: websiteUploadMissingChunks
   /cmd/executeFunction:
     post:
-      operationId: cmdExecuteFunction
-      parameters:
-        - in: body
-          name: body
-          required: true
-          x-nullable: false
-          schema:
-            type: object
-            required:
-              - nickname
-              - name
-              - at
-            default:
-              nickname: "test"
-              name: "test"
-              at: "A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh"
-              args: ""
-              gaz:
-                price: 0
-                limit: 700000000
-              coins: 0
-              expiry: 3
-              fee: 0
-              keyId: default
-            properties:
-              nickname:
-                description: Wallet's short name.
-                type: string
-                x-nullable: false
-              name:
-                description: Function name to call.
-                type: string
-                x-nullable: false
-              at:
-                description: Smart contract address exporting the function to call.
-                type: string
-                x-nullable: false
-              args:
-                description: Arguments to pass to the function.
-                type: string
-                default: ""
-              gaz:
-                type: object
-                description: Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.
-                properties:
-                  price:
-                    type: number
-                    description: Price of a gaz unit.
-                    default: 0
-                  limit:
-                    type: integer
-                    description: Maximum number of gaz unit that a node will be able consume.
-                    default: 700000000
-              coins:
-                description: Set the fee amount (in massa) that will be given to the block creator.
-                type: number
-                default: 0
-              expiry:
-                description: Set the expiry duration (in number of slots) of the transaction.
-                type: integer
-                default: 3
-              fee:
-                description: Set the fee amount (in massa) that will be given to the block creator.
-                type: number
-                default: 0
-              keyId:
-                description: Defines the key to used to sign the transaction.
-                type: string
-                default: default
-      produces:
-        - application/json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              default:
+                nickname: test
+                name: test
+                at: A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh
+                args: ''
+                gaz:
+                  price: 0
+                  limit: 700000000
+                coins: 0
+                expiry: 3
+                fee: 0
+                keyId: default
+              required:
+                - nickname
+                - name
+                - at
+              type: object
+              properties:
+                nickname:
+                  nullable: false
+                  description: Wallet's short name.
+                  type: string
+                name:
+                  nullable: false
+                  description: Function name to call.
+                  type: string
+                at:
+                  nullable: false
+                  description: Smart contract address exporting the function to call.
+                  type: string
+                args:
+                  description: Arguments to pass to the function.
+                  default: ''
+                  type: string
+                gaz:
+                  description: >-
+                    Gaz attibutes. Gaz is a virtual resource consumed by node
+                    while running smart contract.
+                  type: object
+                  properties:
+                    price:
+                      description: Price of a gaz unit.
+                      default: 0
+                      type: number
+                    limit:
+                      description: >-
+                        Maximum number of gaz unit that a node will be able
+                        consume.
+                      default: 700000000
+                      type: integer
+                coins:
+                  description: >-
+                    Set the fee amount (in massa) that will be given to the
+                    block creator.
+                  default: 0
+                  type: number
+                expiry:
+                  description: >-
+                    Set the expiry duration (in number of slots) of the
+                    transaction.
+                  default: 3
+                  type: integer
+                fee:
+                  description: >-
+                    Set the fee amount (in massa) that will be given to the
+                    block creator.
+                  default: 0
+                  type: number
+                keyId:
+                  description: Defines the key to used to sign the transaction.
+                  default: default
+                  type: string
+        required: true
+        x-nullable: false
       responses:
-        "200":
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Operation id.
+                type: string
           description: OK.
-          schema:
-            type: string
-            description: Operation id.
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Unprocessable Entity - syntax is correct, but the server was unable
+            to process the contained instructions.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Internal Server Error - The server has encountered a situation it
+            does not know how to handle.
+      operationId: cmdExecuteFunction
   /kpi:
     get:
-      operationId: kpi
       parameters:
-        - name: scope
-          in: query
-          type: array
-          minItems: 0
-          uniqueItems: true
-          collectionFormat: csv
-          items:
-            type: string
-            enum: [wallet, node, stacking, blockchain]
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: kpi message.
+        - style: form
+          explode: false
+          name: scope
           schema:
-            type: object
-            properties:
-              wallet:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    coin:
-                      type: string
-                    balance:
-                      type: number
-              node:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    memory:
-                      type: array
-                      items:
-                        type: number
-                    cpu:
-                      type: array
-                      items:
-                        type: number
-                    storage:
-                      type: array
-                      items:
-                        type: number
-                    network:
-                      type: array
-                      items:
-                        type: number
-              stacking:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    address:
-                      type: string
-                    rolls:
-                      type: integer
-                    slashing:
-                      type: integer
-                    gains:
-                      type: number
-  /browse/{address}/{resource}:
-    get:
-      operationId: browse
-      produces:
-        - application/json
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
-      parameters:
-        - in: path
-          name: address
-          type: string
-          required: true
-          description: Address containing the website.
-        - in: path
-          name: resource
-          type: string
-          default: index.html
-          required: true
-          description: Website resource.
-      responses:
-        "200":
-          description: Resource retrieved.
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "404":
-          description: Resource not found.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-  /all/domains:
-    get:
-      operationId: allDomainsGetter
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: All domains returned.
-          schema:
+            minItems: 0
+            uniqueItems: true
             type: array
             items:
-              $ref: "#/definitions/Registry"
-        "400":
+              enum:
+                - wallet
+                - node
+                - stacking
+                - blockchain
+              type: string
+          in: query
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  wallet:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        coin:
+                          type: string
+                        balance:
+                          type: number
+                  node:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        memory:
+                          type: array
+                          items:
+                            type: number
+                        cpu:
+                          type: array
+                          items:
+                            type: number
+                        storage:
+                          type: array
+                          items:
+                            type: number
+                        network:
+                          type: array
+                          items:
+                            type: number
+                  stacking:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        rolls:
+                          type: integer
+                        slashing:
+                          type: integer
+                        gains:
+                          type: number
+          description: kpi message.
+      operationId: kpi
+  '/browse/{address}/{resource}':
+    get:
+      parameters:
+        - name: address
+          description: Address containing the website.
+          schema:
+            type: string
+          in: path
+          required: true
+        - name: resource
+          description: Website resource.
+          schema:
+            default: index.html
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Resource retrieved.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/css:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/webp:
+              schema:
+                $ref: '#/components/schemas/Error'
+            image/png:
+              schema:
+                $ref: '#/components/schemas/Error'
           description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-definitions:
-  Error:
-    type: object
-    description: Error object.
-    required:
-      - code
-      - message
-    properties:
-      code:
-        description: error code.
-        type: string
-        x-nullable: false
-      message:
-        description: error message.
-        type: string
-        x-nullable: false
-  Wallet:
-    type: object
-    description: Wallet object (V0).
-    required:
-      - nickname
-      - address
-      - keyPairs
-    properties:
-      nickname:
-        description: wallet's nickname.
-        type: string
-      address:
-        description: wallet's address.
-        type: string
-      balance:
-        description: wallet's balance.
-        type: number
-      keyPairs:
-        description: wallet's key pairs.
-        type: array
-        items:
-          type: object
-          required:
-            - privateKey
-            - publicKey
-            - salt
-            - nonce
-          properties:
-            privateKey:
-              description: Key pair's private key.
-              type: string
-              format: base58check
-            publicKey:
-              description: Key pair's public key.
-              type: string
-              format: base58check
-            salt:
-              description: Salt used by the PBKDF that generates the secret key used to protect the key pair's private key.
-              type: string
-              format: base58check
-            nonce:
-              description: Nonce used by the AES-GCM algorithm used to protect the key pair's private key.
-              type: string
-              format: base58check
-  Websites:
-    type: object
-    description: Websites object (V0).
-    properties:
-      name:
-        description: Website's name.
-        type: string
-      address:
-        description: Website's address.
-        type: string
-      brokenChunks:
-        description: Array of empty chunks if website contains preventing the website to load.
-        type: array
-        items:
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/css:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/webp:
+              schema:
+                $ref: '#/components/schemas/Error'
+            image/png:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Resource not found.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/css:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/webp:
+              schema:
+                $ref: '#/components/schemas/Error'
+            image/png:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Internal Server Error - The server has encountered a situation it
+            does not know how to handle.
+      operationId: browse
+  /all/domains:
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Registry'
+          description: All domains returned.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: >-
+            Internal Server Error - The server has encountered a situation it
+            does not know how to handle.
+      operationId: allDomainsGetter
+components:
+  schemas:
+    Error:
+      description: Error object.
+      required:
+        - code
+        - message
+      type: object
+      properties:
+        code:
+          nullable: false
+          description: error code.
           type: string
-  Events:
-    type: object
-    description: Events object (V0)
-    properties:
-      data:
-        description: Event data.
-        type: string
-      address:
-        description: Event caller.
-        type: string
-  Registry:
-    type: object
-    description: Registry object (V0).
-    properties:
-      name:
-        description: Website's name.
-        type: string
-      address:
-        description: Website's address.
-        type: string
-      created_at:
-        description: Creation date of the website.
-        type: string
-      updated_at:
-        description: Update date of the website.
-        type: string
+        message:
+          nullable: false
+          description: error message.
+          type: string
+    Wallet:
+      description: Wallet object (V0).
+      required:
+        - nickname
+        - address
+        - keyPairs
+      type: object
+      properties:
+        nickname:
+          description: wallet's nickname.
+          type: string
+        address:
+          description: wallet's address.
+          type: string
+        balance:
+          description: wallet's balance.
+          type: number
+        keyPairs:
+          description: wallet's key pairs.
+          type: array
+          items:
+            required:
+              - privateKey
+              - publicKey
+              - salt
+              - nonce
+            type: object
+            properties:
+              privateKey:
+                format: base58check
+                description: Key pair's private key.
+                type: string
+              publicKey:
+                format: base58check
+                description: Key pair's public key.
+                type: string
+              salt:
+                format: base58check
+                description: >-
+                  Salt used by the PBKDF that generates the secret key used to
+                  protect the key pair's private key.
+                type: string
+              nonce:
+                format: base58check
+                description: >-
+                  Nonce used by the AES-GCM algorithm used to protect the key
+                  pair's private key.
+                type: string
+    Websites:
+      description: Websites object (V0).
+      type: object
+      properties:
+        name:
+          description: Website's name.
+          type: string
+        address:
+          description: Website's address.
+          type: string
+        brokenChunks:
+          description: >-
+            Array of empty chunks if website contains preventing the website to
+            load.
+          type: array
+          items:
+            type: string
+    Events:
+      description: Events object (V0)
+      type: object
+      properties:
+        data:
+          description: Event data.
+          type: string
+        address:
+          description: Event caller.
+          type: string
+    Registry:
+      description: Registry object (V0).
+      type: object
+      properties:
+        name:
+          description: Website's name.
+          type: string
+        address:
+          description: Website's address.
+          type: string
+        created_at:
+          description: Creation date of the website.
+          type: string
+        updated_at:
+          description: Update date of the website.
+          type: string
