@@ -1,4 +1,4 @@
-package plugins
+package plugin
 
 import (
 	"github.com/go-openapi/runtime/middleware"
@@ -9,18 +9,18 @@ import (
 
 //nolint:nolintlint,ireturn
 func NewGet(manager *pluginManager.PluginManager) operations.MgmtPluginsListHandler {
-	return &pluginsGet{manager: manager}
+	return &pluginHandler{manager: manager}
 }
 
-type pluginsGet struct {
+type pluginHandler struct {
 	manager *pluginManager.PluginManager
 }
 
 //nolint:nolintlint,ireturn
-func (c *pluginsGet) Handle(params operations.MgmtPluginsListParams) middleware.Responder {
-	pluginList := c.manager.List()
+func (pluginCatalog *pluginHandler) Handle(params operations.MgmtPluginsListParams) middleware.Responder {
+	pluginList := pluginCatalog.manager.List()
 
-	var plugin []*models.Plugin
+	var body []*models.Plugin
 
 	for i := 0; i < len(pluginList); i++ {
 		pluginInfo := &models.Plugin{
@@ -28,8 +28,8 @@ func (c *pluginsGet) Handle(params operations.MgmtPluginsListParams) middleware.
 			Port: int64(pluginList[i].Port),
 		}
 
-		plugin = append(plugin, pluginInfo)
+		body = append(body, pluginInfo)
 	}
 
-	return operations.NewMgmtPluginsListOK().WithPayload(plugin)
+	return operations.NewMgmtPluginsListOK().WithPayload(body)
 }
