@@ -168,13 +168,6 @@ paths:
             $ref: "#/definitions/Error"
     put:
       operationId: mgmtWalletImport
-      parameters:
-        - in: body
-          name: body
-          required: true
-          x-nullable: false
-          schema:
-            $ref: "#/definitions/Wallet"
       produces:
         - application/json
       responses:

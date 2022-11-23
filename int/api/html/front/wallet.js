@@ -1,4 +1,4 @@
-document.getElementById("import-wallet").addEventListener("click", openDialog);
+document.getElementById("import-wallet").addEventListener("click", importWallet);
 document.getElementById("fileid").addEventListener("change", handleFileSelect, true);
 
 getWallets();
@@ -22,12 +22,12 @@ function handleFileSelect(evt) {
 }
 
 // Import a wallet through PUT query
-async function importWallet(wallet) {
+async function importWallet() {
+    console.log("Sending")
     axios
-        .put("/mgmt/wallet", wallet)
+        .put("/mgmt/wallet", {test: "test"})
         .then((_) => {
-            tableInsert(wallet);
-            wallets.push(wallet);
+            console.log("Insert new wallet row")
         })
         .catch(handleAPIError);
 }
