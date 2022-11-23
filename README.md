@@ -31,6 +31,18 @@ Use prettrier to format de code. We recommend to install IDE prettier extension 
 
 For go code, we use the formatter included in <https://marketplace.visualstudio.com/items?itemName=golang.go>.
 
+
+### golangci-lint
+- golangci-lint is used to run linters in parallel.. We recommend to [install](https://golangci-lint.run/usage/install/) it locally and run it on your source code, before pushing any modification, otherwise some potential lint errors will be catched by the pipeline.
+- to run golangci-lint locally : `golangci-lint run <Path>`
+#### How to reseolve golangci-lint recurring errors ?
+- File is not `gofumpt`
+gofumpt need to be installed locally `go install mvdan.cc/gofumpt@latest`
+run gofumpt locally on your source code `gofumpt -l -w .`
+- File is not `gci`
+gci need to be installed locally `go install github.com/daixiang0/gci@latest`
+run gofumpt locally on your source code `gci -write <path>`
+
 ## How to...
 
 ### ... install Thyra on my computer?
