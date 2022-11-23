@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"golang.org/x/exp/slices"
 
 	"fyne.io/fyne/v2"
 	"github.com/go-openapi/runtime/middleware"
@@ -30,23 +31,13 @@ func CreatePrepareForWebsiteHandler(
 	}
 }
 
-func listArchiveContent(zipReader *zip.Reader) []string {
+func listFileName(zipReader *zip.Reader) []string {
 	FilesInArchive := []string{}
 	for _, zipFile := range zipReader.File {
 		FilesInArchive = append(FilesInArchive, zipFile.Name)
 	}
 
 	return FilesInArchive
-}
-
-func contains(elems []string, v string) bool {
-	for _, s := range elems {
-		if v == s {
-			return true
-		}
-	}
-
-	return false
 }
 
 //nolint:nolintlint,ireturn,funlen
@@ -83,9 +74,9 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 	}
 
 	zipReader, _ := zip.NewReader(bytes.NewReader(archive), int64(len(archive)))
-	FilesOfArchive := listArchiveContent(zipReader)
+	FilesOfArchive := listFileName(zipReader)
 
-	if !contains(FilesOfArchive, "index.html") {
+	if slices.Index(FilesOfArchive, "index.html") == -1 {
 		return createInternalServerError(errorCodeWebCreatorHTMLNotInSource, errorCodeWebCreatorHTMLNotInSource)
 	}
 
