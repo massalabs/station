@@ -8,9 +8,9 @@ An entrance to the Massa blockchain.
 
 ## ⚠️ WIP
 
-Everything is this project is WIP prototype.
+This project is still WIP. It is a prototype. 
 
-⚠️ Breaking changes ahead ⚠️
+⚠️ Potential breaking changes ahead ⚠️
 
 ## Contribute
 
@@ -61,6 +61,31 @@ Follow the instructions for your computer in the wiki:
 - [Linux](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#linux)
 - [Windows](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#windows)
 
+### ... manage my wallet?
+1. Create / delete your wallet 
+
+You can access to Thyra wallet interface at URL : <http://my.massa/thyra/wallet/index.html>
+By inputing the 'Nickname' & 'Password', you'll be able to create an encrypted wallet locally on your machine.
+To delete your wallet, simply use the interface. 
+⚠️ If you delete your wallet, you won't be able to edit the website linked to it anymore.
+
+2. Get coins on your wallet
+
+To get coins on your wallet, you have to send your address on [Massa faucet channel](https://discord.com/channels/828270821042159636/866190913030193172)
+Make sure that you use the latest version of Thyra (and defacto Testnet) [here](https://github.com/massalabs/thyra/releases/latest/), otherwise the faucet won't work.
+
+### ... store a website on chain?
+
+You can access to Thyra web hosting interface at URL : <http://my.massa/thyra/websiteCreator/index.html>
+
+In order to register a website on Thyra you'll need to :
+
+- Deploy a Smart Contract that will handle the storage of your website, your DNS name will fetch the Address of this Smart Contract
+- Upload the build of your application
+- Use a wallet with sufficient coins to upload it on the blockchain
+Important note: At the moment, we have defined that 1 chunk (=280ko) of data worth 100 MAS. It will change and become more and more specific and precise as the Testnet and Thyra are evolving. In the mean time, we have defined it arbitrarily.
+- Share your .massa websites on our [Discord channel](https://discord.com/channels/828270821042159636/912346860902047755) !
+
 ### ... get the latest dev version of `thyra-server`?
 
 To install the latest dev version of the `thyra-server` application you need to:
@@ -108,20 +133,6 @@ openssl req -newkey rsa:4096 \
 
 You can now execute a thyra-server using the following command changing _path to ..._ to proper values:
 `thyra-server --tls-certificate <path to my_thyra.crt> --tls-key <path to my_thyra.key>`.
-
-### ... wallet management?
-
-You can access to Thyra wallet interface at URL : <http://my.massa/thyra/wallet/index.html>
-By inputing the 'Nickname' & 'Password', you'll be able to create an encrypted wallet locally on your machine.
-
-### ... web on chain?
-
-You can access to Thyra web hosting interface at URL : <http://my.massa/thyra/websiteCreator/index.html>
-
-In order to register a website on Thyra you'll need to :
-
-- Deploy a Smart Contract that will handle the storage of your website, your DNS name will fetch the Address of this Smart Contract
-- Upload the build of your application
 
 ### ... code with auto-reload
 
