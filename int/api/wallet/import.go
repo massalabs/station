@@ -43,7 +43,6 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 				Message: err.Error(),
 			})
 	}
-
 	err = newWallet.Protect(password, 0)
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(

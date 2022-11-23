@@ -224,10 +224,18 @@ func New(nickname string) (*Wallet, error) {
 func Imported(nickname string, privateKey string) (*Wallet, error) {
 
 	privateKeyByte := []byte(privateKey)
-	pubKey, err := ed25519.GeneratePublicKey(nil, privateKeyByte)
+
+	prv, err := base58.CheckDecode(privateKey[2:])
+	if err != nil {
+		panic(err)
+	}
+
+	pubKey, err := ed25519.GeneratePublicKey(nil, prv)
 	if err != nil {
 		return nil, fmt.Errorf("generating ed25519 keypair: %w", err)
 	}
+
+	// B58pubKey := "P" + base58.CheckEncode(append(make([]byte, 1), pubKey...))
 
 	addr := blake3.Sum256(pubKey)
 
