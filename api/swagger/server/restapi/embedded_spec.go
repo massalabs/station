@@ -368,9 +368,6 @@ func init() {
         }
       },
       "put": {
-        "produces": [
-          "application/json"
-        ],
         "operationId": "mgmtWalletImport",
         "responses": {
           "204": {
@@ -1368,9 +1365,6 @@ func init() {
         }
       },
       "put": {
-        "produces": [
-          "application/json"
-        ],
         "operationId": "mgmtWalletImport",
         "responses": {
           "204": {

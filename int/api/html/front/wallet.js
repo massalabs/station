@@ -23,11 +23,10 @@ function handleFileSelect(evt) {
 
 // Import a wallet through PUT query
 async function importWallet() {
-    console.log("Sending")
     axios
-        .put("/mgmt/wallet", {test: "test"})
+        .put("/mgmt/wallet")
         .then((_) => {
-            console.log("Insert new wallet row")
+            getWallets();
         })
         .catch(handleAPIError);
 }
