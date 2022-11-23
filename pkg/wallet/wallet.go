@@ -221,6 +221,55 @@ func New(nickname string) (*Wallet, error) {
 	return &wallet, nil
 }
 
+func Imported(nickname string, privateKey string) (*Wallet, error) {
+
+	privateKeyByte := []byte(privateKey)
+	pubKey, err := ed25519.GeneratePublicKey(nil, privateKeyByte)
+	if err != nil {
+		return nil, fmt.Errorf("generating ed25519 keypair: %w", err)
+	}
+
+	addr := blake3.Sum256(pubKey)
+
+	var salt [16]byte
+
+	_, err = rand.Read(salt[:])
+	if err != nil {
+		return nil, fmt.Errorf("generating random salt: %w", err)
+	}
+
+	var nonce [12]byte
+
+	_, err = rand.Read(nonce[:])
+	if err != nil {
+		return nil, fmt.Errorf("generating random nonce: %w", err)
+	}
+
+	wallet := Wallet{
+		Version:  0,
+		Nickname: nickname,
+		Address:  "A" + base58.CheckEncode(append(make([]byte, 1), addr[:]...)),
+		KeyPairs: []KeyPair{{
+			PrivateKey: privateKeyByte,
+			PublicKey:  pubKey,
+			Salt:       salt,
+			Nonce:      nonce,
+		}},
+	}
+
+	bytesOutput, err := json.Marshal(wallet)
+	if err != nil {
+		return nil, fmt.Errorf("marshalling wallet: %w", err)
+	}
+
+	err = os.WriteFile(GetWalletDirectory()+"wallet_"+nickname+".json", bytesOutput, FileModeUserReadWriteOnly)
+	if err != nil {
+		return nil, fmt.Errorf("writing wallet to 'wallet_%s.json': %w", nickname, err)
+	}
+
+	return &wallet, nil
+}
+
 func Delete(nickname string) (err error) {
 	err = os.Remove(GetWalletDirectory() + "wallet_" + nickname + ".json")
 	if err != nil {

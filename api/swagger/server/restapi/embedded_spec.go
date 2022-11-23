@@ -368,21 +368,7 @@ func init() {
         }
       },
       "put": {
-        "produces": [
-          "application/json"
-        ],
         "operationId": "mgmtWalletImport",
-        "parameters": [
-          {
-            "x-nullable": false,
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Wallet"
-            }
-          }
-        ],
         "responses": {
           "204": {
             "description": "Wallet imported."
@@ -1379,21 +1365,7 @@ func init() {
         }
       },
       "put": {
-        "produces": [
-          "application/json"
-        ],
         "operationId": "mgmtWalletImport",
-        "parameters": [
-          {
-            "x-nullable": false,
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Wallet"
-            }
-          }
-        ],
         "responses": {
           "204": {
             "description": "Wallet imported."
