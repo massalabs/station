@@ -29,11 +29,10 @@ type wImport struct {
 
 //nolint:nolintlint,ireturn,funlen
 func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Responder {
-	var err error
+	password, walletName, pk, err := gui.AskWalletInfo(c.app)
 	if err != nil {
 		panic(err)
 	}
-	password, walletName, pk, err := gui.AskWalletInfo(c.app)
 
 	newWallet, err := wallet.Imported(walletName, pk)
 	if err != nil {
@@ -43,6 +42,7 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 				Message: err.Error(),
 			})
 	}
+
 	err = newWallet.Protect(password, 0)
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
@@ -69,7 +69,7 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 				Message: err.Error(),
 			})
 	}
-	fmt.Println(password, walletName, pk)
+	fmt.Println(password, walletName, pk, newWallet)
 
 	c.walletStorage.Store(newWallet.Nickname, newWallet)
 
