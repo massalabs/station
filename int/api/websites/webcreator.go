@@ -9,8 +9,6 @@ import (
 	"os"
 	"strconv"
 
-	"golang.org/x/exp/slices"
-
 	"fyne.io/fyne/v2"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -18,6 +16,7 @@ import (
 	"github.com/massalabs/thyra/pkg/gui"
 	"github.com/massalabs/thyra/pkg/onchain/website"
 	"github.com/massalabs/thyra/pkg/wallet"
+	"golang.org/x/exp/slices"
 )
 
 const UploadMaxSize = "UPLOAD_MAX_SIZE"
