@@ -54,7 +54,7 @@ To delete your wallet, simply use the interface.
 To get coins on your wallet, you have to send your address on `Massa faucet channel <https://discord.com/channels/828270821042159636/866190913030193172>`_
 Make sure that you use the latest version of Thyra (and defacto Testnet) `here <https://discord.com/channels/828270821042159636/866190913030193172>`_ , otherwise the faucet won't work.
 
-### ... web on chain?
+### ... store a website on chain?
 
 You can access to Thyra web hosting interface at URL : <http://my.massa/thyra/websiteCreator/index.html>
 
