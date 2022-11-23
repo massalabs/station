@@ -63,7 +63,7 @@ In order to register a website on Thyra you'll need to :
 - Deploy a Smart Contract that will handle the storage of your website, your DNS name will fetch the Address of this Smart Contract
 - Upload the build of your application
 - Use a wallet with sufficient coins to upload it on the blockchain
-Important note: At the moment, we have defined that 1 chunk (=280ko) of data worth 100 MAS. It will change and become more and more specific and precise as the Testnet is evolving. In the mean time, we have defined it arbitrarily.
+Important note: At the moment, we have defined that 1 chunk (=280ko) of data worth 100 MAS. It will change and become more and more specific and precise as the Testnet and Thyra are evolving. In the mean time, we have defined it arbitrarily.
 - Share your .massa websites on our `Discord channel <https://discord.com/channels/828270821042159636/912346860902047755>`_ ! 
 
 ### ... get the latest dev version of `thyra-server`?
