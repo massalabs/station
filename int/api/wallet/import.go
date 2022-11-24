@@ -8,7 +8,6 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/gui"
-
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
@@ -61,7 +60,6 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 	}
 
 	newWallet, err := wallet.Imported(walletName, privateKey)
-
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{
