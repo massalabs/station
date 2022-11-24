@@ -23,9 +23,23 @@ To develop on this project you will need :
 
 Once Golang is installed on your system, you can install the swagger dependency by running the following command outside of a go module directory:
 
-- `go install github.com/go-swagger/go-swagger/cmd/swagger@latest`
+```bash
+go install github.com/go-swagger/go-swagger/cmd/swagger@latest
+ ```
 
 ### Setup code formatting tool
+
+#### Linter:
+
+Follow linter setup instructions [here](https://golangci-lint.run/usage/install/).
+Then simply run:
+
+```bash
+ golangci-lint run
+ ```
+
+
+#### Prettier:
 
 Use prettrier to format de code. We recommend to install IDE prettier extension to format on save.
 
@@ -139,6 +153,37 @@ You can now execute a thyra-server using the following command changing _path to
 You can run the application with this command: `air`.
 
 It will generate and reload thyra each time a file is modified.
+
+### Plugin installation
+
+Thanks to its modular architecture, it is possible to use third party plugins in Thyra.
+Plugins must be placed in a `plugins` folder in the Thyra config directory: `$HOME/.config/thyra`.
+Some plugins are provided by Massa and the following procedure describe the Playground plugin as an example.
+
+#### Playground plugin installation
+
+Download the plugin:
+
+-   [MacOS-amd64](https://github.com/massalabs/thyra-playground-plugin/suites/9559118439/artifacts/454914700)
+-   [MacOS-arm64](https://github.com/massalabs/thyra-playground-plugin/suites/9559118439/artifacts/454914701)
+-   [Linux](https://github.com/massalabs/thyra-playground-plugin/suites/9559118439/artifacts/454914702)
+-   [Windows](https://github.com/massalabs/thyra-playground-plugin/suites/9559118439/artifacts/454914703)
+
+create the `plugins` directory and unzip the content of the archive in it.
+
+Your plugins directory should look like this:
+```
+  plugins
+    └── playground-plugin
+        ├── manifest.json
+        ├── simulator
+        │   └── massa-sc-tester
+        └── thyra-playground-plugin
+```
+
+For Linux and MacOs users, you have to set the executable permission on binary files:
+
+`chmod +x plugins/playground-plugin/thyra-playground-plugin plugins/playground-plugin/simulator/massa-sc-tester`
 
 ## Usage
 
