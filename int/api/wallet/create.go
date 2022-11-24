@@ -57,7 +57,12 @@ func (c *walletCreate) Handle(params operations.MgmtWalletCreateParams) middlewa
 			})
 	}
 
-	err = newWallet.Protect(*params.Body.Password, 0)
+	return CreateNewWallet(params.Body.Nickname, params.Body.Password, c.walletStorage, newWallet)
+}
+
+//nolint:lll,nolintlint,ireturn
+func CreateNewWallet(nickname *string, password *string, storage *sync.Map, newWallet *wallet.Wallet) middleware.Responder {
+	err := newWallet.Protect(*password, 0)
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{
@@ -75,7 +80,7 @@ func (c *walletCreate) Handle(params operations.MgmtWalletCreateParams) middlewa
 			})
 	}
 
-	err = os.WriteFile(wallet.GetWalletDirectory()+"wallet_"+*params.Body.Nickname+".json", bytesOutput, fileModeUserRW)
+	err = os.WriteFile(wallet.GetWalletDirectory()+"wallet_"+*nickname+".json", bytesOutput, fileModeUserRW)
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{
@@ -84,7 +89,7 @@ func (c *walletCreate) Handle(params operations.MgmtWalletCreateParams) middlewa
 			})
 	}
 
-	c.walletStorage.Store(newWallet.Nickname, newWallet)
+	storage.Store(newWallet.Nickname, newWallet)
 
 	privK := base58.CheckEncode(newWallet.KeyPairs[0].PrivateKey)
 	pubK := base58.CheckEncode(newWallet.KeyPairs[0].PublicKey)

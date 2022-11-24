@@ -1,96 +1,72 @@
 package wallet
 
 import (
-	"encoding/json"
-	"os"
 	"sync"
 
+	"fyne.io/fyne/v2"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/pkg/node/base58"
+	"github.com/massalabs/thyra/pkg/gui"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 const fileModeUserRW = 0o600
 
 //nolint:nolintlint,ireturn
-func NewImport(walletStorage *sync.Map) operations.MgmtWalletImportHandler {
-	return &wImport{walletStorage: walletStorage}
+func NewImport(walletStorage *sync.Map, app *fyne.App) operations.MgmtWalletImportHandler {
+	return &wImport{walletStorage: walletStorage, app: app}
 }
 
 type wImport struct {
 	walletStorage *sync.Map
+	app           *fyne.App
 }
 
 //nolint:nolintlint,ireturn,funlen
 func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Responder {
-	var err error
+	password, walletName, privateKey, err := gui.AskWalletInfo(c.app)
+	if err != nil {
+		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
+			&models.Error{
+				Code:    errorCodeWalletCreateNew,
+				Message: err.Error(),
+			})
+	}
 
-	_, ok := c.walletStorage.Load(*params.Body.Nickname)
-	if ok {
-		return operations.NewMgmtWalletImportInternalServerError().WithPayload(
+	if len(walletName) == 0 {
+		return operations.NewMgmtWalletCreateBadRequest().WithPayload(
+			&models.Error{
+				Code:    errorCodeWalletCreateNoNickname,
+				Message: "Error: nickname field is mandatory.",
+			})
+	}
+
+	_, inStore := c.walletStorage.Load(walletName)
+	if inStore {
+		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{
 				Code:    errorCodeWalletAlreadyExists,
 				Message: "Error: a wallet with the same nickname already exists.",
 			})
 	}
 
-	keyPairs := make([]wallet.KeyPair, len(params.Body.KeyPairs))
-	for index := 0; index < len(params.Body.KeyPairs); index++ {
-		keyPairs[index].PrivateKey, err = base58.CheckDecode(*params.Body.KeyPairs[index].PrivateKey)
-		if err != nil {
-			return operations.NewMgmtWalletCreateUnprocessableEntity()
-		}
-
-		keyPairs[index].PublicKey, err = base58.CheckDecode(*params.Body.KeyPairs[index].PublicKey)
-		if err != nil {
-			return operations.NewMgmtWalletCreateUnprocessableEntity()
-		}
-
-		salt, err := base58.CheckDecode(*params.Body.KeyPairs[index].Salt)
-		if err != nil {
-			return operations.NewMgmtWalletCreateUnprocessableEntity()
-		}
-
-		copy(keyPairs[index].Salt[:], salt)
-
-		nonce, err := base58.CheckDecode(*params.Body.KeyPairs[index].Nonce)
-		if err != nil {
-			return operations.NewMgmtWalletCreateUnprocessableEntity()
-		}
-
-		copy(keyPairs[index].Nonce[:], nonce)
-
-		keyPairs[index].Protected = true
+	if len(password) == 0 {
+		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
+			&models.Error{
+				Code:    errorCodeWalletCreateNoPassword,
+				Message: "Error: password field is mandatory.",
+			})
 	}
 
-	newWallet := wallet.Wallet{
-		Version:  0,
-		Nickname: *params.Body.Nickname,
-		Address:  *params.Body.Address,
-		KeyPairs: keyPairs,
-	}
-
-	c.walletStorage.Store(newWallet.Nickname, newWallet)
-
-	bytesOutput, err := json.Marshal(newWallet)
+	newWallet, err := wallet.Imported(walletName, privateKey)
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{
-				Code:    errorCodeWalletImportNew,
+				Code:    errorCodeWalletCreateNew,
 				Message: err.Error(),
 			})
 	}
 
-	err = os.WriteFile(wallet.GetWalletDirectory()+"wallet_"+*params.Body.Nickname+".json", bytesOutput, fileModeUserRW)
-	if err != nil {
-		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-			&models.Error{
-				Code:    errorCodeWalletImportNew,
-				Message: err.Error(),
-			})
-	}
-
-	return operations.NewMgmtWalletImportNoContent()
+	return CreateNewWallet(&walletName, &password, c.walletStorage, newWallet)
 }

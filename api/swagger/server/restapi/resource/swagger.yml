@@ -168,18 +168,13 @@ paths:
             $ref: "#/definitions/Error"
     put:
       operationId: mgmtWalletImport
-      parameters:
-        - in: body
-          name: body
-          required: true
-          x-nullable: false
-          schema:
-            $ref: "#/definitions/Wallet"
       produces:
         - application/json
       responses:
-        "204":
-          description: Wallet imported.
+        "200":
+          description: New wallet created.
+          schema:
+            $ref: "#/definitions/Wallet"
         "400":
           description: Bad request.
           schema:

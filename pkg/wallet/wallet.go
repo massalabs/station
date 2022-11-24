@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
 	"strings"
 
 	"github.com/massalabs/thyra/pkg/node/base58"
@@ -182,9 +183,41 @@ func New(nickname string) (*Wallet, error) {
 
 	addr := blake3.Sum256(pubKey)
 
+	return CreateWalletFromKeys(nickname, privKey, pubKey, addr)
+}
+
+func Imported(nickname string, privateKey string) (*Wallet, error) {
+	privKeyBytes, _, err := base58.VersionedCheckDecode(privateKey[1:])
+	if err != nil {
+		return nil, fmt.Errorf("encoding private key B58: %w", err)
+	}
+
+	keypair := ed25519.NewKeyFromSeed(privKeyBytes)
+
+	pubKeyBytes := reflect.ValueOf(keypair.Public()).Bytes() // force conversion to byte array
+
+	addr := blake3.Sum256(pubKeyBytes)
+
+	return CreateWalletFromKeys(nickname, privKeyBytes, pubKeyBytes, addr)
+}
+
+func Delete(nickname string) (err error) {
+	err = os.Remove(GetWalletDirectory() + "wallet_" + nickname + ".json")
+	if err != nil {
+		return fmt.Errorf("deleting wallet 'wallet_%s.json': %w", nickname, err)
+	}
+
+	return nil
+}
+
+func AddressChecker(address string) bool {
+	return len(address) > MinAddressLength
+}
+
+func CreateWalletFromKeys(nickname string, privKeyBytes []byte, pubKeyBytes []byte, addr [32]byte) (*Wallet, error) {
 	var salt [16]byte
 
-	_, err = rand.Read(salt[:])
+	_, err := rand.Read(salt[:])
 	if err != nil {
 		return nil, fmt.Errorf("generating random salt: %w", err)
 	}
@@ -201,8 +234,8 @@ func New(nickname string) (*Wallet, error) {
 		Nickname: nickname,
 		Address:  "A" + base58.CheckEncode(append(make([]byte, 1), addr[:]...)),
 		KeyPairs: []KeyPair{{
-			PrivateKey: privKey,
-			PublicKey:  pubKey,
+			PrivateKey: privKeyBytes,
+			PublicKey:  pubKeyBytes,
 			Salt:       salt,
 			Nonce:      nonce,
 		}},
@@ -219,17 +252,4 @@ func New(nickname string) (*Wallet, error) {
 	}
 
 	return &wallet, nil
-}
-
-func Delete(nickname string) (err error) {
-	err = os.Remove(GetWalletDirectory() + "wallet_" + nickname + ".json")
-	if err != nil {
-		return fmt.Errorf("deleting wallet 'wallet_%s.json': %w", nickname, err)
-	}
-
-	return nil
-}
-
-func AddressChecker(address string) bool {
-	return len(address) > MinAddressLength
 }
