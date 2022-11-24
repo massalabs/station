@@ -184,11 +184,8 @@ func New(nickname string) (*Wallet, error) {
 	addr := blake3.Sum256(pubKey)
 
 	return CreateWalletFromKeys(nickname, privKey, pubKey, addr)
-
 }
-
 func Imported(nickname string, privateKey string) (*Wallet, error) {
-
 	privKeyBytes, _, err := base58.VersionedCheckDecode(privateKey[1:])
 	if err != nil {
 		return nil, fmt.Errorf("encoding private key B58: %w", err)
@@ -201,9 +198,7 @@ func Imported(nickname string, privateKey string) (*Wallet, error) {
 	addr := blake3.Sum256(pubKeyBytes)
 
 	return CreateWalletFromKeys(nickname, privKeyBytes, pubKeyBytes, addr)
-
 }
-
 func Delete(nickname string) (err error) {
 	err = os.Remove(GetWalletDirectory() + "wallet_" + nickname + ".json")
 	if err != nil {
@@ -218,7 +213,6 @@ func AddressChecker(address string) bool {
 }
 
 func CreateWalletFromKeys(nickname string, privKeyBytes []byte, pubKeyBytes []byte, addr [32]byte) (*Wallet, error) {
-
 	var salt [16]byte
 
 	_, err := rand.Read(salt[:])
@@ -254,5 +248,6 @@ func CreateWalletFromKeys(nickname string, privKeyBytes []byte, pubKeyBytes []by
 	if err != nil {
 		return nil, fmt.Errorf("writing wallet to 'wallet_%s.json': %w", nickname, err)
 	}
+
 	return &wallet, nil
 }

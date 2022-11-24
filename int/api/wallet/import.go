@@ -28,7 +28,6 @@ type wImport struct {
 
 //nolint:nolintlint,ireturn,funlen
 func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Responder {
-
 	password, walletName, privateKey, err := gui.AskWalletInfo(c.app)
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
@@ -38,7 +37,7 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 			})
 	}
 
-	if len(*&walletName) == 0 {
+	if len(walletName) == 0 {
 		return operations.NewMgmtWalletCreateBadRequest().WithPayload(
 			&models.Error{
 				Code:    errorCodeWalletCreateNoNickname,
@@ -46,7 +45,7 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 			})
 	}
 
-	_, ok := c.walletStorage.Load(*&walletName)
+	_, ok := c.walletStorage.Load(walletName)
 	if ok {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{
@@ -55,7 +54,7 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 			})
 	}
 
-	if len(*&password) == 0 {
+	if len(password) == 0 {
 		return operations.NewMgmtWalletCreateBadRequest().WithPayload(
 			&models.Error{
 				Code:    errorCodeWalletCreateNoPassword,
