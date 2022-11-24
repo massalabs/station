@@ -185,6 +185,7 @@ func New(nickname string) (*Wallet, error) {
 
 	return CreateWalletFromKeys(nickname, privKey, pubKey, addr)
 }
+
 func Imported(nickname string, privateKey string) (*Wallet, error) {
 	privKeyBytes, _, err := base58.VersionedCheckDecode(privateKey[1:])
 	if err != nil {
@@ -199,6 +200,7 @@ func Imported(nickname string, privateKey string) (*Wallet, error) {
 
 	return CreateWalletFromKeys(nickname, privKeyBytes, pubKeyBytes, addr)
 }
+
 func Delete(nickname string) (err error) {
 	err = os.Remove(GetWalletDirectory() + "wallet_" + nickname + ".json")
 	if err != nil {
