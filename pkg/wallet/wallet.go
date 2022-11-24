@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
 	"strings"
 
 	"github.com/massalabs/thyra/pkg/node/base58"
@@ -222,14 +223,16 @@ func New(nickname string) (*Wallet, error) {
 }
 
 func Imported(nickname string, privateKey string) (*Wallet, error) {
-
-	privateKeyByte := []byte(privateKey)
-	pubKey, err := ed25519.GeneratePublicKey(nil, privateKeyByte)
+	privKeyBytes, _, err := base58.VersionedCheckDecode(privateKey[1:])
 	if err != nil {
-		return nil, fmt.Errorf("generating ed25519 keypair: %w", err)
+		panic(err)
 	}
 
-	addr := blake3.Sum256(pubKey)
+	keypair := ed25519.NewKeyFromSeed(privKeyBytes)
+
+	pubKeyBytes := reflect.ValueOf(keypair.Public()).Bytes() // force conversion to byte array
+
+	addr := blake3.Sum256(pubKeyBytes)
 
 	var salt [16]byte
 
@@ -250,8 +253,8 @@ func Imported(nickname string, privateKey string) (*Wallet, error) {
 		Nickname: nickname,
 		Address:  "A" + base58.CheckEncode(append(make([]byte, 1), addr[:]...)),
 		KeyPairs: []KeyPair{{
-			PrivateKey: privateKeyByte,
-			PublicKey:  pubKey,
+			PrivateKey: privKeyBytes,
+			PublicKey:  pubKeyBytes,
 			Salt:       salt,
 			Nonce:      nonce,
 		}},
