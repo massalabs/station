@@ -60,7 +60,7 @@ func (c *walletCreate) Handle(params operations.MgmtWalletCreateParams) middlewa
 	return CreateNewWallet(params.Body.Nickname, params.Body.Password, c.walletStorage, newWallet)
 }
 
-//nolint:lll
+//nolint:lll,nolintlint,ireturn
 func CreateNewWallet(nickname *string, password *string, storage *sync.Map, newWallet *wallet.Wallet) middleware.Responder {
 	err := newWallet.Protect(*password, 0)
 	if err != nil {
