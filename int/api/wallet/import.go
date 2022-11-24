@@ -52,7 +52,7 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 	}
 
 	if len(password) == 0 {
-		return operations.NewMgmtWalletCreateBadRequest().WithPayload(
+		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{
 				Code:    errorCodeWalletCreateNoPassword,
 				Message: "Error: password field is mandatory.",
