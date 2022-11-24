@@ -2,7 +2,6 @@ package wallet
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"sync"
 
@@ -18,8 +17,8 @@ import (
 const fileModeUserRW = 0o600
 
 //nolint:nolintlint,ireturn
-func NewImport(app *fyne.App) operations.MgmtWalletImportHandler {
-	return &wImport{app: app}
+func NewImport(walletStorage *sync.Map, app *fyne.App) operations.MgmtWalletImportHandler {
+	return &wImport{walletStorage: walletStorage, app: app}
 }
 
 type wImport struct {
@@ -29,12 +28,42 @@ type wImport struct {
 
 //nolint:nolintlint,ireturn,funlen
 func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Responder {
-	password, walletName, pk, err := gui.AskWalletInfo(c.app)
+
+	password, walletName, privateKey, err := gui.AskWalletInfo(c.app)
 	if err != nil {
-		panic(err)
+		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
+			&models.Error{
+				Code:    errorCodeWalletCreateNew,
+				Message: err.Error(),
+			})
 	}
 
-	newWallet, err := wallet.Imported(walletName, pk)
+	if len(*&walletName) == 0 {
+		return operations.NewMgmtWalletCreateBadRequest().WithPayload(
+			&models.Error{
+				Code:    errorCodeWalletCreateNoNickname,
+				Message: "Error: nickname field is mandatory.",
+			})
+	}
+
+	_, ok := c.walletStorage.Load(*&walletName)
+	if ok {
+		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
+			&models.Error{
+				Code:    errorCodeWalletAlreadyExists,
+				Message: "Error: a wallet with the same nickname already exists.",
+			})
+	}
+
+	if len(*&password) == 0 {
+		return operations.NewMgmtWalletCreateBadRequest().WithPayload(
+			&models.Error{
+				Code:    errorCodeWalletCreateNoPassword,
+				Message: "Error: password field is mandatory.",
+			})
+	}
+
+	newWallet, err := wallet.Imported(walletName, privateKey)
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{
@@ -69,7 +98,6 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 				Message: err.Error(),
 			})
 	}
-	fmt.Println(password, walletName, pk, newWallet)
 
 	c.walletStorage.Store(newWallet.Nickname, newWallet)
 

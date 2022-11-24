@@ -368,10 +368,16 @@ func init() {
         }
       },
       "put": {
+        "produces": [
+          "application/json"
+        ],
         "operationId": "mgmtWalletImport",
         "responses": {
-          "204": {
-            "description": "Wallet imported."
+          "200": {
+            "description": "New wallet created.",
+            "schema": {
+              "$ref": "#/definitions/Wallet"
+            }
           },
           "400": {
             "description": "Bad request.",
@@ -1365,10 +1371,16 @@ func init() {
         }
       },
       "put": {
+        "produces": [
+          "application/json"
+        ],
         "operationId": "mgmtWalletImport",
         "responses": {
-          "204": {
-            "description": "Wallet imported."
+          "200": {
+            "description": "New wallet created.",
+            "schema": {
+              "$ref": "#/definitions/Wallet"
+            }
           },
           "400": {
             "description": "Bad request.",

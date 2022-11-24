@@ -183,49 +183,15 @@ func New(nickname string) (*Wallet, error) {
 
 	addr := blake3.Sum256(pubKey)
 
-	var salt [16]byte
+	return CreateWalletFromKeys(nickname, privKey, pubKey, addr)
 
-	_, err = rand.Read(salt[:])
-	if err != nil {
-		return nil, fmt.Errorf("generating random salt: %w", err)
-	}
-
-	var nonce [12]byte
-
-	_, err = rand.Read(nonce[:])
-	if err != nil {
-		return nil, fmt.Errorf("generating random nonce: %w", err)
-	}
-
-	wallet := Wallet{
-		Version:  0,
-		Nickname: nickname,
-		Address:  "A" + base58.CheckEncode(append(make([]byte, 1), addr[:]...)),
-		KeyPairs: []KeyPair{{
-			PrivateKey: privKey,
-			PublicKey:  pubKey,
-			Salt:       salt,
-			Nonce:      nonce,
-		}},
-	}
-
-	bytesOutput, err := json.Marshal(wallet)
-	if err != nil {
-		return nil, fmt.Errorf("marshalling wallet: %w", err)
-	}
-
-	err = os.WriteFile(GetWalletDirectory()+"wallet_"+nickname+".json", bytesOutput, FileModeUserReadWriteOnly)
-	if err != nil {
-		return nil, fmt.Errorf("writing wallet to 'wallet_%s.json': %w", nickname, err)
-	}
-
-	return &wallet, nil
 }
 
 func Imported(nickname string, privateKey string) (*Wallet, error) {
+
 	privKeyBytes, _, err := base58.VersionedCheckDecode(privateKey[1:])
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("encoding private key B58: %w", err)
 	}
 
 	keypair := ed25519.NewKeyFromSeed(privKeyBytes)
@@ -234,9 +200,28 @@ func Imported(nickname string, privateKey string) (*Wallet, error) {
 
 	addr := blake3.Sum256(pubKeyBytes)
 
+	return CreateWalletFromKeys(nickname, privKeyBytes, pubKeyBytes, addr)
+
+}
+
+func Delete(nickname string) (err error) {
+	err = os.Remove(GetWalletDirectory() + "wallet_" + nickname + ".json")
+	if err != nil {
+		return fmt.Errorf("deleting wallet 'wallet_%s.json': %w", nickname, err)
+	}
+
+	return nil
+}
+
+func AddressChecker(address string) bool {
+	return len(address) > MinAddressLength
+}
+
+func CreateWalletFromKeys(nickname string, privKeyBytes []byte, pubKeyBytes []byte, addr [32]byte) (*Wallet, error) {
+
 	var salt [16]byte
 
-	_, err = rand.Read(salt[:])
+	_, err := rand.Read(salt[:])
 	if err != nil {
 		return nil, fmt.Errorf("generating random salt: %w", err)
 	}
@@ -269,19 +254,5 @@ func Imported(nickname string, privateKey string) (*Wallet, error) {
 	if err != nil {
 		return nil, fmt.Errorf("writing wallet to 'wallet_%s.json': %w", nickname, err)
 	}
-
 	return &wallet, nil
-}
-
-func Delete(nickname string) (err error) {
-	err = os.Remove(GetWalletDirectory() + "wallet_" + nickname + ".json")
-	if err != nil {
-		return fmt.Errorf("deleting wallet 'wallet_%s.json': %w", nickname, err)
-	}
-
-	return nil
-}
-
-func AddressChecker(address string) bool {
-	return len(address) > MinAddressLength
 }

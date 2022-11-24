@@ -13,29 +13,49 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/models"
 )
 
-// MgmtWalletImportNoContentCode is the HTTP code returned for type MgmtWalletImportNoContent
-const MgmtWalletImportNoContentCode int = 204
+// MgmtWalletImportOKCode is the HTTP code returned for type MgmtWalletImportOK
+const MgmtWalletImportOKCode int = 200
 
 /*
-MgmtWalletImportNoContent Wallet imported.
+MgmtWalletImportOK New wallet created.
 
-swagger:response mgmtWalletImportNoContent
+swagger:response mgmtWalletImportOK
 */
-type MgmtWalletImportNoContent struct {
+type MgmtWalletImportOK struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.Wallet `json:"body,omitempty"`
 }
 
-// NewMgmtWalletImportNoContent creates MgmtWalletImportNoContent with default headers values
-func NewMgmtWalletImportNoContent() *MgmtWalletImportNoContent {
+// NewMgmtWalletImportOK creates MgmtWalletImportOK with default headers values
+func NewMgmtWalletImportOK() *MgmtWalletImportOK {
 
-	return &MgmtWalletImportNoContent{}
+	return &MgmtWalletImportOK{}
+}
+
+// WithPayload adds the payload to the mgmt wallet import o k response
+func (o *MgmtWalletImportOK) WithPayload(payload *models.Wallet) *MgmtWalletImportOK {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the mgmt wallet import o k response
+func (o *MgmtWalletImportOK) SetPayload(payload *models.Wallet) {
+	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *MgmtWalletImportNoContent) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *MgmtWalletImportOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
-	rw.WriteHeader(204)
+	rw.WriteHeader(200)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }
 
 // MgmtWalletImportBadRequestCode is the HTTP code returned for type MgmtWalletImportBadRequest
