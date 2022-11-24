@@ -31,8 +31,8 @@ func LoadWalletDialog(app *fyne.App) chan WalletInfoEntry {
 
 	window := (*app).NewWindow("Massa - Thyra")
 
-	width := 250.0
-	height := 80.0
+	width := 700.0
+	height := 100.0
 
 	window.Resize(fyne.Size{Width: float32(width), Height: float32(height)})
 
@@ -50,17 +50,22 @@ func LoadWalletDialog(app *fyne.App) chan WalletInfoEntry {
 		Items: items,
 		OnSubmit: func() {
 			window.Hide()
-			walletInfoEntry <- WalletInfoEntry{ClearPassword: password.Text, WalletName: walletName.Text, PrivateKey: privateKey.Text, Err: nil}
+			walletInfoEntry <- WalletInfoEntry{ClearPassword: password.Text,
+				WalletName: walletName.Text,
+				PrivateKey: privateKey.Text,
+				Err:        nil}
 		},
 		OnCancel: func() {
-			walletInfoEntry <- WalletInfoEntry{ClearPassword: "", WalletName: "", PrivateKey: "", Err: errors.New("Wallet loading cancelled by the user")}
+			walletInfoEntry <- WalletInfoEntry{ClearPassword: "",
+				WalletName: "", PrivateKey: "",
+				Err: errors.New("wallet loading cancelled by the user")}
 			window.Hide()
 		},
 		SubmitText: "Load",
 		CancelText: "Cancel",
 	}
 	spacer := layout.NewSpacer()
-	text1 := widget.NewLabel(`Load "` + walletName.Text + `" Wallet ?`)
+	text1 := widget.NewLabel(`Load a Wallet`)
 	title := container.New(layout.NewHBoxLayout(), spacer, text1, spacer)
 	centeredForm := container.New(layout.NewVBoxLayout(), spacer, form, spacer)
 	window.SetContent(container.New(layout.NewVBoxLayout(), title, spacer, centeredForm, spacer))
