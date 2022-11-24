@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"sync"
-	"time"
 
 	"github.com/go-cmd/cmd"
 	"github.com/massalabs/thyra/pkg/config"
@@ -82,44 +81,44 @@ func DetectPlugin(path string) (*PluginManifest, error) {
 func StartPlugin(plugin PluginItem, waitG *sync.WaitGroup) {
 	log.Println("Starting plugin '" + plugin.Manifest.Name + "' on port " + strconv.Itoa(plugin.Port))
 
+	cmdOptions := cmd.Options{ //nolint:exhaustruct
+		Buffered:  false,
+		Streaming: true,
+	}
 	// Launching system command could be a security issue. This topic should be tackle, and security layers should be added
-	cmd := cmd.NewCmd(filepath.Join(plugin.Path, plugin.Manifest.Bin),
+	cmd := cmd.NewCmdOptions(cmdOptions, filepath.Join(plugin.Path, plugin.Manifest.Bin),
 		"--port", strconv.Itoa(plugin.Port), "--path", plugin.Path)
-	cmd.Start() // non-blocking
 
-	ticker := time.NewTicker(time.Second)
+	// Print STDOUT and STDERR lines streaming from Cmd
+	printChannel := make(chan struct{})
 
-	// Print new lines of stdout and stdErr every seconds
 	go func() {
-		stdOutIdx := 0
-		stdErrIdx := 0
+		defer close(printChannel)
+		// Done when both channels have been closed
+		// https://dave.cheney.net/2013/04/30/curious-channels
+		for cmd.Stdout != nil || cmd.Stderr != nil {
+			select {
+			case line, open := <-cmd.Stdout:
+				if !open {
+					cmd.Stdout = nil
 
-		for range ticker.C {
-			status := cmd.Status()
-			stdOutLen := len(status.Stdout)
-			stdErrLen := len(status.Stderr)
-
-			if stdOutLen > stdOutIdx {
-				logs := status.Stdout[stdOutIdx:]
-
-				for _, stdOut := range logs {
-					log.Println(plugin.Manifest.Name + ": " + stdOut)
+					continue
 				}
 
-				stdOutIdx = stdOutLen
-			}
+				log.Println(plugin.Manifest.Name + ": " + line)
+			case line, open := <-cmd.Stderr:
+				if !open {
+					cmd.Stderr = nil
 
-			if stdErrLen > stdErrIdx {
-				logs := status.Stderr[stdErrIdx:]
-
-				for _, stdErr := range logs {
-					log.Println(plugin.Manifest.Name + ": " + stdErr)
+					continue
 				}
 
-				stdErrIdx = stdErrLen
+				fmt.Fprintln(os.Stderr, plugin.Manifest.Name+": "+line)
 			}
 		}
 	}()
+
+	cmd.Start() // non-blocking
 
 	<-plugin.stopChannel
 
@@ -128,7 +127,9 @@ func StartPlugin(plugin PluginItem, waitG *sync.WaitGroup) {
 		log.Println("err " + err.Error())
 	}
 
-	cmd.Status()
+	// Wait for goroutine to print everything
+	<-printChannel
+
 	waitG.Done()
 }
 
