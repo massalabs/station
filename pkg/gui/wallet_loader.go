@@ -67,8 +67,8 @@ func LoadWalletDialog(app *fyne.App) chan WalletInfoEntry {
 		CancelText: "Cancel",
 	}
 	spacer := layout.NewSpacer()
-	text1 := widget.NewLabel(`Load a Wallet`)
-	title := container.New(layout.NewHBoxLayout(), spacer, text1, spacer)
+	text := widget.NewLabel(`Load a Wallet`)
+	title := container.New(layout.NewHBoxLayout(), spacer, text, spacer)
 	centeredForm := container.New(layout.NewVBoxLayout(), spacer, form, spacer)
 	window.SetContent(container.New(layout.NewVBoxLayout(), title, spacer, centeredForm, spacer))
 	window.CenterOnScreen()
