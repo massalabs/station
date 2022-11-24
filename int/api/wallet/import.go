@@ -42,8 +42,8 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 			})
 	}
 
-	_, ok := c.walletStorage.Load(walletName)
-	if ok {
+	_, inStore := c.walletStorage.Load(walletName)
+	if inStore {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{
 				Code:    errorCodeWalletAlreadyExists,
