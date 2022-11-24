@@ -1,8 +1,6 @@
 package wallet
 
 import (
-	"encoding/json"
-	"os"
 	"sync"
 
 	"fyne.io/fyne/v2"
@@ -10,7 +8,6 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/gui"
-	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
@@ -71,50 +68,5 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 			})
 	}
 
-	err = newWallet.Protect(password, 0)
-	if err != nil {
-		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-			&models.Error{
-				Code:    errorCodeWalletCreateNew,
-				Message: err.Error(),
-			})
-	}
-
-	bytesOutput, err := json.Marshal(newWallet)
-	if err != nil {
-		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-			&models.Error{
-				Code:    errorCodeWalletCreateNew,
-				Message: err.Error(),
-			})
-	}
-
-	err = os.WriteFile(wallet.GetWalletDirectory()+"wallet_"+walletName+".json", bytesOutput, fileModeUserRW)
-	if err != nil {
-		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-			&models.Error{
-				Code:    errorCodeWalletCreateNew,
-				Message: err.Error(),
-			})
-	}
-
-	c.walletStorage.Store(newWallet.Nickname, newWallet)
-
-	privK := base58.CheckEncode(newWallet.KeyPairs[0].PrivateKey)
-	pubK := base58.CheckEncode(newWallet.KeyPairs[0].PublicKey)
-	salt := base58.CheckEncode(newWallet.KeyPairs[0].Salt[:])
-	nonce := base58.CheckEncode(newWallet.KeyPairs[0].Nonce[:])
-
-	return operations.NewMgmtWalletCreateOK().WithPayload(
-		&models.Wallet{
-			Nickname: &newWallet.Nickname,
-			Address:  &newWallet.Address,
-			KeyPairs: []*models.WalletKeyPairsItems0{{
-				PrivateKey: &privK,
-				PublicKey:  &pubK,
-				Salt:       &salt,
-				Nonce:      &nonce,
-			}},
-			Balance: 0,
-		})
+	return CreateNewWallet(&walletName, &password, c.walletStorage, newWallet)
 }
