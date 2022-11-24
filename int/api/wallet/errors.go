@@ -13,4 +13,5 @@ const (
 	errorCodeWalletImportNew        = "Wallet-3001"
 	errorCodeWalletGetWallets       = "Wallet-4001"
 	errorCodeWalletGetBalance       = "Wallet-4002"
+	errorCodeWalletAlreadyImported  = "Wallet-4003"
 )

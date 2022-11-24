@@ -23,6 +23,10 @@ const errorCodes = new Map([
         "Wallet-4002",
         "Error while fetching your balance. Reconnect all your wallets and try again",
     ],
+    [
+        "Wallet-4003",
+        "Error while importing your wallet. Wallet Already Imported",
+    ],
 
     ["Wallet-5001", "Please select a wallet to be able to see your domains"],
     ["Wallet-5002", "Please select a wallet to be able to perform that action"],

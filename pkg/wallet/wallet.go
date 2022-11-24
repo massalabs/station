@@ -17,6 +17,7 @@ import (
 	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"golang.org/x/crypto/pbkdf2"
+	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v3"
 	"lukechampine.com/blake3"
 )
@@ -154,6 +155,14 @@ func LoadAll() (wallets []Wallet, e error) {
 	return wallets, nil
 }
 
+func GetListOfAddresses(mywallets []Wallet) []string {
+	var ListOfAddresses []string
+	for _, wallet := range mywallets {
+		ListOfAddresses = append(ListOfAddresses, wallet.Address)
+	}
+	return ListOfAddresses
+}
+
 func Load(nickname string) (*Wallet, error) {
 	bytesInput, err := os.ReadFile(GetWalletFile(nickname))
 	if err != nil {
@@ -187,11 +196,21 @@ func Imported(nickname string, privateKey string) (*Wallet, error) {
 		return nil, fmt.Errorf("encoding private key B58: %w", err)
 	}
 
+	wallets, err := LoadAll()
+	ListOfAddresses := GetListOfAddresses(wallets)
+	if err != nil {
+		return nil, fmt.Errorf("loading wallets error: %w", err)
+	}
+
 	keypair := ed25519.NewKeyFromSeed(privKeyBytes)
 
 	pubKeyBytes := reflect.ValueOf(keypair.Public()).Bytes() // force conversion to byte array
 
 	addr := blake3.Sum256(pubKeyBytes)
+	Address := "A" + base58.CheckEncode(append(make([]byte, 1), addr[:]...))
+	if slices.Index(ListOfAddresses, Address) != -1 {
+		return nil, fmt.Errorf("wallet already imported: %w", err)
+	}
 
 	return CreateWalletFromKeys(nickname, privKeyBytes, pubKeyBytes, addr)
 }
