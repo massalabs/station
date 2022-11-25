@@ -1,17 +1,13 @@
 #!/bin/bash +x
 
 BINARY_URL="https://github.com/massalabs/thyra/releases/latest/download/thyra-server_linux"
-SCRIPT="Linux"
+OS="Linux"
 
-MKCERT_URL="https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-amd64"
+export THYRA_CONF_DIR=$HOME/.config/thyra
 
-THYRA_CONF_DIR=$HOME/.config/thyra
-
-green () { echo -e "\033[01;32m$1:\033[0m $2"; }
-
-warn () { echo -e "\033[01;33m[$SCRIPT]WARNING:\033[0m $1"; }
-
-fatal () { echo -e "\033[01;31m[$SCRIPT]ERROR:\033[0m $1" >&2; exit 1; }
+SCRIPT_DIR=$(dirname "$0")
+source $SCRIPT_DIR/lib/certificates.sh
+source $SCRIPT_DIR/lib/color-logs.sh
 
 architecture_version () {
     case $(uname -m) in
@@ -68,16 +64,6 @@ set_local_dns () {
     esac
 }
 
-ssl_certificate () {
-    green "INFO" "Generate SSL certificates:"
-    curl -sL $MKCERT_URL -o mkcert
-    chmod +x mkcert
-    ./mkcert -install
-    mkdir -p $THYRA_CONF_DIR/certs
-    ./mkcert -cert-file $THYRA_CONF_DIR/certs/cert.pem -key-file $THYRA_CONF_DIR/certs/cert-key.pem my.massa
-    rm mkcert
-}
-
 echo ""
 
 green "INFO" "This installation script will install the last release of Thyra and will configure your local DNS to resolve .massa if needed."
@@ -86,7 +72,8 @@ check_supported_distro || exit 1
 
 install_thyra || exit 1
 
-ssl_certificate || exit 1
+green "INFO" "Generate SSL certificates:"
+generate-certificate $OS || exit 1
 
 ping -c 1 -t 1 test.massa &> /dev/null || set_local_dns || exit 1
 

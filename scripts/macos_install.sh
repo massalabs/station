@@ -1,16 +1,13 @@
 #!/bin/bash +x
 
 BINARY_URL="https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin"
-SCRIPT="MacOS"
+OS="MacOS"
 
-MKCERT_URL_ARM="https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-darwin-arm64"
-MKCERT_URL_AMD="https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-darwin-amd64"
+export THYRA_CONF_DIR=$HOME/.config/thyra
 
-THYRA_CONF_DIR=$HOME/.config/thyra
-
-green () { echo -e "\033[01;32m$1:\033[0m $2"; }
-
-fatal () { echo -e "\033[01;31m[$SCRIPT]ERROR:\033[0m $1" >&2; exit 1; }
+SCRIPT_DIR=$(dirname "$0")
+source $SCRIPT_DIR/lib/certificates.sh
+source $SCRIPT_DIR/lib/color-logs.sh
 
 architecture_version () {
     case $(uname -m) in
@@ -70,7 +67,8 @@ green "INFO" "This installation script will install the last release of Thyra an
 
 install_thyra || exit 1
 
-ssl_certificate || exit 1
+green "INFO" "Generate SSL certificates:"
+generate-certificate $OS || exit 1
 
 ping -c 1 -t 1 test.massa  || set_local_dns || exit 1
 
