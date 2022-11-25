@@ -4,3 +4,5 @@ wallet_*.json
 
 # air temporary directory
 tmp/
+
+/plugins/

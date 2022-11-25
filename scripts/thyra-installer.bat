@@ -63,6 +63,8 @@ ECHO 127.0.0.1 *.massa >> %ACRYLIC_PATH%\AcrylicHosts.txt
 NET STOP "AcrylicDNSProxySvc"
 NET START "AcrylicDNSProxySvc"
 
+if not exist %homedrive%%homepath%\.config\thyra mkdir %homedrive%%homepath%\.config\thyra
+
 ECHO Installation and setup successfull
 
 PAUSE

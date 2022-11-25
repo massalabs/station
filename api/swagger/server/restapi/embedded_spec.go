@@ -337,6 +337,37 @@ func init() {
         }
       }
     },
+    "/mgmt/plugins": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "mgmtPluginsList",
+        "responses": {
+          "200": {
+            "description": "Plugins list",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Plugin"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/mgmt/wallet": {
       "get": {
         "produces": [
@@ -967,6 +998,20 @@ func init() {
         }
       }
     },
+    "Plugin": {
+      "description": "Plugin object (V0).",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Plugin's name.",
+          "type": "string"
+        },
+        "port": {
+          "description": "Plugin's port.",
+          "type": "integer"
+        }
+      }
+    },
     "Registry": {
       "description": "Registry object (V0).",
       "type": "object",
@@ -1335,6 +1380,37 @@ func init() {
                   }
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/mgmt/plugins": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "mgmtPluginsList",
+        "responses": {
+          "200": {
+            "description": "Plugins list",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Plugin"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           }
         }
@@ -2012,6 +2088,20 @@ func init() {
           "items": {
             "type": "number"
           }
+        }
+      }
+    },
+    "Plugin": {
+      "description": "Plugin object (V0).",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Plugin's name.",
+          "type": "string"
+        },
+        "port": {
+          "description": "Plugin's port.",
+          "type": "integer"
         }
       }
     },

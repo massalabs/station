@@ -80,7 +80,7 @@ func CreateNewWallet(nickname *string, password *string, storage *sync.Map, newW
 			})
 	}
 
-	err = os.WriteFile(wallet.GetWalletDirectory()+"wallet_"+*nickname+".json", bytesOutput, fileModeUserRW)
+	err = os.WriteFile(wallet.GetWalletFile(*nickname), bytesOutput, fileModeUserRW)
 	if err != nil {
 		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 			&models.Error{

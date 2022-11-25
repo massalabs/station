@@ -12,8 +12,10 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/int/api/cmd"
+	"github.com/massalabs/thyra/int/api/plugin"
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
+	pluginmanager "github.com/massalabs/thyra/pkg/plugins"
 )
 
 func parseFlags(server *restapi.Server) {
@@ -58,27 +60,12 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 	os.Setenv("MASSA_NODE_URL", *massaNodeServerPtr)
 }
 
-func StartServer(app *fyne.App) {
-	// Initialize Swagger
-	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	localAPI := operations.NewThyraServerAPI(swaggerSpec)
-	server := restapi.NewServer(localAPI)
-
-	defer func() {
-		if err := server.Shutdown(); err != nil {
-			log.Fatalln(err)
-		}
-	}()
-
-	parseFlags(server)
-
+func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *pluginmanager.PluginManager) {
 	var walletStorage sync.Map
 
 	localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(cmd.CreateExecuteFunctionHandler(app))
+
+	localAPI.MgmtPluginsListHandler = plugin.NewGet(manager)
 
 	localAPI.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
 	localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
@@ -104,10 +91,38 @@ func StartServer(app *fyne.App) {
 
 	localAPI.ThyraWalletHandler = operations.ThyraWalletHandlerFunc(ThyraWalletHandler)
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
+}
 
+func StartServer(app *fyne.App) {
+	// Initialize Swagger
+	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	localAPI := operations.NewThyraServerAPI(swaggerSpec)
+	server := restapi.NewServer(localAPI)
+
+	parseFlags(server)
+
+	// Run plugins
+	manager, err := pluginmanager.New(server.Port, server.TLSPort)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	defer func() {
+		manager.StopPlugins()
+
+		if err := server.Shutdown(); err != nil {
+			log.Fatalln(err)
+		}
+
+		(*app).Quit()
+	}()
+
+	initLocalAPI(localAPI, app, manager)
 	server.ConfigureAPI()
-
-	defer (*app).Quit()
 
 	if err := server.Serve(); err != nil {
 		//nolint:gocritic
