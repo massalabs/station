@@ -156,10 +156,11 @@ func LoadAll() (wallets []Wallet, e error) {
 }
 
 func GetListOfAddresses(mywallets []Wallet) []string {
-	var ListOfAddresses []string
-	for _, wallet := range mywallets {
-		ListOfAddresses = append(ListOfAddresses, wallet.Address)
+	ListOfAddresses := make([]string, len(mywallets))
+	for i, wallet := range mywallets {
+		ListOfAddresses[i] = wallet.Address
 	}
+
 	return ListOfAddresses
 }
 
@@ -198,6 +199,7 @@ func Imported(nickname string, privateKey string) (*Wallet, error) {
 
 	wallets, err := LoadAll()
 	ListOfAddresses := GetListOfAddresses(wallets)
+
 	if err != nil {
 		return nil, fmt.Errorf("loading wallets error: %w", err)
 	}
@@ -208,6 +210,7 @@ func Imported(nickname string, privateKey string) (*Wallet, error) {
 
 	addr := blake3.Sum256(pubKeyBytes)
 	Address := "A" + base58.CheckEncode(append(make([]byte, 1), addr[:]...))
+
 	if slices.Index(ListOfAddresses, Address) != -1 {
 		return nil, fmt.Errorf("wallet already imported: %w", err)
 	}
