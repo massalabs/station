@@ -23,65 +23,11 @@ on:
         default: true
 
 env:
-  GO_VERSION: 1.19
   RELEASE_VERSION: ${{ github.event.inputs.release-version }}
   RELEASE_AS_DRAFT: ${{ github.event.inputs.release-as-draft }}
   RELEASE_AS_PRERELEASE: ${{ github.event.inputs.release-as-prerelease }}
   GENERATE_RELEASE_NOTES: ${{ github.event.inputs.generate-release-notes }}
 
 jobs:
-
-  lint:
-    uses: ./.github/workflows/lint.yml
-
-  tests:
-    uses: ./.github/workflows/tests.yml
-
   build-release:
-    name: create release with assets
-    needs: [lint, tests]
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            arch: amd64
-            target: windows
-            cc: x86_64-w64-mingw32-gcc
-            cxx: CXX=x86_64-w64-mingw32-g++
-          - os: ubuntu-latest
-            arch: amd64
-            target: linux
-            cc: gcc
-            cxx: g++
-          - os: macos-latest
-            arch: amd64
-            target: darwin
-            cc: ""
-            cxx: ""
-          - os: macos-latest
-            arch: arm64
-            target: darwin
-            cc: ""
-            cxx: ""
-    runs-on: ${{ matrix.os }} 
-    steps:
-      - uses: actions/checkout@v3
-      - name: installing dependencies
-        uses: ./.github/actions/install
-        with:
-          os: ${{ matrix.os }}
-      - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
-        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ matrix.target }}-${{ matrix.arch }}-binary
-          path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
-      - name: Create release and upload binaries
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ env.RELEASE_VERSION }}
-          draft: ${{ env.RELEASE_AS_DRAFT }}
-          prerelease: ${{ env.RELEASE_AS_PRERELEASE }}
-          generate_release_notes: ${{ env.GENERATE_RELEASE_NOTES }}
-          files: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
+    uses: ./.github/workflows/build.yml
