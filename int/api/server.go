@@ -1,8 +1,8 @@
 package api
 
 import (
+	_ "embed"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -16,6 +16,9 @@ import (
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
 )
+
+//go:embed version.txt
+var version string
 
 func parseFlags(server *restapi.Server) bool {
 	const httpPort = 80
@@ -62,7 +65,16 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 	os.Setenv("MASSA_NODE_URL", *massaNodeServerPtr)
 }
 
-//nolint:funlen
+func stopServer(app *fyne.App, server *restapi.Server) {
+	defer func() {
+		if err := server.Shutdown(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
+
+	defer (*app).Quit()
+}
+
 func StartServer(app *fyne.App) {
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
@@ -73,57 +85,50 @@ func StartServer(app *fyne.App) {
 	localAPI := operations.NewThyraServerAPI(swaggerSpec)
 	server := restapi.NewServer(localAPI)
 
-	defer func() {
-		if err := server.Shutdown(); err != nil {
-			log.Fatalln(err)
-		}
-	}()
-
 	hasVersionFlag := parseFlags(server)
 
 	if hasVersionFlag {
-		//nolint:forbidigo
-		fmt.Println("Thyra version", versionStr)
+		log.Println("Thyra version", version)
+		stopServer(app, server)
 
-		defer (*app).Quit()
-	} else {
-		var walletStorage sync.Map
-
-		localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(
-			cmd.CreateExecuteFunctionHandler(app))
-
-		localAPI.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
-		localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
-		localAPI.MgmtWalletImportHandler = wallet.NewImport(&walletStorage)
-		localAPI.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage, app)
-
-		localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(
-			websites.CreatePrepareForWebsiteHandler(app),
-		)
-		localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(
-			websites.CreateUploadWebsiteHandler(app),
-		)
-		localAPI.WebsiteUploadMissingChunksHandler = operations.WebsiteUploadMissingChunksHandlerFunc(
-			websites.CreateUploadMissingChunksHandler(app),
-		)
-		localAPI.MyDomainsGetterHandler = operations.MyDomainsGetterHandlerFunc(websites.DomainsHandler)
-		localAPI.AllDomainsGetterHandler = operations.AllDomainsGetterHandlerFunc(websites.RegistryHandler)
-
-		localAPI.ThyraRegistryHandler = operations.ThyraRegistryHandlerFunc(ThyraRegistryHandler)
-
-		localAPI.ThyraEventsGetterHandler = operations.ThyraEventsGetterHandlerFunc(EventListenerHandler)
-		localAPI.BrowseHandler = operations.BrowseHandlerFunc(BrowseHandler)
-
-		localAPI.ThyraWalletHandler = operations.ThyraWalletHandlerFunc(ThyraWalletHandler)
-		localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
-
-		server.ConfigureAPI()
-
-		defer (*app).Quit()
-
-		if err := server.Serve(); err != nil {
-			//nolint:gocritic
-			log.Fatalln(err)
-		}
+		return
 	}
+
+	var walletStorage sync.Map
+
+	localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(
+		cmd.CreateExecuteFunctionHandler(app))
+
+	localAPI.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
+	localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
+	localAPI.MgmtWalletImportHandler = wallet.NewImport(&walletStorage)
+	localAPI.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage, app)
+
+	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(
+		websites.CreatePrepareForWebsiteHandler(app),
+	)
+	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(
+		websites.CreateUploadWebsiteHandler(app),
+	)
+	localAPI.WebsiteUploadMissingChunksHandler = operations.WebsiteUploadMissingChunksHandlerFunc(
+		websites.CreateUploadMissingChunksHandler(app),
+	)
+	localAPI.MyDomainsGetterHandler = operations.MyDomainsGetterHandlerFunc(websites.DomainsHandler)
+	localAPI.AllDomainsGetterHandler = operations.AllDomainsGetterHandlerFunc(websites.RegistryHandler)
+
+	localAPI.ThyraRegistryHandler = operations.ThyraRegistryHandlerFunc(ThyraRegistryHandler)
+
+	localAPI.ThyraEventsGetterHandler = operations.ThyraEventsGetterHandlerFunc(EventListenerHandler)
+	localAPI.BrowseHandler = operations.BrowseHandlerFunc(BrowseHandler)
+
+	localAPI.ThyraWalletHandler = operations.ThyraWalletHandlerFunc(ThyraWalletHandler)
+	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
+
+	server.ConfigureAPI()
+
+	if err := server.Serve(); err != nil {
+		log.Fatalln(err)
+	}
+
+	stopServer(app, server)
 }
