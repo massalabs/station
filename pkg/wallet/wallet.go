@@ -122,7 +122,7 @@ func (w *Wallet) Unprotect(password string, keyPairIndex uint8) error {
 			err,
 		)
 	}
-
+	//nolint:varnamelen
 	pk, err := aesgcm.Open(
 		nil,
 		w.KeyPairs[keyPairIndex].Nonce[:],
