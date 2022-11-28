@@ -26,7 +26,7 @@ type StartServerFlags struct {
 	Version           bool
 }
 
-func parseFlags(server *restapi.Server, startFlags StartServerFlags) {
+func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 	server.Port = startFlags.Port
 	server.TLSPort = startFlags.TLSPort
 
@@ -112,7 +112,7 @@ func StartServer(app *fyne.App, startFlags StartServerFlags) {
 	localAPI := operations.NewThyraServerAPI(swaggerSpec)
 	server := restapi.NewServer(localAPI)
 
-	parseFlags(server, startFlags)
+	setAPIFlags(server, startFlags)
 
 	// Run plugins
 	manager, err := pluginmanager.New(server.Port, server.TLSPort)
