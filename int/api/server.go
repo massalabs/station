@@ -137,6 +137,7 @@ func StartServer(app *fyne.App) {
 
 		return
 	}
+
 	initLocalAPI(localAPI, app, manager)
 	server.ConfigureAPI()
 
