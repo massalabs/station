@@ -57,15 +57,13 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 }
 
 func stopServer(app *fyne.App, server *restapi.Server, manager *pluginmanager.PluginManager) {
-	defer func() {
-		manager.StopPlugins()
+	manager.StopPlugins()
 
-		if err := server.Shutdown(); err != nil {
-			log.Fatalln(err)
-		}
+	if err := server.Shutdown(); err != nil {
+		log.Fatalln(err)
+	}
 
-		(*app).Quit()
-	}()
+	(*app).Quit()
 }
 
 func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *pluginmanager.PluginManager) {
