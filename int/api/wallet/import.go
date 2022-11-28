@@ -1,7 +1,6 @@
 package wallet
 
 import (
-	"strings"
 	"sync"
 
 	"fyne.io/fyne/v2"
@@ -60,19 +59,31 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 			})
 	}
 
-	newWallet, err := wallet.Imported(walletName, privateKey)
-	if err != nil {
-		if strings.HasPrefix(err.Error(), "wallet already imported") {
+	newWallet, RequestError := wallet.Imported(walletName, privateKey)
+	if RequestError.Err != nil {
+		if RequestError.StatusCode == 2 {
 			return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 				&models.Error{
 					Code:    errorCodeWalletAlreadyImported,
-					Message: err.Error(),
+					Message: RequestError.Err.Error(),
+				})
+		} else if RequestError.StatusCode == 0 {
+			return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
+				&models.Error{
+					Code:    errorCodeWalletEncodingB58E,
+					Message: RequestError.Err.Error(),
+				})
+		} else if RequestError.StatusCode == 1 {
+			return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
+				&models.Error{
+					Code:    errorCodeWalletLoadingWallets,
+					Message: RequestError.Err.Error(),
 				})
 		} else {
 			return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 				&models.Error{
 					Code:    errorCodeWalletCreateNew,
-					Message: err.Error(),
+					Message: RequestError.Err.Error(),
 				})
 		}
 	}

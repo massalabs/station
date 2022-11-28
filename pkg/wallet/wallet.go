@@ -48,13 +48,34 @@ type Wallet struct {
 	KeyPairs []KeyPair `json:"keyPairs"`
 }
 
+// Struct to create custom errors.
+type RequestError struct {
+	StatusCode int
+	Err        error
+}
+
+// StatusCodes To be used in Imported function for custom errors.
+const (
+	ImportedEncodingB58Error          = 0
+	ImportedLoadingWalletsError       = 1
+	ImportedAlreadyImported           = 2
+	ImportedCreateWalletFromKeysError = 3
+	ImportedNoError                   = -1
+)
+
 type Config struct {
 	// address
 	Wallets []KeyPair `json:"wallets"`
 }
 
 func (w *Wallet) Protect(password string, keyPairIndex uint8) error {
-	secretKey := pbkdf2.Key([]byte(password), w.KeyPairs[keyPairIndex].Salt[:], PBKDF2NbRound, SecretKeyLength, sha256.New)
+	secretKey := pbkdf2.Key(
+		[]byte(password),
+		w.KeyPairs[keyPairIndex].Salt[:],
+		PBKDF2NbRound,
+		SecretKeyLength,
+		sha256.New,
+	)
 
 	block, err := aes.NewCipher(secretKey)
 	if err != nil {
@@ -63,7 +84,10 @@ func (w *Wallet) Protect(password string, keyPairIndex uint8) error {
 
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
-		return fmt.Errorf("intializing the AES block cipher wrapped in a Gallois Counter Mode ciphering: %w", err)
+		return fmt.Errorf(
+			"intializing the AES block cipher wrapped in a Gallois Counter Mode ciphering: %w",
+			err,
+		)
 	}
 
 	w.KeyPairs[keyPairIndex].PrivateKey = aesgcm.Seal(
@@ -78,7 +102,13 @@ func (w *Wallet) Protect(password string, keyPairIndex uint8) error {
 }
 
 func (w *Wallet) Unprotect(password string, keyPairIndex uint8) error {
-	secretKey := pbkdf2.Key([]byte(password), w.KeyPairs[keyPairIndex].Salt[:], PBKDF2NbRound, SecretKeyLength, sha256.New)
+	secretKey := pbkdf2.Key(
+		[]byte(password),
+		w.KeyPairs[keyPairIndex].Salt[:],
+		PBKDF2NbRound,
+		SecretKeyLength,
+		sha256.New,
+	)
 
 	block, err := aes.NewCipher(secretKey)
 	if err != nil {
@@ -87,10 +117,18 @@ func (w *Wallet) Unprotect(password string, keyPairIndex uint8) error {
 
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
-		return fmt.Errorf("intializing the AES block cipher wrapped in a Gallois Counter Mode ciphering: %w", err)
+		return fmt.Errorf(
+			"intializing the AES block cipher wrapped in a Gallois Counter Mode ciphering: %w",
+			err,
+		)
 	}
 
-	pk, err := aesgcm.Open(nil, w.KeyPairs[keyPairIndex].Nonce[:], w.KeyPairs[keyPairIndex].PrivateKey, nil)
+	pk, err := aesgcm.Open(
+		nil,
+		w.KeyPairs[keyPairIndex].Nonce[:],
+		w.KeyPairs[keyPairIndex].PrivateKey,
+		nil,
+	)
 	if err != nil {
 		return fmt.Errorf("opening the cipher seal: %w", err)
 	}
@@ -155,15 +193,6 @@ func LoadAll() (wallets []Wallet, e error) {
 	return wallets, nil
 }
 
-func GetListOfAddresses(mywallets []Wallet) []string {
-	ListOfAddresses := make([]string, len(mywallets))
-	for i, wallet := range mywallets {
-		ListOfAddresses[i] = wallet.Address
-	}
-
-	return ListOfAddresses
-}
-
 func Load(nickname string) (*Wallet, error) {
 	bytesInput, err := os.ReadFile(GetWalletFile(nickname))
 	if err != nil {
@@ -191,17 +220,21 @@ func New(nickname string) (*Wallet, error) {
 	return CreateWalletFromKeys(nickname, privKey, pubKey, addr)
 }
 
-func Imported(nickname string, privateKey string) (*Wallet, error) {
+func Imported(nickname string, privateKey string) (*Wallet, RequestError) {
 	privKeyBytes, _, err := base58.VersionedCheckDecode(privateKey[1:])
 	if err != nil {
-		return nil, fmt.Errorf("encoding private key B58: %w", err)
+		return nil, RequestError{
+			StatusCode: ImportedEncodingB58Error,
+			Err:        fmt.Errorf("encoding private key B58: %w", err),
+		}
 	}
 
 	wallets, err := LoadAll()
-	ListOfAddresses := GetListOfAddresses(wallets)
-
 	if err != nil {
-		return nil, fmt.Errorf("loading wallets error: %w", err)
+		return nil, RequestError{
+			StatusCode: ImportedLoadingWalletsError,
+			Err:        fmt.Errorf("loading wallets error: %w", err),
+		}
 	}
 
 	keypair := ed25519.NewKeyFromSeed(privKeyBytes)
@@ -211,11 +244,25 @@ func Imported(nickname string, privateKey string) (*Wallet, error) {
 	addr := blake3.Sum256(pubKeyBytes)
 	Address := "A" + base58.CheckEncode(append(make([]byte, 1), addr[:]...))
 
-	if slices.Index(ListOfAddresses, Address) != -1 {
-		return nil, fmt.Errorf("wallet already imported: %w", err)
+	if slices.IndexFunc(
+		wallets,
+		func(wallet Wallet) bool { return wallet.Address == Address },
+	) != -1 {
+		return nil, RequestError{
+			StatusCode: ImportedAlreadyImported,
+			Err:        errors.New("wallet already imported"),
+		}
 	}
 
-	return CreateWalletFromKeys(nickname, privKeyBytes, pubKeyBytes, addr)
+	WalletFromKeys, err := CreateWalletFromKeys(nickname, privKeyBytes, pubKeyBytes, addr)
+	if err != nil {
+		return nil, RequestError{
+			StatusCode: ImportedCreateWalletFromKeysError,
+			Err:        fmt.Errorf("create wallet from keys error  %w", err),
+		}
+	}
+
+	return WalletFromKeys, RequestError{StatusCode: ImportedNoError, Err: nil}
 }
 
 func Delete(nickname string) (err error) {
@@ -231,7 +278,12 @@ func AddressChecker(address string) bool {
 	return len(address) > MinAddressLength
 }
 
-func CreateWalletFromKeys(nickname string, privKeyBytes []byte, pubKeyBytes []byte, addr [32]byte) (*Wallet, error) {
+func CreateWalletFromKeys(
+	nickname string,
+	privKeyBytes []byte,
+	pubKeyBytes []byte,
+	addr [32]byte,
+) (*Wallet, error) {
 	var salt [16]byte
 
 	_, err := rand.Read(salt[:])
