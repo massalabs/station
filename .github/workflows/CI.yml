@@ -48,7 +48,7 @@ jobs:
           files: coverage.coverprofile
 
   build:
-    # if: ${{ github.ref == 'refs/heads/main' }} REMOVED FOR TESTING PURPOSES
+    if: ${{ github.ref == 'refs/heads/main' }}
     name: build and upload artifacts
     env:
       BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
