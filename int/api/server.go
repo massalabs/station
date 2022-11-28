@@ -15,6 +15,7 @@ import (
 	"github.com/massalabs/thyra/int/api/plugin"
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
+	"github.com/massalabs/thyra/pkg/node"
 	pluginmanager "github.com/massalabs/thyra/pkg/plugins"
 )
 
@@ -63,7 +64,8 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *pluginmanager.PluginManager) {
 	var walletStorage sync.Map
 
-	localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(cmd.CreateExecuteFunctionHandler(app))
+	localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(
+		cmd.CreateExecuteFunctionHandler(app))
 
 	localAPI.MgmtPluginsListHandler = plugin.NewGet(manager)
 
@@ -104,6 +106,19 @@ func StartServer(app *fyne.App) {
 	server := restapi.NewServer(localAPI)
 
 	parseFlags(server)
+
+	// Display info about node server
+	client := node.NewDefaultClient()
+	status, err := node.Status(client)
+
+	nodeVersion := "unknown"
+	if err == nil {
+		nodeVersion = *status.Version
+	} else {
+		log.Println("Could not get node version:", err)
+	}
+
+	log.Printf("Connected to node server %s (version %s)\n", os.Getenv("MASSA_NODE_URL"), nodeVersion)
 
 	// Run plugins
 	manager, err := pluginmanager.New(server.Port, server.TLSPort)
