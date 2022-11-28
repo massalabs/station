@@ -27,6 +27,9 @@ install_thyra () {
 
     chmod +x thyra-server || fatal "change to executable failed."
     sudo mv thyra-server /usr/local/bin/ || fatal "move to /usr/local/bin/ failed."
+
+    # Create config dir
+    mkdir -p $HOME/.config/thyra
 }
 
 configure_network_manager () {

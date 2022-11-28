@@ -337,6 +337,37 @@ func init() {
         }
       }
     },
+    "/mgmt/plugins": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "mgmtPluginsList",
+        "responses": {
+          "200": {
+            "description": "Plugins list",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Plugin"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/mgmt/wallet": {
       "get": {
         "produces": [
@@ -372,20 +403,12 @@ func init() {
           "application/json"
         ],
         "operationId": "mgmtWalletImport",
-        "parameters": [
-          {
-            "x-nullable": false,
-            "name": "body",
-            "in": "body",
-            "required": true,
+        "responses": {
+          "200": {
+            "description": "New wallet created.",
             "schema": {
               "$ref": "#/definitions/Wallet"
             }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Wallet imported."
           },
           "400": {
             "description": "Bad request.",
@@ -975,6 +998,20 @@ func init() {
         }
       }
     },
+    "Plugin": {
+      "description": "Plugin object (V0).",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Plugin's name.",
+          "type": "string"
+        },
+        "port": {
+          "description": "Plugin's port.",
+          "type": "integer"
+        }
+      }
+    },
     "Registry": {
       "description": "Registry object (V0).",
       "type": "object",
@@ -983,16 +1020,13 @@ func init() {
           "description": "Website's address.",
           "type": "string"
         },
-        "created_at": {
-          "description": "Creation date of the website.",
-          "type": "string"
+        "metadata": {
+          "description": "byte array as string including created_at and updated_at values",
+          "type": "string",
+          "format": "byte"
         },
         "name": {
           "description": "Website's name.",
-          "type": "string"
-        },
-        "updated_at": {
-          "description": "Update date of the website.",
           "type": "string"
         }
       }
@@ -1351,6 +1385,37 @@ func init() {
         }
       }
     },
+    "/mgmt/plugins": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "mgmtPluginsList",
+        "responses": {
+          "200": {
+            "description": "Plugins list",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Plugin"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/mgmt/wallet": {
       "get": {
         "produces": [
@@ -1386,20 +1451,12 @@ func init() {
           "application/json"
         ],
         "operationId": "mgmtWalletImport",
-        "parameters": [
-          {
-            "x-nullable": false,
-            "name": "body",
-            "in": "body",
-            "required": true,
+        "responses": {
+          "200": {
+            "description": "New wallet created.",
             "schema": {
               "$ref": "#/definitions/Wallet"
             }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Wallet imported."
           },
           "400": {
             "description": "Bad request.",
@@ -2034,6 +2091,20 @@ func init() {
         }
       }
     },
+    "Plugin": {
+      "description": "Plugin object (V0).",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Plugin's name.",
+          "type": "string"
+        },
+        "port": {
+          "description": "Plugin's port.",
+          "type": "integer"
+        }
+      }
+    },
     "Registry": {
       "description": "Registry object (V0).",
       "type": "object",
@@ -2042,16 +2113,13 @@ func init() {
           "description": "Website's address.",
           "type": "string"
         },
-        "created_at": {
-          "description": "Creation date of the website.",
-          "type": "string"
+        "metadata": {
+          "description": "byte array as string including created_at and updated_at values",
+          "type": "string",
+          "format": "byte"
         },
         "name": {
           "description": "Website's name.",
-          "type": "string"
-        },
-        "updated_at": {
-          "description": "Update date of the website.",
           "type": "string"
         }
       }

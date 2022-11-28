@@ -168,18 +168,13 @@ paths:
             $ref: "#/definitions/Error"
     put:
       operationId: mgmtWalletImport
-      parameters:
-        - in: body
-          name: body
-          required: true
-          x-nullable: false
-          schema:
-            $ref: "#/definitions/Wallet"
       produces:
         - application/json
       responses:
-        "204":
-          description: Wallet imported.
+        "200":
+          description: New wallet created.
+          schema:
+            $ref: "#/definitions/Wallet"
         "400":
           description: Bad request.
           schema:
@@ -605,6 +600,26 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /mgmt/plugins:
+    get:
+      operationId: mgmtPluginsList
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Plugins list
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Plugin"
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
   /all/domains:
     get:
       operationId: allDomainsGetter
@@ -720,9 +735,17 @@ definitions:
       address:
         description: Website's address.
         type: string
-      created_at:
-        description: Creation date of the website.
+      metadata:
+        description: byte array as string including created_at and updated_at values
         type: string
-      updated_at:
-        description: Update date of the website.
+        format: byte
+  Plugin:
+    type: object
+    description: Plugin object (V0).
+    properties:
+      name:
+        description: Plugin's name.
         type: string
+      port:
+        description: Plugin's port.
+        type: integer

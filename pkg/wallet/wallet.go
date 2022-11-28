@@ -10,8 +10,11 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
+	"reflect"
 	"strings"
 
+	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"golang.org/x/crypto/pbkdf2"
 	"gopkg.in/yaml.v3"
@@ -24,7 +27,6 @@ const (
 	SecretKeyLength           = 32
 	PBKDF2NbRound             = 10000
 	FileModeUserReadWriteOnly = 0o600
-	WalletDirectoryPermission = 0o755
 	MinAddressLength          = 49
 )
 
@@ -116,30 +118,24 @@ func FromYAML(raw []byte) (w Wallet, err error) {
 	return
 }
 
-func GetWalletDirectory() string {
-	walletDirectory := os.Getenv("HOME") + "/.config/thyra/"
-	if _, err := os.Stat(walletDirectory); os.IsNotExist(err) {
-		if os.MkdirAll(walletDirectory, WalletDirectoryPermission) != nil {
-			walletDirectory = ""
-		}
-	}
-
-	return walletDirectory
-}
-
 func LoadAll() (wallets []Wallet, e error) {
 	wallets = []Wallet{}
 
-	files, err := os.ReadDir(GetWalletDirectory())
+	configDir, err := config.GetConfigDir()
 	if err != nil {
-		return nil, fmt.Errorf("reading wallet directory '%s': %w", GetWalletDirectory(), err)
+		return nil, fmt.Errorf("reading config directory '%s': %w", configDir, err)
+	}
+
+	files, err := os.ReadDir(configDir)
+	if err != nil {
+		return nil, fmt.Errorf("reading wallet directory '%s': %w", configDir, err)
 	}
 
 	for _, f := range files {
 		fileName := f.Name()
 
 		if strings.HasPrefix(fileName, "wallet_") && strings.HasSuffix(fileName, ".json") {
-			bytesInput, err := os.ReadFile(GetWalletDirectory() + fileName)
+			bytesInput, err := os.ReadFile(path.Join(configDir, fileName))
 			if err != nil {
 				return nil, fmt.Errorf("reading file '%s': %w", fileName, err)
 			}
@@ -159,7 +155,7 @@ func LoadAll() (wallets []Wallet, e error) {
 }
 
 func Load(nickname string) (*Wallet, error) {
-	bytesInput, err := os.ReadFile(GetWalletDirectory() + "wallet_" + nickname + ".json")
+	bytesInput, err := os.ReadFile(GetWalletFile(nickname))
 	if err != nil {
 		return nil, fmt.Errorf("reading file 'wallet_%s.json': %w", nickname, err)
 	}
@@ -182,9 +178,41 @@ func New(nickname string) (*Wallet, error) {
 
 	addr := blake3.Sum256(pubKey)
 
+	return CreateWalletFromKeys(nickname, privKey, pubKey, addr)
+}
+
+func Imported(nickname string, privateKey string) (*Wallet, error) {
+	privKeyBytes, _, err := base58.VersionedCheckDecode(privateKey[1:])
+	if err != nil {
+		return nil, fmt.Errorf("encoding private key B58: %w", err)
+	}
+
+	keypair := ed25519.NewKeyFromSeed(privKeyBytes)
+
+	pubKeyBytes := reflect.ValueOf(keypair.Public()).Bytes() // force conversion to byte array
+
+	addr := blake3.Sum256(pubKeyBytes)
+
+	return CreateWalletFromKeys(nickname, privKeyBytes, pubKeyBytes, addr)
+}
+
+func Delete(nickname string) (err error) {
+	err = os.Remove(GetWalletFile(nickname))
+	if err != nil {
+		return fmt.Errorf("deleting wallet 'wallet_%s.json': %w", nickname, err)
+	}
+
+	return nil
+}
+
+func AddressChecker(address string) bool {
+	return len(address) > MinAddressLength
+}
+
+func CreateWalletFromKeys(nickname string, privKeyBytes []byte, pubKeyBytes []byte, addr [32]byte) (*Wallet, error) {
 	var salt [16]byte
 
-	_, err = rand.Read(salt[:])
+	_, err := rand.Read(salt[:])
 	if err != nil {
 		return nil, fmt.Errorf("generating random salt: %w", err)
 	}
@@ -201,8 +229,8 @@ func New(nickname string) (*Wallet, error) {
 		Nickname: nickname,
 		Address:  "A" + base58.CheckEncode(append(make([]byte, 1), addr[:]...)),
 		KeyPairs: []KeyPair{{
-			PrivateKey: privKey,
-			PublicKey:  pubKey,
+			PrivateKey: privKeyBytes,
+			PublicKey:  pubKeyBytes,
 			Salt:       salt,
 			Nonce:      nonce,
 		}},
@@ -213,7 +241,7 @@ func New(nickname string) (*Wallet, error) {
 		return nil, fmt.Errorf("marshalling wallet: %w", err)
 	}
 
-	err = os.WriteFile(GetWalletDirectory()+"wallet_"+nickname+".json", bytesOutput, FileModeUserReadWriteOnly)
+	err = os.WriteFile(GetWalletFile(nickname), bytesOutput, FileModeUserReadWriteOnly)
 	if err != nil {
 		return nil, fmt.Errorf("writing wallet to 'wallet_%s.json': %w", nickname, err)
 	}
@@ -221,15 +249,11 @@ func New(nickname string) (*Wallet, error) {
 	return &wallet, nil
 }
 
-func Delete(nickname string) (err error) {
-	err = os.Remove(GetWalletDirectory() + "wallet_" + nickname + ".json")
+func GetWalletFile(nickname string) string {
+	configDir, err := config.GetConfigDir()
 	if err != nil {
-		return fmt.Errorf("deleting wallet 'wallet_%s.json': %w", nickname, err)
+		return ""
 	}
 
-	return nil
-}
-
-func AddressChecker(address string) bool {
-	return len(address) > MinAddressLength
+	return path.Join(configDir, "wallet_"+nickname+".json")
 }

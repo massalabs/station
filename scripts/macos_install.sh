@@ -22,6 +22,9 @@ install_thyra () {
     chmod +x thyra-server || fatal "change to executable failed."
     $(sudo [ -d /usr/local/bin ] || sudo mkdir /usr/local/bin) || fatal "/usr/local/bin creation failed."
     sudo mv thyra-server /usr/local/bin/ || fatal "move to /usr/local/bin/ failed."
+
+    # Create config dir
+    mkdir -p $HOME/.config/thyra
 }
 
 configure_start_dnsmasq () {

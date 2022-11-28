@@ -13,8 +13,10 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/int/api/cmd"
+	"github.com/massalabs/thyra/int/api/plugin"
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
+	pluginmanager "github.com/massalabs/thyra/pkg/plugins"
 )
 
 //go:embed version.txt
@@ -65,43 +67,29 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 	os.Setenv("MASSA_NODE_URL", *massaNodeServerPtr)
 }
 
-func stopServer(app *fyne.App, server *restapi.Server) {
+func stopServer(app *fyne.App, server *restapi.Server, manager *pluginmanager.PluginManager) {
 	defer func() {
+		manager.StopPlugins()
+
 		if err := server.Shutdown(); err != nil {
 			log.Fatalln(err)
 		}
-	}()
 
-	defer (*app).Quit()
+		(*app).Quit()
+	}()
 }
 
-func StartServer(app *fyne.App) {
-	// Initialize Swagger
-	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	localAPI := operations.NewThyraServerAPI(swaggerSpec)
-	server := restapi.NewServer(localAPI)
-
-	hasVersionFlag := parseFlags(server)
-
-	if hasVersionFlag {
-		log.Println("Thyra version", version)
-		stopServer(app, server)
-
-		return
-	}
-
+func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *pluginmanager.PluginManager) {
 	var walletStorage sync.Map
 
 	localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(
 		cmd.CreateExecuteFunctionHandler(app))
 
+	localAPI.MgmtPluginsListHandler = plugin.NewGet(manager)
+
 	localAPI.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
 	localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
-	localAPI.MgmtWalletImportHandler = wallet.NewImport(&walletStorage)
+	localAPI.MgmtWalletImportHandler = wallet.NewImport(&walletStorage, app)
 	localAPI.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage, app)
 
 	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(
@@ -123,12 +111,38 @@ func StartServer(app *fyne.App) {
 
 	localAPI.ThyraWalletHandler = operations.ThyraWalletHandlerFunc(ThyraWalletHandler)
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
+}
 
+func StartServer(app *fyne.App) {
+	// Initialize Swagger
+	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	localAPI := operations.NewThyraServerAPI(swaggerSpec)
+	server := restapi.NewServer(localAPI)
+
+	hasVersionFlag := parseFlags(server)
+
+	// Run plugins
+	manager, err := pluginmanager.New(server.Port, server.TLSPort)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	if hasVersionFlag {
+		log.Println("Thyra version", version)
+		stopServer(app, server, manager)
+
+		return
+	}
+	initLocalAPI(localAPI, app, manager)
 	server.ConfigureAPI()
 
 	if err := server.Serve(); err != nil {
 		log.Fatalln(err)
 	}
 
-	stopServer(app, server)
+	stopServer(app, server, manager)
 }

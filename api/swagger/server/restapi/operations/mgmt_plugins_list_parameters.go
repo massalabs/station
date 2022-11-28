@@ -12,19 +12,19 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 )
 
-// NewMgmtWalletImportParams creates a new MgmtWalletImportParams object
+// NewMgmtPluginsListParams creates a new MgmtPluginsListParams object
 //
 // There are no default values defined in the spec.
-func NewMgmtWalletImportParams() MgmtWalletImportParams {
+func NewMgmtPluginsListParams() MgmtPluginsListParams {
 
-	return MgmtWalletImportParams{}
+	return MgmtPluginsListParams{}
 }
 
-// MgmtWalletImportParams contains all the bound params for the mgmt wallet import operation
+// MgmtPluginsListParams contains all the bound params for the mgmt plugins list operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters mgmtWalletImport
-type MgmtWalletImportParams struct {
+// swagger:parameters mgmtPluginsList
+type MgmtPluginsListParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -33,8 +33,8 @@ type MgmtWalletImportParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewMgmtWalletImportParams() beforehand.
-func (o *MgmtWalletImportParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewMgmtPluginsListParams() beforehand.
+func (o *MgmtPluginsListParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r

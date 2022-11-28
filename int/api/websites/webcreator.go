@@ -1,6 +1,8 @@
 package websites
 
 import (
+	"archive/zip"
+	"bytes"
 	"encoding/base64"
 	"io"
 	"net/http"
@@ -14,6 +16,7 @@ import (
 	"github.com/massalabs/thyra/pkg/gui"
 	"github.com/massalabs/thyra/pkg/onchain/website"
 	"github.com/massalabs/thyra/pkg/wallet"
+	"golang.org/x/exp/slices"
 )
 
 const UploadMaxSize = "UPLOAD_MAX_SIZE"
@@ -26,6 +29,15 @@ func CreatePrepareForWebsiteHandler(
 	return func(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
 		return prepareForWebsiteHandler(params, app)
 	}
+}
+
+func listFileName(zipReader *zip.Reader) []string {
+	FilesInArchive := []string{}
+	for _, zipFile := range zipReader.File {
+		FilesInArchive = append(FilesInArchive, zipFile.Name)
+	}
+
+	return FilesInArchive
 }
 
 //nolint:nolintlint,ireturn,funlen
@@ -61,8 +73,11 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 		return createInternalServerError(errorCodeWebCreatorArchiveSize, errorCodeWebCreatorArchiveSize)
 	}
 
-	if !checkContentType(archive, "application/zip") {
-		return createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
+	zipReader, _ := zip.NewReader(bytes.NewReader(archive), int64(len(archive)))
+	FilesOfArchive := listFileName(zipReader)
+
+	if slices.Index(FilesOfArchive, "index.html") == -1 {
+		return createInternalServerError(errorCodeWebCreatorHTMLNotInSource, errorCodeWebCreatorHTMLNotInSource)
 	}
 
 	b64 := base64.StdEncoding.EncodeToString(archive)

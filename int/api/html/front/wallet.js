@@ -1,33 +1,16 @@
-document.getElementById("import-wallet").addEventListener("click", openDialog);
-document.getElementById("fileid").addEventListener("change", handleFileSelect, true);
+document.getElementById("import-wallet").addEventListener("click", importWallet);
 
 getWallets();
 
 let wallets = [];
 
-// open file upload
-function openDialog() {
-    document.getElementById("fileid").value = null;
-    document.getElementById("fileid").click();
-}
-
-// Handle event on file selecting
-function handleFileSelect(evt) {
-    let files = evt.target.files; // get files
-    let f = files[0];
-    const reader = new FileReader();
-    reader.onload = (event) => importWallet(JSON.parse(event.target.result)); // desired file content
-    reader.onerror = (error) => reject(error);
-    reader.readAsText(f);
-}
-
 // Import a wallet through PUT query
-async function importWallet(wallet) {
+async function importWallet() {
     axios
-        .put("/mgmt/wallet", wallet)
-        .then((_) => {
-            tableInsert(wallet);
-            wallets.push(wallet);
+        .put("/mgmt/wallet")
+        .then((resp) => {
+            tableInsert(resp.data);
+            wallets.push(resp.data);
         })
         .catch(handleAPIError);
 }

@@ -7,3 +7,5 @@ tmp/
 # IDE
 .idea
 .vscode
+
+/plugins/
