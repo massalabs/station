@@ -1,0 +1,61 @@
+name: build and upload artifacts
+on:
+  push:
+    tags:
+      - v[0-9]+.*
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+
+  lint:
+    uses: ./.github/workflows/lint.yml
+
+  tests:
+    uses: ./.github/workflows/tests.yml
+
+  build:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: [lint, tests]
+    name: build and upload artifacts
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            arch: amd64
+            target: windows
+            cc: x86_64-w64-mingw32-gcc
+            cxx: CXX=x86_64-w64-mingw32-g++
+          - os: ubuntu-latest
+            arch: amd64
+            target: linux
+            cc: gcc
+            cxx: g++
+          - os: macos-latest
+            arch: amd64
+            target: darwin
+            cc: ""
+            cxx: ""
+          - os: macos-latest
+            arch: arm64
+            target: darwin
+            cc: ""
+            cxx: ""
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: installing dependencies
+        uses: ./.github/actions/install
+        with:
+          os: ${{ matrix.os }}
+      - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
+        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.target }}-${{ matrix.arch }}-binary
+          path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
