@@ -118,12 +118,13 @@ func StartServer(app *fyne.App, startFlags StartServerFlags) {
 		log.Fatalln(err)
 	}
 
+	defer stopServer(app, server, manager)
+
 	initLocalAPI(localAPI, app, manager)
 	server.ConfigureAPI()
 
 	if err := server.Serve(); err != nil {
+		//nolint:gocritic
 		log.Fatalln(err)
 	}
-
-	stopServer(app, server, manager)
 }
