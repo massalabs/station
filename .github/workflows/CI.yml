@@ -48,7 +48,7 @@ jobs:
           files: coverage.coverprofile
 
   build:
-    if: ${{ github.ref == 'refs/heads/main' }}
+    # if: ${{ github.ref == 'refs/heads/main' }} REMOVED FOR TESTING PURPOSES
     name: build and upload artifacts
     env:
       BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
@@ -93,7 +93,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Update version
         run: |
-          echo -e "package api\n\nconst version_str=\"${GITHUB_REF_NAME}\"" > int/api/server_version.go
+          echo -e "${GITHUB_REF_NAME}" > int/api/version.txt
       - name: Install the Apple certificate and provisioning profile
         if: startsWith(matrix.os, 'macos-')
         run: |
