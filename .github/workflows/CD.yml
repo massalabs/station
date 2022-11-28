@@ -59,7 +59,7 @@ jobs:
     steps:
       - name: installing dependencies
         if: startsWith(matrix.os, 'ubuntu-')
-        run: sudo apt install -y libgl1-mesa-dev xorg-dev gcc-mingw-w64-x86-64
+        run: sudo apt update && sudo apt install -y libgl1-mesa-dev xorg-dev gcc-mingw-w64-x86-64
       - name: Select the latest version of Xcode
         if: startsWith(matrix.os, 'macos-')
         uses: devbotsxyz/xcode-select@v1
