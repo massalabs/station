@@ -1,8 +1,6 @@
 package api
 
 import (
-	_ "embed"
-	"flag"
 	"log"
 	"os"
 	"sync"
@@ -19,37 +17,28 @@ import (
 	pluginmanager "github.com/massalabs/thyra/pkg/plugins"
 )
 
-//go:embed version.txt
-var version string
+type StartServerFlags struct {
+	Port              int
+	TLSPort           int
+	TLSCertificate    string
+	TLSCertificateKey string
+	MassaNodeServer   string
+	Version           bool
+}
 
-func parseFlags(server *restapi.Server) bool {
-	const httpPort = 80
+func parseFlags(server *restapi.Server, startFlags StartServerFlags) {
+	server.Port = startFlags.Port
+	server.TLSPort = startFlags.TLSPort
 
-	const httpsPort = 443
-
-	flag.IntVar(&server.Port, "http-port", httpPort, "HTTP port to listen to")
-
-	flag.IntVar(&server.TLSPort, "https-port", httpsPort, "HTTPS port to listen to")
-
-	certFilePtr := flag.String("tls-certificate", "", "path to certificate file")
-	keyFilePtr := flag.String("tls-key", "", "path to key file")
-	massaNodeServerPtr := flag.String("node-server", "TESTNET", `Massa node that Thyra connects to. 
-	Can be an IP address, a URL or one of the following values: 'TESTNET', 'LABNET', 'INNONET' or LOCALHOST`)
-	version := flag.Bool("version", false, "Print version info and exit")
-
-	flag.Parse()
-
-	if *certFilePtr != "" {
-		server.TLSCertificate = flags.Filename(*certFilePtr)
+	if startFlags.TLSCertificate != "" {
+		server.TLSCertificate = flags.Filename(startFlags.TLSCertificate)
 	}
 
-	if *keyFilePtr != "" {
-		server.TLSCertificateKey = flags.Filename(*keyFilePtr)
+	if startFlags.TLSCertificateKey != "" {
+		server.TLSCertificateKey = flags.Filename(startFlags.TLSCertificateKey)
 	}
 
-	parseNetworkFlag(massaNodeServerPtr)
-
-	return *version
+	parseNetworkFlag(&startFlags.MassaNodeServer)
 }
 
 func parseNetworkFlag(massaNodeServerPtr *string) {
@@ -113,7 +102,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *p
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
 }
 
-func StartServer(app *fyne.App) {
+func StartServer(app *fyne.App, startFlags StartServerFlags) {
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
@@ -123,19 +112,12 @@ func StartServer(app *fyne.App) {
 	localAPI := operations.NewThyraServerAPI(swaggerSpec)
 	server := restapi.NewServer(localAPI)
 
-	hasVersionFlag := parseFlags(server)
+	parseFlags(server, startFlags)
 
 	// Run plugins
 	manager, err := pluginmanager.New(server.Port, server.TLSPort)
 	if err != nil {
 		log.Fatalln(err)
-	}
-
-	if hasVersionFlag {
-		log.Println("Thyra version", version)
-		stopServer(app, server, manager)
-
-		return
 	}
 
 	initLocalAPI(localAPI, app, manager)
