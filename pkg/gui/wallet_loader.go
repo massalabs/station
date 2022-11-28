@@ -50,7 +50,6 @@ func LoadWalletDialog(app *fyne.App) chan WalletInfoEntry {
 		Items: items,
 		OnSubmit: func() {
 			window.Hide()
-			//nolint:gofumpt
 			walletInfoEntry <- WalletInfoEntry{
 				ClearPassword: password.Text,
 				WalletName:    walletName.Text,
@@ -59,7 +58,6 @@ func LoadWalletDialog(app *fyne.App) chan WalletInfoEntry {
 			}
 		},
 		OnCancel: func() {
-			//nolint:gofumpt
 			walletInfoEntry <- WalletInfoEntry{
 				ClearPassword: "",
 				WalletName:    "", PrivateKey: "",
