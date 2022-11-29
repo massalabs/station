@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"errors"
 	"sync"
 
 	"fyne.io/fyne/v2"
@@ -47,20 +48,13 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 		return NewWalletError(errorCodeWalletCreateNoPassword, "Error: password field is mandatory.")
 	}
 
-	newWallet, RequestError := wallet.Imported(walletName, privateKey)
-	if RequestError.Err != nil {
-		ErrorString := RequestError.Err.Error()
-
-		switch {
-		case RequestError.StatusCode == wallet.ImportedAlreadyImported:
-			return NewWalletError(errorCodeWalletAlreadyImported, ErrorString)
-		case RequestError.StatusCode == wallet.ImportedEncodingB58Error:
-			return NewWalletError(errorCodeWalletEncodingB58E, ErrorString)
-		case RequestError.StatusCode == wallet.ImportedLoadingWalletsError:
-			return NewWalletError(errorCodeWalletLoadingWallets, ErrorString)
-		default:
-			return NewWalletError(errorCodeWalletCreateNew, ErrorString)
+	newWallet, Err := wallet.Imported(walletName, privateKey)
+	if Err != nil {
+		if errors.Is(Err, wallet.ErrWalletAlreadyImported) {
+			return NewWalletError(errorCodeWalletAlreadyImported, wallet.ErrWalletAlreadyImported.Error())
 		}
+
+		return NewWalletError(errorCodeWalletCreateNew, Err.Error())
 	}
 
 	return CreateNewWallet(&walletName, &password, c.walletStorage, newWallet)
