@@ -27,11 +27,7 @@ type wImport struct {
 func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Responder {
 	password, walletName, privateKey, err := gui.AskWalletInfo(c.app)
 	if err != nil {
-		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-			&models.Error{
-				Code:    errorCodeWalletCreateNew,
-				Message: err.Error(),
-			})
+		return NewWalletError(errorCodeWalletCreateNew, err.Error())
 	}
 
 	if len(walletName) == 0 {
@@ -44,50 +40,37 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 
 	_, inStore := c.walletStorage.Load(walletName)
 	if inStore {
-		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-			&models.Error{
-				Code:    errorCodeWalletAlreadyExists,
-				Message: "Error: a wallet with the same nickname already exists.",
-			})
+		return NewWalletError(errorCodeWalletAlreadyExists, "Error: a wallet with the same nickname already exists.")
 	}
 
 	if len(password) == 0 {
-		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-			&models.Error{
-				Code:    errorCodeWalletCreateNoPassword,
-				Message: "Error: password field is mandatory.",
-			})
+		return NewWalletError(errorCodeWalletCreateNoPassword, "Error: password field is mandatory.")
 	}
 
 	newWallet, RequestError := wallet.Imported(walletName, privateKey)
 	if RequestError.Err != nil {
+		ErrorString := RequestError.Err.Error()
+
 		switch {
 		case RequestError.StatusCode == wallet.ImportedAlreadyImported:
-			return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-				&models.Error{
-					Code:    errorCodeWalletAlreadyImported,
-					Message: RequestError.Err.Error(),
-				})
+			return NewWalletError(errorCodeWalletAlreadyImported, ErrorString)
 		case RequestError.StatusCode == wallet.ImportedEncodingB58Error:
-			return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-				&models.Error{
-					Code:    errorCodeWalletEncodingB58E,
-					Message: RequestError.Err.Error(),
-				})
+			return NewWalletError(errorCodeWalletEncodingB58E, ErrorString)
 		case RequestError.StatusCode == wallet.ImportedLoadingWalletsError:
-			return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-				&models.Error{
-					Code:    errorCodeWalletLoadingWallets,
-					Message: RequestError.Err.Error(),
-				})
+			return NewWalletError(errorCodeWalletLoadingWallets, ErrorString)
 		default:
-			return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-				&models.Error{
-					Code:    errorCodeWalletCreateNew,
-					Message: RequestError.Err.Error(),
-				})
+			return NewWalletError(errorCodeWalletCreateNew, ErrorString)
 		}
 	}
 
 	return CreateNewWallet(&walletName, &password, c.walletStorage, newWallet)
+}
+
+//nolint:nolintlint,ireturn
+func NewWalletError(errorCode string, errorMessage string) middleware.Responder {
+	return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
+		&models.Error{
+			Code:    errorCode,
+			Message: errorMessage,
+		})
 }
