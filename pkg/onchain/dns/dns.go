@@ -18,7 +18,7 @@ const DNSRawAddress = "A1QxHhhi9crDJoEAaXRjkU2w3xsusBwpwGcAGpRRFAVUUuDWf7z"
 func Resolve(client *node.Client, name string) (string, error) {
 	const dnsPrefix = "record"
 
-	entry, err := node.DatastoreEntry(client, DNSRawAddress, helper.StringtoByteArray(dnsPrefix+name))
+	entry, err := node.DatastoreEntry(client, DNSRawAddress, helper.StringToByteArray(dnsPrefix+name))
 	if err != nil {
 		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", DNSRawAddress, dnsPrefix+name, err)
 	}

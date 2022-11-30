@@ -10,7 +10,7 @@ func Uint64ToByteArrayU8(u64 uint64) []byte {
 	return b
 }
 
-func StringtoByteArray(str string) []byte {
+func StringToByteArray(str string) []byte {
 	return []byte(str)
 }
 
