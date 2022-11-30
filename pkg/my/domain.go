@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/massalabs/thyra/api/swagger/server/models"
+	"github.com/massalabs/thyra/pkg/helper"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
 	"github.com/massalabs/thyra/pkg/wallet"
@@ -27,7 +28,7 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 
 	domains := []string{}
 
-	domainsEntry, err := node.DatastoreEntry(client, dns.DNSRawAddress, ownedPrefix+wallet.Address)
+	domainsEntry, err := node.DatastoreEntry(client, dns.DNSRawAddress, helper.StringtoByteArray(ownedPrefix+wallet.Address))
 	if err != nil {
 		return nil, fmt.Errorf("reading entry '%s' at '%s': %w", dns.DNSRawAddress, ownedPrefix+wallet.Address, err)
 	}
@@ -52,7 +53,7 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	for i := 0; i < len(domainNames); i++ {
 		param := node.DatastoreEntriesKeysAsString{
 			Address: dns.DNSRawAddress,
-			Key:     recordPrefix + domainNames[i],
+			Key:     helper.StringtoByteArray(recordPrefix + domainNames[i]),
 		}
 		params = append(params, param)
 	}
@@ -89,7 +90,7 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 
 	var missedChunks []string
 
-	keyNumber, err := node.DatastoreEntry(client, address, chunkNumberKey)
+	keyNumber, err := node.DatastoreEntry(client, address, helper.StringtoByteArray(chunkNumberKey))
 	if err != nil {
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
 	}
@@ -104,7 +105,7 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 	for i := 0; i < chunkNumber; i++ {
 		entry := node.DatastoreEntriesKeysAsString{
 			Address: address,
-			Key:     "massa_web_" + strconv.Itoa(i),
+			Key:     helper.StringtoByteArray("massa_web_" + strconv.Itoa(i)),
 		}
 		entries = append(entries, entry)
 	}
