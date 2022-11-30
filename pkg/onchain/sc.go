@@ -82,7 +82,7 @@ func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (strin
 
 	datastore[[3]uint8{1, 2, 3}] = []uint8{1, 2, 3}
 	exeSC := executesc.New(contract,
-		sendOperation.DefaultGazLimit, sendOperation.NoGazFee,
+		sendOperation.DefaultGazLimit,
 		sendOperation.NoCoin, datastore)
 
 	opID, err := sendOperation.Call(

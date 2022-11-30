@@ -4,15 +4,13 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/gob"
-	"fmt"
 )
 
 const ExecuteSCOpID = 3
 
 type OperationDetails struct {
-	Data     []byte `json:"data"`
-	MaxGas   uint64 `json:"max_gas"`
-	GasPrice string `json:"gas_price"`
+	Data   []byte `json:"data"`
+	MaxGas uint64 `json:"max_gas"`
 	//nolint:tagliatelle
 	DataStore map[[3]uint8][]uint8 `json:"datastore"`
 }
@@ -25,17 +23,15 @@ type Operation struct {
 type ExecuteSC struct {
 	data      []byte
 	maxGas    uint64
-	gasPrice  uint64
 	dataStore map[[3]uint8][]uint8
 }
 
-func New(data []byte, maxGas uint64, gasPrice uint64, coins uint64, dataStore map[[3]uint8][]uint8) *ExecuteSC {
+func New(data []byte, maxGas uint64, coins uint64, dataStore map[[3]uint8][]uint8) *ExecuteSC {
 	gob.Register(map[[3]uint8]interface{}{})
 
 	return &ExecuteSC{
 		data:      data,
 		maxGas:    maxGas,
-		gasPrice:  gasPrice,
 		dataStore: dataStore,
 	}
 }
@@ -45,7 +41,6 @@ func (e *ExecuteSC) Content() interface{} {
 		ExecuteSC: OperationDetails{
 			Data:      e.data,
 			MaxGas:    e.maxGas,
-			GasPrice:  fmt.Sprint(e.gasPrice),
 			DataStore: e.dataStore,
 		},
 	}
@@ -61,10 +56,6 @@ func (e *ExecuteSC) Message() []byte {
 
 	// maxGas
 	nbBytes = binary.PutUvarint(buf, e.maxGas)
-	msg = append(msg, buf[:nbBytes]...)
-
-	// GasPrice
-	nbBytes = binary.PutUvarint(buf, e.gasPrice)
 	msg = append(msg, buf[:nbBytes]...)
 
 	// data
