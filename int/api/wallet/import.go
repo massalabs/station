@@ -51,7 +51,7 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 	newWallet, err := wallet.Imported(walletName, privateKey)
 	if err != nil {
 		if errors.Is(err, wallet.ErrWalletAlreadyImported) {
-			return NewWalletError(errorCodeWalletAlreadyImported, wallet.ErrWalletAlreadyImported.Error())
+			return NewWalletError(errorCodeWalletAlreadyImported, err.Error())
 		}
 
 		return NewWalletError(errorCodeWalletCreateNew, err.Error())
@@ -61,10 +61,10 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 }
 
 //nolint:nolintlint,ireturn
-func NewWalletError(errorCode string, errorMessage string) middleware.Responder {
+func NewWalletError(code string, message string) middleware.Responder {
 	return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 		&models.Error{
-			Code:    errorCode,
-			Message: errorMessage,
+			Code:    code,
+			Message: message,
 		})
 }
