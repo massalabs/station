@@ -58,7 +58,7 @@ func ContractDatastoreEntries(client *Client, address string, keys []string) ([]
 	for i := 0; i < len(keys); i++ {
 		entry := DatastoreEntriesKeysAsString{
 			Address: address,
-			Key:     helper.StringtoByteArray(keys[i]),
+			Key:     helper.StringToByteArray(keys[i]),
 		}
 		entries = append(entries, entry)
 	}
@@ -79,7 +79,7 @@ func DatastoreEntries(client *Client, params []DatastoreEntriesKeysAsString) ([]
 	for i := 0; i < len(params); i++ {
 		entry := getDatastoreEntries{
 			Address: params[i].Address,
-			Key:     []byte(params[i].Key),
+			Key:     params[i].Key,
 		}
 		entries[0] = append(entries[0], entry)
 	}
@@ -103,5 +103,6 @@ func DatastoreEntries(client *Client, params []DatastoreEntriesKeysAsString) ([]
 	if err != nil {
 		return nil, fmt.Errorf("parsing get_datastore_entries jsonrpc response '%+v': %w", response, err)
 	}
+
 	return entry, nil
 }
