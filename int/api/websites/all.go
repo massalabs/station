@@ -7,6 +7,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/helper"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/ledger"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
@@ -49,6 +50,7 @@ func RegistryHandler(params operations.AllDomainsGetterParams) middleware.Respon
 
 func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.Registry, error) {
 	recordKeys, err := ledger.KeysFiltered(client, dns.DNSRawAddress, recordKey)
+	// helper.StringtoByteArray(recordKeys)
 	if err != nil {
 		return nil, fmt.Errorf("filtering keys with '%+v' failed : %w", recordKey, err)
 	}
@@ -63,7 +65,7 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 	for _, record := range recordResult {
 		if wallet.AddressChecker(string(record.CandidateValue)) {
 			metadataKeys = append(metadataKeys, node.DatastoreEntriesKeysAsString{
-				Address: string(record.CandidateValue), Key: metaKey,
+				Address: string(record.CandidateValue), Key: helper.StringtoByteArray(metaKey),
 			})
 		}
 	}
