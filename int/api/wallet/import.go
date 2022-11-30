@@ -48,13 +48,13 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 		return NewWalletError(errorCodeWalletCreateNoPassword, "Error: password field is mandatory.")
 	}
 
-	newWallet, Err := wallet.Imported(walletName, privateKey)
-	if Err != nil {
-		if errors.Is(Err, wallet.ErrWalletAlreadyImported) {
+	newWallet, err := wallet.Imported(walletName, privateKey)
+	if err != nil {
+		if errors.Is(err, wallet.ErrWalletAlreadyImported) {
 			return NewWalletError(errorCodeWalletAlreadyImported, wallet.ErrWalletAlreadyImported.Error())
 		}
 
-		return NewWalletError(errorCodeWalletCreateNew, Err.Error())
+		return NewWalletError(errorCodeWalletCreateNew, err.Error())
 	}
 
 	return CreateNewWallet(&walletName, &password, c.walletStorage, newWallet)
