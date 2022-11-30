@@ -21,7 +21,7 @@ func CallFunction(client *node.Client, wallet wallet.Wallet,
 	addr []byte, function string, parameter []byte, coins uint64,
 ) (string, error) {
 	callSC := callsc.New(addr, function, parameter,
-		sendOperation.NoGazFee, sendOperation.DefaultGazLimit,
+		sendOperation.DefaultGazLimit,
 		coins)
 
 	operationID, err := sendOperation.Call(
@@ -62,7 +62,7 @@ func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet, expiryDelta
 	addr []byte, function string, parameter []byte,
 ) (string, error) {
 	callSC := callsc.New(addr, function, parameter,
-		sendOperation.NoGazFee, sendOperation.DefaultGazLimit,
+		sendOperation.DefaultGazLimit,
 		sendOperation.HundredMassa)
 
 	operationID, err := sendOperation.Call(

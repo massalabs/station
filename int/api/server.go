@@ -51,7 +51,7 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 	case "TESTNET":
 		*massaNodeServerPtr = "https://test.massa.net/api/v2"
 	case "LABNET":
-		*massaNodeServerPtr = "https://labnet.massa.net/"
+		*massaNodeServerPtr = "https://labnet.massa.net/api/v2"
 	case "INNONET":
 		*massaNodeServerPtr = "https://inno.massa.net/test15"
 	case "LOCALHOST":

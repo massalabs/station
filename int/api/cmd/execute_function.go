@@ -61,7 +61,6 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyn
 		addr,
 		params.Body.Name,
 		[]byte(params.Body.Args),
-		uint64(params.Body.Gaz.Price),
 		uint64(*params.Body.Gaz.Limit),
 		uint64(params.Body.Coins))
 
