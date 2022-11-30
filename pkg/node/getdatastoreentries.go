@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"strings"
+
+	"github.com/massalabs/thyra/pkg/helper"
 )
 
 type getDatastoreEntries struct {
@@ -18,7 +20,7 @@ type DatastoreEntryResponse struct {
 
 type DatastoreEntriesKeysAsString struct {
 	Address string `json:"address"`
-	Key     string `json:"key"`
+	Key     []byte `json:"key"`
 }
 
 type JSONableSlice []uint8
@@ -34,7 +36,7 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 	return []byte(result), nil
 }
 
-func DatastoreEntry(client *Client, address string, key string) (*DatastoreEntryResponse, error) {
+func DatastoreEntry(client *Client, address string, key []byte) (*DatastoreEntryResponse, error) {
 	entries := []DatastoreEntriesKeysAsString{}
 	entry := DatastoreEntriesKeysAsString{
 		Address: address,
@@ -56,7 +58,7 @@ func ContractDatastoreEntries(client *Client, address string, keys []string) ([]
 	for i := 0; i < len(keys); i++ {
 		entry := DatastoreEntriesKeysAsString{
 			Address: address,
-			Key:     keys[i],
+			Key:     helper.StringtoByteArray(keys[i]),
 		}
 		entries = append(entries, entry)
 	}
@@ -101,6 +103,5 @@ func DatastoreEntries(client *Client, params []DatastoreEntriesKeysAsString) ([]
 	if err != nil {
 		return nil, fmt.Errorf("parsing get_datastore_entries jsonrpc response '%+v': %w", response, err)
 	}
-
 	return entry, nil
 }
