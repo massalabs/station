@@ -3,8 +3,10 @@ package helper
 import "encoding/binary"
 
 func Uint64ToByteArrayU8(u64 uint64) []byte {
-	b := make([]byte, 8)
-	binary.LittleEndian.PutUint64(b, uint64(u64))
+	encode := 8
+	b := make([]byte, encode)
+	binary.LittleEndian.PutUint64(b, u64)
+
 	return b
 }
 
@@ -13,7 +15,8 @@ func StringtoByteArray(str string) []byte {
 }
 
 func ByteArrayToString(byteArray []byte) string {
-	str1 := string(byteArray[:])
+	str1 := string(byteArray)
+
 	return str1
 }
 
