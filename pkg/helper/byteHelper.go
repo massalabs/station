@@ -14,12 +14,6 @@ func StringtoByteArray(str string) []byte {
 	return []byte(str)
 }
 
-func ByteArrayToString(byteArray []byte) string {
-	str1 := string(byteArray)
-
-	return str1
-}
-
 func ByteArrayToUint64(byteArray []byte) uint64 {
 	return binary.LittleEndian.Uint64(byteArray)
 }
