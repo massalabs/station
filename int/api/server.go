@@ -14,6 +14,7 @@ import (
 	"github.com/massalabs/thyra/int/api/plugin"
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
+	"github.com/massalabs/thyra/pkg/node"
 	pluginmanager "github.com/massalabs/thyra/pkg/plugins"
 )
 
@@ -111,6 +112,19 @@ func StartServer(app *fyne.App, startFlags StartServerFlags) {
 	server := restapi.NewServer(localAPI)
 
 	setAPIFlags(server, startFlags)
+
+	// Display info about node server
+	client := node.NewDefaultClient()
+	status, err := node.Status(client)
+
+	nodeVersion := "unknown"
+	if err == nil {
+		nodeVersion = *status.Version
+	} else {
+		log.Println("Could not get node version:", err)
+	}
+
+	log.Printf("Connected to node server %s (version %s)\n", os.Getenv("MASSA_NODE_URL"), nodeVersion)
 
 	// Run plugins
 	manager, err := pluginmanager.New(server.Port, server.TLSPort)

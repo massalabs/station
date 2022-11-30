@@ -1,0 +1,33 @@
+name: Release workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        description: "Version to produce"
+        required: true
+      release-as-draft:
+        description: "Whether it's a draft or not"
+        required: true
+        type: boolean
+        default: true
+      release-as-prerelease:
+        description: "Whether it's a prerelease or not"
+        required: true
+        type: boolean
+        default: false
+      generate-release-notes:
+        description: "Generate release notes"
+        required: true
+        type: boolean
+        default: true
+
+env:
+  RELEASE_VERSION: ${{ github.event.inputs.release-version }}
+  RELEASE_AS_DRAFT: ${{ github.event.inputs.release-as-draft }}
+  RELEASE_AS_PRERELEASE: ${{ github.event.inputs.release-as-prerelease }}
+  GENERATE_RELEASE_NOTES: ${{ github.event.inputs.generate-release-notes }}
+
+jobs:
+  build-release:
+    uses: ./.github/workflows/build.yml
