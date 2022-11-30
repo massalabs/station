@@ -200,7 +200,8 @@ func Imported(nickname string, privateKey string) (*Wallet, error) {
 	pubKeyBytes := reflect.ValueOf(keypair.Public()).Bytes() // force conversion to byte array
 
 	addr := blake3.Sum256(pubKeyBytes)
-	Address := "A" + base58.CheckEncode(append(make([]byte, 1), addr[:]...))
+	//nolint:gomnd
+	Address := "A" + base58.VersionedCheckEncode(addr[:] /* current version is 0*/, 0x00)
 
 	if slices.IndexFunc(
 		wallets,
