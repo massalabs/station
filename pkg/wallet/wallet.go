@@ -17,11 +17,15 @@ import (
 	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"golang.org/x/crypto/pbkdf2"
+	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v3"
 	"lukechampine.com/blake3"
 )
 
-var ErrUnprotectedSerialization = errors.New("private key must be protected before serialization")
+var (
+	ErrUnprotectedSerialization = errors.New("private key must be protected before serialization")
+	ErrWalletAlreadyImported    = errors.New("wallet already imported")
+)
 
 const (
 	SecretKeyLength           = 32
@@ -187,11 +191,24 @@ func Imported(nickname string, privateKey string) (*Wallet, error) {
 		return nil, fmt.Errorf("encoding private key B58: %w", err)
 	}
 
-	keypair := ed25519.NewKeyFromSeed(privKeyBytes)
+	wallets, err := LoadAll()
+	if err != nil {
+		return nil, fmt.Errorf("error loadin wallets %w", err)
+	}
 
+	keypair := ed25519.NewKeyFromSeed(privKeyBytes)
 	pubKeyBytes := reflect.ValueOf(keypair.Public()).Bytes() // force conversion to byte array
 
 	addr := blake3.Sum256(pubKeyBytes)
+	version := byte(0)
+	address := "A" + base58.VersionedCheckEncode(addr[:], version)
+
+	if slices.IndexFunc(
+		wallets,
+		func(wallet Wallet) bool { return wallet.Address == address },
+	) != -1 {
+		return nil, ErrWalletAlreadyImported
+	}
 
 	return CreateWalletFromKeys(nickname, privKeyBytes, pubKeyBytes, addr)
 }

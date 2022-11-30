@@ -50,17 +50,19 @@ func LoadWalletDialog(app *fyne.App) chan WalletInfoEntry {
 		Items: items,
 		OnSubmit: func() {
 			window.Hide()
-			//nolint:gofumpt
-			walletInfoEntry <- WalletInfoEntry{ClearPassword: password.Text,
-				WalletName: walletName.Text,
-				PrivateKey: privateKey.Text,
-				Err:        nil}
+			walletInfoEntry <- WalletInfoEntry{
+				ClearPassword: password.Text,
+				WalletName:    walletName.Text,
+				PrivateKey:    privateKey.Text,
+				Err:           nil,
+			}
 		},
 		OnCancel: func() {
-			//nolint:gofumpt
-			walletInfoEntry <- WalletInfoEntry{ClearPassword: "",
-				WalletName: "", PrivateKey: "",
-				Err: errors.New("wallet loading cancelled by the user")}
+			walletInfoEntry <- WalletInfoEntry{
+				ClearPassword: "",
+				WalletName:    "", PrivateKey: "",
+				Err: errors.New("wallet loading cancelled by the user"),
+			}
 			window.Hide()
 		},
 		SubmitText: "Load",

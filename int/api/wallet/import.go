@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"errors"
 	"sync"
 
 	"fyne.io/fyne/v2"
@@ -27,11 +28,7 @@ type wImport struct {
 func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Responder {
 	password, walletName, privateKey, err := gui.AskWalletInfo(c.app)
 	if err != nil {
-		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-			&models.Error{
-				Code:    errorCodeWalletCreateNew,
-				Message: err.Error(),
-			})
+		return NewWalletError(errorCodeWalletCreateNew, err.Error())
 	}
 
 	if len(walletName) == 0 {
@@ -44,29 +41,30 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 
 	_, inStore := c.walletStorage.Load(walletName)
 	if inStore {
-		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-			&models.Error{
-				Code:    errorCodeWalletAlreadyExists,
-				Message: "Error: a wallet with the same nickname already exists.",
-			})
+		return NewWalletError(errorCodeWalletAlreadyExists, "Error: a wallet with the same nickname already exists.")
 	}
 
 	if len(password) == 0 {
-		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-			&models.Error{
-				Code:    errorCodeWalletCreateNoPassword,
-				Message: "Error: password field is mandatory.",
-			})
+		return NewWalletError(errorCodeWalletCreateNoPassword, "Error: password field is mandatory.")
 	}
 
 	newWallet, err := wallet.Imported(walletName, privateKey)
 	if err != nil {
-		return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
-			&models.Error{
-				Code:    errorCodeWalletCreateNew,
-				Message: err.Error(),
-			})
+		if errors.Is(err, wallet.ErrWalletAlreadyImported) {
+			return NewWalletError(errorCodeWalletAlreadyImported, err.Error())
+		}
+
+		return NewWalletError(errorCodeWalletCreateNew, err.Error())
 	}
 
 	return CreateNewWallet(&walletName, &password, c.walletStorage, newWallet)
+}
+
+//nolint:nolintlint,ireturn
+func NewWalletError(code string, message string) middleware.Responder {
+	return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
+		&models.Error{
+			Code:    code,
+			Message: message,
+		})
 }
