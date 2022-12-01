@@ -1,8 +1,11 @@
-.vscode
 wallet_*.json
 *.exe
 
 # air temporary directory
 tmp/
+
+# IDE
+.idea
+.vscode
 
 /plugins/
