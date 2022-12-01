@@ -36,7 +36,7 @@ type setApproval struct {
 }
 
 type setRecord struct {
-	Name    string `json:"name"`
+	Name    []byte `json:"name"`
 	Address string `json:"address"`
 }
 
@@ -47,7 +47,7 @@ func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContr
 	}
 
 	rec := setRecord{
-		Name:    url,
+		Name:    helper.StringToByteArray(url),
 		Address: smartContract,
 	}
 
@@ -64,6 +64,7 @@ func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContr
 	return result, nil
 }
 
+// DEAD CODE ??
 func SetRecordManager(client *node.Client, wallet wallet.Wallet) (string, error) {
 	addr, _, err := base58.VersionedCheckDecode(DNSRawAddress[1:])
 	if err != nil {
