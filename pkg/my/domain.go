@@ -1,11 +1,12 @@
 package my
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/massalabs/thyra/api/swagger/server/models"
+	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
 	"github.com/massalabs/thyra/pkg/wallet"
@@ -26,9 +27,10 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 	}
 
 	domains := []string{}
+	keyOwned := convert.ByteArrayWithSize([]byte(ownedPrefix + wallet.Address))
 
-	domainsEntry, err := node.DatastoreEntry(client, dns.DNSRawAddress,
-		[]byte(ownedPrefix+wallet.Address))
+	fmt.Println("🚀 ~ file: domain.go:33 ~ funcDomains ~ keyOwned", keyOwned)
+	domainsEntry, err := node.DatastoreEntry(client, dns.DNSRawAddress, keyOwned)
 	if err != nil {
 		return nil, fmt.Errorf("reading entry '%s' at '%s': %w", dns.DNSRawAddress, ownedPrefix+wallet.Address, err)
 	}
@@ -37,7 +39,10 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 		return domains, nil
 	}
 
-	err = json.Unmarshal(domainsEntry.CandidateValue, &domains)
+	fmt.Println("🚀 ~ file: domain.go:45 ~ funcDomains ~ domainsEntry.CandidatedValue", string(domainsEntry.CandidateValue[4:]))
+
+	domains = strings.Split(string(domainsEntry.CandidateValue[4:]), ",")
+
 	if err != nil {
 		return nil, fmt.Errorf("parsing json '%s': %w", domainsEntry.CandidateValue, err)
 	}
@@ -53,7 +58,7 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	for i := 0; i < len(domainNames); i++ {
 		param := node.DatastoreEntriesKeysAsString{
 			Address: dns.DNSRawAddress,
-			Key:     []byte(recordPrefix + domainNames[i]),
+			Key:     convert.ByteArrayWithSize([]byte(recordPrefix + domainNames[i])),
 		}
 		params = append(params, param)
 	}
@@ -67,6 +72,7 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 
 	for i := 0; i < len(domainNames); i++ { //nolint:varnamelen
 		contractAddress := string(contractAddresses[i].CandidateValue)
+		fmt.Println("🚀 ~ file: domain.go:74 ~ fori:=0;i<len ~ contractAddress", contractAddress)
 
 		brokenChunks, err := getMissingChunkIds(client, contractAddress)
 		if err != nil {

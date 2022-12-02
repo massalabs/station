@@ -3,7 +3,7 @@ package storage
 import (
 	"archive/zip"
 	"bytes"
-	"encoding/base64"
+	"encoding/binary"
 	"fmt"
 	"io"
 	"strconv"
@@ -29,23 +29,24 @@ func readZipFile(z *zip.File) ([]byte, error) {
 //nolint:nolintlint,ireturn,funlen
 func Get(client *node.Client, address string, key string) (map[string][]byte, error) {
 	chunkNumberKey := "total_chunks"
+	fmt.Println(" ~ file: storage.go:33 ~ funcGet ~ chunkNumberKey", chunkNumberKey)
 
 	keyNumber, err := node.DatastoreEntry(client, address, []byte(chunkNumberKey))
 	if err != nil {
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
 	}
 
-	chunkNumber, err := strconv.Atoi(string(keyNumber.CandidateValue))
-	if err != nil {
-		return nil, fmt.Errorf("error converting String to integer")
-	}
+	fmt.Println("~ file: storage.go:36 ~ funcGet ~ keyNumber", keyNumber)
+
+	chunkNumber := binary.LittleEndian.Uint64(keyNumber.CandidateValue)
+	fmt.Println(" ~ file: storage.go:44 ~ funcGet ~ chunkNumber", chunkNumber)
 
 	entries := []node.DatastoreEntriesKeysAsString{}
 
-	for i := 0; i < chunkNumber; i++ {
+	for i := uint64(0); i < chunkNumber; i++ {
 		entry := node.DatastoreEntriesKeysAsString{
 			Address: address,
-			Key:     []byte("massa_web_" + strconv.Itoa(i)),
+			Key:     []byte("massa_web_" + strconv.Itoa(int(i))),
 		}
 		entries = append(entries, entry)
 	}
@@ -55,19 +56,14 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
 	}
 
-	dataStore := ""
-	for i := 0; i < chunkNumber; i++ {
-		dataStore += string(response[i].CandidateValue)
+	var dataStore []byte
+	for i := uint64(0); i < chunkNumber; i++ {
+		dataStore = append(dataStore, response[i].CandidateValue...)
 	}
 
-	b64, err := base64.StdEncoding.DecodeString(dataStore)
+	zipReader, err := zip.NewReader(bytes.NewReader(dataStore), int64(len(dataStore)))
 	if err != nil {
-		return nil, fmt.Errorf("base64 decoding datastore entry '%s' at '%s': %w", address, key, err)
-	}
-
-	zipReader, err := zip.NewReader(bytes.NewReader(b64), int64(len(b64)))
-	if err != nil {
-		return nil, fmt.Errorf("instanciating zip reader from decoded datastore entry '%s' at '%s': %w", address, key, err)
+		return nil, fmt.Errorf("instantiating zip reader from decoded datastore entry '%s' at '%s': %w", address, key, err)
 	}
 
 	content := make(map[string][]byte)
@@ -81,6 +77,6 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 
 		content[zipFile.Name] = rsc
 	}
-
+	fmt.Println(" ~ file: storage.go:85 ~ funcGet ~ content", content)
 	return content, nil
 }
