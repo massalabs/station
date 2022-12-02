@@ -3,7 +3,7 @@
 BINARY_URL="https://github.com/massalabs/thyra/releases/latest/download/thyra-server_linux"
 SCRIPT="Linux"
 
-MKCERT_URL="https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-amd64"
+MKCERT_URL="https://dl.filippo.io/mkcert/latest?for=linux/amd64"
 
 THYRA_CONF_DIR=$HOME/.config/thyra
 
@@ -68,8 +68,8 @@ set_local_dns () {
     esac
 }
 
-ssl_certificate () {
-    green "INFO" "Generate SSL certificates:"
+generate_certificate () {
+    green "INFO" "Installing MKcert and generating HTTPS certificates:"
     curl -sL $MKCERT_URL -o mkcert
     chmod +x mkcert
     ./mkcert -install
@@ -86,7 +86,7 @@ check_supported_distro || exit 1
 
 install_thyra || exit 1
 
-ssl_certificate || exit 1
+generate_certificate || exit 1
 
 ping -c 1 -t 1 test.massa &> /dev/null || set_local_dns || exit 1
 

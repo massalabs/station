@@ -66,9 +66,9 @@ NET START "AcrylicDNSProxySvc"
 SET thyraConfigDir=%homedrive%%homepath%\.config\thyra
 if not exist %thyraConfigDir% mkdir %thyraConfigDir%
 
-ECHO Install SSL certificates
+ECHO "Installing MKcert and generating HTTPS certificates:"
 SET certificatePath=%thyraConfigDir%\certs
-curl -L "https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-windows-amd64.exe" -o mkcert.exe
+curl -L "https://dl.filippo.io/mkcert/latest?for=windows/amd64" -o mkcert.exe
 mkcert.exe --install
 if not exist %certificatePath% mkdir %certificatePath%
 mkcert.exe --cert-file %certificatePath%\cert.pem --key-file %certificatePath%\cert-key.pem my.massa

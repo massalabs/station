@@ -3,8 +3,8 @@
 BINARY_URL="https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin"
 SCRIPT="MacOS"
 
-MKCERT_URL_ARM="https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-darwin-arm64"
-MKCERT_URL_AMD="https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-darwin-amd64"
+MKCERT_URL_ARM="https://dl.filippo.io/mkcert/latest?for=darwin/arm64"
+MKCERT_URL_AMD="https://dl.filippo.io/mkcert/latest?for=darwin/ams64"
 
 THYRA_CONF_DIR=$HOME/.config/thyra
 
@@ -48,8 +48,8 @@ set_local_dns () {
     esac
 }
 
-ssl_certificate () {
-    green "INFO" "Generate SSL certificates:"
+generate_certificate () {
+    green "INFO" "Installing MKcert and generating HTTPS certificates:"
     ARCH=$(uname -m)
     if [[ "$ARCH" == 'aarch64' ]]; then
         MKCERT_URL=$MKCERT_URL_ARM
@@ -70,7 +70,7 @@ green "INFO" "This installation script will install the last release of Thyra an
 
 install_thyra || exit 1
 
-ssl_certificate || exit 1
+generate_certificate || exit 1
 
 ping -c 1 -t 1 test.massa  || set_local_dns || exit 1
 
