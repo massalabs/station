@@ -28,3 +28,15 @@ func EncodeUint32ToUTF8String(numberToEncode uint32) string {
 
 	return encodedString
 }
+
+func ByteArrayWithSize(arr []byte) []byte {
+	return append(EncodeIntToByteArray(len(arr)), arr...)
+}
+
+func EncodeIntToByteArray(numberToEncode int) []byte {
+	//nolint:gomnd
+	buffer := make([]byte, 4)
+	binary.LittleEndian.PutUint32(buffer, uint32(numberToEncode))
+
+	return buffer
+}
