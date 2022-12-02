@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-
-	"github.com/massalabs/thyra/pkg/helper"
 )
 
 type getDatastoreEntries struct {
@@ -58,7 +56,7 @@ func ContractDatastoreEntries(client *Client, address string, keys []string) ([]
 	for i := 0; i < len(keys); i++ {
 		entry := DatastoreEntriesKeysAsString{
 			Address: address,
-			Key:     helper.StringToByteArray(keys[i]),
+			Key:     []byte(keys[i]),
 		}
 		entries = append(entries, entry)
 	}

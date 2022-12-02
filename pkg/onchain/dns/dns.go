@@ -17,7 +17,7 @@ const DNSRawAddress = "A1eRTxkNVRNfXzigHSUs6gbfMnzCfDDFwJUz9oBUb6SSBqpRGbj"
 func Resolve(client *node.Client, name string) (string, error) {
 	const dnsPrefix = "record"
 
-	entry, err := node.DatastoreEntry(client, DNSRawAddress, helper.StringToByteArray(dnsPrefix+name))
+	entry, err := node.DatastoreEntry(client, DNSRawAddress, []byte(dnsPrefix+name))
 	if err != nil {
 		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", DNSRawAddress, dnsPrefix+name, err)
 	}
@@ -36,10 +36,10 @@ func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContr
 	}
 
 	// Set Resolver prepare data
-	rec := []byte(helper.EncodeUint8ToUTF16String(uint32(len(url))))
-	rec = append(rec, helper.StringToByteArray(url)...)
-	rec = append(rec, helper.EncodeUint8ToUTF16String(uint32(len(smartContract)))...)
-	rec = append(rec, helper.StringToByteArray(smartContract)...)
+	rec := []byte(helper.EncodeUint32ToUTF8String(uint32(len(url))))
+	rec = append(rec, []byte(url)...)
+	rec = append(rec, helper.EncodeUint32ToUTF8String(uint32(len(smartContract)))...)
+	rec = append(rec, []byte(smartContract)...)
 
 	result, err := onchain.CallFunction(client, wallet, addr, "setResolver", rec, sendoperation.OneMassa)
 	if err != nil {
