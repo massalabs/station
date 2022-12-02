@@ -13,19 +13,7 @@ func Uint64ToByteArrayU8(u64 uint64) []byte {
 	return b
 }
 
-func StringToByteArray(str string) []byte {
-	return []byte(str)
-}
-
-func ByteArrayToUint64(byteArray []byte) uint64 {
-	return binary.LittleEndian.Uint64(byteArray)
-}
-
-func ByteArrayToUint32(byteArray []byte) uint32 {
-	return binary.LittleEndian.Uint32(byteArray)
-}
-
-func EncodeUint8ToUTF16String(numberToEncode uint32) string {
+func EncodeUint32ToUTF8String(numberToEncode uint32) string {
 	//nolint:gomnd
 	buffer := make([]byte, 4)
 	binary.LittleEndian.PutUint32(buffer, numberToEncode)
