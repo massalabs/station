@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/massalabs/thyra/pkg/helper"
+	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/node/sendoperation"
@@ -36,9 +36,9 @@ func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContr
 	}
 
 	// Set Resolver prepare data
-	rec := []byte(helper.EncodeUint32ToUTF8String(uint32(len(url))))
+	rec := []byte(convert.EncodeUint32ToUTF8String(uint32(len(url))))
 	rec = append(rec, []byte(url)...)
-	rec = append(rec, helper.EncodeUint32ToUTF8String(uint32(len(smartContract)))...)
+	rec = append(rec, convert.EncodeUint32ToUTF8String(uint32(len(smartContract)))...)
 	rec = append(rec, []byte(smartContract)...)
 
 	result, err := onchain.CallFunction(client, wallet, addr, "setResolver", rec, sendoperation.OneMassa)

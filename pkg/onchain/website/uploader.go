@@ -9,7 +9,7 @@ import (
 	"strings"
 	"unicode/utf16"
 
-	"github.com/massalabs/thyra/pkg/helper"
+	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/node/sendoperation"
@@ -77,9 +77,9 @@ func Upload(atAddress string, content []byte, wallet *wallet.Wallet) ([]string, 
 
 func upload(client *node.Client, addr []byte, chunks [][]byte, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
-	// totalChunks := helper.Uint64ToByteArrayU8((uint64(len(chunks))))
+	// totalChunks := convert.Uint64ToByteArrayU8((uint64(len(chunks))))
 
-	totalChunks := helper.Uint64ToByteArrayU8((uint64(10)))
+	totalChunks := convert.Uint64ToByteArrayU8((uint64(10)))
 
 	fmt.Println("typeOf totalChunks ", reflect.TypeOf(totalChunks))
 
@@ -93,9 +93,9 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet *wallet.Wa
 
 	for index := 0; index < len(chunks); index++ {
 		// Chunk ID encoding
-		params := helper.Uint64ToByteArrayU8(uint64(index))
+		params := convert.Uint64ToByteArrayU8(uint64(index))
 		// Chunk data length encoding
-		params = append(params, helper.Uint64ToByteArrayU8((uint64(len(chunks[index]))))...)
+		params = append(params, convert.Uint64ToByteArrayU8((uint64(len(chunks[index]))))...)
 		// Chunk data encoding
 		params = append(params, chunks[index]...)
 
@@ -140,9 +140,9 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, misse
 		if err != nil {
 			return nil, fmt.Errorf("error while converting chunk ID")
 		}
-		params := helper.Uint64ToByteArrayU8(uint64(chunkID))
+		params := convert.Uint64ToByteArrayU8(uint64(chunkID))
 		// Chunk data length encoding
-		params = append(params, helper.Uint64ToByteArrayU8((uint64(len(chunks[chunkID]))))...)
+		params = append(params, convert.Uint64ToByteArrayU8((uint64(len(chunks[chunkID]))))...)
 		// Chunk data encoding
 		params = append(params, chunks[chunkID]...)
 
