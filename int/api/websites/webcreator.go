@@ -3,7 +3,6 @@ package websites
 import (
 	"archive/zip"
 	"bytes"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -81,14 +80,12 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 		return createInternalServerError(errorCodeWebCreatorHTMLNotInSource, errorCodeWebCreatorHTMLNotInSource)
 	}
 
-	//b64 := base64.StdEncoding.EncodeToString(archive)
+	// b64 := base64.StdEncoding.EncodeToString(archive)
 
 	address, err := website.PrepareForUpload(params.URL, wallet)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorPrepare, err.Error())
 	}
-
-	fmt.Println("address ", address)
 
 	_, err = website.Upload(address, archive, wallet)
 	if err != nil {
@@ -181,10 +178,6 @@ func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyn
 	}
 
 	// b64 := base64.StdEncoding.EncodeToString(archive)
-
-	fmt.Println("encode b64")
-
-	fmt.Println("params.address ", params.Address)
 
 	_, err = website.Upload(params.Address, archive, wallet)
 	if err != nil {
