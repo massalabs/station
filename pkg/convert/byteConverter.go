@@ -6,8 +6,8 @@ import (
 )
 
 // Encode uint64 to byte array.
-func Uint64ToByteArrayU8(u64 uint64) []byte {
-	encode := 8
+func U64NbBytes(u64 uint64) []byte {
+	const encode = 8
 	b := make([]byte, encode)
 	binary.LittleEndian.PutUint64(b, u64)
 
@@ -15,7 +15,7 @@ func Uint64ToByteArrayU8(u64 uint64) []byte {
 }
 
 // Decode uint32 to string.
-func EncodeUint32ToUTF8String(numberToEncode uint32) string {
+func U32ToString(numberToEncode uint32) string {
 	//nolint:gomnd
 	buffer := make([]byte, 4)
 	binary.LittleEndian.PutUint32(buffer, numberToEncode)
@@ -26,7 +26,5 @@ func EncodeUint32ToUTF8String(numberToEncode uint32) string {
 		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
 	}
 
-	encodedString := string(runesBuffer)
-
-	return encodedString
+	return string(runesBuffer)
 }

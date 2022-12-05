@@ -73,7 +73,7 @@ func Upload(atAddress string, content []byte, wallet *wallet.Wallet) ([]string, 
 
 func upload(client *node.Client, addr []byte, chunks [][]byte, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
-	totalChunks := convert.Uint64ToByteArrayU8(uint64(len(chunks)))
+	totalChunks := convert.U64NbBytes(uint64(len(chunks)))
 
 	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", totalChunks,
 		sendoperation.OneMassa)
@@ -85,13 +85,10 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet *wallet.Wa
 
 	for index := 0; index < len(chunks); index++ {
 		// Chunk ID encoding
-		params := convert.Uint64ToByteArrayU8(uint64(index))
-		// Chunk data length encoding
-		//nolint:ineffassign,nolintlint
-		params = append(params, convert.Uint64ToByteArrayU8((uint64(len(chunks[index]))))...)
+		params := convert.U64NbBytes(uint64(index))
 		// Chunk data encoding
 		//nolint:ineffassign,nolintlint
-		params = append(params, chunks[index]...)
+		params = append(append(params, convert.U64NbBytes((uint64(len(chunks[index]))))...), chunks[index]...)
 
 		//nolint:lll
 		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte(params))
@@ -135,13 +132,10 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, misse
 			return nil, fmt.Errorf("error while converting chunk ID")
 		}
 
-		params := convert.Uint64ToByteArrayU8(uint64(chunkID))
-		// Chunk data length encoding
-		//nolint:ineffassign,nolintlint
-		params = append(params, convert.Uint64ToByteArrayU8((uint64(len(chunks[chunkID]))))...)
+		params := convert.U64NbBytes(uint64(chunkID))
 		// Chunk data encoding
 		//nolint:ineffassign,nolintlint
-		params = append(params, chunks[chunkID]...)
+		params = append(append(params, convert.U64NbBytes((uint64(len(chunks[chunkID]))))...), chunks[chunkID]...)
 
 		//nolint:lll
 		opID, err := onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", params)

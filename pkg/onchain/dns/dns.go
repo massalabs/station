@@ -36,9 +36,11 @@ func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContr
 	}
 
 	// Set Resolver prepare data
-	rec := []byte(convert.EncodeUint32ToUTF8String(uint32(len(url))))
+	// Encoding len + url
+	rec := []byte(convert.U32ToString(uint32(len(url))))
 	rec = append(rec, []byte(url)...)
-	rec = append(rec, convert.EncodeUint32ToUTF8String(uint32(len(smartContract)))...)
+	// Encoding len + smartContract
+	rec = append(rec, convert.U32ToString(uint32(len(smartContract)))...)
 	rec = append(rec, []byte(smartContract)...)
 
 	result, err := onchain.CallFunction(client, wallet, addr, "setResolver", rec, sendoperation.OneMassa)

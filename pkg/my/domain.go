@@ -37,7 +37,7 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 		return domains, nil
 	}
 
-	domains = strings.Split(string(domainsEntry.CandidateValue[4:]), ",")
+	domains = strings.Split(string(domainsEntry.CandidateValue), ",")
 
 	if err != nil {
 		return nil, fmt.Errorf("parsing json '%s': %w", domainsEntry.CandidateValue, err)
@@ -67,7 +67,7 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	}
 
 	for i := 0; i < len(domainNames); i++ { //nolint:varnamelen
-		contractAddress := string(contractAddresses[i].CandidateValue[4:])
+		contractAddress := string(contractAddresses[i].CandidateValue)
 
 		brokenChunks, err := getMissingChunkIds(client, contractAddress)
 		if err != nil {

@@ -74,7 +74,7 @@ func DatastoreEntries(client *Client, params []DatastoreEntriesKeysAsString) ([]
 	entries := [][]getDatastoreEntries{
 		{},
 	}
-	// Change the key to []byte(params[i].Key)
+
 	for i := 0; i < len(params); i++ {
 		entry := getDatastoreEntries{
 			Address: params[i].Address,
