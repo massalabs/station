@@ -38,6 +38,7 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 	}
 
 	domains = strings.Split(string(domainsEntry.CandidateValue[4:]), ",")
+
 	if err != nil {
 		return nil, fmt.Errorf("parsing json '%s': %w", domainsEntry.CandidateValue, err)
 	}
