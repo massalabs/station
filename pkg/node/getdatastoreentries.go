@@ -74,7 +74,6 @@ func ContractDatastoreEntries(client *Client, address string, keys []string) ([]
 
 func DatastoreEntries(client *Client, params []DatastoreEntriesKeysAsString) ([]DatastoreEntryResponse, error) {
 	entries := [][]getDatastoreEntries{
-
 		{},
 	}
 
