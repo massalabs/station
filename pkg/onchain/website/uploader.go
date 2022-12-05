@@ -4,7 +4,6 @@ import (
 	"embed"
 	"encoding/binary"
 	"fmt"
-	"reflect"
 	"strconv"
 	"strings"
 	"unicode/utf16"
@@ -43,7 +42,6 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 		return "", fmt.Errorf("deploying webstorage SC: %w", err)
 	}
 
-	fmt.Println("xxx" + scAddress + "xxx")
 	// Set DNS.
 	_, err = dns.SetRecord(client, *wallet, url, scAddress)
 	if err != nil {
@@ -77,11 +75,7 @@ func Upload(atAddress string, content []byte, wallet *wallet.Wallet) ([]string, 
 
 func upload(client *node.Client, addr []byte, chunks [][]byte, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
-	// totalChunks := convert.Uint64ToByteArrayU8((uint64(len(chunks))))
-
-	totalChunks := convert.Uint64ToByteArrayU8((uint64(10)))
-
-	fmt.Println("typeOf totalChunks ", reflect.TypeOf(totalChunks))
+	totalChunks := convert.Uint64ToByteArrayU8(uint64(len(chunks)))
 
 	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", totalChunks,
 		sendoperation.OneMassa)

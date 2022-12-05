@@ -29,17 +29,13 @@ func readZipFile(z *zip.File) ([]byte, error) {
 //nolint:nolintlint,ireturn,funlen
 func Get(client *node.Client, address string, key string) (map[string][]byte, error) {
 	chunkNumberKey := "total_chunks"
-	fmt.Println(" ~ file: storage.go:33 ~ funcGet ~ chunkNumberKey", chunkNumberKey)
 
 	keyNumber, err := node.DatastoreEntry(client, address, []byte(chunkNumberKey))
 	if err != nil {
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
 	}
 
-	fmt.Println("~ file: storage.go:36 ~ funcGet ~ keyNumber", keyNumber)
-
 	chunkNumber := binary.LittleEndian.Uint64(keyNumber.CandidateValue)
-	fmt.Println(" ~ file: storage.go:44 ~ funcGet ~ chunkNumber", chunkNumber)
 
 	entries := []node.DatastoreEntriesKeysAsString{}
 
@@ -77,6 +73,6 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 
 		content[zipFile.Name] = rsc
 	}
-	fmt.Println(" ~ file: storage.go:85 ~ funcGet ~ content", content)
+
 	return content, nil
 }
