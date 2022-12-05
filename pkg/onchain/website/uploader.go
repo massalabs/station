@@ -87,12 +87,14 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet *wallet.Wa
 		// Chunk ID encoding
 		params := convert.Uint64ToByteArrayU8(uint64(index))
 		// Chunk data length encoding
+		//nolint:ineffassign,nolintlint
 		params = append(params, convert.Uint64ToByteArrayU8((uint64(len(chunks[index]))))...)
 		// Chunk data encoding
+		//nolint:ineffassign,nolintlint
 		params = append(params, chunks[index]...)
 
 		//nolint:lll
-		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte("salut"))
+		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte(params))
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
@@ -135,10 +137,10 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, misse
 
 		params := convert.Uint64ToByteArrayU8(uint64(chunkID))
 		// Chunk data length encoding
-		//nolint:ineffassign
+		//nolint:ineffassign,nolintlint
 		params = append(params, convert.Uint64ToByteArrayU8((uint64(len(chunks[chunkID]))))...)
 		// Chunk data encoding
-		//nolint:ineffassign
+		//nolint:ineffassign,nolintlint
 		params = append(params, chunks[chunkID]...)
 
 		//nolint:lll
