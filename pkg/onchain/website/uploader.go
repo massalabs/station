@@ -90,7 +90,7 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet *wallet.Wa
 		//nolint:ineffassign,nolintlint
 		params = append(append(params, convert.U64NbBytes((uint64(len(chunks[index]))))...), chunks[index]...)
 
-		//nolint:lll
+		//nolint:lll, unconvert
 		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte(params))
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)

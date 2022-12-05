@@ -80,7 +80,7 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 
 	registryResult := make([]*models.Registry, len(metadatas))
 
-	// Here we have to switch to string to display to the the front
+	// Here we have to switch to string to display to the front
 	for index := 0; index < len(metadatas); index++ {
 		registryResult[index] = &models.Registry{
 			Name:     strings.Split(recordKeys[index], recordKey)[1],
