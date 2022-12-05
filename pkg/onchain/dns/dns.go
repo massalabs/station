@@ -12,7 +12,7 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-const DNSRawAddress = "A12v6nQaTCp4ZAYL4dtJAJR7YZkK4HgJ76WLWEhaGyuULZHNSQSW"
+const DNSRawAddress = "A1aNfHJ4CVHK4tW29jYcmx181zNWhf5GDyjqznV5HUrCsaSmCSD"
 
 func Resolve(client *node.Client, name string) (string, error) {
 	const dnsPrefix = "record"
