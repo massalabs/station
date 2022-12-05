@@ -36,14 +36,12 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 
 func DatastoreEntry(client *Client, address string, key []byte) (*DatastoreEntryResponse, error) {
 	entries := []DatastoreEntriesKeysAsString{}
-
 	entry := DatastoreEntriesKeysAsString{
 		Address: address,
 		Key:     key,
 	}
 
 	entries = append(entries, entry)
-
 	response, err := DatastoreEntries(client, entries)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,6 @@ func ContractDatastoreEntries(client *Client, address string, keys []string) ([]
 			Address: address,
 			Key:     []byte(keys[i]),
 		}
-
 		entries = append(entries, entry)
 	}
 
