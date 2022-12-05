@@ -170,6 +170,7 @@ async function tableInsert(resp, count) {
     const cell3 = row.insertCell();
     cell0.innerHTML = resp.name;
     cell1.innerHTML = addressInnerHTML(resp.address);
+    // TO BE UNCOMENTED : Because this was blocking for our tests at the end Uncoment this 
     // if (resp.brokenChunks != null) {
     //     missingChunks[count] = await resp.brokenChunks;
     //     cell2.innerHTML = `
