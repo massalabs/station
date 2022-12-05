@@ -73,7 +73,6 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 	}
 
 	zipReader, _ := zip.NewReader(bytes.NewReader(archive), int64(len(archive)))
-
 	FilesOfArchive := listFileName(zipReader)
 
 	if slices.Index(FilesOfArchive, "index.html") == -1 {
