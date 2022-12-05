@@ -43,7 +43,6 @@ func DatastoreEntry(client *Client, address string, key []byte) (*DatastoreEntry
 
 	entries = append(entries, entry)
 	response, err := DatastoreEntries(client, entries)
-
 	if err != nil {
 		return nil, err
 	}
