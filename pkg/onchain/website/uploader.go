@@ -2,11 +2,9 @@ package website
 
 import (
 	"embed"
-	"encoding/binary"
 	"fmt"
 	"strconv"
 	"strings"
-	"unicode/utf16"
 
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
@@ -91,6 +89,7 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet *wallet.Wa
 		// Chunk data length encoding
 		params = append(params, convert.Uint64ToByteArrayU8((uint64(len(chunks[index]))))...)
 		// Chunk data encoding
+		//nolint:lll
 		params = append(params, chunks[index]...)
 
 		//nolint:lll
@@ -170,35 +169,37 @@ func chunk(data []byte, chunkSize int) [][]byte {
 	return chunks
 }
 
-// We need to add an interface to this function in order to handle uint64 AND uint32 when we have time.
-func encodeUint64ToUTF16String(numberToEncode uint64) string {
-	//nolint:gomnd
-	buffer := make([]byte, 8)
-	binary.LittleEndian.PutUint64(buffer, numberToEncode)
-	//nolint:gomnd
-	runesBuffer := make([]rune, 8)
+//DEAD CODE ?
+// // We need to add an interface to this function in order to handle uint64 AND uint32 when we have time.
+// func encodeUint64ToUTF16String(numberToEncode uint64) string {
+// 	//nolint:gomnd
+// 	buffer := make([]byte, 8)
+// 	binary.LittleEndian.PutUint64(buffer, numberToEncode)
+// 	//nolint:gomnd
+// 	runesBuffer := make([]rune, 8)
 
-	for i := 0; i < len(buffer); i++ {
-		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
-	}
+// 	for i := 0; i < len(buffer); i++ {
+// 		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
+// 	}
 
-	encodedString := string(runesBuffer)
+// 	encodedString := string(runesBuffer)
 
-	return encodedString
-}
+// 	return encodedString
+// }
 
-func encodeUint32ToUTF16String(numberToEncode uint32) string {
-	//nolint:gomnd
-	buffer := make([]byte, 4)
-	binary.LittleEndian.PutUint32(buffer, numberToEncode)
-	//nolint:gomnd
-	runesBuffer := make([]rune, 4)
+// DEAD CODE ?
+// func encodeUint32ToUTF16String(numberToEncode uint32) string {
+// 	//nolint:gomnd
+// 	buffer := make([]byte, 4)
+// 	binary.LittleEndian.PutUint32(buffer, numberToEncode)
+// 	//nolint:gomnd
+// 	runesBuffer := make([]rune, 4)
 
-	for i := 0; i < len(buffer); i++ {
-		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
-	}
+// 	for i := 0; i < len(buffer); i++ {
+// 		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
+// 	}
 
-	encodedString := string(runesBuffer)
+// 	encodedString := string(runesBuffer)
 
-	return encodedString
-}
+// 	return encodedString
+// }
