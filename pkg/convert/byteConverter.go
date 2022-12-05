@@ -5,7 +5,7 @@ import (
 	"unicode/utf16"
 )
 
-// Encode uint64 to byte array
+// Encode uint64 to byte array.
 func Uint64ToByteArrayU8(u64 uint64) []byte {
 	encode := 8
 	b := make([]byte, encode)
@@ -14,7 +14,7 @@ func Uint64ToByteArrayU8(u64 uint64) []byte {
 	return b
 }
 
-// Decode uint32 to string
+// Decode uint32 to string.
 func EncodeUint32ToUTF8String(numberToEncode uint32) string {
 	//nolint:gomnd
 	buffer := make([]byte, 4)
