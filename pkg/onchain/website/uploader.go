@@ -57,7 +57,7 @@ type InitialisationParams struct {
 
 func Upload(atAddress string, content []byte, wallet *wallet.Wallet) ([]string, error) {
 	client := node.NewDefaultClient()
-	fmt.Println(atAddress[1:])
+
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
 	if err != nil {
 		return nil, fmt.Errorf("decoding address '%s': %w", atAddress[1:], err)
@@ -134,13 +134,13 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, misse
 		if err != nil {
 			return nil, fmt.Errorf("error while converting chunk ID")
 		}
+
 		params := convert.Uint64ToByteArrayU8(uint64(chunkID))
 		// Chunk data length encoding
 		params = append(params, convert.Uint64ToByteArrayU8((uint64(len(chunks[chunkID]))))...)
 		// Chunk data encoding
 		params = append(params, chunks[chunkID]...)
 
-		fmt.Println(params)
 		//nolint:lll
 		opID, err := onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", params)
 		if err != nil {

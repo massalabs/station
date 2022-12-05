@@ -30,7 +30,6 @@ func EncodeUint32ToUTF8String(numberToEncode uint32) string {
 }
 
 func ByteArrayWithSize(arr []byte) []byte {
-
 	return append(EncodeIntToByteArray(len(arr)), arr...)
 }
 
