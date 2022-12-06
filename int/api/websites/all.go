@@ -7,6 +7,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/ledger"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
@@ -63,12 +64,14 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 	// Here we need to add the prefix len to the key depending on the type of the key
 	// to get the correct key in the datastore,
 	// each key has a different length and this length is append to the key
+	//massa := []byte{109, 97, 115, 115, 97}
 	for _, record := range recordResult {
 		if wallet.AddressChecker(string(record.CandidateValue)) {
 			metadataKey := node.DatastoreEntriesKeysAsString{
 				Address: string(record.CandidateValue),
-				Key:     []byte(metaKey + string(record.CandidateValue)),
+				Key:     []byte(convert.EncodeStringUint32ToUTF8(metaKey + string(record.CandidateValue))),
 			}
+
 			metadataKeys = append(metadataKeys, metadataKey)
 		}
 	}
