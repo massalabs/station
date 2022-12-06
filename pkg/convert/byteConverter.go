@@ -30,7 +30,6 @@ func U32ToString(numberToEncode uint32) string {
 }
 
 func EncodeStringUint32ToUTF8(str string) []byte {
-
 	numberToEncode := len(str)
 	//nolint:gomnd
 	buffer := make([]byte, 4)
@@ -44,5 +43,6 @@ func EncodeStringUint32ToUTF8(str string) []byte {
 
 	encodedString := string(runesBuffer)
 	slice := []byte(encodedString)
+
 	return append(slice, str...)
 }

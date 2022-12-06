@@ -1,6 +1,7 @@
 package my
 
 import (
+	"encoding/binary"
 	"fmt"
 	"strconv"
 	"strings"
@@ -71,15 +72,15 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	for i := 0; i < len(domainNames); i++ { //nolint:varnamelen
 		contractAddress := string(contractAddresses[i].CandidateValue[4:])
 
-		// brokenChunks, err := getMissingChunkIds(client, contractAddress)
-		// if err != nil {
-		// 	return nil, fmt.Errorf("checking chunk integrity: %w", err)
-		// }
+		brokenChunks, err := getMissingChunkIds(client, contractAddress)
+		if err != nil {
+			return nil, fmt.Errorf("checking chunk integrity: %w", err)
+		}
 
 		response := models.Websites{
 			Address:      contractAddress,
 			Name:         domainNames[i],
-			BrokenChunks: nil,
+			BrokenChunks: brokenChunks,
 		}
 		responses = append(responses, &response)
 	}
@@ -98,10 +99,7 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
 	}
 
-	chunkNumber, err := strconv.Atoi(string(keyNumber.CandidateValue))
-	if err != nil {
-		return nil, fmt.Errorf("error converting String to integer")
-	}
+	chunkNumber := int(binary.LittleEndian.Uint64(keyNumber.CandidateValue))
 
 	entries := []node.DatastoreEntriesKeysAsString{}
 

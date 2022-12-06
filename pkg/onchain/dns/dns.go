@@ -13,11 +13,12 @@ import (
 )
 
 const DNSRawAddress = "A1aNfHJ4CVHK4tW29jYcmx181zNWhf5GDyjqznV5HUrCsaSmCSD"
+const bytesPerU32 = 4
 
 func Resolve(client *node.Client, name string) (string, error) {
 	const dnsPrefix = "record"
 
-	entry, err := node.DatastoreEntry(client, DNSRawAddress, []byte(dnsPrefix+name))
+	entry, err := node.DatastoreEntry(client, DNSRawAddress, convert.EncodeStringUint32ToUTF8(dnsPrefix+name))
 	if err != nil {
 		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", DNSRawAddress, dnsPrefix+name, err)
 	}
@@ -25,8 +26,8 @@ func Resolve(client *node.Client, name string) (string, error) {
 	if len(entry.CandidateValue) == 0 {
 		return "", errors.New("name not found")
 	}
-
-	return string(entry.CandidateValue), nil
+	// we remove from the address its header length expressed as a U32
+	return string(entry.CandidateValue[bytesPerU32:]), nil
 }
 
 func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContract string) (string, error) {
@@ -36,10 +37,8 @@ func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContr
 	}
 
 	// Set Resolver prepare data
-	// Encoding len + url
 	rec := []byte(convert.U32ToString(uint32(len(url))))
 	rec = append(rec, []byte(url)...)
-	// Encoding len + smartContract
 	rec = append(rec, convert.U32ToString(uint32(len(smartContract)))...)
 	rec = append(rec, []byte(smartContract)...)
 

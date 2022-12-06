@@ -2,6 +2,7 @@ package website
 
 import (
 	"embed"
+	"encoding/binary"
 	"fmt"
 	"strconv"
 	"strings"
@@ -86,12 +87,19 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet *wallet.Wa
 	for index := 0; index < len(chunks); index++ {
 		// Chunk ID encoding
 		params := convert.U64NbBytes(uint64(index))
+		// Chunk data length encoding
+		//nolint:gomnd
+		b := make([]byte, 4)
+		binary.LittleEndian.PutUint32(b, uint32(len(chunks[index])))
+
+		//nolint:ineffassign,nolintlint
+		params = append(params, b...)
 		// Chunk data encoding
 		//nolint:ineffassign,nolintlint
-		params = append(append(params, convert.U64NbBytes((uint64(len(chunks[index]))))...), chunks[index]...)
+		params = append(params, chunks[index]...)
 
-		//nolint:lll, unconvert
-		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte(params))
+		//nolint:lll
+		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", params)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
@@ -133,9 +141,12 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, misse
 		}
 
 		params := convert.U64NbBytes(uint64(chunkID))
+		// Chunk data length encoding
+		//nolint:ineffassign,nolintlint
+		params = append(params, convert.U64NbBytes((uint64(len(chunks[chunkID]))))...)
 		// Chunk data encoding
 		//nolint:ineffassign,nolintlint
-		params = append(append(params, convert.U64NbBytes((uint64(len(chunks[chunkID]))))...), chunks[chunkID]...)
+		params = append(params, chunks[chunkID]...)
 
 		//nolint:lll
 		opID, err := onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", params)
