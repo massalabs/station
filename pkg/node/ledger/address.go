@@ -63,10 +63,11 @@ func KeysFiltered(client *node.Client, scAddress string, keyPrefix string) ([]st
 	var filteredKeys []string
 
 	for _, candidateDatastoreKey := range results[0].CandidateDatastoreKeys {
-		if strings.Index(string(candidateDatastoreKey), keyPrefix) == 0 {
-			filteredKeys = append(filteredKeys, string(candidateDatastoreKey))
+
+		if strings.Index(string(candidateDatastoreKey[4:]), keyPrefix) == 0 {
+			filteredKeys = append(filteredKeys, string(candidateDatastoreKey[4:]))
+
 		}
 	}
-
 	return filteredKeys, nil
 }

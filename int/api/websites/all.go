@@ -53,7 +53,11 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 	if err != nil {
 		return nil, fmt.Errorf("filtering keys with '%+v' failed : %w", recordKey, err)
 	}
-	recordResult, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, recordKeys)
+	EncodedRecordKey := make([][]byte, len(recordKeys))
+	for i, v := range recordKeys {
+		EncodedRecordKey[i] = convert.EncodeStringUint32ToUTF8(v)
+	}
+	recordResult, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, EncodedRecordKey)
 	if err != nil {
 		return nil, fmt.Errorf("searching recordAddress failed : %w", err)
 	}
@@ -65,9 +69,9 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 	// each key has a different length and this length is append to the key
 	//massa := []byte{109, 97, 115, 115, 97}
 	for _, record := range recordResult {
-		if wallet.AddressChecker(string(record.CandidateValue)) {
+		if wallet.AddressChecker(string(record.CandidateValue[4:])) {
 			metadataKey := node.DatastoreEntriesKeysAsString{
-				Address: string(record.CandidateValue),
+				Address: string(record.CandidateValue[4:]),
 				Key:     convert.EncodeStringUint32ToUTF8(metaKey + string(record.CandidateValue)),
 			}
 
@@ -86,9 +90,11 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 	for index := 0; index < len(metadatas); index++ {
 		registryResult[index] = &models.Registry{
 			Name:     strings.Split(recordKeys[index], recordKey)[1],
-			Address:  metadataKeys[index].Address,
+			Address:  string(metadataKeys[index].Address[4:]),
 			Metadata: metadatas[index].CandidateValue,
 		}
+		fmt.Println("🚀 ~ file: all.go:90 ~ forindex:=0;index<len ~ registryResult[index]", metadatas[index].CandidateValue)
+
 	}
 
 	return registryResult, nil

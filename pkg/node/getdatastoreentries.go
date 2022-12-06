@@ -51,13 +51,13 @@ func DatastoreEntry(client *Client, address string, key []byte) (*DatastoreEntry
 	return &response[0], nil
 }
 
-func ContractDatastoreEntries(client *Client, address string, keys []string) ([]DatastoreEntryResponse, error) {
+func ContractDatastoreEntries(client *Client, address string, keys [][]byte) ([]DatastoreEntryResponse, error) {
 	entries := []DatastoreEntriesKeysAsString{}
 
 	for i := 0; i < len(keys); i++ {
 		entry := DatastoreEntriesKeysAsString{
 			Address: address,
-			Key:     []byte(keys[i]),
+			Key:     keys[i],
 		}
 		entries = append(entries, entry)
 	}

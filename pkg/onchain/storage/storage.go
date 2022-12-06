@@ -8,6 +8,7 @@ import (
 	"io"
 	"strconv"
 
+	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 )
 
@@ -42,7 +43,7 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 	for i := uint64(0); i < chunkNumber; i++ {
 		entry := node.DatastoreEntriesKeysAsString{
 			Address: address,
-			Key:     []byte("massa_web_" + strconv.Itoa(int(i))),
+			Key:     convert.EncodeStringUint32ToUTF8("massa_web_" + strconv.Itoa(int(i))),
 		}
 		entries = append(entries, entry)
 	}
