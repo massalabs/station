@@ -2,6 +2,7 @@ package website
 
 import (
 	"embed"
+	"encoding/binary"
 	"fmt"
 	"strconv"
 	"strings"
@@ -87,14 +88,18 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet *wallet.Wa
 		// Chunk ID encoding
 		params := convert.Uint64ToByteArrayU8(uint64(index))
 		// Chunk data length encoding
+		//nolint:gomnd
+		b := make([]byte, 4)
+		binary.LittleEndian.PutUint32(b, uint32(len(chunks[index])))
+
 		//nolint:ineffassign,nolintlint
-		params = append(params, convert.Uint64ToByteArrayU8((uint64(len(chunks[index]))))...)
+		params = append(params, b...)
 		// Chunk data encoding
 		//nolint:ineffassign,nolintlint
 		params = append(params, chunks[index]...)
 
 		//nolint:lll
-		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte(params))
+		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", params)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}

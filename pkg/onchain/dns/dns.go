@@ -13,6 +13,7 @@ import (
 )
 
 const DNSRawAddress = "A1aNfHJ4CVHK4tW29jYcmx181zNWhf5GDyjqznV5HUrCsaSmCSD"
+const bytesPerU32 = 4
 
 func Resolve(client *node.Client, name string) (string, error) {
 	const dnsPrefix = "record"
@@ -25,8 +26,8 @@ func Resolve(client *node.Client, name string) (string, error) {
 	if len(entry.CandidateValue) == 0 {
 		return "", errors.New("name not found")
 	}
-
-	return string(entry.CandidateValue), nil
+	// we remove from the address its header length expressed as a U32
+	return string(entry.CandidateValue[bytesPerU32:]), nil
 }
 
 func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContract string) (string, error) {

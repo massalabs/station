@@ -28,7 +28,7 @@ func readZipFile(z *zip.File) ([]byte, error) {
 }
 
 //nolint:nolintlint,ireturn,funlen
-func Get(client *node.Client, address string, key string) (map[string][]byte, error) {
+func Get(client *node.Client, address string) (map[string][]byte, error) {
 	chunkNumberKey := "total_chunks"
 
 	keyNumber, err := node.DatastoreEntry(client, address, convert.EncodeStringUint32ToUTF8(chunkNumberKey))
@@ -36,14 +36,14 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
 	}
 
-	chunkNumber := binary.LittleEndian.Uint64(keyNumber.CandidateValue)
+	chunkNumber := int(binary.LittleEndian.Uint64(keyNumber.CandidateValue))
 
 	entries := []node.DatastoreEntriesKeysAsString{}
 
-	for i := uint64(0); i < chunkNumber; i++ {
+	for i := 0; i < chunkNumber; i++ {
 		entry := node.DatastoreEntriesKeysAsString{
 			Address: address,
-			Key:     []byte("massa_web_" + strconv.Itoa(int(i))),
+			Key:     convert.EncodeStringUint32ToUTF8("massa_web_" + strconv.Itoa(i)),
 		}
 		entries = append(entries, entry)
 	}
@@ -54,13 +54,13 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 	}
 
 	var dataStore []byte
-	for i := uint64(0); i < chunkNumber; i++ {
-		dataStore = append(dataStore, response[i].CandidateValue...)
+	for i := 0; i < chunkNumber; i++ {
+		dataStore = append(dataStore, response[i].CandidateValue[4:]...)
 	}
 
 	zipReader, err := zip.NewReader(bytes.NewReader(dataStore), int64(len(dataStore)))
 	if err != nil {
-		return nil, fmt.Errorf("instantiating zip reader from decoded datastore entry '%s' at '%s': %w", address, key, err)
+		return nil, fmt.Errorf("instantiating zip reader from decoded datastore entry '%s' at  '%w'", address, err)
 	}
 
 	content := make(map[string][]byte)
