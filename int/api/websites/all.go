@@ -69,7 +69,6 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 	// Here we need to add the prefix len to the key depending on the type of the key
 	// to get the correct key in the datastore,
 	// each key has a different length and this length is append to the key
-	// massa := []byte{109, 97, 115, 115, 97}
 	for _, record := range recordResult {
 		if wallet.AddressChecker(string(record.CandidateValue[4:])) {
 			metadataKey := node.DatastoreEntriesKeysAsString{

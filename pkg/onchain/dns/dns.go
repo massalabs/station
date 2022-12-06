@@ -13,6 +13,7 @@ import (
 )
 
 const DNSRawAddress = "A1aNfHJ4CVHK4tW29jYcmx181zNWhf5GDyjqznV5HUrCsaSmCSD"
+
 const bytesPerU32 = 4
 
 func Resolve(client *node.Client, name string) (string, error) {
