@@ -8,6 +8,7 @@ import (
 	"io"
 	"strconv"
 
+	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 )
 
@@ -30,7 +31,7 @@ func readZipFile(z *zip.File) ([]byte, error) {
 func Get(client *node.Client, address string, key string) (map[string][]byte, error) {
 	chunkNumberKey := "total_chunks"
 
-	keyNumber, err := node.DatastoreEntry(client, address, []byte(chunkNumberKey))
+	keyNumber, err := node.DatastoreEntry(client, address, convert.EncodeStringUint32ToUTF8(chunkNumberKey))
 	if err != nil {
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
 	}
