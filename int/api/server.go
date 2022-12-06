@@ -31,11 +31,11 @@ func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 	server.Port = startFlags.Port
 	server.TLSPort = startFlags.TLSPort
 
-	if startFlags.TLSCertificate != "" {
+	if _, err := os.Stat(startFlags.TLSCertificate); err == nil {
 		server.TLSCertificate = flags.Filename(startFlags.TLSCertificate)
 	}
 
-	if startFlags.TLSCertificateKey != "" {
+	if _, err := os.Stat(startFlags.TLSCertificateKey); err == nil {
 		server.TLSCertificateKey = flags.Filename(startFlags.TLSCertificateKey)
 	}
 

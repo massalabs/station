@@ -3,6 +3,11 @@
 BINARY_URL="https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin"
 SCRIPT="MacOS"
 
+MKCERT_URL_ARM="https://dl.filippo.io/mkcert/latest?for=darwin/arm64"
+MKCERT_URL_AMD="https://dl.filippo.io/mkcert/latest?for=darwin/ams64"
+
+THYRA_CONF_DIR=$HOME/.config/thyra
+
 green () { echo -e "\033[01;32m$1:\033[0m $2"; }
 
 fatal () { echo -e "\033[01;31m[$SCRIPT]ERROR:\033[0m $1" >&2; exit 1; }
@@ -24,7 +29,7 @@ install_thyra () {
     sudo mv thyra-server /usr/local/bin/ || fatal "move to /usr/local/bin/ failed."
 
     # Create config dir
-    mkdir -p $HOME/.config/thyra
+    mkdir -p $THYRA_CONF_DIR
 }
 
 configure_start_dnsmasq () {
@@ -43,11 +48,29 @@ set_local_dns () {
     esac
 }
 
+generate_certificate () {
+    green "INFO" "Installing MKcert and generating HTTPS certificates:"
+    ARCH=$(uname -m)
+    if [[ "$ARCH" == 'aarch64' ]]; then
+        MKCERT_URL=$MKCERT_URL_ARM
+        else
+        MKCERT_URL=$MKCERT_URL_AMD
+    fi
+    curl -sL $MKCERT_URL -o mkcert
+    chmod +x mkcert
+    ./mkcert -install
+    mkdir -p $THYRA_CONF_DIR/certs
+    ./mkcert -cert-file $THYRA_CONF_DIR/certs/cert.pem -key-file $THYRA_CONF_DIR/certs/cert-key.pem my.massa
+    rm mkcert
+}
+
 echo ""
 
 green "INFO" "This installation script will install the last release of Thyra and will configure your local DNS to resolve .massa if needed."
 
 install_thyra || exit 1
+
+generate_certificate || exit 1
 
 ping -c 1 -t 1 test.massa  || set_local_dns || exit 1
 
