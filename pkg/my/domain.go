@@ -27,8 +27,11 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 	}
 
 	domains := []string{}
-	keyOwned := []byte(ownedPrefix + wallet.Address)
-	domainsEntry, err := node.DatastoreEntry(client, dns.DNSRawAddress, keyOwned)
+
+	keyWithHeader := convert.EncodeStringUint32ToUTF8(ownedPrefix + wallet.Address)
+
+	domainsEntry, err := node.DatastoreEntry(client, dns.DNSRawAddress, keyWithHeader)
+	fmt.Println("🚀 ~ file: domain.go:37 ~ funcDomains ~ domainsEntry", domainsEntry)
 	if err != nil {
 		return nil, fmt.Errorf("reading entry '%s' at '%s': %w", dns.DNSRawAddress, ownedPrefix+wallet.Address, err)
 	}
@@ -37,7 +40,7 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 		return domains, nil
 	}
 
-	domains = strings.Split(string(domainsEntry.CandidateValue), ",")
+	domains = strings.Split(string(domainsEntry.CandidateValue[4:]), ",")
 
 	if err != nil {
 		return nil, fmt.Errorf("parsing json '%s': %w", domainsEntry.CandidateValue, err)
@@ -54,30 +57,33 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	for i := 0; i < len(domainNames); i++ {
 		param := node.DatastoreEntriesKeysAsString{
 			Address: dns.DNSRawAddress,
-			Key:     []byte(convert.EncodeStringUint32ToUTF8(recordPrefix + domainNames[i])),
+			Key:     convert.EncodeStringUint32ToUTF8(recordPrefix + domainNames[i]),
 		}
+		fmt.Println("🚀 ~ file: domain.go:61 ~ fori:=0;i<len ~ Key", param)
 		params = append(params, param)
-
 	}
 
 	responses := []*models.Websites{}
+
 	contractAddresses, err := node.DatastoreEntries(client, params)
+	fmt.Println("🚀 ~ file: domain.go:68 ~ funcWebsites ~ contractAddresses", contractAddresses)
+
 	if err != nil {
 		return nil, fmt.Errorf("reading entries'%s': %w", params, err)
 	}
 
 	for i := 0; i < len(domainNames); i++ { //nolint:varnamelen
-		contractAddress := string(contractAddresses[i].CandidateValue)
+		contractAddress := string(contractAddresses[i].CandidateValue[4:])
 
-		brokenChunks, err := getMissingChunkIds(client, contractAddress)
-		if err != nil {
-			return nil, fmt.Errorf("checking chunk integrity: %w", err)
-		}
+		// brokenChunks, err := getMissingChunkIds(client, contractAddress)
+		// if err != nil {
+		// 	return nil, fmt.Errorf("checking chunk integrity: %w", err)
+		// }
 
 		response := models.Websites{
 			Address:      contractAddress,
 			Name:         domainNames[i],
-			BrokenChunks: brokenChunks,
+			BrokenChunks: nil,
 		}
 		responses = append(responses, &response)
 	}
@@ -91,7 +97,7 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 
 	var missedChunks []string
 
-	keyNumber, err := node.DatastoreEntry(client, address, []byte(chunkNumberKey))
+	keyNumber, err := node.DatastoreEntry(client, address, convert.EncodeStringUint32ToUTF8(chunkNumberKey))
 	if err != nil {
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
 	}
@@ -106,11 +112,11 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 	for i := 0; i < chunkNumber; i++ {
 		entry := node.DatastoreEntriesKeysAsString{
 			Address: address,
-			Key:     []byte(convert.EncodeStringUint32ToUTF8("massa_web_" + strconv.Itoa(i))),
+			Key:     convert.EncodeStringUint32ToUTF8("massa_web_" + strconv.Itoa(i)),
 		}
 		entries = append(entries, entry)
-
 	}
+
 	response, err := node.DatastoreEntries(client, entries)
 	if err != nil {
 		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)

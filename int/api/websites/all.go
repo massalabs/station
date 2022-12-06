@@ -53,7 +53,6 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 	if err != nil {
 		return nil, fmt.Errorf("filtering keys with '%+v' failed : %w", recordKey, err)
 	}
-
 	recordResult, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, recordKeys)
 	if err != nil {
 		return nil, fmt.Errorf("searching recordAddress failed : %w", err)
@@ -69,7 +68,7 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 		if wallet.AddressChecker(string(record.CandidateValue)) {
 			metadataKey := node.DatastoreEntriesKeysAsString{
 				Address: string(record.CandidateValue),
-				Key:     []byte(convert.EncodeStringUint32ToUTF8(metaKey + string(record.CandidateValue))),
+				Key:     convert.EncodeStringUint32ToUTF8(metaKey + string(record.CandidateValue)),
 			}
 
 			metadataKeys = append(metadataKeys, metadataKey)
