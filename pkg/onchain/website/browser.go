@@ -12,7 +12,7 @@ import (
 func Fetch(c *node.Client, addr string, filename string) ([]byte, error) {
 	m, err := storage.Get(c, addr)
 	if err != nil {
-		return nil, fmt.Errorf("fetching the '%s' web resource at '%s': %w", filename, addr[1:], err)
+		return nil, fmt.Errorf("fetching the '%s' web resource at '%s': %w", filename, addr, err)
 	}
 
 	return m[filename], nil

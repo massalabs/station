@@ -25,21 +25,6 @@ func FromU32(u32 uint32) (bytes []byte) {
 	return
 }
 
-// Decode uint32 to string.
-func U32ToString(numberToEncode uint32) string {
-	//nolint:gomnd
-	buffer := make([]byte, 4)
-	binary.LittleEndian.PutUint32(buffer, numberToEncode)
-	//nolint:gomnd
-	runesBuffer := make([]rune, 4)
-
-	for i := 0; i < len(buffer); i++ {
-		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
-	}
-
-	return string(runesBuffer)
-}
-
 func EncodeStringUint32ToUTF8(str string) []byte {
 	numberToEncode := len(str)
 	//nolint:gomnd
@@ -58,7 +43,7 @@ func EncodeStringUint32ToUTF8(str string) []byte {
 	return append(slice, str...)
 }
 
-func DecodeStringUTF8ToUint32(entry []byte) string {
+func RemoveStringEncodingPrefix(entry []byte) string {
 	prefix := 4 // 4 first bytes representing the Length of the string
 	entryWithoutPrefix := entry[prefix:]
 

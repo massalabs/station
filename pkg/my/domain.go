@@ -40,7 +40,7 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 		return domains, nil
 	}
 
-	domains = strings.Split(convert.DecodeStringUTF8ToUint32(domainsEntry.CandidateValue), ",")
+	domains = strings.Split(convert.RemoveStringEncodingPrefix(domainsEntry.CandidateValue), ",")
 
 	if err != nil {
 		return nil, fmt.Errorf("parsing json '%s': %w", domainsEntry.CandidateValue, err)
@@ -70,7 +70,7 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	}
 
 	for i := 0; i < len(domainNames); i++ { //nolint:varnamelen
-		contractAddress := convert.DecodeStringUTF8ToUint32(contractAddresses[i].CandidateValue)
+		contractAddress := convert.RemoveStringEncodingPrefix(contractAddresses[i].CandidateValue)
 
 		brokenChunks, err := getMissingChunkIds(client, contractAddress)
 		if err != nil {

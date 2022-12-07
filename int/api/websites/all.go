@@ -49,8 +49,15 @@ func RegistryHandler(params operations.AllDomainsGetterParams) middleware.Respon
 	return operations.NewAllDomainsGetterOK().WithPayload(results)
 }
 
+/*
+This function fetch all websites data that are associated with the DNS
+smart contract Thyra is connected to. Once this data has been fetched from the DNS and
+the various website storer contracts, the function builds an array of Registry objects
+and returns it to the frontend for display on the Registry page.
+*/
 func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.Registry, error) {
-	recordKeysStrings, err := ledger.KeysFiltered(client, dns.DNSRawAddress, recordKey) // array of strings of website names : (recordflappy)
+	// array of strings of website names : (recordflappy).
+	recordKeysStrings, err := ledger.KeysFiltered(client, dns.DNSRawAddress, recordKey)
 	if err != nil {
 		return nil, fmt.Errorf("filtering keys with '%+v' failed : %w", recordKey, err)
 	}
@@ -59,43 +66,43 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 	for i, v := range recordKeysStrings {
 		recordKeyBytes[i] = convert.EncodeStringUint32ToUTF8(v)
 	}
-	// retrieve the records owners values : addresses who own the websites
+	// retrieve the records owners values : addresses who own the websites.
 	recordResult, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, recordKeyBytes)
 	if err != nil {
 		return nil, fmt.Errorf("searching Owners of records (addresses) failed : %w", err)
 	}
 
-	var metadataKeys []node.DatastoreEntriesKeysAsString
+	var websiteStorersKeys []node.DatastoreEntriesKeysAsString
 
 	for _, record := range recordResult {
-		if wallet.CheckAddress(convert.DecodeStringUTF8ToUint32(record.CandidateValue)) {
-			metadataKey := node.DatastoreEntriesKeysAsString{
-				Address: convert.DecodeStringUTF8ToUint32(record.CandidateValue),
+		if wallet.CheckAddress(convert.RemoveStringEncodingPrefix(record.CandidateValue)) {
+			websiteStorerKey := node.DatastoreEntriesKeysAsString{
+				Address: convert.RemoveStringEncodingPrefix(record.CandidateValue),
 				Key:     convert.EncodeStringUint32ToUTF8(metaKey + string(record.CandidateValue)),
 			}
 
-			metadataKeys = append(metadataKeys, metadataKey)
+			websiteStorersKeys = append(websiteStorersKeys, websiteStorerKey)
 		}
 	}
 
-	metadatas, err := node.DatastoreEntries(client, metadataKeys)
+	websiteUploadDates, err := node.DatastoreEntries(client, websiteStorersKeys)
 	if err != nil {
 		return nil, fmt.Errorf("metadata reaching on dnsContractStorers failed : %w", err)
 	}
 
-	registryResult := make([]*models.Registry, len(metadatas))
+	registryResult := make([]*models.Registry, len(websiteUploadDates))
 
-	// Here we have to switch to string to display to the front
-	for index := 0; index < len(metadatas); index++ {
+	for index := 0; index < len(websiteUploadDates); index++ {
 		registryResult[index] = &models.Registry{
-			Name:     strings.Split(recordKeysStrings[index], recordKey)[1], // name of website : flappy
-			Address:  metadataKeys[index].Address[4:],                       // Owner of Website Address
-			Metadata: metadatas[index].CandidateValue,                       // TimeStamp : Date of Upload
+			Name:     strings.Split(recordKeysStrings[index], recordKey)[1], // name of website : flappy.
+			Address:  websiteStorersKeys[index].Address,                     // Owner of Website Address.
+			Metadata: websiteUploadDates[index].CandidateValue,              // Date of Upload.
 		}
 	}
-	// sort website names with alphanumeric order
+	// sort website names with alphanumeric order.
 	sort.Slice(registryResult, func(i, j int) bool {
 		return registryResult[i].Name < registryResult[j].Name
 	})
+
 	return registryResult, nil
 }
