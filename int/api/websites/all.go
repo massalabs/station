@@ -2,6 +2,7 @@ package websites
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -92,6 +93,9 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 			Metadata: metadatas[index].CandidateValue,                       // TimeStamp : Date of Upload
 		}
 	}
-
+	// sort website names with alphanumeric order
+	sort.Slice(registryResult, func(i, j int) bool {
+		return registryResult[i].Name < registryResult[j].Name
+	})
 	return registryResult, nil
 }
