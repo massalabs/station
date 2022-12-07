@@ -21,7 +21,7 @@ from the DNS smart contract and returns it.
 func Resolve(client *node.Client, name string) (string, error) {
 	const dnsPrefix = "record"
 
-	entry, err := node.DatastoreEntry(client, DNSRawAddress, convert.EncodeStringUint32ToUTF8(dnsPrefix+name))
+	entry, err := node.DatastoreEntry(client, DNSRawAddress, convert.EncodeStringToByteArray(dnsPrefix+name))
 	if err != nil {
 		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", DNSRawAddress, dnsPrefix+name, err)
 	}

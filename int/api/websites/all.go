@@ -64,7 +64,7 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 	// convert array of strings to array of [array of bytes]
 	recordKeyBytes := make([][]byte, len(recordKeysStrings))
 	for i, v := range recordKeysStrings {
-		recordKeyBytes[i] = convert.EncodeStringUint32ToUTF8(v)
+		recordKeyBytes[i] = convert.EncodeStringToByteArray(v)
 	}
 	// retrieve the records owners values : addresses who own the websites.
 	recordResult, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, recordKeyBytes)
@@ -78,7 +78,7 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 		if wallet.CheckAddress(convert.RemoveStringEncodingPrefix(record.CandidateValue)) {
 			websiteStorerKey := node.DatastoreEntriesKeysAsString{
 				Address: convert.RemoveStringEncodingPrefix(record.CandidateValue),
-				Key:     convert.EncodeStringUint32ToUTF8(metaKey + string(record.CandidateValue)),
+				Key:     convert.EncodeStringToByteArray(metaKey + string(record.CandidateValue)),
 			}
 
 			websiteStorersKeys = append(websiteStorersKeys, websiteStorerKey)

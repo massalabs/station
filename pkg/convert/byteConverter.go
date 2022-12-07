@@ -25,7 +25,7 @@ func FromU32(u32 uint32) (bytes []byte) {
 	return
 }
 
-func EncodeStringUint32ToUTF8(str string) []byte {
+func EncodeStringToByteArray(str string) []byte {
 	numberToEncode := len(str)
 	//nolint:gomnd
 	buffer := make([]byte, 4)

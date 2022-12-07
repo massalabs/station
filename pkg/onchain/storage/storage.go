@@ -39,7 +39,7 @@ func readZipFile(z *zip.File) ([]byte, error) {
 func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, error) {
 	chunkNumberKey := "total_chunks"
 
-	keyNumber, err := node.DatastoreEntry(client, websiteStorerAddress, convert.EncodeStringUint32ToUTF8(chunkNumberKey))
+	keyNumber, err := node.DatastoreEntry(client, websiteStorerAddress, convert.EncodeStringToByteArray(chunkNumberKey))
 	if err != nil {
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", websiteStorerAddress, chunkNumberKey, err)
 	}
@@ -51,7 +51,7 @@ func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, e
 	for i := 0; i < chunkNumber; i++ {
 		entry := node.DatastoreEntriesKeysAsString{
 			Address: websiteStorerAddress,
-			Key:     convert.EncodeStringUint32ToUTF8("massa_web_" + strconv.Itoa(i)),
+			Key:     convert.EncodeStringToByteArray("massa_web_" + strconv.Itoa(i)),
 		}
 		entries = append(entries, entry)
 	}
