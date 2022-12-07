@@ -16,6 +16,10 @@ const DNSRawAddress = "A1aNfHJ4CVHK4tW29jYcmx181zNWhf5GDyjqznV5HUrCsaSmCSD"
 
 const bytesPerU32 = 4
 
+/*
+This function fetch the address of the website storer associated with the name given in parameter
+from the DNS smart contract and returns it
+*/
 func Resolve(client *node.Client, name string) (string, error) {
 	const dnsPrefix = "record"
 
@@ -28,7 +32,7 @@ func Resolve(client *node.Client, name string) (string, error) {
 		return "", errors.New("name not found")
 	}
 	// we remove from the address its header length expressed as a U32
-	return string(entry.CandidateValue[bytesPerU32:]), nil
+	return convert.DecodeStringUTF8ToUint32(entry.CandidateValue), nil
 }
 
 func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContract string) (string, error) {
@@ -38,9 +42,9 @@ func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContr
 	}
 
 	// Set Resolver prepare data
-	rec := []byte(convert.U32ToString(uint32(len(url))))
+	rec := convert.FromU32(uint32(len(url)))
 	rec = append(rec, []byte(url)...)
-	rec = append(rec, convert.U32ToString(uint32(len(smartContract)))...)
+	rec = append(rec, convert.FromU32(uint32(len(smartContract)))...)
 	rec = append(rec, []byte(smartContract)...)
 
 	result, err := onchain.CallFunction(client, wallet, addr, "setResolver", rec, sendoperation.OneMassa)

@@ -27,13 +27,21 @@ func readZipFile(z *zip.File) ([]byte, error) {
 	return content, nil
 }
 
+/*
+	This function fetch the datastore entries required to display
+	a website in the browser from the website storer contract, unzip them and
+	return the full unzipped website content.
+	Datastore entries fetched :
+	- total_chunks : Total number of chunks that are to be fetched.
+	- massa_web_XXX : Keys containing the website data, with XXX being the chunk ID.
+*/
 //nolint:nolintlint,ireturn,funlen
-func Get(client *node.Client, address string) (map[string][]byte, error) {
+func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, error) {
 	chunkNumberKey := "total_chunks"
 
-	keyNumber, err := node.DatastoreEntry(client, address, convert.EncodeStringUint32ToUTF8(chunkNumberKey))
+	keyNumber, err := node.DatastoreEntry(client, websiteStorerAddress, convert.EncodeStringUint32ToUTF8(chunkNumberKey))
 	if err != nil {
-		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
+		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", websiteStorerAddress, chunkNumberKey, err)
 	}
 
 	chunkNumber := int(binary.LittleEndian.Uint64(keyNumber.CandidateValue))
@@ -42,7 +50,7 @@ func Get(client *node.Client, address string) (map[string][]byte, error) {
 
 	for i := 0; i < chunkNumber; i++ {
 		entry := node.DatastoreEntriesKeysAsString{
-			Address: address,
+			Address: websiteStorerAddress,
 			Key:     convert.EncodeStringUint32ToUTF8("massa_web_" + strconv.Itoa(i)),
 		}
 		entries = append(entries, entry)
@@ -60,7 +68,7 @@ func Get(client *node.Client, address string) (map[string][]byte, error) {
 
 	zipReader, err := zip.NewReader(bytes.NewReader(dataStore), int64(len(dataStore)))
 	if err != nil {
-		return nil, fmt.Errorf("instantiating zip reader from decoded datastore entry '%s' at  '%w'", address, err)
+		return nil, fmt.Errorf("instantiating zip reader from decoded datastore entries '%s' at  '%w'", dataStore, err)
 	}
 
 	content := make(map[string][]byte)
