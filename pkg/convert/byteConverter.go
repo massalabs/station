@@ -5,22 +5,24 @@ import (
 	"unicode/utf16"
 )
 
-// Encode uint64 to byte array.
-func U64NbBytes(u64 uint64) []byte {
-	const encode = 8
-	b := make([]byte, encode)
-	binary.LittleEndian.PutUint64(b, u64)
+const bytesPerUint64 = 8
 
-	return b
+// Encode uint64 to byte array.
+func FromU64(u64 uint64) (bytes []byte) {
+	bytes = make([]byte, bytesPerUint64)
+	binary.LittleEndian.PutUint64(bytes, u64)
+
+	return
 }
 
-// Encode uint32 to byte array.
-func U32NbBytes(u32 uint32) []byte {
-	const encode = 4
-	b := make([]byte, encode)
-	binary.LittleEndian.PutUint32(b, u32)
+const bytesPerUint32 = 4
 
-	return b
+// Encode uint32 to byte array.
+func FromU32(u32 uint32) (bytes []byte) {
+	bytes = make([]byte, bytesPerUint32)
+	binary.LittleEndian.PutUint32(bytes, u32)
+
+	return
 }
 
 // Decode uint32 to string.
