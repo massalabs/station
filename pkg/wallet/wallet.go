@@ -222,7 +222,7 @@ func Delete(nickname string) (err error) {
 	return nil
 }
 
-func AddressChecker(address string) bool {
+func CheckAddress(address string) bool {
 	return len(address) > MinAddressLength
 }
 

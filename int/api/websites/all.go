@@ -70,7 +70,7 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 	// to get the correct key in the datastore,
 	// each key has a different length and this length is append to the key
 	for _, record := range recordResult {
-		if wallet.AddressChecker(convert.DecodeStringUTF8ToUint32(record.CandidateValue)) {
+		if wallet.CheckAddress(convert.DecodeStringUTF8ToUint32(record.CandidateValue)) {
 			metadataKey := node.DatastoreEntriesKeysAsString{
 				Address: convert.DecodeStringUTF8ToUint32(record.CandidateValue),
 				Key:     convert.EncodeStringUint32ToUTF8(metaKey + string(record.CandidateValue)),
