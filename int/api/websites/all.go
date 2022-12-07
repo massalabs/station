@@ -49,7 +49,7 @@ func RegistryHandler(params operations.AllDomainsGetterParams) middleware.Respon
 }
 
 func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.Registry, error) {
-	recordKeysStrings, err := ledger.KeysFiltered(client, dns.DNSRawAddress, recordKey) //array of strings of website names : (flappy)
+	recordKeysStrings, err := ledger.KeysFiltered(client, dns.DNSRawAddress, recordKey) //array of strings of website names : (recordflappy)
 	if err != nil {
 		return nil, fmt.Errorf("filtering keys with '%+v' failed : %w", recordKey, err)
 	}
@@ -89,7 +89,7 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 		registryResult[index] = &models.Registry{
 			Name:     strings.Split(recordKeysStrings[index], recordKey)[1], // name of website : flappy
 			Address:  metadataKeys[index].Address[4:],                       // Owner of Website Address
-			Metadata: metadatas[index].CandidateValue,                       // TimeStamp : Dta of Upload
+			Metadata: metadatas[index].CandidateValue,                       // TimeStamp : Date of Upload
 		}
 	}
 
