@@ -49,26 +49,23 @@ func RegistryHandler(params operations.AllDomainsGetterParams) middleware.Respon
 }
 
 func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.Registry, error) {
-	recordKeys, err := ledger.KeysFiltered(client, dns.DNSRawAddress, recordKey)
+	recordKeysStrings, err := ledger.KeysFiltered(client, dns.DNSRawAddress, recordKey) //array of strings of website names : (flappy)
 	if err != nil {
 		return nil, fmt.Errorf("filtering keys with '%+v' failed : %w", recordKey, err)
 	}
-
-	EncodedRecordKey := make([][]byte, len(recordKeys))
-	for i, v := range recordKeys {
-		EncodedRecordKey[i] = convert.EncodeStringUint32ToUTF8(v)
+	//convert array of strings to array of [array of bytes]
+	recordKeyBytes := make([][]byte, len(recordKeysStrings))
+	for i, v := range recordKeysStrings {
+		recordKeyBytes[i] = convert.EncodeStringUint32ToUTF8(v)
 	}
-
-	recordResult, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, EncodedRecordKey)
+	// retrieve the records owners values : addresses who own the websites
+	recordResult, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, recordKeyBytes)
 	if err != nil {
-		return nil, fmt.Errorf("searching recordAddress failed : %w", err)
+		return nil, fmt.Errorf("searching Owners of records (addresses) failed : %w", err)
 	}
 
 	var metadataKeys []node.DatastoreEntriesKeysAsString
 
-	// Here we need to add the prefix len to the key depending on the type of the key
-	// to get the correct key in the datastore,
-	// each key has a different length and this length is append to the key
 	for _, record := range recordResult {
 		if wallet.CheckAddress(convert.DecodeStringUTF8ToUint32(record.CandidateValue)) {
 			metadataKey := node.DatastoreEntriesKeysAsString{
@@ -90,9 +87,9 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 	// Here we have to switch to string to display to the front
 	for index := 0; index < len(metadatas); index++ {
 		registryResult[index] = &models.Registry{
-			Name:     strings.Split(recordKeys[index], recordKey)[1],
-			Address:  metadataKeys[index].Address[4:],
-			Metadata: metadatas[index].CandidateValue,
+			Name:     strings.Split(recordKeysStrings[index], recordKey)[1], // name of website : flappy
+			Address:  metadataKeys[index].Address[4:],                       // Owner of Website Address
+			Metadata: metadatas[index].CandidateValue,                       // TimeStamp : Dta of Upload
 		}
 	}
 
