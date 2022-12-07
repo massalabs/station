@@ -84,10 +84,10 @@ In order to register a website on Thyra you'll need to :
 
 - Deploy a Smart Contract that will handle the storage of your website, your DNS name will fetch the Address of this Smart Contract - this step is handled by Thyra, don't worry. But at least you know what's happening behind the wood.
 - Upload the build of your application.
-If you don't have an application or website handy but still want to test this functionality, here are some websites you can use:
-[bbx.zip](https://github.com/massalabs/thyra/files/10169142/bbx.zip)
-[flappy.zip](https://github.com/massalabs/thyra/files/10169143/flappy.zip)
-[tic-tac-toe.zip](https://github.com/massalabs/thyra/files/10169144/tic-tac-toe.zip)
+  * If you don't have an application or website handy but still want to test this functionality, here are some websites you can use:
+    - [bbx.zip](https://github.com/massalabs/thyra/files/10169142/bbx.zip)
+    - [flappy.zip](https://github.com/massalabs/thyra/files/10169143/flappy.zip)
+    - [tic-tac-toe.zip](https://github.com/massalabs/thyra/files/10169144/tic-tac-toe.zip)
 
 - Use a wallet with sufficient coins to upload it on the blockchain
 Important note: At the moment, we have defined that 1 chunk (=280ko) of data worth 100 MAS. It will change and become more and more specific and precise as the Testnet and Thyra are evolving. In the mean time, we have defined it arbitrarily.
