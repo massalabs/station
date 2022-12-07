@@ -46,3 +46,9 @@ func EncodeStringUint32ToUTF8(str string) []byte {
 
 	return append(slice, str...)
 }
+
+func DecodeStringUTF8ToUint32(entry []byte) string {
+	prefix := 4 // 4 first bytes representing the Length of the string
+	entryWithoutPrefix := entry[prefix:]
+	return string(entryWithoutPrefix)
+}
