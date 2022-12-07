@@ -14,6 +14,15 @@ func U64NbBytes(u64 uint64) []byte {
 	return b
 }
 
+// Encode uint32 to byte array.
+func U32NbBytes(u32 uint32) []byte {
+	const encode = 4
+	b := make([]byte, encode)
+	binary.LittleEndian.PutUint32(b, u32)
+
+	return b
+}
+
 // Decode uint32 to string.
 func U32ToString(numberToEncode uint32) string {
 	//nolint:gomnd

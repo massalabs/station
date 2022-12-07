@@ -84,7 +84,7 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 		return createInternalServerError(errorCodeWebCreatorPrepare, err.Error())
 	}
 
-	_, err = website.Upload(address, archive, wallet)
+	_, err = website.Upload(address, archive, *wallet)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
@@ -174,7 +174,7 @@ func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyn
 		return createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
 	}
 
-	_, err = website.Upload(params.Address, archive, wallet)
+	_, err = website.Upload(params.Address, archive, *wallet)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}

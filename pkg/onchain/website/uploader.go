@@ -2,7 +2,6 @@ package website
 
 import (
 	"embed"
-	"encoding/binary"
 	"fmt"
 	"strconv"
 	"strings"
@@ -21,9 +20,12 @@ var content embed.FS
 
 const baseOffset = 5
 
-const multiplicator = 2
-
 const blockLength = 260000
+
+// function calculating the max expiry period, this calculation is empiric
+func maxExpiryPeriod(index int) uint64 {
+	return baseOffset + uint64(index)*2
+}
 
 func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	client := node.NewDefaultClient()
@@ -50,11 +52,7 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	return scAddress, nil
 }
 
-type InitialisationParams struct {
-	TotalChunks string `json:"total_chunks"`
-}
-
-func Upload(atAddress string, content []byte, wallet *wallet.Wallet) ([]string, error) {
+func Upload(atAddress string, content []byte, wallet wallet.Wallet) ([]string, error) {
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
@@ -72,11 +70,11 @@ func Upload(atAddress string, content []byte, wallet *wallet.Wallet) ([]string, 
 	return operations, nil
 }
 
-func upload(client *node.Client, addr []byte, chunks [][]byte, wallet *wallet.Wallet) ([]string, error) {
+func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
-	totalChunks := convert.U64NbBytes(uint64(len(chunks)))
+	nbChunks := convert.U64NbBytes(uint64(len(chunks)))
 
-	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", totalChunks,
+	opID, err := onchain.CallFunction(client, wallet, addr, "initializeWebsite", nbChunks,
 		sendoperation.OneMassa)
 	if err != nil {
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
@@ -88,18 +86,13 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet *wallet.Wa
 		// Chunk ID encoding
 		params := convert.U64NbBytes(uint64(index))
 		// Chunk data length encoding
-		//nolint:gomnd
-		b := make([]byte, 4)
-		binary.LittleEndian.PutUint32(b, uint32(len(chunks[index])))
 
-		//nolint:ineffassign,nolintlint
-		params = append(params, b...)
+		params = append(params, convert.U32NbBytes(uint32(len(chunks[index])))...)
+
 		// Chunk data encoding
-		//nolint:ineffassign,nolintlint
 		params = append(params, chunks[index]...)
 
-		//nolint:lll
-		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", params)
+		opID, err = onchain.CallFunctionUnwaited(client, wallet, maxExpiryPeriod(index), addr, "appendBytesToWebsite", params)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
@@ -143,13 +136,13 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, misse
 		params := convert.U64NbBytes(uint64(chunkID))
 		// Chunk data length encoding
 		//nolint:ineffassign,nolintlint
-		params = append(params, convert.U64NbBytes((uint64(len(chunks[chunkID]))))...)
+		params = append(params, convert.U32NbBytes(uint32(len(chunks[chunkID])))...)
 		// Chunk data encoding
 		//nolint:ineffassign,nolintlint
 		params = append(params, chunks[chunkID]...)
 
 		//nolint:lll
-		opID, err := onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", params)
+		opID, err := onchain.CallFunctionUnwaited(client, *wallet, maxExpiryPeriod(index), addr, "appendBytesToWebsite", params)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
