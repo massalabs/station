@@ -31,26 +31,26 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 		return nil, fmt.Errorf("loading wallet '%s': %w", nickname, err)
 	}
 
-	domainsList := []string{}
+	names := []string{}
 
-	userDomainListKey := convert.EncodeStringToByteArray(ownedPrefix + wallet.Address)
+	ownerKey := convert.StringToBytes(ownedPrefix + wallet.Address)
 
-	encodedUserDomainsList, err := node.DatastoreEntry(client, dns.DNSRawAddress, userDomainListKey)
+	rawNames, err := node.DatastoreEntry(client, dns.DNSRawAddress, ownerKey)
 	if err != nil {
 		return nil, fmt.Errorf("reading entry '%s' at '%s': %w", dns.DNSRawAddress, ownedPrefix+wallet.Address, err)
 	}
 
-	if len(encodedUserDomainsList.CandidateValue) == 0 {
-		return domainsList, nil
+	if len(rawNames.CandidateValue) == 0 {
+		return names, nil
 	}
 
-	domainsList = strings.Split(convert.RemoveStringEncodingPrefix(encodedUserDomainsList.CandidateValue), ",")
+	names = strings.Split(convert.BytesToString(rawNames.CandidateValue), ",")
 
 	if err != nil {
-		return nil, fmt.Errorf("parsing json '%s': %w", encodedUserDomainsList.CandidateValue, err)
+		return nil, fmt.Errorf("parsing json '%s': %w", rawNames.CandidateValue, err)
 	}
 
-	return domainsList, nil
+	return names, nil
 }
 
 func Websites(client *node.Client, domainNames []string) ([]*models.Websites, error) {
@@ -61,7 +61,7 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	for i := 0; i < len(domainNames); i++ {
 		param := node.DatastoreEntriesKeysAsString{
 			Address: dns.DNSRawAddress,
-			Key:     convert.EncodeStringToByteArray(recordPrefix + domainNames[i]),
+			Key:     convert.StringToBytes(recordPrefix + domainNames[i]),
 		}
 		params = append(params, param)
 	}
@@ -74,7 +74,7 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	}
 
 	for i := 0; i < len(domainNames); i++ { //nolint:varnamelen
-		contractAddress := convert.RemoveStringEncodingPrefix(contractAddresses[i].CandidateValue)
+		contractAddress := convert.BytesToString(contractAddresses[i].CandidateValue)
 
 		missingChunks, err := getMissingChunkIds(client, contractAddress)
 		if err != nil {
@@ -98,7 +98,7 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 
 	var missedChunks []string
 
-	encodedNumberOfChunks, err := node.DatastoreEntry(client, address, convert.EncodeStringToByteArray(chunkNumberKey))
+	encodedNumberOfChunks, err := node.DatastoreEntry(client, address, convert.StringToBytes(chunkNumberKey))
 	if err != nil {
 		return nil, fmt.Errorf("reading datastore entry '%s' at address '%s': %w", chunkNumberKey, address, err)
 	}
@@ -110,7 +110,7 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 	for i := 0; i < numberOfChunks; i++ {
 		entry := node.DatastoreEntriesKeysAsString{
 			Address: address,
-			Key:     convert.EncodeStringToByteArray("massa_web_" + strconv.Itoa(i)),
+			Key:     convert.StringToBytes("massa_web_" + strconv.Itoa(i)),
 		}
 		entries = append(entries, entry)
 	}

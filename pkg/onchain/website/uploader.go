@@ -73,7 +73,7 @@ func Upload(atAddress string, content []byte, wallet wallet.Wallet) ([]string, e
 
 func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
-	nbChunks := convert.FromU64(uint64(len(chunks)))
+	nbChunks := convert.U64ToBytes(len(chunks))
 
 	opID, err := onchain.CallFunction(client, wallet, addr, "initializeWebsite", nbChunks,
 		sendoperation.OneMassa)
@@ -85,10 +85,10 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wal
 
 	for index := 0; index < len(chunks); index++ {
 		// Chunk ID encoding
-		params := convert.FromU64(uint64(index))
+		params := convert.U64ToBytes(index)
 		// Chunk data length encoding
 
-		params = append(params, convert.FromU32(uint32(len(chunks[index])))...)
+		params = append(params, convert.U32ToBytes(len(chunks[index]))...)
 
 		// Chunk data encoding
 		params = append(params, chunks[index]...)
@@ -134,10 +134,10 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, misse
 			return nil, fmt.Errorf("error while converting chunk ID")
 		}
 
-		params := convert.FromU64(uint64(chunkID))
+		params := convert.U64ToBytes(chunkID)
 		// Chunk data length encoding
 		//nolint:ineffassign,nolintlint
-		params = append(params, convert.FromU32(uint32(len(chunks[chunkID])))...)
+		params = append(params, convert.U32ToBytes(len(chunks[chunkID]))...)
 		// Chunk data encoding
 		//nolint:ineffassign,nolintlint
 		params = append(params, chunks[chunkID]...)

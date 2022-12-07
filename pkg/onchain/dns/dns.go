@@ -21,7 +21,7 @@ from the DNS smart contract and returns it.
 func Resolve(client *node.Client, name string) (string, error) {
 	const dnsPrefix = "record"
 
-	entry, err := node.DatastoreEntry(client, DNSRawAddress, convert.EncodeStringToByteArray(dnsPrefix+name))
+	entry, err := node.DatastoreEntry(client, DNSRawAddress, convert.StringToBytes(dnsPrefix+name))
 	if err != nil {
 		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", DNSRawAddress, dnsPrefix+name, err)
 	}
@@ -30,7 +30,7 @@ func Resolve(client *node.Client, name string) (string, error) {
 		return "", errors.New("name not found")
 	}
 	// we remove from the address its header length expressed as a U32
-	return convert.RemoveStringEncodingPrefix(entry.CandidateValue), nil
+	return convert.BytesToString(entry.CandidateValue), nil
 }
 
 func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContract string) (string, error) {
@@ -40,9 +40,9 @@ func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContr
 	}
 
 	// Set Resolver prepare data
-	rec := convert.FromU32(uint32(len(url)))
+	rec := convert.U32ToBytes(len(url))
 	rec = append(rec, []byte(url)...)
-	rec = append(rec, convert.FromU32(uint32(len(smartContract)))...)
+	rec = append(rec, convert.U32ToBytes(len(smartContract))...)
 	rec = append(rec, []byte(smartContract)...)
 
 	result, err := onchain.CallFunction(client, wallet, addr, "setResolver", rec, sendoperation.OneMassa)

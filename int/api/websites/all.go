@@ -62,47 +62,47 @@ func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.R
 		return nil, fmt.Errorf("filtering keys with '%+v' failed : %w", recordKey, err)
 	}
 	// convert array of strings to array of [array of bytes]
-	recordKeyBytes := make([][]byte, len(recordKeysStrings))
+	recordKeysBytes := make([][]byte, len(recordKeysStrings))
 	for i, v := range recordKeysStrings {
-		recordKeyBytes[i] = convert.EncodeStringToByteArray(v)
+		recordKeysBytes[i] = convert.StringToBytes(v)
 	}
 	// retrieve the records owners values : addresses who own the websites.
-	recordResult, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, recordKeyBytes)
+	recordResult, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, recordKeysBytes)
 	if err != nil {
 		return nil, fmt.Errorf("searching Owners of records (addresses) failed : %w", err)
 	}
 
-	var websiteStorersKeys []node.DatastoreEntriesKeysAsString
+	var websiteStorers []node.DatastoreEntriesKeysAsString
 
 	for _, record := range recordResult {
-		if wallet.CheckAddress(convert.RemoveStringEncodingPrefix(record.CandidateValue)) {
+		if wallet.CheckAddress(convert.BytesToString(record.CandidateValue)) {
 			websiteStorerKey := node.DatastoreEntriesKeysAsString{
-				Address: convert.RemoveStringEncodingPrefix(record.CandidateValue),
-				Key:     convert.EncodeStringToByteArray(metaKey + string(record.CandidateValue)),
+				Address: convert.BytesToString(record.CandidateValue),
+				Key:     convert.StringToBytes(metaKey + string(record.CandidateValue)),
 			}
 
-			websiteStorersKeys = append(websiteStorersKeys, websiteStorerKey)
+			websiteStorers = append(websiteStorers, websiteStorerKey)
 		}
 	}
 
-	websiteUploadDates, err := node.DatastoreEntries(client, websiteStorersKeys)
+	websitesMetadata, err := node.DatastoreEntries(client, websiteStorers)
 	if err != nil {
 		return nil, fmt.Errorf("metadata reaching on dnsContractStorers failed : %w", err)
 	}
 
-	registryResult := make([]*models.Registry, len(websiteUploadDates))
+	registry := make([]*models.Registry, len(websitesMetadata))
 
-	for index := 0; index < len(websiteUploadDates); index++ {
-		registryResult[index] = &models.Registry{
+	for index := 0; index < len(websitesMetadata); index++ {
+		registry[index] = &models.Registry{
 			Name:     strings.Split(recordKeysStrings[index], recordKey)[1], // name of website : flappy.
-			Address:  websiteStorersKeys[index].Address,                     // Owner of Website Address.
-			Metadata: websiteUploadDates[index].CandidateValue,              // Date of Upload.
+			Address:  websiteStorers[index].Address,                         // owner of Website Address.
+			Metadata: websitesMetadata[index].CandidateValue,                // website metadata.
 		}
 	}
 	// sort website names with alphanumeric order.
-	sort.Slice(registryResult, func(i, j int) bool {
-		return registryResult[i].Name < registryResult[j].Name
+	sort.Slice(registry, func(i, j int) bool {
+		return registry[i].Name < registry[j].Name
 	})
 
-	return registryResult, nil
+	return registry, nil
 }
