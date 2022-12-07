@@ -23,6 +23,7 @@ const baseOffset = 5
 const blockLength = 260000
 
 // function calculating the max expiry period, this calculation is empiric
+
 func maxExpiryPeriod(index int) uint64 {
 	return baseOffset + uint64(index)*2
 }

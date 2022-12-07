@@ -14,8 +14,6 @@ import (
 
 const DNSRawAddress = "A1aNfHJ4CVHK4tW29jYcmx181zNWhf5GDyjqznV5HUrCsaSmCSD"
 
-const bytesPerU32 = 4
-
 /*
 This function fetch the address of the website storer associated with the name given in parameter
 from the DNS smart contract and returns it.
