@@ -31,7 +31,7 @@ func StringToBytes(str string) []byte {
 	// let's start by encoding the string length.
 	lenBytes := U32ToBytes(len(str))
 
-	runesBuffer := make([]rune, 4)
+	runesBuffer := make([]rune, bytesPerUint32)
 
 	for i := 0; i < len(lenBytes); i++ {
 		runesBuffer[i] = utf16.Decode([]uint16{uint16(lenBytes[i])})[0]
