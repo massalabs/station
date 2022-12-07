@@ -49,11 +49,11 @@ func RegistryHandler(params operations.AllDomainsGetterParams) middleware.Respon
 }
 
 func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.Registry, error) {
-	recordKeysStrings, err := ledger.KeysFiltered(client, dns.DNSRawAddress, recordKey) //array of strings of website names : (recordflappy)
+	recordKeysStrings, err := ledger.KeysFiltered(client, dns.DNSRawAddress, recordKey) // array of strings of website names : (recordflappy)
 	if err != nil {
 		return nil, fmt.Errorf("filtering keys with '%+v' failed : %w", recordKey, err)
 	}
-	//convert array of strings to array of [array of bytes]
+	// convert array of strings to array of [array of bytes]
 	recordKeyBytes := make([][]byte, len(recordKeysStrings))
 	for i, v := range recordKeysStrings {
 		recordKeyBytes[i] = convert.EncodeStringUint32ToUTF8(v)
