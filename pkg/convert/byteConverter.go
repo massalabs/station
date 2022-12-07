@@ -26,10 +26,8 @@ func FromU32(u32 uint32) (bytes []byte) {
 }
 
 func EncodeStringToByteArray(str string) []byte {
-	numberToEncode := len(str)
-	//nolint:gomnd
-	buffer := make([]byte, 4)
-	binary.LittleEndian.PutUint32(buffer, uint32(numberToEncode))
+        //let's start by encoding the string length
+	lenBytes := FromU32(len(str))
 	//nolint:gomnd
 	runesBuffer := make([]rune, 4)
 
