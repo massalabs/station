@@ -447,7 +447,7 @@ function step1(dnsName, totalChunk) {
 // Step 2, wait for DNS setting
 function step2(dnsName, contractAddress, totalChunk) {
     eventManager.subscribe(
-        `Resolver set to record key : record${dnsName} at address `,
+        `Record name ${dnsName} added to DNS for owner ${getWallet(getDefaultWallet()).address} at address ${contractAddress}`,
         getWallet(getDefaultWallet()).address,
         (_) => {
             step3(contractAddress, totalChunk);
@@ -467,7 +467,7 @@ function step3(contractAddress, totalChunk) {
 
     for (let i = 0; i < totalChunk; i++) {
         eventManager.subscribe(
-            `Chunk of Website deployed to ${contractAddress} on key massa_web_${i}`,
+            `Website chunk deployed to ${contractAddress} on key massa_web_${i}`,
             getWallet(getDefaultWallet()).address,
             (_) => {
                 actualChunk++;
