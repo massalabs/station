@@ -307,7 +307,7 @@ $(".website-dns input").on("change", function () {
 function uploadProcess(file, dnsName, isFullProcess, bodyFormData, callback) {
     document.getElementById("wallet-popover").classList.add("popover__disabled");
     const reader = new FileReader();
-    reader.readAsDataURL(file);
+    reader.readAsBinaryString(file);
     reader.onloadend = (_) => {
         const result = reader.result.length;
 
