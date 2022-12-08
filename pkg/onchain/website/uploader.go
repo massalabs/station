@@ -2,12 +2,11 @@ package website
 
 import (
 	"embed"
-	"encoding/binary"
 	"fmt"
 	"strconv"
 	"strings"
-	"unicode/utf16"
 
+	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/node/sendoperation"
@@ -21,9 +20,13 @@ var content embed.FS
 
 const baseOffset = 5
 
-const multiplicator = 2
-
 const blockLength = 260000
+
+// function calculating the max expiry period, this calculation is empiric
+
+func maxExpiryPeriod(index int) uint64 {
+	return baseOffset + uint64(index)*2
+}
 
 func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	client := node.NewDefaultClient()
@@ -50,11 +53,7 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	return scAddress, nil
 }
 
-type InitialisationParams struct {
-	TotalChunks string `json:"total_chunks"`
-}
-
-func Upload(atAddress string, content string, wallet *wallet.Wallet) ([]string, error) {
+func Upload(atAddress string, content []byte, wallet wallet.Wallet) ([]string, error) {
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
@@ -72,11 +71,11 @@ func Upload(atAddress string, content string, wallet *wallet.Wallet) ([]string, 
 	return operations, nil
 }
 
-func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wallet) ([]string, error) {
+func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
-	totalChunksUTF16 := encodeUint64ToUTF16String(uint64(len(chunks)))
+	nbChunks := convert.U64ToBytes(len(chunks))
 
-	opID, err := onchain.CallFunction(client, *wallet, addr, "initializeWebsite", []byte(totalChunksUTF16),
+	opID, err := onchain.CallFunction(client, wallet, addr, "initializeWebsite", nbChunks,
 		sendoperation.OneMassa)
 	if err != nil {
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
@@ -86,14 +85,15 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 
 	for index := 0; index < len(chunks); index++ {
 		// Chunk ID encoding
-		params := encodeUint64ToUTF16String(uint64(index))
+		params := convert.U64ToBytes(index)
 		// Chunk data length encoding
-		params += encodeUint32ToUTF16String(uint32(len(chunks[index])))
-		// Chunk data encoding
-		params += chunks[index]
 
-		//nolint:lll
-		opID, err = onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte(params))
+		params = append(params, convert.U32ToBytes(len(chunks[index]))...)
+
+		// Chunk data encoding
+		params = append(params, chunks[index]...)
+
+		opID, err = onchain.CallFunctionUnwaited(client, wallet, maxExpiryPeriod(index), addr, "appendBytesToWebsite", params)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
@@ -105,7 +105,7 @@ func upload(client *node.Client, addr []byte, chunks []string, wallet *wallet.Wa
 }
 
 //nolint:lll
-func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet, missedChunks string) ([]string, error) {
+func UploadMissedChunks(atAddress string, content []byte, wallet *wallet.Wallet, missedChunks string) ([]string, error) {
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
@@ -124,7 +124,7 @@ func UploadMissedChunks(atAddress string, content string, wallet *wallet.Wallet,
 }
 
 //nolint:lll
-func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, missedChunks string, wallet *wallet.Wallet) ([]string, error) {
+func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, missedChunks string, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
 	arrMissedChunks := strings.Split(missedChunks, ",")
 
@@ -134,14 +134,16 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, misse
 			return nil, fmt.Errorf("error while converting chunk ID")
 		}
 
-		params := encodeUint64ToUTF16String(uint64(chunkID))
+		params := convert.U64ToBytes(chunkID)
 		// Chunk data length encoding
-		params += encodeUint32ToUTF16String(uint32(len(chunks[chunkID])))
+		//nolint:ineffassign,nolintlint
+		params = append(params, convert.U32ToBytes(len(chunks[chunkID]))...)
 		// Chunk data encoding
-		params += chunks[chunkID]
+		//nolint:ineffassign,nolintlint
+		params = append(params, chunks[chunkID]...)
 
 		//nolint:lll
-		opID, err := onchain.CallFunctionUnwaited(client, *wallet, baseOffset+uint64(index)*multiplicator, addr, "appendBytesToWebsite", []byte(params))
+		opID, err := onchain.CallFunctionUnwaited(client, *wallet, maxExpiryPeriod(index), addr, "appendBytesToWebsite", params)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
@@ -152,12 +154,12 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks []string, misse
 	return operations, nil
 }
 
-func chunk(data string, chunkSize int) []string {
+func chunk(data []byte, chunkSize int) [][]byte {
 	counter := 0
 
 	chunkNumber := len(data)/chunkSize + 1
 
-	var chunks []string
+	var chunks [][]byte
 
 	for i := 1; i < chunkNumber; i++ {
 		counter += chunkSize
@@ -167,37 +169,4 @@ func chunk(data string, chunkSize int) []string {
 	chunks = append(chunks, data[(chunkNumber-1)*chunkSize:])
 
 	return chunks
-}
-
-// We need to add an interface to this function in order to handle uint64 AND uint32 when we have time.
-func encodeUint64ToUTF16String(numberToEncode uint64) string {
-	//nolint:gomnd
-	buffer := make([]byte, 8)
-	binary.LittleEndian.PutUint64(buffer, numberToEncode)
-	//nolint:gomnd
-	runesBuffer := make([]rune, 8)
-
-	for i := 0; i < len(buffer); i++ {
-		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
-	}
-
-	encodedString := string(runesBuffer)
-
-	return encodedString
-}
-
-func encodeUint32ToUTF16String(numberToEncode uint32) string {
-	//nolint:gomnd
-	buffer := make([]byte, 4)
-	binary.LittleEndian.PutUint32(buffer, numberToEncode)
-	//nolint:gomnd
-	runesBuffer := make([]rune, 4)
-
-	for i := 0; i < len(buffer); i++ {
-		runesBuffer[i] = utf16.Decode([]uint16{uint16(buffer[i])})[0]
-	}
-
-	encodedString := string(runesBuffer)
-
-	return encodedString
 }

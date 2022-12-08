@@ -3,11 +3,12 @@ package storage
 import (
 	"archive/zip"
 	"bytes"
-	"encoding/base64"
+	"encoding/binary"
 	"fmt"
 	"io"
 	"strconv"
 
+	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 )
 
@@ -26,26 +27,31 @@ func readZipFile(z *zip.File) ([]byte, error) {
 	return content, nil
 }
 
+/*
+	This function fetch the datastore entries required to display
+	a website in the browser from the website storer contract, unzip them and
+	return the full unzipped website content.
+	Datastore entries fetched :
+	- total_chunks : Total number of chunks that are to be fetched.
+	- massa_web_XXX : Keys containing the website data, with XXX being the chunk ID.
+*/
 //nolint:nolintlint,ireturn,funlen
-func Get(client *node.Client, address string, key string) (map[string][]byte, error) {
+func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, error) {
 	chunkNumberKey := "total_chunks"
 
-	keyNumber, err := node.DatastoreEntry(client, address, chunkNumberKey)
+	keyNumber, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes(chunkNumberKey))
 	if err != nil {
-		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
+		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", websiteStorerAddress, chunkNumberKey, err)
 	}
 
-	chunkNumber, err := strconv.Atoi(string(keyNumber.CandidateValue))
-	if err != nil {
-		return nil, fmt.Errorf("error converting String to integer")
-	}
+	chunkNumber := int(binary.LittleEndian.Uint64(keyNumber.CandidateValue))
 
 	entries := []node.DatastoreEntriesKeysAsString{}
 
 	for i := 0; i < chunkNumber; i++ {
 		entry := node.DatastoreEntriesKeysAsString{
-			Address: address,
-			Key:     "massa_web_" + strconv.Itoa(i),
+			Address: websiteStorerAddress,
+			Key:     convert.StringToBytes("massa_web_" + strconv.Itoa(i)),
 		}
 		entries = append(entries, entry)
 	}
@@ -55,19 +61,15 @@ func Get(client *node.Client, address string, key string) (map[string][]byte, er
 		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
 	}
 
-	dataStore := ""
+	var dataStore []byte
 	for i := 0; i < chunkNumber; i++ {
-		dataStore += string(response[i].CandidateValue)
+		// content is prefixed with it's length encoded using a u32 (4 bytes).
+		dataStore = append(dataStore, response[i].CandidateValue[4:]...)
 	}
 
-	b64, err := base64.StdEncoding.DecodeString(dataStore)
+	zipReader, err := zip.NewReader(bytes.NewReader(dataStore), int64(len(dataStore)))
 	if err != nil {
-		return nil, fmt.Errorf("base64 decoding datastore entry '%s' at '%s': %w", address, key, err)
-	}
-
-	zipReader, err := zip.NewReader(bytes.NewReader(b64), int64(len(b64)))
-	if err != nil {
-		return nil, fmt.Errorf("instanciating zip reader from decoded datastore entry '%s' at '%s': %w", address, key, err)
+		return nil, fmt.Errorf("instantiating zip reader from decoded datastore entries '%s' at  '%w'", dataStore, err)
 	}
 
 	content := make(map[string][]byte)

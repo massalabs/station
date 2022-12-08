@@ -1,11 +1,13 @@
 package my
 
 import (
-	"encoding/json"
+	"encoding/binary"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/massalabs/thyra/api/swagger/server/models"
+	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
 	"github.com/massalabs/thyra/pkg/wallet"
@@ -17,6 +19,10 @@ type Domain struct {
 	Address string `json:"address"`
 }
 
+/*
+This function fetch the list of domain names owned by a user from the DNS smart contract
+and returns it as an array of strings.
+*/
 func Domains(client *node.Client, nickname string) ([]string, error) {
 	const ownedPrefix = "owned"
 
@@ -25,23 +31,26 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 		return nil, fmt.Errorf("loading wallet '%s': %w", nickname, err)
 	}
 
-	domains := []string{}
+	names := []string{}
 
-	domainsEntry, err := node.DatastoreEntry(client, dns.DNSRawAddress, ownedPrefix+wallet.Address)
+	ownerKey := convert.StringToBytes(ownedPrefix + wallet.Address)
+
+	rawNames, err := node.DatastoreEntry(client, dns.DNSRawAddress, ownerKey)
 	if err != nil {
 		return nil, fmt.Errorf("reading entry '%s' at '%s': %w", dns.DNSRawAddress, ownedPrefix+wallet.Address, err)
 	}
 
-	if len(domainsEntry.CandidateValue) == 0 {
-		return domains, nil
+	if len(rawNames.CandidateValue) == 0 {
+		return names, nil
 	}
 
-	err = json.Unmarshal(domainsEntry.CandidateValue, &domains)
+	names = strings.Split(convert.BytesToString(rawNames.CandidateValue), ",")
+
 	if err != nil {
-		return nil, fmt.Errorf("parsing json '%s': %w", domainsEntry.CandidateValue, err)
+		return nil, fmt.Errorf("parsing json '%s': %w", rawNames.CandidateValue, err)
 	}
 
-	return domains, nil
+	return names, nil
 }
 
 func Websites(client *node.Client, domainNames []string) ([]*models.Websites, error) {
@@ -52,7 +61,7 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	for i := 0; i < len(domainNames); i++ {
 		param := node.DatastoreEntriesKeysAsString{
 			Address: dns.DNSRawAddress,
-			Key:     recordPrefix + domainNames[i],
+			Key:     convert.StringToBytes(recordPrefix + domainNames[i]),
 		}
 		params = append(params, param)
 	}
@@ -65,9 +74,9 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	}
 
 	for i := 0; i < len(domainNames); i++ { //nolint:varnamelen
-		contractAddress := string(contractAddresses[i].CandidateValue)
+		contractAddress := convert.BytesToString(contractAddresses[i].CandidateValue)
 
-		brokenChunks, err := getMissingChunkIds(client, contractAddress)
+		missingChunks, err := getMissingChunkIds(client, contractAddress)
 		if err != nil {
 			return nil, fmt.Errorf("checking chunk integrity: %w", err)
 		}
@@ -75,7 +84,7 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 		response := models.Websites{
 			Address:      contractAddress,
 			Name:         domainNames[i],
-			BrokenChunks: brokenChunks,
+			BrokenChunks: missingChunks,
 		}
 		responses = append(responses, &response)
 	}
@@ -89,22 +98,19 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 
 	var missedChunks []string
 
-	keyNumber, err := node.DatastoreEntry(client, address, chunkNumberKey)
+	encodedNumberOfChunks, err := node.DatastoreEntry(client, address, convert.StringToBytes(chunkNumberKey))
 	if err != nil {
-		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", address, chunkNumberKey, err)
+		return nil, fmt.Errorf("reading datastore entry '%s' at address '%s': %w", chunkNumberKey, address, err)
 	}
 
-	chunkNumber, err := strconv.Atoi(string(keyNumber.CandidateValue))
-	if err != nil {
-		return nil, fmt.Errorf("error converting String to integer")
-	}
+	numberOfChunks := int(binary.LittleEndian.Uint64(encodedNumberOfChunks.CandidateValue))
 
 	entries := []node.DatastoreEntriesKeysAsString{}
 
-	for i := 0; i < chunkNumber; i++ {
+	for i := 0; i < numberOfChunks; i++ {
 		entry := node.DatastoreEntriesKeysAsString{
 			Address: address,
-			Key:     "massa_web_" + strconv.Itoa(i),
+			Key:     convert.StringToBytes("massa_web_" + strconv.Itoa(i)),
 		}
 		entries = append(entries, entry)
 	}
@@ -114,7 +120,7 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
 	}
 
-	for i := 0; i < chunkNumber; i++ {
+	for i := 0; i < numberOfChunks; i++ {
 		if string(response[i].CandidateValue) == "" {
 			missedChunks = append(missedChunks, strconv.Itoa(i))
 		}

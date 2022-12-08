@@ -1,10 +1,10 @@
 package dns
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
+	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/node/sendoperation"
@@ -12,12 +12,16 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-const DNSRawAddress = "A1QxHhhi9crDJoEAaXRjkU2w3xsusBwpwGcAGpRRFAVUUuDWf7z"
+const DNSRawAddress = "A1aNfHJ4CVHK4tW29jYcmx181zNWhf5GDyjqznV5HUrCsaSmCSD"
 
+/*
+This function fetch the address of the website storer associated with the name given in parameter
+from the DNS smart contract and returns it.
+*/
 func Resolve(client *node.Client, name string) (string, error) {
 	const dnsPrefix = "record"
 
-	entry, err := node.DatastoreEntry(client, DNSRawAddress, dnsPrefix+name)
+	entry, err := node.DatastoreEntry(client, DNSRawAddress, convert.StringToBytes(dnsPrefix+name))
 	if err != nil {
 		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", DNSRawAddress, dnsPrefix+name, err)
 	}
@@ -25,18 +29,8 @@ func Resolve(client *node.Client, name string) (string, error) {
 	if len(entry.CandidateValue) == 0 {
 		return "", errors.New("name not found")
 	}
-
-	return string(entry.CandidateValue), nil
-}
-
-type setApproval struct {
-	Operator string `json:"operator"`
-	Approved bool   `json:"approved"`
-}
-
-type setRecord struct {
-	Name    string `json:"name"`
-	Address string `json:"address"`
+	// we remove from the address its header length expressed as a U32
+	return convert.BytesToString(entry.CandidateValue), nil
 }
 
 func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContract string) (string, error) {
@@ -45,44 +39,15 @@ func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContr
 		return "", fmt.Errorf("checking address '%s': %w", DNSRawAddress[1:], err)
 	}
 
-	rec := setRecord{
-		Name:    url,
-		Address: smartContract,
-	}
-
-	param, err := json.Marshal(rec)
-	if err != nil {
-		return "", fmt.Errorf("marshalling '%+v': %w", rec, err)
-	}
-
-	result, err := onchain.CallFunction(client, wallet, addr, "setResolver", param, sendoperation.OneMassa)
-	if err != nil {
-		return "", fmt.Errorf("calling setResolver with '%+v' at '%s': %w", param, addr, err)
-	}
-
-	return result, nil
-}
-
-func SetRecordManager(client *node.Client, wallet wallet.Wallet) (string, error) {
-	addr, _, err := base58.VersionedCheckDecode(DNSRawAddress[1:])
-	if err != nil {
-		return "", fmt.Errorf("checking address '%s': %w", DNSRawAddress[1:], err)
-	}
-
 	// Set Resolver prepare data
-	appr := &setApproval{
-		Operator: wallet.Address,
-		Approved: true,
-	}
+	rec := convert.U32ToBytes(len(url))
+	rec = append(rec, []byte(url)...)
+	rec = append(rec, convert.U32ToBytes(len(smartContract))...)
+	rec = append(rec, []byte(smartContract)...)
 
-	param, err := json.Marshal(appr)
+	result, err := onchain.CallFunction(client, wallet, addr, "setResolver", rec, sendoperation.OneMassa)
 	if err != nil {
-		return "", fmt.Errorf("marshalling '%+v': %w", appr, err)
-	}
-
-	result, err := onchain.CallFunction(client, wallet, addr, "setApprovalForAll", param, sendoperation.OneMassa)
-	if err != nil {
-		return "", fmt.Errorf("calling setApprovalForAll with '%+v' at '%s': %w", param, addr, err)
+		return "", fmt.Errorf("calling setResolver with '%+v' at '%s': %w", rec, addr, err)
 	}
 
 	return result, nil

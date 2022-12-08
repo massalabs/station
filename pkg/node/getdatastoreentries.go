@@ -18,7 +18,7 @@ type DatastoreEntryResponse struct {
 
 type DatastoreEntriesKeysAsString struct {
 	Address string `json:"address"`
-	Key     string `json:"key"`
+	Key     []byte `json:"key"`
 }
 
 type JSONableSlice []uint8
@@ -34,12 +34,13 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 	return []byte(result), nil
 }
 
-func DatastoreEntry(client *Client, address string, key string) (*DatastoreEntryResponse, error) {
+func DatastoreEntry(client *Client, address string, key []byte) (*DatastoreEntryResponse, error) {
 	entries := []DatastoreEntriesKeysAsString{}
 	entry := DatastoreEntriesKeysAsString{
 		Address: address,
 		Key:     key,
 	}
+
 	entries = append(entries, entry)
 
 	response, err := DatastoreEntries(client, entries)
@@ -50,7 +51,7 @@ func DatastoreEntry(client *Client, address string, key string) (*DatastoreEntry
 	return &response[0], nil
 }
 
-func ContractDatastoreEntries(client *Client, address string, keys []string) ([]DatastoreEntryResponse, error) {
+func ContractDatastoreEntries(client *Client, address string, keys [][]byte) ([]DatastoreEntryResponse, error) {
 	entries := []DatastoreEntriesKeysAsString{}
 
 	for i := 0; i < len(keys); i++ {
@@ -77,8 +78,9 @@ func DatastoreEntries(client *Client, params []DatastoreEntriesKeysAsString) ([]
 	for i := 0; i < len(params); i++ {
 		entry := getDatastoreEntries{
 			Address: params[i].Address,
-			Key:     []byte(params[i].Key),
+			Key:     params[i].Key,
 		}
+
 		entries[0] = append(entries[0], entry)
 	}
 

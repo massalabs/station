@@ -3,7 +3,6 @@ package websites
 import (
 	"archive/zip"
 	"bytes"
-	"encoding/base64"
 	"io"
 	"net/http"
 	"os"
@@ -80,14 +79,12 @@ func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app
 		return createInternalServerError(errorCodeWebCreatorHTMLNotInSource, errorCodeWebCreatorHTMLNotInSource)
 	}
 
-	b64 := base64.StdEncoding.EncodeToString(archive)
-
 	address, err := website.PrepareForUpload(params.URL, wallet)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorPrepare, err.Error())
 	}
 
-	_, err = website.Upload(address, b64, wallet)
+	_, err = website.Upload(address, archive, *wallet)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
@@ -177,9 +174,7 @@ func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyn
 		return createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
 	}
 
-	b64 := base64.StdEncoding.EncodeToString(archive)
-
-	_, err = website.Upload(params.Address, b64, wallet)
+	_, err = website.Upload(params.Address, archive, *wallet)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
@@ -245,9 +240,7 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 		return createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
 	}
 
-	b64 := base64.StdEncoding.EncodeToString(archive)
-
-	_, err = website.UploadMissedChunks(params.Address, b64, wallet, params.MissedChunks)
+	_, err = website.UploadMissedChunks(params.Address, archive, wallet, params.MissedChunks)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
