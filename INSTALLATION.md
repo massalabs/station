@@ -182,7 +182,7 @@ If you want to get down to business, you can start your [Massalian journey](http
 Simply use copy/paste the cmd line below in your terminal. The installation process will start and a success message will be displayed once done.
 
 Note that you must execute this script as an administrator in your terminal. To do so:
-1. Open Windows Explorer 
+1. Open Windows search bar 
 2. Type "cmd" 
 3. Right click on the "Open command prompt" icon and click on "Execute as an administrator"
 
