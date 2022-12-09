@@ -44,7 +44,7 @@ Now, let's move on to your OS section:
 ### MacOS
 
 #### Automatically
-*If you're not a developer, it's better to use automatic installation*
+> **_NOTE:_** If you're not a developer, it's better to use automatic installation
 
 Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
 
@@ -179,7 +179,7 @@ If you want to get down to business, you can start your [Massalian journey](http
 ### Windows
 
 #### Automatically
-*If you're not a developer, it's better to use automatic installation*
+> **_NOTE:_** If you're not a developer, it's better to use automatic installation
 
 Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done. 
 
