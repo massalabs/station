@@ -31,6 +31,7 @@ install_thyra () {
 
     chmod +x thyra-server || fatal "change to executable failed."
     sudo mv thyra-server /usr/local/bin/ || fatal "move to /usr/local/bin/ failed."
+    sudo setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/thyra-server || fatal "add bind capabilities failed"
 
     # Create config dir
     mkdir -p $THYRA_CONF_DIR

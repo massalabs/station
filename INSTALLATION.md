@@ -60,6 +60,7 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 
 
+
 #### Manually
 
 ##### Thyra installation
@@ -113,14 +114,14 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
 
-
 Open and use this file [here](https://github.com/massalabs/thyra/blob/main/scripts/linux_install.sh) or run the following cmd in your terminal:
 
 ```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/linux_install.sh)"
 ```
 
-Congratulation, your version of Thyra is now installed on your system and can be run by executing `sudo thyra-server` in your terminal.
+Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
+
 You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
@@ -181,6 +182,7 @@ If you want to get down to business, you can start your [Massalian journey](http
 *If you're not a developer, it's better to use automatic installation*
 
 Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done. 
+
 Note that you must execute this script as an administrator. To do so:
 1. Click on the buttons: Windows + X 
 2. Look for "Terminal" 
