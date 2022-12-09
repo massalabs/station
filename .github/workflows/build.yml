@@ -40,7 +40,7 @@ jobs:
             target: windows
             cc: x86_64-w64-mingw32-gcc
             cxx: CXX=x86_64-w64-mingw32-g++
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             arch: amd64
             target: linux
             cc: gcc
