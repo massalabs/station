@@ -48,7 +48,7 @@ Now, let's move on to your OS section:
 
 Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
 
-Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/macos_install.sh) or or run the following cmd in your terminal:
+Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/macos_install.sh) or run the following cmd in your terminal:
 
 ```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/macos_install.sh)"
