@@ -44,10 +44,11 @@ Now, let's move on to your OS section:
 ### MacOS
 
 #### Automatically
+*If you're not a developer, it's better to use automatic installation*
 
 Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
 
-Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/macos_install.sh) or or run the following cmd:
+Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/macos_install.sh) or or run the following cmd in your terminal:
 
 ```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/macos_install.sh)"
@@ -56,6 +57,8 @@ Download and open the file [here](https://github.com/massalabs/thyra/blob/main/s
 Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
 You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
+
+
 
 #### Manually
 
@@ -78,7 +81,7 @@ Congratulation, your version of Thyra is now installed on your system and can be
 
 > **_NOTE:_** If your DNS is already configured to handle the massa TLD, you're free to go. Otherwise, please follow the instructions in the next section.
 
-#### DNS installation
+##### DNS installation
 
 > **_WARNING:_** If you already have a DNS service running that is not dnsmasq, you must configure it to redirect .massa to 127.0.0.1 (localhost).
 
@@ -111,7 +114,7 @@ If you want to get down to business, you can start your [Massalian journey](http
 Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
 
 
-Open and use this file [here](https://github.com/massalabs/thyra/blob/main/scripts/linux_install.sh) or run the following cmd:
+Open and use this file [here](https://github.com/massalabs/thyra/blob/main/scripts/linux_install.sh) or run the following cmd in your terminal:
 
 ```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/linux_install.sh)"
@@ -123,9 +126,12 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 > **_NOTE:_** Only Linux Ubuntu is currently supported.
 
+
+
+
 #### Manually
 
-#### Thyra installation
+##### Thyra installation
 
 Let's start by downloading the version of Thyra corresponding to your system [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_linux_amd64).
 
@@ -141,11 +147,11 @@ Congratulation, your version of Thyra is now installed on your system and can be
 
 > **_NOTE:_** If your DNS is already configured to handle the massa TLD, you're free to go. Otherwise, please follow the instructions in the next section.
 
-#### DNS installation
+##### DNS installation
 
 > **_WARNING:_** If you already have a DNS service running that is not dnsmasq, you must configure it to redirect .massa to 127.0.0.1 (localhost).
 
-##### dnsmasq (default)
+###### dnsmasq (default)
 
 > **_NOTE:_** If you have `NetworkManager` running, you must change its configuration to use `dnsmasq` as your local DNS. You can do this by running the following command:
 >
@@ -172,11 +178,15 @@ If you want to get down to business, you can start your [Massalian journey](http
 ### Windows
 
 #### Automatically
+*If you're not a developer, it's better to use automatic installation*
 
 Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done. 
-Note that you must execute this script as an administrator.
+Note that you must execute this script as an administrator. To do so:
+1. Click on the buttons: Windows + X 
+2. Look for "Terminal" 
+3. Open "Terminal (administrator)" and copy the cmd below
 
-Open and use this file [here](https://github.com/massalabs/thyra/blob/main/scripts/thyra-installer.bat) or run the following cmd:
+Open and use this file [here](https://github.com/massalabs/thyra/blob/main/scripts/thyra-installer.bat) or run the following cmd in your terminal:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/thyra-installer.bat >> thyra-installer.bat && thyra-installer.bat
@@ -188,7 +198,7 @@ You can now browse the **websites on-chain** seamlessly. If you need to take the
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
 
-#### Thyra installation
+#### Manually
 
 Let's start by downloading the version of Thyra corresponding to your system [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64).
 
@@ -198,7 +208,7 @@ Congratulation, your version of Thyra is now installed on your system and can be
 
 > **_NOTE:_** If your DNS is already configured to handle the massa TLD, you're free to go. Otherwise, please follow the instructions in the next section.
 
-#### DNS installation
+##### DNS installation
 
 > **_WARNING:_** If you already have a DNS service running that is not dnsmasq, you must configure it to redirect .massa to 127.0.0.1 (localhost).
 
