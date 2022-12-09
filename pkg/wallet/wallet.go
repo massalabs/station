@@ -185,19 +185,21 @@ func New(nickname string) (*Wallet, error) {
 	return CreateWalletFromKeys(nickname, privKey, pubKey, addr)
 }
 
-func Imported(nickname string, privateKey string) (*Wallet, error) {
-	privKeyBytes, _, err := base58.VersionedCheckDecode(privateKey[1:])
+func Imported(nickname string, privateKeyB58V string) (*Wallet, error) {
+	privateKeyBytes, _, err := base58.VersionedCheckDecode(privateKeyB58V[1:])
 	if err != nil {
 		return nil, fmt.Errorf("encoding private key B58: %w", err)
 	}
 
 	wallets, err := LoadAll()
 	if err != nil {
-		return nil, fmt.Errorf("error loadin wallets %w", err)
+		return nil, fmt.Errorf("error loading wallets %w", err)
 	}
 
-	keypair := ed25519.NewKeyFromSeed(privKeyBytes)
-	pubKeyBytes := reflect.ValueOf(keypair.Public()).Bytes() // force conversion to byte array
+	// The ed25519 seed is in fact what we call a private key in cryptography...
+	privateKey := ed25519.NewKeyFromSeed(privateKeyBytes)
+
+	pubKeyBytes := reflect.ValueOf(privateKey.Public()).Bytes() // force conversion to byte array
 
 	addr := blake3.Sum256(pubKeyBytes)
 	version := byte(0)
@@ -210,7 +212,7 @@ func Imported(nickname string, privateKey string) (*Wallet, error) {
 		return nil, ErrWalletAlreadyImported
 	}
 
-	return CreateWalletFromKeys(nickname, privKeyBytes, pubKeyBytes, addr)
+	return CreateWalletFromKeys(nickname, privateKey, pubKeyBytes, addr)
 }
 
 func Delete(nickname string) (err error) {
