@@ -46,9 +46,8 @@ Now, let's move on to your OS section:
 #### Automatically
 > **_NOTE:_** If you're not a developer, it's better to use automatic installation
 
-Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
+Simply use copy/paste the cmd line below in your terminal. The installation process will start and a success message will be displayed once done.
 
-Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/macos_install.sh) or run the following cmd in your terminal:
 
 ```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/macos_install.sh)"
@@ -112,9 +111,8 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 #### Automatically
 
-Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
+Simply use copy/paste the cmd line below in your terminal. The installation process will start and a success message will be displayed once done.
 
-Open and use this file [here](https://github.com/massalabs/thyra/blob/main/scripts/linux_install.sh) or run the following cmd in your terminal:
 
 ```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/linux_install.sh)"
@@ -181,14 +179,14 @@ If you want to get down to business, you can start your [Massalian journey](http
 #### Automatically
 > **_NOTE:_** If you're not a developer, it's better to use automatic installation
 
-Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done. 
+Simply use copy/paste the cmd line below in your terminal. The installation process will start and a success message will be displayed once done.
 
-Note that you must execute this script as an administrator. To do so:
+Note that you must execute this script as an administrator in your terminal. To do so:
 1. Click on the buttons: Windows + X 
 2. Look for "Terminal" 
 3. Open "Terminal (administrator)" and copy the cmd below
 
-Open and use this file [here](https://github.com/massalabs/thyra/blob/main/scripts/thyra-installer.bat) or run the following cmd in your terminal:
+Now, copy the cmd below and paste it in the terminal you just opened.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/thyra-installer.bat >> thyra-installer.bat && thyra-installer.bat
