@@ -46,8 +46,6 @@ Now, let's move on to your OS section:
 #### Automatically
 
 Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
-Once the installation is finished, congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
 Download and open the file [here](https://github.com/massalabs/thyra/blob/main/scripts/macos_install.sh) or or run the following cmd:
 
@@ -56,6 +54,8 @@ Download and open the file [here](https://github.com/massalabs/thyra/blob/main/s
 ```
 
 Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
+You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
+If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
 #### Manually
 
@@ -109,8 +109,7 @@ If you want to get down to business, you can start your [Massalian journey](http
 #### Automatically
 
 Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done.
-Once the installation is finished, congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
+
 
 Open and use this file [here](https://github.com/massalabs/thyra/blob/main/scripts/linux_install.sh) or run the following cmd:
 
@@ -118,7 +117,9 @@ Open and use this file [here](https://github.com/massalabs/thyra/blob/main/scrip
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/linux_install.sh)"
 ```
 
-Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
+Congratulation, your version of Thyra is now installed on your system and can be run by executing `sudo thyra-server` in your terminal.
+You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
+If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
 > **_NOTE:_** Only Linux Ubuntu is currently supported.
 
@@ -174,8 +175,6 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 Simply use the link below to download and then open the file on your machine. The installation process will start and a success message will be displayed once done. 
 Note that you must execute this script as an administrator.
-Once the installation is finished, congratulations, you can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
 Open and use this file [here](https://github.com/massalabs/thyra/blob/main/scripts/thyra-installer.bat) or run the following cmd:
 
@@ -184,6 +183,9 @@ curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/thyra-
 ```
 
 Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
+
+You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
+If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
 
 #### Thyra installation
