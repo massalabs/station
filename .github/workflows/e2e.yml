@@ -1,0 +1,38 @@
+name: e2e tests
+on:
+  push:
+    tags:
+      - v[0-9]+.*
+    branches:
+      - main
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: write
+
+jobs:
+  e2e:
+    name: e2e tests
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: ubuntu-latest
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          ./scripts/linux_install.sh
+
+      - name: run macOs install script
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: |
+          ./scripts/macos_install.sh
+
+      - name: ping test
+        shell: bash
+        run: ping -c 1 -t 1 test.massa
+

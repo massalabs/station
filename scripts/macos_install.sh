@@ -1,10 +1,11 @@
-#!/bin/bash +x
+#!/bin/bash
+set -x
 
 BINARY_URL="https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin"
 SCRIPT="MacOS"
 
 MKCERT_URL_ARM="https://dl.filippo.io/mkcert/latest?for=darwin/arm64"
-MKCERT_URL_AMD="https://dl.filippo.io/mkcert/latest?for=darwin/ams64"
+MKCERT_URL_AMD="https://dl.filippo.io/mkcert/latest?for=darwin/amd64"
 
 THYRA_CONF_DIR=$HOME/.config/thyra
 
@@ -41,11 +42,11 @@ configure_start_dnsmasq () {
 }
 
 set_local_dns () {
-    case $(sudo lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//') in
-        "")         (brew install dnsmasq || fatal "dnsmasq installation failed.") && configure_start_dnsmasq || exit -1 ;;
-        dnsmasq)    configure_start_dnsmasq || exit -1 ;;
-        *)          fatal "local DNS application unsupported." ;;
-    esac
+    if ! command -v dnsmasq &> /dev/null
+    then
+        brew install dnsmasq || fatal "dnsmasq installation failed."
+    fi
+    configure_start_dnsmasq
 }
 
 generate_certificate () {
@@ -72,7 +73,7 @@ install_thyra || exit 1
 
 generate_certificate || exit 1
 
-ping -c 1 -t 1 test.massa  || set_local_dns || exit 1
+ping -c 1 -t 1 test.massa &> /dev/null || set_local_dns || exit 1
 
 green "SUCCESS" "Thyra is installed and the .massa TLD resolution is configured. You're free to go!!!"
 
