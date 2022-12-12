@@ -4,7 +4,7 @@ BINARY_URL="https://github.com/massalabs/thyra/releases/latest/download/thyra-se
 SCRIPT="MacOS"
 
 MKCERT_URL_ARM="https://dl.filippo.io/mkcert/latest?for=darwin/arm64"
-MKCERT_URL_AMD="https://dl.filippo.io/mkcert/latest?for=darwin/ams64"
+MKCERT_URL_AMD="https://dl.filippo.io/mkcert/latest?for=darwin/amd64"
 
 THYRA_CONF_DIR=$HOME/.config/thyra
 
