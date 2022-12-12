@@ -3,7 +3,7 @@ name: 'Thyra install'
 inputs:
   os:
     required: true
-    default: 'ubuntu-latest'
+    default: 'ubuntu-20.04'
 
 runs:
   using: "composite"
@@ -14,7 +14,7 @@ runs:
       with:
         go-version: ${{ env.GO_VERSION }}
     - name: installing linux dependencies
-      if: ${{ inputs.os == 'ubuntu-latest' }}
+      if: ${{ inputs.os == 'ubuntu-20.04' }}
       shell: bash
       run: |
         sudo apt update
