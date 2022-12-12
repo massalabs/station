@@ -101,7 +101,7 @@ Important note: At the moment, we have defined that 1 chunk (=280ko) of data wor
 To install the latest dev version of the `thyra-server` application you need to:
 
 - [install go](https://go.dev/doc/install)
-- execute `go install github.com/massalabs/thyra/cmd/thyra-server@main` in your terminal
+- execute `go install github.com/massalabs/thyra/cmd/thyra-server@latest` in your terminal
 
 Note: you can change `main` to a tag or a commit value if needed.
 
