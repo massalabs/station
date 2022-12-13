@@ -52,7 +52,7 @@ def executeOSCommandOrFile(command, decodeBinary, errorChecking=True):
     stdout, stderr = process.communicate()
 
     if stderr != None and stderr != "" and errorChecking == True:
-        print("Error encountered while executing : " + str(command) + " :\n", stderr)
+        print("Error encountered while executing " + str(command) + " :\n", stderr)
         os._exit(-1)
     return stdout
 
