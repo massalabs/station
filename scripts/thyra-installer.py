@@ -52,8 +52,7 @@ def executeOSCommandOrFile(command, decodeBinary, errorChecking=True):
     stdout, stderr = process.communicate()
 
     if stderr != None and stderr != "" and errorChecking == True:
-        print("Error encountered while executing " + str(command) + " :\n", stderr)
-        os._exit(-1)
+        printErrorAndExit("Error encountered while executing : " + str(command) + " :\n" + stderr)
     return stdout
 
 def setupDNS():
@@ -74,8 +73,10 @@ def setupDNS():
 def configureAcrylic():
     print("Configuring Acrylic...")
     f = open(DEFAULT_ACRYLIC_PATH + "\\" + ACRYLIC_HOST_FILE, "r+")
-    if f.read().find("127.0.0.1 *.massa") == -1:
-        f.write("\n127.0.0.1 *.massa")
+    if f.read().find("127.0.0.1 *.massa") is not -1:
+        f.close()
+        return
+    f.write("\n127.0.0.1 *.massa")
     f.close()
 
     executeOSCommandOrFile("NET STOP AcrylicDNSProxySvc", True)
