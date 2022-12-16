@@ -72,12 +72,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.target }}-${{ matrix.arch }}-binary
-          path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}$
+          path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
+      - name: Echoing
+        run: ls -R
       - name: Upload installer artifact
         uses: actions/upload-artifact@v3
         with:
           name: thyra-installer.exe
-          path: ${{github.workspace}}/scripts/dist/thyra-installer
+          path: thyra-installer
       - name: Create release and upload binaries
         if: ${{ inputs.tag_name != '' }}
         uses: softprops/action-gh-release@v1
