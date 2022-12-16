@@ -64,9 +64,9 @@ jobs:
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
         run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
       - name: Build installer binary
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: JackMcKew/pyinstaller-action-windows@main
         with:
-          os: ubuntu-latest
           path: scripts
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
