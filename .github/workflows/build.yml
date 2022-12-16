@@ -72,7 +72,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.target }}-${{ matrix.arch }}-binary
-          path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
+          path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}$
+      - name: Echoing
+        run: echo -e "${GITHUB_WORKSPACE}/scripts/dist/thyra-installer"
       - name: Upload installer artifact
         uses: actions/upload-artifact@v3
         with:
