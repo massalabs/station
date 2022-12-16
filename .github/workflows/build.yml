@@ -66,6 +66,7 @@ jobs:
       - name: Build installer binary
         uses: JackMcKew/pyinstaller-action-windows@main
         with:
+          os: ubuntu-latest
           path: scripts
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
