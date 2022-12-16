@@ -3,8 +3,6 @@ on:
   push:
     tags:
       - v[0-9]+.*
-    branches:
-      - main
   pull_request:
   workflow_call:
     inputs:
@@ -66,11 +64,20 @@ jobs:
         run: echo -e "${GITHUB_REF_NAME}" > cmd/thyra-server/version.txt
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
         run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
+      - name: Build installer binary
+        uses: JackMcKew/pyinstaller-action-windows@main
+        with:
+          path: scripts
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.target }}-${{ matrix.arch }}-binary
           path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: thyra-installer.exe
+          path: scripts/dist/thyra-installer
       - name: Create release and upload binaries
         if: ${{ inputs.tag_name != '' }}
         uses: softprops/action-gh-release@v1
