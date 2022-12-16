@@ -64,14 +64,16 @@ var content embed.FS
 
 func myCert(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 	fmt.Println("inside myCert")
-	certx509, err := (&mkcert{}).Run(hello.ServerName)
-	var cert *tls.Certificate
+	certBytes, priv, err := (&mkcert{}).Run(hello.ServerName)
+	var cert tls.Certificate
 	if err != nil {
-		cert.Leaf = &certx509
+		return nil, err
 	}
+	cert.Certificate = append(cert.Certificate, certBytes)
+	cert.PrivateKey = priv
 
 	fmt.Println("%v", hello)
-	return cert, fmt.Errorf("err.Error()")
+	return &cert, nil //fmt.Errorf("err.Error()")
 }
 
 // The TLS configuration before HTTPS server starts.

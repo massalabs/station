@@ -46,7 +46,7 @@ type mkcert struct {
 	ignoreCheckFailure bool
 }
 
-func (m *mkcert) Run(serverName string) (x509.Certificate, error) {
+func (m *mkcert) Run(serverName string) ([]byte, crypto.PrivateKey, error) {
 
 	m.CAROOT = getCAROOT()
 	if m.CAROOT == "" {
@@ -101,25 +101,30 @@ func (m *mkcert) Run(serverName string) (x509.Certificate, error) {
 	// }
 
 	// Parsing Certificate to avoid duplication creation of certificate
-	certFile, _, _ := m.fileNames(serverName)
-	fmt.Println("serverName:" + serverName)
-	fmt.Println("certFile:" + certFile)
-	if pathExists(certFile) {
-		cert, err := x509.ParseCertificate([]byte(certFile))
-		if err != nil {
-			fmt.Println("Begin Of Parse")
-			m.makeCert(serverName)
-			fmt.Println("End Of Parse")
-		}
-		fmt.Println("Return parse begin")
-		//Its here GREG i think the null pointer problem is here | TODO LFA
-		return &cert, err
+
+	priv, err := m.generateKey(false)
+	fatalIfErr(err, "failed to generate certificate key")
+	pub := priv.(crypto.Signer).Public()
+
+	expiration := time.Now().AddDate(2, 3, 0)
+
+	tpl := &x509.Certificate{
+		SerialNumber: randomSerialNumber(),
+		Subject: pkix.Name{
+			CommonName:   serverName,
+			Organization: []string{"thyra dynamically generated"},
+		},
+
+		NotBefore:   time.Now(),
+		NotAfter:    expiration,
+		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
+		KeyUsage:    x509.KeyUsageDigitalSignature,
 	}
-	// m.findCert(name)
-	fmt.Println("Begin Of RUN before return")
-	cert, err := m.makeCert(serverName)
-	fmt.Println("End Of RUN before return")
-	return cert, err
+
+	tpl.DNSNames = append(tpl.DNSNames, serverName)
+	cert, err := x509.CreateCertificate(rand.Reader, tpl, m.caCert, pub, m.caKey)
+
+	return cert, priv, err
 }
 
 func storeEnabled(name string) bool {
