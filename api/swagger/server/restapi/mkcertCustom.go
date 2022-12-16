@@ -53,7 +53,6 @@ func (m *mkcert) Run(serverName string) (x509.Certificate, error) {
 		log.Fatalln("ERROR: failed to find the default CA location, set one as the CAROOT env var")
 	}
 	fatalIfErr(os.MkdirAll(m.CAROOT, 0755), "failed to create the CAROOT")
-	fmt.Println("HELLLOOO BEFORE LOAD CA")
 	fmt.Println("m.CAROOT : " + m.CAROOT)
 	m.loadCA()
 	// var warning bool
@@ -103,9 +102,8 @@ func (m *mkcert) Run(serverName string) (x509.Certificate, error) {
 
 	// Parsing Certificate to avoid duplication creation of certificate
 	certFile, _, _ := m.fileNames(serverName)
-	fmt.Println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-	fmt.Println(serverName)
-	fmt.Println(certFile)
+	fmt.Println("serverName:" + serverName)
+	fmt.Println("certFile:" + certFile)
 	if pathExists(certFile) {
 		cert, err := x509.ParseCertificate([]byte(certFile))
 		if err != nil {
@@ -114,6 +112,7 @@ func (m *mkcert) Run(serverName string) (x509.Certificate, error) {
 			fmt.Println("End Of Parse")
 		}
 		fmt.Println("Return parse begin")
+		//Its here GREG i think the null pointer problem is here | TODO LFA
 		return &cert, err
 	}
 	// m.findCert(name)
