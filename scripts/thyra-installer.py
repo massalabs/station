@@ -44,14 +44,14 @@ def unzipAcrylic():
     except ReadError as err:
         printErrorAndExit(err)
 
-def executeOSCommandOrFile(command, decodeBinary, errorChecking=True):
+def executeOSCommandOrFile(command, decodeBinary):
     process = subprocess.Popen(command,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE,
                             universal_newlines=decodeBinary)
     stdout, stderr = process.communicate()
 
-    if stderr != None and stderr != "" and errorChecking == True:
+    if stderr != None and stderr != "" and process.returncode != 0:
         printErrorAndExit("Error encountered while executing : " + str(command) + " :\n" + stderr)
     return stdout
 
@@ -73,7 +73,7 @@ def setupDNS():
 def configureAcrylic():
     print("Configuring Acrylic...")
     f = open(DEFAULT_ACRYLIC_PATH + "\\" + ACRYLIC_HOST_FILE, "r+")
-    if f.read().find("127.0.0.1 *.massa") is not -1:
+    if f.read().find("127.0.0.1 *.massa") != -1:
         f.close()
         return
     f.write("\n127.0.0.1 *.massa")
@@ -91,14 +91,14 @@ def setupMkCerts():
             printErrorAndExit(err)
 
     downloadFile(MKCERT_URL, MKCERT_FILENAME)
-    executeOSCommandOrFile([os.getcwd() + "\\" + MKCERT_FILENAME, "--install"], False, False)
+    executeOSCommandOrFile([os.getcwd() + "\\" + MKCERT_FILENAME, "--install"], False)
     executeOSCommandOrFile([
         os.getcwd() + "\\" + MKCERT_FILENAME,
         "--cert-file",
         CERTIFICATIONS_FOLDER + "\\cert.pem",
         "--key-file",
         CERTIFICATIONS_FOLDER  + "\\cert-key.pem",
-        "my.massa"], False, False)
+        "my.massa"], False)
     try:
         os.remove(MKCERT_FILENAME)
     except OSError as err:
