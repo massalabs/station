@@ -71,7 +71,7 @@ func myCert(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 	cert.Certificate = append(cert.Certificate, certBytes)
 	cert.PrivateKey = priv
 
-	fmt.Println("%v", hello)
+	fmt.Printf("%v", hello)
 	return &cert, nil
 }
 
