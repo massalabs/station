@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/errors"
-	openApiRuntime "github.com/go-openapi/runtime"
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/onchain/website"
@@ -36,9 +36,9 @@ func configureAPI(api *operations.ThyraServerAPI) http.Handler {
 	// To continue using redoc as your UI, uncomment the following line
 	// api.UseRedoc()
 
-	api.JSONConsumer = openApiRuntime.JSONConsumer()
+	api.JSONConsumer = runtime.JSONConsumer()
 
-	api.JSONProducer = openApiRuntime.JSONProducer()
+	api.JSONProducer = runtime.JSONProducer()
 
 	if api.CmdExecuteFunctionHandler == nil {
 		api.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(func(params operations.CmdExecuteFunctionParams) middleware.Responder {
@@ -63,7 +63,6 @@ func configureAPI(api *operations.ThyraServerAPI) http.Handler {
 var content embed.FS
 
 func myCert(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
-	fmt.Println("inside myCert")
 	certBytes, priv, err := (&mkcert{}).Run(hello.ServerName)
 	var cert tls.Certificate
 	if err != nil {
@@ -73,7 +72,7 @@ func myCert(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 	cert.PrivateKey = priv
 
 	fmt.Println("%v", hello)
-	return &cert, nil //fmt.Errorf("err.Error()")
+	return &cert, nil
 }
 
 // The TLS configuration before HTTPS server starts.
@@ -95,9 +94,7 @@ func configureTLS(tlsConfig *tls.Config) {
 	if err != nil {
 		panic(err)
 	}
-	// Se placer la pour provide le CA une fois qu'on l'a généré
-	// Récuperer le CA et ses Clefs suivant l'os via getCaROOT() et getCaKey()
-	// Faire le process de certificate avec le CA et les clefs a la volée
+
 	if len(tlsConfig.Certificates) == 0 {
 		fmt.Println("warning: insecure HTTPS configuration.")
 		fmt.Println("	To fix this, use your own .crt and .key files using `--tls-certificate` and `--tls-key` flags")
@@ -108,17 +105,9 @@ func configureTLS(tlsConfig *tls.Config) {
 		certiff, err := tls.X509KeyPair(unsecureCertificate, unsecureKey)
 		tlsConfig.Certificates = append(tlsConfig.Certificates, certiff)
 		if err != nil {
-			fmt.Println("PANIC PANIC")
+			fmt.Println("error: unable to load certificate and key files.")
 			panic(err)
 		}
-	}
-	//Le Probleme etant que c'est appellé deux fois au lancement une premiere fois ServerName est vide
-	// Une seconde fois et la ca plante donc ce tableau
-	// var leafCertificate *x509.Certificate
-
-	// Ok donc mon certificat est donc dans leafCertificate maintenant on fait quoi
-	if err != nil {
-		fmt.Println("C CASSE CHEF")
 	}
 }
 
