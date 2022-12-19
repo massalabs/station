@@ -3,8 +3,6 @@ on:
   push:
     tags:
       - v[0-9]+.*
-    branches:
-      - main
   pull_request:
   workflow_call:
     inputs:
@@ -29,7 +27,6 @@ jobs:
     uses: ./.github/workflows/tests.yml
 
   build:
-    if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
     needs: [lint, tests]
     name: build and upload artifacts
     strategy:
@@ -67,7 +64,7 @@ jobs:
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
         run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
       - name: Build installer binary
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.target == 'windows' }}
         uses: JackMcKew/pyinstaller-action-windows@main
         with:
           path: scripts
@@ -77,7 +74,7 @@ jobs:
           name: ${{ matrix.target }}-${{ matrix.arch }}-binary
           path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
       - name: Upload installer artifacts
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.target == 'windows' }}
         uses: actions/upload-artifact@v3
         with:
           name: thyra-installer
