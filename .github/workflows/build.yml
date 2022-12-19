@@ -73,10 +73,11 @@ jobs:
         with:
           name: ${{ matrix.target }}-${{ matrix.arch }}-binary
           path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
-      - name: Upload installer artifact
+      - name: Upload installer artifacts
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: actions/upload-artifact@v3
         with:
-          name: thyra-installer.zip
+          name: thyra-installer
           path: scripts/dist/windows/thyra-installer/
       - name: Create release and upload binaries
         if: ${{ inputs.tag_name != '' }}
