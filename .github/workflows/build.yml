@@ -76,7 +76,7 @@ jobs:
       - name: Upload installer artifact
         uses: actions/upload-artifact@v3
         with:
-          name: thyra-installer
+          name: thyra-installer.zip
           path: scripts/dist/windows/thyra-installer/
       - name: Create release and upload binaries
         if: ${{ inputs.tag_name != '' }}
