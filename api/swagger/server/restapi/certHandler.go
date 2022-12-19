@@ -90,12 +90,16 @@ func getCAROOT() string {
 	case runtime.GOOS == "darwin":
 		dir = os.Getenv("HOME")
 		if dir == "" {
+			// $HOME is not set
+			// return empty string when CAROOT is not set
 			return ""
 		}
 		dir = filepath.Join(dir, "Library", "Application Support")
 	default: // Unix
 		dir = os.Getenv("HOME")
 		if dir == "" {
+			// $HOME is not set
+			// return empty string when CAROOT is not set
 			return ""
 		}
 		dir = filepath.Join(dir, ".local", "share")
@@ -110,7 +114,7 @@ func (m *mkcert) loadCA() {
 	}
 
 	certPEMBlock, err := os.ReadFile(filepath.Join(m.CAROOT, rootName))
-	// fmt.Println(err, "failed to read the CA certificate")
+
 	fatalIfErr(err, "failed to read the CA certificate")
 	certDERBlock, _ := pem.Decode(certPEMBlock)
 	if certDERBlock == nil || certDERBlock.Type != "CERTIFICATE" {

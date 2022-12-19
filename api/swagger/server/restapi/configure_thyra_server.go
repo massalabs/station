@@ -6,6 +6,7 @@ import (
 	"crypto/tls"
 	"embed"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -71,7 +72,6 @@ func myCert(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 	cert.Certificate = append(cert.Certificate, certBytes)
 	cert.PrivateKey = priv
 
-	fmt.Printf("%v", hello)
 	return &cert, nil
 }
 
@@ -105,7 +105,7 @@ func configureTLS(tlsConfig *tls.Config) {
 		certiff, err := tls.X509KeyPair(unsecureCertificate, unsecureKey)
 		tlsConfig.Certificates = append(tlsConfig.Certificates, certiff)
 		if err != nil {
-			fmt.Println("error: unable to load certificate and key files.")
+			log.Println("error: unable to load certificate and key files.")
 			panic(err)
 		}
 	}
