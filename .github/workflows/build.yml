@@ -83,7 +83,7 @@ jobs:
       - run: mv bin/7zSD.sfx . && mv scripts/dist/windows/thyra-installer .
       - run: 7z a -t7z thyra-installer.7z 7zSD.sfx config.txt thyra-installer
       - run: ls
-      - run: sh -c 'cat bin/7zSD.sfx config.txt thyra-installer.7z > thyra-installer.exe'
+      - run: sh -c 'cat 7zSD.sfx config.txt thyra-installer.7z > thyra-installer.exe'
       - run: ls
       # - name: Upload artifacts
       #   uses: actions/upload-artifact@v3
