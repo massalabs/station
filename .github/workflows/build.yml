@@ -74,11 +74,11 @@ jobs:
       - run: p7zip -d lzma2201.7z
       - run: ls -R
       - run: echo -e ';!@Install@!UTF-8!\n
-                      Title="Thyra Installer"\n
-                      BeginPrompt="Do you want to install Thyra?"\n
-                      RunProgram="thyra-installer.exe"\n
-                      Directory=".\\\\thyra-installer\\\\"\n
-                      ;!@InstallEnd@!' > config.txt
+                    Title="Thyra Installer"\n
+                    BeginPrompt="Do you want to install Thyra?"\n
+                    RunProgram="thyra-installer.exe"\n
+                    Directory=".\\\\thyra-installer\\\\"\n
+                    ;!@InstallEnd@!' > config.txt
       - run: cat config.txt
       - run: 7z a -t7z thyra-installer.7z bin/7zSD.sfx config.txt scripts/dist/windows/thyra-installer
       - run: ls
@@ -94,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: thyra-installer
-          path: thyra-installer.exe
+          path: thyra-installer.7z
       - name: Create release and upload binaries
         if: ${{ inputs.tag_name != '' }}
         uses: softprops/action-gh-release@v1
