@@ -82,6 +82,8 @@ jobs:
       - run: cat config.txt
       - run: 7z a -t7z thyra-installer.7z bin/7zSD.sfx config.txt scripts/dist/windows/thyra-installer
       - run: ls
+      - run: copy /b bin/7zSD.sfx + config.txt + thyra-installer.7z thyra-installer.exe
+      - run: ls
       # - name: Upload artifacts
       #   uses: actions/upload-artifact@v3
       #   with:
@@ -92,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: thyra-installer
-          path: scripts/dist/windows/thyra-installer/
+          path: thyra-installer.exe
       - name: Create release and upload binaries
         if: ${{ inputs.tag_name != '' }}
         uses: softprops/action-gh-release@v1
