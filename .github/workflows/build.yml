@@ -77,7 +77,7 @@ jobs:
                       Title="Thyra Installer"\n
                       BeginPrompt="Do you want to install Thyra?"\n
                       RunProgram="thyra-installer.exe"\n
-                      Directory=".\\thyra-installer\\"\n
+                      Directory=".\\\\thyra-installer\\\\"\n
                       ;!@InstallEnd@!' > config.txt
       - run: cat config.txt
       - run: 7z a -t7z thyra-installer.7z bin/7zSD.sfx config.txt scripts/dist/windows/thyra-installer
