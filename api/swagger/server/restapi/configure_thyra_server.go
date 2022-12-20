@@ -65,10 +65,10 @@ var content embed.FS
 
 func myCert(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 	certBytes, priv, err := (&mkcert{}).Run(hello.ServerName)
-	var cert tls.Certificate
 	if err != nil {
 		return nil, err
 	}
+	var cert tls.Certificate
 	cert.Certificate = append(cert.Certificate, certBytes)
 	cert.PrivateKey = priv
 
