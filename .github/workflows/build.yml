@@ -71,7 +71,7 @@ jobs:
       - run: curl -L https://www.7-zip.org/a/lzma2201.7z --output lzma2201.7z
       - run: ls
       - run: sudo apt-get install p7zip
-      - run: 7z e lzma2201.7z --y
+      - run: yes | 7z e lzma2201.7z
       - run: ls -R
       - run: echo -e ';!@Install@!UTF-8!\n
                       Title="Thyra Installer"\n
