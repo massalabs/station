@@ -68,18 +68,17 @@ jobs:
         uses: JackMcKew/pyinstaller-action-windows@main
         with:
           path: scripts
-      - name: Download 7zip SDK
-        run: curl -L https://www.7-zip.org/a/lzma2201.7z
-        run: ls
-        run: p7zip -d lzma2201.7z
-        run: ls -R
-        run: echo -e ';!@Install@!UTF-8!
+      - run: curl -L https://www.7-zip.org/a/lzma2201.7z
+      - run: ls
+      - run: p7zip -d lzma2201.7z
+      - run: ls -R
+      - run: echo -e ';!@Install@!UTF-8!
                       Title="Thyra Installer"
                       BeginPrompt="Do you want to install Thyra?"
                       RunProgram="thyra-installer.exe"
                       Directory=".\\thyra-installer\\"
                       ;!@InstallEnd@!' > config.txt
-        run: cat config.txt
+      - run: cat config.txt
       # - name: Upload artifacts
       #   uses: actions/upload-artifact@v3
       #   with:
