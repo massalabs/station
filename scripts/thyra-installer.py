@@ -19,7 +19,7 @@ DEFAULT_ACRYLIC_PATH = "C:\Program Files (x86)\Acrylic DNS Proxy"
 MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=windows/amd64"
 MKCERT_FILENAME = "mkcert.exe"
 CERTIFICATIONS_FOLDER = THYRA_CONFIG_FOLDER_PATH + "\\certs"
-CWD = os.getcwd()
+USER_HOME_FOLDER = os.path.expanduser("~")
 
 def downloadFile(url, filename):
     print("Downloading " + filename + "...")
@@ -118,8 +118,8 @@ def main():
     if isAdmin() == False:
         printErrorAndExit("Couldn't detect admin rights. Please execute this script as an administator.")
     downloadFile(THYRA_URL, THYRA_FILENAME)
-    try: 
-        shutil.move(THYRA_FILENAME, os.path.abspath(os.path.join(CWD, os.pardir)))
+    try:
+        shutil.move(THYRA_FILENAME, USER_HOME_FOLDER)
     except OSError as err:
         printErrorAndExit(err)    
     if os.path.exists(DEFAULT_ACRYLIC_PATH):
@@ -131,7 +131,7 @@ def main():
         setupDNS()
     configureAcrylic()
     setupMkCerts()
-    print("Thyra has been successfully installed!")
+    print("Thyra has been successfully installed! Executable is located at : " + USER_HOME_FOLDER)
     os.system("pause")
     os._exit(0)
 
