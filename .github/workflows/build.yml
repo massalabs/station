@@ -73,13 +73,15 @@ jobs:
       - run: sudo apt-get install p7zip
       - run: p7zip -d lzma2201.7z
       - run: ls -R
-      - run: echo -e ';!@Install@!UTF-8!
-                      Title="Thyra Installer"
-                      BeginPrompt="Do you want to install Thyra?"
-                      RunProgram="thyra-installer.exe"
-                      Directory=".\\thyra-installer\\"
+      - run: echo -e ';!@Install@!UTF-8!\n
+                      Title="Thyra Installer"\n
+                      BeginPrompt="Do you want to install Thyra?"\n
+                      RunProgram="thyra-installer.exe"\n
+                      Directory=".\\thyra-installer\\"\n
                       ;!@InstallEnd@!' > config.txt
       - run: cat config.txt
+      - run: p7zip a thyra-installer bin/7zSD.sfx config.txt scripts/dist/windows/thyra-installer
+      - run: ls
       # - name: Upload artifacts
       #   uses: actions/upload-artifact@v3
       #   with:
