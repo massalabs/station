@@ -63,7 +63,7 @@ func configureAPI(api *operations.ThyraServerAPI) http.Handler {
 //go:embed resource
 var content embed.FS
 
-func myCert(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
+func generateCertificate(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 	certBytes, priv, err := (&mkcert{}).Run(hello.ServerName)
 	if err != nil {
 		return nil, err
@@ -77,12 +77,11 @@ func myCert(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
-	var err error
 
 	var helloInfo tls.ClientHelloInfo
 	helloInfo.ServerName = tlsConfig.ServerName
 
-	tlsConfig.GetCertificate = myCert
+	tlsConfig.GetCertificate = generateCertificate
 	basePath := "resource/certificate/"
 
 	unsecureCertificate, err := content.ReadFile(basePath + "unsecure.crt")
@@ -98,8 +97,6 @@ func configureTLS(tlsConfig *tls.Config) {
 	if len(tlsConfig.Certificates) == 0 {
 		fmt.Println("warning: insecure HTTPS configuration.")
 		fmt.Println("	To fix this, use your own .crt and .key files using `--tls-certificate` and `--tls-key` flags")
-
-		var err error
 
 		tlsConfig.Certificates = make([]tls.Certificate, 1)
 		certiff, err := tls.X509KeyPair(unsecureCertificate, unsecureKey)
