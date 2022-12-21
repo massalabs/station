@@ -76,13 +76,7 @@ jobs:
         run: |
           curl -L https://www.7-zip.org/a/lzma2201.7z --output lzma2201.7z
           p7zip -d lzma2201.7z
-          echo -e ';!@Install@!UTF-8!\n
-                    Title="Thyra Installer"\n
-                    BeginPrompt="Do you want to install Thyra?"\n
-                    RunProgram="thyra-installer.exe"\n
-                    Directory=".\\\\thyra-installer\\\\"\n
-                    ;!@InstallEnd@!' > config.txt
-          mv bin/7zSD.sfx . && mv scripts/dist/windows/thyra-installer .
+          mv bin/7zSD.sfx . && mv scripts/config.txt . && mv scripts/dist/windows/thyra-installer .
           7z a -t7z thyra-installer.7z 7zSD.sfx config.txt thyra-installer
           sh -c 'cat 7zSD.sfx config.txt thyra-installer.7z > thyra-installer.exe'
       - name: Upload artifacts
