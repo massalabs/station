@@ -27,7 +27,7 @@ jobs:
     uses: ./.github/workflows/tests.yml
 
   build:
-    # needs: [lint, tests]
+    needs: [lint, tests]
     name: build and upload artifacts
     strategy:
       matrix:
@@ -37,21 +37,21 @@ jobs:
             target: windows
             cc: x86_64-w64-mingw32-gcc
             cxx: CXX=x86_64-w64-mingw32-g++
-          # - os: ubuntu-20.04
-          #   arch: amd64
-          #   target: linux
-          #   cc: gcc
-          #   cxx: g++
-          # - os: macos-latest
-          #   arch: amd64
-          #   target: darwin
-          #   cc: ""
-          #   cxx: ""
-          # - os: macos-latest
-          #   arch: arm64
-          #   target: darwin
-          #   cc: ""
-          #   cxx: ""
+          - os: ubuntu-20.04
+            arch: amd64
+            target: linux
+            cc: gcc
+            cxx: g++
+          - os: macos-latest
+            arch: amd64
+            target: darwin
+            cc: ""
+            cxx: ""
+          - os: macos-latest
+            arch: arm64
+            target: darwin
+            cc: ""
+            cxx: ""
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -61,35 +61,32 @@ jobs:
           os: ${{ matrix.os }}
       - name: Update version
         run: echo -e "${GITHUB_REF_NAME}" > cmd/thyra-server/version.txt
-      # - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
-      #   run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
+      - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
+        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
       - name: Build installer binary
         if: ${{ matrix.target == 'windows' }}
         uses: JackMcKew/pyinstaller-action-windows@main
         with:
           path: scripts
-      - run: curl -L https://www.7-zip.org/a/lzma2201.7z --output lzma2201.7z
-      - run: ls
-      - run: sudo apt-get install p7zip
-      - run: p7zip -d lzma2201.7z
-      - run: ls -R
-      - run: echo -e ';!@Install@!UTF-8!\n
+      - name: Package installer folder into Windows executable file
+        if: ${{ matrix.target == 'windows' }}
+        run: |
+          curl -L https://www.7-zip.org/a/lzma2201.7z --output lzma2201.7z
+          p7zip -d lzma2201.7z
+          echo -e ';!@Install@!UTF-8!\n
                     Title="Thyra Installer"\n
                     BeginPrompt="Do you want to install Thyra?"\n
                     RunProgram="thyra-installer.exe"\n
                     Directory=".\\\\thyra-installer\\\\"\n
                     ;!@InstallEnd@!' > config.txt
-      - run: cat config.txt
-      - run: mv bin/7zSD.sfx . && mv scripts/dist/windows/thyra-installer .
-      - run: 7z a -t7z thyra-installer.7z 7zSD.sfx config.txt thyra-installer
-      - run: ls
-      - run: sh -c 'cat 7zSD.sfx config.txt thyra-installer.7z > thyra-installer.exe'
-      - run: ls
-      # - name: Upload artifacts
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: ${{ matrix.target }}-${{ matrix.arch }}-binary
-      #     path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
+          mv bin/7zSD.sfx . && mv scripts/dist/windows/thyra-installer .
+          7z a -t7z thyra-installer.7z 7zSD.sfx config.txt thyra-installer
+          sh -c 'cat 7zSD.sfx config.txt thyra-installer.7z > thyra-installer.exe'
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.target }}-${{ matrix.arch }}-binary
+          path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
       - name: Upload installer artifacts
         if: ${{ matrix.target == 'windows' }}
         uses: actions/upload-artifact@v3
