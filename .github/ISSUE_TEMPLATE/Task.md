@@ -20,5 +20,6 @@ assignees: ''
 **Technical details**
 *Give the technical insights so anyone in the team can tackle the tasks - Dev*
 
-**Testing strategy**
-*Explain how to test the ticket if not obvious - Dev*
+**QA testing**
+*Does this task require some QA tests ?*
+*If yes, explain how to validate it*
