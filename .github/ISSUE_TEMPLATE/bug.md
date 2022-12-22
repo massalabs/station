@@ -34,3 +34,7 @@ The version of Thyra the bug is present in.
 
 **Additional context**
 Add any other context about the problem here.
+
+**QA testing**
+*Does this task require some QA tests ?*
+*If yes, explain how to validate it*
