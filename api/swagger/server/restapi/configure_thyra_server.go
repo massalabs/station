@@ -64,7 +64,7 @@ var content embed.FS
 
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
-	tlsConfig.GetCertificate = cert.GenerateTlsCertificate
+	tlsConfig.GetCertificate = cert.GenerateTLSCertificate
 }
 
 // As soon as server is initialized but not run yet, this function will be called.
