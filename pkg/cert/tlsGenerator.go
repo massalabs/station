@@ -3,7 +3,6 @@ package cert
 import "crypto/tls"
 
 func GenerateTLSCertificate(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
-
 	certBytes, priv, err := GenerateCertificate(hello.ServerName)
 
 	if err != nil {

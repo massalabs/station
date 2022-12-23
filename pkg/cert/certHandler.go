@@ -101,15 +101,12 @@ func getCAROOT() string {
 
 	switch {
 	case runtime.GOOS == "windows":
-
 		dir = os.Getenv("LocalAppData")
 
 	case os.Getenv("XDG_DATA_HOME") != "":
-
 		dir = os.Getenv("XDG_DATA_HOME")
 
 	case runtime.GOOS == "darwin":
-
 		dir = os.Getenv("HOME")
 		if dir == "" {
 			// $HOME is not set.
@@ -135,7 +132,6 @@ func getCAROOT() string {
 
 // Get the CA root key or create a new one.
 func loadCA() (*x509.Certificate, crypto.PrivateKey) {
-
 	if !pathExists(filepath.Join(CAROOT, rootName)) {
 		log.Fatalln("ERROR: failed to find the CA Root path at: " + filepath.Join(CAROOT, rootName) + "")
 	}
@@ -148,7 +144,9 @@ func loadCA() (*x509.Certificate, crypto.PrivateKey) {
 	if certDERBlock == nil || certDERBlock.Type != "CERTIFICATE" {
 		log.Fatalln("ERROR: failed to read the CA certificate: unexpected content")
 	}
+
 	caCert, err := x509.ParseCertificate(certDERBlock.Bytes)
+
 	fatalIfErr(err, "failed to parse the CA certificate")
 
 	if !pathExists(filepath.Join(CAROOT, rootKeyName)) {
@@ -156,6 +154,7 @@ func loadCA() (*x509.Certificate, crypto.PrivateKey) {
 	}
 
 	keyPEMBlock, err := ioutil.ReadFile(filepath.Join(CAROOT, rootKeyName))
+
 	fatalIfErr(err, "failed to read the CA key")
 
 	keyDERBlock, _ := pem.Decode(keyPEMBlock)
@@ -163,6 +162,7 @@ func loadCA() (*x509.Certificate, crypto.PrivateKey) {
 		log.Fatalln("ERROR: failed to read the CA key: unexpected content")
 	}
 	caKey, err = x509.ParsePKCS8PrivateKey(keyDERBlock.Bytes)
+
 	fatalIfErr(err, "failed to parse the CA key")
 
 	return caCert, caKey
