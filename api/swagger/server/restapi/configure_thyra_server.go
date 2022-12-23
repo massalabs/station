@@ -5,14 +5,13 @@ package restapi
 import (
 	"crypto/tls"
 	"embed"
-	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/cert"
 	"github.com/massalabs/thyra/pkg/onchain/website"
 	"github.com/rs/cors"
 )
@@ -63,49 +62,9 @@ func configureAPI(api *operations.ThyraServerAPI) http.Handler {
 //go:embed resource
 var content embed.FS
 
-func generateCertificate(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
-	certBytes, priv, err := (&mkcert{}).Run(hello.ServerName)
-	if err != nil {
-		return nil, err
-	}
-	var cert tls.Certificate
-	cert.Certificate = append(cert.Certificate, certBytes)
-	cert.PrivateKey = priv
-
-	return &cert, nil
-}
-
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
-
-	var helloInfo tls.ClientHelloInfo
-	helloInfo.ServerName = tlsConfig.ServerName
-
-	tlsConfig.GetCertificate = generateCertificate
-	basePath := "resource/certificate/"
-
-	unsecureCertificate, err := content.ReadFile(basePath + "unsecure.crt")
-	if err != nil {
-		panic(err)
-	}
-
-	unsecureKey, err := content.ReadFile(basePath + "unsecure.key")
-	if err != nil {
-		panic(err)
-	}
-
-	if len(tlsConfig.Certificates) == 0 {
-		fmt.Println("warning: insecure HTTPS configuration.")
-		fmt.Println("	To fix this, use your own .crt and .key files using `--tls-certificate` and `--tls-key` flags")
-
-		tlsConfig.Certificates = make([]tls.Certificate, 1)
-		certiff, err := tls.X509KeyPair(unsecureCertificate, unsecureKey)
-		tlsConfig.Certificates = append(tlsConfig.Certificates, certiff)
-		if err != nil {
-			log.Println("error: unable to load certificate and key files.")
-			panic(err)
-		}
-	}
+	tlsConfig.GetCertificate = cert.GenerateTlsCertificate
 }
 
 // As soon as server is initialized but not run yet, this function will be called.
