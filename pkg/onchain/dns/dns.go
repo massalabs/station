@@ -12,7 +12,7 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-const DNSRawAddress = "A15e47ChESAK1SdmGe3b92bybnBvMX2eFaxg23wn3rSdRzFHHGB"
+const DNSRawAddress = "A12who5jfzxGUcCqyEq7C2PLkYsx7Q3XNMVAtxEDYerMW6kXSqNC"
 
 /*
 This function fetch the address of the website storer associated with the name given in parameter
