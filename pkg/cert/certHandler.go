@@ -30,6 +30,7 @@ var caKey crypto.PrivateKey
 var priv *rsa.PrivateKey
 
 // Static data for the certificate.
+// nolint exhaustruct
 var tempCertificate = x509.Certificate{
 	SerialNumber: randomSerialNumber(),
 	Subject: pkix.Name{
@@ -77,6 +78,7 @@ func GenerateCertificate(serverName string) ([]byte, crypto.PrivateKey, error) {
 	// Create the template for the certificate.
 	expiration := time.Now().AddDate(0, 1, 0)
 	tpl := &tempCertificate
+	// nolint exhaustruct
 	tpl = &x509.Certificate{
 		Subject: pkix.Name{
 			CommonName: serverName,
@@ -161,6 +163,7 @@ func loadCA() (*x509.Certificate, crypto.PrivateKey) {
 	if keyDERBlock == nil || keyDERBlock.Type != "PRIVATE KEY" {
 		log.Fatalln("ERROR: failed to read the CA key: unexpected content")
 	}
+
 	caKey, err = x509.ParsePKCS8PrivateKey(keyDERBlock.Bytes)
 
 	fatalIfErr(err, "failed to parse the CA key")
