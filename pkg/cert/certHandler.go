@@ -19,25 +19,27 @@ import (
 const rootName = "rootCA.pem"
 const rootKeyName = "rootCA-key.pem"
 
-var priv *rsa.PrivateKey
-
+// CA Path
 var CAROOT = getCAROOT()
 
-// var caCert = loadCA()
+// CA certificate and key
 var caCert *x509.Certificate
 var caKey crypto.PrivateKey
 
+// Private Key for the certificate
+var priv *rsa.PrivateKey
+
+// Static data for the certificate
 var tempCertificate x509.Certificate = x509.Certificate{
 	SerialNumber: randomSerialNumber(),
 	Subject: pkix.Name{
-		//Static no interest
 		Organization: []string{"thyra dynamically generated"},
 	},
 	ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
 	KeyUsage:    x509.KeyUsageDigitalSignature,
 }
 
-func LoadCa() (*x509.Certificate, crypto.PrivateKey) {
+func getCa() (*x509.Certificate, crypto.PrivateKey) {
 	// Get the CA root certificate
 	if CAROOT == "" {
 		log.Fatalln("ERROR: failed to find the default CA location, set one as the CAROOT env var")
@@ -59,15 +61,14 @@ func generatePrivAndPubKey() (crypto.PrivateKey, crypto.PublicKey) {
 }
 
 func GenerateCertificate(serverName string) ([]byte, crypto.PrivateKey, error) {
-	caCert, caKey = LoadCa()
+	caCert, caKey = getCa()
 	if len(serverName) == 0 {
 		panic("error:ServerName is Empty.")
 	}
-	// end extract
 
 	priv, pub := generatePrivAndPubKey()
 
-	// Dynamic Change date to short
+	// Create the template for the certificate
 	expiration := time.Now().AddDate(0, 1, 0)
 	tpl := &tempCertificate
 	tpl = &x509.Certificate{
@@ -133,7 +134,7 @@ func loadCA() (*x509.Certificate, crypto.PrivateKey) {
 	fatalIfErr(err, "failed to parse the CA certificate")
 
 	if !pathExists(filepath.Join(CAROOT, rootKeyName)) {
-		return nil, nil
+		log.Fatalln("ERROR: failed to find the CA RootKeyName path at: " + filepath.Join(CAROOT, rootKeyName) + "")
 	}
 
 	keyPEMBlock, err := ioutil.ReadFile(filepath.Join(CAROOT, rootKeyName))
