@@ -55,6 +55,9 @@ func Addresses(client *node.Client, addr []string) ([]Address, error) {
 	return content, nil
 }
 
+// KeyFiltered returns an array of Key in byte array filtered with a prefix.
+// If isIncluded is true, will return all the keys with the given prefix,
+// If isIncluded is false, will return all the keys without the given prefix.
 func KeysFiltered(client *node.Client, scAddress string, keyPrefix string, isIncluded bool) ([][]byte, error) {
 	results, err := Addresses(client, []string{scAddress})
 	if err != nil {
@@ -72,25 +75,8 @@ func KeysFiltered(client *node.Client, scAddress string, keyPrefix string, isInc
 			if strings.Index(convert.BytesToString(candidateDatastoreKey), keyPrefix) != 0 {
 				filteredKeys = append(filteredKeys, candidateDatastoreKey)
 			}
-
 		}
-
 	}
 
 	return filteredKeys, nil
 }
-
-// func GetAllKeys(client *node.Client, scAddress string) ([][]byte, error) {
-// 	results, err := Addresses(client, []string{scAddress})
-// 	if err != nil {
-// 		return nil, fmt.Errorf("calling get_addresses with '%+v': %w", scAddress, err)
-// 	}
-
-// 	var keys [][]byte
-
-// 	for _, candidateDatastoreKey := range results[0].CandidateDatastoreKeys {
-// 		keys = append(keys, candidateDatastoreKey)
-// 	}
-
-// 	return keys, err
-// }
