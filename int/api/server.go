@@ -11,6 +11,7 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/int/api/cmd"
+	"github.com/massalabs/thyra/int/api/plugin"
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/node"
@@ -72,7 +73,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *p
 	localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(
 		cmd.CreateExecuteFunctionHandler(app))
 
-	// localAPI.MgmtPluginsListHandler = plugin.NewGet(manager)
+	localAPI.MgmtPluginsListHandler = plugin.NewGet(manager)
 
 	localAPI.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
 	localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
