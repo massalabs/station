@@ -345,6 +345,13 @@ paths:
           required: true
           x-nullable: false
           description: Website contents in a ZIP file.
+        - in: formData
+          name: url
+          type: string
+          pattern: "^[a-z0-9]+$"
+          required: true
+          x-nullable: false
+          description: URL without dot (.), upper case and special characters
       produces:
         - application/json
       responses:
@@ -394,6 +401,13 @@ paths:
           required: true
           x-nullable: false
           description: Website missing chunks
+        - in: formData
+          name: url
+          type: string
+          pattern: "^[a-z0-9]+$"
+          required: true
+          x-nullable: false
+          description: URL without dot (.), upper case and special characters
       produces:
         - application/json
       responses:
@@ -600,26 +614,6 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /mgmt/plugins:
-    get:
-      operationId: mgmtPluginsList
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Plugins list
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Plugin"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
   /all/domains:
     get:
       operationId: allDomainsGetter
@@ -739,13 +733,3 @@ definitions:
         description: byte array as string including created_at and updated_at values
         type: string
         format: byte
-  Plugin:
-    type: object
-    description: Plugin object (V0).
-    properties:
-      name:
-        description: Plugin's name.
-        type: string
-      port:
-        description: Plugin's port.
-        type: integer

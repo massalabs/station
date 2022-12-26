@@ -379,12 +379,12 @@ function deployWebsiteAndUpload() {
 // Full deployment process
 function uploadWebsite(file, count) {
     const bodyFormData = new FormData();
-
     const address = deployers[count].address;
+    const websiteName = deployers[count].name;
     bodyFormData.append("zipfile", file);
     bodyFormData.append("address", address);
     bodyFormData.append("nickname", getDefaultWallet());
-
+    bodyFormData.append("url", websiteName);
     uploadProcess(file, deployers[count].name, false, bodyFormData, (bodyFormData) =>
         postUpload(bodyFormData)
     );
@@ -395,10 +395,12 @@ function uploadMissingChunks(file, count) {
     const bodyFormData = new FormData();
     const missedChunks = missingChunks[count];
     const address = deployers[count].address;
+    const websiteName = deployers[count].name;
     bodyFormData.append("zipfile", file);
     bodyFormData.append("address", address);
     bodyFormData.append("nickname", getDefaultWallet());
     bodyFormData.append("missedChunks", missedChunks);
+    bodyFormData.append("url", websiteName);
     uploadProcess(file, deployers[count].name, false, bodyFormData, (bodyFormData) =>
         postUploadMissedChunks(bodyFormData)
     );
@@ -447,7 +449,9 @@ function step1(dnsName, totalChunk) {
 // Step 2, wait for DNS setting
 function step2(dnsName, contractAddress, totalChunk) {
     eventManager.subscribe(
-        `Record name ${dnsName} added to DNS for owner ${getWallet(getDefaultWallet()).address} at address ${contractAddress}`,
+        `Record name ${dnsName} added to DNS for owner ${
+            getWallet(getDefaultWallet()).address
+        } at address ${contractAddress}`,
         getWallet(getDefaultWallet()).address,
         (_) => {
             step3(contractAddress, totalChunk);

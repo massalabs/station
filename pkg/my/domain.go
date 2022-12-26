@@ -72,7 +72,6 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	}
 
 	for i := 0; i < len(domainNames); i++ { //nolint:varnamelen
-
 		contractAddressesIndex := 0
 		contractAddress := convert.ByteToStringArray(contractAddresses[i].CandidateValue)[contractAddressesIndex]
 

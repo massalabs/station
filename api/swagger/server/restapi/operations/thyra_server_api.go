@@ -69,9 +69,6 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		KpiHandler: KpiHandlerFunc(func(params KpiParams) middleware.Responder {
 			return middleware.NotImplemented("operation Kpi has not yet been implemented")
 		}),
-		MgmtPluginsListHandler: MgmtPluginsListHandlerFunc(func(params MgmtPluginsListParams) middleware.Responder {
-			return middleware.NotImplemented("operation MgmtPluginsList has not yet been implemented")
-		}),
 		MgmtWalletCreateHandler: MgmtWalletCreateHandlerFunc(func(params MgmtWalletCreateParams) middleware.Responder {
 			return middleware.NotImplemented("operation MgmtWalletCreate has not yet been implemented")
 		}),
@@ -173,8 +170,6 @@ type ThyraServerAPI struct {
 	CmdExecuteFunctionHandler CmdExecuteFunctionHandler
 	// KpiHandler sets the operation handler for the kpi operation
 	KpiHandler KpiHandler
-	// MgmtPluginsListHandler sets the operation handler for the mgmt plugins list operation
-	MgmtPluginsListHandler MgmtPluginsListHandler
 	// MgmtWalletCreateHandler sets the operation handler for the mgmt wallet create operation
 	MgmtWalletCreateHandler MgmtWalletCreateHandler
 	// MgmtWalletDeleteHandler sets the operation handler for the mgmt wallet delete operation
@@ -307,9 +302,6 @@ func (o *ThyraServerAPI) Validate() error {
 	}
 	if o.KpiHandler == nil {
 		unregistered = append(unregistered, "KpiHandler")
-	}
-	if o.MgmtPluginsListHandler == nil {
-		unregistered = append(unregistered, "MgmtPluginsListHandler")
 	}
 	if o.MgmtWalletCreateHandler == nil {
 		unregistered = append(unregistered, "MgmtWalletCreateHandler")
@@ -466,10 +458,6 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/kpi"] = NewKpi(o.context, o.KpiHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/mgmt/plugins"] = NewMgmtPluginsList(o.context, o.MgmtPluginsListHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

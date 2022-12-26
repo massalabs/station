@@ -337,37 +337,6 @@ func init() {
         }
       }
     },
-    "/mgmt/plugins": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtPluginsList",
-        "responses": {
-          "200": {
-            "description": "Plugins list",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Plugin"
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
     "/mgmt/wallet": {
       "get": {
         "produces": [
@@ -861,6 +830,15 @@ func init() {
             "name": "zipfile",
             "in": "formData",
             "required": true
+          },
+          {
+            "pattern": "^[a-z0-9]+$",
+            "type": "string",
+            "x-nullable": false,
+            "description": "URL without dot (.), upper case and special characters",
+            "name": "url",
+            "in": "formData",
+            "required": true
           }
         ],
         "responses": {
@@ -932,6 +910,15 @@ func init() {
             "name": "missedChunks",
             "in": "formData",
             "required": true
+          },
+          {
+            "pattern": "^[a-z0-9]+$",
+            "type": "string",
+            "x-nullable": false,
+            "description": "URL without dot (.), upper case and special characters",
+            "name": "url",
+            "in": "formData",
+            "required": true
           }
         ],
         "responses": {
@@ -995,20 +982,6 @@ func init() {
         "data": {
           "description": "Event data.",
           "type": "string"
-        }
-      }
-    },
-    "Plugin": {
-      "description": "Plugin object (V0).",
-      "type": "object",
-      "properties": {
-        "name": {
-          "description": "Plugin's name.",
-          "type": "string"
-        },
-        "port": {
-          "description": "Plugin's port.",
-          "type": "integer"
         }
       }
     },
@@ -1385,37 +1358,6 @@ func init() {
         }
       }
     },
-    "/mgmt/plugins": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtPluginsList",
-        "responses": {
-          "200": {
-            "description": "Plugins list",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Plugin"
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
     "/mgmt/wallet": {
       "get": {
         "produces": [
@@ -1909,6 +1851,15 @@ func init() {
             "name": "zipfile",
             "in": "formData",
             "required": true
+          },
+          {
+            "pattern": "^[a-z0-9]+$",
+            "type": "string",
+            "x-nullable": false,
+            "description": "URL without dot (.), upper case and special characters",
+            "name": "url",
+            "in": "formData",
+            "required": true
           }
         ],
         "responses": {
@@ -1978,6 +1929,15 @@ func init() {
             "x-nullable": false,
             "description": "Website missing chunks",
             "name": "missedChunks",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "pattern": "^[a-z0-9]+$",
+            "type": "string",
+            "x-nullable": false,
+            "description": "URL without dot (.), upper case and special characters",
+            "name": "url",
             "in": "formData",
             "required": true
           }
@@ -2088,20 +2048,6 @@ func init() {
           "items": {
             "type": "number"
           }
-        }
-      }
-    },
-    "Plugin": {
-      "description": "Plugin object (V0).",
-      "type": "object",
-      "properties": {
-        "name": {
-          "description": "Plugin's name.",
-          "type": "string"
-        },
-        "port": {
-          "description": "Plugin's port.",
-          "type": "integer"
         }
       }
     },
