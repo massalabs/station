@@ -41,43 +41,7 @@ func listFileName(zipReader *zip.Reader) []string {
 
 //nolint:nolintlint,ireturn,funlen
 func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app *fyne.App) middleware.Responder {
-	wallet, err := wallet.Load(params.Nickname)
-	if err != nil {
-		return createInternalServerError(errorCodeGetWallet, err.Error())
-	}
-
-	clearPassword, err := gui.AskPassword(wallet.Nickname, app)
-	if err != nil {
-		return createInternalServerError(ErrorCodeWalletCanceledAction, err.Error())
-	}
-
-	if len(clearPassword) == 0 {
-		return createInternalServerError(ErrorCodeWalletPasswordEmptyWebCreator, ErrorCodeWalletPasswordEmptyWebCreator)
-	}
-
-	err = wallet.Unprotect(clearPassword, 0)
-
-	if err != nil {
-		return createInternalServerError(errorCodeWalletWrongPassword, err.Error())
-	}
-
-	archive, err := io.ReadAll(params.Zipfile)
-	if err != nil {
-		return createInternalServerError(errorCodeWebCreatorReadArchive, err.Error())
-	}
-
-	maxArchiveSize := GetMaxArchiveSize()
-
-	if len(archive) > maxArchiveSize {
-		return createInternalServerError(errorCodeWebCreatorArchiveSize, errorCodeWebCreatorArchiveSize)
-	}
-
-	zipReader, _ := zip.NewReader(bytes.NewReader(archive), int64(len(archive)))
-	FilesOfArchive := listFileName(zipReader)
-
-	if slices.Index(FilesOfArchive, "index.html") == -1 {
-		return createInternalServerError(errorCodeWebCreatorHTMLNotInSource, errorCodeWebCreatorHTMLNotInSource)
-	}
+	archive, wallet, _ := unprotectWalletAndReadArchive(params.Nickname, params.Zipfile, app)
 
 	address, err := website.PrepareForUpload(params.URL, wallet)
 	if err != nil {
@@ -131,50 +95,9 @@ func CreateUploadWebsiteHandler(app *fyne.App) func(params operations.WebsiteCre
 
 //nolint:nolintlint,ireturn
 func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyne.App) middleware.Responder {
-	wallet, err := wallet.Load(params.Nickname)
-	if err != nil {
-		return operations.NewWebsiteCreatorUploadInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeGetWallet,
-					Message: err.Error(),
-				})
-	}
+	archive, wallet, _ := unprotectWalletAndReadArchive(params.Nickname, params.Zipfile, app)
 
-	clearPassword, err := gui.AskPassword(wallet.Nickname, app)
-	if err != nil {
-		return operations.NewWebsiteCreatorUploadInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    ErrorCodeWalletCanceledAction,
-					Message: ErrorCodeWalletCanceledAction,
-				})
-	}
-
-	err = wallet.Unprotect(clearPassword, 0)
-	if err != nil {
-		return operations.NewWebsiteCreatorUploadInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeWalletWrongPassword,
-					Message: err.Error(),
-				})
-	}
-
-	archive, err := io.ReadAll(params.Zipfile)
-	if err != nil {
-		return operations.NewWebsiteCreatorUploadInternalServerError().
-			WithPayload(&models.Error{
-				Code:    errorCodeWebCreatorReadArchive,
-				Message: err.Error(),
-			})
-	}
-
-	if !checkContentType(archive, "application/zip") {
-		return createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
-	}
-
-	_, err = website.Upload(params.Address, archive, *wallet, params.URL)
+	_, err := website.Upload(params.Address, archive, *wallet, params.URL)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
@@ -202,45 +125,9 @@ func CreateUploadMissingChunksHandler(app *fyne.App) func(params operations.Webs
 
 //nolint:nolintlint,ireturn,lll
 func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChunksParams, app *fyne.App) middleware.Responder {
-	wallet, err := wallet.Load(params.Nickname)
-	if err != nil {
-		return operations.NewWebsiteCreatorUploadInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeGetWallet,
-					Message: err.Error(),
-				})
-	}
+	archive, wallet, _ := unprotectWalletAndReadArchive(params.Nickname, params.Zipfile, app)
 
-	clearPassword, err := gui.AskPassword(wallet.Nickname, app)
-	if err != nil {
-		return createInternalServerError(ErrorCodeWalletCanceledAction, err.Error())
-	}
-
-	err = wallet.Unprotect(clearPassword, 0)
-	if err != nil {
-		return operations.NewWebsiteCreatorUploadInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeWalletWrongPassword,
-					Message: err.Error(),
-				})
-	}
-
-	archive, err := io.ReadAll(params.Zipfile)
-	if err != nil {
-		return operations.NewWebsiteCreatorUploadInternalServerError().
-			WithPayload(&models.Error{
-				Code:    errorCodeWebCreatorReadArchive,
-				Message: err.Error(),
-			})
-	}
-
-	if !checkContentType(archive, "application/zip") {
-		return createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
-	}
-
-	_, err = website.UploadMissedChunks(params.Address, archive, wallet, params.MissedChunks, params.URL)
+	_, err := website.UploadMissedChunks(params.Address, archive, wallet, params.MissedChunks, params.URL)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
@@ -251,4 +138,50 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 			Address:      params.Address,
 			BrokenChunks: nil,
 		})
+}
+
+//nolint:lll, unparam, ireturn, nolintlint
+func unprotectWalletAndReadArchive(nickname string, zipFile io.ReadCloser, app *fyne.App) ([]byte, *wallet.Wallet, middleware.Responder) {
+	wallet, err := wallet.Load(nickname)
+	if err != nil {
+		return nil, nil, createInternalServerError(errorCodeGetWallet, err.Error())
+	}
+
+	clearPassword, err := gui.AskPassword(wallet.Nickname, app)
+	if err != nil {
+		return nil, nil, createInternalServerError(ErrorCodeWalletCanceledAction, err.Error())
+	}
+
+	if len(clearPassword) == 0 {
+		return nil, nil, createInternalServerError(ErrorCodeWalletPasswordEmptyWebCreator, ErrorCodeWalletPasswordEmptyWebCreator)
+	}
+
+	err = wallet.Unprotect(clearPassword, 0)
+	if err != nil {
+		return nil, nil, createInternalServerError(errorCodeWalletWrongPassword, err.Error())
+	}
+
+	archive, err := io.ReadAll(zipFile)
+	if err != nil {
+		return nil, nil, createInternalServerError(errorCodeWebCreatorReadArchive, err.Error())
+	}
+
+	maxArchiveSize := GetMaxArchiveSize()
+
+	if len(archive) > maxArchiveSize {
+		return nil, nil, createInternalServerError(errorCodeWebCreatorArchiveSize, errorCodeWebCreatorArchiveSize)
+	}
+
+	zipReader, _ := zip.NewReader(bytes.NewReader(archive), int64(len(archive)))
+	FilesOfArchive := listFileName(zipReader)
+
+	if slices.Index(FilesOfArchive, "index.html") == -1 {
+		return nil, nil, createInternalServerError(errorCodeWebCreatorHTMLNotInSource, errorCodeWebCreatorHTMLNotInSource)
+	}
+
+	if !checkContentType(archive, "application/zip") {
+		return nil, nil, createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
+	}
+
+	return archive, wallet, nil
 }
