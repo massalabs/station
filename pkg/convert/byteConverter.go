@@ -61,7 +61,7 @@ func ByteToStringArray(entry []byte) []string {
 	for len(content) >= minBytesForString {
 		// we check the string length and we update the offset
 		stringLength := binary.LittleEndian.Uint32(content[:bytesPerUint32])
-		offsetDown := len(content) - bytesPerUint32 - int(stringLength)
+		offsetDown := bytesPerUint32 + int(stringLength)
 
 		// we check offset because if = 0 will throw an error and we decode the string
 		if offsetDown > 0 {
