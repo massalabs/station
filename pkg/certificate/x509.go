@@ -42,7 +42,7 @@ func GenerateSignedCertificate(serverName string, priv *rsa.PrivateKey) ([]byte,
 	}
 
 	//nolint:exhaustruct
-	tpl := &x509.Certificate{
+	template := &x509.Certificate{
 		SerialNumber: &big.Int{}, // mandatory, but useless as it should be a unique id given to the certificate by the CA
 		Subject: pkix.Name{ // not necessary, but cool to have if the user ask for certificate details.
 			CommonName:   serverName,
@@ -53,10 +53,10 @@ func GenerateSignedCertificate(serverName string, priv *rsa.PrivateKey) ([]byte,
 		NotAfter: time.Now().AddDate(0, 0, 1),
 	}
 
-	tpl.DNSNames = append(tpl.DNSNames, serverName)
+	template.DNSNames = append(template.DNSNames, serverName)
 
 	// Create the certificate.
-	cert, err := x509.CreateCertificate(rand.Reader, tpl, caCert, priv.Public(), caPrivateKey)
+	cert, err := x509.CreateCertificate(rand.Reader, template, caCert, priv.Public(), caPrivateKey)
 	if err != nil {
 		return nil, nil, fmt.Errorf("while creating certificate: %w", err)
 	}
