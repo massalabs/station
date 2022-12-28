@@ -15,6 +15,7 @@ import (
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/node"
+	"github.com/massalabs/thyra/pkg/onchain/dns"
 	pluginmanager "github.com/massalabs/thyra/pkg/plugins"
 )
 
@@ -24,6 +25,7 @@ type StartServerFlags struct {
 	TLSCertificate    string
 	TLSCertificateKey string
 	MassaNodeServer   string
+	DNSAddress        string
 	Version           bool
 }
 
@@ -40,12 +42,19 @@ func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 	}
 
 	parseNetworkFlag(&startFlags.MassaNodeServer)
+
+	if startFlags.DNSAddress != "" {
+		os.Setenv(dns.DNSAddressEnvKey, startFlags.DNSAddress)
+	}
 }
 
 func parseNetworkFlag(massaNodeServerPtr *string) {
+	var dnsAddressPtr string
+
 	switch *massaNodeServerPtr {
 	case "TESTNET":
 		*massaNodeServerPtr = "https://test.massa.net/api/v2"
+		dnsAddressPtr = "A15e47ChESAK1SdmGe3b92bybnBvMX2eFaxg23wn3rSdRzFHHGB"
 	case "LABNET":
 		*massaNodeServerPtr = "https://labnet.massa.net/api/v2"
 	case "INNONET":
@@ -54,6 +63,7 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 		*massaNodeServerPtr = "http://127.0.0.1:33035"
 	}
 
+	os.Setenv(dns.DNSAddressEnvKey, dnsAddressPtr)
 	os.Setenv("MASSA_NODE_URL", *massaNodeServerPtr)
 }
 

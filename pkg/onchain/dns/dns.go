@@ -3,6 +3,7 @@ package dns
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
@@ -12,16 +13,20 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-const DNSRawAddress = "A1n3jcTJg4nUojhsu9LLABVxiz6wkbdTLPpajEDVsTk6buE5fFY"
+const DNSAddressEnvKey = "THYRA_DNS_ADDRESS"
+
+func GetDNSAddress() string {
+	return os.Getenv(DNSAddressEnvKey)
+}
 
 /*
 This function fetch the address of the website storer associated with the name given in parameter
 from the DNS smart contract and returns it.
 */
 func Resolve(client *node.Client, name string) (string, error) {
-	entry, err := node.DatastoreEntry(client, DNSRawAddress, convert.StringToBytes(name))
+	entry, err := node.DatastoreEntry(client, GetDNSAddress(), convert.StringToBytes(name))
 	if err != nil {
-		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", DNSRawAddress, name, err)
+		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", GetDNSAddress(), name, err)
 	}
 
 	if len(entry.CandidateValue) == 0 {
@@ -32,9 +37,9 @@ func Resolve(client *node.Client, name string) (string, error) {
 }
 
 func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContract string) (string, error) {
-	addr, _, err := base58.VersionedCheckDecode(DNSRawAddress[1:])
+	addr, _, err := base58.VersionedCheckDecode(GetDNSAddress()[1:])
 	if err != nil {
-		return "", fmt.Errorf("checking address '%s': %w", DNSRawAddress[1:], err)
+		return "", fmt.Errorf("checking address '%s': %w", GetDNSAddress()[1:], err)
 	}
 
 	// Set Resolver prepare data

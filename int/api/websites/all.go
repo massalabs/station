@@ -44,14 +44,14 @@ the various website storer contracts, the function builds an array of Registry o
 and returns it to the frontend for display on the Registry page.
 */
 func Registry(client *node.Client) ([]*models.Registry, error) {
-	websiteNames, err := ledger.FilterSCKeysByPrefix(client, dns.DNSRawAddress, ownedPrefix, false)
+	websiteNames, err := ledger.FilterSCKeysByPrefix(client, dns.GetDNSAddress(), ownedPrefix, false)
 	if err != nil {
-		return nil, fmt.Errorf("fetching all keys without '%s' prefix at '%s': %w", ownedPrefix, dns.DNSRawAddress, err)
+		return nil, fmt.Errorf("fetching all keys without '%s' prefix at '%s': %w", ownedPrefix, dns.GetDNSAddress(), err)
 	}
 
-	dnsValues, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, websiteNames)
+	dnsValues, err := node.ContractDatastoreEntries(client, dns.GetDNSAddress(), websiteNames)
 	if err != nil {
-		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, dns.DNSRawAddress, err)
+		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, dns.GetDNSAddress(), err)
 	}
 
 	// in website name key, value are stored in this order -> website Address, website Owner Address
