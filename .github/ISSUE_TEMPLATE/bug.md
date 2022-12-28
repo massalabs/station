@@ -21,4 +21,5 @@ The version of Thyra the bug is present in.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. MacOS, Windows...]
- - Any other useful info
+ 
+ **Any other useful info**
