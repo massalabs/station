@@ -1,9 +1,25 @@
 package certificate
 
+// This package aims to solve the impossibility of generating a valid certificate for an entire top-level domain (TLD).
+//
+// The following approaches are not possible:
+// - using a *.massa certificate
+// - adding several SANs to the same certificate (e.g. *.my.massa, *.thyra.massa, *.web.massa...) due to
+//    * the technical limit to the number of SANs that can be included in a certificate as well as
+//    * the delay between adding a website to the blockchain and adding it to the certificate.
+//
+// Therefore, here we use the SNI mechanism to:
+// - get the server name and
+// - generate a temporary certificate instead of just retrieving an existing one.
+//
+// To pass the security checks of the browser and the operating system, we also sign this certificate
+// with a root certificate generated with mkcert.
+
 import (
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
+	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
@@ -16,29 +32,62 @@ import (
 	"time"
 )
 
-const (
-	rootName    = "rootCA.pem"
-	rootKeyName = "rootCA-key.pem"
-)
+const privateKeySizeInBits = 2048
 
-func GenerateSignedCertificate(serverName string, priv *rsa.PrivateKey) ([]byte, *rsa.PrivateKey, error) {
-	if len(serverName) == 0 {
-		return nil, nil, errors.New("while generating certificate: server name is empty")
+// wrapAndPrint wraps error and print error message to std err.
+// Printing to stderr is mandatory as this is not done by the http server later in the process.
+func wrapAndPrint(msg string, err error) error {
+	wrappingMsg := "while handling SNI Hello request"
+
+	err = fmt.Errorf("%s: %w", msg, err)
+	fmt.Fprintf(os.Stderr, "%s: %v", wrappingMsg, err)
+
+	return fmt.Errorf("%s: %w", wrappingMsg, err)
+}
+
+// GenerateTLS processes an SNI Hello request by generating a dynamic certificate.
+func GenerateTLS(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
+	privateKey, err := rsa.GenerateKey(rand.Reader, privateKeySizeInBits)
+	if err != nil {
+		return nil, wrapAndPrint("while generating keypair", err)
 	}
 
 	caPath, err := mkcertCARootPath()
 	if err != nil {
-		return nil, nil, fmt.Errorf("while generating certificate: %w", err)
+		return nil, wrapAndPrint("while getting mkcert CA root path", err)
 	}
 
-	caCert, err := LoadCertificate(caPath + "/" + rootName)
+	caCertificate, err := LoadCertificate(caPath + "/rootCA.pem")
 	if err != nil {
-		return nil, nil, fmt.Errorf("while loading CA certificate: %w", err)
+		return nil, wrapAndPrint("while loading CA certificate", err)
 	}
 
-	caPrivateKey, err := LoadPrivateKey(caPath + "/" + rootKeyName)
+	caPrivateKey, err := LoadPrivateKey(caPath + "/rootCA-key.pem")
 	if err != nil {
-		return nil, nil, fmt.Errorf("while loading CA key: %w", err)
+		return nil, wrapAndPrint("while loading CA key", err)
+	}
+
+	certBytes, privateKey, err := GenerateSignedCertificate(hello.ServerName, privateKey, caCertificate, caPrivateKey)
+	if err != nil {
+		return nil, wrapAndPrint("while generating signed certificate", err)
+	}
+
+	var cert tls.Certificate
+
+	cert.Certificate = append(cert.Certificate, certBytes)
+	cert.PrivateKey = privateKey
+
+	return &cert, nil
+}
+
+// GenerateSignedCertificate generates a certificate and signed it with the given AC.
+func GenerateSignedCertificate(
+	serverName string,
+	privateKey *rsa.PrivateKey,
+	caCertificate *x509.Certificate, caPrivateKey crypto.PrivateKey,
+) ([]byte, *rsa.PrivateKey, error) {
+	if len(serverName) == 0 {
+		return nil, nil, errors.New("while generating certificate: server name is empty")
 	}
 
 	//nolint:exhaustruct
@@ -56,12 +105,12 @@ func GenerateSignedCertificate(serverName string, priv *rsa.PrivateKey) ([]byte,
 	template.DNSNames = append(template.DNSNames, serverName)
 
 	// Create the certificate.
-	cert, err := x509.CreateCertificate(rand.Reader, template, caCert, priv.Public(), caPrivateKey)
+	cert, err := x509.CreateCertificate(rand.Reader, template, caCertificate, privateKey.Public(), caPrivateKey)
 	if err != nil {
 		return nil, nil, fmt.Errorf("while creating certificate: %w", err)
 	}
 
-	return cert, priv, nil
+	return cert, privateKey, nil
 }
 
 // Get the mkcert CA root path depending on the OS.
