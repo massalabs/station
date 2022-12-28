@@ -27,7 +27,7 @@ func Resolve(client *node.Client, name string) (string, error) {
 	if len(entry.CandidateValue) == 0 {
 		return "", errors.New("name not found")
 	}
-	// in the name key is stored the storer Address + the owner Address, we keep only the storer Address
+	// entry.CandidateValue contains the website address + the owner address, we keep only the website address.
 	return convert.ByteToStringArray(entry.CandidateValue)[0], nil
 }
 

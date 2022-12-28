@@ -53,7 +53,7 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	return scAddress, nil
 }
 
-func Upload(atAddress string, content []byte, wallet wallet.Wallet, url string) ([]string, error) {
+func Upload(atAddress string, content []byte, wallet wallet.Wallet) ([]string, error) {
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
@@ -63,7 +63,7 @@ func Upload(atAddress string, content []byte, wallet wallet.Wallet, url string) 
 
 	blocks := chunk(content, blockLength)
 
-	operations, err := upload(client, addr, blocks, wallet, url)
+	operations, err := upload(client, addr, blocks, wallet)
 	if err != nil {
 		return nil, err
 	}
@@ -71,18 +71,10 @@ func Upload(atAddress string, content []byte, wallet wallet.Wallet, url string) 
 	return operations, nil
 }
 
-func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wallet, url string) ([]string, error) {
+func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
 
-	// add encoded nbChunks to arguments
-	argsInitializeWebsite := convert.U64ToBytes(len(chunks))
-
-	websiteName := convert.StringToBytes(url)
-
-	// add encoded websiteName to arguments
-	argsInitializeWebsite = append(argsInitializeWebsite, websiteName...)
-
-	opID, err := onchain.CallFunction(client, wallet, addr, "initializeWebsite", argsInitializeWebsite,
+	opID, err := onchain.CallFunction(client, wallet, addr, "initializeWebsite", convert.U64ToBytes(len(chunks)),
 		sendoperation.OneMassa)
 	if err != nil {
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
@@ -93,9 +85,6 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wal
 	for index := 0; index < len(chunks); index++ {
 		// Chunk ID encoding
 		params := convert.U64ToBytes(index)
-
-		// add websiteName to params
-		params = append(params, websiteName...)
 
 		// Chunk data length encoding
 		params = append(params, convert.U32ToBytes(len(chunks[index]))...)
@@ -115,7 +104,7 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wal
 }
 
 //nolint:lll
-func UploadMissedChunks(atAddress string, content []byte, wallet *wallet.Wallet, missedChunks string, url string) ([]string, error) {
+func UploadMissedChunks(atAddress string, content []byte, wallet *wallet.Wallet, missedChunks string) ([]string, error) {
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
@@ -125,7 +114,7 @@ func UploadMissedChunks(atAddress string, content []byte, wallet *wallet.Wallet,
 
 	blocks := chunk(content, blockLength)
 
-	operations, err := uploadMissedChunks(client, addr, blocks, missedChunks, wallet, url)
+	operations, err := uploadMissedChunks(client, addr, blocks, missedChunks, wallet)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +123,7 @@ func UploadMissedChunks(atAddress string, content []byte, wallet *wallet.Wallet,
 }
 
 //nolint:lll
-func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, missedChunks string, wallet *wallet.Wallet, url string) ([]string, error) {
+func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, missedChunks string, wallet *wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
 	arrMissedChunks := strings.Split(missedChunks, ",")
 
@@ -145,9 +134,6 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, misse
 		}
 
 		params := convert.U64ToBytes(chunkID)
-
-		// add websiteName to params
-		params = append(params, convert.StringToBytes(url)...)
 
 		// Chunk data length encoding
 		//nolint:ineffassign,nolintlint
