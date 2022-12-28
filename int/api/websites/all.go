@@ -64,9 +64,7 @@ func Registry(client *node.Client) ([]*models.Registry, error) {
 
 		websiteMetadata, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes(metaKey))
 		if err != nil {
-			if err != nil {
-				return nil, fmt.Errorf("reading key '%s' at '%s': %w", metaKey, websiteStorerAddress, err)
-			}
+			return nil, fmt.Errorf("reading key '%s' at '%s': %w", metaKey, websiteStorerAddress, err)
 		}
 
 		registry[index] = &models.Registry{
