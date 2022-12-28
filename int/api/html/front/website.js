@@ -380,11 +380,9 @@ function deployWebsiteAndUpload() {
 function uploadWebsite(file, count) {
     const bodyFormData = new FormData();
     const address = deployers[count].address;
-    const websiteName = deployers[count].name;
     bodyFormData.append("zipfile", file);
     bodyFormData.append("address", address);
     bodyFormData.append("nickname", getDefaultWallet());
-    bodyFormData.append("url", websiteName);
     uploadProcess(file, deployers[count].name, false, bodyFormData, (bodyFormData) =>
         postUpload(bodyFormData)
     );
@@ -395,12 +393,10 @@ function uploadMissingChunks(file, count) {
     const bodyFormData = new FormData();
     const missedChunks = missingChunks[count];
     const address = deployers[count].address;
-    const websiteName = deployers[count].name;
     bodyFormData.append("zipfile", file);
     bodyFormData.append("address", address);
     bodyFormData.append("nickname", getDefaultWallet());
     bodyFormData.append("missedChunks", missedChunks);
-    bodyFormData.append("url", websiteName);
     uploadProcess(file, deployers[count].name, false, bodyFormData, (bodyFormData) =>
         postUploadMissedChunks(bodyFormData)
     );

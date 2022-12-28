@@ -51,12 +51,6 @@ type WebsiteCreatorUploadParams struct {
 	  In: formData
 	*/
 	Nickname string
-	/*URL without dot (.), upper case and special characters
-	  Required: true
-	  Pattern: ^[a-z0-9]+$
-	  In: formData
-	*/
-	URL string
 	/*Website contents in a ZIP file.
 	  Required: true
 	  In: formData
@@ -89,11 +83,6 @@ func (o *WebsiteCreatorUploadParams) BindRequest(r *http.Request, route *middlew
 
 	fdNickname, fdhkNickname, _ := fds.GetOK("nickname")
 	if err := o.bindNickname(fdNickname, fdhkNickname, route.Formats); err != nil {
-		res = append(res, err)
-	}
-
-	fdURL, fdhkURL, _ := fds.GetOK("url")
-	if err := o.bindURL(fdURL, fdhkURL, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -148,40 +137,6 @@ func (o *WebsiteCreatorUploadParams) bindNickname(rawData []string, hasKey bool,
 		return err
 	}
 	o.Nickname = raw
-
-	return nil
-}
-
-// bindURL binds and validates parameter URL from formData.
-func (o *WebsiteCreatorUploadParams) bindURL(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	if !hasKey {
-		return errors.Required("url", "formData", rawData)
-	}
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: true
-
-	if err := validate.RequiredString("url", "formData", raw); err != nil {
-		return err
-	}
-	o.URL = raw
-
-	if err := o.validateURL(formats); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// validateURL carries on validations for parameter URL
-func (o *WebsiteCreatorUploadParams) validateURL(formats strfmt.Registry) error {
-
-	if err := validate.Pattern("url", "formData", o.URL, `^[a-z0-9]+$`); err != nil {
-		return err
-	}
 
 	return nil
 }

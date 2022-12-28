@@ -861,15 +861,6 @@ func init() {
             "name": "zipfile",
             "in": "formData",
             "required": true
-          },
-          {
-            "pattern": "^[a-z0-9]+$",
-            "type": "string",
-            "x-nullable": false,
-            "description": "URL without dot (.), upper case and special characters",
-            "name": "url",
-            "in": "formData",
-            "required": true
           }
         ],
         "responses": {
@@ -939,15 +930,6 @@ func init() {
             "x-nullable": false,
             "description": "Website missing chunks",
             "name": "missedChunks",
-            "in": "formData",
-            "required": true
-          },
-          {
-            "pattern": "^[a-z0-9]+$",
-            "type": "string",
-            "x-nullable": false,
-            "description": "URL without dot (.), upper case and special characters",
-            "name": "url",
             "in": "formData",
             "required": true
           }
@@ -1927,15 +1909,6 @@ func init() {
             "name": "zipfile",
             "in": "formData",
             "required": true
-          },
-          {
-            "pattern": "^[a-z0-9]+$",
-            "type": "string",
-            "x-nullable": false,
-            "description": "URL without dot (.), upper case and special characters",
-            "name": "url",
-            "in": "formData",
-            "required": true
           }
         ],
         "responses": {
@@ -2005,15 +1978,6 @@ func init() {
             "x-nullable": false,
             "description": "Website missing chunks",
             "name": "missedChunks",
-            "in": "formData",
-            "required": true
-          },
-          {
-            "pattern": "^[a-z0-9]+$",
-            "type": "string",
-            "x-nullable": false,
-            "description": "URL without dot (.), upper case and special characters",
-            "name": "url",
             "in": "formData",
             "required": true
           }

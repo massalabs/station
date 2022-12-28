@@ -345,13 +345,6 @@ paths:
           required: true
           x-nullable: false
           description: Website contents in a ZIP file.
-        - in: formData
-          name: url
-          type: string
-          pattern: "^[a-z0-9]+$"
-          required: true
-          x-nullable: false
-          description: URL without dot (.), upper case and special characters
       produces:
         - application/json
       responses:
@@ -401,13 +394,6 @@ paths:
           required: true
           x-nullable: false
           description: Website missing chunks
-        - in: formData
-          name: url
-          type: string
-          pattern: "^[a-z0-9]+$"
-          required: true
-          x-nullable: false
-          description: URL without dot (.), upper case and special characters
       produces:
         - application/json
       responses:
