@@ -1,6 +1,7 @@
 package ledger
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"strings"
@@ -80,4 +81,37 @@ func KeysOfSCFilteredByPrefix(client *node.Client, scAddress string, keyPrefix s
 	}
 
 	return filteredKeys, nil
+}
+
+func RemoveKeysFromKeyList(keyList [][]byte, keysToRemove [][]byte) [][]byte {
+
+	var indexToRemove []int
+	for i := 0; i < len(keyList); i++ {
+		for j := 0; j < len(keysToRemove); j++ {
+
+			if bytes.Compare(keyList[i], keysToRemove[j]) == 0 {
+				indexToRemove = append(indexToRemove, i)
+				fmt.Println("🚀 ~ file: address.go:95 ~ ifbytes.Compare ~ 		indexToRemove = append(indexToRemove, i)", indexToRemove)
+			}
+		}
+
+	}
+
+	result := make([][]byte, len(keyList)-len(indexToRemove))
+	fmt.Println("🚀 ~ file: address.go:101 ~ funcRemoveKeysFromKeyList ~ result", result)
+
+	for j := 0; j < len(indexToRemove); j++ {
+		for i := 0; i < len(keyList); i++ {
+
+			if indexToRemove[j] != i {
+
+				copy(keyList[i], result[i])
+
+			}
+
+		}
+
+	}
+	fmt.Println("🚀 ~ file: address.go:116 ~ funcRemoveKeysFromKeyList ~ 	return result", result)
+	return result
 }

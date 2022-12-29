@@ -2,7 +2,7 @@ package websites
 
 import (
 	"fmt"
-	"sort"
+	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -17,6 +17,7 @@ const (
 	dateFormat          = "2006-01-02"
 	metaKey             = "META"
 	ownedPrefix         = "owned"
+	blackListKey        = "blackList"
 	secondsToMilliCoeff = 1000
 )
 
@@ -49,35 +50,46 @@ func Registry(client *node.Client) ([]*models.Registry, error) {
 		return nil, fmt.Errorf("fetching all keys without '%s' prefix at '%s': %w", ownedPrefix, dns.DNSRawAddress, err)
 	}
 
-	dnsValues, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, websiteNames)
-	if err != nil {
-		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, dns.DNSRawAddress, err)
-	}
+	blackListedWebsites, err := node.DatastoreEntry(client, dns.DNSRawAddress, convert.StringToBytes(blackListKey))
 
-	// in website name key, value are stored in this order -> website Address, website Owner
-	indexOfWebsiteAddress := 0
+	blackListedWebsitesToStringArray := strings.Split(convert.BytesToString(blackListedWebsites.CandidateValue), ",")
+	keyListToRemove := append(blackListedWebsitesToStringArray, blackListKey)
+	keyListToRemoveAsArrayOfByteArray := convert.StringArrayToArrayOfByteArray(keyListToRemove)
 
-	registry := make([]*models.Registry, len(dnsValues))
+	entries := ledger.RemoveKeysFromKeyList(websiteNames, keyListToRemoveAsArrayOfByteArray)
+	fmt.Println("🚀 ~ file: all.go:60 ~ funcRegistry ~ entries ", entries)
 
-	for index := 0; index < len(dnsValues); index++ {
-		websiteStorerAddress := convert.ByteToStringArray(dnsValues[index].CandidateValue)[indexOfWebsiteAddress]
+	// dnsValues, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, entries)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, dns.DNSRawAddress, err)
+	// }
 
-		websiteMetadata, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes(metaKey))
-		if err != nil {
-			return nil, fmt.Errorf("reading key '%s' at '%s': %w", metaKey, websiteStorerAddress, err)
-		}
+	// // in website name key, value are stored in this order -> website Address, website Owner
+	// indexOfWebsiteAddress := 0
 
-		registry[index] = &models.Registry{
-			Name:     convert.BytesToString(websiteNames[index]), // name of website : flappy.
-			Address:  websiteStorerAddress,                       // website Address
-			Metadata: websiteMetadata.CandidateValue,             // website metadata.
-		}
-	}
+	// registry := make([]*models.Registry, len(dnsValues))
 
-	// sort website names with alphanumeric order.
-	sort.Slice(registry, func(i, j int) bool {
-		return registry[i].Name < registry[j].Name
-	})
+	// for index := 0; index < len(dnsValues); index++ {
+	// 	websiteStorerAddress := convert.ByteToStringArray(dnsValues[index].CandidateValue)[indexOfWebsiteAddress]
 
-	return registry, nil
+	// 	websiteMetadata, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes(metaKey))
+	// 	if err != nil {
+	// 		return nil, fmt.Errorf("reading key '%s' at '%s': %w", metaKey, websiteStorerAddress, err)
+	// 	}
+
+	// 	registry[index] = &models.Registry{
+	// 		Name:     convert.BytesToString(websiteNames[index]), // name of website : flappy.
+	// 		Address:  websiteStorerAddress,                       // website Address
+	// 		Metadata: websiteMetadata.CandidateValue,             // website metadata.
+	// 	}
+	// }
+
+	// // sort website names with alphanumeric order.
+	// sort.Slice(registry, func(i, j int) bool {
+	// 	return registry[i].Name < registry[j].Name
+	// })
+
+	// return registry, nil
+
+	return nil, nil
 }
