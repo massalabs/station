@@ -162,7 +162,7 @@ async function tableInsert(resp, count) {
         .getElementById("website-deployers-table")
         .getElementsByTagName("tbody")[0];
     const row = tBody.insertRow(-1);
-    const url = "http://" + resp.name + ".massa/";
+    const url = `//${resp.name}.massa:${window.location.port}/`;
 
     const cell0 = row.insertCell();
     const cell1 = row.insertCell();
