@@ -379,12 +379,10 @@ function deployWebsiteAndUpload() {
 // Full deployment process
 function uploadWebsite(file, count) {
     const bodyFormData = new FormData();
-
     const address = deployers[count].address;
     bodyFormData.append("zipfile", file);
     bodyFormData.append("address", address);
     bodyFormData.append("nickname", getDefaultWallet());
-
     uploadProcess(file, deployers[count].name, false, bodyFormData, (bodyFormData) =>
         postUpload(bodyFormData)
     );
@@ -447,7 +445,7 @@ function step1(dnsName, totalChunk) {
 // Step 2, wait for DNS setting
 function step2(dnsName, contractAddress, totalChunk) {
     eventManager.subscribe(
-        `Record name ${dnsName} added to DNS for owner ${getWallet(getDefaultWallet()).address} at address ${contractAddress}`,
+        `Website name ${dnsName} added to DNS at address ${contractAddress}`,
         getWallet(getDefaultWallet()).address,
         (_) => {
             step3(contractAddress, totalChunk);
@@ -467,7 +465,7 @@ function step3(contractAddress, totalChunk) {
 
     for (let i = 0; i < totalChunk; i++) {
         eventManager.subscribe(
-            `Website chunk deployed to ${contractAddress} on key massa_web_${i}`,
+            `Website chunk deployed to ${contractAddress} on key ${i}`,
             getWallet(getDefaultWallet()).address,
             (_) => {
                 actualChunk++;

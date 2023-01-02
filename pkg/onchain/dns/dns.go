@@ -12,25 +12,23 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-const DNSRawAddress = "A15e47ChESAK1SdmGe3b92bybnBvMX2eFaxg23wn3rSdRzFHHGB"
+const DNSRawAddress = "A1n3jcTJg4nUojhsu9LLABVxiz6wkbdTLPpajEDVsTk6buE5fFY"
 
 /*
 This function fetch the address of the website storer associated with the name given in parameter
 from the DNS smart contract and returns it.
 */
 func Resolve(client *node.Client, name string) (string, error) {
-	const dnsPrefix = "record"
-
-	entry, err := node.DatastoreEntry(client, DNSRawAddress, convert.StringToBytes(dnsPrefix+name))
+	entry, err := node.DatastoreEntry(client, DNSRawAddress, convert.StringToBytes(name))
 	if err != nil {
-		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", DNSRawAddress, dnsPrefix+name, err)
+		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", DNSRawAddress, name, err)
 	}
 
 	if len(entry.CandidateValue) == 0 {
 		return "", errors.New("name not found")
 	}
-	// we remove from the address its header length expressed as a U32
-	return convert.BytesToString(entry.CandidateValue), nil
+	// entry.CandidateValue contains the website address + the owner address, we keep only the website address.
+	return convert.ByteToStringArray(entry.CandidateValue)[0], nil
 }
 
 func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContract string) (string, error) {

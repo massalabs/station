@@ -54,14 +54,12 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 }
 
 func Websites(client *node.Client, domainNames []string) ([]*models.Websites, error) {
-	const recordPrefix = "record"
-
-	params := []node.DatastoreEntriesKeysAsString{}
+	params := []node.DatastoreEntriesKeys{}
 
 	for i := 0; i < len(domainNames); i++ {
-		param := node.DatastoreEntriesKeysAsString{
+		param := node.DatastoreEntriesKeys{
 			Address: dns.DNSRawAddress,
-			Key:     convert.StringToBytes(recordPrefix + domainNames[i]),
+			Key:     convert.StringToBytes(domainNames[i]),
 		}
 		params = append(params, param)
 	}
@@ -74,7 +72,8 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 	}
 
 	for i := 0; i < len(domainNames); i++ { //nolint:varnamelen
-		contractAddress := convert.BytesToString(contractAddresses[i].CandidateValue)
+		contractAddressesIndex := 0
+		contractAddress := convert.ByteToStringArray(contractAddresses[i].CandidateValue)[contractAddressesIndex]
 
 		missingChunks, err := getMissingChunkIds(client, contractAddress)
 		if err != nil {
@@ -105,10 +104,10 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 
 	numberOfChunks := int(binary.LittleEndian.Uint64(encodedNumberOfChunks.CandidateValue))
 
-	entries := []node.DatastoreEntriesKeysAsString{}
+	entries := []node.DatastoreEntriesKeys{}
 
 	for i := 0; i < numberOfChunks; i++ {
-		entry := node.DatastoreEntriesKeysAsString{
+		entry := node.DatastoreEntriesKeys{
 			Address: address,
 			Key:     convert.StringToBytes("massa_web_" + strconv.Itoa(i)),
 		}

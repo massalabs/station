@@ -46,10 +46,10 @@ func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, e
 
 	chunkNumber := int(binary.LittleEndian.Uint64(keyNumber.CandidateValue))
 
-	entries := []node.DatastoreEntriesKeysAsString{}
+	entries := []node.DatastoreEntriesKeys{}
 
 	for i := 0; i < chunkNumber; i++ {
-		entry := node.DatastoreEntriesKeysAsString{
+		entry := node.DatastoreEntriesKeys{
 			Address: websiteStorerAddress,
 			Key:     convert.StringToBytes("massa_web_" + strconv.Itoa(i)),
 		}

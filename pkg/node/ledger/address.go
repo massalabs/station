@@ -55,17 +55,27 @@ func Addresses(client *node.Client, addr []string) ([]Address, error) {
 	return content, nil
 }
 
-func KeysFiltered(client *node.Client, scAddress string, keyPrefix string) ([]string, error) {
+// keysOfSCFilteredByPrefix returns an array of Key in byte array filtered with a prefix.
+
+// If includePrefix is true, will return all the keys with the given prefix,
+
+// If includePrefix is false, will return all the keys without the given prefix.
+
+//nolint:lll
+func FilterSCKeysByPrefix(client *node.Client, scAddress string, keyPrefix string, includePrefix bool) ([][]byte, error) {
 	results, err := Addresses(client, []string{scAddress})
 	if err != nil {
 		return nil, fmt.Errorf("calling get_addresses with '%+v': %w", scAddress, err)
 	}
 
-	var filteredKeys []string
+	var filteredKeys [][]byte
 
 	for _, candidateDatastoreKey := range results[0].CandidateDatastoreKeys {
-		if strings.Index(convert.BytesToString(candidateDatastoreKey), keyPrefix) == 0 {
-			filteredKeys = append(filteredKeys, convert.BytesToString(candidateDatastoreKey))
+		isPrefixInKey := strings.Contains(convert.BytesToString(candidateDatastoreKey), keyPrefix)
+		if includePrefix && isPrefixInKey {
+			filteredKeys = append(filteredKeys, candidateDatastoreKey)
+		} else if !includePrefix && !isPrefixInKey {
+			filteredKeys = append(filteredKeys, candidateDatastoreKey)
 		}
 	}
 

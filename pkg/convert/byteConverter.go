@@ -48,3 +48,26 @@ func BytesToString(entry []byte) string {
 
 	return string(content)
 }
+
+func ByteToStringArray(entry []byte) []string {
+	var result []string
+
+	content := entry
+	// with args you will have at least 5 bytes for a string (4 for the size and 1 for the value)
+	minimumNbBytes := bytesPerUint32 + 1
+	// we parse the content until there is no more string left inside
+	for len(content) >= minimumNbBytes {
+		// we check the string length and we update the offset
+		stringLength := binary.LittleEndian.Uint32(content[:bytesPerUint32])
+		offset := bytesPerUint32 + int(stringLength)
+
+		str := string(content[bytesPerUint32:offset])
+
+		result = append(result, str)
+
+		// we remove the string and its length header from the content
+		content = content[bytesPerUint32+int(stringLength):]
+	}
+
+	return result
+}

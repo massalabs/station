@@ -73,9 +73,8 @@ func Upload(atAddress string, content []byte, wallet wallet.Wallet) ([]string, e
 
 func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wallet) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
-	nbChunks := convert.U64ToBytes(len(chunks))
 
-	opID, err := onchain.CallFunction(client, wallet, addr, "initializeWebsite", nbChunks,
+	opID, err := onchain.CallFunction(client, wallet, addr, "initializeWebsite", convert.U64ToBytes(len(chunks)),
 		sendoperation.OneMassa)
 	if err != nil {
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
@@ -86,8 +85,8 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wal
 	for index := 0; index < len(chunks); index++ {
 		// Chunk ID encoding
 		params := convert.U64ToBytes(index)
-		// Chunk data length encoding
 
+		// Chunk data length encoding
 		params = append(params, convert.U32ToBytes(len(chunks[index]))...)
 
 		// Chunk data encoding
@@ -135,6 +134,7 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, misse
 		}
 
 		params := convert.U64ToBytes(chunkID)
+
 		// Chunk data length encoding
 		//nolint:ineffassign,nolintlint
 		params = append(params, convert.U32ToBytes(len(chunks[chunkID]))...)
