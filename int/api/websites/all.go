@@ -44,7 +44,7 @@ the various website storer contracts, the function builds an array of Registry o
 and returns it to the frontend for display on the Registry page.
 */
 func Registry(client *node.Client) ([]*models.Registry, error) {
-	websiteNames, err := ledger.KeysOfSCFilteredByPrefix(client, dns.DNSRawAddress, ownedPrefix, false)
+	websiteNames, err := ledger.FilterSCKeysByPrefix(client, dns.DNSRawAddress, ownedPrefix, false)
 	if err != nil {
 		return nil, fmt.Errorf("fetching all keys without '%s' prefix at '%s': %w", ownedPrefix, dns.DNSRawAddress, err)
 	}
@@ -54,7 +54,7 @@ func Registry(client *node.Client) ([]*models.Registry, error) {
 		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, dns.DNSRawAddress, err)
 	}
 
-	// in website name key, value are stored in this order -> website Address, website Owner
+	// in website name key, value are stored in this order -> website Address, website Owner Address
 	indexOfWebsiteAddress := 0
 
 	registry := make([]*models.Registry, len(dnsValues))

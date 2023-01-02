@@ -62,7 +62,7 @@ func Addresses(client *node.Client, addr []string) ([]Address, error) {
 // If includePrefix is false, will return all the keys without the given prefix.
 
 //nolint:lll
-func KeysOfSCFilteredByPrefix(client *node.Client, scAddress string, keyPrefix string, includePrefix bool) ([][]byte, error) {
+func FilterSCKeysByPrefix(client *node.Client, scAddress string, keyPrefix string, includePrefix bool) ([][]byte, error) {
 	results, err := Addresses(client, []string{scAddress})
 	if err != nil {
 		return nil, fmt.Errorf("calling get_addresses with '%+v': %w", scAddress, err)

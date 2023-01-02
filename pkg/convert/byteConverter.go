@@ -65,7 +65,7 @@ func ByteToStringArray(entry []byte) []string {
 
 		result = append(result, str)
 
-		// we remove the string and its length header to the content
+		// we remove the string and its length header from the content
 		content = content[bytesPerUint32+int(stringLength):]
 	}
 
