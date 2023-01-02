@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -46,7 +47,6 @@ the various website storer contracts, the function builds an array of Registry o
 and returns it to the frontend for display on the Registry page.
 */
 func Registry(client *node.Client) ([]*models.Registry, error) {
-
 	websiteNames, err := filterEntriesToDisplay(client)
 	if err != nil {
 		return nil, fmt.Errorf("filtering keys to be displayed at '%s': %w", dns.DNSRawAddress, err)
@@ -57,7 +57,6 @@ func Registry(client *node.Client) ([]*models.Registry, error) {
 		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, dns.DNSRawAddress, err)
 	}
 
-
 	// in website name key, value are stored in this order -> website Address, website Owner
 	indexOfWebsiteAddress := 0
 
@@ -65,7 +64,6 @@ func Registry(client *node.Client) ([]*models.Registry, error) {
 
 	for index := 0; index < len(dnsValues); index++ {
 		websiteStorerAddress := convert.ByteToStringArray(dnsValues[index].CandidateValue)[indexOfWebsiteAddress]
-
 
 		websiteMetadata, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes(metaKey))
 		if err != nil {
@@ -96,7 +94,7 @@ we only want to keep the website names keys.
 */
 func filterEntriesToDisplay(client *node.Client) ([][]byte, error) {
 	// we first remove the owned type keys
-	keyList, err := ledger.KeysOfSCFilteredByPrefix(client, dns.DNSRawAddress, ownedPrefix, false)
+	keyList, err := ledger.FilterSCKeysByPrefix(client, dns.DNSRawAddress, ownedPrefix, false)
 	if err != nil {
 		return nil, fmt.Errorf("fetching all keys without '%s' prefix at '%s': %w", ownedPrefix, dns.DNSRawAddress, err)
 	}
