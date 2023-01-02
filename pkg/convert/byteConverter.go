@@ -65,14 +65,12 @@ func ByteToStringArray(entry []byte) []string {
 
 		result = append(result, str)
 
-
 		// we remove the string and its length header from the content
 		content = content[bytesPerUint32+int(stringLength):]
 	}
 
 	return result
 }
-
 
 func StringArrayToArrayOfByteArray(stringArray []string) [][]byte {
 	stringArrayLength := len(stringArray)
@@ -85,4 +83,3 @@ func StringArrayToArrayOfByteArray(stringArray []string) [][]byte {
 
 	return result
 }
-

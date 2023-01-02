@@ -57,7 +57,7 @@ func Registry(client *node.Client) ([]*models.Registry, error) {
 		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, dns.DNSRawAddress, err)
 	}
 
-	// in website name key, value are stored in this order -> website Address, website Owner
+	// in website name key, value are stored in this order -> website Address, website Owner Address
 	indexOfWebsiteAddress := 0
 
 	registry := make([]*models.Registry, len(dnsValues))
