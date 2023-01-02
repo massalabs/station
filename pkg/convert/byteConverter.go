@@ -2,7 +2,6 @@ package convert
 
 import (
 	"encoding/binary"
-	"fmt"
 	"unicode/utf16"
 )
 
@@ -75,10 +74,12 @@ func ByteToStringArray(entry []byte) []string {
 
 func StringArrayToArrayOfByteArray(stringArray []string) [][]byte {
 	stringArrayLength := len(stringArray)
+
 	var result [][]byte
+
 	for i := 0; i < stringArrayLength; i++ {
 		result = append(result, StringToBytes(stringArray[i]))
 	}
-	fmt.Println("🚀 ~ file: byteConverter.go:84 ~ funcStringArrayToArrayOfByteArray ~ result", result)
+
 	return result
 }
