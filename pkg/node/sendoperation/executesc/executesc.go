@@ -80,8 +80,8 @@ func compactAndAppendBytes(msg *[]byte, value interface{}) {
 	buf := make([]byte, binary.MaxVarintLen64)
 	bytesBuffer := new(bytes.Buffer)
 	encoder := gob.NewEncoder(bytesBuffer)
+
 	err := encoder.Encode(value)
-	//nolint:golang-ci
 	if err != nil {
 		panic(err)
 	}

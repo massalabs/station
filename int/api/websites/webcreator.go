@@ -106,7 +106,7 @@ func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyn
 
 	return operations.NewWebsiteCreatorUploadOK().
 		WithPayload(&models.Websites{
-			Name:         "Name",
+			Name:         "",
 			Address:      params.Address,
 			BrokenChunks: nil,
 		})
@@ -137,7 +137,7 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 
 	return operations.NewWebsiteUploadMissingChunksOK().
 		WithPayload(&models.Websites{
-			Name:         "Name",
+			Name:         "",
 			Address:      params.Address,
 			BrokenChunks: nil,
 		})
