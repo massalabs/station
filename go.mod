@@ -73,4 +73,5 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1
 	lukechampine.com/blake3 v1.1.7
+	software.sslmate.com/src/go-pkcs12 v0.2.0
 )
