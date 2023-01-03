@@ -98,7 +98,7 @@ func RemoveKeysFromKeyList(keyList [][]byte, keysToRemove [][]byte) [][]byte {
 	return result
 }
 
-// checks if an array of byte is included in an array of array of byte
+// checks if an array of byte is included in an array of array of byte.
 func contains(keyList [][]byte, keyToRemove []byte) bool {
 	for _, keyListEntry := range keyList {
 		if bytes.Equal(keyListEntry, keyToRemove) {
