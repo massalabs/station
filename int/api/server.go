@@ -49,22 +49,22 @@ func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 }
 
 func parseNetworkFlag(massaNodeServerPtr *string) {
-	var dnsAddressPtr string
+	var dnsAddress string
 
 	switch *massaNodeServerPtr {
 	case "TESTNET":
 		*massaNodeServerPtr = "https://test.massa.net/api/v2"
-		dnsAddressPtr = "A15e47ChESAK1SdmGe3b92bybnBvMX2eFaxg23wn3rSdRzFHHGB"
+		dnsAddress = "A15e47ChESAK1SdmGe3b92bybnBvMX2eFaxg23wn3rSdRzFHHGB"
 	case "LABNET":
 		*massaNodeServerPtr = "https://labnet.massa.net/api/v2"
 	case "INNONET":
 		*massaNodeServerPtr = "https://inno.massa.net/test17"
-		dnsAddressPtr = "A12WHCz3Qf4iPSaWMWA1ErbCUxJrHQSfY24BrPte3HELsCG7YxJh"
+		dnsAddress = "A12WHCz3Qf4iPSaWMWA1ErbCUxJrHQSfY24BrPte3HELsCG7YxJh"
 	case "LOCALHOST":
 		*massaNodeServerPtr = "http://127.0.0.1:33035"
 	}
 
-	os.Setenv(dns.EnvKey, dnsAddressPtr)
+	os.Setenv(dns.EnvKey, dnsAddress)
 	os.Setenv("MASSA_NODE_URL", *massaNodeServerPtr)
 }
 
