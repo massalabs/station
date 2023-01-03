@@ -12,6 +12,7 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
+// labnet dns address
 const DNSRawAddress = "A12RgLPuRQaVTue2CtPws6deXUfUnk6nfveZS9bedyzoNS8WyYtg"
 
 /*
