@@ -13,16 +13,11 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-
-// labnet dns address
-const DNSRawAddress = "A12RgLPuRQaVTue2CtPws6deXUfUnk6nfveZS9bedyzoNS8WyYtg"
-
 const EnvKey = "THYRA_DNS_ADDRESS"
 
 func Address() string {
 	return os.Getenv(EnvKey)
 }
-
 
 /*
 This function fetch the address of the website storer associated with the name given in parameter

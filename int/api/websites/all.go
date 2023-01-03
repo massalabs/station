@@ -49,7 +49,7 @@ and returns it to the frontend for display on the Registry page.
 func Registry(client *node.Client) ([]*models.Registry, error) {
 	websiteNames, err := filterEntriesToDisplay(client)
 	if err != nil {
-		return nil, fmt.Errorf("filtering keys to be displayed at '%s': %w", dns.DNSRawAddress, err)
+		return nil, fmt.Errorf("filtering keys to be displayed at '%s': %w", dns.Address(), err)
 	}
 
 	dnsValues, err := node.ContractDatastoreEntries(client, dns.Address(), websiteNames)
@@ -94,15 +94,15 @@ we only want to keep the website names keys.
 */
 func filterEntriesToDisplay(client *node.Client) ([][]byte, error) {
 	// we first remove the owned type keys
-	keyList, err := ledger.FilterSCKeysByPrefix(client, dns.DNSRawAddress, ownedPrefix, false)
+	keyList, err := ledger.FilterSCKeysByPrefix(client, dns.Address(), ownedPrefix, false)
 	if err != nil {
-		return nil, fmt.Errorf("fetching all keys without '%s' prefix at '%s': %w", ownedPrefix, dns.DNSRawAddress, err)
+		return nil, fmt.Errorf("fetching all keys without '%s' prefix at '%s': %w", ownedPrefix, dns.Address(), err)
 	}
 
 	// we then read the blacklisted websites
-	blackListedWebsites, err := node.DatastoreEntry(client, dns.DNSRawAddress, convert.StringToBytes(blackListKey))
+	blackListedWebsites, err := node.DatastoreEntry(client, dns.Address(), convert.StringToBytes(blackListKey))
 	if err != nil {
-		return nil, fmt.Errorf("reading entry '%s' prefix at '%s': %w", blackListKey, dns.DNSRawAddress, err)
+		return nil, fmt.Errorf("reading entry '%s' prefix at '%s': %w", blackListKey, dns.Address(), err)
 	}
 
 	var keyListToRemove []string
