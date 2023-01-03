@@ -44,7 +44,7 @@ func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 	parseNetworkFlag(&startFlags.MassaNodeServer)
 
 	if startFlags.DNSAddress != "" {
-		os.Setenv(dns.DNSAddressEnvKey, startFlags.DNSAddress)
+		os.Setenv(dns.EnvKey, startFlags.DNSAddress)
 	}
 }
 
@@ -63,7 +63,7 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 		*massaNodeServerPtr = "http://127.0.0.1:33035"
 	}
 
-	os.Setenv(dns.DNSAddressEnvKey, dnsAddressPtr)
+	os.Setenv(dns.EnvKey, dnsAddressPtr)
 	os.Setenv("MASSA_NODE_URL", *massaNodeServerPtr)
 }
 
