@@ -52,9 +52,9 @@ func Registry(client *node.Client) ([]*models.Registry, error) {
 		return nil, fmt.Errorf("filtering keys to be displayed at '%s': %w", dns.DNSRawAddress, err)
 	}
 
-	dnsValues, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, websiteNames)
+	dnsValues, err := node.ContractDatastoreEntries(client, dns.Address(), websiteNames)
 	if err != nil {
-		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, dns.DNSRawAddress, err)
+		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, dns.Address(), err)
 	}
 
 	// in website name key, value are stored in this order -> website Address, website Owner Address

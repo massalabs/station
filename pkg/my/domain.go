@@ -35,9 +35,9 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 
 	ownerKey := convert.StringToBytes(ownedPrefix + wallet.Address)
 
-	rawNames, err := node.DatastoreEntry(client, dns.DNSRawAddress, ownerKey)
+	rawNames, err := node.DatastoreEntry(client, dns.Address(), ownerKey)
 	if err != nil {
-		return nil, fmt.Errorf("reading entry '%s' at '%s': %w", dns.DNSRawAddress, ownedPrefix+wallet.Address, err)
+		return nil, fmt.Errorf("reading entry '%s' at '%s': %w", dns.Address(), ownedPrefix+wallet.Address, err)
 	}
 
 	if len(rawNames.CandidateValue) == 0 {
@@ -58,7 +58,7 @@ func Websites(client *node.Client, domainNames []string) ([]*models.Websites, er
 
 	for i := 0; i < len(domainNames); i++ {
 		param := node.DatastoreEntriesKeys{
-			Address: dns.DNSRawAddress,
+			Address: dns.Address(),
 			Key:     convert.StringToBytes(domainNames[i]),
 		}
 		params = append(params, param)
