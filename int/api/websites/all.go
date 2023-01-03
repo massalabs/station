@@ -1,8 +1,10 @@
 package websites
 
 import (
+	"bytes"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -17,6 +19,7 @@ const (
 	dateFormat          = "2006-01-02"
 	metaKey             = "META"
 	ownedPrefix         = "owned"
+	blackListKey        = "blackList"
 	secondsToMilliCoeff = 1000
 )
 
@@ -44,9 +47,9 @@ the various website storer contracts, the function builds an array of Registry o
 and returns it to the frontend for display on the Registry page.
 */
 func Registry(client *node.Client) ([]*models.Registry, error) {
-	websiteNames, err := ledger.FilterSCKeysByPrefix(client, dns.Address(), ownedPrefix, false)
+	websiteNames, err := filterEntriesToDisplay(client)
 	if err != nil {
-		return nil, fmt.Errorf("fetching all keys without '%s' prefix at '%s': %w", ownedPrefix, dns.Address(), err)
+		return nil, fmt.Errorf("filtering keys to be displayed at '%s': %w", dns.Address(), err)
 	}
 
 	dnsValues, err := node.ContractDatastoreEntries(client, dns.Address(), websiteNames)
@@ -80,4 +83,40 @@ func Registry(client *node.Client) ([]*models.Registry, error) {
 	})
 
 	return registry, nil
+}
+
+/*
+The dns SC has 3 different kinds of key :
+-the website names
+-keys owned concatenated with the owner's address
+-a key blackList
+we only want to keep the website names keys.
+*/
+func filterEntriesToDisplay(client *node.Client) ([][]byte, error) {
+	// we first remove the owned type keys
+	keyList, err := ledger.FilterSCKeysByPrefix(client, dns.Address(), ownedPrefix, false)
+	if err != nil {
+		return nil, fmt.Errorf("fetching all keys without '%s' prefix at '%s': %w", ownedPrefix, dns.Address(), err)
+	}
+
+	// we then read the blacklisted websites
+	blackListedWebsites, err := node.DatastoreEntry(client, dns.Address(), convert.StringToBytes(blackListKey))
+	if err != nil {
+		return nil, fmt.Errorf("reading entry '%s' prefix at '%s': %w", blackListKey, dns.Address(), err)
+	}
+
+	var keyListToRemove []string
+	if !bytes.Equal(blackListedWebsites.CandidateValue, make([]byte, 0)) {
+		keyListToRemove = strings.Split(convert.BytesToString(blackListedWebsites.CandidateValue), ",")
+	}
+
+	// we add the key blackList to the list of key to be removed
+	keyListToRemove = append(keyListToRemove, blackListKey)
+
+	// we encode the list as a slice of byteArray
+	keyListToRemoveAsArrayOfByteArray := convert.StringArrayToArrayOfByteArray(keyListToRemove)
+
+	websiteNames := ledger.RemoveKeysFromKeyList(keyList, keyListToRemoveAsArrayOfByteArray)
+
+	return websiteNames, nil
 }

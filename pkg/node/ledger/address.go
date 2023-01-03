@@ -1,6 +1,7 @@
 package ledger
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"strings"
@@ -80,4 +81,30 @@ func FilterSCKeysByPrefix(client *node.Client, scAddress string, keyPrefix strin
 	}
 
 	return filteredKeys, nil
+}
+
+// removes a byte arrays from a list of byte array.
+func RemoveKeysFromKeyList(keyList [][]byte, keysToRemove [][]byte) [][]byte {
+	result := make([][]byte, 0)
+
+	for _, v := range keyList {
+		// If the current value is not in the list of values to remove,
+		// append it to the result
+		if !contains(keysToRemove, v) {
+			result = append(result, v)
+		}
+	}
+
+	return result
+}
+
+// checks if an array of byte is included in an array of array of byte.
+func contains(keyList [][]byte, keyToRemove []byte) bool {
+	for _, keyListEntry := range keyList {
+		if bytes.Equal(keyListEntry, keyToRemove) {
+			return true
+		}
+	}
+
+	return false
 }
