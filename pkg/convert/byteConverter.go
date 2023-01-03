@@ -72,6 +72,7 @@ func ByteToStringArray(entry []byte) []string {
 	return result
 }
 
+// this function encodes a string array to an array of byte arrays
 func StringArrayToArrayOfByteArray(stringArray []string) [][]byte {
 	stringArrayLength := len(stringArray)
 
