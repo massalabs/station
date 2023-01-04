@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	defaultHttpPort   = 80
-	defaultHttpsPort  = 443
+	defaultHTTPPort   = 80
+	defaultHTTPSPort  = 443
 	defaultNodeServer = "INNONET"
 )
 
@@ -28,8 +28,8 @@ func ParseFlags() api.StartServerFlags {
 	defaultCertFile := path.Join(configDir, "certs", "cert.pem")
 	defaultCertKeyFile := path.Join(configDir, "certs", "cert-key.pem")
 
-	flag.IntVar(&flags.Port, "http-port", defaultHttpPort, "HTTP port to listen to")
-	flag.IntVar(&flags.TLSPort, "https-port", defaultHttpsPort, "HTTPS port to listen to")
+	flag.IntVar(&flags.Port, "http-port", defaultHTTPPort, "HTTP port to listen to")
+	flag.IntVar(&flags.TLSPort, "https-port", defaultHTTPSPort, "HTTPS port to listen to")
 	flag.StringVar(&flags.TLSCertificate, "tls-certificate", defaultCertFile, "path to certificate file")
 	flag.StringVar(&flags.TLSCertificateKey, "tls-key", defaultCertKeyFile, "path to key file")
 	flag.StringVar(&flags.MassaNodeServer, "node-server", defaultNodeServer, `Massa node that Thyra connects to. 
