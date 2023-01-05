@@ -19,6 +19,7 @@ import (
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
+	"crypto/sha256"
 	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
@@ -57,12 +58,12 @@ func GenerateTLS(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 		return nil, wrapAndPrint("while getting mkcert CA root path", err)
 	}
 
-	caCertificate, err := LoadCertificate(caPath + "/rootCA.pem")
+	caCertificate, err := LoadCertificate(filepath.Join(caPath, "rootCA.pem"))
 	if err != nil {
 		return nil, wrapAndPrint("while loading CA certificate", err)
 	}
 
-	caPrivateKey, err := LoadPrivateKey(caPath + "/rootCA-key.pem")
+	caPrivateKey, err := LoadPrivateKey(filepath.Join(caPath, "rootCA-key.pem"))
 	if err != nil {
 		return nil, wrapAndPrint("while loading CA key", err)
 	}
@@ -90,9 +91,12 @@ func GenerateSignedCertificate(
 		return nil, nil, errors.New("while generating certificate: server name is empty")
 	}
 
+	SHA256serverNameEncrypted := sha256.New().Sum([]byte(serverName))
+
 	//nolint:exhaustruct
 	template := &x509.Certificate{
-		SerialNumber: &big.Int{}, // mandatory, but useless as it should be a unique id given to the certificate by the CA
+		//nolint:lll
+		SerialNumber: new(big.Int).SetBytes(SHA256serverNameEncrypted), // in order to have an unique ID for each website Name, we hash the website name
 		Subject: pkix.Name{ // not necessary, but cool to have if the user ask for certificate details.
 			CommonName:   serverName,
 			Organization: []string{"thyra dynamically generated"},
