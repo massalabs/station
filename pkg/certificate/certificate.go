@@ -91,12 +91,12 @@ func GenerateSignedCertificate(
 		return nil, nil, errors.New("while generating certificate: server name is empty")
 	}
 
-	SHA256serverNameEncrypted := sha256.New().Sum([]byte(serverName))
+	uniqueSiteNameID := sha256.New().Sum([]byte(serverName))
 
 	//nolint:exhaustruct
 	template := &x509.Certificate{
 		//nolint:lll
-		SerialNumber: new(big.Int).SetBytes(SHA256serverNameEncrypted), // in order to have an unique ID for each website Name, we hash the website name
+		SerialNumber: new(big.Int).SetBytes(uniqueSiteNameID), // in order to have an unique ID for each website Name, we hash the website name
 		Subject: pkix.Name{ // not necessary, but cool to have if the user ask for certificate details.
 			CommonName:   serverName,
 			Organization: []string{"thyra dynamically generated"},
