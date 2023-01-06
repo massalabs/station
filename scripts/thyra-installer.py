@@ -10,6 +10,8 @@ from tarfile import ReadError
 # This file is to be bundled with pyinstaller in order to produce a .exe that can run on Windows without Python installed.
 
 THYRA_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
+THYRA_APP = ""
+THYRA_APP_FILENAME = "ThyraApp"
 THYRA_FILENAME = "thyra-server.exe"
 THYRA_CONFIG_FOLDER_PATH = os.path.expanduser("~") + "\\.config\\thyra"
 ACRYLIC_DNS_PROXY_URL = "https://sourceforge.net/projects/acrylic/files/Acrylic/2.1.1/Acrylic-Portable.zip/download"
@@ -118,8 +120,10 @@ def main():
     if isAdmin() == False:
         printErrorAndExit("Couldn't detect admin rights. Please execute this script as an administator.")
     downloadFile(THYRA_URL, THYRA_FILENAME)
+    downloadFile(THYRA_APP, THYRA_APP_FILENAME)
     try:
         shutil.move(THYRA_FILENAME, USER_HOME_FOLDER)
+        shutil.move(THYRA_APP_FILENAME, USER_HOME_FOLDER)
     except OSError as err:
         printErrorAndExit(err)    
     if os.path.exists(DEFAULT_ACRYLIC_PATH):
