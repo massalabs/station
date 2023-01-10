@@ -141,12 +141,14 @@ func StartServer(app *fyne.App, startFlags StartServerFlags) {
 
 	log.Printf("Connected to node server %s (version %s)\n", os.Getenv("MASSA_NODE_URL"), nodeVersion)
 
-	// Run plugins
+	// Load plugins
 	manager, err := pluginmanager.New(server.Port, server.TLSPort)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
+	// Start plugins
+	manager.StartPlugins()
 	defer stopServer(app, server, manager)
 
 	initLocalAPI(localAPI, app, manager)
