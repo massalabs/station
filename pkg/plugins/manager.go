@@ -268,7 +268,7 @@ func (manager *PluginManager) InstallNodeManager() error {
 }
 
 func unzip(zipPath string, pluginDir string) error {
-	cmd := exec.Command("unzip", "-o", zipPath, "-d", pluginDir)
+	cmd := exec.Command("tar", "-xf", zipPath, "-C", pluginDir)
 	cmd.Stderr = os.Stderr
 
 	err := cmd.Run()
