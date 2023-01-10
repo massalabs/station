@@ -137,7 +137,11 @@ def main():
         setupDNS()
     configureAcrylic()
     setupMkCerts()
-    print("Thyra has been successfully installed! Executable is located at : " + USER_HOME_FOLDER)
+    THYRA_APP_PATH = os.path.join(USER_HOME_FOLDER, THYRA_APP_FILENAME)
+    if os.path.exists(THYRA_APP_PATH):
+        executeOSCommandOrFile(THYRA_APP_PATH, True)
+    print("Thyra and ThyraApp successfully installed! Executable is located at : " + USER_HOME_FOLDER)
+    print("Congratulations you can start using thyra from the menu bar on the bottom of your screen")
     os.system("pause")
     os._exit(0)
 
