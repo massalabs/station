@@ -3,6 +3,7 @@ package websites
 import (
 	"archive/zip"
 	"bytes"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -12,13 +13,18 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/gui"
+	"github.com/massalabs/thyra/pkg/node"
+	"github.com/massalabs/thyra/pkg/node/ledger"
+	"github.com/massalabs/thyra/pkg/onchain/dns"
 	"github.com/massalabs/thyra/pkg/onchain/website"
 	"github.com/massalabs/thyra/pkg/wallet"
 	"golang.org/x/exp/slices"
 )
 
 const UploadMaxSize = "UPLOAD_MAX_SIZE"
+const dnsAdminKey = "admin"
 
 const defaultMaxArchiveSize = 1500000
 
@@ -41,6 +47,11 @@ func listFileName(zipReader *zip.Reader) []string {
 
 //nolint:nolintlint,ireturn,funlen
 func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app *fyne.App) middleware.Responder {
+
+	if !IsDNSDeployed() {
+		return createInternalServerError(errorCodeWebCreatorDNSNotDeployed, errorCodeWebCreatorDNSNotDeployed)
+	}
+
 	wallet, _ := loadAndUnprotectWallet(params.Nickname, app)
 	archive, _ := readAndCheckArchive(params.Zipfile, app)
 
@@ -192,4 +203,19 @@ func readAndCheckArchive(zipFile io.ReadCloser, app *fyne.App) ([]byte, middlewa
 	}
 
 	return archive, nil
+}
+
+func IsDNSDeployed() bool {
+	dnsAdminKeyValue, err := node.DatastoreEntry(node.NewDefaultClient(), dns.Address(), convert.StringToBytes(dnsAdminKey))
+	fmt.Println("🚀 ~ file: webcreator.go:203 ~ funcIsDNSDeployed ~ dnsAdminKeyValue", dnsAdminKeyValue)
+	checkDNSkeys, err := ledger.FilterSCKeysByPrefix(node.NewDefaultClient(), dns.Address(), "prefixneverincluded", false)
+	fmt.Println("🚀 ~ file: webcreator.go:212 ~ funcIsDNSDeployed ~ checkDNSkeys", checkDNSkeys)
+	if err != nil {
+		return false
+	}
+	if bytes.Equal(dnsAdminKeyValue.CandidateValue, make([]byte, 0)) {
+		return false
+	} else {
+		return true
+	}
 }

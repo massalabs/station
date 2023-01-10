@@ -14,5 +14,6 @@ const (
 	errorCodeWebCreatorArchiveSize         = "WebCreator-1003"
 	errorCodeWebCreatorFileType            = "WebCreator-1004"
 	errorCodeWebCreatorHTMLNotInSource     = "WebCreator-1005"
+	errorCodeWebCreatorDNSNotDeployed      = "WebCreator-1006"
 	errorCodeGetRegistry                   = "Registry-0001"
 )

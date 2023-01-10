@@ -38,6 +38,7 @@ const errorCodes = new Map([
     ["WebCreator-1001", "Impossible to read you ZIP file. Try again"],
     ["WebCreator-1002", "The upload of your ZIP file failed. Try again"],
     ["WebCreator-1005", ".html doesn not exist in source of Website ZIP. Try again"],
+    ["WebCreator-1006", "DNS SC not yet deployed on this blockchain version"],
     ["Unknown-0001", "An unknown error occured. Please try again"],
 ]);
 
