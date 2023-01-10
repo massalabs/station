@@ -207,6 +207,8 @@ func New(hostPort int, hostTLSPort int) (*PluginManager, error) {
 }
 
 // TEMPORARY. This code should be removed once the NodeManager plugin tests are done.
+//
+//nolint:funlen,cyclop
 func (manager *PluginManager) InstallNodeManager() error {
 	for _, plugin := range manager.plugins {
 		if plugin.Manifest.Name == "Node Manager plugin" {
@@ -257,6 +259,7 @@ func (manager *PluginManager) InstallNodeManager() error {
 		if err != nil {
 			return fmt.Errorf("renaming plugin executable '%s': %w", filepath.Join(pluginPath, manifest.Bin), err)
 		}
+
 		manifest.Bin += ".exe"
 	}
 
