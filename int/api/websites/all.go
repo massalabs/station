@@ -27,6 +27,10 @@ const (
 func RegistryHandler(params operations.AllDomainsGetterParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
+	if !IsDNSDeployed() {
+		return createInternalServerError(errorCodeWebCreatorDNSNotDeployed, errorCodeWebCreatorDNSNotDeployed)
+	}
+
 	results, err := Registry(client)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().

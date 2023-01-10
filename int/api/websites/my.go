@@ -11,7 +11,9 @@ import (
 //nolint:nolintlint,ireturn
 func DomainsHandler(params operations.MyDomainsGetterParams) middleware.Responder {
 	client := node.NewDefaultClient()
-
+	if !IsDNSDeployed() {
+		return createInternalServerError(errorCodeWebCreatorDNSNotDeployed, errorCodeWebCreatorDNSNotDeployed)
+	}
 	myDomainNames, err := my.Domains(client, params.Nickname)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().

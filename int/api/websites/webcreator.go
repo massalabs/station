@@ -13,7 +13,6 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/gui"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/ledger"
@@ -206,16 +205,15 @@ func readAndCheckArchive(zipFile io.ReadCloser, app *fyne.App) ([]byte, middlewa
 }
 
 func IsDNSDeployed() bool {
-	dnsAdminKeyValue, err := node.DatastoreEntry(node.NewDefaultClient(), dns.Address(), convert.StringToBytes(dnsAdminKey))
-	fmt.Println("🚀 ~ file: webcreator.go:203 ~ funcIsDNSDeployed ~ dnsAdminKeyValue", dnsAdminKeyValue)
-	checkDNSkeys, err := ledger.FilterSCKeysByPrefix(node.NewDefaultClient(), dns.Address(), "prefixneverincluded", false)
-	fmt.Println("🚀 ~ file: webcreator.go:212 ~ funcIsDNSDeployed ~ checkDNSkeys", checkDNSkeys)
+	keyOwned, err := ledger.FilterSCKeysByPrefix(node.NewDefaultClient(), dns.Address(), "owned", true)
+	fmt.Println("🚀 ~ file: webcreator.go:208 ~ funcIsDNSDeployed ~ keyOwned", keyOwned)
 	if err != nil {
 		return false
 	}
-	if bytes.Equal(dnsAdminKeyValue.CandidateValue, make([]byte, 0)) {
+	if bytes.Equal(keyOwned[0], make([]byte, 0)) {
 		return false
-	} else {
-		return true
 	}
+
+	return true
+
 }
