@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/go-cmd/cmd"
@@ -249,6 +250,14 @@ func (manager *PluginManager) InstallNodeManager() error {
 	manifest, err := DetectPlugin(pluginPath)
 	if err != nil {
 		log.Println(err)
+	}
+
+	if runtime.GOOS == "windows" && !strings.HasSuffix(manifest.Bin, ".exe") {
+		err = os.Rename(filepath.Join(pluginPath, manifest.Bin), filepath.Join(pluginPath, manifest.Bin+".exe"))
+		if err != nil {
+			return fmt.Errorf("renaming plugin executable '%s': %w", filepath.Join(pluginPath, manifest.Bin), err)
+		}
+		manifest.Bin += ".exe"
 	}
 
 	err = os.Chmod(filepath.Join(pluginPath, manifest.Bin), fileMode)
