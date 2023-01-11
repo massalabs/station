@@ -38,7 +38,7 @@ THYRA_APP_FILENAME = "ThyraApp_windows-amd64.exe"
 
 THYRA_URL = ""
 THYRA_FILENAME = ""
-THYRA_CONFIG_FOLDER_PATH = os.path.expanduser("~") + "\\.config\\thyra"
+THYRA_CONFIG_FOLDER_PATH = os.path.join(os.path.expanduser("~"), ".config", "thyra")
 
 USER_HOME_FOLDER = os.path.expanduser("~")
 
@@ -51,7 +51,7 @@ DEFAULT_ACRYLIC_PATH = "C:\Program Files (x86)\Acrylic DNS Proxy"
 # Certifications
 MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=windows/amd64"
 MKCERT_FILENAME = "mkcert.exe"
-CERTIFICATIONS_FOLDER = THYRA_CONFIG_FOLDER_PATH + "\\certs"
+CERTIFICATIONS_FOLDER = os.path.join(THYRA_CONFIG_FOLDER_PATH, "certs")
 
 
 def setThyraGlobals():
@@ -68,6 +68,23 @@ def setThyraGlobals():
                     THYRA_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_arm64"
                 case "x86_64":
                     THYRA_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_amd64"
+        case _:
+            printErrorAndExit("Unsupported platform: " + platform.system())
+
+def setMKCertGlobals():
+    global MKCERT_URL, MKCERT_FILENAME
+
+    match platform.system():
+        case "Windows":
+            MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=windows/amd64"
+            MKCERT_FILENAME = "mkcert.exe"
+        case "Darwin":
+            MKCERT_FILENAME = "mkcert"
+            match platform.machine():
+                case "arm64":
+                    MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=darwin/arm64"
+                case "x86_64":
+                    MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=darwin/amd64"
         case _:
             printErrorAndExit("Unsupported platform: " + platform.system())
 
@@ -103,7 +120,7 @@ def executeOSCommandOrFile(command, decodeBinary):
     stdout, stderr = process.communicate()
 
     if stderr != None and stderr != "" and process.returncode != 0:
-        printErrorAndExit("Error encountered while executing : " + str(command) + " :\n" + stderr)
+        printErrorAndExit(f"Error encountered while executing : {command} :\n{stderr}")
     return stdout
 
 def setupDNS():
@@ -133,22 +150,27 @@ def configureAcrylic():
     executeOSCommandOrFile("NET STOP AcrylicDNSProxySvc", True)
     executeOSCommandOrFile("NET START AcrylicDNSProxySvc", True)
 
-def setupMkCerts():
+def generateCertificate():
     if os.path.isdir(THYRA_CONFIG_FOLDER_PATH) is False:
         try:
             os.mkdir(THYRA_CONFIG_FOLDER_PATH)
-            os.mkdir(THYRA_CONFIG_FOLDER_PATH + "\\certs")
         except OSError as err:
-            printErrorAndExit(err)
+            printErrorAndExit("Error while creating config folder: " + err)
+
+    if os.path.isdir(CERTIFICATIONS_FOLDER) is False:
+        try:
+            os.mkdir(CERTIFICATIONS_FOLDER)
+        except OSError as err:
+            printErrorAndExit("Error while creating certificates folder: " + err)
 
     downloadFile(MKCERT_URL, MKCERT_FILENAME)
-    executeOSCommandOrFile([os.getcwd() + "\\" + MKCERT_FILENAME, "--install"], False)
+    os.chmod(MKCERT_FILENAME, 755)
+
+    executeOSCommandOrFile([os.path.join(os.getcwd(), MKCERT_FILENAME), "--install"], False)
     executeOSCommandOrFile([
-        os.getcwd() + "\\" + MKCERT_FILENAME,
-        "--cert-file",
-        CERTIFICATIONS_FOLDER + "\\cert.pem",
-        "--key-file",
-        CERTIFICATIONS_FOLDER  + "\\cert-key.pem",
+        os.path.join(os.getcwd() , MKCERT_FILENAME),
+        "--cert-file", os.path.join(CERTIFICATIONS_FOLDER , "cert.pem"),
+        "--key-file", os.path.join(CERTIFICATIONS_FOLDER, "cert-key.pem"),
         "my.massa"], False)
     try:
         os.remove(MKCERT_FILENAME)
@@ -172,10 +194,7 @@ def main():
         printErrorAndExit("Couldn't detect admin rights. Please execute this script as an administator.")
 
     setThyraGlobals()
-    if THYRA_URL == "":
-        printErrorAndExit("Thyra URL is not defined. Please check the script.")
-    if THYRA_FILENAME == "":
-        printErrorAndExit("Thyra filename is not defined. Please check the script.")
+    setMKCertGlobals()
 
     # DEBUG
     print(THYRA_FILENAME, THYRA_URL)
@@ -183,8 +202,7 @@ def main():
     downloadFile(THYRA_URL, THYRA_FILENAME)
     downloadFile(THYRA_APP, THYRA_APP_FILENAME)
     try:
-        if platform.system() == "Darwin":
-            os.chmod(THYRA_FILENAME, 755)
+        os.chmod(THYRA_FILENAME, 755)
 
         thyra_home_path = os.path.join(USER_HOME_FOLDER, THYRA_FILENAME)
         if os.path.exists(thyra_home_path):
@@ -195,15 +213,22 @@ def main():
     except OSError as err:
         printErrorAndExit(err)
 
-    # if os.path.exists(DEFAULT_ACRYLIC_PATH):
-    #     logging.info("Acrylic DNS Proxy is already installed")
-    # else:
-    #     downloadFile(ACRYLIC_DNS_PROXY_URL, ACRYLIC_DNS_PROXY_FILENAME)
-    #     unzipAcrylic()
-    #     executeOSCommandOrFile(DEFAULT_ACRYLIC_PATH + "\InstallAcrylicService.bat", True)
-    #     setupDNS()
-    # configureAcrylic()
-    # setupMkCerts()
+    match platform.system():
+        case "Windows":
+            if os.path.exists(DEFAULT_ACRYLIC_PATH):
+                logging.info("Acrylic DNS Proxy is already installed")
+            else:
+                downloadFile(ACRYLIC_DNS_PROXY_URL, ACRYLIC_DNS_PROXY_FILENAME)
+                unzipAcrylic()
+                executeOSCommandOrFile(DEFAULT_ACRYLIC_PATH + "\InstallAcrylicService.bat", True)
+                setupDNS()
+            configureAcrylic()
+        case "Darwin":
+            logging.info("MacOS is not supported yet")
+        case _:
+            printErrorAndExit("Unsupported platform: " + platform.system())
+
+    generateCertificate()
 
     logging.info("Thyra has been successfully installed! Executable is located at : " + USER_HOME_FOLDER)
 
