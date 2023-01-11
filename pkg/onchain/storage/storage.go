@@ -106,7 +106,7 @@ func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, e
 func IsInCache(filepath string) bool {
 	_, err := os.Stat(filepath)
 
-	return os.IsNotExist(err)
+	return !os.IsNotExist(err)
 }
 
 // Checks the timestamp ("META") key and return the uint64 UNIX Timestamp.
