@@ -43,7 +43,6 @@ func readZipFile(z *zip.File) ([]byte, error) {
 func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, error) {
 	content := make(map[string][]byte)
 	filepath, err := getFilePath(client, websiteStorerAddress)
-
 	if err != nil {
 		return nil, fmt.Errorf("getting file path '%s' : %w", websiteStorerAddress, err)
 	}

@@ -90,7 +90,6 @@ func StringArrayToArrayOfByteArray(stringArray []string) [][]byte {
 func BytesToU64(byteArray []byte) uint64 {
 	var u64 uint64
 	err := binary.Read(bytes.NewReader(byteArray), binary.LittleEndian, &u64)
-
 	if err != nil {
 		log.Printf("error converting bytesToU64 :%v\n", err)
 	}
