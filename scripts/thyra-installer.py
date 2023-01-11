@@ -4,15 +4,36 @@ import shutil
 import os
 import zipfile
 import ctypes
+import logging
 from urllib.error import URLError
 from tarfile import ReadError
 
-# This file is to be bundled with pyinstaller in order to produce a .exe that can run on Windows without Python installed.
+import logging
+import os
 
+# set up logging to file
+logging.basicConfig(level=logging.INFO,
+                    filename=os.path.join(os.path.expanduser("~"), "thyra_installer.log"),
+                    filemode='w')
+
+# define a Handler which writes INFO messages or higher to the sys.stderr
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+
+# set a format which is simpler for console use
+formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+console.setFormatter(formatter)
+
+# add the handler to the root logger
+logging.getLogger('').addHandler(console)
+
+logging.info('Starting thyra installer . . .')
+
+# This file is to be bundled with pyinstaller in order to produce a .exe that can run on Windows without Python installed.
 THYRA_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
-THYRA_APP = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/download/v0.0.1/ThyraApp_windows-amd64.exe"
-THYRA_APP_FILENAME = "ThyraApp_windows-amd64.exe"
 THYRA_FILENAME = "thyra-server.exe"
+THYRA_APP = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_windows-amd64.exe"
+THYRA_APP_FILENAME = "ThyraApp_windows-amd64.exe"
 THYRA_CONFIG_FOLDER_PATH = os.path.expanduser("~") + "\\.config\\thyra"
 ACRYLIC_DNS_PROXY_URL = "https://sourceforge.net/projects/acrylic/files/Acrylic/2.1.1/Acrylic-Portable.zip/download"
 ACRYLIC_DNS_PROXY_FILENAME = "Acrylic-Portable.zip"
@@ -24,14 +45,14 @@ CERTIFICATIONS_FOLDER = THYRA_CONFIG_FOLDER_PATH + "\\certs"
 USER_HOME_FOLDER = os.path.expanduser("~")
 
 def downloadFile(url, filename):
-    print("Downloading " + filename + "...")
+    logging.info("Downloading " + filename + "...")
     try:
         with urllib.request.urlopen(url) as response, open(filename, 'wb') as out_file:
             shutil.copyfileobj(response, out_file)
     except URLError as err:
-        print("Failed to download " + filename + " :")
+        logging.info("Failed to download " + filename + " :")
         printErrorAndExit(err)
-    print(filename + " downloaded successfully")
+    logging.info(filename + " downloaded successfully")
 
 def unzipAcrylic():
     try: 
@@ -43,7 +64,7 @@ def unzipAcrylic():
     try:
         with zipfile.ZipFile(DEFAULT_ACRYLIC_PATH + "\\" +  ACRYLIC_DNS_PROXY_FILENAME, 'r') as zip_ref:
             zip_ref.extractall(DEFAULT_ACRYLIC_PATH)
-        print("Acrylic unzipped")
+        logging.info("Acrylic unzipped")
     except ReadError as err:
         printErrorAndExit(err)
 
@@ -74,7 +95,7 @@ def setupDNS():
         printErrorAndExit(err)
 
 def configureAcrylic():
-    print("Configuring Acrylic...")
+    logging.info("Configuring Acrylic...")
     f = open(DEFAULT_ACRYLIC_PATH + "\\" + ACRYLIC_HOST_FILE, "r+")
     if f.read().find("127.0.0.1 *.massa") != -1:
         f.close()
@@ -106,13 +127,13 @@ def setupMkCerts():
         os.remove(MKCERT_FILENAME)
     except OSError as err:
         printErrorAndExit(err)
-    print("MKcert and HTTPS certificates successfully setup")
+    logging.info("MKcert and HTTPS certificates successfully setup")
 
 def isAdmin():
     return ctypes.windll.shell32.IsUserAnAdmin() != 0
 
 def printErrorAndExit(error):
-    print(error)
+    logging.error(error)
     os.system("pause")
     os._exit(-1)
 
@@ -129,7 +150,7 @@ def main():
     except OSError as err:
         printErrorAndExit(err)    
     if os.path.exists(DEFAULT_ACRYLIC_PATH):
-        print("Acrylic DNS Proxy is already installed")
+        logging.info("Acrylic DNS Proxy is already installed")
     else:
         downloadFile(ACRYLIC_DNS_PROXY_URL, ACRYLIC_DNS_PROXY_FILENAME)
         unzipAcrylic()
@@ -138,10 +159,10 @@ def main():
     configureAcrylic()
     setupMkCerts()
     THYRA_APP_PATH = os.path.join(USER_HOME_FOLDER, THYRA_APP_FILENAME)
-    print("Thyra has been successfully installed! Executable is located at : " + USER_HOME_FOLDER)
+    logging.info("Thyra has been successfully installed! Executable is located at : " + USER_HOME_FOLDER)
     if os.path.exists(THYRA_APP_PATH):
         executeOSCommandOrFile(THYRA_APP_PATH, True)
-        print("You can start using thyra from the menu bar located on the bottom of your screen")
+        logging.info("You can start using thyra from the menu bar located on the bottom of your screen")
     os.system("pause")
     os._exit(0)
 
