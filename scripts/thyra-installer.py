@@ -1,3 +1,4 @@
+import platform
 import urllib.request
 import subprocess
 import shutil
@@ -34,15 +35,41 @@ THYRA_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-s
 THYRA_FILENAME = "thyra-server.exe"
 THYRA_APP = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_windows-amd64.exe"
 THYRA_APP_FILENAME = "ThyraApp_windows-amd64.exe"
+
+THYRA_URL = ""
+THYRA_FILENAME = ""
 THYRA_CONFIG_FOLDER_PATH = os.path.expanduser("~") + "\\.config\\thyra"
+
+USER_HOME_FOLDER = os.path.expanduser("~")
+
+# Windows // Acrylic
 ACRYLIC_DNS_PROXY_URL = "https://sourceforge.net/projects/acrylic/files/Acrylic/2.1.1/Acrylic-Portable.zip/download"
 ACRYLIC_DNS_PROXY_FILENAME = "Acrylic-Portable.zip"
 ACRYLIC_HOST_FILE = "AcrylicHosts.txt"
 DEFAULT_ACRYLIC_PATH = "C:\Program Files (x86)\Acrylic DNS Proxy"
+
+# Certifications
 MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=windows/amd64"
 MKCERT_FILENAME = "mkcert.exe"
 CERTIFICATIONS_FOLDER = THYRA_CONFIG_FOLDER_PATH + "\\certs"
-USER_HOME_FOLDER = os.path.expanduser("~")
+
+
+def setThyraGlobals():
+    global THYRA_URL, THYRA_FILENAME
+
+    match platform.system():
+        case "Windows":
+            THYRA_FILENAME = "thyra-server.exe"
+            THYRA_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
+        case "Darwin":
+            THYRA_FILENAME = "thyra-server"
+            match platform.machine():
+                case "arm64":
+                    THYRA_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_arm64"
+                case "x86_64":
+                    THYRA_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_amd64"
+        case _:
+            printErrorAndExit("Unsupported platform: " + platform.system())
 
 def downloadFile(url, filename):
     logging.info("Downloading " + filename + "...")
@@ -133,37 +160,60 @@ def isAdmin():
     return ctypes.windll.shell32.IsUserAnAdmin() != 0
 
 def printErrorAndExit(error):
-    logging.error(error)
-    os.system("pause")
+    print(error)
+    if platform.system() == "Windows":
+        os.system("pause")
     os._exit(-1)
 
 def main():
     if not os.path.exists(THYRA_CONFIG_FOLDER_PATH):
         os.makedirs(THYRA_CONFIG_FOLDER_PATH)
-    if isAdmin() == False:
+    if platform.system() == "Windows" and isAdmin() == False:
         printErrorAndExit("Couldn't detect admin rights. Please execute this script as an administator.")
+
+    setThyraGlobals()
+    if THYRA_URL == "":
+        printErrorAndExit("Thyra URL is not defined. Please check the script.")
+    if THYRA_FILENAME == "":
+        printErrorAndExit("Thyra filename is not defined. Please check the script.")
+
+    # DEBUG
+    print(THYRA_FILENAME, THYRA_URL)
+
     downloadFile(THYRA_URL, THYRA_FILENAME)
     downloadFile(THYRA_APP, THYRA_APP_FILENAME)
     try:
+        if platform.system() == "Darwin":
+            os.chmod(THYRA_FILENAME, 755)
+
+        thyra_home_path = os.path.join(USER_HOME_FOLDER, THYRA_FILENAME)
+        if os.path.exists(thyra_home_path):
+            os.remove(thyra_home_path)
+
         shutil.move(THYRA_FILENAME, USER_HOME_FOLDER)
         shutil.move(THYRA_APP_FILENAME, USER_HOME_FOLDER)
     except OSError as err:
-        printErrorAndExit(err)    
-    if os.path.exists(DEFAULT_ACRYLIC_PATH):
-        logging.info("Acrylic DNS Proxy is already installed")
-    else:
-        downloadFile(ACRYLIC_DNS_PROXY_URL, ACRYLIC_DNS_PROXY_FILENAME)
-        unzipAcrylic()
-        executeOSCommandOrFile(DEFAULT_ACRYLIC_PATH + "\InstallAcrylicService.bat", True)
-        setupDNS()
-    configureAcrylic()
-    setupMkCerts()
-    THYRA_APP_PATH = os.path.join(USER_HOME_FOLDER, THYRA_APP_FILENAME)
+        printErrorAndExit(err)
+
+    # if os.path.exists(DEFAULT_ACRYLIC_PATH):
+    #     logging.info("Acrylic DNS Proxy is already installed")
+    # else:
+    #     downloadFile(ACRYLIC_DNS_PROXY_URL, ACRYLIC_DNS_PROXY_FILENAME)
+    #     unzipAcrylic()
+    #     executeOSCommandOrFile(DEFAULT_ACRYLIC_PATH + "\InstallAcrylicService.bat", True)
+    #     setupDNS()
+    # configureAcrylic()
+    # setupMkCerts()
+
     logging.info("Thyra has been successfully installed! Executable is located at : " + USER_HOME_FOLDER)
+
+    THYRA_APP_PATH = os.path.join(USER_HOME_FOLDER, THYRA_APP_FILENAME)
     if os.path.exists(THYRA_APP_PATH):
         executeOSCommandOrFile(THYRA_APP_PATH, True)
         logging.info("You can start using thyra from the menu bar located on the bottom of your screen")
-    os.system("pause")
+
+    if platform.system() == "Windows":
+        os.system("pause")
     os._exit(0)
 
 main()
