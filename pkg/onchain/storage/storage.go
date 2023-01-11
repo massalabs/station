@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"io/ioutil"
+	"log"
 	"os"
 	"path"
 	"strconv"
@@ -14,8 +14,6 @@ import (
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 )
-
-const websitePath = "websitesCache/"
 
 func readZipFile(z *zip.File) ([]byte, error) {
 	file, err := z.Open()
@@ -33,20 +31,25 @@ func readZipFile(z *zip.File) ([]byte, error) {
 }
 
 /*
-	This function fetch the datastore entries required to display
-	a website in the browser from the website storer contract, unzip them and
-	return the full unzipped website content.
+	This function check the cache, fetch the datastore entries required to display
+	a website in the browser from the website storer contract and save it in cache
+	if not present yet, read the cache zipfile,
+	unzip them and	return the full unzipped website content.
 	Datastore entries fetched :
 	- total_chunks : Total number of chunks that are to be fetched.
 	- massa_web_XXX : Keys containing the website data, with XXX being the chunk ID.
 */
 //nolint:nolintlint,ireturn,funlen
 func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, error) {
-
 	content := make(map[string][]byte)
-	filepath := getFilePath(client, websiteStorerAddress)
-	if !IsInCache(filepath) {
+	filepath, err := getFilePath(client, websiteStorerAddress)
 
+	if err != nil {
+		return nil, fmt.Errorf("getting file path '%s' : %w", websiteStorerAddress, err)
+	}
+
+	// we check if the website is in cache, if not we fetch it from the blockchain
+	if !IsInCache(filepath) {
 		chunkNumberKey := "total_chunks"
 
 		keyNumber, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes(chunkNumberKey))
@@ -77,10 +80,11 @@ func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, e
 			dataStore = append(dataStore, response[i].CandidateValue[4:]...)
 		}
 
+		// Once we get the zip content, we save it in the cache
 		saveInCache(filepath, dataStore)
-
 	}
 
+	// We read the website from the cache
 	zipReader, err := zip.OpenReader(filepath)
 	if err != nil {
 		return nil, fmt.Errorf("reading zipfile from cache '%s' at  '%w'", filepath, err)
@@ -99,49 +103,53 @@ func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, e
 	return content, nil
 }
 
+// Checks if the website is in cache and return true if yes.
 func IsInCache(filepath string) bool {
 	_, err := os.Stat(filepath)
-	if os.IsNotExist(err) {
-		return false
-	}
-	return true
+
+	return os.IsNotExist(err)
 }
 
+// Checks the timestamp ("META") key and return the uint64 UNIX Timestamp.
 func getTimeStamp(client *node.Client, websiteStorerAddress string) uint64 {
 	timestamp, _ := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes("META"))
+
 	return convert.BytesToU64(timestamp.CandidateValue)
 }
 
-func getFilePath(client *node.Client, websiteStorerAddress string) string {
+// Returns the file path in the cache, cache folder is inside your .config/thyra
+// file name is the websiteStorer SC address+_+the UNIX timestamp.zip
+
+func getFilePath(client *node.Client, websiteStorerAddress string) (string, error) {
 	timestamp := strconv.Itoa(int(getTimeStamp(client, websiteStorerAddress)))
 	configDir, _ := config.GetConfigDir()
 	cachePath := path.Join(configDir, "websitesCache")
 	_, err := os.Stat(cachePath)
+
 	if os.IsNotExist(err) {
-		// folder does not exist
-		// create the folder
 		err := os.MkdirAll(cachePath, os.ModePerm)
 		if err != nil {
-			fmt.Printf("Error while creating folder: %v\n", err)
+			return "", fmt.Errorf("error creating folder: %w", err)
 		}
-	} else if err != nil {
-		fmt.Printf("Error while checking if folder exists: %v\n", err)
 	}
 
-	return path.Join(cachePath, websiteStorerAddress+"_"+timestamp+".zip")
+	return path.Join(cachePath, websiteStorerAddress+"_"+timestamp+".zip"), nil
 }
 
+// Save the raw content as a zip file.
 func saveInCache(filePath string, content []byte) {
 	file, err := os.Create(filePath)
 	if err != nil {
-		fmt.Printf("Error while creating file: %v\n", err)
+		log.Printf("error while creating file: %v\n", err)
+
 		return
 	}
 	defer file.Close()
 
-	err = ioutil.WriteFile(filePath, content, 0644)
+	err = os.WriteFile(filePath, content, 0600)
 	if err != nil {
-		fmt.Printf("error saving zipfile: %w", err)
+		log.Printf("error saving zipfile: %v\n", err)
+
 		return
 	}
 }
