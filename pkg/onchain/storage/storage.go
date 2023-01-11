@@ -147,6 +147,7 @@ func saveInCache(filePath string, content []byte) {
 
 	defer file.Close()
 
+	//nolint:gofumpt
 	err = os.WriteFile(filePath, content, 0600)
 	if err != nil {
 		log.Printf("error saving zipfile: %v\n", err)
