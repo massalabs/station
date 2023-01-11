@@ -1,7 +1,9 @@
 package convert
 
 import (
+	"bytes"
 	"encoding/binary"
+	"fmt"
 	"unicode/utf16"
 )
 
@@ -83,4 +85,13 @@ func StringArrayToArrayOfByteArray(stringArray []string) [][]byte {
 	}
 
 	return result
+}
+
+func BytesToU64(byteArray []byte) uint64 {
+	var u64 uint64
+	err := binary.Read(bytes.NewReader(byteArray), binary.LittleEndian, &u64)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return u64
 }
