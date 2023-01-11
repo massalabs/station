@@ -42,6 +42,7 @@ func readZipFile(z *zip.File) ([]byte, error) {
 //nolint:nolintlint,ireturn,funlen
 func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, error) {
 	content := make(map[string][]byte)
+
 	filepath, err := getFilePath(client, websiteStorerAddress)
 	if err != nil {
 		return nil, fmt.Errorf("getting file path '%s' : %w", websiteStorerAddress, err)
@@ -143,6 +144,7 @@ func saveInCache(filePath string, content []byte) {
 
 		return
 	}
+
 	defer file.Close()
 
 	err = os.WriteFile(filePath, content, 0600)
