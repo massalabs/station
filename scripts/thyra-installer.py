@@ -1,4 +1,5 @@
 import platform
+import socket
 import urllib.request
 import subprocess
 import shutil
@@ -31,11 +32,10 @@ logging.getLogger('').addHandler(console)
 logging.info('Starting thyra installer . . .')
 
 # This file is to be bundled with pyinstaller in order to produce a .exe that can run on Windows without Python installed.
-THYRA_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
-THYRA_FILENAME = "thyra-server.exe"
 THYRA_APP = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_windows-amd64.exe"
 THYRA_APP_FILENAME = "ThyraApp_windows-amd64.exe"
 
+# General
 THYRA_URL = ""
 THYRA_FILENAME = ""
 THYRA_CONFIG_FOLDER_PATH = os.path.join(os.path.expanduser("~"), ".config", "thyra")
@@ -53,7 +53,7 @@ MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=windows/amd64"
 MKCERT_FILENAME = "mkcert.exe"
 CERTIFICATIONS_FOLDER = os.path.join(THYRA_CONFIG_FOLDER_PATH, "certs")
 
-
+# Global variables
 def setThyraGlobals():
     global THYRA_URL, THYRA_FILENAME
 
@@ -88,16 +88,7 @@ def setMKCertGlobals():
         case _:
             printErrorAndExit("Unsupported platform: " + platform.system())
 
-def downloadFile(url, filename):
-    logging.info("Downloading " + filename + "...")
-    try:
-        with urllib.request.urlopen(url) as response, open(filename, 'wb') as out_file:
-            shutil.copyfileobj(response, out_file)
-    except URLError as err:
-        logging.info("Failed to download " + filename + " :")
-        printErrorAndExit(err)
-    logging.info(filename + " downloaded successfully")
-
+# Windows
 def unzipAcrylic():
     try: 
         os.mkdir(DEFAULT_ACRYLIC_PATH)
@@ -111,17 +102,6 @@ def unzipAcrylic():
         logging.info("Acrylic unzipped")
     except ReadError as err:
         printErrorAndExit(err)
-
-def executeOSCommandOrFile(command, decodeBinary):
-    process = subprocess.Popen(command,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE,
-                            universal_newlines=decodeBinary)
-    stdout, stderr = process.communicate()
-
-    if stderr != None and stderr != "" and process.returncode != 0:
-        printErrorAndExit(f"Error encountered while executing : {command} :\n{stderr}")
-    return stdout
 
 def setupDNS():
     commandOutput = executeOSCommandOrFile("wmic nic where \"netenabled=true\" get netconnectionID", True)
@@ -181,6 +161,41 @@ def generateCertificate():
 def isAdmin():
     return ctypes.windll.shell32.IsUserAnAdmin() != 0
 
+# MacOS
+def configureDNSMasq():
+    print("Configuring DNSMasq...")
+    
+    executeOSCommandOrFile("sudo bash -c 'echo ""address=/.massa/127.0.0.1"" > $(brew --prefix)/etc/dnsmasq.d/massa.conf'", True, True)
+    executeOSCommandOrFile("sudo mkdir -p /etc/resolver", True, True)
+    executeOSCommandOrFile("sudo bash -c 'echo ""nameserver 127.0.0.1"" > /etc/resolver/massa'", True, True)
+
+    print("Restarting DNSMasq...")
+    executeOSCommandOrFile("sudo brew services restart dnsmasq", True, True)
+
+
+# Generic
+def downloadFile(url, filename):
+    logging.info("Downloading " + filename + "...")
+    try:
+        with urllib.request.urlopen(url) as response, open(filename, 'wb') as out_file:
+            shutil.copyfileobj(response, out_file)
+    except URLError as err:
+        logging.info("Failed to download " + filename + " :")
+        printErrorAndExit(err)
+    logging.info(filename + " downloaded successfully")
+
+def executeOSCommandOrFile(command, decodeBinary, shell=False):
+    process = subprocess.Popen(command,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            universal_newlines=decodeBinary,
+                            shell=shell)
+    stdout, stderr = process.communicate()
+
+    if stderr != None and stderr != "" and process.returncode != 0:
+        printErrorAndExit(f"Error encountered while executing : {command} :\n{stderr}")
+    return stdout
+
 def printErrorAndExit(error):
     print(error)
     if platform.system() == "Windows":
@@ -195,9 +210,6 @@ def main():
 
     setThyraGlobals()
     setMKCertGlobals()
-
-    # DEBUG
-    print(THYRA_FILENAME, THYRA_URL)
 
     downloadFile(THYRA_URL, THYRA_FILENAME)
     downloadFile(THYRA_APP, THYRA_APP_FILENAME)
@@ -224,7 +236,19 @@ def main():
                 setupDNS()
             configureAcrylic()
         case "Darwin":
-            logging.info("MacOS is not supported yet")
+            runningDNS = executeOSCommandOrFile("sudo lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//'", True, True)
+            runningDNS = runningDNS[:-1]
+            match runningDNS:
+                case "dnsmasq":
+                    logging.info("dnsmasq is already installed")
+                    configureDNSMasq()
+                case "":
+                    logging.info("Installing dnsmasq...")
+                    executeOSCommandOrFile("brew install dnsmasq", False)
+                    configureDNSMasq()
+                case _:
+                    logging.info(runningDNS)
+                    printErrorAndExit("Unsupported DNS server")
         case _:
             printErrorAndExit("Unsupported platform: " + platform.system())
 
