@@ -1,16 +1,18 @@
 package convert
 
 import (
+	"bytes"
 	"encoding/binary"
+	"log"
 	"unicode/utf16"
 )
 
-const bytesPerUint64 = 8
+const BytesPerUint64 = 8
 
 // Encode uint64 to byte array.
 func U64ToBytes(nb int) (bytes []byte) {
 	u64 := uint64(nb)
-	bytes = make([]byte, bytesPerUint64)
+	bytes = make([]byte, BytesPerUint64)
 	binary.LittleEndian.PutUint64(bytes, u64)
 
 	return
@@ -83,4 +85,15 @@ func StringArrayToArrayOfByteArray(stringArray []string) [][]byte {
 	}
 
 	return result
+}
+
+func BytesToU64(byteArray []byte) uint64 {
+	var u64 uint64
+
+	err := binary.Read(bytes.NewReader(byteArray), binary.LittleEndian, &u64)
+	if err != nil {
+		log.Printf("error converting bytesToU64 :%v\n", err)
+	}
+
+	return u64
 }
