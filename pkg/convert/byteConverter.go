@@ -7,12 +7,12 @@ import (
 	"unicode/utf16"
 )
 
-const bytesPerUint64 = 8
+const BytesPerUint64 = 8
 
 // Encode uint64 to byte array.
 func U64ToBytes(nb int) (bytes []byte) {
 	u64 := uint64(nb)
-	bytes = make([]byte, bytesPerUint64)
+	bytes = make([]byte, BytesPerUint64)
 	binary.LittleEndian.PutUint64(bytes, u64)
 
 	return
