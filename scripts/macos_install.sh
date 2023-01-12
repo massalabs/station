@@ -1,4 +1,4 @@
-#!/bin/bash +x
+#!/bin/bash -x
 
 BINARY_URL="https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin"
 SCRIPT="MacOS"
@@ -49,7 +49,10 @@ set_local_dns () {
 }
 
 generate_certificate () {
-    green "INFO" "Installing MKcert and generating HTTPS certificates:"
+    green "INFO" "Installing MKcert, its dependencies and then generating HTTPS certificates:"
+
+    [[ $(pkgutil --pkgs=.\+Firefox.\+) ]] && (brew install nss || fatal "impossible to install certutil. Thyra will not work on Firefox.")
+    
     ARCH=$(uname -m)
     if [[ "$ARCH" == 'aarch64' ]]; then
         MKCERT_URL=$MKCERT_URL_ARM
