@@ -91,7 +91,9 @@ func GenerateSignedCertificate(
 		return nil, nil, errors.New("while generating certificate: server name is empty")
 	}
 
-	uniqueSiteNameID := sha256.New().Sum([]byte(serverName))
+	currentTime := time.Now()
+
+	uniqueSiteNameID := sha256.New().Sum([]byte(serverName + currentTime.Format("01-02-2006")))
 
 	//nolint:exhaustruct
 	template := &x509.Certificate{
@@ -101,9 +103,9 @@ func GenerateSignedCertificate(
 			CommonName:   serverName,
 			Organization: []string{"thyra dynamically generated"},
 		},
-		NotBefore: time.Now(),
+		NotBefore: currentTime,
 		// one day of validity is enough since the certificate is generated dynamically each time
-		NotAfter: time.Now().AddDate(0, 0, 1),
+		NotAfter: currentTime.AddDate(0, 0, 1),
 	}
 
 	template.DNSNames = append(template.DNSNames, serverName)
