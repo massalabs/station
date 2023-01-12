@@ -162,9 +162,9 @@ async function tableInsert(resp, count) {
         .getElementById("website-deployers-table")
         .getElementsByTagName("tbody")[0];
     const row = tBody.insertRow(-1);
-    const url = isWindowsAndFirefox()
-        ? `http://${resp.name}.massa:${window.location.port}/`
-        : `https://${resp.name}.massa:${window.location.port}/`;
+
+    const protocol = isWindowsAndFirefox() ? "http" : "https";
+    const url = `${protocol}://${resp.name}.massa:${window.location.port}/`;
 
     const cell0 = row.insertCell();
     const cell1 = row.insertCell();
