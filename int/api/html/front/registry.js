@@ -24,7 +24,9 @@ function tableInsert(website) {
         .getElementById("website-deployers-table")
         .getElementsByTagName("tbody")[0];
     const row = tBody.insertRow(-1);
-    const url = `//${website[NAME]}.massa:${window.location.port}/`;
+
+    const protocol = isExcludedOSAndFirefox() ? "http" : "https";
+    const url = `${protocol}://${website[NAME]}.massa:${window.location.port}/`;
 
     // const cell0 = row.insertCell(); removed unit args class is available
     const cell1 = row.insertCell();
