@@ -163,7 +163,7 @@ async function tableInsert(resp, count) {
         .getElementsByTagName("tbody")[0];
     const row = tBody.insertRow(-1);
 
-    const protocol = isWindowsAndFirefox() ? "http" : "https";
+    const protocol = isExcludedOSAndFirefox() ? "http" : "https";
     const url = `${protocol}://${resp.name}.massa:${window.location.port}/`;
 
     const cell0 = row.insertCell();

@@ -76,8 +76,8 @@ function displayPlugins() {
 
 displayPlugins();
 
-// isWindowsAndFirefox returns true if user uses Windows and Firefox
-function isWindowsAndFirefox() {
+// isExcludedOSAndFirefox returns true if user uses Windows or Mac and Firefox
+function isExcludedOSAndFirefox() {
     // userAgent gets the os and navigator infos.
     // ex : Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0.
     let userAgent = navigator.userAgent;
@@ -85,9 +85,12 @@ function isWindowsAndFirefox() {
     // isWindows checks if current os is Windows
     let isWindows = userAgent.indexOf("Windows") != -1;
 
+    // isMac checks if current os is MacOS
+    let isMac = userAgent.indexOf("Macintosh") != -1;
+
     // isFirefox checks if current navigator is Firefox
     let isFirefox = userAgent.indexOf("Firefox") != -1;
 
-    return isFirefox && isWindows;
+    return isFirefox && (isWindows || isMac);
 }
-window.isWindowsAndFirefox = isWindowsAndFirefox;
+window.isExcludedOSAndFirefox = isExcludedOSAndFirefox;
