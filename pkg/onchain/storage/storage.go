@@ -2,17 +2,16 @@ package storage
 
 import (
 	"archive/zip"
+	"bytes"
 	"encoding/binary"
 	"fmt"
 	"io"
-	"log"
-	"os"
-	"path"
 	"strconv"
 
-	"github.com/massalabs/thyra/pkg/config"
+	"github.com/massalabs/thyra/pkg/cache"
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
+	"github.com/massalabs/thyra/pkg/onchain/dns"
 )
 
 func readZipFile(z *zip.File) ([]byte, error) {
@@ -30,64 +29,83 @@ func readZipFile(z *zip.File) ([]byte, error) {
 	return content, nil
 }
 
-/*
-	This function check the cache, fetch the datastore entries required to display
-	a website in the browser from the website storer contract and save it in cache
-	if not present yet, read the cache zipfile,
-	unzip them and	return the full unzipped website content.
-	Datastore entries fetched :
-	- total_chunks : Total number of chunks that are to be fetched.
-	- massa_web_XXX : Keys containing the website data, with XXX being the chunk ID.
-*/
-//nolint:nolintlint,ireturn,funlen
+// Fetch retrieves data from the blockchain ledger at the given address.
+func Fetch(client *node.Client, websiteStorerAddress string) ([]byte, error) {
+	chunkNumberKey := "total_chunks"
+
+	keyNumber, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes(chunkNumberKey))
+	if err != nil {
+		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", websiteStorerAddress, chunkNumberKey, err)
+	}
+
+	chunkNumber := int(binary.LittleEndian.Uint64(keyNumber.CandidateValue))
+
+	entries := []node.DatastoreEntriesKeys{}
+
+	for i := 0; i < chunkNumber; i++ {
+		entry := node.DatastoreEntriesKeys{
+			Address: websiteStorerAddress,
+			Key:     convert.StringToBytes("massa_web_" + strconv.Itoa(i)),
+		}
+		entries = append(entries, entry)
+	}
+
+	response, err := node.DatastoreEntries(client, entries)
+	if err != nil {
+		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
+	}
+
+	var dataStore []byte
+	for i := 0; i < chunkNumber; i++ {
+		// content is prefixed with it's length encoded using a u32 (4 bytes).
+		dataStore = append(dataStore, response[i].CandidateValue[4:]...)
+	}
+
+	return dataStore, nil
+}
+
+// Get tries to get the file from the cache and fallback to Fetch from the datastore.
+// New files are automatically added to the cache.
+// New website version at the same address are handled thanks to the LastUpdateTimestamp.
 func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, error) {
 	content := make(map[string][]byte)
 
-	filepath, err := getFilePath(client, websiteStorerAddress)
+	metaData, err := dns.FetchRecordMetaData(client, websiteStorerAddress)
 	if err != nil {
-		return nil, fmt.Errorf("getting file path '%s' : %w", websiteStorerAddress, err)
+		return nil, fmt.Errorf("getting metadata for '%s' : %w", websiteStorerAddress, err)
 	}
+
+	lastTimestamp := metaData.LastUpdateTimestamp
+
+	if lastTimestamp == 0 {
+		lastTimestamp = metaData.CreationTimeStamp
+	}
+
+	fileName := fmt.Sprintf("%s-%d", websiteStorerAddress, lastTimestamp)
+
+	var fileContent []byte
 
 	// we check if the website is in cache, if not we fetch it from the blockchain
-	if !IsInCache(filepath) {
-		chunkNumberKey := "total_chunks"
-
-		keyNumber, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes(chunkNumberKey))
+	if cache.IsPresent(fileName) {
+		fileContent, err = cache.Read(fileName)
 		if err != nil {
-			return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", websiteStorerAddress, chunkNumberKey, err)
+			return nil, fmt.Errorf("reading file '%s': %w", fileName, err)
 		}
-
-		chunkNumber := int(binary.LittleEndian.Uint64(keyNumber.CandidateValue))
-
-		entries := []node.DatastoreEntriesKeys{}
-
-		for i := 0; i < chunkNumber; i++ {
-			entry := node.DatastoreEntriesKeys{
-				Address: websiteStorerAddress,
-				Key:     convert.StringToBytes("massa_web_" + strconv.Itoa(i)),
-			}
-			entries = append(entries, entry)
-		}
-
-		response, err := node.DatastoreEntries(client, entries)
+	} else {
+		fileContent, err = Fetch(client, websiteStorerAddress)
 		if err != nil {
-			return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
+			return nil, fmt.Errorf("fetching website content at %s from blockchain: %w", websiteStorerAddress, err)
 		}
 
-		var dataStore []byte
-		for i := 0; i < chunkNumber; i++ {
-			// content is prefixed with it's length encoded using a u32 (4 bytes).
-			dataStore = append(dataStore, response[i].CandidateValue[4:]...)
+		err = cache.Save(fileName, fileContent)
+		if err != nil {
+			return nil, fmt.Errorf("caching %s: %w", fileName, err)
 		}
-
-		// Once we get the zip content, we save it in the cache
-		saveInCache(filepath, dataStore)
 	}
 
-	// We read the website from the cache
-	zipReader, err := zip.OpenReader(filepath)
+	zipReader, err := zip.NewReader(bytes.NewReader(fileContent), int64(len(fileContent)))
 	if err != nil {
-		return nil, fmt.Errorf("reading zipfile from cache '%s' at  '%w'", filepath, err)
+		return nil, fmt.Errorf("instantiating zip reader from '%s': %w", fileName, err)
 	}
 
 	// Read all the files from zip archive
@@ -101,57 +119,4 @@ func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, e
 	}
 
 	return content, nil
-}
-
-// Checks if the website is in cache and return true if yes.
-func IsInCache(filepath string) bool {
-	_, err := os.Stat(filepath)
-
-	return !os.IsNotExist(err)
-}
-
-// Checks the timestamp ("META") key and return the uint64 UNIX Timestamp.
-func getTimeStamp(client *node.Client, websiteStorerAddress string) uint64 {
-	timestamp, _ := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes("META"))
-
-	return convert.BytesToU64(timestamp.CandidateValue)
-}
-
-// Returns the file path in the cache, cache folder is inside your .config/thyra
-// file name is the websiteStorer SC address+_+the UNIX timestamp.zip
-
-func getFilePath(client *node.Client, websiteStorerAddress string) (string, error) {
-	timestamp := strconv.Itoa(int(getTimeStamp(client, websiteStorerAddress)))
-	configDir, _ := config.GetConfigDir()
-	cachePath := path.Join(configDir, "websitesCache")
-	_, err := os.Stat(cachePath)
-
-	if os.IsNotExist(err) {
-		err := os.MkdirAll(cachePath, os.ModePerm)
-		if err != nil {
-			return "", fmt.Errorf("error creating folder: %w", err)
-		}
-	}
-
-	return path.Join(cachePath, websiteStorerAddress+"_"+timestamp+".zip"), nil
-}
-
-// Save the raw content as a zip file.
-func saveInCache(filePath string, content []byte) {
-	file, err := os.Create(filePath)
-	if err != nil {
-		log.Printf("error while creating file: %v\n", err)
-
-		return
-	}
-
-	defer file.Close()
-
-	//nolint:gofumpt, gomnd, nolintlint
-	err = os.WriteFile(filePath, content, 0600)
-	if err != nil {
-		log.Printf("error saving zipfile: %v\n", err)
-
-		return
-	}
 }
