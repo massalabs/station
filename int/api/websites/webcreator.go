@@ -39,7 +39,6 @@ func listFileName(zipReader *zip.Reader) []string {
 	return FilesInArchive
 }
 
-//nolint:nolintlint,ireturn,funlen
 func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app *fyne.App) middleware.Responder {
 	wallet, _ := loadAndUnprotectWallet(params.Nickname, app)
 	archive, _ := readAndCheckArchive(params.Zipfile, app)
@@ -78,7 +77,6 @@ func GetMaxArchiveSize() int {
 	return uploadMaxSizeInt
 }
 
-//nolint:nolintlint,ireturn
 func createInternalServerError(errorCode string, errorMessage string) middleware.Responder {
 	return operations.NewWebsiteCreatorPrepareInternalServerError().
 		WithPayload(
@@ -94,7 +92,6 @@ func CreateUploadWebsiteHandler(app *fyne.App) func(params operations.WebsiteCre
 	}
 }
 
-//nolint:nolintlint,ireturn
 func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyne.App) middleware.Responder {
 	wallet, _ := loadAndUnprotectWallet(params.Nickname, app)
 	archive, _ := readAndCheckArchive(params.Zipfile, app)
@@ -125,7 +122,7 @@ func CreateUploadMissingChunksHandler(app *fyne.App) func(params operations.Webs
 	}
 }
 
-//nolint:nolintlint,ireturn,lll
+//nolint:lll
 func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChunksParams, app *fyne.App) middleware.Responder {
 	wallet, _ := loadAndUnprotectWallet(params.Nickname, app)
 	archive, _ := readAndCheckArchive(params.Zipfile, app)
@@ -143,7 +140,7 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 		})
 }
 
-//nolint:unparam,ireturn,nolintlint
+//nolint:unparam
 func loadAndUnprotectWallet(nickname string, app *fyne.App) (*wallet.Wallet, middleware.Responder) {
 	wallet, err := wallet.Load(nickname)
 	if err != nil {
@@ -167,7 +164,7 @@ func loadAndUnprotectWallet(nickname string, app *fyne.App) (*wallet.Wallet, mid
 	return wallet, nil
 }
 
-//nolint:unparam,ireturn,nolintlint
+//nolint:unparam
 func readAndCheckArchive(zipFile io.ReadCloser, app *fyne.App) ([]byte, middleware.Responder) {
 	archive, err := io.ReadAll(zipFile)
 	if err != nil {

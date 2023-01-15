@@ -9,7 +9,6 @@ import (
 	"github.com/massalabs/thyra/pkg/onchain/website"
 )
 
-//nolint:nolintlint,ireturn
 func BrowseHandler(params operations.BrowseParams) middleware.Responder {
 	body, err := website.Fetch(node.NewDefaultClient(), params.Address, params.Resource)
 	if err != nil {

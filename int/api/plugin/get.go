@@ -7,7 +7,6 @@ import (
 	pluginManager "github.com/massalabs/thyra/pkg/plugins"
 )
 
-//nolint:nolintlint,ireturn
 func NewGet(manager *pluginManager.PluginManager) operations.MgmtPluginsListHandler {
 	return &pluginHandler{manager: manager}
 }
@@ -16,7 +15,6 @@ type pluginHandler struct {
 	manager *pluginManager.PluginManager
 }
 
-//nolint:nolintlint,ireturn
 func (pluginCatalog *pluginHandler) Handle(params operations.MgmtPluginsListParams) middleware.Responder {
 	pluginList := pluginCatalog.manager.List()
 

@@ -6,7 +6,6 @@ import (
 	"github.com/massalabs/thyra/pkg/plugin"
 )
 
-//nolint:ireturn
 func newRegister(manager *plugin.Manager) operations.PluginManagerRegisterHandler {
 	return &register{manager: manager}
 }

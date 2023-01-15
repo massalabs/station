@@ -10,7 +10,6 @@ import (
 	"github.com/massalabs/thyra/pkg/plugin"
 )
 
-//nolint:ireturn
 func newInstall(manager *plugin.Manager) operations.PluginManagerInstallHandler {
 	return &install{manager: manager}
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/massalabs/thyra/pkg/plugin"
 )
 
-//nolint:ireturn
 func newUninstall(manager *plugin.Manager) operations.PluginManagerUninstallHandler {
 	return &uninstall{manager: manager}
 }

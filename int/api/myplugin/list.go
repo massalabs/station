@@ -6,7 +6,6 @@ import (
 	"github.com/massalabs/thyra/pkg/plugin"
 )
 
-//nolint:ireturn
 func newList(manager *plugin.Manager) operations.PluginManagerListHandler {
 	return &list{manager: manager}
 }
