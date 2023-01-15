@@ -12,6 +12,9 @@ func info(param operations.PluginManagerGetInformationParams) middleware.Respond
 	}
 
 	plugin := manager.Plugin(param.ID)
+	if plugin == nil {
+		return operations.NewPluginManagerGetInformationNotFound()
+	}
 
 	return operations.NewPluginManagerGetInformationOK().WithPayload(
 		&operations.PluginManagerGetInformationOKBody{Status: plugin.Status().String()},

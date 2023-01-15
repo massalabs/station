@@ -12,6 +12,9 @@ func register(param operations.PluginManagerRegisterParams) middleware.Responder
 	}
 
 	wantedPlugin := manager.Plugin(param.Body.ID)
+	if wantedPlugin == nil {
+		return operations.NewPluginManagerRegisterNotFound()
+	}
 
 	info := plugin.Information{
 		Name: param.Body.Name, Description: param.Body.Description,
