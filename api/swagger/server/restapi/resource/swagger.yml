@@ -640,6 +640,248 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /plugin-manager:
+    post:
+      operationId: pluginManagerInstall
+      parameters:
+        - in: query
+          name: source
+          type: string
+          format: url
+          required: true
+          x-nullable: false
+          description: URL from which to retrieve the plug-in.
+      produces:
+        - application/json
+      responses:
+        "204":
+          description: Plugin successfully installed
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+    get:
+      operationId: pluginManagerList
+      responses:
+        "200":
+          description: List all installed plugins.
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  description: Plugin identifier.
+                  type: integer
+                  x-nullable: false
+                name:
+                  description: Plugin name.
+                  type: string
+                  x-nullable: false
+                description:
+                  description: Plugin description.
+                  type: string
+                  x-nullable: false
+                logo:
+                  description: Plugin logo.
+                  type: string
+                  format: byte
+                  x-nullable: false
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+  /plugin-manager/register:
+    post:
+      operationId: pluginManagerRegister
+      parameters:
+        - in: body
+          name: body
+          required: true
+          x-nullable: false
+          schema:
+            type: object
+            required:
+              - id
+              - name
+              - description
+              - logo
+              - authority
+              - api-spec
+            properties:
+                id:
+                  description: Plugin identifier.
+                  type: integer
+                  x-nullable: false
+                name:
+                  description: Plugin name.
+                  type: string
+                  x-nullable: false
+                description:
+                  description: Plugin description.
+                  type: string
+                  x-nullable: false
+                logo:
+                  description: Plugin logo.
+                  type: string
+                  format: byte
+                  x-nullable: false
+                authority:
+                  description: URL authority to use to connect to the plugin
+                  type: string
+                  x-nullable: false
+                api_spec:
+                  description: Plugin API specification
+                  type: string
+                  x-nullable: false
+      responses:
+        "204":
+          description: Plugin successfully installed
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+  /plugin-manager/{id}:
+    get:
+      operationId: pluginManagerGetInformation
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+          description: Plugin identifier.
+      responses:
+        "200":
+          description: Get execution information from the plugin.
+          schema:
+            type: object
+            properties:
+              status:
+                description: Plugin status.
+                type: string
+                enum: ["Starting", "Up", "Down", "ShuttingDown", "Crashed"]
+                x-nullable: false
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      operationId: pluginManagerUninstall
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+          description: Plugin identifier.
+      responses:
+        "204":
+          description: Plugin successfuly remove from the system.
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+  /plugin-manager/{id}/execute:
+    post:
+      operationId: pluginManagerExecuteCommand
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+          description: Plugin unique identifier.
+        - in: body
+          name: body
+          required: true
+          x-nullable: false
+          schema:
+            type: object
+            required:
+              - command
+            properties:
+                command:
+                  description: Command to execute.
+                  type: string
+                  enum: ["update", "stop", "start", "restart"]
+                  x-nullable: false
+      responses:
+        "204":
+          description: Command successfuly executed.
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
 definitions:
   Error:
     type: object
