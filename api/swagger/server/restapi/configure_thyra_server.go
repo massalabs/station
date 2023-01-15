@@ -16,8 +16,6 @@ import (
 	"github.com/rs/cors"
 )
 
-//go:generate swagger generate server --target ../../server --name ThyraServer --spec ../../swagger.yml --principal interface{} --exclude-main
-
 func configureFlags(api *operations.ThyraServerAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
