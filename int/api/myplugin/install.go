@@ -10,13 +10,16 @@ import (
 	"github.com/massalabs/thyra/pkg/plugin"
 )
 
-var manager *plugin.Manager
+//nolint:ireturn
+func newInstall(manager *plugin.Manager) operations.PluginManagerInstallHandler {
+	return &install{manager: manager}
+}
 
-func pluginInstall(param operations.PluginManagerInstallParams) middleware.Responder {
-	if manager == nil {
-		manager = plugin.NewManager()
-	}
+type install struct {
+	manager *plugin.Manager
+}
 
+func (i *install) Handle(param operations.PluginManagerInstallParams) middleware.Responder {
 	_, err := url.ParseRequestURI(param.Source)
 	if err != nil {
 		return operations.NewPluginManagerInstallBadRequest().WithPayload(
@@ -26,7 +29,7 @@ func pluginInstall(param operations.PluginManagerInstallParams) middleware.Respo
 			})
 	}
 
-	err = manager.Install(param.Source)
+	err = i.manager.Install(param.Source)
 	if err != nil {
 		return operations.NewPluginManagerInstallInternalServerError().WithPayload(
 			&models.Error{

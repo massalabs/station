@@ -6,12 +6,17 @@ import (
 	"github.com/massalabs/thyra/pkg/plugin"
 )
 
-func register(param operations.PluginManagerRegisterParams) middleware.Responder {
-	if manager == nil {
-		manager = plugin.NewManager()
-	}
+//nolint:ireturn
+func newRegister(manager *plugin.Manager) operations.PluginManagerRegisterHandler {
+	return &register{manager: manager}
+}
 
-	wantedPlugin := manager.Plugin(param.Body.ID)
+type register struct {
+	manager *plugin.Manager
+}
+
+func (r *register) Handle(param operations.PluginManagerRegisterParams) middleware.Responder {
+	wantedPlugin := r.manager.Plugin(param.Body.ID)
 	if wantedPlugin == nil {
 		return operations.NewPluginManagerRegisterNotFound()
 	}

@@ -7,12 +7,17 @@ import (
 	"github.com/massalabs/thyra/pkg/plugin"
 )
 
-func remove(param operations.PluginManagerUninstallParams) middleware.Responder {
-	if manager == nil {
-		manager = plugin.NewManager()
-	}
+//nolint:ireturn
+func newUninstall(manager *plugin.Manager) operations.PluginManagerUninstallHandler {
+	return &uninstall{manager: manager}
+}
 
-	err := manager.Delete(param.ID)
+type uninstall struct {
+	manager *plugin.Manager
+}
+
+func (u *uninstall) Handle(param operations.PluginManagerUninstallParams) middleware.Responder {
+	err := u.manager.Delete(param.ID)
 	if err != nil {
 		return operations.NewPluginManagerUninstallInternalServerError().WithPayload(
 			&models.Error{Code: "", Message: err.Error()},

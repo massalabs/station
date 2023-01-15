@@ -6,12 +6,17 @@ import (
 	"github.com/massalabs/thyra/pkg/plugin"
 )
 
-func info(param operations.PluginManagerGetInformationParams) middleware.Responder {
-	if manager == nil {
-		manager = plugin.NewManager()
-	}
+//nolint:ireturn
+func newInfo(manager *plugin.Manager) operations.PluginManagerGetInformationHandler {
+	return &info{manager: manager}
+}
 
-	plugin := manager.Plugin(param.ID)
+type info struct {
+	manager *plugin.Manager
+}
+
+func (i *info) Handle(param operations.PluginManagerGetInformationParams) middleware.Responder {
+	plugin := i.manager.Plugin(param.ID)
 	if plugin == nil {
 		return operations.NewPluginManagerGetInformationNotFound()
 	}
