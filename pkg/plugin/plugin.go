@@ -12,6 +12,7 @@ type Status int64
 
 const (
 	Starting Status = iota
+	//nolint:varnamelen
 	Up
 	Down
 	ShuttingDown
@@ -84,28 +85,29 @@ func (p *Plugin) Kill() error {
 }
 
 func New(path string) (*Plugin, error) {
-	p := &Plugin{status: Starting}
+	//nolint:exhaustruct
+	plgn := &Plugin{status: Starting}
 
-	p.command = exec.Command(path)
+	plgn.command = exec.Command(path)
 
-	pipe, err := p.command.StdoutPipe()
+	pipe, err := plgn.command.StdoutPipe()
 	if err != nil {
 		return nil, fmt.Errorf("instantiating plugin %s: initializing stdout Pipe: %w", path, err)
 	}
 
-	p.stdOut = pipe
+	plgn.stdOut = pipe
 
-	pipe, err = p.command.StderrPipe()
+	pipe, err = plgn.command.StderrPipe()
 	if err != nil {
 		return nil, fmt.Errorf("instantiating plugin %s: initializing stderr Pipe: %w", path, err)
 	}
 
-	p.stdErr = pipe
+	plgn.stdErr = pipe
 
-	err = p.command.Start()
+	err = plgn.command.Start()
 	if err != nil {
 		return nil, fmt.Errorf("instantiating plugin %s: starting command: %w", path, err)
 	}
 
-	return p, nil
+	return plgn, nil
 }

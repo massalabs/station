@@ -38,6 +38,7 @@ type Manager struct {
 }
 
 func NewManager() *Manager {
+	//nolint:exhaustruct
 	return &Manager{plugins: make(map[int64]*Plugin), id: 0}
 }
 
@@ -66,10 +67,12 @@ func (m *Manager) Plugin(id int64) *Plugin {
 }
 
 // Delete kill a plugin and remove it from the manager.
+//
+//nolint:varnamelen
 func (m *Manager) Delete(id int64) error {
 	m.m.Lock()
 
-	p, ok := m.plugins[id]
+	plgn, ok := m.plugins[id]
 	if !ok {
 		m.m.Unlock()
 
@@ -79,7 +82,7 @@ func (m *Manager) Delete(id int64) error {
 	delete(m.plugins, id)
 	m.m.Unlock()
 
-	return p.Kill()
+	return plgn.Kill()
 }
 
 // Run starts new plugin and adds it to manager.
@@ -108,7 +111,11 @@ func (m *Manager) RunAll() error {
 
 	for _, rootItem := range rootItems {
 		if !rootItem.IsDir() {
-			m.Run(rootItem.Name())
+			err := m.Run(rootItem.Name())
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "WARN: while running plugin %s: %s.\n", rootItem.Name(), err)
+				fmt.Fprintln(os.Stderr, "This plugin will not be executed.")
+			}
 		}
 	}
 
@@ -135,7 +142,11 @@ func (m *Manager) Install(url string) error {
 	}
 
 	fileName := filepath.Base(resp.Filename)
-	fileName = fileName[:strings.Index(fileName, "_")]
+
+	splitUndescoreIndex := strings.Index(fileName, "_")
+	if splitUndescoreIndex > 0 {
+		fileName = fileName[:splitUndescoreIndex]
+	}
 
 	err = m.Run(filepath.Join(pluginDirectory, fileName))
 	if err != nil {
