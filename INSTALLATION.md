@@ -182,10 +182,10 @@ If you want to get down to business, you can start your [Massalian journey](http
 Follow the link below and download the file named "ThyraApp_windows-amd64.exe" on your computer. Then: 
 1. Open it by double clicking
 2. The script starts and here is what it does:
-** If you have Thyra already installed on your computer, it install Thyra's icon tray. 
-![windows_icontray_V0](https://user-images.githubusercontent.com/109611779/212294116-05e1dd37-ed3f-4e3e-b034-b02d782bc4ee.png)
-** If nothing is installed on your computer yet, it will install both.
+  * If you have Thyra already installed on your computer, it install Thyra's icon tray.
+  * If nothing is installed on your computer yet, it will install both.
 
+![windows_icontray_V0](https://user-images.githubusercontent.com/109611779/212294116-05e1dd37-ed3f-4e3e-b034-b02d782bc4ee.png)
 
 Congratulation, your version of Thyra is now installed on your system and you can "Start" your journey using the icon tray.
 
