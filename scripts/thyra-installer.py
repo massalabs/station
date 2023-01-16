@@ -57,16 +57,16 @@ def setThyraGlobals():
     global THYRA_SERVER_URL, THYRA_SERVER_FILENAME
 
     if platform.system() == "Windows":
-            THYRA_SERVER_FILENAME = "thyra-server.exe"
-            THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
+        THYRA_SERVER_FILENAME = "thyra-server.exe"
+        THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
     elif platform.system() == "Darwin":
-            THYRA_SERVER_FILENAME = "thyra-server"
+        THYRA_SERVER_FILENAME = "thyra-server"
         if platform.machine() == "arm64":
-                    THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_arm64"
+            THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_arm64"
         elif platform.machine() == "x86_64":
-                    THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_amd64"
+            THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_amd64"
     else:
-            printErrorAndExit("Unsupported platform: " + platform.system())
+        printErrorAndExit("Unsupported platform: " + platform.system())
 
 def setThyraAppGlobals():
     global THYRA_APP_URL, THYRA_APP_FILENAME
@@ -77,11 +77,11 @@ def setThyraAppGlobals():
     elif platform.system() == "Darwin":
             THYRA_APP_FILENAME = "thyra-app"
             if platform.machine() == "arm64":
-                    THYRA_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_darwin-arm64"
+                THYRA_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_darwin-arm64"
             elif platform.machine() == "x86_64":
-                    THYRA_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_darwin-amd64"
+                THYRA_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_darwin-amd64"
     else:
-            printErrorAndExit("Unsupported platform: " + platform.system())
+        printErrorAndExit("Unsupported platform: " + platform.system())
 
 def setMKCertGlobals():
     global MKCERT_URL, MKCERT_FILENAME
@@ -92,11 +92,11 @@ def setMKCertGlobals():
     elif platform.system() == "Darwin":
             MKCERT_FILENAME = "mkcert"
             if platform.machine() == "arm64":
-                    MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=darwin/arm64"
+                MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=darwin/arm64"
             elif platform.machine() == "x86_64":
-                    MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=darwin/amd64"
+                MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=darwin/amd64"
     else:
-            printErrorAndExit("Unsupported platform: " + platform.system())
+        printErrorAndExit("Unsupported platform: " + platform.system())
 
 # Windows
 def unzipAcrylic():
@@ -241,29 +241,29 @@ def main():
         printErrorAndExit(err)
 
     if platform.system() == "Windows":
-            if os.path.exists(DEFAULT_ACRYLIC_PATH):
-                logging.info("Acrylic DNS Proxy is already installed")
-            else:
-                downloadFile(ACRYLIC_DNS_PROXY_URL, ACRYLIC_DNS_PROXY_FILENAME)
-                unzipAcrylic()
-                executeOSCommandOrFile(DEFAULT_ACRYLIC_PATH + "\InstallAcrylicService.bat", True)
-                setupDNS()
-            configureAcrylic()
-    elif platform.system() == "Darwin":
-            runningDNS = executeOSCommandOrFile("sudo lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//'", True, True)
-            runningDNS = runningDNS[:-1]
-        if runningDNS == "dnsmasq":
-                    logging.info("dnsmasq is already installed")
-                    configureDNSMasq()
-        elif runningDNS == "":
-                    logging.info("Installing dnsmasq...")
-                    executeOSCommandOrFile("brew install dnsmasq", False)
-                    configureDNSMasq()
+        if os.path.exists(DEFAULT_ACRYLIC_PATH):
+            logging.info("Acrylic DNS Proxy is already installed")
         else:
-                    logging.info(runningDNS)
-                    printErrorAndExit("Unsupported DNS server")
+            downloadFile(ACRYLIC_DNS_PROXY_URL, ACRYLIC_DNS_PROXY_FILENAME)
+            unzipAcrylic()
+            executeOSCommandOrFile(DEFAULT_ACRYLIC_PATH + "\InstallAcrylicService.bat", True)
+            setupDNS()
+        configureAcrylic()
+    elif platform.system() == "Darwin":
+        runningDNS = executeOSCommandOrFile("sudo lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//'", True, True)
+        runningDNS = runningDNS[:-1]
+        if runningDNS == "dnsmasq":
+            logging.info("dnsmasq is already installed")
+            configureDNSMasq()
+        elif runningDNS == "":
+            logging.info("Installing dnsmasq...")
+            executeOSCommandOrFile("brew install dnsmasq", False)
+            configureDNSMasq()
+        else:
+            logging.info(runningDNS)
+            printErrorAndExit("Unsupported DNS server")
     else:
-            printErrorAndExit("Unsupported platform: " + platform.system())
+        printErrorAndExit("Unsupported platform: " + platform.system())
 
     generateCertificate()
 
