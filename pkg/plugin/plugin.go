@@ -31,52 +31,52 @@ type Plugin struct {
 	command *exec.Cmd
 	stdOut  io.ReadCloser
 	stdErr  io.ReadCloser
-	m       sync.RWMutex
+	mutex   sync.RWMutex
 	status  Status
 	info    *Information
 }
 
 func (p *Plugin) Information() *Information {
-	p.m.RLock()
-	defer p.m.RUnlock()
+	p.mutex.RLock()
+	defer p.mutex.RUnlock()
 
 	return p.info
 }
 
 func (p *Plugin) SetInformation(info *Information) {
-	p.m.Lock()
-	defer p.m.Unlock()
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
 	p.info = info
 	p.status = Up
 }
 
 func (p *Plugin) Status() Status {
-	p.m.RLock()
-	defer p.m.RUnlock()
+	p.mutex.RLock()
+	defer p.mutex.RUnlock()
 
 	return p.status
 }
 
 func (p *Plugin) Kill() error {
-	p.m.Lock()
+	p.mutex.Lock()
 
 	p.status = ShuttingDown
 
 	err := p.command.Process.Kill()
 	if err != nil {
 		p.status = Crashed
-		p.m.Unlock()
+		p.mutex.Unlock()
 
 		return fmt.Errorf("killing process: %w", err)
 	}
 
-	p.m.Unlock()
+	p.mutex.Unlock()
 
 	err = (*p.command).Wait()
 	if err.Error() != "signal: killed" {
-		p.m.Lock()
+		p.mutex.Lock()
 		p.status = Crashed
-		p.m.Unlock()
+		p.mutex.Unlock()
 
 		return fmt.Errorf("killing process: unexpected wait error: got %w, want `signal: killed`", err)
 	}

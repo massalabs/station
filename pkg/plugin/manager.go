@@ -14,7 +14,7 @@ import (
 	"github.com/xyproto/unzip"
 )
 
-// Directory return the plugin directory.
+// Directory returns the plugin directory.
 // Note: the plugin directory is the /plugins inside the home directory.
 func Directory() string {
 	homeDir, _ := config.GetConfigDir()
@@ -33,10 +33,11 @@ func Directory() string {
 
 type Manager struct {
 	plugins map[int64]*Plugin
-	m       sync.RWMutex
+	mutex   sync.RWMutex
 	id      int64
 }
 
+// NewManager instantiates a manager struct.
 func NewManager() *Manager {
 	//nolint:exhaustruct
 	return &Manager{plugins: make(map[int64]*Plugin), id: 0}
@@ -66,21 +67,21 @@ func (m *Manager) Plugin(id int64) *Plugin {
 	return p
 }
 
-// Delete kill a plugin and remove it from the manager.
+// Delete kills a plugin and remove it from the manager.
 //
 //nolint:varnamelen
 func (m *Manager) Delete(id int64) error {
-	m.m.Lock()
+	m.mutex.Lock()
 
 	plgn, ok := m.plugins[id]
 	if !ok {
-		m.m.Unlock()
+		m.mutex.Unlock()
 
 		return errors.New("no plugin matching given id")
 	}
 
 	delete(m.plugins, id)
-	m.m.Unlock()
+	m.mutex.Unlock()
 
 	return plgn.Kill()
 }
@@ -92,15 +93,15 @@ func (m *Manager) Run(file string) error {
 		return err
 	}
 
-	m.m.Lock()
+	m.mutex.Lock()
 	m.id++
 	m.plugins[m.id] = plugin
-	m.m.Unlock()
+	m.mutex.Unlock()
 
 	return nil
 }
 
-// plugins are expected to be located in a subdir inside default plugin directory.
+// RunALL runs all the installed plugins.
 func (m *Manager) RunAll() error {
 	pluginDir := Directory()
 
@@ -122,11 +123,11 @@ func (m *Manager) RunAll() error {
 	return nil
 }
 
-// Install grab a remote plugin from the given url and install it locally.
+// Install grabs a remote plugin from the given url and install it locally.
 func (m *Manager) Install(url string) error {
 	resp, err := grab.Get(Directory(), url)
 	if err != nil {
-		return fmt.Errorf("grabing a plugin at %s: %w", url, err)
+		return fmt.Errorf("grabbing a plugin at %s: %w", url, err)
 	}
 
 	pluginDirectory := filepath.Dir(resp.Filename)
