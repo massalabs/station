@@ -13,6 +13,8 @@ from tarfile import ReadError
 import logging
 import os
 
+# This file is to be bundled with pyinstaller in order to produce a .exe that can run on Windows without Python installed.
+
 # set up logging to file
 logging.basicConfig(level=logging.INFO,
                     filename=os.path.join(os.path.expanduser("~"), "thyra_installer.log"),
@@ -31,13 +33,11 @@ logging.getLogger('').addHandler(console)
 
 logging.info('Starting thyra installer . . .')
 
-# This file is to be bundled with pyinstaller in order to produce a .exe that can run on Windows without Python installed.
-THYRA_APP = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_windows-amd64.exe"
-THYRA_APP_FILENAME = "ThyraApp_windows-amd64.exe"
-
 # General
-THYRA_URL = ""
-THYRA_FILENAME = ""
+THYRA_SERVER_URL = ""
+THYRA_SERVER_FILENAME = ""
+THYRA_APP_URL = ""
+THYRA_APP_FILENAME = ""
 THYRA_CONFIG_FOLDER_PATH = os.path.join(os.path.expanduser("~"), ".config", "thyra")
 
 USER_HOME_FOLDER = os.path.expanduser("~")
@@ -55,19 +55,36 @@ CERTIFICATIONS_FOLDER = os.path.join(THYRA_CONFIG_FOLDER_PATH, "certs")
 
 # Global variables
 def setThyraGlobals():
-    global THYRA_URL, THYRA_FILENAME
+    global THYRA_SERVER_URL, THYRA_SERVER_FILENAME
 
     match platform.system():
         case "Windows":
-            THYRA_FILENAME = "thyra-server.exe"
-            THYRA_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
+            THYRA_SERVER_FILENAME = "thyra-server.exe"
+            THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
         case "Darwin":
-            THYRA_FILENAME = "thyra-server"
+            THYRA_SERVER_FILENAME = "thyra-server"
             match platform.machine():
                 case "arm64":
-                    THYRA_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_arm64"
+                    THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_arm64"
                 case "x86_64":
-                    THYRA_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_amd64"
+                    THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_amd64"
+        case _:
+            printErrorAndExit("Unsupported platform: " + platform.system())
+
+def setThyraAppGlobals():
+    global THYRA_APP_URL, THYRA_APP_FILENAME
+
+    match platform.system():
+        case "Windows":
+            THYRA_APP_FILENAME = "thyra-app.exe"
+            THYRA_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_windows-amd64.exe"
+        case "Darwin":
+            THYRA_APP_FILENAME = "thyra-app"
+            match platform.machine():
+                case "arm64":
+                    THYRA_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_darwin-arm64"
+                case "x86_64":
+                    THYRA_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_darwin-amd64"
         case _:
             printErrorAndExit("Unsupported platform: " + platform.system())
 
@@ -209,18 +226,23 @@ def main():
         printErrorAndExit("Couldn't detect admin rights. Please execute this script as an administator.")
 
     setThyraGlobals()
+    setThyraAppGlobals()
     setMKCertGlobals()
 
-    downloadFile(THYRA_URL, THYRA_FILENAME)
-    downloadFile(THYRA_APP, THYRA_APP_FILENAME)
+    downloadFile(THYRA_SERVER_URL, THYRA_SERVER_FILENAME)
+    downloadFile(THYRA_APP_URL, THYRA_APP_FILENAME)
     try:
-        os.chmod(THYRA_FILENAME, 755)
+        os.chmod(THYRA_SERVER_FILENAME, 0o755)
+        os.chmod(THYRA_APP_FILENAME, 0o755)
 
-        thyra_home_path = os.path.join(USER_HOME_FOLDER, THYRA_FILENAME)
+        thyra_home_path = os.path.join(USER_HOME_FOLDER, THYRA_SERVER_FILENAME)
+        thyra_app_home_path = os.path.join(USER_HOME_FOLDER, THYRA_APP_FILENAME)
         if os.path.exists(thyra_home_path):
             os.remove(thyra_home_path)
+        if os.path.exists(thyra_app_home_path):
+            os.remove(thyra_app_home_path)
 
-        shutil.move(THYRA_FILENAME, USER_HOME_FOLDER)
+        shutil.move(THYRA_SERVER_FILENAME, USER_HOME_FOLDER)
         shutil.move(THYRA_APP_FILENAME, USER_HOME_FOLDER)
     except OSError as err:
         printErrorAndExit(err)
