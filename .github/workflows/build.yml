@@ -29,7 +29,7 @@ jobs:
     uses: ./.github/workflows/tests.yml
 
   build:
-#    if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
+    if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
     needs: [lint, tests]
     name: build and upload artifacts
     strategy:
@@ -79,17 +79,24 @@ jobs:
           mv bin/7zSD.sfx . && mv scripts/config.txt . && mv scripts/dist/windows/thyra-installer .
           7z a -t7z thyra-installer.7z 7zSD.sfx config.txt thyra-installer
           sh -c 'cat 7zSD.sfx config.txt thyra-installer.7z > thyra-installer.exe'
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ matrix.target }}-${{ matrix.arch }}-binary
-          path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
-      - name: Upload installer artifacts
+      - name: Upload Windows installer artifacts
         if: ${{ matrix.target == 'windows' }}
         uses: actions/upload-artifact@v3
         with:
-          name: thyra-installer
+          name: thyra-installer-${{ matrix.target }}-${{ matrix.arch }}-binary
           path: thyra-installer.exe
+      - name: Build MacOS installer binary
+        if: ${{ matrix.target == 'darwin' }}
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install pyinstaller
+          pyinstaller --clean --onefile -y --dist ./dist/macos --workpath /tmp scripts/thyra-installer.py
+      - name: Upload MacOS installer artifacts
+        if: ${{ matrix.target == 'darwin' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: thyra-installer-${{ matrix.target }}-${{ matrix.arch }}-binary
+          path: ./dist/macos/thyra-installer
       - name: Create release and upload binaries
         if: ${{ inputs.tag_name != '' }}
         uses: softprops/action-gh-release@v1
