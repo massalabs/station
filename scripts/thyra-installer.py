@@ -271,7 +271,7 @@ def main():
 
     THYRA_APP_PATH = os.path.join(USER_HOME_FOLDER, THYRA_APP_FILENAME)
     if os.path.exists(THYRA_APP_PATH):
-        executeOSCommandOrFile(THYRA_APP_PATH, True)
+        subprocess.Popen([THYRA_APP_PATH], start_new_session=True)
         logging.info("You can start using thyra from the menu bar located on the bottom of your screen")
 
     if platform.system() == "Windows":
