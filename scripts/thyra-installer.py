@@ -228,16 +228,18 @@ def main():
         os.chmod(THYRA_SERVER_FILENAME, 0o755)
         os.chmod(THYRA_APP_FILENAME, 0o755)
 
-        thyra_home_path = os.path.join(USER_HOME_FOLDER, THYRA_SERVER_FILENAME)
-        thyra_app_home_path = os.path.join(USER_HOME_FOLDER, THYRA_APP_FILENAME)
-        if os.path.exists(thyra_home_path):
-            os.remove(thyra_home_path)
-        if os.path.exists(thyra_app_home_path):
-            os.remove(thyra_app_home_path)
+        if os.getcwd() != USER_HOME_FOLDER:
+            thyra_home_path = os.path.join(USER_HOME_FOLDER, THYRA_SERVER_FILENAME)
+            thyra_app_home_path = os.path.join(USER_HOME_FOLDER, THYRA_APP_FILENAME)
+            if os.path.exists(thyra_home_path):
+                os.remove(thyra_home_path)
+            if os.path.exists(thyra_app_home_path):
+                os.remove(thyra_app_home_path)
 
-        shutil.move(THYRA_SERVER_FILENAME, USER_HOME_FOLDER)
-        shutil.move(THYRA_APP_FILENAME, USER_HOME_FOLDER)
+            shutil.move(THYRA_SERVER_FILENAME, USER_HOME_FOLDER)
+            shutil.move(THYRA_APP_FILENAME, USER_HOME_FOLDER)
     except OSError as err:
+        logging.error("Error while installing Thyra:")
         printErrorAndExit(err)
 
     if platform.system() == "Windows":
