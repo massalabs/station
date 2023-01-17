@@ -179,20 +179,15 @@ If you want to get down to business, you can start your [Massalian journey](http
 #### Automatically
 > **_NOTE:_** If you're not a developer, it's better to use automatic installation
 
-Simply use copy/paste the cmd line below in your terminal. The installation process will start and a success message will be displayed once done.
+Follow the link below and download the file named "ThyraApp_windows-amd64.exe" on your computer. Then: 
+1. Open it by double clicking
+2. The script starts and here is what it does:
+  * If you have Thyra already installed on your computer, it installs Thyra's icon tray.
+  * If nothing is installed on your computer yet, it will install both.
 
-Note that you must execute this script as an administrator in your terminal. To do so:
-1. Open Windows search bar 
-2. Type "cmd" 
-3. Right click on the "Open command prompt" icon and click on "Execute as an administrator"
+![windows_icontray_V0](https://user-images.githubusercontent.com/109611779/212294116-05e1dd37-ed3f-4e3e-b034-b02d782bc4ee.png)
 
-Now, copy the cmd below and paste it in the terminal you just opened.
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/thyra-installer.bat >> thyra-installer.bat && thyra-installer.bat
-```
-
-Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
+Congratulation, your version of Thyra is now installed on your system and you can "Start" your journey using the icon tray.
 
 You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
