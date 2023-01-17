@@ -77,18 +77,15 @@ jobs:
           files: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
 
   build-installer:
-#    if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
+    if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
     needs: [lint, tests]
     name: build and upload installers binaries
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: windows-latest
             arch: x86_64
             target: windows
-          - os: ubuntu-20.04
-            arch: x86_64
-            target: linux
           - os: macos-latest
             arch: x86_64
             target: darwin
@@ -98,37 +95,17 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      - name: Build Windows installer binary
-        if: ${{ matrix.target == 'windows' }}
-        uses: JackMcKew/pyinstaller-action-windows@main
-        with:
-          path: scripts
-      - name: Package installer folder into Windows executable file
-        if: ${{ matrix.target == 'windows' }}
-        run: |
-          curl -L https://www.7-zip.org/a/lzma2201.7z --output lzma2201.7z
-          p7zip -d lzma2201.7z
-          mv bin/7zSD.sfx . && mv scripts/config.txt . && mv scripts/dist/windows/thyra-installer .
-          7z a -t7z thyra-installer.7z 7zSD.sfx config.txt thyra-installer
-          sh -c 'cat 7zSD.sfx config.txt thyra-installer.7z > thyra-installer.exe'
-      - name: Upload Windows installer artifacts
-        if: ${{ matrix.target == 'windows' }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: thyra-installer-${{ matrix.target }}-${{ matrix.arch }}-binary
-          path: thyra-installer.exe
-      - name: Install MacOS dependencies
-        if: ${{ matrix.target == 'darwin' }}
+      - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install pyinstaller
-      - name: Build MacOS installer binary
-        if: ${{ matrix.target == 'darwin' }}
+      - name: Build installer binary
         run: |
-          pyinstaller --clean --onefile -y --target-arch ${{ matrix.arch }} --dist ./dist/macos --workpath /tmp scripts/thyra-installer.py
-      - name: Upload MacOS installer artifacts
-        if: ${{ matrix.target == 'darwin' }}
+          pyinstaller --clean --onefile -y --target-arch ${{ matrix.arch }} --dist ./dist/${{ matrix.target }} --workpath /tmp scripts/thyra-installer.py
+      - name: Upload installer artifacts
         uses: actions/upload-artifact@v3
         with:
           name: thyra-installer-${{ matrix.target }}-${{ matrix.arch }}-binary
-          path: ./dist/macos/thyra-installer
+          path: |
+            ./dist/${{ matrix.target }}/thyra-installer
+            ./dist/${{ matrix.target }}/thyra-installer.exe
