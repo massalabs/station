@@ -203,6 +203,10 @@ Congratulation, your version of Thyra is now installed on your system and can be
 
 > **_NOTE:_** If your DNS is already configured to handle the massa TLD, you're free to go. Otherwise, please follow the instructions in the next section.
 
+##### GCC installation
+
+> Download GCC : [here](https://gcc.gnu.org/install/binaries.html) and select a windows solution then do standard installation
+
 ##### DNS installation
 
 > **_WARNING:_** If you already have a DNS service running that is not dnsmasq, you must configure it to redirect .massa to 127.0.0.1 (localhost).
