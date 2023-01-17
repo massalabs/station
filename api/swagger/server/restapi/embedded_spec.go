@@ -1065,6 +1065,40 @@ func init() {
         }
       }
     },
+    "/thyra/home/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "text/javascript",
+          "text/html",
+          "text/css",
+          "text/webp",
+          "image/png"
+        ],
+        "operationId": "thyraHome",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/registry/{resource}": {
       "get": {
         "produces": [
@@ -2456,33 +2490,6 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
-          }
-        }
-      }
-    },
-    "/thyra/plugin/{author-name}/{plugin-name}": {
-      "get": {
-        "description": "virtual endpoint handling requests for third party plugin. The actual handler is defined as an HTTP handler middleware.",
-        "operationId": "pluginRouter",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Author of the plugin.",
-            "name": "author-name",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "Name of the plugin.",
-            "name": "plugin-name",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Dumb response. All content and HTTP code are possible for this endpoint."
           }
         }
       }
