@@ -1,4 +1,6 @@
 import platform
+import ssl
+import certifi
 import urllib.request
 import subprocess
 import shutil
@@ -187,7 +189,7 @@ def configureDNSMasq():
 def downloadFile(url, filename):
     logging.info("Downloading " + filename + "...")
     try:
-        with urllib.request.urlopen(url) as response, open(filename, 'wb') as out_file:
+        with urllib.request.urlopen(url, context=ssl.create_default_context(cafile=certifi.where())) as response, open(filename, 'wb') as out_file:
             shutil.copyfileobj(response, out_file)
     except URLError as err:
         logging.info("Failed to download " + filename + " :")
