@@ -49,7 +49,10 @@ set_local_dns () {
 }
 
 generate_certificate () {
-    green "INFO" "Installing MKcert and generating HTTPS certificates:"
+    green "INFO" "Installing MKcert, its dependencies and then generating HTTPS certificates:"
+
+    [[ $(find /Applications/ -type d -iname "*Firefox*.app") ]] && (brew install nss || fatal "impossible to install certutil. Thyra will not work on Firefox.")
+    
     ARCH=$(uname -m)
     if [[ "$ARCH" == 'aarch64' ]]; then
         MKCERT_URL=$MKCERT_URL_ARM

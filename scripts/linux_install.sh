@@ -70,7 +70,10 @@ set_local_dns () {
 }
 
 generate_certificate () {
-    green "INFO" "Installing MKcert and generating HTTPS certificates:"
+    green "INFO" "Installing MKcert, its dependencies and then generating HTTPS certificates:"
+
+    [[ $(dpkg -s firefox | grep Status) ]] && (sudo apt install libnss3-tools || fatal "impossible to install certutil. Thyra will not work on Firefox.")
+
     curl -sL $MKCERT_URL -o mkcert
     chmod +x mkcert
     ./mkcert -install
