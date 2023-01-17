@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash +x
 
 BINARY_URL="https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin"
 SCRIPT="MacOS"
