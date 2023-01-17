@@ -2,6 +2,7 @@ package api
 
 import (
 	"embed"
+	"log"
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -12,6 +13,10 @@ import (
 const indexHTML = "index.html"
 
 const basePath = "html/front/"
+
+const basePathReact = "./dist/"
+
+// const testtry =  "../../web/thyra-frontend/dist"
 
 //go:embed html/front
 var content embed.FS
@@ -67,4 +72,16 @@ func ThyraRegistryHandler(params operations.ThyraRegistryParams) middleware.Resp
 	}
 
 	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)
+}
+
+func ThyraHomeHandler(params operations.ThyraHomeParams) middleware.Responder {
+	log.Println(basePathReact + indexHTML)
+	// currentPath, err := os.Getwd()
+	resource, err := content.ReadFile(basePathReact + indexHTML)
+	log.Println(err)
+	if err != nil {
+		return operations.NewThyraHomeNotFound()
+	}
+
+	return NewCustomResponder(resource, contentType(indexHTML), http.StatusOK)
 }
