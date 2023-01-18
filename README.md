@@ -123,26 +123,7 @@ Accepts a URL, an IP address or one of the following values :
 To use this option with a constant, you have to execute :
 `thyra-server --node-server=LABNET`
 To use this option with a custom IP address, you have to execute :
-`thyra-server node-server=192.168.X.X`
-
-### ... secure HTTPS configuration?
-
-Using HTTPS configuration without specifying your own certificate and key triggers a warning: `insecure HTTPS configuration`.
-
-To solve this you need to create your own certificate. You can do so by using openssl:
-
-```shell
-openssl req -newkey rsa:4096 \
-            -x509 \
-            -sha256 \
-            -days 365 \
-            -nodes \
-            -out my_thyra.crt \
-            -keyout my_thyra.key
-```
-
-You can now execute a thyra-server using the following command changing _path to ..._ to proper values:
-`thyra-server --tls-certificate <path to my_thyra.crt> --tls-key <path to my_thyra.key>`.
+`thyra-server --node-server=192.168.X.X`
 
 ### ... code with auto-reload
 
