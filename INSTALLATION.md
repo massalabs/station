@@ -78,7 +78,7 @@ If you want to get down to business, you can start your [Massalian journey](http
 ### Windows
 
 
-Follow the link below and download the file named "ThyraApp_windows-amd64.exe" on your computer. Then: 
+Follow [this link](https://github.com/massalabs/Thyra-Menu-Bar-App/releases/tag/v0.0.1) and download the file named "ThyraApp_windows-amd64.exe" on your computer. Then: 
 1. Open it by double clicking
 2. The script starts and here is what it does:
   * If you have Thyra already installed on your computer, it installs Thyra's icon tray.
