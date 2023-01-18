@@ -2,7 +2,6 @@ package api
 
 import (
 	"embed"
-	"log"
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -14,13 +13,15 @@ const indexHTML = "index.html"
 
 const basePath = "html/front/"
 
-const basePathReact = "./dist/"
-
-// const testtry =  "../../web/thyra-frontend/dist"
+const basePathReact = "dist/"
 
 //go:embed html/front
 var content embed.FS
 
+//go:embed dist
+var contentReact embed.FS
+
+//nolint:nolintlint,ireturn
 func ThyraWalletHandler(params operations.ThyraWalletParams) middleware.Responder {
 	file := params.Resource
 	if params.Resource == indexHTML {
@@ -74,14 +75,13 @@ func ThyraRegistryHandler(params operations.ThyraRegistryParams) middleware.Resp
 	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)
 }
 
+//nolint:nolintlint,ireturn
 func ThyraHomeHandler(params operations.ThyraHomeParams) middleware.Responder {
-	log.Println(basePathReact + indexHTML)
-	// currentPath, err := os.Getwd()
-	resource, err := content.ReadFile(basePathReact + indexHTML)
-	log.Println(err)
+
+	content, err := contentReact.ReadFile(basePathReact + params.Resource)
 	if err != nil {
 		return operations.NewThyraHomeNotFound()
 	}
+	return NewCustomResponder(content, contentType(params.Resource), http.StatusOK)
 
-	return NewCustomResponder(resource, contentType(indexHTML), http.StatusOK)
 }
