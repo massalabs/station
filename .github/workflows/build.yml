@@ -66,30 +66,6 @@ jobs:
         run: echo -e "${GITHUB_REF_NAME}" > cmd/thyra-server/version.txt
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
         run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
-      - name: Build installer binary
-        if: ${{ matrix.target == 'windows' }}
-        uses: JackMcKew/pyinstaller-action-windows@main
-        with:
-          path: scripts
-      - name: Package installer folder into Windows executable file
-        if: ${{ matrix.target == 'windows' }}
-        run: |
-          curl -L https://www.7-zip.org/a/lzma2201.7z --output lzma2201.7z
-          p7zip -d lzma2201.7z
-          mv bin/7zSD.sfx . && mv scripts/config.txt . && mv scripts/dist/windows/thyra-installer .
-          7z a -t7z thyra-installer.7z 7zSD.sfx config.txt thyra-installer
-          sh -c 'cat 7zSD.sfx config.txt thyra-installer.7z > thyra-installer.exe'
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ matrix.target }}-${{ matrix.arch }}-binary
-          path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
-      - name: Upload installer artifacts
-        if: ${{ matrix.target == 'windows' }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: thyra-installer
-          path: thyra-installer.exe
       - name: Create release and upload binaries
         if: ${{ inputs.tag_name != '' }}
         uses: softprops/action-gh-release@v1
@@ -99,3 +75,37 @@ jobs:
           prerelease: ${{ inputs.prerelease }}
           generate_release_notes: ${{ inputs.generate_release_notes }}
           files: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
+
+  build-installer:
+    if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
+    needs: [lint, tests]
+    name: build and upload installers binaries
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            arch: x86_64
+            target: windows
+          - os: macos-latest
+            arch: x86_64
+            target: darwin
+          - os: macos-latest
+            arch: arm64
+            target: darwin
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install pyinstaller
+      - name: Build installer binary
+        run: |
+          pyinstaller --clean --onefile -y --target-arch ${{ matrix.arch }} --dist ./dist/${{ matrix.target }} --workpath /tmp scripts/thyra-installer.py
+      - name: Upload installer artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: thyra-installer-${{ matrix.target }}-${{ matrix.arch }}-binary
+          path: |
+            ./dist/${{ matrix.target }}/thyra-installer
+            ./dist/${{ matrix.target }}/thyra-installer.exe
