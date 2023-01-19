@@ -2,6 +2,11 @@ import React, { useEffect } from "react";
 import thyraLogo from "../../assets/ThyraLogo-V0-Detailed.png";
 import massaLogoLight from "../../assets/MASSA_LIGHT_Detailed.png";
 import massaLogomark from "../../assets/massa_logomark_detailed.png";
+import {
+    useQuery,
+    useMutation,
+    useQueryClient,
+  } from 'react-query'
 type Props = {};
 
 /**
@@ -14,6 +19,21 @@ function home({}: Props) {
         //plugins = fetch('http://localhost:8080/plugin/manager')
     }, []);
 
+    // List of plugins
+    let pluginList : JSX.Element[] = [<> Loading... </>];
+    const getPlugins = async () => {
+        const init = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+        const res = await fetch('http://localhost:*PortDuPluginManager*/plugin-manager', init)
+        return res.json()
+    }
+    const { data, error } = useQuery('plugins', getPlugins)
+
+    if (error) pluginList = [<> Error: {error} </>]
     // Store the result in plugins
     // Mocked till we have the API
     let plugins = [
@@ -47,8 +67,10 @@ function home({}: Props) {
         },
     ];
 
+    if (data) plugins = data
+
     // Map over the plugins and display them in a list
-    const pluginList = plugins.map((plugin) => {
+    pluginList = plugins.map((plugin) => {
         return (
             <button className="flex flex-wrap rounded-lg p-5 m-5" key={plugin.name}>
                 <div className="mx-auto">

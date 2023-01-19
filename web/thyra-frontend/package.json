@@ -9,9 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query-devtools": "^4.22.0",
     "daisyui": "^2.46.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-query": "^3.39.2",
     "tailwind": "^4.0.0"
   },
   "devDependencies": {
