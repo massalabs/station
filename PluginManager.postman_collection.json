@@ -1,0 +1,259 @@
+{
+	"info": {
+		"_postman_id": "1840f5b8-96d5-4d23-8657-2cde09dbec62",
+		"name": "Plugin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "16586582"
+	},
+	"item": [
+		{
+			"name": "List plugins",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://127.0.0.1/plugin-manager"
+			},
+			"response": []
+		},
+		{
+			"name": "Install Hello world plugin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1/plugin-manager?source=https://github.com/massalabs/thyra-plugin-hello-world/blob/main/thyra-plugin-hello-world_linux_amd64.zip?raw=true",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"path": [
+						"plugin-manager"
+					],
+					"query": [
+						{
+							"key": "source",
+							"value": "https://github.com/massalabs/thyra-plugin-hello-world/blob/main/thyra-plugin-hello-world_linux_amd64.zip?raw=true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List plugins",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://127.0.0.1/plugin-manager"
+			},
+			"response": []
+		},
+		{
+			"name": "Plugin info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://127.0.0.1/plugin-manager/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Register hello world plugin",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 1,\n  \"name\": \"hello world\",\n  \"description\": \"A simple hello world plugin.\",\n  \"logo\": \"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\",\n  \"authority\": \"elit quis\",\n  \"api_spec\": \"culpa enim sint aliqua\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://127.0.0.1/plugin-manager/register"
+			},
+			"response": [
+				{
+					"name": "Plugin successfully installed",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": -65217,\n  \"name\": \"ut aliqua non\",\n  \"description\": \"minim consectetur dolore\",\n  \"logo\": \"id et sunt irure\",\n  \"authority\": \"elit quis\",\n  \"api_spec\": \"culpa enim sint aliqua\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/plugin-manager/register"
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "text",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "text/plain"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				},
+				{
+					"name": "Bad request.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": -65217,\n  \"name\": \"ut aliqua non\",\n  \"description\": \"minim consectetur dolore\",\n  \"logo\": \"id et sunt irure\",\n  \"authority\": \"elit quis\",\n  \"api_spec\": \"culpa enim sint aliqua\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/plugin-manager/register"
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n  \"code\": \"ut pariatur deserunt est\",\n  \"message\": \"quis\"\n}"
+				},
+				{
+					"name": "Not found.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": -65217,\n  \"name\": \"ut aliqua non\",\n  \"description\": \"minim consectetur dolore\",\n  \"logo\": \"id et sunt irure\",\n  \"authority\": \"elit quis\",\n  \"api_spec\": \"culpa enim sint aliqua\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/plugin-manager/register"
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n  \"code\": \"ut pariatur deserunt est\",\n  \"message\": \"quis\"\n}"
+				},
+				{
+					"name": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": -65217,\n  \"name\": \"ut aliqua non\",\n  \"description\": \"minim consectetur dolore\",\n  \"logo\": \"id et sunt irure\",\n  \"authority\": \"elit quis\",\n  \"api_spec\": \"culpa enim sint aliqua\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/plugin-manager/register"
+					},
+					"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+					"code": 422,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n  \"code\": \"ut pariatur deserunt est\",\n  \"message\": \"quis\"\n}"
+				},
+				{
+					"name": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": -65217,\n  \"name\": \"ut aliqua non\",\n  \"description\": \"minim consectetur dolore\",\n  \"logo\": \"id et sunt irure\",\n  \"authority\": \"elit quis\",\n  \"api_spec\": \"culpa enim sint aliqua\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/plugin-manager/register"
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n  \"code\": \"ut pariatur deserunt est\",\n  \"message\": \"quis\"\n}"
+				}
+			]
+		},
+		{
+			"name": "List plugins Copy",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://127.0.0.1/plugin-manager"
+			},
+			"response": []
+		},
+		{
+			"name": "Plugin info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://127.0.0.1/plugin-manager/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Remove hello world plugin",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://127.0.0.1/plugin-manager/1"
+			},
+			"response": []
+		}
+	]
+}

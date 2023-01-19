@@ -14,7 +14,6 @@ import (
 
 const fileModeUserRW = 0o600
 
-//nolint:nolintlint,ireturn
 func NewImport(walletStorage *sync.Map, app *fyne.App) operations.MgmtWalletImportHandler {
 	return &wImport{walletStorage: walletStorage, app: app}
 }
@@ -24,7 +23,6 @@ type wImport struct {
 	app           *fyne.App
 }
 
-//nolint:nolintlint,ireturn,funlen
 func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Responder {
 	password, walletName, privateKey, err := gui.AskWalletInfo(c.app)
 	if err != nil {
@@ -60,7 +58,6 @@ func (c *wImport) Handle(params operations.MgmtWalletImportParams) middleware.Re
 	return CreateNewWallet(&walletName, &password, c.walletStorage, newWallet)
 }
 
-//nolint:nolintlint,ireturn
 func NewWalletError(code string, message string) middleware.Responder {
 	return operations.NewMgmtWalletCreateInternalServerError().WithPayload(
 		&models.Error{

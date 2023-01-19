@@ -624,6 +624,370 @@ func init() {
         }
       }
     },
+    "/plugin-manager": {
+      "get": {
+        "operationId": "pluginManagerList",
+        "responses": {
+          "200": {
+            "description": "List all installed plugins.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "description": "Plugin description.",
+                    "type": "string",
+                    "x-nullable": false
+                  },
+                  "id": {
+                    "description": "Plugin identifier.",
+                    "type": "integer",
+                    "x-nullable": false
+                  },
+                  "logo": {
+                    "description": "Plugin logo.",
+                    "type": "string",
+                    "format": "byte",
+                    "x-nullable": false
+                  },
+                  "name": {
+                    "description": "Plugin name.",
+                    "type": "string",
+                    "x-nullable": false
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "pluginManagerInstall",
+        "parameters": [
+          {
+            "type": "string",
+            "format": "url",
+            "x-nullable": false,
+            "description": "URL from which to retrieve the plug-in.",
+            "name": "source",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Plugin successfully installed"
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/plugin-manager/register": {
+      "post": {
+        "operationId": "pluginManagerRegister",
+        "parameters": [
+          {
+            "x-nullable": false,
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "description",
+                "logo",
+                "authority",
+                "api-spec"
+              ],
+              "properties": {
+                "api_spec": {
+                  "description": "Plugin API specification",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "authority": {
+                  "description": "URL authority to use to connect to the plugin",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "description": {
+                  "description": "Plugin description.",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "id": {
+                  "description": "Plugin identifier.",
+                  "type": "integer",
+                  "x-nullable": false
+                },
+                "logo": {
+                  "description": "Plugin logo.",
+                  "type": "string",
+                  "format": "byte",
+                  "x-nullable": false
+                },
+                "name": {
+                  "description": "Plugin name.",
+                  "type": "string",
+                  "x-nullable": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Plugin successfully installed"
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/plugin-manager/{id}": {
+      "get": {
+        "operationId": "pluginManagerGetInformation",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Plugin identifier.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get execution information from the plugin.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "description": "Plugin status.",
+                  "type": "string",
+                  "enum": [
+                    "Starting",
+                    "Up",
+                    "Down",
+                    "ShuttingDown",
+                    "Crashed"
+                  ],
+                  "x-nullable": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "pluginManagerUninstall",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Plugin identifier.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Plugin successfuly remove from the system."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/plugin-manager/{id}/execute": {
+      "post": {
+        "operationId": "pluginManagerExecuteCommand",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Plugin unique identifier.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "x-nullable": false,
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "command"
+              ],
+              "properties": {
+                "command": {
+                  "description": "Command to execute.",
+                  "type": "string",
+                  "enum": [
+                    "update",
+                    "stop",
+                    "start",
+                    "restart"
+                  ],
+                  "x-nullable": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Command successfuly executed."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/events/{str}/{caller}": {
       "get": {
         "produces": [
@@ -1672,6 +2036,347 @@ func init() {
         }
       }
     },
+    "/plugin-manager": {
+      "get": {
+        "operationId": "pluginManagerList",
+        "responses": {
+          "200": {
+            "description": "List all installed plugins.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PluginManagerListOKBodyItems0"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "pluginManagerInstall",
+        "parameters": [
+          {
+            "type": "string",
+            "format": "url",
+            "x-nullable": false,
+            "description": "URL from which to retrieve the plug-in.",
+            "name": "source",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Plugin successfully installed"
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/plugin-manager/register": {
+      "post": {
+        "operationId": "pluginManagerRegister",
+        "parameters": [
+          {
+            "x-nullable": false,
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "description",
+                "logo",
+                "authority",
+                "api-spec"
+              ],
+              "properties": {
+                "api_spec": {
+                  "description": "Plugin API specification",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "authority": {
+                  "description": "URL authority to use to connect to the plugin",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "description": {
+                  "description": "Plugin description.",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "id": {
+                  "description": "Plugin identifier.",
+                  "type": "integer",
+                  "x-nullable": false
+                },
+                "logo": {
+                  "description": "Plugin logo.",
+                  "type": "string",
+                  "format": "byte",
+                  "x-nullable": false
+                },
+                "name": {
+                  "description": "Plugin name.",
+                  "type": "string",
+                  "x-nullable": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Plugin successfully installed"
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/plugin-manager/{id}": {
+      "get": {
+        "operationId": "pluginManagerGetInformation",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Plugin identifier.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get execution information from the plugin.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "description": "Plugin status.",
+                  "type": "string",
+                  "enum": [
+                    "Starting",
+                    "Up",
+                    "Down",
+                    "ShuttingDown",
+                    "Crashed"
+                  ],
+                  "x-nullable": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "pluginManagerUninstall",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Plugin identifier.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Plugin successfuly remove from the system."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/plugin-manager/{id}/execute": {
+      "post": {
+        "operationId": "pluginManagerExecuteCommand",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Plugin unique identifier.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "x-nullable": false,
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "command"
+              ],
+              "properties": {
+                "command": {
+                  "description": "Command to execute.",
+                  "type": "string",
+                  "enum": [
+                    "update",
+                    "stop",
+                    "start",
+                    "restart"
+                  ],
+                  "x-nullable": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Command successfuly executed."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/events/{str}/{caller}": {
       "get": {
         "produces": [
@@ -2102,6 +2807,32 @@ func init() {
         "port": {
           "description": "Plugin's port.",
           "type": "integer"
+        }
+      }
+    },
+    "PluginManagerListOKBodyItems0": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Plugin description.",
+          "type": "string",
+          "x-nullable": false
+        },
+        "id": {
+          "description": "Plugin identifier.",
+          "type": "integer",
+          "x-nullable": false
+        },
+        "logo": {
+          "description": "Plugin logo.",
+          "type": "string",
+          "format": "byte",
+          "x-nullable": false
+        },
+        "name": {
+          "description": "Plugin name.",
+          "type": "string",
+          "x-nullable": false
         }
       }
     },

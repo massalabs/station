@@ -23,7 +23,6 @@ const (
 	secondsToMilliCoeff = 1000
 )
 
-//nolint:nolintlint,ireturn
 func RegistryHandler(params operations.AllDomainsGetterParams) middleware.Responder {
 	client := node.NewDefaultClient()
 

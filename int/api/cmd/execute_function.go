@@ -20,7 +20,6 @@ func CreateExecuteFunctionHandler(app *fyne.App) func(params operations.CmdExecu
 	}
 }
 
-//nolint:nolintlint,ireturn
 func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyne.App) middleware.Responder {
 	addr, err := base58.CheckDecode(params.Body.At[1:])
 	if err != nil {
@@ -80,7 +79,6 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyn
 	return operations.NewCmdExecuteFunctionOK().WithPayload(operationID)
 }
 
-// nolint:nolintlint,ireturn
 func createInternalServerError(errorCode string, errorMessage string) middleware.Responder {
 	return operations.NewCmdExecuteFunctionInternalServerError().
 		WithPayload(

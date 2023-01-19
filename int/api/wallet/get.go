@@ -12,7 +12,6 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-//nolint:nolintlint,ireturn
 func NewGet(walletStorage *sync.Map) operations.MgmtWalletGetHandler {
 	return &walletGet{walletStorage: walletStorage}
 }
@@ -21,7 +20,6 @@ type walletGet struct {
 	walletStorage *sync.Map
 }
 
-//nolint:nolintlint,ireturn
 func (c *walletGet) Handle(params operations.MgmtWalletGetParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
