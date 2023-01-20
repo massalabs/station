@@ -9,11 +9,14 @@ import {
     QueryClient,
     QueryClientProvider,
 } from "react-query";
+import { BrowserRouter, createBrowserRouter, RouterProvider } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
-        <QueryClientProvider client={new QueryClient()}>
-            <App />
-        </QueryClientProvider>
+        <BrowserRouter>
+            <QueryClientProvider client={new QueryClient()}>
+                <App />
+            </QueryClientProvider>
+        </BrowserRouter>
     </React.StrictMode>
 );
