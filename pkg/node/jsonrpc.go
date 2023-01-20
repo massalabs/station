@@ -9,8 +9,6 @@ import (
 	"github.com/ybbus/jsonrpc/v3"
 )
 
-const InnoNetServer = "https://inno.massa.net/test13" // current version of the InnoNet
-
 type withLoggingRoundTripper struct {
 	isEnabled        bool
 	showResponseBody bool
@@ -49,9 +47,6 @@ type Client struct {
 
 func NewDefaultClient() *Client {
 	defaultServer := os.Getenv("MASSA_NODE_URL")
-	if defaultServer == "" {
-		defaultServer = InnoNetServer
-	}
 
 	return NewClient(defaultServer)
 }

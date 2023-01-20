@@ -1,4 +1,4 @@
-package ledger
+package node
 
 import (
 	"bytes"
@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/massalabs/thyra/pkg/convert"
-	"github.com/massalabs/thyra/pkg/node"
 )
 
 type Address struct {
@@ -20,20 +19,7 @@ type Address struct {
 	FinalDatastoreKeys     [][]byte `json:"final_datastore_keys"`
 }
 
-type JSONableSlice []uint8
-
-func (u JSONableSlice) MarshalJSON() ([]byte, error) {
-	var result string
-	if u == nil {
-		result = "null"
-	} else {
-		result = strings.Join(strings.Fields(fmt.Sprintf("%d", u)), ",")
-	}
-
-	return []byte(result), nil
-}
-
-func Addresses(client *node.Client, addr []string) ([]Address, error) {
+func Addresses(client *Client, addr []string) ([]Address, error) {
 	response, err := client.RPCClient.Call(
 		context.Background(),
 		"get_addresses",
@@ -63,7 +49,7 @@ func Addresses(client *node.Client, addr []string) ([]Address, error) {
 // If includePrefix is false, will return all the keys without the given prefix.
 
 //nolint:lll
-func FilterSCKeysByPrefix(client *node.Client, scAddress string, keyPrefix string, includePrefix bool) ([][]byte, error) {
+func FilterSCKeysByPrefix(client *Client, scAddress string, keyPrefix string, includePrefix bool) ([][]byte, error) {
 	results, err := Addresses(client, []string{scAddress})
 	if err != nil {
 		return nil, fmt.Errorf("calling get_addresses with '%+v': %w", scAddress, err)

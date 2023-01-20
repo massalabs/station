@@ -11,7 +11,6 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/node/ledger"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
 )
 
@@ -93,7 +92,7 @@ we only want to keep the website names keys.
 */
 func filterEntriesToDisplay(client *node.Client) ([][]byte, error) {
 	// we first remove the owned type keys
-	keyList, err := ledger.FilterSCKeysByPrefix(client, dns.Address(), ownedPrefix, false)
+	keyList, err := node.FilterSCKeysByPrefix(client, dns.Address(), ownedPrefix, false)
 	if err != nil {
 		return nil, fmt.Errorf("fetching all keys without '%s' prefix at '%s': %w", ownedPrefix, dns.Address(), err)
 	}
@@ -115,7 +114,7 @@ func filterEntriesToDisplay(client *node.Client) ([][]byte, error) {
 	// we encode the list as a slice of byteArray
 	keyListToRemoveAsArrayOfByteArray := convert.StringArrayToArrayOfByteArray(keyListToRemove)
 
-	websiteNames := ledger.RemoveKeysFromKeyList(keyList, keyListToRemoveAsArrayOfByteArray)
+	websiteNames := node.RemoveKeysFromKeyList(keyList, keyListToRemoveAsArrayOfByteArray)
 
 	return websiteNames, nil
 }
