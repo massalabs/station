@@ -10,6 +10,7 @@ type GetBalanceOfResponse struct {
 	FinalBalance     float64
 }
 
+// GetBalanceOf returns as a float64 the candidate balance and final balance of an address
 func GetBalanceOf(client *Client, walletAddress string) (*GetBalanceOfResponse, error) {
 	addressDetails, err := Addresses(client, []string{walletAddress})
 	if err != nil {
