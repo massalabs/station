@@ -47,8 +47,6 @@ func Addresses(client *Client, addr []string) ([]Address, error) {
 // If includePrefix is true, will return all the keys with the given prefix,
 
 // If includePrefix is false, will return all the keys without the given prefix.
-
-//nolint:lll
 func FilterSCKeysByPrefix(client *Client, scAddress string, keyPrefix string, includePrefix bool) ([][]byte, error) {
 	results, err := Addresses(client, []string{scAddress})
 	if err != nil {
