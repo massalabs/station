@@ -5,12 +5,12 @@ import (
 	"strconv"
 )
 
-type GetBalanceResponse struct {
+type GetBalanceOfResponse struct {
 	CandidateBalance float64
 	FinalBalance     float64
 }
 
-func GetBalanceOf(client *Client, walletAddress string) (*GetBalanceResponse, error) {
+func GetBalanceOf(client *Client, walletAddress string) (*GetBalanceOfResponse, error) {
 	addressDetails, err := Addresses(client, []string{walletAddress})
 	if err != nil {
 		return nil, fmt.Errorf("calling get_addresses :%w", err)
@@ -26,5 +26,5 @@ func GetBalanceOf(client *Client, walletAddress string) (*GetBalanceResponse, er
 		return nil, fmt.Errorf("converting string to float :%w", err)
 	}
 
-	return &GetBalanceResponse{CandidateBalance: candidateBalance, FinalBalance: finalBalance}, nil
+	return &GetBalanceOfResponse{CandidateBalance: candidateBalance, FinalBalance: finalBalance}, nil
 }
