@@ -13,10 +13,15 @@ func InitializePluginAPI(api *operations.ThyraServerAPI) {
 	api.PluginManagerListHandler = newList(manager)
 	api.PluginManagerRegisterHandler = newRegister(manager)
 	api.PluginManagerUninstallHandler = newUninstall(manager)
+
+	// This endpoint is not defined by the go-swagger API.
+	plugin.Handler = *plugin.NewAPIPHandler(manager)
 }
 
 const (
 	errorCodePluginUnknown = "Plugin-0001"
 
 	errorCodePluginInstallationInvalidSource = "Plugin-0010"
+
+	errorCodePluginRegisterInvalidData = "Plugin-0020"
 )

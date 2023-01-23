@@ -1,7 +1,11 @@
 package myplugin
 
 import (
+	"fmt"
+	"net/url"
+
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/plugin"
 )
@@ -20,13 +24,26 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 		return operations.NewPluginManagerRegisterNotFound()
 	}
 
+	urlPlugin, err := url.Parse(param.Body.URL)
+	if err != nil {
+		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
+			&models.Error{Code: errorCodePluginRegisterInvalidData, Message: fmt.Sprintf("parsing URL: %s", err.Error())},
+		)
+	}
+
+	// Set plugin information.
 	info := plugin.Information{
-		Name: param.Body.Name, Description: param.Body.Description,
-		Logo:      param.Body.Logo,
-		Authority: param.Body.Authority, APISpec: param.Body.APISpec,
+		Name: param.Body.Name, Author: param.Body.Author,
+		Description: param.Body.Description,
+		Logo:        param.Body.Logo,
+		URL:         urlPlugin, APISpec: param.Body.APISpec,
 	}
 
 	wantedPlugin.SetInformation(&info)
+
+	// Add alias for http requests.
+	alias := fmt.Sprintf("%s/%s", param.Body.Author, param.Body.Name)
+	r.manager.SetAlias(alias, param.Body.ID)
 
 	return operations.NewPluginManagerRegisterNoContent()
 }
