@@ -4,19 +4,10 @@
 * [Step by step instructions](#step-by-step-instructions)
   * [MacOS](#macos)
     * [Automatically](#automatically)
-    * [Manually](#manually)
-      * [Thyra installation](#thyra-installation)
-      * [DNS installation](#dns-installation)
   * [Linux](#linux)
     * [Automatically](#automatically)
-    * [Manually](#manually)
-      * [Thyra installation](#thyra-installation-1)
-      * [DNS installation](#dns-installation-1)
   * [Windows](#windows)
     * [Automatically](#automatically)
-    * [Manually](#manually)
-      * [Thyra installation](#thyra-installation-2)
-      * [DNS installation](#dns-installation-2)
 
 ## Introduction
 
