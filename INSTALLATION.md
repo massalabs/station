@@ -3,20 +3,8 @@
 * [Introduction](#introduction)
 * [Step by step instructions](#step-by-step-instructions)
   * [MacOS](#macos)
-    * [Automatically](#automatically)
-    * [Manually](#manually)
-      * [Thyra installation](#thyra-installation)
-      * [DNS installation](#dns-installation)
   * [Linux](#linux)
-    * [Automatically](#automatically)
-    * [Manually](#manually)
-      * [Thyra installation](#thyra-installation-1)
-      * [DNS installation](#dns-installation-1)
   * [Windows](#windows)
-    * [Automatically](#automatically)
-    * [Manually](#manually)
-      * [Thyra installation](#thyra-installation-2)
-      * [DNS installation](#dns-installation-2)
 
 ## Introduction
 
@@ -78,11 +66,11 @@ If you want to get down to business, you can start your [Massalian journey](http
 ### Windows
 
 
-Follow [this link](https://github.com/massalabs/Thyra-Menu-Bar-App/releases/tag/v0.0.1) and download the file named "ThyraApp_windows-amd64.exe" on your computer. Then: 
+Follow [this link](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer.exe) to download the Thyra installer on your computer. Then:
 1. Open it by double clicking
-2. The script starts and here is what it does:
-  * If you have Thyra already installed on your computer, it installs Thyra's icon tray.
-  * If nothing is installed on your computer yet, it will install both.
+2. The installer will:
+  * Check if you have the latest version of Thyra and install it if not.
+  * Check if you have the latest version of ThyraApp and install it if not.
 
 ![windows_icontray_V0](https://user-images.githubusercontent.com/109611779/212294116-05e1dd37-ed3f-4e3e-b034-b02d782bc4ee.png)
 
