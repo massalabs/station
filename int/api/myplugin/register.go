@@ -32,6 +32,7 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 	}
 
 	// Set plugin information.
+
 	info := plugin.Information{
 		Name: param.Body.Name, Author: param.Body.Author,
 		Description: param.Body.Description,
@@ -42,6 +43,7 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 	wantedPlugin.SetInformation(&info)
 
 	// Add alias for http requests.
+
 	alias := fmt.Sprintf("%s/%s", param.Body.Author, param.Body.Name)
 
 	err = r.manager.SetAlias(alias, param.Body.ID)

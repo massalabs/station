@@ -64,7 +64,7 @@ func (m *Manager) ID() []int64 {
 }
 
 // SetAlias adds an alias to an existing plugin.
-// Alias can be defined during plugin register once the name and author of the plugin can be find.
+// Alias can be defined during plugin register once the name and author of the plugin can be found.
 //
 //nolint:varnamelen
 func (m *Manager) SetAlias(name string, id int64) error {

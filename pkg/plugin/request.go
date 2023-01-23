@@ -37,6 +37,23 @@ var Handler APIHandler
 
 const endpointPattern = "/thyra/plugin/"
 
+type endpointContent struct {
+	pluginAuthor string
+	pluginName   string
+	subURI       string
+}
+
+func splitEndpoint(uri string) *endpointContent {
+	// ["", "thyra", "plugin", "{author-name}", "{plugin-name}", ...]
+	exploded := strings.Split(uri, "/")
+
+	return &endpointContent{
+		pluginAuthor: exploded[3],
+		pluginName:   exploded[4],
+		subURI:       "/" + strings.Join(exploded[5:], "/"),
+	}
+}
+
 // Interceptor intercepts requests for plugins.
 // The endpoint is expected to have the following structure:
 // /thyra/plugin/{author-name}/{plugin-name}/{plugin-endpoint}...
@@ -49,18 +66,16 @@ func Interceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
 	indexPluginEndpoint := strings.Index(req.Request.RequestURI, endpointPattern)
 
 	if isMyMassa && indexPluginEndpoint > -1 {
-		indexAuthorName := indexPluginEndpoint + len(endpointPattern)
-		indexPluginName := indexAuthorName + strings.Index(req.Request.RequestURI[indexAuthorName:], "/") + 1
-		indexPluginEndpoint := indexPluginName + strings.Index(req.Request.RequestURI[indexPluginName:], "/") + 1
+		endpoint := splitEndpoint(req.Request.RequestURI)
 
-		authorName, err := url.QueryUnescape(req.Request.RequestURI[indexAuthorName : indexPluginName-1])
+		authorName, err := url.QueryUnescape(endpoint.pluginAuthor)
 		if err != nil {
 			log.Fatal(err)
 
 			return nil
 		}
 
-		pluginName, err := url.QueryUnescape(req.Request.RequestURI[indexPluginName : indexPluginEndpoint-1])
+		pluginName, err := url.QueryUnescape(endpoint.pluginName)
 		if err != nil {
 			log.Fatal(err)
 
@@ -83,27 +98,20 @@ func Interceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
 func modifyRequest(req *http.Request) {
 	urlExternal := req.URL.String()
 
-	endpointPatternLength := len(endpointPattern)
-
 	// the url has the following format:
 	// 		http://127.0.0.1:1234/thyra/plugin/massalabs/hello%20world/web/index.html?name=Massalabs
 	// The idea is to rewrite url to remove: /thyra/plugin/massalabs/hello%20world
-	// prefixBegin is for the first slash.
-	// indexPluginName is for the first char after the slash after massalabs
-	// prefixEnd is for slash after hello%20world
-	prefixBegin := strings.Index(urlExternal, endpointPattern)
 
-	indexPluginName := prefixBegin + endpointPatternLength +
-		strings.Index(urlExternal[prefixBegin+endpointPatternLength:], "/") + 1
+	index := strings.Index(urlExternal, endpointPattern)
 
-	prefixEnd := indexPluginName + strings.Index(urlExternal[indexPluginName:], "/")
+	endpoint := splitEndpoint(urlExternal[index:])
 
-	urlRewritten := urlExternal[:prefixBegin] + urlExternal[prefixEnd:]
+	urlRewritten := urlExternal[:index] + endpoint.subURI
 
-	newURL, err := url.Parse(urlRewritten)
+	urlNew, err := url.Parse(urlRewritten)
 	if err != nil {
 		panic(err)
 	}
 
-	req.URL = newURL
+	req.URL = urlNew
 }

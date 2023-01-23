@@ -20,7 +20,7 @@ func TopMiddleware(handler http.Handler) http.Handler {
 		req := website.RedirectToDefaultResourceInterceptor(
 			plugin.Interceptor(
 				website.MassaTLDInterceptor(&interceptor.Interceptor{Writer: w, Request: r}))) //nolint:contextcheck
-		// if the request was not handled by any interceptor, let the swagger API takes car of it.
+		// if the request was not handled by any interceptor, let the swagger API takes care of it.
 		if req != nil {
 			handler.ServeHTTP(w, r)
 		}
