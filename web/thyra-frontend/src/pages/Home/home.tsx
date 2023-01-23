@@ -4,7 +4,8 @@ import massaLogoLight from "../../assets/MASSA_LIGHT_Detailed.png";
 import massaLogomark from "../../assets/massa_logomark_detailed.png";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import gearingLogo from "../../assets/gearing.png";
-import { Link } from "react-router-dom";
+import { Link, Route, Routes } from "react-router-dom";
+import Manager from "../Plugin_Manager/manager";
 type Props = {};
 
 /**
@@ -23,8 +24,9 @@ function Home({}: Props) {
                 "Content-Type": "application/json",
             },
         };
-        const res = await fetch("https://localhost/plugin-manager", init);
-        console.log(res.json());
+        const res = await fetch("https://my.massa/thyra/plugin-manager", init);
+        //To delete when Api is merged.
+        console.log(res.json())
         return res.json();
     };
     const { isLoading, data, error, isError } = useQuery("plugins", getPlugins);
@@ -69,7 +71,7 @@ function Home({}: Props) {
         return (
             <button className="flex flex-wrap rounded-lg p-5 m-5" key={plugin.name}>
                 {/* Uncomment when url is ready */}
-                {/* <a href={`http://localhost/${plugin.name}`} target="_blank"> */}
+                {/* <a href={`https://localhost/${plugin.authorname}/${plugin.name}`} target="_blank"> */}
                 <div className="mx-auto">
                     <div className="tooltip" data-tip={plugin.description}>
                         <img className="w-9 h-9 self-center bg-slate-800" src={massaLogomark}></img>
@@ -109,15 +111,15 @@ function Home({}: Props) {
                 {pluginList}
             </div>
             <div className="mx-auto">
-                <Link to="/manager">
-                <link className="" href="../Plugin_Manager/manager.tsx"/>
-                    <img
-                        className="max-w-9 max-h-9 mx-auto block mb-2"
-                        src={gearingLogo}
-                        alt="Gearing Logo"
-                    />
-                    <p className="text-center text-m font text-white">Plugin Manager</p>                
-                    </Link>
+                <Link to="/thyra/manager">
+                    <link className="" href="../Plugin_Manager/manager.tsx"/>
+                        <img
+                            className="max-w-9 max-h-9 mx-auto block mb-2"
+                            src={gearingLogo}
+                            alt="Gearing Logo"
+                        />
+                        <p className="text-center text-m font text-white">Plugin Manager</p>                
+                </Link>
             </div>
         </div>
     );

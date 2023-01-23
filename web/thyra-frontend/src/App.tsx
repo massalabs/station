@@ -6,10 +6,7 @@ import Manager from "./pages/Plugin_Manager/manager";
 function App() {
     return (
         <div className="min-h-screen bg-slate-900">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/manager" element={<Manager/>} />
-          </Routes>
+            <Home/>
         </div>
     );
 }
