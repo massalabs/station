@@ -69,7 +69,7 @@ function Home({}: Props) {
         return (
             <button className="flex flex-wrap rounded-lg p-5 m-5" key={plugin.name}>
                 {/* Uncomment when url is ready */}
-                {/* <a href={`http://localhost:3000/${plugin.name}`} target="_blank"> */}
+                {/* <a href={`http://localhost/${plugin.name}`} target="_blank"> */}
                 <div className="mx-auto">
                     <div className="tooltip" data-tip={plugin.description}>
                         <img className="w-9 h-9 self-center bg-slate-800" src={massaLogomark}></img>
