@@ -7,5 +7,4 @@ tmp/
 # IDE
 .idea
 
-/int/api/dist
 /plugins/
