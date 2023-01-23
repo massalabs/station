@@ -7,6 +7,7 @@ MKCERT_URL_ARM="https://dl.filippo.io/mkcert/latest?for=darwin/arm64"
 MKCERT_URL_AMD="https://dl.filippo.io/mkcert/latest?for=darwin/amd64"
 
 THYRA_CONF_DIR=$HOME/.config/thyra
+THYRA_PLUGINS_DIR=$THYRA_CONF_DIR/plugins
 
 green () { echo -e "\033[01;32m$1:\033[0m $2"; }
 
@@ -30,6 +31,9 @@ install_thyra () {
 
     # Create config dir
     mkdir -p $THYRA_CONF_DIR
+
+    # Create plugins dir
+    mkdir -p $THYRA_PLUGINS_DIR
 }
 
 configure_start_dnsmasq () {
