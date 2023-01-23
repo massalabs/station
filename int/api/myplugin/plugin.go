@@ -23,5 +23,6 @@ const (
 
 	errorCodePluginInstallationInvalidSource = "Plugin-0010"
 
+	errorCodePluginRegisterUnknown     = "Plugin-0020"
 	errorCodePluginRegisterInvalidData = "Plugin-0020"
 )

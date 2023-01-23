@@ -65,17 +65,19 @@ func (m *Manager) ID() []int64 {
 
 // SetAlias adds an alias to an existing plugin.
 // Alias can be defined during plugin register once the name and author of the plugin can be find.
+//
+//nolint:varnamelen
 func (m *Manager) SetAlias(name string, id int64) error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
 	if m.plugins[id] == nil {
-		return fmt.Errorf("while setting alias for %s: no plugin matching the given id %d.", name, id)
+		return fmt.Errorf("while setting alias for %s: no plugin matching the given id %d", name, id)
 	}
 
 	_, exist := m.authorNameToID[name]
 	if exist {
-		return fmt.Errorf("while setting alias for %s: a plugin with the same alias already exists.", name)
+		return fmt.Errorf("while setting alias for %s: a plugin with the same alias already exists", name)
 	}
 
 	m.authorNameToID[name] = id
@@ -125,6 +127,7 @@ func (m *Manager) Delete(id int64) error {
 // correlationID generate a unique correlation id.
 func (m *Manager) correlationID() int64 {
 	for {
+		//nolint:varnamelen
 		id := int64(weakRand.Int())
 
 		_, exist := m.plugins[id]
@@ -138,6 +141,7 @@ func (m *Manager) correlationID() int64 {
 
 // Run starts new plugin and adds it to manager.
 func (m *Manager) Run(file string) error {
+	//nolint:varnamelen
 	id := m.correlationID()
 
 	plugin, err := New(file, id)

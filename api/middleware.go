@@ -14,6 +14,7 @@ import (
 // - Plugin interceptor to handle call to registered plugins
 // - Default resource interceptor to handle browser call (needed for mobile?) and web resources not yet pluginized.
 func TopMiddleware(handler http.Handler) http.Handler {
+	//nolint:varnamelen
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Goes through all local interceptors.
 		req := website.RedirectToDefaultResourceInterceptor(

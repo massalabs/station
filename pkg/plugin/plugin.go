@@ -106,7 +106,7 @@ func New(path string, id int64) (*Plugin, error) {
 	//nolint:exhaustruct
 	plgn := &Plugin{status: Starting}
 
-	plgn.command = exec.Command(path, strconv.FormatInt(id, 10))
+	plgn.command = exec.Command(path, strconv.FormatInt(id, 10)) // #nosec G204
 
 	pipe, err := plgn.command.StdoutPipe()
 	if err != nil {

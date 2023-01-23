@@ -32,6 +32,7 @@ func (h *APIHandler) Handle(writer http.ResponseWriter, reader *http.Request, pl
 	plugin.ReverseProxy().ServeHTTP(writer, reader)
 }
 
+//nolint:gochecknoglobals
 var Handler APIHandler
 
 const endpointPattern = "/thyra/plugin/"

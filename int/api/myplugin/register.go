@@ -43,7 +43,13 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 
 	// Add alias for http requests.
 	alias := fmt.Sprintf("%s/%s", param.Body.Author, param.Body.Name)
-	r.manager.SetAlias(alias, param.Body.ID)
+
+	err = r.manager.SetAlias(alias, param.Body.ID)
+	if err != nil {
+		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
+			&models.Error{Code: errorCodePluginRegisterUnknown, Message: fmt.Sprintf("setting alias: %s", err.Error())},
+		)
+	}
 
 	return operations.NewPluginManagerRegisterNoContent()
 }
