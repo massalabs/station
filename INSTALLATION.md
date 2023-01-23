@@ -3,11 +3,8 @@
 * [Introduction](#introduction)
 * [Step by step instructions](#step-by-step-instructions)
   * [MacOS](#macos)
-    * [Automatically](#automatically)
   * [Linux](#linux)
-    * [Automatically](#automatically)
   * [Windows](#windows)
-    * [Automatically](#automatically)
 
 ## Introduction
 
