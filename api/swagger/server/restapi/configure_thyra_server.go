@@ -10,9 +10,9 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/massalabs/thyra/api"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/certificate"
-	"github.com/massalabs/thyra/pkg/onchain/website"
 	"github.com/rs/cors"
 )
 
@@ -83,5 +83,5 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	handleCORS := cors.Default().Handler
 
-	return website.TopMiddleware(handleCORS(handler))
+	return api.TopMiddleware(handleCORS(handler))
 }

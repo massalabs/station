@@ -3,11 +3,13 @@ package plugin
 import (
 	"errors"
 	"fmt"
+	weakRand "math/rand"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/cavaliergopher/grab/v3"
 	"github.com/massalabs/thyra/pkg/config"
@@ -31,16 +33,20 @@ func Directory() string {
 	return pluginsDir
 }
 
+// Manager manages different plugins.
+// plugins key is a plugin map storage using the author name and the plugin name as key.
+// correlationID is an identifier used to recognize the plugin when it register.
 type Manager struct {
-	plugins map[int64]*Plugin
-	mutex   sync.RWMutex
-	id      int64
+	mutex          sync.RWMutex
+	plugins        map[int64]*Plugin
+	authorNameToID map[string]int64
 }
 
 // NewManager instantiates a manager struct.
 func NewManager() *Manager {
+	weakRand.Seed(time.Now().Unix())
 	//nolint:exhaustruct
-	return &Manager{plugins: make(map[int64]*Plugin), id: 0}
+	return &Manager{plugins: make(map[int64]*Plugin), authorNameToID: make(map[string]int64)}
 }
 
 // ID returns the list of all the plugin id.
@@ -55,6 +61,38 @@ func (m *Manager) ID() []int64 {
 	}
 
 	return keys
+}
+
+// SetAlias adds an alias to an existing plugin.
+// Alias can be defined during plugin register once the name and author of the plugin can be found.
+//
+//nolint:varnamelen
+func (m *Manager) SetAlias(name string, id int64) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	if m.plugins[id] == nil {
+		return fmt.Errorf("while setting alias for %s: no plugin matching the given id %d", name, id)
+	}
+
+	_, exist := m.authorNameToID[name]
+	if exist {
+		return fmt.Errorf("while setting alias for %s: a plugin with the same alias already exists", name)
+	}
+
+	m.authorNameToID[name] = id
+
+	return nil
+}
+
+// PluginByAlias returns a plugin from the manager using an alias.
+func (m *Manager) PluginByAlias(alias string) *Plugin {
+	id, exist := m.authorNameToID[alias]
+	if exist {
+		return m.Plugin(id)
+	}
+
+	return nil
 }
 
 // Plugin returns a plugin from the manager.
@@ -86,16 +124,33 @@ func (m *Manager) Delete(id int64) error {
 	return plgn.Kill()
 }
 
+// correlationID generate a unique correlation id.
+func (m *Manager) correlationID() int64 {
+	for {
+		//nolint:varnamelen
+		id := int64(weakRand.Int())
+
+		_, exist := m.plugins[id]
+		if exist {
+			continue
+		}
+
+		return id
+	}
+}
+
 // Run starts new plugin and adds it to manager.
 func (m *Manager) Run(file string) error {
-	plugin, err := New(file)
+	//nolint:varnamelen
+	id := m.correlationID()
+
+	plugin, err := New(file, id)
 	if err != nil {
 		return err
 	}
 
 	m.mutex.Lock()
-	m.id++
-	m.plugins[m.id] = plugin
+	m.plugins[id] = plugin
 	m.mutex.Unlock()
 
 	return nil

@@ -68,9 +68,9 @@ type PluginManagerRegisterBody struct {
 	// Plugin API specification
 	APISpec string `json:"api_spec,omitempty"`
 
-	// URL authority to use to connect to the plugin
+	// Plugin author.
 	// Required: true
-	Authority string `json:"authority"`
+	Author string `json:"author"`
 
 	// Plugin description.
 	// Required: true
@@ -88,13 +88,17 @@ type PluginManagerRegisterBody struct {
 	// Plugin name.
 	// Required: true
 	Name string `json:"name"`
+
+	// URL authority to use to connect to the plugin
+	// Required: true
+	URL string `json:"url"`
 }
 
 // Validate validates this plugin manager register body
 func (o *PluginManagerRegisterBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := o.validateAuthority(formats); err != nil {
+	if err := o.validateAuthor(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -114,15 +118,19 @@ func (o *PluginManagerRegisterBody) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := o.validateURL(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
 }
 
-func (o *PluginManagerRegisterBody) validateAuthority(formats strfmt.Registry) error {
+func (o *PluginManagerRegisterBody) validateAuthor(formats strfmt.Registry) error {
 
-	if err := validate.RequiredString("body"+"."+"authority", "body", o.Authority); err != nil {
+	if err := validate.RequiredString("body"+"."+"author", "body", o.Author); err != nil {
 		return err
 	}
 
@@ -159,6 +167,15 @@ func (o *PluginManagerRegisterBody) validateLogo(formats strfmt.Registry) error 
 func (o *PluginManagerRegisterBody) validateName(formats strfmt.Registry) error {
 
 	if err := validate.RequiredString("body"+"."+"name", "body", o.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *PluginManagerRegisterBody) validateURL(formats strfmt.Registry) error {
+
+	if err := validate.RequiredString("body"+"."+"url", "body", o.URL); err != nil {
 		return err
 	}
 
