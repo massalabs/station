@@ -111,8 +111,8 @@ function Home({}: Props) {
                 {pluginList}
             </div>
             <div className="mx-auto">
+                {/* Will change when manager page is done */}
                 <Link to="/thyra/manager">
-                    <link className="" href="../Plugin_Manager/manager.tsx"/>
                         <img
                             className="max-w-9 max-h-9 mx-auto block mb-2"
                             src={gearingLogo}
