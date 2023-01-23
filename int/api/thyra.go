@@ -18,8 +18,8 @@ const basePathReact = "dist/"
 //go:embed html/front
 var content embed.FS
 
-//nolint:typecheck
 //go:embed dist
+//nolint:typecheck
 var contentReact embed.FS
 
 //nolint:nolintlint,ireturn
