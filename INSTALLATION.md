@@ -33,7 +33,7 @@ Two steps are required to use our web on-chain product:
 * Thyra installation : obtain the Thyra binary corresponding to your operating system (OS), rename it and make it executable.
 * DNS configuration : install and configure your DNS to resolve the massa top level domain (*.massa) where Thyra runs.
 
-The following installation guide allows you to perform these steps automatically using a simply script to run on your terminal.
+The following installation guide allows you to perform these steps automatically using a simple script to run on your terminal.
 
 Now, let's move on to your OS section:
 
