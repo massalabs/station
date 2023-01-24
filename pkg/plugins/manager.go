@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -17,6 +16,7 @@ import (
 
 	"github.com/go-cmd/cmd"
 	"github.com/massalabs/thyra/pkg/config"
+	"github.com/xyproto/unzip"
 )
 
 const (
@@ -237,9 +237,9 @@ func (manager *PluginManager) InstallNodeManager() error {
 		return fmt.Errorf("downloading plugin: %w", err)
 	}
 
-	err = unzip(zipPath, pluginDir)
+	err = unzip.Extract(zipPath, pluginDir)
 	if err != nil {
-		return err
+		return fmt.Errorf("extracting the plugin at %s: %w", zipPath, err)
 	}
 
 	err = os.Remove(zipPath)
@@ -275,18 +275,6 @@ func (manager *PluginManager) InstallNodeManager() error {
 
 	plugin.stopChannel = make(chan bool)
 	manager.plugins = append(manager.plugins, plugin)
-
-	return nil
-}
-
-func unzip(zipPath string, pluginDir string) error {
-	cmd := exec.Command("tar", "-xf", zipPath, "-C", pluginDir)
-	cmd.Stderr = os.Stderr
-
-	err := cmd.Run()
-	if err != nil {
-		return fmt.Errorf("unzipping plugin '%s': %w", zipPath, err)
-	}
 
 	return nil
 }
