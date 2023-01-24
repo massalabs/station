@@ -1,0 +1,10 @@
+wallet_*.json
+*.exe
+
+# air temporary directory
+tmp/
+
+# IDE
+.idea
+**/node_modules/*
+/plugins/
