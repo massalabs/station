@@ -1,18 +1,14 @@
-import React from "react";
 import thyraLogo from "../../assets/ThyraLogo-V0-Detailed.png";
 import massaLogoLight from "../../assets/MASSA_LIGHT_Detailed.png";
 import massaLogomark from "../../assets/massa_logomark_detailed.png";
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import gearingLogo from "../../assets/gearing.png";
-import { Link, Route, Routes } from "react-router-dom";
-import Manager from "../Plugin_Manager/manager";
-type Props = {};
 
 /**
  * Homepage of Thyra with a list of plugins installed
  *
  */
-function Home({}: Props) {
+function Home() {
     // Fetch plugins installed by calling get /plugin/manager
 
     // List of plugins
@@ -112,14 +108,12 @@ function Home({}: Props) {
             </div>
             <div className="mx-auto">
                 {/* Will change when manager page is done */}
-                <Link to="/thyra/manager">
                         <img
                             className="max-w-9 max-h-9 mx-auto block mb-2"
                             src={gearingLogo}
                             alt="Gearing Logo"
                         />
                         <p className="text-center text-m font text-white">Plugin Manager</p>                
-                </Link>
             </div>
         </div>
     );
