@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import thyraLogo from "../../assets/ThyraLogo-V0-Detailed.png";
 import massaLogoLight from "../../assets/MASSA_LIGHT_Detailed.png";
 import massaLogomark from "../../assets/massa_logomark_detailed.png";
