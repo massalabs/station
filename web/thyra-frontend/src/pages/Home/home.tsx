@@ -24,7 +24,7 @@ function Home({}: Props) {
                 "Content-Type": "application/json",
             },
         };
-        const res = await fetch("https://my.massa/thyra/plugin-manager", init);
+        const res = await fetch(`//${window.location.hostname}/thyra/plugin-manager`, init);
         //To delete when Api is merged.
         console.log(res.json())
         return res.json();
