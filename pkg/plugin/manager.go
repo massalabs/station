@@ -140,11 +140,11 @@ func (m *Manager) correlationID() int64 {
 }
 
 // Run starts new plugin and adds it to manager.
-func (m *Manager) Run(file string) error {
+func (m *Manager) Run(binPath string) error {
 	//nolint:varnamelen
 	id := m.correlationID()
 
-	plugin, err := New(file, id)
+	plugin, err := New(binPath, id)
 	if err != nil {
 		return err
 	}
@@ -166,8 +166,10 @@ func (m *Manager) RunAll() error {
 	}
 
 	for _, rootItem := range rootItems {
-		if !rootItem.IsDir() {
-			err := m.Run(rootItem.Name())
+		if rootItem.IsDir() {
+			binPath := filepath.Join(pluginDir, rootItem.Name(), rootItem.Name())
+
+			err = m.Run(binPath)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "WARN: while running plugin %s: %s.\n", rootItem.Name(), err)
 				fmt.Fprintln(os.Stderr, "This plugin will not be executed.")
@@ -180,12 +182,25 @@ func (m *Manager) RunAll() error {
 
 // Install grabs a remote plugin from the given url and install it locally.
 func (m *Manager) Install(url string) error {
-	resp, err := grab.Get(Directory(), url)
+	pluginsDir := Directory()
+
+	resp, err := grab.Get(pluginsDir, url)
 	if err != nil {
 		return fmt.Errorf("grabbing a plugin at %s: %w", url, err)
 	}
 
-	pluginDirectory := filepath.Dir(resp.Filename)
+	archiveName := filepath.Base(resp.Filename)
+	pluginName := strings.Split(archiveName, ".zip")[0]
+	pluginDirectory := filepath.Join(pluginsDir, pluginName)
+
+	_, err = os.Stat(pluginDirectory)
+
+	if os.IsNotExist(err) {
+		err := os.MkdirAll(pluginDirectory, os.ModePerm)
+		if err != nil {
+			panic(fmt.Errorf("creating %s plugin directory: creating folder: %w", archiveName, err))
+		}
+	}
 
 	err = unzip.Extract(resp.Filename, pluginDirectory)
 	if err != nil {
@@ -197,14 +212,7 @@ func (m *Manager) Install(url string) error {
 		return fmt.Errorf("deleting extracted archive %s: %w", resp.Filename, err)
 	}
 
-	fileName := filepath.Base(resp.Filename)
-
-	splitUndescoreIndex := strings.Index(fileName, "_")
-	if splitUndescoreIndex > 0 {
-		fileName = fileName[:splitUndescoreIndex]
-	}
-
-	err = m.Run(filepath.Join(pluginDirectory, fileName))
+	err = m.Run(filepath.Join(pluginDirectory, pluginName))
 	if err != nil {
 		return fmt.Errorf("running after installation: %w", err)
 	}

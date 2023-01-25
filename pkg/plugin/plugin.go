@@ -7,6 +7,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os/exec"
+	"runtime"
 	"strconv"
 	"sync"
 )
@@ -102,29 +103,34 @@ func (p *Plugin) ReverseProxy() *httputil.ReverseProxy {
 	return p.reverseProxy
 }
 
-func New(path string, id int64) (*Plugin, error) {
+func New(binPath string, pluginID int64) (*Plugin, error) {
 	//nolint:exhaustruct
 	plgn := &Plugin{status: Starting}
 
-	plgn.command = exec.Command(path, strconv.FormatInt(id, 10)) // #nosec G204
+	exe := ""
+	if runtime.GOOS == "windows" {
+		exe = ".exe"
+	}
+
+	plgn.command = exec.Command(binPath+exe, strconv.FormatInt(pluginID, 10)) // #nosec G204
 
 	pipe, err := plgn.command.StdoutPipe()
 	if err != nil {
-		return nil, fmt.Errorf("instantiating plugin %s: initializing stdout Pipe: %w", path, err)
+		return nil, fmt.Errorf("instantiating plugin %s: initializing stdout Pipe: %w", binPath, err)
 	}
 
 	plgn.stdOut = pipe
 
 	pipe, err = plgn.command.StderrPipe()
 	if err != nil {
-		return nil, fmt.Errorf("instantiating plugin %s: initializing stderr Pipe: %w", path, err)
+		return nil, fmt.Errorf("instantiating plugin %s: initializing stderr Pipe: %w", binPath, err)
 	}
 
 	plgn.stdErr = pipe
 
 	err = plgn.command.Start()
 	if err != nil {
-		return nil, fmt.Errorf("instantiating plugin %s: starting command: %w", path, err)
+		return nil, fmt.Errorf("instantiating plugin %s: starting command: %w", binPath, err)
 	}
 
 	return plgn, nil
