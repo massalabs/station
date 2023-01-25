@@ -97,6 +97,30 @@ paths:
       responses:
         "200":
           description: Page found
+  /thyra/home/{resource}:
+    get:
+      operationId: thyraHome
+      produces:
+        - application/json
+        - text/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          type: string
+          default: index.html
+          required: true
+          description: Website resource.
+      responses:
+        "200":
+          description: Page found
+        "404":
+          description: Resource not found.
+          schema:
+            $ref: "#/definitions/Error"
   /thyra/events/{str}/{caller}:
     get:
       operationId: thyraEventsGetter
