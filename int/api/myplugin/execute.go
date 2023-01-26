@@ -28,29 +28,31 @@ func (c *execute) Handle(params operations.PluginManagerExecuteCommandParams) mi
 
 	status := plugin.Status()
 
+	pluginName := filepath.Base(plugin.BinPath)
+
 	cmd := params.Body.Command
 	switch cmd {
 	case "start":
 		err := plugin.Start()
 		if err != nil {
 			return executeFailed(cmd, status,
-				fmt.Sprintf("Error while starting plugin %s: %s.\n", filepath.Base(plugin.BinPath), err))
+				fmt.Sprintf("Error while starting plugin %s: %s.\n", pluginName, err))
 		}
 	case "stop":
 		err := plugin.Stop()
 		if err != nil {
-			return executeFailed(cmd, status, fmt.Sprintf("Error while stopping plugin %d: %s.\n", params.ID, err))
+			return executeFailed(cmd, status, fmt.Sprintf("Error while stopping plugin %s: %s.\n", pluginName, err))
 		}
 	case "restart":
 		err := plugin.Stop()
 		if err != nil {
-			return executeFailed(cmd, status, fmt.Sprintf("Error while stopping plugin %d: %s.\n", params.ID, err))
+			return executeFailed(cmd, status, fmt.Sprintf("Error while stopping plugin %s: %s.\n", pluginName, err))
 		}
 
 		err = plugin.Start()
 		if err != nil {
 			return executeFailed(cmd, status,
-				fmt.Sprintf("Error while starting plugin %s: %s.\n", filepath.Base(plugin.BinPath), err))
+				fmt.Sprintf("Error while restarting plugin %s: %s.\n", pluginName, err))
 		}
 	case "update":
 	default:
@@ -64,7 +66,7 @@ func executeFailed(cmd string, currentStatus plugin.Status, err string,
 ) *operations.PluginManagerExecuteCommandBadRequest {
 	errStr := ""
 	if err != "" {
-		errStr = " (err)"
+		errStr = fmt.Sprintf(" (%s)", err)
 	}
 
 	return operations.NewPluginManagerExecuteCommandBadRequest().WithPayload(

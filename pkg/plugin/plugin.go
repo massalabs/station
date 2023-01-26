@@ -7,7 +7,9 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"sync"
@@ -36,8 +38,6 @@ type Information struct {
 
 type Plugin struct {
 	command      *exec.Cmd
-	stdOut       io.ReadCloser
-	stdErr       io.ReadCloser
 	mutex        sync.RWMutex
 	status       Status
 	info         *Information
@@ -97,9 +97,19 @@ func (p *Plugin) ReverseProxy() *httputil.ReverseProxy {
 	return p.reverseProxy
 }
 
-func (p *Plugin) Start() error {
+type prefixWriter struct {
+	prefix string
+}
 
-	log.Printf("Starting plugin %d.\n", p.ID)
+func (w *prefixWriter) Write(p []byte) (n int, err error) {
+	//nolint:forbidigo,wrapcheck
+	return fmt.Print(w.prefix + string(p))
+}
+
+func (p *Plugin) Start() error {
+	pluginName := filepath.Base(p.BinPath)
+
+	log.Printf("Starting plugin '%s' with id %d\n", pluginName, p.ID)
 
 	status := p.Status()
 
@@ -108,30 +118,46 @@ func (p *Plugin) Start() error {
 	}
 
 	p.mutex.Lock()
-	defer p.mutex.Unlock()
 
 	p.command = exec.Command(p.BinPath, strconv.FormatInt(p.ID, 10)) // #nosec G204
 
-	pipe, err := p.command.StdoutPipe()
+	stdOut, err := p.command.StdoutPipe()
 	if err != nil {
-		return fmt.Errorf("start plugin %s: initializing stdout Pipe: %w", p.BinPath, err)
+		return fmt.Errorf("start plugin %s: initializing stdout Pipe: %w", pluginName, err)
 	}
 
-	p.stdOut = pipe
-
-	pipe, err = p.command.StderrPipe()
+	stdErr, err := p.command.StderrPipe()
 	if err != nil {
-		return fmt.Errorf("start plugin %s: initializing stderr Pipe: %w", p.BinPath, err)
+		return fmt.Errorf("start plugin %s: initializing stderr Pipe: %w", pluginName, err)
 	}
-
-	p.stdErr = pipe
 
 	err = p.command.Start()
 	if err != nil {
-		return fmt.Errorf("start plugin %s: starting command: %w", p.BinPath, err)
+		return fmt.Errorf("start plugin %s: starting command: %w", pluginName, err)
 	}
 
 	p.status = Up
+
+	p.mutex.Unlock()
+
+	prefixedStdout := io.MultiWriter(os.Stdout, &prefixWriter{prefix: fmt.Sprintf("[%s] - ", pluginName)})
+
+	// start two goroutine for stdout and stderr
+	//nolint:errcheck
+	go io.Copy(prefixedStdout, stdOut)
+	//nolint:errcheck
+	go io.Copy(os.Stderr, stdErr)
+
+	// start a goroutine to wait on the command
+	go func() {
+		//nolint:errcheck
+		p.command.Wait()
+		log.Printf("plugin '%s' exiting.\n", pluginName)
+
+		p.mutex.Lock()
+		defer p.mutex.Unlock()
+		p.status = Down
+	}()
 
 	return nil
 }
