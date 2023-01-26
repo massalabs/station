@@ -8,16 +8,18 @@ function Manager() {
         logo: "https://upload.wikimedia.org/wikipedia/fr/thumb/1/15/Audi_logo.svg/1280px-Audi_logo.svg.png",
         description: "T Becarefull",
         version: "1.0.0",
-        online: true,
+        online: false,
         updateAvailable: true,
+        id:1,
     };
     const mock2: PluginProps = {
         name: "Plugin 2",
         logo: "https://upload.wikimedia.org/wikipedia/fr/thumb/1/15/Audi_logo.svg/1280px-Audi_logo.svg.png",
         description: "This is a plugin Description BecarefullThis is a plugin Description BecarefullThis is a plugin Description BecarefullThis is a plugin Description Becarefull",
         version: "1.0.0",
-        online: true,
+        online: false,
         updateAvailable: false,
+        id: 2,
     };
     const mock3: PluginProps = {
         name: "Plugin 3",
@@ -26,6 +28,7 @@ function Manager() {
         version: "1.0.0",
         online: true,
         updateAvailable: true,
+        id: 3,
     };
     const mock4: PluginProps = {
       name: "Plugin 4",
@@ -34,6 +37,7 @@ function Manager() {
       version: "1.0.0",
       online: true,
       updateAvailable: false,
+      id: 4,
   };
   const mock5: PluginProps = {
     name: "Plugin 5",
@@ -42,6 +46,7 @@ function Manager() {
     version: "1.0.0",
     online: true,
     updateAvailable: true,
+    id: 5,
 };
 const mock6: PluginProps = {
   name: "Plugin 5",
@@ -50,6 +55,7 @@ const mock6: PluginProps = {
   version: "1.0.0",
   online: true,
   updateAvailable: true,
+  id: 6,
 };
     const mocks = [mock, mock2, mock3, mock4, mock5, mock6];
     const plugins = mocks.map((mock) => <PluginBlock {...mock} />);

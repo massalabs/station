@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { ArrowPathIcon, TrashIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
 export type PluginProps = {
     name: string;
@@ -7,9 +7,114 @@ export type PluginProps = {
     version: string;
     online: boolean;
     updateAvailable: boolean;
+    id: number;
 };
 
 function PluginBlock(props: PluginProps) {
+    //UseMemo props
+    // useMemo(() => {
+    //   console.log("props UseMemo", props);
+    // }, [props]);
+    // Each Rerender we update fetch plugins data
+    useEffect(() => {
+        fetchPluginInfo();
+        console.log("props UseEffect", props);
+    }, [props]);
+    //UseRef props
+    const propsRef = useRef(props);
+
+    // fetch info from plugin
+    function fetchPluginInfo() {
+        fetch(`${window.location.hostname}/thyra/plugin-manager/${props.id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Success:", data);
+                if (data !== undefined) {
+                    propsRef.current = data;
+                }
+            });
+    }
+
+    function launchAndStopPlugins() {
+        // fetch info from plugin
+        fetch(`${window.location.hostname}/thyra/plugin-manager/${props.id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Success:", data);
+            });
+        console.log(props);
+        // Launch plugin
+        return launchPlugins();
+    }
+
+    // Launch plugin
+    function launchPlugins() {
+        fetch(`${window.location.hostname}/thyra/plugin-manager/${props.id}/execute`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                command: "start",
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Success:", data);
+                if (data !== undefined) {
+                    propsRef.current.online = true;
+                }
+            });
+    }
+    // Stop plugin
+    function stopPlugins() {
+        fetch(`${window.location.hostname}/thyra/plugin-manager/${props.id}/execute`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                command: "stop",
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Success:", data);
+                if (data !== undefined) {
+                    propsRef.current.online = false;
+                }
+            });
+    }
+    // restart plugin
+    function restartPlugins() {
+        fetch(`${window.location.hostname}/thyra/plugin-manager/${props.id}/execute`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                command: "restart",
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Success:", data);
+                if (data !== undefined) {
+                    propsRef.current.online = true;
+                }
+            });
+    }
+
     function minimizeString(str: string, length: number) {
         if (str.length > length) {
             return str.substring(0, length) + "...";
@@ -19,26 +124,15 @@ function PluginBlock(props: PluginProps) {
     }
 
     function playStatus() {
-        if (props.online) {
-            return <PlayCircleIcon className="w-6 h-6 text-green-500" />;
-        } else {
-            return <PlayCircleIcon className="w-6 h-6 text-red-500" />;
-        }
+        return props.online ? "w-6 h-6 text-green-500" : "w-6 h-6 text-red-500";
     }
+
     function updateStatus() {
-        if (props.updateAvailable) {
-            return (
-                <div>
-                    <ArrowPathIcon className="w-6 h-6 text-yellow-500" />
-                </div>
-            );
-        } else {
-            return (
-                <div>
-                    <ArrowPathIcon className="w-6 h-6 text-green-500" />
-                </div>
-            );
-        }
+        return props.updateAvailable ? "w-6 h-6 text-yellow-500" : "w-6 h-6 text-green-500";
+    }
+
+    function toggleStatus() {
+        return props.online ? "toggle toggle-success" : "toggle toggle-success checked";
     }
 
     return (
@@ -57,10 +151,19 @@ function PluginBlock(props: PluginProps) {
                     <div className="flex w-full pt-7 justify-around items-center">
                         <p className="font-light">V: {props.version}</p>
 
-                        <input type="checkbox" className="toggle toggle-success " />
+                        <input
+                            type="checkbox"
+                            className="toggle toggle-success"
+                            checked={props.online}
+                            onChange={launchAndStopPlugins}
+                        />
 
-                        <button>{updateStatus()}</button>
-                        <button>{playStatus()}</button>
+                        <button>
+                            <PlayCircleIcon className={playStatus()} />
+                        </button>
+                        <button>
+                            <ArrowPathIcon className={updateStatus()} />
+                        </button>
                         <button>
                             <TrashIcon className="w-6 h-6 " />
                         </button>
