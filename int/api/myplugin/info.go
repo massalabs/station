@@ -1,7 +1,10 @@
 package myplugin
 
 import (
+	"fmt"
+
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/plugin"
 )
@@ -15,9 +18,10 @@ type info struct {
 }
 
 func (i *info) Handle(param operations.PluginManagerGetInformationParams) middleware.Responder {
-	plugin := i.manager.Plugin(param.ID)
-	if plugin == nil {
-		return operations.NewPluginManagerGetInformationNotFound()
+	plugin, err := i.manager.Plugin(param.ID)
+	if err != nil {
+		return operations.NewPluginManagerGetInformationNotFound().WithPayload(
+			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
 	}
 
 	return operations.NewPluginManagerGetInformationOK().WithPayload(

@@ -8,7 +8,7 @@ import (
 func InitializePluginAPI(api *operations.ThyraServerAPI) {
 	manager := plugin.NewManager()
 	api.PluginManagerInstallHandler = newInstall(manager)
-	// api.PluginManagerExecuteCommandHandler
+	api.PluginManagerExecuteCommandHandler = newExecute(manager)
 	api.PluginManagerGetInformationHandler = newInfo(manager)
 	api.PluginManagerListHandler = newList(manager)
 	api.PluginManagerRegisterHandler = newRegister(manager)
@@ -25,4 +25,6 @@ const (
 
 	errorCodePluginRegisterUnknown     = "Plugin-0020"
 	errorCodePluginRegisterInvalidData = "Plugin-0020"
+
+	errorCodePluginExecuteCmdBadRequest = "Plugin-0030"
 )

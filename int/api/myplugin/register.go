@@ -19,9 +19,10 @@ type register struct {
 }
 
 func (r *register) Handle(param operations.PluginManagerRegisterParams) middleware.Responder {
-	wantedPlugin := r.manager.Plugin(param.Body.ID)
-	if wantedPlugin == nil {
-		return operations.NewPluginManagerRegisterNotFound()
+	wantedPlugin, err := r.manager.Plugin(param.Body.ID)
+	if err != nil {
+		return operations.NewPluginManagerRegisterNotFound().WithPayload(
+			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
 	}
 
 	urlPlugin, err := url.Parse(param.Body.URL)

@@ -21,9 +21,8 @@ type APIHandler struct {
 func (h *APIHandler) Handle(writer http.ResponseWriter, reader *http.Request, pluginAuthor string, pluginName string) {
 	alias := fmt.Sprintf("%s/%s", pluginAuthor, pluginName)
 
-	plugin := h.manager.PluginByAlias(alias)
-
-	if plugin == nil {
+	plugin, err := h.manager.PluginByAlias(alias)
+	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
 
 		return

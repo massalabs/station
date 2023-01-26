@@ -3,6 +3,7 @@ package plugin
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -41,6 +42,8 @@ type Plugin struct {
 	status       Status
 	info         *Information
 	reverseProxy *httputil.ReverseProxy
+	BinPath      string
+	ID           int64
 }
 
 func (p *Plugin) Information() *Information {
@@ -74,33 +77,75 @@ func (p *Plugin) Status() Status {
 
 func (p *Plugin) Kill() error {
 	p.mutex.Lock()
+	defer p.mutex.Unlock()
 
 	p.status = ShuttingDown
 
 	err := p.command.Process.Kill()
 	if err != nil {
 		p.status = Crashed
-		p.mutex.Unlock()
 
 		return fmt.Errorf("killing process: %w", err)
 	}
 
-	p.mutex.Unlock()
-
-	err = (*p.command).Wait()
-	if err.Error() != "signal: killed" {
-		p.mutex.Lock()
-		p.status = Crashed
-		p.mutex.Unlock()
-
-		return fmt.Errorf("killing process: unexpected wait error: got %w, want `signal: killed`", err)
-	}
+	p.status = Down
 
 	return nil
 }
 
 func (p *Plugin) ReverseProxy() *httputil.ReverseProxy {
 	return p.reverseProxy
+}
+
+func (p *Plugin) Start() error {
+
+	log.Printf("Starting plugin %d.\n", p.ID)
+
+	status := p.Status()
+
+	if status != Down && status != Starting {
+		return fmt.Errorf("Plugin is not ready to start")
+	}
+
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
+	p.command = exec.Command(p.BinPath, strconv.FormatInt(p.ID, 10)) // #nosec G204
+
+	pipe, err := p.command.StdoutPipe()
+	if err != nil {
+		return fmt.Errorf("start plugin %s: initializing stdout Pipe: %w", p.BinPath, err)
+	}
+
+	p.stdOut = pipe
+
+	pipe, err = p.command.StderrPipe()
+	if err != nil {
+		return fmt.Errorf("start plugin %s: initializing stderr Pipe: %w", p.BinPath, err)
+	}
+
+	p.stdErr = pipe
+
+	err = p.command.Start()
+	if err != nil {
+		return fmt.Errorf("start plugin %s: starting command: %w", p.BinPath, err)
+	}
+
+	p.status = Up
+
+	return nil
+}
+
+// Kills a plugin.
+func (p *Plugin) Stop() error {
+	log.Printf("Stopping plugin %d.\n", p.ID)
+
+	status := p.Status()
+	if status != Up {
+		return fmt.Errorf("plugin is not running")
+	}
+
+	return p.Kill()
 }
 
 func New(binPath string, pluginID int64) (*Plugin, error) {
@@ -112,25 +157,12 @@ func New(binPath string, pluginID int64) (*Plugin, error) {
 		exe = ".exe"
 	}
 
-	plgn.command = exec.Command(binPath+exe, strconv.FormatInt(pluginID, 10)) // #nosec G204
+	plgn.BinPath = binPath + exe
+	plgn.ID = pluginID
 
-	pipe, err := plgn.command.StdoutPipe()
+	err := plgn.Start()
 	if err != nil {
-		return nil, fmt.Errorf("instantiating plugin %s: initializing stdout Pipe: %w", binPath, err)
-	}
-
-	plgn.stdOut = pipe
-
-	pipe, err = plgn.command.StderrPipe()
-	if err != nil {
-		return nil, fmt.Errorf("instantiating plugin %s: initializing stderr Pipe: %w", binPath, err)
-	}
-
-	plgn.stdErr = pipe
-
-	err = plgn.command.Start()
-	if err != nil {
-		return nil, fmt.Errorf("instantiating plugin %s: starting command: %w", binPath, err)
+		return nil, fmt.Errorf("creating plugin: %w", err)
 	}
 
 	return plgn, nil

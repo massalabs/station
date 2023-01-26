@@ -1,7 +1,10 @@
 package myplugin
 
 import (
+	"fmt"
+
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/plugin"
 )
@@ -26,7 +29,13 @@ func (l *list) Handle(param operations.PluginManagerListParams) middleware.Respo
 			ID: ids[index],
 		}
 
-		info := l.manager.Plugin(id).Information()
+		plgn, err := l.manager.Plugin(id)
+		if err != nil {
+			return operations.NewPluginManagerListNotFound().WithPayload(
+				&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
+		}
+
+		info := plgn.Information()
 
 		if info != nil {
 			payload[index].Name = info.Name

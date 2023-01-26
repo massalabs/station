@@ -46,7 +46,14 @@ type Manager struct {
 func NewManager() *Manager {
 	weakRand.Seed(time.Now().Unix())
 	//nolint:exhaustruct
-	return &Manager{plugins: make(map[int64]*Plugin), authorNameToID: make(map[string]int64)}
+	manager := &Manager{plugins: make(map[int64]*Plugin), authorNameToID: make(map[string]int64)}
+
+	err := manager.RunAll()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "WARN: while running all plugins %s.\n", err)
+	}
+
+	return manager
 }
 
 // ID returns the list of all the plugin id.
@@ -86,46 +93,63 @@ func (m *Manager) SetAlias(name string, id int64) error {
 }
 
 // PluginByAlias returns a plugin from the manager using an alias.
-func (m *Manager) PluginByAlias(alias string) *Plugin {
+func (m *Manager) PluginByAlias(alias string) (*Plugin, error) {
 	id, exist := m.authorNameToID[alias]
 	if exist {
-		return m.Plugin(id)
+		p, err := m.Plugin(id)
+		if err != nil {
+			return nil, fmt.Errorf("get plugin by alias %w", err)
+		}
+
+		return p, nil
 	}
 
-	return nil
+	return nil, fmt.Errorf("plugin not found for alias %s", alias)
 }
 
 // Plugin returns a plugin from the manager.
-func (m *Manager) Plugin(id int64) *Plugin {
+func (m *Manager) Plugin(id int64) (*Plugin, error) {
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+
 	p, ok := m.plugins[id]
 	if !ok {
-		return nil
+		return nil, errors.New("no plugin matching given id")
 	}
 
-	return p
+	return p, nil
 }
 
 // Delete kills a plugin and remove it from the manager.
 //
 //nolint:varnamelen
 func (m *Manager) Delete(id int64) error {
-	m.mutex.Lock()
+	defer m.mutex.Unlock()
 
-	plgn, ok := m.plugins[id]
-	if !ok {
-		m.mutex.Unlock()
-
-		return errors.New("no plugin matching given id")
+	plgn, err := m.Plugin(id)
+	if err != nil {
+		return fmt.Errorf("deleting plugin %d: %w", id, err)
 	}
 
-	delete(m.plugins, id)
-	m.mutex.Unlock()
+	err = plgn.Stop()
+	if err != nil {
+		return err
+	}
 
-	return plgn.Kill()
+	m.mutex.Lock()
+
+	delete(m.plugins, id)
+
+	err = os.RemoveAll(filepath.Dir(plgn.BinPath))
+	if err != nil {
+		return fmt.Errorf("deleting plugin %d: %w", id, err)
+	}
+
+	return nil
 }
 
 // correlationID generate a unique correlation id.
-func (m *Manager) correlationID() int64 {
+func (m *Manager) createCorrelationID() int64 {
 	for {
 		//nolint:varnamelen
 		id := int64(weakRand.Int())
@@ -140,9 +164,9 @@ func (m *Manager) correlationID() int64 {
 }
 
 // Run starts new plugin and adds it to manager.
-func (m *Manager) Run(binPath string) error {
+func (m *Manager) InitPlugin(binPath string) error {
 	//nolint:varnamelen
-	id := m.correlationID()
+	id := m.createCorrelationID()
 
 	plugin, err := New(binPath, id)
 	if err != nil {
@@ -169,7 +193,7 @@ func (m *Manager) RunAll() error {
 		if rootItem.IsDir() {
 			binPath := filepath.Join(pluginDir, rootItem.Name(), rootItem.Name())
 
-			err = m.Run(binPath)
+			err = m.InitPlugin(binPath)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "WARN: while running plugin %s: %s.\n", rootItem.Name(), err)
 				fmt.Fprintln(os.Stderr, "This plugin will not be executed.")
@@ -212,7 +236,7 @@ func (m *Manager) Install(url string) error {
 		return fmt.Errorf("deleting extracted archive %s: %w", resp.Filename, err)
 	}
 
-	err = m.Run(filepath.Join(pluginDirectory, pluginName))
+	err = m.InitPlugin(filepath.Join(pluginDirectory, pluginName))
 	if err != nil {
 		return fmt.Errorf("running after installation: %w", err)
 	}
