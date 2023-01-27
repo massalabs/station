@@ -88,6 +88,13 @@ func (p *Plugin) Kill() error {
 		return fmt.Errorf("killing process: %w", err)
 	}
 
+	err = (*p.command).Wait()
+	if err.Error() != "signal: killed" {
+		p.status = Crashed
+
+		return fmt.Errorf("killing process: unexpected wait error: got %w, want `signal: killed`", err)
+	}
+
 	p.status = Down
 
 	return nil
@@ -114,7 +121,7 @@ func (p *Plugin) Start() error {
 	status := p.Status()
 
 	if status != Down && status != Starting {
-		return fmt.Errorf("Plugin is not ready to start")
+		return fmt.Errorf("plugin is not ready to start")
 	}
 
 	p.mutex.Lock()
@@ -167,7 +174,7 @@ func (p *Plugin) Stop() error {
 	log.Printf("Stopping plugin %d.\n", p.ID)
 
 	status := p.Status()
-	if status != Up {
+	if status != Up && status != Crashed {
 		return fmt.Errorf("plugin is not running")
 	}
 
@@ -175,16 +182,13 @@ func (p *Plugin) Stop() error {
 }
 
 func New(binPath string, pluginID int64) (*Plugin, error) {
-	//nolint:exhaustruct
-	plgn := &Plugin{status: Starting}
-
 	exe := ""
 	if runtime.GOOS == "windows" {
 		exe = ".exe"
 	}
 
-	plgn.BinPath = binPath + exe
-	plgn.ID = pluginID
+	//nolint:exhaustruct
+	plgn := &Plugin{status: Starting, BinPath: binPath + exe, ID: pluginID}
 
 	err := plgn.Start()
 	if err != nil {

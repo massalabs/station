@@ -24,6 +24,7 @@ func (h *APIHandler) Handle(writer http.ResponseWriter, reader *http.Request, pl
 	plugin, err := h.manager.PluginByAlias(alias)
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(writer, err)
 
 		return
 	}

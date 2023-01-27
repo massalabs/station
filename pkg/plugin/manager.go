@@ -1,7 +1,6 @@
 package plugin
 
 import (
-	"errors"
 	"fmt"
 	weakRand "math/rand"
 	"os"
@@ -43,17 +42,17 @@ type Manager struct {
 }
 
 // NewManager instantiates a manager struct.
-func NewManager() *Manager {
+func NewManager() (*Manager, error) {
 	weakRand.Seed(time.Now().Unix())
 	//nolint:exhaustruct
 	manager := &Manager{plugins: make(map[int64]*Plugin), authorNameToID: make(map[string]int64)}
 
 	err := manager.RunAll()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "WARN: while running all plugins %s.\n", err)
+		return manager, fmt.Errorf("while running all plugin: %w", err)
 	}
 
-	return manager
+	return manager, nil
 }
 
 // ID returns the list of all the plugin id.
@@ -98,7 +97,7 @@ func (m *Manager) PluginByAlias(alias string) (*Plugin, error) {
 	if exist {
 		p, err := m.Plugin(id)
 		if err != nil {
-			return nil, fmt.Errorf("get plugin by alias %w", err)
+			return nil, fmt.Errorf("getting plugin by alias %w", err)
 		}
 
 		return p, nil
@@ -108,13 +107,15 @@ func (m *Manager) PluginByAlias(alias string) (*Plugin, error) {
 }
 
 // Plugin returns a plugin from the manager.
+//
+//nolint:varnamelen
 func (m *Manager) Plugin(id int64) (*Plugin, error) {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
 
 	p, ok := m.plugins[id]
 	if !ok {
-		return nil, errors.New("no plugin matching given id")
+		return nil, fmt.Errorf("no plugin matching id %d", id)
 	}
 
 	return p, nil
@@ -124,21 +125,20 @@ func (m *Manager) Plugin(id int64) (*Plugin, error) {
 //
 //nolint:varnamelen
 func (m *Manager) Delete(id int64) error {
-	defer m.mutex.Unlock()
-
 	plgn, err := m.Plugin(id)
 	if err != nil {
 		return fmt.Errorf("deleting plugin %d: %w", id, err)
 	}
+
+	m.mutex.Lock()
 
 	err = plgn.Stop()
 	if err != nil {
 		return err
 	}
 
-	m.mutex.Lock()
-
 	delete(m.plugins, id)
+	m.mutex.Unlock()
 
 	err = os.RemoveAll(filepath.Dir(plgn.BinPath))
 	if err != nil {
@@ -148,8 +148,8 @@ func (m *Manager) Delete(id int64) error {
 	return nil
 }
 
-// correlationID generate a unique correlation id.
-func (m *Manager) createCorrelationID() int64 {
+// generateCorrelationID generate a unique correlation id.
+func (m *Manager) generateCorrelationID() int64 {
 	for {
 		//nolint:varnamelen
 		id := int64(weakRand.Int())
@@ -166,7 +166,7 @@ func (m *Manager) createCorrelationID() int64 {
 // Run starts new plugin and adds it to manager.
 func (m *Manager) InitPlugin(binPath string) error {
 	//nolint:varnamelen
-	id := m.createCorrelationID()
+	id := m.generateCorrelationID()
 
 	plugin, err := New(binPath, id)
 	if err != nil {
@@ -186,7 +186,7 @@ func (m *Manager) RunAll() error {
 
 	rootItems, err := os.ReadDir(pluginDir)
 	if err != nil {
-		return fmt.Errorf("running all plugins: reading plugins directory '%s': %w", pluginDir, err)
+		return fmt.Errorf("reading plugins directory '%s': %w", pluginDir, err)
 	}
 
 	for _, rootItem := range rootItems {
@@ -222,7 +222,7 @@ func (m *Manager) Install(url string) error {
 	if os.IsNotExist(err) {
 		err := os.MkdirAll(pluginDirectory, os.ModePerm)
 		if err != nil {
-			panic(fmt.Errorf("creating %s plugin directory: creating folder: %w", archiveName, err))
+			return fmt.Errorf("creating %s plugin directory: creating folder %s: %w", archiveName, pluginDirectory, err)
 		}
 	}
 
@@ -238,7 +238,7 @@ func (m *Manager) Install(url string) error {
 
 	err = m.InitPlugin(filepath.Join(pluginDirectory, pluginName))
 	if err != nil {
-		return fmt.Errorf("running after installation: %w", err)
+		return fmt.Errorf("running plugin %s after installation: %w", pluginName, err)
 	}
 
 	return nil

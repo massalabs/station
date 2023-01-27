@@ -19,8 +19,8 @@ type execute struct {
 }
 
 //nolint:cyclop
-func (c *execute) Handle(params operations.PluginManagerExecuteCommandParams) middleware.Responder {
-	plugin, err := c.manager.Plugin(params.ID)
+func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) middleware.Responder {
+	plugin, err := e.manager.Plugin(params.ID)
 	if err != nil {
 		return operations.NewPluginManagerExecuteCommandNotFound().WithPayload(
 			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
@@ -62,16 +62,16 @@ func (c *execute) Handle(params operations.PluginManagerExecuteCommandParams) mi
 	return operations.NewPluginManagerExecuteCommandNoContent()
 }
 
-func executeFailed(cmd string, currentStatus plugin.Status, err string,
+func executeFailed(cmd string, currentStatus plugin.Status, errorMsg string,
 ) *operations.PluginManagerExecuteCommandBadRequest {
 	errStr := ""
-	if err != "" {
-		errStr = fmt.Sprintf(" (%s)", err)
+	if errorMsg != "" {
+		errStr = fmt.Sprintf(" (%s)", errorMsg)
 	}
 
 	return operations.NewPluginManagerExecuteCommandBadRequest().WithPayload(
 		&models.Error{
 			Code:    errorCodePluginExecuteCmdBadRequest,
-			Message: fmt.Sprintf("Error: Unable to execute %s command. Current plugin status: %s."+errStr, cmd, currentStatus),
+			Message: fmt.Sprintf("[%s] %s. Current plugin status is %s.", cmd, errStr, currentStatus),
 		})
 }

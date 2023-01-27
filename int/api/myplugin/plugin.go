@@ -1,12 +1,19 @@
 package myplugin
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/plugin"
 )
 
 func InitializePluginAPI(api *operations.ThyraServerAPI) {
-	manager := plugin.NewManager()
+	manager, err := plugin.NewManager()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "WARN: while starting plugin manager %s.\n", err)
+	}
+
 	api.PluginManagerInstallHandler = newInstall(manager)
 	api.PluginManagerExecuteCommandHandler = newExecute(manager)
 	api.PluginManagerGetInformationHandler = newInfo(manager)
