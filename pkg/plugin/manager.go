@@ -163,7 +163,7 @@ func (m *Manager) generateCorrelationID() int64 {
 	}
 }
 
-// Run starts new plugin and adds it to manager.
+// InitPlugin starts new plugin and adds it to manager.
 func (m *Manager) InitPlugin(binPath string) error {
 	//nolint:varnamelen
 	id := m.generateCorrelationID()

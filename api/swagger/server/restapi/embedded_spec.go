@@ -990,6 +990,12 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "501": {
+            "description": "Not Implemented - the server does not support the functionality required to fulfill the request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -2443,6 +2449,12 @@ func init() {
           },
           "500": {
             "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "501": {
+            "description": "Not Implemented - the server does not support the functionality required to fulfill the request.",
             "schema": {
               "$ref": "#/definitions/Error"
             }

@@ -217,3 +217,48 @@ func (o *PluginManagerExecuteCommandInternalServerError) WriteResponse(rw http.R
 		}
 	}
 }
+
+// PluginManagerExecuteCommandNotImplementedCode is the HTTP code returned for type PluginManagerExecuteCommandNotImplemented
+const PluginManagerExecuteCommandNotImplementedCode int = 501
+
+/*
+PluginManagerExecuteCommandNotImplemented Not Implemented - the server does not support the functionality required to fulfill the request.
+
+swagger:response pluginManagerExecuteCommandNotImplemented
+*/
+type PluginManagerExecuteCommandNotImplemented struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.Error `json:"body,omitempty"`
+}
+
+// NewPluginManagerExecuteCommandNotImplemented creates PluginManagerExecuteCommandNotImplemented with default headers values
+func NewPluginManagerExecuteCommandNotImplemented() *PluginManagerExecuteCommandNotImplemented {
+
+	return &PluginManagerExecuteCommandNotImplemented{}
+}
+
+// WithPayload adds the payload to the plugin manager execute command not implemented response
+func (o *PluginManagerExecuteCommandNotImplemented) WithPayload(payload *models.Error) *PluginManagerExecuteCommandNotImplemented {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the plugin manager execute command not implemented response
+func (o *PluginManagerExecuteCommandNotImplemented) SetPayload(payload *models.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *PluginManagerExecuteCommandNotImplemented) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(501)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

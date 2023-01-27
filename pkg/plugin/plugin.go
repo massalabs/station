@@ -47,9 +47,6 @@ type Plugin struct {
 }
 
 func (p *Plugin) Information() *Information {
-	p.mutex.RLock()
-	defer p.mutex.RUnlock()
-
 	return p.info
 }
 
@@ -69,9 +66,6 @@ func (p *Plugin) SetInformation(info *Information) {
 }
 
 func (p *Plugin) Status() Status {
-	p.mutex.RLock()
-	defer p.mutex.RUnlock()
-
 	return p.status
 }
 
@@ -118,13 +112,13 @@ func (p *Plugin) Start() error {
 
 	log.Printf("Starting plugin '%s' with id %d\n", pluginName, p.ID)
 
+	p.mutex.Lock()
+
 	status := p.Status()
 
 	if status != Down && status != Starting {
 		return fmt.Errorf("plugin is not ready to start")
 	}
-
-	p.mutex.Lock()
 
 	p.command = exec.Command(p.BinPath, strconv.FormatInt(p.ID, 10)) // #nosec G204
 

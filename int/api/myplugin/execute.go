@@ -55,6 +55,7 @@ func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) mi
 				fmt.Sprintf("Error while restarting plugin %s: %s.\n", pluginName, err))
 		}
 	case "update":
+		return operations.NewPluginManagerExecuteCommandNotImplemented()
 	default:
 		return executeFailed(cmd, status, fmt.Sprintf("Unknown command %s.\n", cmd))
 	}
