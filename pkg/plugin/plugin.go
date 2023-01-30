@@ -3,7 +3,11 @@ package plugin
 import (
 	"fmt"
 	"io"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os/exec"
+	"strconv"
 	"sync"
 )
 
@@ -21,19 +25,21 @@ const (
 
 type Information struct {
 	Name        string
+	Author      string
 	Description string
 	Logo        []byte
-	Authority   string
+	URL         *url.URL
 	APISpec     string
 }
 
 type Plugin struct {
-	command *exec.Cmd
-	stdOut  io.ReadCloser
-	stdErr  io.ReadCloser
-	mutex   sync.RWMutex
-	status  Status
-	info    *Information
+	command      *exec.Cmd
+	stdOut       io.ReadCloser
+	stdErr       io.ReadCloser
+	mutex        sync.RWMutex
+	status       Status
+	info         *Information
+	reverseProxy *httputil.ReverseProxy
 }
 
 func (p *Plugin) Information() *Information {
@@ -48,6 +54,14 @@ func (p *Plugin) SetInformation(info *Information) {
 	defer p.mutex.Unlock()
 	p.info = info
 	p.status = Up
+
+	p.reverseProxy = httputil.NewSingleHostReverseProxy(p.info.URL)
+
+	originalDirector := p.reverseProxy.Director
+	p.reverseProxy.Director = func(req *http.Request) {
+		originalDirector(req)
+		modifyRequest(req)
+	}
 }
 
 func (p *Plugin) Status() Status {
@@ -84,11 +98,15 @@ func (p *Plugin) Kill() error {
 	return nil
 }
 
-func New(path string) (*Plugin, error) {
+func (p *Plugin) ReverseProxy() *httputil.ReverseProxy {
+	return p.reverseProxy
+}
+
+func New(path string, id int64) (*Plugin, error) {
 	//nolint:exhaustruct
 	plgn := &Plugin{status: Starting}
 
-	plgn.command = exec.Command(path)
+	plgn.command = exec.Command(path, strconv.FormatInt(id, 10)) // #nosec G204
 
 	pipe, err := plgn.command.StdoutPipe()
 	if err != nil {

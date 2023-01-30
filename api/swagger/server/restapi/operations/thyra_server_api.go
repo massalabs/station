@@ -108,8 +108,14 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		PluginManagerUninstallHandler: PluginManagerUninstallHandlerFunc(func(params PluginManagerUninstallParams) middleware.Responder {
 			return middleware.NotImplemented("operation PluginManagerUninstall has not yet been implemented")
 		}),
+		PluginRouterHandler: PluginRouterHandlerFunc(func(params PluginRouterParams) middleware.Responder {
+			return middleware.NotImplemented("operation PluginRouter has not yet been implemented")
+		}),
 		ThyraEventsGetterHandler: ThyraEventsGetterHandlerFunc(func(params ThyraEventsGetterParams) middleware.Responder {
 			return middleware.NotImplemented("operation ThyraEventsGetter has not yet been implemented")
+		}),
+		ThyraHomeHandler: ThyraHomeHandlerFunc(func(params ThyraHomeParams) middleware.Responder {
+			return middleware.NotImplemented("operation ThyraHome has not yet been implemented")
 		}),
 		ThyraRegistryHandler: ThyraRegistryHandlerFunc(func(params ThyraRegistryParams) middleware.Responder {
 			return middleware.NotImplemented("operation ThyraRegistry has not yet been implemented")
@@ -217,8 +223,12 @@ type ThyraServerAPI struct {
 	PluginManagerRegisterHandler PluginManagerRegisterHandler
 	// PluginManagerUninstallHandler sets the operation handler for the plugin manager uninstall operation
 	PluginManagerUninstallHandler PluginManagerUninstallHandler
+	// PluginRouterHandler sets the operation handler for the plugin router operation
+	PluginRouterHandler PluginRouterHandler
 	// ThyraEventsGetterHandler sets the operation handler for the thyra events getter operation
 	ThyraEventsGetterHandler ThyraEventsGetterHandler
+	// ThyraHomeHandler sets the operation handler for the thyra home operation
+	ThyraHomeHandler ThyraHomeHandler
 	// ThyraRegistryHandler sets the operation handler for the thyra registry operation
 	ThyraRegistryHandler ThyraRegistryHandler
 	// ThyraWalletHandler sets the operation handler for the thyra wallet operation
@@ -377,8 +387,14 @@ func (o *ThyraServerAPI) Validate() error {
 	if o.PluginManagerUninstallHandler == nil {
 		unregistered = append(unregistered, "PluginManagerUninstallHandler")
 	}
+	if o.PluginRouterHandler == nil {
+		unregistered = append(unregistered, "PluginRouterHandler")
+	}
 	if o.ThyraEventsGetterHandler == nil {
 		unregistered = append(unregistered, "ThyraEventsGetterHandler")
+	}
+	if o.ThyraHomeHandler == nil {
+		unregistered = append(unregistered, "ThyraHomeHandler")
 	}
 	if o.ThyraRegistryHandler == nil {
 		unregistered = append(unregistered, "ThyraRegistryHandler")
@@ -569,7 +585,15 @@ func (o *ThyraServerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/thyra/plugin/{author-name}/{plugin-name}"] = NewPluginRouter(o.context, o.PluginRouterHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/thyra/events/{str}/{caller}"] = NewThyraEventsGetter(o.context, o.ThyraEventsGetterHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/thyra/home/{resource}"] = NewThyraHome(o.context, o.ThyraHomeHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

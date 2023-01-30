@@ -11,6 +11,24 @@ schemes:
   - https
 swagger: "2.0"
 paths:
+  /thyra/plugin/{author-name}/{plugin-name}:
+    get:
+      operationId: pluginRouter
+      description: virtual endpoint handling requests for third party plugin. The actual handler is defined as an HTTP handler middleware.
+      parameters:
+        - in: path
+          name: author-name
+          type: string
+          required: true
+          description: Author of the plugin.
+        - in: path
+          name: plugin-name
+          type: string
+          required: true
+          description: Name of the plugin.
+      responses:
+        "200":
+          description: Dumb response. All content and HTTP code are possible for this endpoint.
   /thyra/wallet/{resource}:
     get:
       operationId: thyraWallet
@@ -79,6 +97,30 @@ paths:
       responses:
         "200":
           description: Page found
+  /thyra/home/{resource}:
+    get:
+      operationId: thyraHome
+      produces:
+        - application/json
+        - text/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          type: string
+          default: index.html
+          required: true
+          description: Website resource.
+      responses:
+        "200":
+          description: Page found
+        "404":
+          description: Resource not found.
+          schema:
+            $ref: "#/definitions/Error"
   /thyra/events/{str}/{caller}:
     get:
       operationId: thyraEventsGetter
@@ -728,9 +770,10 @@ paths:
             required:
               - id
               - name
+              - author
               - description
               - logo
-              - authority
+              - url
               - api-spec
             properties:
                 id:
@@ -739,6 +782,10 @@ paths:
                   x-nullable: false
                 name:
                   description: Plugin name.
+                  type: string
+                  x-nullable: false
+                author:
+                  description: Plugin author.
                   type: string
                   x-nullable: false
                 description:
@@ -750,7 +797,7 @@ paths:
                   type: string
                   format: byte
                   x-nullable: false
-                authority:
+                url:
                   description: URL authority to use to connect to the plugin
                   type: string
                   x-nullable: false
