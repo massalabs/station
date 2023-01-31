@@ -39,6 +39,7 @@ THYRA_SERVER_FILENAME = ""
 THYRA_APP_URL = ""
 THYRA_APP_FILENAME = ""
 THYRA_CONFIG_FOLDER_PATH = os.path.join(os.path.expanduser("~"), ".config", "thyra")
+THYRA_PLUGINS_PATH = os.path.join(THYRA_CONFIG_FOLDER_PATH, "plugins" )
 
 USER_HOME_FOLDER = os.path.expanduser("~")
 
@@ -220,6 +221,8 @@ def printErrorAndExit(error):
 def main():
     if not os.path.exists(THYRA_CONFIG_FOLDER_PATH):
         os.makedirs(THYRA_CONFIG_FOLDER_PATH)
+    if not os.path.exists(THYRA_PLUGINS_PATH):
+        os.makedirs(THYRA_PLUGINS_PATH)    
     if platform.system() == "Windows" and isAdmin() == False:
         printErrorAndExit("Couldn't detect admin rights. Please execute this script as an administator.")
 
