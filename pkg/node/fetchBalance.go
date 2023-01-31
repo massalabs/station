@@ -11,7 +11,7 @@ type Balance struct {
 	Final     decimal.Decimal
 }
 
-// FetchBalance returns as a float64 the candidate balance and final balance of an address.
+// FetchBalance returns as a decimal the candidate balance and final balance of an address.
 func FetchBalance(client *Client, address string) (*Balance, error) {
 	addressDetails, err := Addresses(client, []string{address})
 	if err != nil {
