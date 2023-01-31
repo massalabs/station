@@ -2,6 +2,7 @@ package myplugin
 
 import (
 	"fmt"
+	"log"
 	"path/filepath"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -20,6 +21,10 @@ type execute struct {
 
 //nolint:cyclop
 func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) middleware.Responder {
+	cmd := params.Body.Command
+
+	log.Printf("[POST /plugin-manager/%d/execute] command: %s", params.ID, cmd)
+
 	plugin, err := e.manager.Plugin(params.ID)
 	if err != nil {
 		return operations.NewPluginManagerExecuteCommandNotFound().WithPayload(
@@ -30,7 +35,6 @@ func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) mi
 
 	pluginName := filepath.Base(plugin.BinPath)
 
-	cmd := params.Body.Command
 	switch cmd {
 	case "start":
 		err := plugin.Start()

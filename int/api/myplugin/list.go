@@ -2,6 +2,7 @@ package myplugin
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -18,6 +19,8 @@ type list struct {
 }
 
 func (l *list) Handle(param operations.PluginManagerListParams) middleware.Responder {
+	log.Println("[GET /plugin-manager]")
+
 	ids := l.manager.ID()
 
 	payload := make([]*operations.PluginManagerListOKBodyItems0, len(ids))

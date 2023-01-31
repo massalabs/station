@@ -2,6 +2,7 @@ package myplugin
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -18,6 +19,8 @@ type info struct {
 }
 
 func (i *info) Handle(param operations.PluginManagerGetInformationParams) middleware.Responder {
+	log.Printf("[GET /plugin-manager/%d]", param.ID)
+
 	plugin, err := i.manager.Plugin(param.ID)
 	if err != nil {
 		return operations.NewPluginManagerGetInformationNotFound().WithPayload(
