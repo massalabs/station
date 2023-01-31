@@ -16,6 +16,15 @@ This project is still WIP. It is a prototype.
 
 ### Install dev dependencies
 
+#### Linux:
+
+```bash
+sudo apt update
+sudo apt install -y build-essential libgl1-mesa-dev xorg-dev p7zip
+```
+
+#### all OS:
+
 To develop on this project you will need :
 
 - [go](https://go.dev/doc/install)
