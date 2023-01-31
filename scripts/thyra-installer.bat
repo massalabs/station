@@ -9,6 +9,12 @@ fltmc >nul 2>&1 && (
   EXIT
 )
 
+SET THYRA_CONF_DIR=%USERPROFILE%\.config\thyra\plugins
+
+IF NOT exist %THYRA_CONF_DIR% (
+  md %THYRA_CONF_DIR%
+)
+
 curl -L https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64 --output thyra-server.exe
 
 SET ACRYLIC_PATH="C:\Program Files (x86)\Acrylic DNS Proxy"
