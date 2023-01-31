@@ -2,12 +2,13 @@ package node
 
 import (
 	"fmt"
-	"strconv"
+
+	"github.com/shopspring/decimal"
 )
 
 type Balance struct {
-	Candidate float64
-	Final     float64
+	Candidate decimal.Decimal
+	Final     decimal.Decimal
 }
 
 // FetchBalance returns as a float64 the candidate balance and final balance of an address.
@@ -17,14 +18,14 @@ func FetchBalance(client *Client, address string) (*Balance, error) {
 		return nil, err
 	}
 
-	candidate, err := strconv.ParseFloat(addressDetails[0].CandidateBalance, 64)
+	candidate, err := decimal.NewFromString(addressDetails[0].CandidateBalance)
 	if err != nil {
-		return nil, fmt.Errorf("converting candidateBalance %s f64 :%w", addressDetails[0].CandidateBalance, err)
+		return nil, fmt.Errorf("converting candidateBalance %s to decimal :%w", addressDetails[0].CandidateBalance, err)
 	}
 
-	final, err := strconv.ParseFloat(addressDetails[0].FinalBalance, 64)
+	final, err := decimal.NewFromString(addressDetails[0].FinalBalance)
 	if err != nil {
-		return nil, fmt.Errorf("converting candidateBalance %s f64 :%w", addressDetails[0].FinalBalance, err)
+		return nil, fmt.Errorf("converting FinalBalance %s to decimal :%w", addressDetails[0].FinalBalance, err)
 	}
 
 	return &Balance{Candidate: candidate, Final: final}, nil
