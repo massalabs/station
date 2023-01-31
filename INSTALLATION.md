@@ -39,6 +39,8 @@ Simply use copy/paste the cmd line below in your terminal. The installation proc
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/macos_install.sh)"
 ```
 
+> **_NOTE:_** To complete the installation, you have to restart your browser.
+
 Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
 You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
@@ -57,11 +59,13 @@ Simply use copy/paste the cmd line below in your terminal. The installation proc
 
 Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
 
+> **_NOTE:_** To complete the installation, you have to restart your browser.
+
+
 You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
 > **_NOTE:_** Only Linux Ubuntu is currently supported.
-
 
 ### Windows
 
@@ -73,6 +77,8 @@ Follow [this link](https://github.com/massalabs/thyra/releases/latest/download/t
   * Check if you have the latest version of ThyraApp and install it if not.
 
 ![windows_icontray_V0](https://user-images.githubusercontent.com/109611779/212294116-05e1dd37-ed3f-4e3e-b034-b02d782bc4ee.png)
+
+> **_NOTE:_** To complete the installation, you have to restart your browser.
 
 Congratulation, your version of Thyra is now installed on your system and you can "Start" your journey using the icon tray.
 
