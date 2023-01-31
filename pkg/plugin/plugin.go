@@ -151,12 +151,9 @@ func (p *Plugin) Start() error {
 
 	// start a goroutine to wait on the command
 	go func() {
-		//nolint:errcheck
-		p.command.Wait()
-		log.Printf("plugin '%s' exiting.\n", pluginName)
+		err = p.command.Wait()
+		log.Printf("plugin '%s' exiting. %s\n", pluginName, err)
 
-		p.mutex.Lock()
-		defer p.mutex.Unlock()
 		p.status = Down
 	}()
 

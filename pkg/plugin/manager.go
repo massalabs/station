@@ -132,10 +132,9 @@ func (m *Manager) Delete(id int64) error {
 
 	m.mutex.Lock()
 
-	err = plgn.Stop()
-	if err != nil {
-		return err
-	}
+	// Ignore Stop errors. We want to delete the plugin anyway
+	//nolint:errcheck
+	plgn.Stop()
 
 	delete(m.plugins, id)
 	m.mutex.Unlock()
