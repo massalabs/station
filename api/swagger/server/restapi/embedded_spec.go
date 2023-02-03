@@ -117,6 +117,98 @@ func init() {
         }
       }
     },
+    "/cmd/deploySC": {
+      "put": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "cmdDeploySC",
+        "parameters": [
+          {
+            "type": "string",
+            "x-nullable": false,
+            "description": "Name of the Wallet in which the website will be deployed.",
+            "name": "nickname",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "x-nullable": false,
+            "description": "Website contents in a ZIP file.",
+            "name": "Wasmfile",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "default": 0,
+            "description": "Price of a gaz unit.",
+            "name": "gazPrice",
+            "in": "formData"
+          },
+          {
+            "type": "integer",
+            "default": 700000000,
+            "description": "Maximum number of gaz unit that a node will be able consume.",
+            "name": "gazLimit",
+            "in": "formData"
+          },
+          {
+            "type": "number",
+            "default": 100,
+            "description": "Set the fee amount (in massa) that will be given to the block creator.",
+            "name": "coins",
+            "in": "formData"
+          },
+          {
+            "type": "integer",
+            "default": 3,
+            "description": "Set the expiry duration (in number of slots) of the transaction",
+            "name": "expiry",
+            "in": "formData"
+          },
+          {
+            "type": "number",
+            "default": 0,
+            "description": "Set the fee amount (in massa) that will be given to the block creator.",
+            "name": "fee",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "default": "default",
+            "description": "Defines the key to used to sign the transaction.",
+            "name": "keyId",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "schema": {
+              "description": "Operation id.",
+              "type": "string"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/cmd/executeFunction": {
       "post": {
         "produces": [
@@ -1592,6 +1684,10 @@ func init() {
         }
       }
     },
+    "SCDeployed": {
+      "description": "Smart Contract's address.",
+      "type": "string"
+    },
     "Wallet": {
       "description": "Wallet object (V0).",
       "type": "object",
@@ -1760,6 +1856,98 @@ func init() {
           },
           "404": {
             "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/cmd/deploySC": {
+      "put": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "cmdDeploySC",
+        "parameters": [
+          {
+            "type": "string",
+            "x-nullable": false,
+            "description": "Name of the Wallet in which the website will be deployed.",
+            "name": "nickname",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "x-nullable": false,
+            "description": "Website contents in a ZIP file.",
+            "name": "Wasmfile",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "default": 0,
+            "description": "Price of a gaz unit.",
+            "name": "gazPrice",
+            "in": "formData"
+          },
+          {
+            "type": "integer",
+            "default": 700000000,
+            "description": "Maximum number of gaz unit that a node will be able consume.",
+            "name": "gazLimit",
+            "in": "formData"
+          },
+          {
+            "type": "number",
+            "default": 100,
+            "description": "Set the fee amount (in massa) that will be given to the block creator.",
+            "name": "coins",
+            "in": "formData"
+          },
+          {
+            "type": "integer",
+            "default": 3,
+            "description": "Set the expiry duration (in number of slots) of the transaction",
+            "name": "expiry",
+            "in": "formData"
+          },
+          {
+            "type": "number",
+            "default": 0,
+            "description": "Set the fee amount (in massa) that will be given to the block creator.",
+            "name": "fee",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "default": "default",
+            "description": "Defines the key to used to sign the transaction.",
+            "name": "keyId",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "schema": {
+              "description": "Operation id.",
+              "type": "string"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -3262,6 +3450,10 @@ func init() {
           "type": "string"
         }
       }
+    },
+    "SCDeployed": {
+      "description": "Smart Contract's address.",
+      "type": "string"
     },
     "StackingItems0": {
       "type": "object",

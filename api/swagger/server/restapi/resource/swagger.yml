@@ -618,6 +618,70 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /cmd/deploySC:
+    put:
+      operationId: cmdDeploySC
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: nickname
+          type: string
+          required: true
+          x-nullable: false
+          description: Name of the Wallet in which the website will be deployed.
+        - in: formData
+          name: Wasmfile
+          type: file
+          required: true
+          x-nullable: false
+          description: Website contents in a ZIP file.
+        - in : formData
+          name : gazPrice
+          type: number 
+          description : Price of a gaz unit.
+          default : 0
+        - in : formData
+          name : gazLimit
+          type : integer
+          description: Maximum number of gaz unit that a node will be able consume.
+          default: 700000000
+        - in: formData
+          name : coins
+          type: number
+          description: Set the fee amount (in massa) that will be given to the block creator.
+          default: 100
+        - in: formData
+          name : expiry
+          type : integer
+          description: Set the expiry duration (in number of slots) of the transaction
+          default: 3
+        - in: formData
+          name : fee
+          type : number
+          description: Set the fee amount (in massa) that will be given to the block creator.
+          default : 0
+        - in: formData
+          name : keyId 
+          type: string
+          description: Defines the key to used to sign the transaction.
+          default: default
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK.
+          schema:
+            type: string
+            description: Operation id.
+        "422":
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
   /kpi:
     get:
       operationId: kpi
@@ -1093,6 +1157,9 @@ definitions:
         type: array
         items:
           type: string
+  SCDeployed:
+    type: string
+    description: Smart Contract's address.
   Events:
     type: object
     description: Events object (V0)

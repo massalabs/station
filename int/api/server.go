@@ -13,10 +13,12 @@ import (
 	"github.com/massalabs/thyra/int/api/cmd"
 	"github.com/massalabs/thyra/int/api/massa"
 	"github.com/massalabs/thyra/int/api/myplugin"
+
 	"github.com/massalabs/thyra/int/api/plugin"
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/node"
+	deploysc "github.com/massalabs/thyra/pkg/node/sendoperation/deploySC"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
 	pluginmanager "github.com/massalabs/thyra/pkg/plugins"
 )
@@ -100,6 +102,10 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *p
 	localAPI.MassaGetAddressesHandler = operations.MassaGetAddressesHandlerFunc(massa.AddressesHandler)
 	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(
 		websites.CreatePrepareForWebsiteHandler(app),
+	)
+
+	localAPI.CmdDeploySCHandler = operations.CmdDeploySCHandlerFunc(
+		deploysc.CreateCmdDeploySCHandler(app),
 	)
 	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(
 		websites.CreateUploadWebsiteHandler(app),

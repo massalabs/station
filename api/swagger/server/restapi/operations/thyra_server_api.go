@@ -63,6 +63,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		BrowseHandler: BrowseHandlerFunc(func(params BrowseParams) middleware.Responder {
 			return middleware.NotImplemented("operation Browse has not yet been implemented")
 		}),
+		CmdDeploySCHandler: CmdDeploySCHandlerFunc(func(params CmdDeploySCParams) middleware.Responder {
+			return middleware.NotImplemented("operation CmdDeploySC has not yet been implemented")
+		}),
 		CmdExecuteFunctionHandler: CmdExecuteFunctionHandlerFunc(func(params CmdExecuteFunctionParams) middleware.Responder {
 			return middleware.NotImplemented("operation CmdExecuteFunction has not yet been implemented")
 		}),
@@ -199,6 +202,8 @@ type ThyraServerAPI struct {
 	AllDomainsGetterHandler AllDomainsGetterHandler
 	// BrowseHandler sets the operation handler for the browse operation
 	BrowseHandler BrowseHandler
+	// CmdDeploySCHandler sets the operation handler for the cmd deploy s c operation
+	CmdDeploySCHandler CmdDeploySCHandler
 	// CmdExecuteFunctionHandler sets the operation handler for the cmd execute function operation
 	CmdExecuteFunctionHandler CmdExecuteFunctionHandler
 	// KpiHandler sets the operation handler for the kpi operation
@@ -351,6 +356,9 @@ func (o *ThyraServerAPI) Validate() error {
 	}
 	if o.BrowseHandler == nil {
 		unregistered = append(unregistered, "BrowseHandler")
+	}
+	if o.CmdDeploySCHandler == nil {
+		unregistered = append(unregistered, "CmdDeploySCHandler")
 	}
 	if o.CmdExecuteFunctionHandler == nil {
 		unregistered = append(unregistered, "CmdExecuteFunctionHandler")
@@ -538,6 +546,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/browse/{address}/{resource}"] = NewBrowse(o.context, o.BrowseHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/cmd/deploySC"] = NewCmdDeploySC(o.context, o.CmdDeploySCHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
