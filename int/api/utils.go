@@ -2,6 +2,7 @@ package api
 
 import (
 	"html/template"
+	"mime"
 	"net/http"
 	"path/filepath"
 
@@ -11,19 +12,12 @@ import (
 func contentType(rsc string) map[string]string {
 	var contentType map[string]string
 
-	switch filepath.Ext(rsc) {
-	case ".css":
-		contentType = map[string]string{"Content-Type": "text/css"}
-	case ".js":
-		contentType = map[string]string{"Content-Type": "text/javascript"}
-	case ".html":
-		contentType = map[string]string{"Content-Type": "text/html"}
-	case ".webp":
-		contentType = map[string]string{"Content-Type": "text/webp"}
-	case ".png":
-		contentType = map[string]string{"Content-Type": "image/png"}
-	default:
-		contentType = map[string]string{}
+	ctype := mime.TypeByExtension(filepath.Ext(rsc))
+
+	if ctype == "" {
+		contentType = map[string]string{"Content-Type": "text/plain"}
+	} else {
+		contentType = map[string]string{"Content-Type": ctype}
 	}
 
 	return contentType

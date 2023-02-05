@@ -18,7 +18,7 @@ func fetchWebsite(address *C.char, filename *C.char) *C.FetchWebsiteReturn {
 
 	c := node.NewDefaultClient() // server shall be set by the caller
 
-	res, err := website.Fetch(c, C.GoString(address), C.GoString(filename))
+	res, _, _, err := website.Fetch(c, C.GoString(address), C.GoString(filename))
 	if err != nil {
 		output.error = C.CString(err.Error())
 
