@@ -51,7 +51,10 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 	alias := fmt.Sprintf("%s/%s", param.Body.Author, param.Body.Name)
 
 	err = r.manager.SetAlias(alias, param.Body.ID)
+
 	if err != nil {
+		log.Printf("setting plugin alias: %s", err)
+
 		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
 			&models.Error{Code: errorCodePluginRegisterUnknown, Message: fmt.Sprintf("setting alias: %s", err.Error())},
 		)

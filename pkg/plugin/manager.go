@@ -73,20 +73,20 @@ func (m *Manager) ID() []int64 {
 // Alias can be defined during plugin register once the name and author of the plugin can be found.
 //
 //nolint:varnamelen
-func (m *Manager) SetAlias(name string, id int64) error {
+func (m *Manager) SetAlias(alias string, id int64) error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
 	if m.plugins[id] == nil {
-		return fmt.Errorf("while setting alias for %s: no plugin matching the given id %d", name, id)
+		return fmt.Errorf("while setting alias for %s: no plugin matching the given id %d", alias, id)
 	}
 
-	_, exist := m.authorNameToID[name]
-	if exist {
-		return fmt.Errorf("while setting alias for %s: a plugin with the same alias already exists", name)
+	registeredID, exist := m.authorNameToID[alias]
+	if exist && registeredID != id {
+		return fmt.Errorf("while setting alias for %s: a plugin with the same alias already exists", alias)
 	}
 
-	m.authorNameToID[name] = id
+	m.authorNameToID[alias] = id
 
 	return nil
 }
@@ -136,7 +136,12 @@ func (m *Manager) Delete(id int64) error {
 	//nolint:errcheck
 	plgn.Stop()
 
+	alias := fmt.Sprintf("%s/%s", plgn.info.Author, plgn.info.Name)
+
+	delete(m.authorNameToID, alias)
+
 	delete(m.plugins, id)
+
 	m.mutex.Unlock()
 
 	err = os.RemoveAll(filepath.Dir(plgn.BinPath))
