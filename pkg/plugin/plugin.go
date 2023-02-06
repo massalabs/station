@@ -82,13 +82,7 @@ func (p *Plugin) Kill() error {
 		return fmt.Errorf("killing process: %w", err)
 	}
 
-	err = (*p.command).Wait()
-	if err.Error() != "signal: killed" {
-		p.status = Crashed
-
-		return fmt.Errorf("killing process: unexpected wait error: got %w, want `signal: killed`", err)
-	}
-
+	// The wait function is called in the plugin start method
 	p.status = Down
 
 	return nil
@@ -96,15 +90,6 @@ func (p *Plugin) Kill() error {
 
 func (p *Plugin) ReverseProxy() *httputil.ReverseProxy {
 	return p.reverseProxy
-}
-
-type prefixWriter struct {
-	prefix string
-}
-
-func (w *prefixWriter) Write(p []byte) (n int, err error) {
-	//nolint:forbidigo,wrapcheck
-	return fmt.Print(w.prefix + string(p))
 }
 
 func (p *Plugin) Start() error {
@@ -137,27 +122,44 @@ func (p *Plugin) Start() error {
 		return fmt.Errorf("start plugin %s: starting command: %w", pluginName, err)
 	}
 
+	bindPluginLogs(stdOut, stdErr)
+
+	// start a goroutine to wait on the command
+	go func() {
+		err := p.command.Wait()
+		if err != nil && err.Error() != "signal: killed" {
+			log.Printf("plugin '%s' exiting with error: %s\n", pluginName, err)
+
+			p.status = Crashed
+
+			return
+		}
+
+		log.Printf("plugin '%s' exiting without error.\n", pluginName)
+	}()
+
 	p.status = Up
 
 	p.mutex.Unlock()
 
-	prefixedStdout := io.MultiWriter(os.Stdout, &prefixWriter{prefix: fmt.Sprintf("[%s] - ", pluginName)})
+	return nil
+}
 
+func bindPluginLogs(stdOut io.ReadCloser, stdErr io.ReadCloser) {
 	// start two goroutine for stdout and stderr
-	//nolint:errcheck
-	go io.Copy(prefixedStdout, stdOut)
-	//nolint:errcheck
-	go io.Copy(os.Stderr, stdErr)
-
-	// start a goroutine to wait on the command
 	go func() {
-		err = p.command.Wait()
-		log.Printf("plugin '%s' exiting. %s\n", pluginName, err)
-
-		p.status = Down
+		_, err := io.Copy(os.Stdout, stdOut)
+		if err != nil {
+			log.Printf("stdOut pipe error: %s\n", err)
+		}
 	}()
 
-	return nil
+	go func() {
+		_, err := io.Copy(os.Stderr, stdErr)
+		if err != nil {
+			log.Printf("stdErr pipe error: %s\n", err)
+		}
+	}()
 }
 
 // Kills a plugin.
