@@ -92,6 +92,26 @@ func (p *Plugin) ReverseProxy() *httputil.ReverseProxy {
 	return p.reverseProxy
 }
 
+type prefixWriter struct {
+	w      io.Writer
+	prefix string
+}
+
+func (pw prefixWriter) Write(buf []byte) (n int, err error) {
+	data := []byte(pw.prefix + string(buf))
+	n, err = pw.w.Write(data)
+
+	if err != nil {
+		return n, fmt.Errorf("writing logs with prefix: %w", err)
+	}
+
+	if n != len(data) {
+		return n, io.ErrShortWrite
+	}
+
+	return len(buf), nil
+}
+
 func (p *Plugin) Start() error {
 	pluginName := filepath.Base(p.BinPath)
 
@@ -107,22 +127,16 @@ func (p *Plugin) Start() error {
 
 	p.command = exec.Command(p.BinPath, strconv.FormatInt(p.ID, 10)) // #nosec G204
 
-	stdOut, err := p.command.StdoutPipe()
-	if err != nil {
-		return fmt.Errorf("start plugin %s: initializing stdout Pipe: %w", pluginName, err)
-	}
+	stdOutWriter := &prefixWriter{w: os.Stdout, prefix: fmt.Sprintf("[%s] - ", pluginName)}
+	stdErrWriter := &prefixWriter{w: os.Stderr, prefix: fmt.Sprintf("[%s] Error: ", pluginName)}
 
-	stdErr, err := p.command.StderrPipe()
-	if err != nil {
-		return fmt.Errorf("start plugin %s: initializing stderr Pipe: %w", pluginName, err)
-	}
+	p.command.Stdout = stdOutWriter
+	p.command.Stderr = stdErrWriter
 
-	err = p.command.Start()
+	err := p.command.Start()
 	if err != nil {
 		return fmt.Errorf("start plugin %s: starting command: %w", pluginName, err)
 	}
-
-	bindPluginLogs(stdOut, stdErr)
 
 	// start a goroutine to wait on the command
 	go func() {
@@ -143,23 +157,6 @@ func (p *Plugin) Start() error {
 	p.mutex.Unlock()
 
 	return nil
-}
-
-func bindPluginLogs(stdOut io.ReadCloser, stdErr io.ReadCloser) {
-	// start two goroutine for stdout and stderr
-	go func() {
-		_, err := io.Copy(os.Stdout, stdOut)
-		if err != nil {
-			log.Printf("stdOut pipe error: %s\n", err)
-		}
-	}()
-
-	go func() {
-		_, err := io.Copy(os.Stderr, stdErr)
-		if err != nil {
-			log.Printf("stdErr pipe error: %s\n", err)
-		}
-	}()
 }
 
 // Kills a plugin.
