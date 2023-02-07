@@ -87,7 +87,7 @@ jobs:
             arch: x86_64
             target: windows
           - os: macos-latest
-            arch: x86_64
+            arch: amd64
             target: darwin
           - os: macos-latest
             arch: arm64
