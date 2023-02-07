@@ -1,119 +1,129 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowPathIcon, TrashIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
-export type PluginProps = {
-    name: string;
-    logo: string;
-    description: string;
-    version: string;
-    online: boolean;
-    updateAvailable: boolean;
-    id: number;
-};
+import axiosServices from "../services/axios";
+import { AxiosError, AxiosResponse } from "axios";
+import alertHelper from "../helpers/alertHelpers";
+import {Plugin} from "../interfaces/IPlugin";
 
-function PluginBlock(props: PluginProps) {
-    //UseMemo props
-    // useMemo(() => {
-    //   console.log("props UseMemo", props);
-    // }, [props]);
+
+function PluginBlock(props: Plugin) {
+    //State to store error
+    const [error, setError] = useState(<></>)
+    //Callback to remove Error
+    function removeError() :void {
+        setError(<></>);
+    }
     // Each Rerender we update fetch plugins data
     useEffect(() => {
         fetchPluginInfo();
         console.log("props UseEffect", props);
     }, [props]);
     //UseRef props
-    const propsRef = useRef(props);
+    let propsRef = useRef(props);
+    const checkboxRef = useRef<HTMLInputElement>(null);
+    const [toggleStatus, setStatus] = useState(props.isOnline)
 
+    function setData(data: Plugin) {
+        propsRef.current = data;
+    }
     // fetch info from plugin
-    function fetchPluginInfo() {
-        fetch(`${window.location.hostname}/thyra/plugin-manager/${props.id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log("Success:", data);
-                if (data !== undefined) {
-                    propsRef.current = data;
-                }
-            });
+    // Not implemented atm
+    async function fetchPluginInfo() : Promise<boolean> {
+        try {
+            const resultPluginInfo = await axiosServices.getpluginInfo(props.ID);           
+        } catch (error) {           
+            setError(alertHelper("error","Plugins infos failed to launch", removeError))
+            return false                   
+        }
+        return true;
     }
 
-    function launchAndStopPlugins() {
+    
+
+    // Not implemented atm
+    async function launchAndStopPlugins() {
+        //Front end Update
+        setStatus(!toggleStatus);
         // fetch info from plugin
-        fetch(`${window.location.hostname}/thyra/plugin-manager/${props.id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log("Success:", data);
-            });
-        console.log(props);
-        // Launch plugin
-        return launchPlugins();
+        let resultPluginInfo : AxiosResponse<Plugin>;
+        try {
+            resultPluginInfo = await axiosServices.getpluginInfo(props.ID);           
+        } catch (error) {           
+            setError(alertHelper("error","Plugins infos failed to launch", removeError))
+            return                   
+        }
+            setData(resultPluginInfo.data);
+        let result : AxiosResponse<any>;
+        if (!propsRef.current.isOnline) {
+            console.log(props);
+            // Launch plugin
+            
+            try {
+                result = await axiosServices.manageLifePlugins(props.ID, "start");                
+            } catch (error) {
+                setError(alertHelper("error","Plugins infos failed to launch", removeError))
+                return
+            }
+            // return result and change frontend if result is ok
+            propsRef.current.isOnline = true
+        } else {
+            // Stop plugin
+            try {
+                result = await axiosServices.manageLifePlugins(props.ID, "stop");   
+            } catch (error) {
+                setError(alertHelper("error","Plugins infos failed to launch", removeError))
+                return
+            }
+            return result;
+        }
     }
 
-    // Launch plugin
-    function launchPlugins() {
-        fetch(`${window.location.hostname}/thyra/plugin-manager/${props.id}/execute`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                command: "start",
-            }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log("Success:", data);
-                if (data !== undefined) {
-                    propsRef.current.online = true;
-                }
-            });
+    // // restart plugin
+    // // Not implemented atm
+    // function restartPlugins() {
+    //     const result = axiosServices.manageLifePlugins(props.id, "restart");
+    //         if (typeof result == typeof AxiosError){
+    //             console.log("Error:", result);
+    //             return                 
+    //         }
+    //         propsRef.current.online = true
+    //         return result;
+    // }
+    // Update plugin
+    // Not implemented atm
+    function updatePlugins() {
+        //Front end update
+        // propsRef.current.updateAvailable = !propsRef.current.updateAvailable
+
+        //TODO : Uncoment this when we have a update process
+        //#####################################################
+        // const result = axiosServices.uploadPlugins("filename");
+        // if ( pluginsInfos.status && (pluginsInfos.status <= 200 || pluginsInfos.status >= 300)){
+        //     setError(alertHelper("error","Plugins infos failed to launch", removeError))        
+        // }
+        // propsRef.current.online = true
+        // return result;
+        //#####################################################
+        console.log("Update is Not implemented ATM")
     }
-    // Stop plugin
-    function stopPlugins() {
-        fetch(`${window.location.hostname}/thyra/plugin-manager/${props.id}/execute`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                command: "stop",
-            }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log("Success:", data);
-                if (data !== undefined) {
-                    propsRef.current.online = false;
-                }
-            });
+    // Open plugin homepage
+    function openHomepagePlugins() {
+        // TODO: Uncoment this when we have a url
+        // window.open(propsRef.current.Url);
+        console.log("OpenHomepage is Not implemented ATM")
     }
-    // restart plugin
-    function restartPlugins() {
-        fetch(`${window.location.hostname}/thyra/plugin-manager/${props.id}/execute`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                command: "restart",
-            }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log("Success:", data);
-                if (data !== undefined) {
-                    propsRef.current.online = true;
-                }
-            });
-    }
+        // Uninstall plugin
+        //Not implemented atm
+        function removePlugins() {
+            //TODO : Uncoment this when we have a remove process
+            // const result = axiosServices.deletePlugins(props.id);
+            // if ( pluginsInfos.status && (pluginsInfos.status <= 200 || pluginsInfos.status >= 300)){
+            //     setError(alertHelper("error","Plugins infos failed to launch", removeError))        
+            // }
+            // }
+            // return result;
+            console.log("Remove is Not implemented ATM")
+        }
 
     function minimizeString(str: string, length: number) {
         if (str.length > length) {
@@ -124,22 +134,19 @@ function PluginBlock(props: PluginProps) {
     }
 
     function playStatus() {
-        return props.online ? "w-6 h-6 text-green-500" : "w-6 h-6 text-red-500";
+        return props.isOnline ? "w-6 h-6 text-green-500" : "w-6 h-6 text-red-500";
     }
 
     function updateStatus() {
-        return props.updateAvailable ? "w-6 h-6 text-yellow-500" : "w-6 h-6 text-green-500";
-    }
-
-    function toggleStatus() {
-        return props.online ? "toggle toggle-success" : "toggle toggle-success checked";
+        return "w-6 h-6 text-yellow-500"
+        //  return props.updateAvailable ? "w-6 h-6 text-yellow-500" : "w-6 h-6 text-green-500";
     }
 
     return (
         <section className="bg-slate-800 h-48 max-w-lg w-96 p-3 m-4 rounded-2xl">
             <div className=" flex-row h-full text-white ">
                 <div className="flex">
-                    <img className="w-10 h-10 pt-3 mx-2" src={props.logo} alt="Plugin Logo" />
+                    <img className="w-10 h-10 pt-3 mx-2" src={props.logoPath} alt="Plugin Logo" />
                     <div className="w-full">
                         <h1 className="font-bold">{minimizeString(props.name, 90)}</h1>
                         <p className="font-light max-sm:text-sm">
@@ -147,28 +154,26 @@ function PluginBlock(props: PluginProps) {
                         </p>
                     </div>
                 </div>
-                <div className="content-center flex-wrap flex ">
                     <div className="flex w-full pt-7 justify-around items-center">
                         <p className="font-light">V: {props.version}</p>
-
                         <input
                             type="checkbox"
                             className="toggle toggle-success"
-                            checked={props.online}
+                            checked={toggleStatus}
+                            ref={checkboxRef}
                             onChange={launchAndStopPlugins}
                         />
 
                         <button>
-                            <PlayCircleIcon className={playStatus()} />
+                            <PlayCircleIcon className={playStatus()} onClick={openHomepagePlugins} />
+                        </button>
+                        <button className="hidden">
+                            <ArrowPathIcon className={updateStatus()} onClick={updatePlugins} />
                         </button>
                         <button>
-                            <ArrowPathIcon className={updateStatus()} />
-                        </button>
-                        <button>
-                            <TrashIcon className="w-6 h-6 " />
+                            <TrashIcon className="w-6 h-6 " onClick={removePlugins} />
                         </button>
                     </div>
-                </div>
             </div>
         </section>
     );
