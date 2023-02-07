@@ -2,6 +2,7 @@ package myplugin
 
 import (
 	"fmt"
+	"log"
 	"net/url"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -19,6 +20,8 @@ type install struct {
 }
 
 func (i *install) Handle(param operations.PluginManagerInstallParams) middleware.Responder {
+	log.Printf("[POST /plugin-manager] source: %s", param.Source)
+
 	_, err := url.ParseRequestURI(param.Source)
 	if err != nil {
 		return operations.NewPluginManagerInstallBadRequest().WithPayload(

@@ -1,14 +1,21 @@
 package myplugin
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/plugin"
 )
 
 func InitializePluginAPI(api *operations.ThyraServerAPI) {
-	manager := plugin.NewManager()
+	manager, err := plugin.NewManager()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "WARN: while starting plugin manager %s.\n", err)
+	}
+
 	api.PluginManagerInstallHandler = newInstall(manager)
-	// api.PluginManagerExecuteCommandHandler
+	api.PluginManagerExecuteCommandHandler = newExecute(manager)
 	api.PluginManagerGetInformationHandler = newInfo(manager)
 	api.PluginManagerListHandler = newList(manager)
 	api.PluginManagerRegisterHandler = newRegister(manager)
@@ -25,4 +32,6 @@ const (
 
 	errorCodePluginRegisterUnknown     = "Plugin-0020"
 	errorCodePluginRegisterInvalidData = "Plugin-0020"
+
+	errorCodePluginExecuteCmdBadRequest = "Plugin-0030"
 )

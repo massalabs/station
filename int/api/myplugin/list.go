@@ -1,7 +1,11 @@
 package myplugin
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/plugin"
 )
@@ -15,6 +19,8 @@ type list struct {
 }
 
 func (l *list) Handle(param operations.PluginManagerListParams) middleware.Responder {
+	log.Println("[GET /plugin-manager]")
+
 	ids := l.manager.ID()
 
 	payload := make([]*operations.PluginManagerListOKBodyItems0, len(ids))
@@ -26,7 +32,13 @@ func (l *list) Handle(param operations.PluginManagerListParams) middleware.Respo
 			ID: ids[index],
 		}
 
-		info := l.manager.Plugin(id).Information()
+		plgn, err := l.manager.Plugin(id)
+		if err != nil {
+			return operations.NewPluginManagerListNotFound().WithPayload(
+				&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
+		}
+
+		info := plgn.Information()
 
 		if info != nil {
 			payload[index].Name = info.Name

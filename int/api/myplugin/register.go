@@ -2,6 +2,7 @@ package myplugin
 
 import (
 	"fmt"
+	"log"
 	"net/url"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -19,9 +20,12 @@ type register struct {
 }
 
 func (r *register) Handle(param operations.PluginManagerRegisterParams) middleware.Responder {
-	wantedPlugin := r.manager.Plugin(param.Body.ID)
-	if wantedPlugin == nil {
-		return operations.NewPluginManagerRegisterNotFound()
+	log.Printf("[POST /plugin-manager/register] Name: %s ID:%d", param.Body.Name, param.Body.ID)
+
+	wantedPlugin, err := r.manager.Plugin(param.Body.ID)
+	if err != nil {
+		return operations.NewPluginManagerRegisterNotFound().WithPayload(
+			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
 	}
 
 	urlPlugin, err := url.Parse(param.Body.URL)
@@ -47,7 +51,10 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 	alias := fmt.Sprintf("%s/%s", param.Body.Author, param.Body.Name)
 
 	err = r.manager.SetAlias(alias, param.Body.ID)
+
 	if err != nil {
+		log.Printf("setting plugin alias: %s", err)
+
 		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
 			&models.Error{Code: errorCodePluginRegisterUnknown, Message: fmt.Sprintf("setting alias: %s", err.Error())},
 		)
