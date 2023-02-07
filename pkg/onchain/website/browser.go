@@ -35,10 +35,10 @@ func setContentType(file string, writer http.ResponseWriter) {
 	ctype := mime.TypeByExtension(filepath.Ext(file))
 
 	if ctype == "" {
-		writer.Header().Set("Content-Type", "text/plain")
-	} else {
-		writer.Header().Set("Content-Type", ctype)
+		ctype = "text/plain"
 	}
+
+	writer.Header().Set("Content-Type", ctype)
 }
 
 func Request(writer http.ResponseWriter, reader *http.Request, client *node.Client, address string, resource string) {
