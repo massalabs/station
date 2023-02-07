@@ -1097,6 +1097,40 @@ func init() {
         }
       }
     },
+    "/thyra/plugin-manager/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "text/javascript",
+          "text/html",
+          "text/css",
+          "text/webp",
+          "image/png"
+        ],
+        "operationId": "thyraPluginManager",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/plugin/{author-name}/{plugin-name}": {
       "get": {
         "description": "virtual endpoint handling requests for third party plugin. The actual handler is defined as an HTTP handler middleware.",
@@ -2540,6 +2574,40 @@ func init() {
           "text/webp"
         ],
         "operationId": "thyraHome",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "index.html",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/thyra/plugin-manager/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "image/png",
+          "text/css",
+          "text/html",
+          "text/javascript",
+          "text/webp"
+        ],
+        "operationId": "thyraPluginManager",
         "parameters": [
           {
             "type": "string",

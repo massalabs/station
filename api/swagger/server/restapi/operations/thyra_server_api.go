@@ -117,6 +117,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		ThyraHomeHandler: ThyraHomeHandlerFunc(func(params ThyraHomeParams) middleware.Responder {
 			return middleware.NotImplemented("operation ThyraHome has not yet been implemented")
 		}),
+		ThyraPluginManagerHandler: ThyraPluginManagerHandlerFunc(func(params ThyraPluginManagerParams) middleware.Responder {
+			return middleware.NotImplemented("operation ThyraPluginManager has not yet been implemented")
+		}),
 		ThyraRegistryHandler: ThyraRegistryHandlerFunc(func(params ThyraRegistryParams) middleware.Responder {
 			return middleware.NotImplemented("operation ThyraRegistry has not yet been implemented")
 		}),
@@ -229,6 +232,8 @@ type ThyraServerAPI struct {
 	ThyraEventsGetterHandler ThyraEventsGetterHandler
 	// ThyraHomeHandler sets the operation handler for the thyra home operation
 	ThyraHomeHandler ThyraHomeHandler
+	// ThyraPluginManagerHandler sets the operation handler for the thyra plugin manager operation
+	ThyraPluginManagerHandler ThyraPluginManagerHandler
 	// ThyraRegistryHandler sets the operation handler for the thyra registry operation
 	ThyraRegistryHandler ThyraRegistryHandler
 	// ThyraWalletHandler sets the operation handler for the thyra wallet operation
@@ -395,6 +400,9 @@ func (o *ThyraServerAPI) Validate() error {
 	}
 	if o.ThyraHomeHandler == nil {
 		unregistered = append(unregistered, "ThyraHomeHandler")
+	}
+	if o.ThyraPluginManagerHandler == nil {
+		unregistered = append(unregistered, "ThyraPluginManagerHandler")
 	}
 	if o.ThyraRegistryHandler == nil {
 		unregistered = append(unregistered, "ThyraRegistryHandler")
@@ -594,6 +602,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/thyra/home/{resource}"] = NewThyraHome(o.context, o.ThyraHomeHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/thyra/plugin-manager/{resource}"] = NewThyraPluginManager(o.context, o.ThyraPluginManagerHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

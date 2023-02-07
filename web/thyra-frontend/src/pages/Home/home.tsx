@@ -20,7 +20,7 @@ function Home() {
                 "Content-Type": "application/json",
             },
         };
-        const res = await fetch(`//${window.location.hostname}/thyra/plugin-manager`, init);
+        const res = await fetch(`/plugin-manager`, init);
         //To delete when Api is merged.
         console.log(res.json())
         return res.json();
