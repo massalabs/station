@@ -31,17 +31,18 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 	urlPlugin, err := url.Parse(param.Body.URL)
 	if err != nil {
 		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
-			&models.Error{Code: errorCodePluginRegisterInvalidData, Message: fmt.Sprintf("parsing URL: %s", err.Error())},
+			&models.Error{Code: errorCodePluginRegisterInvalidData, Message: fmt.Sprintf("parsing Plugin URL: %s", err.Error())},
 		)
 	}
 
 	// Set plugin information.
-
 	info := plugin.Information{
 		Name: param.Body.Name, Author: param.Body.Author,
 		Description: param.Body.Description,
 		Logo:        param.Body.Logo,
-		URL:         urlPlugin, APISpec: param.Body.APISpec,
+		URL:         urlPlugin,
+		APISpec:     param.Body.APISpec,
+		Home:        param.Body.Home,
 	}
 
 	wantedPlugin.SetInformation(&info)

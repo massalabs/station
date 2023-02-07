@@ -66,15 +66,21 @@ type PluginManagerListOKBodyItems0 struct {
 	// Plugin description.
 	Description string `json:"description,omitempty"`
 
+	// Plugin home Url.
+	Home string `json:"home,omitempty"`
+
 	// Plugin identifier.
 	ID int64 `json:"id,omitempty"`
 
-	// Plugin logo.
-	// Format: byte
-	Logo strfmt.Base64 `json:"logo,omitempty"`
+	// Plugin logo Url.
+	Logo string `json:"logo,omitempty"`
 
 	// Plugin name.
 	Name string `json:"name,omitempty"`
+
+	// Plugin status.
+	// Enum: [Starting Up Down ShuttingDown Crashed]
+	Status interface{} `json:"status,omitempty"`
 }
 
 // Validate validates this plugin manager list o k body items0
