@@ -3,39 +3,36 @@ import { ArrowPathIcon, TrashIcon, PlayCircleIcon } from "@heroicons/react/24/ou
 import axiosServices from "../services/axios";
 import { AxiosError, AxiosResponse } from "axios";
 import alertHelper from "../helpers/alertHelpers";
-import {Plugin} from "../interfaces/IPlugin";
+import {Plugin, PluginProps} from "../interfaces/IPlugin";
 
-
-function PluginBlock(props: Plugin) {
-    //State to store error
-    const [error, setError] = useState(<></>)
-    //Callback to remove Error
-    function removeError() :void {
-        setError(<></>);
+function PluginBlock(p: PluginProps) {
+    // Callback to set error on parent
+    function sendErrorData (errorType: string, errorMessage: string) {
+        p.setErrorData(errorType,errorMessage);
     }
     // Each Rerender we update fetch plugins data
     useEffect(() => {
         fetchPluginInfo();
-        console.log("props UseEffect", props);
-    }, [props]);
-    //UseRef props
-    let propsRef = useRef(props);
+        console.log("p.props UseEffect", p.props);
+    }, []);
+    //UseRef p.props
+    let propsRef = useRef(p.props);
     const checkboxRef = useRef<HTMLInputElement>(null);
-    const [toggleStatus, setStatus] = useState(props.isOnline)
+    const [toggleStatus, setStatus] = useState(p.props.isOnline)
 
     function setData(data: Plugin) {
         propsRef.current = data;
     }
     // fetch info from plugin
     // Not implemented atm
-    async function fetchPluginInfo() : Promise<boolean> {
+    async function fetchPluginInfo() : Promise<AxiosResponse<Plugin>> {
+        let result : AxiosResponse<Plugin> = {} as AxiosResponse<Plugin>;
         try {
-            const resultPluginInfo = await axiosServices.getpluginInfo(props.ID);           
+            result = await axiosServices.getpluginInfo(p.props.ID);           
         } catch (error) {           
-            setError(alertHelper("error","Plugins infos failed to launch", removeError))
-            return false                   
+            sendErrorData("error","Plugins infos failed to launch")                   
         }
-        return true;
+        return result;
     }
 
     
@@ -47,21 +44,20 @@ function PluginBlock(props: Plugin) {
         // fetch info from plugin
         let resultPluginInfo : AxiosResponse<Plugin>;
         try {
-            resultPluginInfo = await axiosServices.getpluginInfo(props.ID);           
+            resultPluginInfo = await axiosServices.getpluginInfo(p.props.ID);           
         } catch (error) {           
-            setError(alertHelper("error","Plugins infos failed to launch", removeError))
+            sendErrorData("error",`Plugins infos failed to get infos from plugin name : ${p.props.name} on ID: ${p.props.ID}`)
             return                   
         }
             setData(resultPluginInfo.data);
         let result : AxiosResponse<any>;
         if (!propsRef.current.isOnline) {
-            console.log(props);
-            // Launch plugin
-            
+            console.log(p.props);
+            // Launch plugin            
             try {
-                result = await axiosServices.manageLifePlugins(props.ID, "start");                
+                result = await axiosServices.manageLifePlugins(p.props.ID, "start");                
             } catch (error) {
-                setError(alertHelper("error","Plugins infos failed to launch", removeError))
+                sendErrorData("error","Start plugin failed")
                 return
             }
             // return result and change frontend if result is ok
@@ -69,26 +65,15 @@ function PluginBlock(props: Plugin) {
         } else {
             // Stop plugin
             try {
-                result = await axiosServices.manageLifePlugins(props.ID, "stop");   
+                result = await axiosServices.manageLifePlugins(p.props.ID, "stop");   
             } catch (error) {
-                setError(alertHelper("error","Plugins infos failed to launch", removeError))
+                sendErrorData("error","Stop plugin failed")
                 return
             }
             return result;
         }
     }
 
-    // // restart plugin
-    // // Not implemented atm
-    // function restartPlugins() {
-    //     const result = axiosServices.manageLifePlugins(props.id, "restart");
-    //         if (typeof result == typeof AxiosError){
-    //             console.log("Error:", result);
-    //             return                 
-    //         }
-    //         propsRef.current.online = true
-    //         return result;
-    // }
     // Update plugin
     // Not implemented atm
     function updatePlugins() {
@@ -99,7 +84,7 @@ function PluginBlock(props: Plugin) {
         //#####################################################
         // const result = axiosServices.uploadPlugins("filename");
         // if ( pluginsInfos.status && (pluginsInfos.status <= 200 || pluginsInfos.status >= 300)){
-        //     setError(alertHelper("error","Plugins infos failed to launch", removeError))        
+        //     sendErrorData("error","Plugins infos failed to launch")        
         // }
         // propsRef.current.online = true
         // return result;
@@ -109,16 +94,16 @@ function PluginBlock(props: Plugin) {
     // Open plugin homepage
     function openHomepagePlugins() {
         // TODO: Uncoment this when we have a url
-        // window.open(propsRef.current.Url);
+        // window.open(propsRef.current.url);
         console.log("OpenHomepage is Not implemented ATM")
     }
         // Uninstall plugin
         //Not implemented atm
         function removePlugins() {
             //TODO : Uncoment this when we have a remove process
-            // const result = axiosServices.deletePlugins(props.id);
+            // const result = axiosServices.deletePlugins(p.props.id);
             // if ( pluginsInfos.status && (pluginsInfos.status <= 200 || pluginsInfos.status >= 300)){
-            //     setError(alertHelper("error","Plugins infos failed to launch", removeError))        
+            //     sendErrorData("error","Plugins infos failed to launch")        
             // }
             // }
             // return result;
@@ -134,28 +119,28 @@ function PluginBlock(props: Plugin) {
     }
 
     function playStatus() {
-        return props.isOnline ? "w-6 h-6 text-green-500" : "w-6 h-6 text-red-500";
+        return p.props.isOnline ? "w-6 h-6 text-green-500" : "w-6 h-6 text-red-500";
     }
 
     function updateStatus() {
         return "w-6 h-6 text-yellow-500"
-        //  return props.updateAvailable ? "w-6 h-6 text-yellow-500" : "w-6 h-6 text-green-500";
+        //  return p.props.updateAvailable ? "w-6 h-6 text-yellow-500" : "w-6 h-6 text-green-500";
     }
 
     return (
         <section className="bg-slate-800 h-48 max-w-lg w-96 p-3 m-4 rounded-2xl">
             <div className=" flex-row h-full text-white ">
                 <div className="flex">
-                    <img className="w-10 h-10 pt-3 mx-2" src={props.logoPath} alt="Plugin Logo" />
+                    <img className="w-10 h-10 pt-3 mx-2" src={p.props.logoPath} alt="Plugin Logo" />
                     <div className="w-full">
-                        <h1 className="font-bold">{minimizeString(props.name, 90)}</h1>
+                        <h1 className="font-bold">{minimizeString(p.props.name, 90)}</h1>
                         <p className="font-light max-sm:text-sm">
-                            {minimizeString(props.description, 100)}
+                            {minimizeString(p.props.description, 100)}
                         </p>
                     </div>
                 </div>
                     <div className="flex w-full pt-7 justify-around items-center">
-                        <p className="font-light">V: {props.version}</p>
+                        <p className="font-light">V: {p.props.version}</p>
                         <input
                             type="checkbox"
                             className="toggle toggle-success"
@@ -167,6 +152,7 @@ function PluginBlock(props: Plugin) {
                         <button>
                             <PlayCircleIcon className={playStatus()} onClick={openHomepagePlugins} />
                         </button>
+                        {/* Delete hidden when update process is set */}
                         <button className="hidden">
                             <ArrowPathIcon className={updateStatus()} onClick={updatePlugins} />
                         </button>
@@ -177,6 +163,6 @@ function PluginBlock(props: Plugin) {
             </div>
         </section>
     );
-}
+};
 
 export default PluginBlock;

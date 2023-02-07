@@ -9,3 +9,8 @@ export interface Plugin {
     isOnline: boolean;
     logoPath: string;
 }
+
+export interface PluginProps {
+    props: Plugin;
+    setErrorData: (errorType: string, errorMessage: string) => void;
+  }
