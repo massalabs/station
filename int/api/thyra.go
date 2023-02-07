@@ -78,7 +78,7 @@ func ThyraRegistryHandler(params operations.ThyraRegistryParams) middleware.Resp
 
 //nolint:nolintlint,ireturn
 func ThyraHomeHandler(params operations.ThyraHomeParams) middleware.Responder {
-	content, err := contentReact.ReadFile(basePathReact + "/home/" + params.Resource)
+	content, err := contentReact.ReadFile(basePathReact + "home/" + params.Resource)
 	if err != nil {
 		return operations.NewThyraHomeNotFound()
 	}
@@ -87,7 +87,7 @@ func ThyraHomeHandler(params operations.ThyraHomeParams) middleware.Responder {
 }
 
 func ThyraPluginManagerHandler(params operations.ThyraPluginManagerParams) middleware.Responder {
-	content, err := contentReact.ReadFile(basePathReact + "/plugin-manager/" + params.Resource)
+	content, err := contentReact.ReadFile(basePathReact + "plugin-manager/" + params.Resource)
 	if err != nil {
 		return operations.NewThyraHomeNotFound()
 	}
