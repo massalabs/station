@@ -18,6 +18,7 @@ const (
 	dateFormat          = "2006-01-02"
 	metaKey             = "META"
 	ownedPrefix         = "owned"
+	ownerKey            = "owner"
 	blackListKey        = "blackList"
 	secondsToMilliCoeff = 1000
 )
@@ -84,10 +85,11 @@ func Registry(client *node.Client) ([]*models.Registry, error) {
 }
 
 /*
-The dns SC has 3 different kinds of key :
+The dns SC has 4 differents kinds of key :
 -the website names
 -keys owned concatenated with the owner's address
 -a key blackList
+-a owner key
 we only want to keep the website names keys.
 */
 func filterEntriesToDisplay(client *node.Client) ([][]byte, error) {
@@ -108,8 +110,8 @@ func filterEntriesToDisplay(client *node.Client) ([][]byte, error) {
 		keyListToRemove = strings.Split(convert.BytesToString(blackListedWebsites.CandidateValue), ",")
 	}
 
-	// we add the key blackList to the list of key to be removed
-	keyListToRemove = append(keyListToRemove, blackListKey)
+	// we add the keys blackList and ownerKey to the list of key to be removed
+	keyListToRemove = append(keyListToRemove, blackListKey, ownerKey)
 
 	// we encode the list as a slice of byteArray
 	keyListToRemoveAsArrayOfByteArray := convert.StringArrayToArrayOfByteArray(keyListToRemove)
