@@ -2,6 +2,8 @@ import ctypes
 import logging
 import os
 import platform
+import zipfile
+
 from installer import Installer
 
 class WindowsInstaller(Installer):
@@ -28,19 +30,28 @@ class WindowsInstaller(Installer):
         os.system("pause")
         os._exit(-1)
 
-    def configureAchylic(self):
+    def unzipAcrylic(self):
+        logging.info("Unzipping Acrylic...")
+        try:
+            with zipfile.ZipFile(self.ACRYLIC_DNS_PROXY_FILENAME, 'r') as zip_ref:
+                zip_ref.extractall(self.DEFAULT_ACRYLIC_PATH)
+        except:
+            self.printErrorAndExit("Could not unzip Acrylic")
+
+    def configureAcrylic(self):
         logging.info("Configuring Acrylic...")
-        f = open(self.DEFAULT_ACRYLIC_PATH + "\\" + self.ACRYLIC_HOST_FILE, "r+")
+        f = open(os.path.join(self.DEFAULT_ACRYLIC_PATH, self.ACRYLIC_HOST_FILE), "r+")
         if f.read().find("127.0.0.1 *.massa") != -1:
             f.close()
             return
         f.write("\n127.0.0.1 *.massa")
         f.close()
 
-        self.executeCommand("NET STOP AcrylicDNSProxySvc", True)
-        self.executeCommand("NET START AcrylicDNSProxySvc", True)
+        logging.info("Restarting Acrylic service...")
+        self.executeCommand("NET STOP AcrylicDNSProxySvc & NET START AcrylicDNSProxySvc", True)
 
     def configureNetworkInterface(self):
+        logging.info("Configuring network interface...")
         commandOutput = self.executeCommand("wmic nic where \"netenabled=true\" get netconnectionID", True)
 
         networkAdpatersNames = list(filter(None, commandOutput.split('\n')))
@@ -48,8 +59,10 @@ class WindowsInstaller(Installer):
         networkAdpatersNames = [name.strip() for name in networkAdpatersNames]
 
         for name in networkAdpatersNames:
-            self.executeCommand("NETSH interface ipv4 set dnsservers " + name + " static 127.0.0.1 primary", True)
-            self.executeCommand("NETSH interface ipv6 set dnsservers " + name + " static ::1 primary", True)
+            self.executeCommand(f'NETSH interface ipv4 set dnsservers "{name}" static 127.0.0.1 primary')
+            self.executeCommand(f'NETSH interface ipv6 set dnsservers "{name}" static ::1 primary')
+
+        logging.info("Network interface configured")
 
     def setupDNS(self):
         logging.info("Setting up DNS...")
@@ -59,8 +72,10 @@ class WindowsInstaller(Installer):
         else:
             logging.info("Installing Acrylic DNS Proxy...")
             self.downloadFile(self.ACRYLIC_DNS_PROXY_URL, self.ACRYLIC_DNS_PROXY_FILENAME)
-            self.executeCommand(f"Expand-Archive {self.ACRYLIC_DNS_PROXY_FILENAME} -DestinationPath {self.DEFAULT_ACRYLIC_PATH}", True)
-            self.executeCommand(f"{self.DEFAULT_ACRYLIC_PATH}\InstallAcrylicService.bat", True)
+            self.unzipAcrylic()
+
+            os.chdir(self.DEFAULT_ACRYLIC_PATH)
+            self.executeCommand(os.path.join(self.DEFAULT_ACRYLIC_PATH, "InstallAcrylicService.bat"))
             self.configureNetworkInterface()
 
             try:
@@ -68,16 +83,18 @@ class WindowsInstaller(Installer):
             except:
                 logging.error("Could not remove Acrylic DNS Proxy installer")
 
-        self.configureAchylic()
+        self.configureAcrylic()
 
 
 if __name__ == "__main__":
     if platform.system() != "Windows":
         logging.error("This script is only compatible with Windows")
+        os.system("pause")
         os._exit(-1)
 
     if ctypes.windll.shell32.IsUserAnAdmin() == 0:
         logging.error("This script must be run as administrator")
+        os.system("pause")
         os._exit(-1)
 
     WindowsInstaller().startInstall()

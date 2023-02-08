@@ -1,15 +1,15 @@
+import locale
 import logging
+import os
 import platform
 import shutil
 import ssl
-import os
 import subprocess
-
 import urllib.request
 from urllib.error import URLError
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=os.environ.get("LOGLEVEL", "DEBUG"),
     format='%(name)-12s: %(levelname)-8s %(message)s',
     handlers=[
         logging.FileHandler("thyra_installer.log", mode='w'),
@@ -47,13 +47,22 @@ class Installer:
     """
     def executeCommand(self, command, shell=False) -> str:
         logging.debug(f'Executing command: {command}')
-        process = subprocess.Popen(command, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = process.communicate()
+        try:
+            process = subprocess.Popen(command, shell=shell,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+            stdout, stderr = process.communicate()
 
-        if process.returncode != 0:
-            self.printErrorAndExit(f"Command failed with error code {process.returncode}: {stderr.decode('utf-8')}")
+            if stdout is not None and len(stdout) > 0:
+                logging.debug(f'Command output: {stdout.decode(locale.getpreferredencoding(False))}')
 
-        return stdout.decode("utf-8")
+            if process.returncode != 0:
+                self.printErrorAndExit(f"Command failed with error : {stderr.decode(locale.getpreferredencoding(False))}")
+
+            return stdout.decode(locale.getpreferredencoding(False))
+        except OSError as err:
+            self.printErrorAndExit(f"Error while executing command: {err}")
 
     """
     Downloads the file at the given url and saves it to the given filename
