@@ -1,4 +1,5 @@
 import logging
+import os
 import platform
 from installer import Installer
 
@@ -19,9 +20,8 @@ class MacOSInstaller(Installer):
             self.THYRA_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_darwin-amd64"
             self.MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=darwin/amd64"
         else:
-            self.printErrorAndExit("Unsupported architecture")
+            self.printErrorAndExit(f"Unsupported architecture {platform.machine()}")
 
-    # TODO: Replace commands with python functions
     def configureDNSMasq(self):
         logging.info("Configuring DNSMasq...")
 
@@ -50,6 +50,6 @@ class MacOSInstaller(Installer):
 if __name__ == "__main__":
     if platform.system() != "Darwin":
         logging.error("This script is only for MacOS")
-        exit(1)
+        os._exit(-1)
 
     MacOSInstaller().startInstall()
