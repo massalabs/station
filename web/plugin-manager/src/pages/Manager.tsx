@@ -15,10 +15,17 @@ function Manager() {
     function removeError(): void {
         setError(<></>);
     }
-    function setErrorFromChild(errorType: string, errorMessage: string): void {
+    function setErrorHandler(errorType: string, errorMessage: string): void {
         setError(alertHelper(errorType, errorMessage, removeError));
+        setInterval(() => {
+            setError(<></>);
+        }, 10000);
     }
-
+    const initializeUi = async () => {
+        pluginsInfos = await axiosServices.getPluginsInfo();
+        console.log("ININITIALIZEUI", pluginsInfos)
+        populatePlugins();
+    };
     //State to store plugins populated
     const [pluginsPopulated, setpluginsPopulated] = useState([<PuffLoader/>])
 
@@ -33,82 +40,82 @@ function Manager() {
                 console.log(pluginsInfos)
                 populatePlugins();
             } catch (error) {
-                setError(alertHelper("error", "Plugins infos failed to launch", removeError));
+                setErrorHandler("error", "Plugins infos failed to launch");
             }
-        }, 10000);
+        }, 4000);
         return () => clearInterval(interval);
     }, []);
 
     const mock: Plugin = {
         name: "Plugin 1",
-        logoPath:
+        logo:
             "https://upload.wikimedia.org/wikipedia/fr/thumb/1/15/Audi_logo.svg/1280px-Audi_logo.svg.png",
         description: "T Becarefull",
         version: "1.0.0",
-        isOnline: false,
-        url: "/urlOfPlugin",
+        status: "Down",
+        home: "/urlOfPlugin",
         // isUpdate: true,
-        id: 1,
+        id: "1",
     };
     const mock2: Plugin = {
         name: "Plugin 2",
-        logoPath:
+        logo:
             "https://upload.wikimedia.org/wikipedia/fr/thumb/1/15/Audi_logo.svg/1280px-Audi_logo.svg.png",
         description:
             "This is a plugin Description BecarefullThis is a plugin Description BecarefullThis is a plugin Description BecarefullThis is a plugin Description Becarefull",
         version: "1.0.0",
-        isOnline: false,
-        url: "/urlOfPlugin",
-        // isUpdate: false,
-        id: 2,
+        status: "Down",
+        home: "/urlOfPlugin",
+        // isUpdate: "Down",
+        id: "2",
     };
     const mock3: Plugin = {
         name: "Plugin 3",
-        logoPath:
+        logo:
             "https://upload.wikimedia.org/wikipedia/fr/thumb/1/15/Audi_logo.svg/1280px-Audi_logo.svg.png",
         description:
             "This is a plugin Descriaaaaaaaaaaaaatio  aaaaaaaaaaa n  aaaaaaaaaaa BecarefullThis is a plugin Description BecarefullThis is a plugin Description BecarefullThis is a plugin Description Becarefull",
         version: "1.0.0",
-        isOnline: true,
-        // isUpdate: true,
-        url: "/urlOfPlugin",
-        id: 3,
+        status: "Up",
+        // isUpdate: "Up",
+        home: "/urlOfPlugin",
+        id: "3",
     };
     const mock4: Plugin = {
         name: "Plugin 4",
-        logoPath:
+        logo:
             "https://upload.wikimedia.org/wikipedia/fr/thumb/1/15/Audi_logo.svg/1280px-Audi_logo.svg.png",
         description:
             "This is a plugin Deaaaaaaaaaacription BecarefullThis is a plugin Description BecarefullThis is a plugin Description BecarefullThis is a plugin Description Becarefull",
         version: "1.0.0",
-        isOnline: true,
-        // isUpdate: false,
-        url: "/urlOfPlugin",
-        id: 4,
+        status: "Up",
+        // isUpdate: "Down",
+        home: "/urlOfPlugin",
+        id: "4",
     };
     const mock5: Plugin = {
         name: "Plugin 5",
-        logoPath:
+        logo:
             "https://upload.wikimedia.org/wikipedia/fr/thumb/1/15/Audi_logo.svg/1280px-Audi_logo.svg.png",
         description:
             "This is a plugin Description BessssssssssscarefullThis is a plugin Description BecarefullThis is a plugin Description BecarefullThis is a plugin Description Becarefull",
         version: "1.0.0",
-        isOnline: true,
-        // isUpdate: true,
-        url: "/urlOfPlugin",
-        id: 5,
+        status: "Up",
+        // isUpdate: "Up",
+        home: "/urlOfPlugin",
+        id: "5",
     };
     const mock6: Plugin = {
         name: "Plugin 5",
-        logoPath:
+        logo:
             "https://upload.wikimedia.org/wikipedia/fr/thumb/1/15/Audi_logo.svg/1280px-Audi_logo.svg.png",
         description:
             "This is a plugin Description BecarefullThis is a plugin Description BecarefullThis is a plugin Description BecarefullThis is a plugin Description Becarefull",
         version: "1.0.0",
-        isOnline: true,
-        // isUpdate: true,
-        url: "/urlOfPlugin",
-        id: 6,
+        status: "Up",
+        // isUpdate: "Up",
+        home: "/urlOfPlugin",
+        id: "6",
     };
     let mocks = [mock, mock2, mock3, mock4, mock5, mock6];
     // pluginsInfos ? mocks : mocks = pluginsInfos;
@@ -119,7 +126,7 @@ function Manager() {
             pluginsInfos.data.map((mock: Plugin) => {
                     let pluginProps: PluginProps = {
                         props: mock,
-                        setErrorData: setErrorFromChild,
+                        setErrorData: setErrorHandler,
                     };
                     console.log(mock)
                     return <PluginBlock {...pluginProps} />;
@@ -127,7 +134,7 @@ function Manager() {
             : mocks.map((mock: Plugin) => {
                     let pluginProps: PluginProps = {
                         props: mock,
-                        setErrorData: setErrorFromChild,
+                        setErrorData: setErrorHandler,
                     };
                     return <PluginBlock {...pluginProps} />;
                 }));

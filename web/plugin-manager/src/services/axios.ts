@@ -7,7 +7,7 @@ export class axiosServices {
   
   }
 
-  static manageLifePlugins (ID:number, command:string) : Promise<AxiosResponse<number>> {
+  static manageLifePlugins (ID:string, command:string) : Promise<AxiosResponse<number>> {
     return axios.post<any>(`/plugin-manager/${ID}/execute`, {
       command: command,
     })
@@ -17,12 +17,12 @@ export class axiosServices {
     return  axios.get<Plugin[]>(`/plugin-manager`);
   }
 
-  static getpluginInfo (ID:number) : Promise<AxiosResponse<Plugin, any>> {
+  static getpluginInfo (ID:string) : Promise<AxiosResponse<Plugin, any>> {
     console.log("getpluginInfo" + ID)
     return  axios.get<Plugin>(`/plugin-manager/${ID}`);      
   }
 
-  static  deletePlugins (ID:number) : Promise<AxiosResponse<any>> {
+  static  deletePlugins (ID:string) : Promise<AxiosResponse<any>> {
     return axios.delete<any>(`/plugin-manager/${ID}`)
 
     }
