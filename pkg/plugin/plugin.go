@@ -31,9 +31,10 @@ type Information struct {
 	Name        string
 	Author      string
 	Description string
-	Logo        []byte
+	Logo        string
 	URL         *url.URL
 	APISpec     string
+	Home        string
 }
 
 type Plugin struct {

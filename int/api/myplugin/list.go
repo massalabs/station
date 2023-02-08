@@ -3,6 +3,7 @@ package myplugin
 import (
 	"fmt"
 	"log"
+	"net/url"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -41,9 +42,13 @@ func (l *list) Handle(param operations.PluginManagerListParams) middleware.Respo
 		info := plgn.Information()
 
 		if info != nil {
+			pluginURL := fmt.Sprintf("%s%s/%s/", plugin.EndpointPattern, url.PathEscape(info.Author), url.PathEscape(info.Name))
+
 			payload[index].Name = info.Name
 			payload[index].Description = info.Description
-			payload[index].Logo = info.Logo
+			payload[index].Logo = pluginURL + info.Logo
+			payload[index].Home = pluginURL + info.Home
+			payload[index].Status = plgn.Status().String()
 		}
 	}
 
