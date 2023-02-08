@@ -2,7 +2,6 @@ name: 'Thyra install'
 
 inputs:
   os:
-    required: true
     default: 'ubuntu-20.04'
 
 runs:
@@ -14,6 +13,18 @@ runs:
       run: |
         sudo apt update
         sudo apt install -y libgl1-mesa-dev xorg-dev gcc-mingw-w64-x86-64 p7zip
+
     - uses: actions/setup-go@v3
       with:
         go-version: 1.19.2
+
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+        cache-dependency-path: web/thyra-frontend/package-lock.json
+
+    - name: Build react frontend
+      shell: bash
+      run: go generate gen-frontend.go
