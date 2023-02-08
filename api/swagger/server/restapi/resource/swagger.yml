@@ -760,10 +760,17 @@ paths:
                   description: Plugin description.
                   type: string
                   x-nullable: false
-                logo:
-                  description: Plugin logo.
+                home:
+                  description: Plugin home Url.
                   type: string
-                  format: byte
+                  x-nullable: false
+                status:
+                  description: Plugin status.
+                  enum: ["Starting", "Up", "Down", "ShuttingDown", "Crashed"]
+                  x-nullable: false
+                logo:
+                  description: Plugin logo Url.
+                  type: string
                   x-nullable: false
         "400":
           description: Bad request.
@@ -819,7 +826,10 @@ paths:
                 logo:
                   description: Plugin logo.
                   type: string
-                  format: byte
+                  x-nullable: false
+                home:
+                  description: Plugin home url.
+                  type: string
                   x-nullable: false
                 url:
                   description: URL authority to use to connect to the plugin

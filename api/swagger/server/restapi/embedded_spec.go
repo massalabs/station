@@ -677,20 +677,35 @@ func init() {
                     "type": "string",
                     "x-nullable": false
                   },
+                  "home": {
+                    "description": "Plugin home Url.",
+                    "type": "string",
+                    "x-nullable": false
+                  },
                   "id": {
                     "description": "Plugin identifier.",
                     "type": "integer",
                     "x-nullable": false
                   },
                   "logo": {
-                    "description": "Plugin logo.",
+                    "description": "Plugin logo Url.",
                     "type": "string",
-                    "format": "byte",
                     "x-nullable": false
                   },
                   "name": {
                     "description": "Plugin name.",
                     "type": "string",
+                    "x-nullable": false
+                  },
+                  "status": {
+                    "description": "Plugin status.",
+                    "enum": [
+                      "Starting",
+                      "Up",
+                      "Down",
+                      "ShuttingDown",
+                      "Crashed"
+                    ],
                     "x-nullable": false
                   }
                 }
@@ -806,6 +821,11 @@ func init() {
                   "type": "string",
                   "x-nullable": false
                 },
+                "home": {
+                  "description": "Plugin home url.",
+                  "type": "string",
+                  "x-nullable": false
+                },
                 "id": {
                   "description": "Plugin identifier.",
                   "type": "integer",
@@ -814,7 +834,6 @@ func init() {
                 "logo": {
                   "description": "Plugin logo.",
                   "type": "string",
-                  "format": "byte",
                   "x-nullable": false
                 },
                 "name": {
@@ -2315,6 +2334,11 @@ func init() {
                   "type": "string",
                   "x-nullable": false
                 },
+                "home": {
+                  "description": "Plugin home url.",
+                  "type": "string",
+                  "x-nullable": false
+                },
                 "id": {
                   "description": "Plugin identifier.",
                   "type": "integer",
@@ -2323,7 +2347,6 @@ func init() {
                 "logo": {
                   "description": "Plugin logo.",
                   "type": "string",
-                  "format": "byte",
                   "x-nullable": false
                 },
                 "name": {
@@ -3058,20 +3081,35 @@ func init() {
           "type": "string",
           "x-nullable": false
         },
+        "home": {
+          "description": "Plugin home Url.",
+          "type": "string",
+          "x-nullable": false
+        },
         "id": {
           "description": "Plugin identifier.",
           "type": "integer",
           "x-nullable": false
         },
         "logo": {
-          "description": "Plugin logo.",
+          "description": "Plugin logo Url.",
           "type": "string",
-          "format": "byte",
           "x-nullable": false
         },
         "name": {
           "description": "Plugin name.",
           "type": "string",
+          "x-nullable": false
+        },
+        "status": {
+          "description": "Plugin status.",
+          "enum": [
+            "Starting",
+            "Up",
+            "Down",
+            "ShuttingDown",
+            "Crashed"
+          ],
           "x-nullable": false
         }
       }

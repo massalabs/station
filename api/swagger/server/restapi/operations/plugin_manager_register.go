@@ -76,14 +76,16 @@ type PluginManagerRegisterBody struct {
 	// Required: true
 	Description string `json:"description"`
 
+	// Plugin home url.
+	Home string `json:"home,omitempty"`
+
 	// Plugin identifier.
 	// Required: true
 	ID int64 `json:"id"`
 
 	// Plugin logo.
 	// Required: true
-	// Format: byte
-	Logo strfmt.Base64 `json:"logo"`
+	Logo string `json:"logo"`
 
 	// Plugin name.
 	// Required: true
@@ -157,7 +159,7 @@ func (o *PluginManagerRegisterBody) validateID(formats strfmt.Registry) error {
 
 func (o *PluginManagerRegisterBody) validateLogo(formats strfmt.Registry) error {
 
-	if err := validate.Required("body"+"."+"logo", "body", strfmt.Base64(o.Logo)); err != nil {
+	if err := validate.RequiredString("body"+"."+"logo", "body", o.Logo); err != nil {
 		return err
 	}
 
