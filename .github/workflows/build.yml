@@ -62,6 +62,12 @@ jobs:
         uses: ./.github/actions/install
         with:
           os: ${{ matrix.os }}
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          cache: 'npm'
+      - name: Go generate
+        run: go generate
       - name: Update version
         run: echo -e "${GITHUB_REF_NAME}" > cmd/thyra-server/version.txt
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
