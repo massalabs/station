@@ -35,12 +35,16 @@ class Installer:
         logging.getLogger('').addHandler(console)
         pass
 
+    """
+    Prints the error given in parameter and exits the program
+    """
     def printErrorAndExit(self, error):
         logging.error(error)
-        if platform.system() == "Windows":
-            os.system("pause")
         os._exit(-1)
 
+    """
+    Executes the command given in parameter and returns the output of the command
+    """
     def executeCommand(self, command, shell=False) -> str:
         logging.debug(f'Executing command: {command}')
         process = subprocess.Popen(command, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -51,6 +55,9 @@ class Installer:
 
         return stdout.decode("utf-8")
 
+    """
+    Downloads the file at the given url and saves it to the given filename
+    """
     def downloadFile(self, url, filename):
         logging.debug(f'Downloading {filename} from {url}')
         try:
@@ -71,6 +78,9 @@ class Installer:
     def setupDNS(self):
         pass
 
+    """
+    Generates an HTTPS certificate for my.massa using mkcert and stores it in the thyra config folder.
+    """
     def generateCertificate(self):
         if not os.path.exists(self.CERTIFICATIONS_FOLDER_PATH):
             try:
@@ -96,6 +106,9 @@ class Installer:
             self.printErrorAndExit(f"Error while deleting mkcert binary: {err}")
         logging.info("HTTPS certificate successfully generated")
 
+    """
+    Downloads thyra server and stores it in the thyra install folder.
+    """
     def installThyraServer(self):
         self.downloadFile(self.THYRA_SERVER_URL, self.THYRA_SERVER_FILENAME)
         os.chmod(self.THYRA_SERVER_FILENAME, 0o755)
@@ -109,6 +122,9 @@ class Installer:
                 self.printErrorAndExit(f"Error while moving thyra server binary: {err}")
         logging.info("Thyra server installed successfully")
 
+    """
+    Downloads thyra app and stores it in the thyra install folder.
+    """
     def installThyraApp(self):
         self.downloadFile(self.THYRA_APP_URL, self.THYRA_APP_FILENAME)
         os.chmod(self.THYRA_APP_FILENAME, 0o755)
@@ -122,6 +138,9 @@ class Installer:
                 self.printErrorAndExit(f"Error while moving thyra app binary: {err}")
         logging.info("Thyra app installed successfully")
 
+    """
+    Installs thyra server, thyra app and a DNS server.
+    """
     def startInstall(self):
         logging.info("Starting installation of thyra")
         self.installThyraServer()
