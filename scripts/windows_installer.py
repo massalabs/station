@@ -1,3 +1,4 @@
+import ctypes
 import logging
 import os
 import platform
@@ -15,10 +16,10 @@ class WindowsInstaller(Installer):
         self.THYRA_APP_FILENAME = "thyra-app.exe"
         self.MKCERT_FILENAME = "mkcert.exe"
 
-        if platform.machine() == "x86_64":
-            self.THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_amd64"
-            self.THYRA_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_darwin-amd64"
-            self.MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=darwin/amd64"
+        if platform.machine() == "AMD64":
+            self.THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
+            self.THYRA_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_windows-amd64.exe"
+            self.MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=windows/amd64"
         else:
             self.printErrorAndExit(f"Unsupported architecture {platform.machine()}")
 
@@ -75,4 +76,9 @@ if __name__ == "__main__":
         logging.error("This script is only compatible with Windows")
         os._exit(-1)
 
+    if ctypes.windll.shell32.IsUserAnAdmin() == 0:
+        logging.error("This script must be run as administrator")
+        os._exit(-1)
+
     WindowsInstaller().startInstall()
+    os.system("pause")

@@ -82,6 +82,8 @@ class Installer:
     Generates an HTTPS certificate for my.massa using mkcert and stores it in the thyra config folder.
     """
     def generateCertificate(self):
+        logging.info("Generating HTTPS certificate for my.massa")
+
         if not os.path.exists(self.CERTIFICATIONS_FOLDER_PATH):
             try:
                 os.makedirs(self.CERTIFICATIONS_FOLDER_PATH)
