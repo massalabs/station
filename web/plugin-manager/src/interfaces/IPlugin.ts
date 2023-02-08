@@ -1,6 +1,6 @@
 // Used in web\plugin-manager\src\components\pluginBlock.tsx
 export interface Plugin {
-    ID: number;
+    id: number;
     name: string;
     description: string;
     version: string;

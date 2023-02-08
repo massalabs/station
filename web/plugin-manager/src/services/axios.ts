@@ -7,7 +7,7 @@ export class axiosServices {
   
   }
 
-  static manageLifePlugins (ID:number, command:string) : Promise<AxiosResponse<any>> {
+  static manageLifePlugins (ID:number, command:string) : Promise<AxiosResponse<number>> {
     return axios.post<any>(`/plugin-manager/${ID}/execute`, {
       command: command,
     })
@@ -18,6 +18,7 @@ export class axiosServices {
   }
 
   static getpluginInfo (ID:number) : Promise<AxiosResponse<Plugin, any>> {
+    console.log("getpluginInfo" + ID)
     return  axios.get<Plugin>(`/plugin-manager/${ID}`);      
   }
 

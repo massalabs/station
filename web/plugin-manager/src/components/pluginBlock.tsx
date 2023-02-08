@@ -6,31 +6,37 @@ import alertHelper from "../helpers/alertHelpers";
 import {Plugin, PluginProps} from "../interfaces/IPlugin";
 
 function PluginBlock(p: PluginProps) {
+
+    let propsRef = useRef(p.props);
     // Callback to set error on parent
     function sendErrorData (errorType: string, errorMessage: string) {
         p.setErrorData(errorType,errorMessage);
     }
-    // Each Rerender we update fetch plugins data
-    useEffect(() => {
-        fetchPluginInfo();
-        console.log("p.props UseEffect", p.props);
-    }, []);
-    //UseRef p.props
-    let propsRef = useRef(p.props);
-    const checkboxRef = useRef<HTMLInputElement>(null);
-    const [toggleStatus, setStatus] = useState(p.props.isOnline)
-
     function setData(data: Plugin) {
         propsRef.current = data;
     }
+    // // Each Rerender we update fetch plugins data
+    // useEffect(() => {
+    //     fetchPluginInfo();
+    //     console.log("p.props UseEffect", p.props);
+    // }, []);
+    let dataMemoized = useMemo(() => { 
+        console.log("p.props useMemo", p.props);     
+            return p.props;       
+    }, [p.props]);
+
+    //UseRef p.props
+    const [toggleStatus, setStatus] = useState(propsRef.current.isOnline)
+
     // fetch info from plugin
     // Not implemented atm
     async function fetchPluginInfo() : Promise<AxiosResponse<Plugin>> {
         let result : AxiosResponse<Plugin> = {} as AxiosResponse<Plugin>;
+        console.log("fetchPluginInfo",dataMemoized)
         try {
-            result = await axiosServices.getpluginInfo(p.props.ID);           
+            return result = await axiosServices.getpluginInfo(dataMemoized.id);           
         } catch (error) {           
-            sendErrorData("error","Plugins infos failed to launch")                   
+            sendErrorData("error",`Plugins infos failed to get infos from plugin name : ${dataMemoized.name} on id: ${dataMemoized.id}`)
         }
         return result;
     }
@@ -42,30 +48,30 @@ function PluginBlock(p: PluginProps) {
         //Front end Update
         setStatus(!toggleStatus);
         // fetch info from plugin
-        let resultPluginInfo : AxiosResponse<Plugin>;
-        try {
-            resultPluginInfo = await axiosServices.getpluginInfo(p.props.ID);           
-        } catch (error) {           
-            sendErrorData("error",`Plugins infos failed to get infos from plugin name : ${p.props.name} on ID: ${p.props.ID}`)
-            return                   
+        let resultPluginInfo : AxiosResponse<Plugin> = await fetchPluginInfo();
+        if ( resultPluginInfo.status && (resultPluginInfo.status <= 200 || resultPluginInfo.status >= 300)){
+            sendErrorData("error","Plugins infos failed to launch")
+            return
         }
             setData(resultPluginInfo.data);
-        let result : AxiosResponse<any>;
+        let result : AxiosResponse<number>;
         if (!propsRef.current.isOnline) {
             console.log(p.props);
             // Launch plugin            
             try {
-                result = await axiosServices.manageLifePlugins(p.props.ID, "start");                
+                result = await axiosServices.manageLifePlugins(dataMemoized.id, "start");
+                dataMemoized.isOnline = true                
             } catch (error) {
                 sendErrorData("error","Start plugin failed")
                 return
             }
             // return result and change frontend if result is ok
-            propsRef.current.isOnline = true
+
         } else {
             // Stop plugin
             try {
-                result = await axiosServices.manageLifePlugins(p.props.ID, "stop");   
+                result = await axiosServices.manageLifePlugins(dataMemoized.id, "stop");   
+                dataMemoized.isOnline = false
             } catch (error) {
                 sendErrorData("error","Stop plugin failed")
                 return
@@ -119,7 +125,7 @@ function PluginBlock(p: PluginProps) {
     }
 
     function playStatus() {
-        return p.props.isOnline ? "w-6 h-6 text-green-500" : "w-6 h-6 text-red-500";
+        return dataMemoized.isOnline ? "w-6 h-6 text-green-500" : "w-6 h-6 text-red-500";
     }
 
     function updateStatus() {
@@ -145,7 +151,6 @@ function PluginBlock(p: PluginProps) {
                             type="checkbox"
                             className="toggle toggle-success"
                             checked={toggleStatus}
-                            ref={checkboxRef}
                             onChange={launchAndStopPlugins}
                         />
 

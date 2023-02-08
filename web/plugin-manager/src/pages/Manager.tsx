@@ -5,6 +5,7 @@ import massaLogoLight from "../assets/MASSA_LIGHT_Detailed.png";
 import axiosServices from "../services/axios";
 import { AxiosError, AxiosResponse } from "axios";
 import alertHelper from "../helpers/alertHelpers";
+import { PuffLoader } from "react-spinners";
 function Manager() {
     let pluginsInfos: AxiosResponse<any, any> = {} as AxiosResponse<any, any>;
 
@@ -19,7 +20,7 @@ function Manager() {
     }
 
     //State to store plugins populated
-    const [pluginsPopulated, setpluginsPopulated] = useState([])
+    const [pluginsPopulated, setpluginsPopulated] = useState([<PuffLoader/>])
 
     //State to store plugins
     const [plugins, setPlugins] = useState<Plugin[]>([]);
@@ -34,7 +35,7 @@ function Manager() {
             } catch (error) {
                 setError(alertHelper("error", "Plugins infos failed to launch", removeError));
             }
-        }, 5000);
+        }, 10000);
         return () => clearInterval(interval);
     }, []);
 
@@ -47,7 +48,7 @@ function Manager() {
         isOnline: false,
         url: "/urlOfPlugin",
         // isUpdate: true,
-        ID: 1,
+        id: 1,
     };
     const mock2: Plugin = {
         name: "Plugin 2",
@@ -59,7 +60,7 @@ function Manager() {
         isOnline: false,
         url: "/urlOfPlugin",
         // isUpdate: false,
-        ID: 2,
+        id: 2,
     };
     const mock3: Plugin = {
         name: "Plugin 3",
@@ -71,7 +72,7 @@ function Manager() {
         isOnline: true,
         // isUpdate: true,
         url: "/urlOfPlugin",
-        ID: 3,
+        id: 3,
     };
     const mock4: Plugin = {
         name: "Plugin 4",
@@ -83,7 +84,7 @@ function Manager() {
         isOnline: true,
         // isUpdate: false,
         url: "/urlOfPlugin",
-        ID: 4,
+        id: 4,
     };
     const mock5: Plugin = {
         name: "Plugin 5",
@@ -95,7 +96,7 @@ function Manager() {
         isOnline: true,
         // isUpdate: true,
         url: "/urlOfPlugin",
-        ID: 5,
+        id: 5,
     };
     const mock6: Plugin = {
         name: "Plugin 5",
@@ -107,7 +108,7 @@ function Manager() {
         isOnline: true,
         // isUpdate: true,
         url: "/urlOfPlugin",
-        ID: 6,
+        id: 6,
     };
     let mocks = [mock, mock2, mock3, mock4, mock5, mock6];
     // pluginsInfos ? mocks : mocks = pluginsInfos;
