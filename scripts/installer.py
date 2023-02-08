@@ -9,7 +9,7 @@ import urllib.request
 from urllib.error import URLError
 
 logging.basicConfig(
-    level=os.environ.get("LOGLEVEL", "DEBUG"),
+    level=os.environ.get("LOGLEVEL", "INFO"),
     format='%(name)-12s: %(levelname)-8s %(message)s',
     handlers=[
         logging.FileHandler("thyra_installer.log", mode='w'),
