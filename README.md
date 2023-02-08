@@ -58,7 +58,7 @@ run gofumpt locally on your source code `gofumpt -l -w .`
 
 gci need to be installed locally `go install github.com/daixiang0/gci@latest`
 
-run gofumpt locally on your source code `gci --write .`
+run gci locally on your source code `gci --write .`
 
 ## How to...
 
@@ -73,7 +73,7 @@ Follow the instructions for your computer in the wiki:
 ### ... manage my wallet?
 1. Create / delete your wallet 
 
-You can access to Thyra wallet interface at URL : <http://my.massa/thyra/wallet/index.html>
+You can access to Thyra wallet interface at URL : <https://my.massa/thyra/wallet/index.html>
 
 By inputing the 'Nickname' & 'Password', you'll be able to create an encrypted wallet locally on your machine.
 To delete your wallet, simply use the interface. 

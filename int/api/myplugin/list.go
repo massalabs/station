@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"strconv"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -30,7 +31,7 @@ func (l *list) Handle(param operations.PluginManagerListParams) middleware.Respo
 	for index, id := range ids {
 		//nolint:exhaustruct
 		payload[index] = &operations.PluginManagerListOKBodyItems0{
-			ID: ids[index],
+			ID: strconv.FormatInt(ids[index], 10),
 		}
 
 		plgn, err := l.manager.Plugin(id)

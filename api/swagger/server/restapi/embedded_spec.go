@@ -647,7 +647,7 @@ func init() {
                   },
                   "id": {
                     "description": "Plugin identifier.",
-                    "type": "integer",
+                    "type": "string",
                     "x-nullable": false
                   },
                   "logo": {
@@ -791,7 +791,7 @@ func init() {
                 },
                 "id": {
                   "description": "Plugin identifier.",
-                  "type": "integer",
+                  "type": "string",
                   "x-nullable": false
                 },
                 "logo": {
@@ -849,7 +849,7 @@ func init() {
         "operationId": "pluginManagerGetInformation",
         "parameters": [
           {
-            "type": "integer",
+            "type": "string",
             "description": "Plugin identifier.",
             "name": "id",
             "in": "path",
@@ -907,7 +907,7 @@ func init() {
         "operationId": "pluginManagerUninstall",
         "parameters": [
           {
-            "type": "integer",
+            "type": "string",
             "description": "Plugin identifier.",
             "name": "id",
             "in": "path",
@@ -950,7 +950,7 @@ func init() {
         "operationId": "pluginManagerExecuteCommand",
         "parameters": [
           {
-            "type": "integer",
+            "type": "string",
             "description": "Plugin unique identifier.",
             "name": "id",
             "in": "path",
@@ -2257,7 +2257,7 @@ func init() {
                 },
                 "id": {
                   "description": "Plugin identifier.",
-                  "type": "integer",
+                  "type": "string",
                   "x-nullable": false
                 },
                 "logo": {
@@ -2315,7 +2315,7 @@ func init() {
         "operationId": "pluginManagerGetInformation",
         "parameters": [
           {
-            "type": "integer",
+            "type": "string",
             "description": "Plugin identifier.",
             "name": "id",
             "in": "path",
@@ -2373,7 +2373,7 @@ func init() {
         "operationId": "pluginManagerUninstall",
         "parameters": [
           {
-            "type": "integer",
+            "type": "string",
             "description": "Plugin identifier.",
             "name": "id",
             "in": "path",
@@ -2416,7 +2416,7 @@ func init() {
         "operationId": "pluginManagerExecuteCommand",
         "parameters": [
           {
-            "type": "integer",
+            "type": "string",
             "description": "Plugin unique identifier.",
             "name": "id",
             "in": "path",
@@ -2994,7 +2994,7 @@ func init() {
         },
         "id": {
           "description": "Plugin identifier.",
-          "type": "integer",
+          "type": "string",
           "x-nullable": false
         },
         "logo": {
