@@ -292,6 +292,30 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /mgmt/balance/{address}:
+    get:
+      operationId: mgmtWalletBalance
+      parameters:
+        - in: path
+          name: address
+          type: string
+          required: true
+          description: Wallet's address
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Balance retrieved
+          schema:
+            $ref: "#/definitions/Data"
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
   /my/domains/{nickname}:
     get:
       operationId: myDomainsGetter
@@ -1017,6 +1041,13 @@ definitions:
         type: string
       address:
         description: Event caller.
+        type: string
+  Data:
+    type: object
+    description: Data object (V0)
+    properties:
+      data:
+        description: data.
         type: string
   Registry:
     type: object

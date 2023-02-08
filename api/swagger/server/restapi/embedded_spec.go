@@ -337,6 +337,43 @@ func init() {
         }
       }
     },
+    "/mgmt/balance/{address}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "mgmtWalletBalance",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Wallet's address",
+            "name": "address",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Balance retrieved",
+            "schema": {
+              "$ref": "#/definitions/Data"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/mgmt/plugins": {
       "get": {
         "produces": [
@@ -1401,6 +1438,16 @@ func init() {
     }
   },
   "definitions": {
+    "Data": {
+      "description": "Data object (V0)",
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "data.",
+          "type": "string"
+        }
+      }
+    },
     "Error": {
       "description": "Error object.",
       "type": "object",
@@ -1817,6 +1864,43 @@ func init() {
                   }
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/mgmt/balance/{address}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "mgmtWalletBalance",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Wallet's address",
+            "name": "address",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Balance retrieved",
+            "schema": {
+              "$ref": "#/definitions/Data"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           }
         }
@@ -2876,6 +2960,16 @@ func init() {
           "description": "Price of a gaz unit.",
           "type": "number",
           "default": 0
+        }
+      }
+    },
+    "Data": {
+      "description": "Data object (V0)",
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "data.",
+          "type": "string"
         }
       }
     },
