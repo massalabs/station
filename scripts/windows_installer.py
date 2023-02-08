@@ -70,6 +70,8 @@ class WindowsInstaller(Installer):
         if os.path.exists(self.DEFAULT_ACRYLIC_PATH):
             logging.info("Acrylic DNS Proxy is already installed")
         else:
+            cwd = os.getcwd()
+
             logging.info("Installing Acrylic DNS Proxy...")
             self.downloadFile(self.ACRYLIC_DNS_PROXY_URL, self.ACRYLIC_DNS_PROXY_FILENAME)
             self.unzipAcrylic()
@@ -77,6 +79,7 @@ class WindowsInstaller(Installer):
             os.chdir(self.DEFAULT_ACRYLIC_PATH)
             self.executeCommand(os.path.join(self.DEFAULT_ACRYLIC_PATH, "InstallAcrylicService.bat"))
             self.configureNetworkInterface()
+            os.chdir(cwd)
 
             try:
                 os.remove(self.ACRYLIC_DNS_PROXY_FILENAME)
