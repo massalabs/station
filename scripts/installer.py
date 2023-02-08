@@ -8,6 +8,15 @@ import subprocess
 import urllib.request
 from urllib.error import URLError
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(name)-12s: %(levelname)-8s %(message)s',
+    handlers=[
+        logging.FileHandler("thyra_installer.log", mode='w'),
+        logging.StreamHandler()
+    ]
+)
+
 class Installer:
     THYRA_INSTALL_FOLDER_PATH = os.path.expanduser("~")
     THYRA_CONFIG_FOLDER_PATH = os.path.join(os.path.expanduser("~"), ".config", "thyra")
@@ -24,15 +33,6 @@ class Installer:
     CERTIFICATIONS_FOLDER_PATH = os.path.join(THYRA_CONFIG_FOLDER_PATH, "certs")
 
     def __init__(self):
-        logging.basicConfig(filename='thyra_installer.log', level=logging.INFO)
-
-        console = logging.StreamHandler()
-        console.setLevel(logging.INFO)
-
-        formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
-        console.setFormatter(formatter)
-
-        logging.getLogger('').addHandler(console)
         pass
 
     """
