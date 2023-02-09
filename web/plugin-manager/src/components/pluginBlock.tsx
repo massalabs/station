@@ -1,13 +1,12 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowPathIcon, TrashIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
 import axiosServices from "../services/axios";
-import { AxiosError, AxiosResponse } from "axios";
-import alertHelper from "../helpers/alertHelpers";
+import { AxiosResponse } from "axios";
+
 import { Plugin, PluginProps, PluginStatus } from "../interfaces/IPlugin";
 import { statusHelper } from "../helpers/statusHelpers";
 
 function PluginBlock(p: PluginProps) {
-    let propsRef = useRef(p.props);
     // Callback to set error on parent
     function sendErrorData(errorType: string, errorMessage: string) {
         p.setErrorData(errorType, errorMessage);
@@ -16,11 +15,6 @@ function PluginBlock(p: PluginProps) {
         dataMemoized = data;
         setStatus(statusHelper(data.status));
     }
-    // // Each Rerender we update fetch plugins data
-    // useEffect(() => {
-    //     fetchPluginInfo();
-    //     console.log("p.props UseEffect", p.props);
-    // }, []);
 
     let dataMemoized = useMemo(() => {
         console.log("p.props useMemo", p.props);
@@ -34,7 +28,6 @@ function PluginBlock(p: PluginProps) {
     // Not implemented atm
     async function fetchPluginInfo(): Promise<AxiosResponse<Plugin>> {
         let result: AxiosResponse<Plugin> = {} as AxiosResponse<Plugin>;
-        console.log("fetchPluginInfo", dataMemoized);
         try {
             return (result = await axiosServices.getpluginInfo(dataMemoized.id));
         } catch (error) {
@@ -48,20 +41,18 @@ function PluginBlock(p: PluginProps) {
 
     // Not implemented atm
     async function launchAndStopPlugins() {
-        //Front end Update
-        // let resultPluginInfo: AxiosResponse<Plugin>;
-        // // fetch info from plugin
-        // try {
-        //     resultPluginInfo = await fetchPluginInfo();
-        // } catch (error) {
-        //     sendErrorData("error", "Plugins infos failed to launch");
-        //     return;
-        // }
-        // setData(resultPluginInfo.data);
+        //Front end Update with fresh data
+        let resultPluginInfo: AxiosResponse<Plugin>;
+        // fetch info from plugin
+        try {
+            resultPluginInfo = await fetchPluginInfo();
+        } catch (error) {
+            sendErrorData("error", "Plugins infos failed to launch");
+            return;
+        }
+        setData(resultPluginInfo.data);
         let result: AxiosResponse<number>;
         if (!toggleStatus) {
-            console.log(p.props);
-            // console.log(statusHelper(dataMemoized.status))
             // Launch plugin
             try {
                 result = await axiosServices.manageLifePlugins(dataMemoized.id, "start");
@@ -107,17 +98,13 @@ function PluginBlock(p: PluginProps) {
     }
     // Open plugin homepage
     function openHomepagePlugins() {
-        // TODO: Uncoment this when we have a url
         if (statusHelper(dataMemoized.status)) window.open(dataMemoized.home);
         else {
             sendErrorData("error", "Plugin is not running can't be launched , Launch it first");
         }
-        // console.log("OpenHomepage is Not implemented ATM");
     }
     // Uninstall plugin
-    //Not implemented atm
     function removePlugins() {
-        //TODO : Uncoment this when we have a remove process
         try {
             axiosServices.deletePlugins(dataMemoized.id);
             sendErrorData("success", "Plugin removed");
@@ -142,6 +129,7 @@ function PluginBlock(p: PluginProps) {
 
     function updateStatus() {
         return "w-6 h-6 text-yellow-500";
+        //Uncomment when update process is implemented
         //  return p.props.updateAvailable ? "w-6 h-6 text-yellow-500" : "w-6 h-6 text-green-500";
     }
 
