@@ -70,7 +70,7 @@ type PluginManagerListOKBodyItems0 struct {
 	Home string `json:"home,omitempty"`
 
 	// Plugin identifier.
-	ID int64 `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	// Plugin logo Url.
 	Logo string `json:"logo,omitempty"`

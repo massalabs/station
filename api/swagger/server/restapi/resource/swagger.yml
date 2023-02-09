@@ -726,7 +726,7 @@ paths:
               properties:
                 id:
                   description: Plugin identifier.
-                  type: integer
+                  type: string
                   x-nullable: false
                 name:
                   description: Plugin name.
@@ -785,7 +785,7 @@ paths:
             properties:
                 id:
                   description: Plugin identifier.
-                  type: integer
+                  type: string
                   x-nullable: false
                 name:
                   description: Plugin name.
@@ -840,7 +840,7 @@ paths:
       parameters:
         - in: path
           name: id
-          type: integer
+          type: string
           required: true
           description: Plugin identifier.
       responses:
@@ -875,7 +875,7 @@ paths:
       parameters:
         - in: path
           name: id
-          type: integer
+          type: string
           required: true
           description: Plugin identifier.
       responses:
@@ -903,7 +903,7 @@ paths:
       parameters:
         - in: path
           name: id
-          type: integer
+          type: string
           required: true
           description: Plugin unique identifier.
         - in: body

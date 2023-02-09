@@ -18,7 +18,7 @@ type uninstall struct {
 }
 
 func (u *uninstall) Handle(param operations.PluginManagerUninstallParams) middleware.Responder {
-	log.Printf("[DELETE /plugin-manager/%d]", param.ID)
+	log.Printf("[DELETE /plugin-manager/%s]", param.ID)
 
 	err := u.manager.Delete(param.ID)
 	if err != nil {
