@@ -2,8 +2,7 @@ import { useMemo, useState } from "react";
 import { ArrowPathIcon, TrashIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
 import axiosServices from "../services/axios";
 import { AxiosResponse } from "axios";
-
-import { Plugin, PluginProps, PluginStatus } from "../interfaces/IPlugin";
+import { Plugin, PluginProps, PluginStatus } from "../../../shared/interfaces/IPlugin";
 import { statusHelper } from "../helpers/statusHelpers";
 
 function PluginBlock(p: PluginProps) {

@@ -23,3 +23,11 @@ export enum PluginStatus {
     Stopping = "Stopping",
     Error = "Error",
 }
+export interface PluginHomePage {
+    id:string;
+    name: string;
+    home: string;
+    description: string;
+    logo: string;
+    status: string;
+}

@@ -1,6 +1,6 @@
 import React from 'react'
 import axios, { AxiosError, AxiosResponse } from 'axios'
-import { Plugin } from '../interfaces/IPlugin'
+import { Plugin } from '../../../shared/interfaces/IPlugin'
 
 export class axiosServices {
   constructor() {

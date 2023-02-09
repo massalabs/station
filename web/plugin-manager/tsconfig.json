@@ -16,6 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src"],
+  "include": ["src", "../shared/interfaces"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
