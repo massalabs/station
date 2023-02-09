@@ -5,6 +5,7 @@ import { useQuery } from "react-query";
 import gearingLogo from "../../assets/gearing.png";
 import axios from "axios";
 import { Plugin, PluginHomePage } from "../../../../shared/interfaces/IPlugin";
+import { MouseEventHandler } from "react";
 
 /**
  * Homepage of Thyra with a list of plugins installed
@@ -31,52 +32,57 @@ function Home() {
     if (isError) pluginList = [<> Error: {error} </>];
     // Store the result in plugins
     // Mocked till we have the API
-    
 
-    let plugins : PluginHomePage[] = [];
+    const openWindows = (url: string): undefined | MouseEventHandler<HTMLButtonElement> => {
+        window.open(url);
+        return undefined;
+    }
+
+    let plugins: PluginHomePage[] = [];
 
     if (data) plugins = data;
 
     plugins.push(
         {
             name: "Wallet",
-            description: "A plugin for managing your Thyra node",
+            description: "Wallet plugin for managing your funds",
             id: "420",
-            home: "thyra/wallet",
+            home: "/thyra/wallet",
             logo: "",
-            status: ""
+            status: "",
         },
         {
             name: "Web On Chain",
-            description: "A plugin for managing your Thyra node",
+            description: "Web On Chain is a plugin for managing websites on the blockchain",
             id: "421",
-            home: "thyra/websiteCreator",
+            home: "/thyra/websiteCreator",
             logo: "",
-            status: ""
+            status: "",
         },
         {
             name: "Node Manager",
-            description: "A plugin for managing your Thyra node",
+            description: "A plugin for managing your local node",
             id: "422",
-            home: "thyra/node-manager",
+            home: ":4200",
             logo: "",
-            status: ""
+            status: "",
         }
     );
 
     // Map over the plugins and display them in a list
     pluginList = plugins.map((plugin) => {
         return (
-            <button className="flex flex-wrap rounded-lg p-5 m-5" key={plugin.name}>
-                {/* Uncomment when url is ready */}
-                {/* <a href={`https://localhost/${plugin.home}`} */}
+            <button
+                className="flex flex-wrap rounded-lg p-5 m-5"
+                key={plugin.name}
+                onClick={() => {window.open(plugin.home)}}
+            >
                 <div className="mx-auto">
                     <div className="tooltip" data-tip={plugin.description}>
                         <img className="w-9 h-9 self-center bg-slate-800" src={massaLogomark}></img>
                     </div>
                     <h1 className="text-xs text-center text-white">{plugin.name}</h1>
                 </div>
-                {/* </a> */}
             </button>
         );
     });
@@ -108,15 +114,14 @@ function Home() {
             <div className="m-4 grid mx-auto w-fit grid-cols-2 rounded-lg sm:grid-cols-4">
                 {pluginList}
             </div>
-            <div className="mx-auto">
-                {/* Will change when manager page is done */}
-                <a href={`/thyra/plugin-manager`}/>
-                <img
-                    className="max-w-9 max-h-9 mx-auto block mb-2"
-                    src={gearingLogo}
-                    alt="Gearing Logo"
-                />
-                <p className="text-center text-m font text-white">Plugin Manager</p>
+            <div className="mx-auto cursor-pointer" onClick={() => {window.open("/thyra/plugin-manager")}}>
+                    {/* Will change when manager page is done */}
+                    <img
+                        className="max-w-9 max-h-9 mx-auto block mb-2"
+                        src={gearingLogo}
+                        alt="Gearing Logo"
+                    />
+                    <p className="text-center text-m font text-white">Plugin Manager</p>
             </div>
         </div>
     );

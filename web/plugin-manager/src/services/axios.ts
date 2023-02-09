@@ -17,9 +17,9 @@ export class axiosServices {
     return  axios.get<Plugin[]>(`/plugin-manager`);
   }
 
-  static getpluginInfo (ID:string) : Promise<AxiosResponse<Plugin, any>> {
+  static getpluginInfo (ID:string) : Promise<AxiosResponse<string, any>> {
     console.log("getpluginInfo" + ID)
-    return  axios.get<Plugin>(`/plugin-manager/${ID}`);      
+    return  axios.get<string>(`/plugin-manager/${ID}`);      
   }
 
   static  deletePlugins (ID:string) : Promise<AxiosResponse<any>> {

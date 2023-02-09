@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { SetStateAction, useMemo, useState } from "react";
 import { ArrowPathIcon, TrashIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
 import axiosServices from "../services/axios";
 import { AxiosResponse } from "axios";
@@ -10,23 +10,20 @@ function PluginBlock(p: PluginProps) {
     function sendErrorData(errorType: string, errorMessage: string) {
         p.setErrorData(errorType, errorMessage);
     }
-    // SetData into UseMemo to avoid re-rendering
-    function setData(data: Plugin) {
-        dataMemoized = data;
-        setStatus(statusHelper(data.status));
-    }
-    // Data to display 
+    // Data to display
     let dataMemoized = useMemo(() => {
         console.log("p.props useMemo", p.props);
         return p.props;
     }, [p.props]);
 
     // Toggle status state
-    const [toggleStatus, setStatus] = useState(p.props.status == "Up");
+    const [toggleStatus, setStatus] = useState(statusHelper(p.props.status));
+
+    const [playStatusClassName, setPlayStatusClassName] = useState(playStatus());
 
     // fetch info from plugin to get fresh data on demand
-    async function fetchPluginInfo(): Promise<AxiosResponse<Plugin>> {
-        let result: AxiosResponse<Plugin> = {} as AxiosResponse<Plugin>;
+    async function fetchPluginStatus(): Promise<AxiosResponse<string>> {
+        let result: AxiosResponse<string> = {} as AxiosResponse<string>;
         try {
             return (result = await axiosServices.getpluginInfo(dataMemoized.id));
         } catch (error) {
@@ -40,35 +37,37 @@ function PluginBlock(p: PluginProps) {
 
     // Launch or stop plugin
     async function launchAndStopPlugins() {
-        let resultPluginInfo: AxiosResponse<Plugin>;
+        let resultPluginInfo: AxiosResponse<string>;
         // fetch info from plugin to get fresh data
-        resultPluginInfo = await fetchPluginInfo();
+        resultPluginInfo = await fetchPluginStatus();
         // Update data
-        setData(resultPluginInfo.data);
+        setStatus(statusHelper(resultPluginInfo.data));
 
         let result: AxiosResponse<number>;
         if (!toggleStatus) {
             // Launch plugin
             try {
                 result = await axiosServices.manageLifePlugins(dataMemoized.id, "start");
-                dataMemoized.status = PluginStatus.Up;
+                // dataMemoized.status = PluginStatus.Up;
                 setStatus(!toggleStatus);
+                forcePlayStatus(true)
                 return result;
             } catch (error) {
                 sendErrorData("error", "Start plugin failed");
-                dataMemoized.status = PluginStatus.Error;
+                // dataMemoized.status = PluginStatus.Error;
                 return;
             }
         } else {
             // Stop plugin
             try {
                 result = await axiosServices.manageLifePlugins(dataMemoized.id, "stop");
-                dataMemoized.status = PluginStatus.Down;
+                // dataMemoized.status = PluginStatus.Down;
+                forcePlayStatus(false)
                 setStatus(!toggleStatus);
                 return result;
             } catch (error) {
                 sendErrorData("error", "Stop plugin failed");
-                dataMemoized.status = PluginStatus.Error;
+                // dataMemoized.status = PluginStatus.Error;
                 return;
             }
         }
@@ -116,12 +115,22 @@ function PluginBlock(p: PluginProps) {
             return str;
         }
     }
-    // Return the right icon for the status
+
+    // Change the play status icon color and update the status if we want to force it
     function playStatus() {
-        return statusHelper(dataMemoized.status)
+            return statusHelper(dataMemoized.status)
             ? "w-6 h-6 text-green-500"
             : "w-6 h-6 text-red-500";
     }
+
+    function forcePlayStatus(status: boolean) {
+        if (status) {
+            setPlayStatusClassName("w-6 h-6 text-green-500");
+        } else {
+            setPlayStatusClassName("w-6 h-6 text-red-500");
+        }
+    }
+
     // Return the right icon for the update
     function updateStatus() {
         return "w-6 h-6 text-yellow-500";
@@ -144,7 +153,7 @@ function PluginBlock(p: PluginProps) {
                 </div>
                 {/* Second Block with Icons  */}
                 <div className="flex w-full pt-7 justify-around items-center">
-                    <p className="font-light">V: {p.props.version}</p>
+                    <p className="hidden font-light">V: {p.props.version}</p>
                     <input
                         type="checkbox"
                         className="toggle toggle-success"
@@ -153,7 +162,10 @@ function PluginBlock(p: PluginProps) {
                     />
 
                     <button>
-                        <PlayCircleIcon className={playStatus()} onClick={openHomepagePlugins} />
+                        <PlayCircleIcon
+                            className={playStatusClassName}
+                            onClick={openHomepagePlugins}
+                        />
                     </button>
                     {/* Delete hidden when update process is set */}
                     <button className="hidden">
