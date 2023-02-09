@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/url"
-	"strconv"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -23,14 +22,7 @@ type register struct {
 func (r *register) Handle(param operations.PluginManagerRegisterParams) middleware.Responder {
 	log.Printf("[POST /plugin-manager/register] Name: %s ID:%s", param.Body.Name, param.Body.ID)
 
-	pluginID, err := strconv.ParseInt(param.Body.ID, 10, 64)
-	if err != nil {
-		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
-			&models.Error{Code: "", Message: err.Error()},
-		)
-	}
-
-	wantedPlugin, err := r.manager.Plugin(pluginID)
+	wantedPlugin, err := r.manager.Plugin(param.Body.ID)
 	if err != nil {
 		return operations.NewPluginManagerRegisterNotFound().WithPayload(
 			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
@@ -59,7 +51,7 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 
 	alias := fmt.Sprintf("%s/%s", param.Body.Author, param.Body.Name)
 
-	err = r.manager.SetAlias(alias, pluginID)
+	err = r.manager.SetAlias(alias, param.Body.ID)
 
 	if err != nil {
 		log.Printf("setting plugin alias: %s", err)

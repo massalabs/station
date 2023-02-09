@@ -2,7 +2,6 @@ package myplugin
 
 import (
 	"log"
-	"strconv"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -21,14 +20,7 @@ type uninstall struct {
 func (u *uninstall) Handle(param operations.PluginManagerUninstallParams) middleware.Responder {
 	log.Printf("[DELETE /plugin-manager/%s]", param.ID)
 
-	pluginID, err := strconv.ParseInt(param.ID, 10, 64)
-	if err != nil {
-		return operations.NewPluginManagerUninstallBadRequest().WithPayload(
-			&models.Error{Code: "", Message: err.Error()},
-		)
-	}
-
-	err = u.manager.Delete(pluginID)
+	err := u.manager.Delete(param.ID)
 	if err != nil {
 		return operations.NewPluginManagerUninstallInternalServerError().WithPayload(
 			&models.Error{Code: "", Message: err.Error()},

@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -37,15 +38,15 @@ func Directory() string {
 // correlationID is an identifier used to recognize the plugin when it register.
 type Manager struct {
 	mutex          sync.RWMutex
-	plugins        map[int64]*Plugin
-	authorNameToID map[string]int64
+	plugins        map[string]*Plugin
+	authorNameToID map[string]string
 }
 
 // NewManager instantiates a manager struct.
 func NewManager() (*Manager, error) {
 	weakRand.Seed(time.Now().Unix())
 	//nolint:exhaustruct
-	manager := &Manager{plugins: make(map[int64]*Plugin), authorNameToID: make(map[string]int64)}
+	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string)}
 
 	err := manager.RunAll()
 	if err != nil {
@@ -56,8 +57,8 @@ func NewManager() (*Manager, error) {
 }
 
 // ID returns the list of all the plugin id.
-func (m *Manager) ID() []int64 {
-	keys := make([]int64, len(m.plugins))
+func (m *Manager) ID() []string {
+	keys := make([]string, len(m.plugins))
 
 	i := 0
 
@@ -73,12 +74,12 @@ func (m *Manager) ID() []int64 {
 // Alias can be defined during plugin register once the name and author of the plugin can be found.
 //
 //nolint:varnamelen
-func (m *Manager) SetAlias(alias string, id int64) error {
+func (m *Manager) SetAlias(alias string, id string) error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
 	if m.plugins[id] == nil {
-		return fmt.Errorf("while setting alias for %s: no plugin matching the given id %d", alias, id)
+		return fmt.Errorf("while setting alias for %s: no plugin matching the given id %s", alias, id)
 	}
 
 	registeredID, exist := m.authorNameToID[alias]
@@ -109,13 +110,13 @@ func (m *Manager) PluginByAlias(alias string) (*Plugin, error) {
 // Plugin returns a plugin from the manager.
 //
 //nolint:varnamelen
-func (m *Manager) Plugin(id int64) (*Plugin, error) {
+func (m *Manager) Plugin(id string) (*Plugin, error) {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
 
 	p, ok := m.plugins[id]
 	if !ok {
-		return nil, fmt.Errorf("no plugin matching id %d", id)
+		return nil, fmt.Errorf("no plugin matching id %s", id)
 	}
 
 	return p, nil
@@ -124,10 +125,10 @@ func (m *Manager) Plugin(id int64) (*Plugin, error) {
 // Delete kills a plugin and remove it from the manager.
 //
 //nolint:varnamelen
-func (m *Manager) Delete(id int64) error {
+func (m *Manager) Delete(id string) error {
 	plgn, err := m.Plugin(id)
 	if err != nil {
-		return fmt.Errorf("deleting plugin %d: %w", id, err)
+		return fmt.Errorf("deleting plugin %s: %w", id, err)
 	}
 
 	m.mutex.Lock()
@@ -146,17 +147,17 @@ func (m *Manager) Delete(id int64) error {
 
 	err = os.RemoveAll(filepath.Dir(plgn.BinPath))
 	if err != nil {
-		return fmt.Errorf("deleting plugin %d: %w", id, err)
+		return fmt.Errorf("deleting plugin %s: %w", id, err)
 	}
 
 	return nil
 }
 
 // generateCorrelationID generate a unique correlation id.
-func (m *Manager) generateCorrelationID() int64 {
+func (m *Manager) generateCorrelationID() string {
 	for {
 		//nolint:varnamelen
-		id := int64(weakRand.Int())
+		id := strconv.Itoa(weakRand.Int())
 
 		_, exist := m.plugins[id]
 		if exist {

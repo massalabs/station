@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
-	"strconv"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -26,14 +25,7 @@ func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) mi
 
 	log.Printf("[POST /plugin-manager/%s/execute] command: %s", params.ID, cmd)
 
-	pluginID, err := strconv.ParseInt(params.ID, 10, 64)
-	if err != nil {
-		return operations.NewPluginManagerExecuteCommandBadRequest().WithPayload(
-			&models.Error{Code: "", Message: err.Error()},
-		)
-	}
-
-	plugin, err := e.manager.Plugin(pluginID)
+	plugin, err := e.manager.Plugin(params.ID)
 	if err != nil {
 		return operations.NewPluginManagerExecuteCommandNotFound().WithPayload(
 			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
