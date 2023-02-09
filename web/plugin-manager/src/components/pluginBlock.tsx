@@ -11,21 +11,21 @@ function PluginBlock(p: PluginProps) {
     function sendErrorData(errorType: string, errorMessage: string) {
         p.setErrorData(errorType, errorMessage);
     }
+    // SetData into UseMemo to avoid re-rendering
     function setData(data: Plugin) {
         dataMemoized = data;
         setStatus(statusHelper(data.status));
     }
-
+    // Data to display 
     let dataMemoized = useMemo(() => {
         console.log("p.props useMemo", p.props);
         return p.props;
     }, [p.props]);
 
-    //UseRef p.props
+    // Toggle status state
     const [toggleStatus, setStatus] = useState(p.props.status == "Up");
 
-    // fetch info from plugin
-    // Not implemented atm
+    // fetch info from plugin to get fresh data on demand
     async function fetchPluginInfo(): Promise<AxiosResponse<Plugin>> {
         let result: AxiosResponse<Plugin> = {} as AxiosResponse<Plugin>;
         try {
@@ -39,18 +39,14 @@ function PluginBlock(p: PluginProps) {
         return result;
     }
 
-    // Not implemented atm
+    // Launch or stop plugin
     async function launchAndStopPlugins() {
-        //Front end Update with fresh data
         let resultPluginInfo: AxiosResponse<Plugin>;
-        // fetch info from plugin
-        try {
-            resultPluginInfo = await fetchPluginInfo();
-        } catch (error) {
-            sendErrorData("error", "Plugins infos failed to launch");
-            return;
-        }
+        // fetch info from plugin to get fresh data
+        resultPluginInfo = await fetchPluginInfo();
+        // Update data
         setData(resultPluginInfo.data);
+
         let result: AxiosResponse<number>;
         if (!toggleStatus) {
             // Launch plugin
@@ -107,13 +103,13 @@ function PluginBlock(p: PluginProps) {
     function removePlugins() {
         try {
             axiosServices.deletePlugins(dataMemoized.id);
-            sendErrorData("success", "Plugin removed");
             p.triggerRefreshPluginList();
+            sendErrorData("success", "Plugin removed");
         } catch (error) {
             sendErrorData("error", "Plugins failed to be removed");
         }
     }
-
+    // Minimize string to fit in the block
     function minimizeString(str: string, length: number) {
         if (str.length > length) {
             return str.substring(0, length) + "...";
@@ -121,13 +117,13 @@ function PluginBlock(p: PluginProps) {
             return str;
         }
     }
-
+    // Return the right icon for the status
     function playStatus() {
         return statusHelper(dataMemoized.status)
             ? "w-6 h-6 text-green-500"
             : "w-6 h-6 text-red-500";
     }
-
+    // Return the right icon for the update
     function updateStatus() {
         return "w-6 h-6 text-yellow-500";
         //Uncomment when update process is implemented
@@ -137,6 +133,7 @@ function PluginBlock(p: PluginProps) {
     return (
         <section className="bg-slate-800 h-48 max-w-lg w-96 p-3 m-4 rounded-2xl">
             <div className=" flex-row h-full text-white ">
+                {/* First block Display plugin name and description */}
                 <div className="flex">
                     <img className="w-10 h-10 pt-3 mx-2" src={p.props.logo} alt="Plugin Logo" />
                     <div className="w-full">
@@ -146,6 +143,7 @@ function PluginBlock(p: PluginProps) {
                         </p>
                     </div>
                 </div>
+                {/* Second Block with Icons  */}
                 <div className="flex w-full pt-7 justify-around items-center">
                     <p className="font-light">V: {p.props.version}</p>
                     <input

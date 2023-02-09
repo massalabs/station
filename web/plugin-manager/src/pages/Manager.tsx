@@ -3,7 +3,7 @@ import PluginBlock from "../components/pluginBlock";
 import { Plugin, PluginProps } from "../interfaces/IPlugin";
 import massaLogoLight from "../assets/MASSA_LIGHT_Detailed.png";
 import axiosServices from "../services/axios";
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import alertHelper from "../helpers/alertHelpers";
 import { PuffLoader } from "react-spinners";
 function Manager() {
