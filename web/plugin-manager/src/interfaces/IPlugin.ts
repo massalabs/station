@@ -13,7 +13,8 @@ export interface Plugin {
 export interface PluginProps {
     props: Plugin;
     setErrorData: (errorType: string, errorMessage: string) => void;
-  }
+    triggerRefreshPluginList: () => void;
+}
 
 export enum PluginStatus {
     Down = "Down",

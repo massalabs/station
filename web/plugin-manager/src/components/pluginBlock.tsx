@@ -108,6 +108,7 @@ function PluginBlock(p: PluginProps) {
         try {
             axiosServices.deletePlugins(dataMemoized.id);
             sendErrorData("success", "Plugin removed");
+            p.triggerRefreshPluginList();
         } catch (error) {
             sendErrorData("error", "Plugins failed to be removed");
         }

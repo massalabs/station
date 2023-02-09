@@ -28,18 +28,23 @@ function Manager() {
         populatePlugins();
     };
 
+    async function getPluginsInfo () {
+        try {
+            pluginsInfos = await axiosServices.getPluginsInfo();
+            console.log(pluginsInfos)
+            populatePlugins();
+        } catch (error) {
+            setErrorHandler("error", "Plugins infos failed to launch");
+        }
+    };
+
+
     // Update plugin status each 10 seconds
     // Create a loop to fetch getPluginsInfo and update the status
     useEffect(() => {
         initializeUi();
         const interval = setInterval(async () => {
-            try {
-                pluginsInfos = await axiosServices.getPluginsInfo();
-                console.log(pluginsInfos)
-                populatePlugins();
-            } catch (error) {
-                setErrorHandler("error", "Plugins infos failed to launch");
-            }
+            getPluginsInfo();
         }, 10000);
         return () => clearInterval(interval);
     }, []);
@@ -90,6 +95,9 @@ function Manager() {
                     let pluginProps: PluginProps = {
                         props: mock,
                         setErrorData: setErrorHandler,
+                        triggerRefreshPluginList: function (): void {
+                            getPluginsInfo();
+                        }
                     };
                     console.log(mock)
                     return <PluginBlock {...pluginProps} />;
@@ -98,6 +106,9 @@ function Manager() {
                     let pluginProps: PluginProps = {
                         props: mock,
                         setErrorData: setErrorHandler,
+                        triggerRefreshPluginList: function (): void {
+                            getPluginsInfo();
+                        }
                     };
                     return <PluginBlock {...pluginProps} />;
                 }));
