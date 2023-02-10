@@ -1,4 +1,4 @@
-export const isStatusReady = (status: string) => {
+export const isUp = (status: string) => {
     switch (status) {
         case "Up":
             return true;

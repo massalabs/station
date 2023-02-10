@@ -2,8 +2,8 @@ import { SetStateAction, useMemo, useState } from "react";
 import { ArrowPathIcon, TrashIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
 import axiosServices from "../services/axios";
 import { AxiosResponse } from "axios";
-import { Plugin, PluginProps, PluginStatus } from "../../../shared/interfaces/IPlugin";
-import { isStatusReady } from "../helpers/isStatusReady";
+import { PluginProps } from "../../../shared/interfaces/IPlugin";
+import { isUp } from "../helpers/isUp";
 
 function PluginBlock(p: PluginProps) {
     // Callback to set error on parent
@@ -16,7 +16,7 @@ function PluginBlock(p: PluginProps) {
     }, [p.props]);
 
     // Toggle status state
-    const [toggleStatus, setStatus] = useState(isStatusReady(p.props.status));
+    const [toggleStatus, setStatus] = useState(isUp(p.props.status));
 
     const [playStatusClassName, setPlayStatusClassName] = useState(definePlayStatus());
 
@@ -25,11 +25,11 @@ function PluginBlock(p: PluginProps) {
         let result: AxiosResponse<string> = {} as AxiosResponse<string>;
         try {
             return (result = await axiosServices.getpluginInfo(dataMemoized.id));
-        } catch (error) {
+        } catch (error: any) {
             console.log(error);
             sendErrorData(
                 "error",
-                `Plugins infos failed to get infos from plugin name : ${dataMemoized.name} on id: ${dataMemoized.id}`
+                `Plugins infos failed to get infos from plugin name : ${dataMemoized.name} on id: ${dataMemoized.id}, error: ${error.message}}`
             );
         }
         return result;
@@ -41,28 +41,28 @@ function PluginBlock(p: PluginProps) {
         // fetch info from plugin to get fresh data
         resultPluginInfo = await fetchPluginStatus();
         // Update data
-        setStatus(isStatusReady(resultPluginInfo.data));
+        setStatus(isUp(resultPluginInfo.data));
 
         let result: AxiosResponse<number>;
-        if (!toggleStatus) {
+        if (toggleStatus) {
+            // Stop plugin
+            try {
+                result = await axiosServices.manageLifePlugins(dataMemoized.id, "stop");
+                forcePlayStatus(false);
+                setStatus(!toggleStatus);
+                return result;
+            } catch (error: any) {
+                sendErrorData("error", `Stop plugin failed , error ${error.message}`);
+            }
+        } else {
             // Launch plugin
             try {
                 result = await axiosServices.manageLifePlugins(dataMemoized.id, "start");
                 setStatus(!toggleStatus);
-                forcePlayStatus(true)
+                forcePlayStatus(true);
                 return result;
-            } catch (error) {
-                sendErrorData("error", "Start plugin failed");
-            }
-        } else {
-            // Stop plugin
-            try {
-                result = await axiosServices.manageLifePlugins(dataMemoized.id, "stop");
-                forcePlayStatus(false)
-                setStatus(!toggleStatus);
-                return result;
-            } catch (error) {
-                sendErrorData("error", "Stop plugin failed");
+            } catch (error: any) {
+                sendErrorData("error", `Start plugin failed , error :${error.message}`);
             }
         }
     }
@@ -85,7 +85,7 @@ function PluginBlock(p: PluginProps) {
     }
     // Open plugin homepage
     function openHomepagePlugins() {
-        if (isStatusReady(dataMemoized.status)) window.open(dataMemoized.home);
+        if (isUp(dataMemoized.status)) window.open(dataMemoized.home);
         else {
             sendErrorData("error", "Plugin is not running can't be launched , launch it first");
         }
@@ -96,11 +96,11 @@ function PluginBlock(p: PluginProps) {
             axiosServices.deletePlugins(dataMemoized.id);
             p.triggerRefreshPluginList();
             sendErrorData("success", "Plugin removed");
-        } catch (error) {
-            sendErrorData("error", "Plugins failed to be removed");
+        } catch (error:any) {
+            sendErrorData("error", `Plugins failed to be removed , error ${error.message}`);
         }
     }
-    // Minimize string to fit in the block
+    //Truncate the string so that it fits in the given lenght if needed.
     function minimize(str: string, length: number) {
         if (str.length > length) {
             return str.substring(0, length) + "...";
@@ -111,9 +111,11 @@ function PluginBlock(p: PluginProps) {
 
     // Change the play status icon color and update the status if we want to force it
     function definePlayStatus() {
-            return isStatusReady(dataMemoized.status)
-            ? "w-6 h-6 text-green-500"
-            : "w-6 h-6 text-red-500";
+        if (isUp(dataMemoized.status)) {
+            return "w-6 h-6 text-green-500";
+        } else {
+            return "w-6 h-6 text-red-500";
+        }
     }
 
     function forcePlayStatus(status: boolean) {
@@ -146,6 +148,7 @@ function PluginBlock(p: PluginProps) {
                 </div>
                 {/* Second Block with Icons  */}
                 <div className="flex w-full pt-7 justify-around items-center">
+                    {/* Delete hidden when version will be send through the API */}
                     <p className="hidden font-light">V: {p.props.version}</p>
                     <input
                         type="checkbox"

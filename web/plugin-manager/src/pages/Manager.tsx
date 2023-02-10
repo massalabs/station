@@ -28,8 +28,8 @@ function Manager() {
         try {
             pluginsInfos = await axiosServices.getPluginsInfo();
             populatePlugins();
-        } catch (error) {
-            setErrorHandler("error", "Get plugins infos failed ");
+        } catch (error:any) {
+            setErrorHandler("error", `Get plugins infos failed ,  error ${error.message} `);
         }
     };
 
