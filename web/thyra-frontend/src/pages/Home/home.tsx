@@ -59,11 +59,19 @@ function Home() {
             logo: "",
             status: "",
         },
+        // {
+        //     name: "Node Manager",
+        //     description: "A plugin for managing your local node",
+        //     id: "422",
+        //     home: "/:4200",
+        //     logo: "",
+        //     status: "",
+        // },
         {
-            name: "Node Manager",
-            description: "A plugin for managing your local node",
-            id: "422",
-            home: ":4200",
+            name: "Registry",
+            description: "Registry page for accessing websites on the blockchain",
+            id: "423",
+            home: "/thyra/registry",
             logo: "",
             status: "",
         }
