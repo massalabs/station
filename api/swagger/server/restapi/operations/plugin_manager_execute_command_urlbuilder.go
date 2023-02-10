@@ -10,13 +10,11 @@ import (
 	"net/url"
 	golangswaggerpaths "path"
 	"strings"
-
-	"github.com/go-openapi/swag"
 )
 
 // PluginManagerExecuteCommandURL generates an URL for the plugin manager execute command operation
 type PluginManagerExecuteCommandURL struct {
-	ID int64
+	ID string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -44,7 +42,7 @@ func (o *PluginManagerExecuteCommandURL) Build() (*url.URL, error) {
 
 	var _path = "/plugin-manager/{id}/execute"
 
-	id := swag.FormatInt64(o.ID)
+	id := o.ID
 	if id != "" {
 		_path = strings.Replace(_path, "{id}", id, -1)
 	} else {

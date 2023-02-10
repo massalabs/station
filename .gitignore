@@ -8,3 +8,6 @@ tmp/
 .idea
 
 /plugins/
+
+# Thyra builded react files
+int/api/dist/

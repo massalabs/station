@@ -11,7 +11,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
 )
 
 // NewPluginManagerGetInformationParams creates a new PluginManagerGetInformationParams object
@@ -35,7 +34,7 @@ type PluginManagerGetInformationParams struct {
 	  Required: true
 	  In: path
 	*/
-	ID int64
+	ID string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -66,12 +65,7 @@ func (o *PluginManagerGetInformationParams) bindID(rawData []string, hasKey bool
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
-	value, err := swag.ConvertInt64(raw)
-	if err != nil {
-		return errors.InvalidType("id", "path", "int64", raw)
-	}
-	o.ID = value
+	o.ID = raw
 
 	return nil
 }

@@ -11,7 +11,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"strconv"
 	"sync"
 )
 
@@ -44,7 +43,7 @@ type Plugin struct {
 	info         *Information
 	reverseProxy *httputil.ReverseProxy
 	BinPath      string
-	ID           int64
+	ID           string
 }
 
 func (p *Plugin) Information() *Information {
@@ -116,7 +115,7 @@ func (pw prefixWriter) Write(buf []byte) (n int, err error) {
 func (p *Plugin) Start() error {
 	pluginName := filepath.Base(p.BinPath)
 
-	log.Printf("Starting plugin '%s' with id %d\n", pluginName, p.ID)
+	log.Printf("Starting plugin '%s' with id %s\n", pluginName, p.ID)
 
 	p.mutex.Lock()
 
@@ -126,7 +125,7 @@ func (p *Plugin) Start() error {
 		return fmt.Errorf("plugin is not ready to start")
 	}
 
-	p.command = exec.Command(p.BinPath, strconv.FormatInt(p.ID, 10)) // #nosec G204
+	p.command = exec.Command(p.BinPath, p.ID) // #nosec G204
 
 	stdOutWriter := &prefixWriter{w: os.Stdout, prefix: fmt.Sprintf("[%s] - ", pluginName)}
 	stdErrWriter := &prefixWriter{w: os.Stderr, prefix: fmt.Sprintf("[%s] Error: ", pluginName)}
@@ -162,7 +161,7 @@ func (p *Plugin) Start() error {
 
 // Kills a plugin.
 func (p *Plugin) Stop() error {
-	log.Printf("Stopping plugin %d.\n", p.ID)
+	log.Printf("Stopping plugin %s.\n", p.ID)
 
 	status := p.Status()
 	if status != Up && status != Crashed {
@@ -172,7 +171,7 @@ func (p *Plugin) Stop() error {
 	return p.Kill()
 }
 
-func New(binPath string, pluginID int64) (*Plugin, error) {
+func New(binPath string, pluginID string) (*Plugin, error) {
 	exe := ""
 	if runtime.GOOS == "windows" {
 		exe = ".exe"

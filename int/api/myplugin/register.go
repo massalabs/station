@@ -20,7 +20,7 @@ type register struct {
 }
 
 func (r *register) Handle(param operations.PluginManagerRegisterParams) middleware.Responder {
-	log.Printf("[POST /plugin-manager/register] Name: %s ID:%d", param.Body.Name, param.Body.ID)
+	log.Printf("[POST /plugin-manager/register] Name: %s ID:%s", param.Body.Name, param.Body.ID)
 
 	wantedPlugin, err := r.manager.Plugin(param.Body.ID)
 	if err != nil {

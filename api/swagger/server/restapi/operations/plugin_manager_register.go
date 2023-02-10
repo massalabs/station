@@ -81,7 +81,7 @@ type PluginManagerRegisterBody struct {
 
 	// Plugin identifier.
 	// Required: true
-	ID int64 `json:"id"`
+	ID string `json:"id"`
 
 	// Plugin logo.
 	// Required: true
@@ -150,7 +150,7 @@ func (o *PluginManagerRegisterBody) validateDescription(formats strfmt.Registry)
 
 func (o *PluginManagerRegisterBody) validateID(formats strfmt.Registry) error {
 
-	if err := validate.Required("body"+"."+"id", "body", int64(o.ID)); err != nil {
+	if err := validate.RequiredString("body"+"."+"id", "body", o.ID); err != nil {
 		return err
 	}
 
