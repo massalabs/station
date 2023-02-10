@@ -49,7 +49,7 @@ function PluginBlock(p: PluginProps) {
             // Stop plugin
             try {
                 await axiosServices.manageLifePlugins(pluginProperties.id, "stop");
-                forcePlayStatus(false);
+                forceRunStatus(false);
                 setStatus(false);
                 pluginProperties.status = "Down";
                 return
@@ -61,7 +61,7 @@ function PluginBlock(p: PluginProps) {
         try {
             await axiosServices.manageLifePlugins(pluginProperties.id, "start");
             setStatus(true);
-            forcePlayStatus(true);
+            forceRunStatus(true);
             pluginProperties.status = "Up";
         } catch (error: any) {
             sendErrorData("error", `Start plugin failed , error :${error.message}`);
@@ -119,7 +119,7 @@ function PluginBlock(p: PluginProps) {
         }
     }
 
-    function forcePlayStatus(status: boolean) {
+    function forceRunStatus(status: boolean) {
         if (status) {
             setPlayStatusClassName("w-6 h-6 text-green-500");
         } else {
