@@ -4,7 +4,6 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-
 	"github.com/massalabs/thyra/pkg/node"
 )
 
@@ -24,11 +23,13 @@ func AddressesHandler(params operations.MassaGetAddressesParams) middleware.Resp
 	//nolint: prealloc
 	var PendingBalances []string
 	for _, addressDetails := range addressesDetails {
+		//nolint: staticcheck
 		PendingBalances = append(PendingBalances, addressDetails.CandidateBalance)
 	}
 	//nolint: prealloc
 	var FinalBalances []string
 	for _, addressDetails := range addressesDetails {
+		//nolint: staticcheck
 		FinalBalances = append(FinalBalances, addressDetails.CandidateBalance)
 	}
 
