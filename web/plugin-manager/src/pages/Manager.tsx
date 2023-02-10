@@ -23,6 +23,7 @@ function Manager() {
             setError(<></>);
         }, 10000);
     }
+    // Initialize UI on render
     const initializeUi = async () => {
         pluginsInfos = await axiosServices.getPluginsInfo();
         populatePlugins();
@@ -34,7 +35,7 @@ function Manager() {
             console.log(pluginsInfos)
             populatePlugins();
         } catch (error) {
-            setErrorHandler("error", "Plugins infos failed to launch");
+            setErrorHandler("error", "Get plugins infos failed ");
         }
     };
 
@@ -53,39 +54,15 @@ function Manager() {
         name: "Plugin 1",
         logo:
             "https://upload.wikimedia.org/wikipedia/fr/thumb/1/15/Audi_logo.svg/1280px-Audi_logo.svg.png",
-        description: "If you See this you probably have a problem with the plugin manager",
+        description: "If you see this you probably have a problem with the plugin manager",
         version: "1.0.0",
         status: "Down",
         home: "/urlOfPlugin",
         // isUpdate: true,
         id: "1",
     };
-    const mock2: Plugin = {
-        name: "Plugin 2",
-        logo:
-            "https://upload.wikimedia.org/wikipedia/fr/thumb/1/15/Audi_logo.svg/1280px-Audi_logo.svg.png",
-        description:
-            "If you See this you probably have a problem with the plugin manager",
-        version: "1.0.0",
-        status: "Down",
-        home: "/urlOfPlugin",
-        // isUpdate: "Down",
-        id: "2",
-    };
-    const mock3: Plugin = {
-        name: "Plugin 3",
-        logo:
-            "https://upload.wikimedia.org/wikipedia/fr/thumb/1/15/Audi_logo.svg/1280px-Audi_logo.svg.png",
-        description:
-            "If you See this you probably have a problem with the plugin manager",
-        version: "1.0.0",
-        status: "Up",
-        // isUpdate: "Up",
-        home: "/urlOfPlugin",
-        id: "3",
-    };
     // Mocks in case we don't have the plugin manager
-    let mocks = [mock, mock2, mock3];
+    let mocks = [mock];
 
     function populatePlugins () {
         console.log(pluginsInfos.status)

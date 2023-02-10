@@ -94,7 +94,7 @@ function PluginBlock(p: PluginProps) {
     function openHomepagePlugins() {
         if (statusHelper(dataMemoized.status)) window.open(dataMemoized.home);
         else {
-            sendErrorData("error", "Plugin is not running can't be launched , Launch it first");
+            sendErrorData("error", "Plugin is not running can't be launched , launch it first");
         }
     }
     // Uninstall plugin

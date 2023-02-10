@@ -4,8 +4,8 @@ import massaLogomark from "../../assets/massa_logomark_detailed.png";
 import { useQuery } from "react-query";
 import gearingLogo from "../../assets/gearing.png";
 import axios from "axios";
-import { Plugin, PluginHomePage } from "../../../../shared/interfaces/IPlugin";
-import { MouseEventHandler } from "react";
+import { PluginHomePage } from "../../../../shared/interfaces/IPlugin";
+
 
 /**
  * Homepage of Thyra with a list of plugins installed
@@ -25,18 +25,13 @@ function Home() {
         };
         const res = await axios.get(`/plugin-manager`, init);
         //To delete when Api is merged.
-        console.log(res.data);
+
         return res.data;
     };
-    const { isLoading, data, error, isError } = useQuery("plugins", getPlugins);
+    const { data, error, isError } = useQuery("plugins", getPlugins);
     if (isError) pluginList = [<> Error: {error} </>];
     // Store the result in plugins
     // Mocked till we have the API
-
-    const openWindows = (url: string): undefined | MouseEventHandler<HTMLButtonElement> => {
-        window.open(url);
-        return undefined;
-    }
 
     let plugins: PluginHomePage[] = [];
 
