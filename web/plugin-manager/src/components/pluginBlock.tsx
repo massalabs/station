@@ -3,7 +3,7 @@ import { ArrowPathIcon, TrashIcon, PlayCircleIcon } from "@heroicons/react/24/ou
 import axiosServices from "../services/axios";
 import { AxiosResponse } from "axios";
 import { Plugin, PluginProps, PluginStatus } from "../../../shared/interfaces/IPlugin";
-import { statusHelper } from "../helpers/statusHelpers";
+import { isStatusReady } from "../helpers/isStatusReady";
 
 function PluginBlock(p: PluginProps) {
     // Callback to set error on parent
@@ -12,14 +12,13 @@ function PluginBlock(p: PluginProps) {
     }
     // Data to display
     let dataMemoized = useMemo(() => {
-        console.log("p.props useMemo", p.props);
         return p.props;
     }, [p.props]);
 
     // Toggle status state
-    const [toggleStatus, setStatus] = useState(statusHelper(p.props.status));
+    const [toggleStatus, setStatus] = useState(isStatusReady(p.props.status));
 
-    const [playStatusClassName, setPlayStatusClassName] = useState(playStatus());
+    const [playStatusClassName, setPlayStatusClassName] = useState(definePlayStatus());
 
     // fetch info from plugin to get fresh data on demand
     async function fetchPluginStatus(): Promise<AxiosResponse<string>> {
@@ -27,6 +26,7 @@ function PluginBlock(p: PluginProps) {
         try {
             return (result = await axiosServices.getpluginInfo(dataMemoized.id));
         } catch (error) {
+            console.log(error);
             sendErrorData(
                 "error",
                 `Plugins infos failed to get infos from plugin name : ${dataMemoized.name} on id: ${dataMemoized.id}`
@@ -41,34 +41,28 @@ function PluginBlock(p: PluginProps) {
         // fetch info from plugin to get fresh data
         resultPluginInfo = await fetchPluginStatus();
         // Update data
-        setStatus(statusHelper(resultPluginInfo.data));
+        setStatus(isStatusReady(resultPluginInfo.data));
 
         let result: AxiosResponse<number>;
         if (!toggleStatus) {
             // Launch plugin
             try {
                 result = await axiosServices.manageLifePlugins(dataMemoized.id, "start");
-                // dataMemoized.status = PluginStatus.Up;
                 setStatus(!toggleStatus);
                 forcePlayStatus(true)
                 return result;
             } catch (error) {
                 sendErrorData("error", "Start plugin failed");
-                // dataMemoized.status = PluginStatus.Error;
-                return;
             }
         } else {
             // Stop plugin
             try {
                 result = await axiosServices.manageLifePlugins(dataMemoized.id, "stop");
-                // dataMemoized.status = PluginStatus.Down;
                 forcePlayStatus(false)
                 setStatus(!toggleStatus);
                 return result;
             } catch (error) {
                 sendErrorData("error", "Stop plugin failed");
-                // dataMemoized.status = PluginStatus.Error;
-                return;
             }
         }
     }
@@ -77,7 +71,6 @@ function PluginBlock(p: PluginProps) {
     // Not implemented atm
     function updatePlugins() {
         //Front end update
-        // propsRef.current.updateAvailable = !propsRef.current.updateAvailable
 
         //TODO : Uncoment this when we have a update process
         //#####################################################
@@ -92,7 +85,7 @@ function PluginBlock(p: PluginProps) {
     }
     // Open plugin homepage
     function openHomepagePlugins() {
-        if (statusHelper(dataMemoized.status)) window.open(dataMemoized.home);
+        if (isStatusReady(dataMemoized.status)) window.open(dataMemoized.home);
         else {
             sendErrorData("error", "Plugin is not running can't be launched , launch it first");
         }
@@ -108,7 +101,7 @@ function PluginBlock(p: PluginProps) {
         }
     }
     // Minimize string to fit in the block
-    function minimizeString(str: string, length: number) {
+    function minimize(str: string, length: number) {
         if (str.length > length) {
             return str.substring(0, length) + "...";
         } else {
@@ -117,8 +110,8 @@ function PluginBlock(p: PluginProps) {
     }
 
     // Change the play status icon color and update the status if we want to force it
-    function playStatus() {
-            return statusHelper(dataMemoized.status)
+    function definePlayStatus() {
+            return isStatusReady(dataMemoized.status)
             ? "w-6 h-6 text-green-500"
             : "w-6 h-6 text-red-500";
     }
@@ -132,7 +125,7 @@ function PluginBlock(p: PluginProps) {
     }
 
     // Return the right icon for the update
-    function updateStatus() {
+    function defineUpdateStatus() {
         return "w-6 h-6 text-yellow-500";
         //Uncomment when update process is implemented
         //  return p.props.updateAvailable ? "w-6 h-6 text-yellow-500" : "w-6 h-6 text-green-500";
@@ -145,9 +138,9 @@ function PluginBlock(p: PluginProps) {
                 <div className="flex">
                     <img className="w-10 h-10 pt-3 mx-2" src={p.props.logo} alt="Plugin Logo" />
                     <div className="w-full">
-                        <h1 className="font-bold">{minimizeString(p.props.name, 90)}</h1>
+                        <h1 className="font-bold">{minimize(p.props.name, 90)}</h1>
                         <p className="font-light max-sm:text-sm">
-                            {minimizeString(p.props.description, 100)}
+                            {minimize(p.props.description, 100)}
                         </p>
                     </div>
                 </div>
@@ -169,7 +162,7 @@ function PluginBlock(p: PluginProps) {
                     </button>
                     {/* Delete hidden when update process is set */}
                     <button className="hidden">
-                        <ArrowPathIcon className={updateStatus()} onClick={updatePlugins} />
+                        <ArrowPathIcon className={defineUpdateStatus()} onClick={updatePlugins} />
                     </button>
                     <button>
                         <TrashIcon className="w-6 h-6 " onClick={removePlugins} />

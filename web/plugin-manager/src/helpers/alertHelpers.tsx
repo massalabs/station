@@ -1,8 +1,6 @@
-import React from "react";
-
 function alertHelper(typeAlert: string, message: string, remove: () => void) {
-    const successAlert = (
-        <div className="alert alert-success shadow-lg">
+    function successAlert(){
+        return<div className="alert alert-success shadow-lg">
             <div>
                 <button onClick={remove}>
                     <svg
@@ -22,10 +20,10 @@ function alertHelper(typeAlert: string, message: string, remove: () => void) {
                 <span>{message}</span>
             </div>
         </div>
-    );
+    }
 
-    const warningAlert = (
-        <div className="alert alert-warning shadow-lg">
+    function warningAlert() {
+        return <div className="alert alert-warning shadow-lg">
             <div>
                 <button onClick={remove}>
                     <svg
@@ -45,10 +43,10 @@ function alertHelper(typeAlert: string, message: string, remove: () => void) {
                 <span>Warning: {message}</span>
             </div>
         </div>
-    );
+    }
 
-    const errorAlert = (
-        <div className="alert alert-error shadow-lg">
+    function errorAlert() {
+        return <div className="alert alert-error shadow-lg">
             <div>
                 <button onClick={remove}>
                     <svg
@@ -68,23 +66,17 @@ function alertHelper(typeAlert: string, message: string, remove: () => void) {
                 <span>Error! {message}</span>
             </div>
         </div>
-    );
-    let returnVal;
+    }
     switch (typeAlert) {
         case "warning":
-            returnVal = warningAlert;
-            break;
+            return warningAlert;
         case "success":
-            returnVal = successAlert;
-            break;
+            return successAlert;
         case "error":
-            returnVal = errorAlert;
-            break;
+            return errorAlert;
         default:
-            returnVal = warningAlert;
-            break;
+            return warningAlert;
     }
-    return returnVal;
 }
 
 export default alertHelper;

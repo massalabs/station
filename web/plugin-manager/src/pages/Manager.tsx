@@ -23,16 +23,10 @@ function Manager() {
             setError(<></>);
         }, 10000);
     }
-    // Initialize UI on render
-    const initializeUi = async () => {
-        pluginsInfos = await axiosServices.getPluginsInfo();
-        populatePlugins();
-    };
 
     async function getPluginsInfo () {
         try {
             pluginsInfos = await axiosServices.getPluginsInfo();
-            console.log(pluginsInfos)
             populatePlugins();
         } catch (error) {
             setErrorHandler("error", "Get plugins infos failed ");
@@ -43,7 +37,9 @@ function Manager() {
     // Update plugin status each 10 seconds
     // Create a loop to fetch getPluginsInfo and update the status
     useEffect(() => {
-        initializeUi();
+        //Initialize Ui on first render
+        getPluginsInfo();
+        // Set interval to update plugin status periodically
         const interval = setInterval(async () => {
             getPluginsInfo();
         }, 10000);
@@ -52,8 +48,7 @@ function Manager() {
 
     const mock: Plugin = {
         name: "Plugin 1",
-        logo:
-            "https://upload.wikimedia.org/wikipedia/fr/thumb/1/15/Audi_logo.svg/1280px-Audi_logo.svg.png",
+        logo:massaLogoLight,
         description: "If you see this you probably have a problem with the plugin manager",
         version: "1.0.0",
         status: "Down",
@@ -65,30 +60,29 @@ function Manager() {
     let mocks = [mock];
 
     function populatePlugins () {
-        console.log(pluginsInfos.status)
-        setpluginsPopulated((pluginsInfos.status == 200)
-            ? 
-            pluginsInfos.data.map((mock: Plugin) => {
-                    let pluginProps: PluginProps = {
-                        props: mock,
-                        setErrorData: setErrorHandler,
-                        triggerRefreshPluginList: function (): void {
-                            getPluginsInfo();
-                        }
-                    };
-                    console.log(mock)
-                    return <PluginBlock {...pluginProps} />;
-                })
-            : mocks.map((mock: Plugin) => {
-                    let pluginProps: PluginProps = {
-                        props: mock,
-                        setErrorData: setErrorHandler,
-                        triggerRefreshPluginList: function (): void {
-                            getPluginsInfo();
-                        }
-                    };
-                    return <PluginBlock {...pluginProps} />;
-                }));
+        if (pluginsInfos.status == 200) {
+            setpluginsPopulated(pluginsInfos.data.map((mock: Plugin) => {
+                let pluginProps: PluginProps = {
+                    props: mock,
+                    setErrorData: setErrorHandler,
+                    triggerRefreshPluginList: function (): void {
+                        getPluginsInfo();
+                    }
+                };
+                return <PluginBlock {...pluginProps} />;
+            }));
+        } else {
+            setpluginsPopulated (mocks.map((mock: Plugin) => {
+                let pluginProps: PluginProps = {
+                    props: mock,
+                    setErrorData: setErrorHandler,
+                    triggerRefreshPluginList: function (): void {
+                        getPluginsInfo();
+                    }
+                };
+                return <PluginBlock {...pluginProps} />;
+            }));
+        }
     }
     
 
