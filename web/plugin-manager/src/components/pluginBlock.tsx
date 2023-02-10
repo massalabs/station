@@ -51,6 +51,7 @@ function PluginBlock(p: PluginProps) {
                 await axiosServices.manageLifePlugins(pluginProperties.id, "stop");
                 forcePlayStatus(false);
                 setStatus(false);
+                pluginProperties.status = "Down";
                 return
             } catch (error: any) {
                 sendErrorData("error", `Stop plugin failed , error ${error.message}`);
@@ -61,6 +62,7 @@ function PluginBlock(p: PluginProps) {
             await axiosServices.manageLifePlugins(pluginProperties.id, "start");
             setStatus(true);
             forcePlayStatus(true);
+            pluginProperties.status = "Up";
         } catch (error: any) {
             sendErrorData("error", `Start plugin failed , error :${error.message}`);
         }
