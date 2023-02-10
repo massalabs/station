@@ -48,23 +48,21 @@ function PluginBlock(p: PluginProps) {
         if (toggleStatus) {
             // Stop plugin
             try {
-                result = await axiosServices.manageLifePlugins(pluginProperties.id, "stop");
+                await axiosServices.manageLifePlugins(pluginProperties.id, "stop");
                 forcePlayStatus(false);
                 setStatus(false);
-                return result;
+                return
             } catch (error: any) {
                 sendErrorData("error", `Stop plugin failed , error ${error.message}`);
             }
-        } else {
-            // Launch plugin
-            try {
-                result = await axiosServices.manageLifePlugins(pluginProperties.id, "start");
-                setStatus(true);
-                forcePlayStatus(true);
-                return result;
-            } catch (error: any) {
-                sendErrorData("error", `Start plugin failed , error :${error.message}`);
-            }
+        }
+        // Launch plugin
+        try {
+            await axiosServices.manageLifePlugins(pluginProperties.id, "start");
+            setStatus(true);
+            forcePlayStatus(true);
+        } catch (error: any) {
+            sendErrorData("error", `Start plugin failed , error :${error.message}`);
         }
     }
 
@@ -97,7 +95,7 @@ function PluginBlock(p: PluginProps) {
             axiosServices.deletePlugins(pluginProperties.id);
             p.triggerRefreshPluginList();
             sendErrorData("success", "Plugin removed");
-        } catch (error:any) {
+        } catch (error: any) {
             sendErrorData("error", `Plugins failed to be removed , error ${error.message}`);
         }
     }

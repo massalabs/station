@@ -19,12 +19,10 @@ paths:
         - in: path
           name: author-name
           type: string
-          required: true
           description: Author of the plugin.
         - in: path
           name: plugin-name
           type: string
-          required: true
           description: Name of the plugin.
       responses:
         "200":
@@ -43,7 +41,6 @@ paths:
         - in: path
           name: resource
           type: string
-          required: true
           description: Website resource.
       responses:
         "200":
@@ -66,7 +63,6 @@ paths:
         - in: path
           name: resource
           type: string
-          required: true
           description: Website resource.
       responses:
         "200":
@@ -89,7 +85,6 @@ paths:
         - in: path
           name: resource
           type: string
-          required: true
           description: Website resource.
       responses:
         "200":
@@ -108,7 +103,6 @@ paths:
         - in: path
           name: resource
           type: string
-          required: true
           description: Website resource.
       responses:
         "200":
@@ -131,7 +125,6 @@ paths:
         - in: path
           name: resource
           type: string
-          required: true
           description: Website resource.
       responses:
         "200":
@@ -149,12 +142,10 @@ paths:
         - in: path
           name: str
           type: string
-          required: true
           description: Data content of the event.
         - in: path
           name: caller
           type: string
-          required: true
           description: Creator of the transaction that triggered the event.
       responses:
         "200":
@@ -255,7 +246,6 @@ paths:
         - in: path
           name: nickname
           type: string
-          required: true
           description: Wallet's short name.
       produces:
         - application/json
@@ -286,7 +276,6 @@ paths:
         - in: path
           name: nickname
           type: string
-          required: true
           description: Wallet's short name.
       produces:
         - application/json
@@ -318,7 +307,6 @@ paths:
         - in: path
           name: nickname
           type: string
-          required: true
           description: Wallet's short name.
       produces:
         - application/json
@@ -859,7 +847,6 @@ paths:
         - in: path
           name: id
           type: string
-          required: true
           description: Plugin identifier.
       responses:
         "200":
@@ -894,7 +881,6 @@ paths:
         - in: path
           name: id
           type: string
-          required: true
           description: Plugin identifier.
       responses:
         "204":
@@ -922,7 +908,6 @@ paths:
         - in: path
           name: id
           type: string
-          required: true
           description: Plugin unique identifier.
         - in: body
           name: body

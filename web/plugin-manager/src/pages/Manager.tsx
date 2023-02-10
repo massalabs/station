@@ -20,7 +20,7 @@ function Manager() {
     function setErrorHandler(errorType: string, errorMessage: string): void {
         setError(alertHelper(errorType, errorMessage, removeError));
         setInterval(() => {
-            setError(<></>);
+            removeError();
         }, 10000);
     }
 
