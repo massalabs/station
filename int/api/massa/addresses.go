@@ -23,13 +23,13 @@ func AddressesHandler(params operations.MassaGetAddressesParams) middleware.Resp
 	//nolint: prealloc
 	var PendingBalances []string
 	for _, addressDetails := range addressesDetails {
-		//nolint: staticcheck
+		//nolint: staticcheck, nolintlint
 		PendingBalances = append(PendingBalances, addressDetails.CandidateBalance)
 	}
 	//nolint: prealloc
 	var FinalBalances []string
 	for _, addressDetails := range addressesDetails {
-		//nolint: staticcheck
+		//nolint: staticcheck, nolintlint
 		FinalBalances = append(FinalBalances, addressDetails.CandidateBalance)
 	}
 
