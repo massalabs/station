@@ -69,11 +69,11 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		KpiHandler: KpiHandlerFunc(func(params KpiParams) middleware.Responder {
 			return middleware.NotImplemented("operation Kpi has not yet been implemented")
 		}),
+		MassaGetAddressesHandler: MassaGetAddressesHandlerFunc(func(params MassaGetAddressesParams) middleware.Responder {
+			return middleware.NotImplemented("operation MassaGetAddresses has not yet been implemented")
+		}),
 		MgmtPluginsListHandler: MgmtPluginsListHandlerFunc(func(params MgmtPluginsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation MgmtPluginsList has not yet been implemented")
-		}),
-		MgmtWalletBalanceHandler: MgmtWalletBalanceHandlerFunc(func(params MgmtWalletBalanceParams) middleware.Responder {
-			return middleware.NotImplemented("operation MgmtWalletBalance has not yet been implemented")
 		}),
 		MgmtWalletCreateHandler: MgmtWalletCreateHandlerFunc(func(params MgmtWalletCreateParams) middleware.Responder {
 			return middleware.NotImplemented("operation MgmtWalletCreate has not yet been implemented")
@@ -200,10 +200,10 @@ type ThyraServerAPI struct {
 	CmdExecuteFunctionHandler CmdExecuteFunctionHandler
 	// KpiHandler sets the operation handler for the kpi operation
 	KpiHandler KpiHandler
+	// MassaGetAddressesHandler sets the operation handler for the massa get addresses operation
+	MassaGetAddressesHandler MassaGetAddressesHandler
 	// MgmtPluginsListHandler sets the operation handler for the mgmt plugins list operation
 	MgmtPluginsListHandler MgmtPluginsListHandler
-	// MgmtWalletBalanceHandler sets the operation handler for the mgmt wallet balance operation
-	MgmtWalletBalanceHandler MgmtWalletBalanceHandler
 	// MgmtWalletCreateHandler sets the operation handler for the mgmt wallet create operation
 	MgmtWalletCreateHandler MgmtWalletCreateHandler
 	// MgmtWalletDeleteHandler sets the operation handler for the mgmt wallet delete operation
@@ -353,11 +353,11 @@ func (o *ThyraServerAPI) Validate() error {
 	if o.KpiHandler == nil {
 		unregistered = append(unregistered, "KpiHandler")
 	}
+	if o.MassaGetAddressesHandler == nil {
+		unregistered = append(unregistered, "MassaGetAddressesHandler")
+	}
 	if o.MgmtPluginsListHandler == nil {
 		unregistered = append(unregistered, "MgmtPluginsListHandler")
-	}
-	if o.MgmtWalletBalanceHandler == nil {
-		unregistered = append(unregistered, "MgmtWalletBalanceHandler")
 	}
 	if o.MgmtWalletCreateHandler == nil {
 		unregistered = append(unregistered, "MgmtWalletCreateHandler")
@@ -538,14 +538,14 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/kpi"] = NewKpi(o.context, o.KpiHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/massa/addresses"] = NewMassaGetAddresses(o.context, o.MassaGetAddressesHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/mgmt/plugins"] = NewMgmtPluginsList(o.context, o.MgmtPluginsListHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/mgmt/balance/{address}"] = NewMgmtWalletBalance(o.context, o.MgmtWalletBalanceHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

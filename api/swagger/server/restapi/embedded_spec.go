@@ -337,26 +337,48 @@ func init() {
         }
       }
     },
-    "/mgmt/balance/{address}": {
-      "get": {
+    "/massa/addresses": {
+      "post": {
         "produces": [
           "application/json"
         ],
-        "operationId": "mgmtWalletBalance",
+        "operationId": "massaGetAddresses",
         "parameters": [
           {
-            "type": "string",
-            "description": "Wallet's address",
-            "name": "address",
-            "in": "path",
-            "required": true
+            "x-nullable": false,
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "addresses",
+                "options"
+              ],
+              "properties": {
+                "addresses": {
+                  "description": "Addresses to fetch info from",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "options": {
+                  "description": "which output is required, for the moment only option avalaible is \"balances\"",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "Balance retrieved",
             "schema": {
-              "$ref": "#/definitions/Data"
+              "$ref": "#/definitions/Get_addresses"
             }
           },
           "400": {
@@ -1457,16 +1479,6 @@ func init() {
     }
   },
   "definitions": {
-    "Data": {
-      "description": "Data object (V0)",
-      "type": "object",
-      "properties": {
-        "data": {
-          "description": "data.",
-          "type": "string"
-        }
-      }
-    },
     "Error": {
       "description": "Error object.",
       "type": "object",
@@ -1498,6 +1510,28 @@ func init() {
         "data": {
           "description": "Event data.",
           "type": "string"
+        }
+      }
+    },
+    "Get_addresses": {
+      "description": "rpc get_addresses call",
+      "type": "object",
+      "properties": {
+        "finalBalances": {
+          "description": "the final balances of addresses",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-nullable": false
+        },
+        "pendingBalances": {
+          "description": "the pending balances of addresses",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-nullable": false
         }
       }
     },
@@ -1888,26 +1922,48 @@ func init() {
         }
       }
     },
-    "/mgmt/balance/{address}": {
-      "get": {
+    "/massa/addresses": {
+      "post": {
         "produces": [
           "application/json"
         ],
-        "operationId": "mgmtWalletBalance",
+        "operationId": "massaGetAddresses",
         "parameters": [
           {
-            "type": "string",
-            "description": "Wallet's address",
-            "name": "address",
-            "in": "path",
-            "required": true
+            "x-nullable": false,
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "addresses",
+                "options"
+              ],
+              "properties": {
+                "addresses": {
+                  "description": "Addresses to fetch info from",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "options": {
+                  "description": "which output is required, for the moment only option avalaible is \"balances\"",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "Balance retrieved",
             "schema": {
-              "$ref": "#/definitions/Data"
+              "$ref": "#/definitions/Get_addresses"
             }
           },
           "400": {
@@ -2986,16 +3042,6 @@ func init() {
         }
       }
     },
-    "Data": {
-      "description": "Data object (V0)",
-      "type": "object",
-      "properties": {
-        "data": {
-          "description": "data.",
-          "type": "string"
-        }
-      }
-    },
     "Error": {
       "description": "Error object.",
       "type": "object",
@@ -3027,6 +3073,28 @@ func init() {
         "data": {
           "description": "Event data.",
           "type": "string"
+        }
+      }
+    },
+    "Get_addresses": {
+      "description": "rpc get_addresses call",
+      "type": "object",
+      "properties": {
+        "finalBalances": {
+          "description": "the final balances of addresses",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-nullable": false
+        },
+        "pendingBalances": {
+          "description": "the pending balances of addresses",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-nullable": false
         }
       }
     },

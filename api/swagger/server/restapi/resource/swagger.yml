@@ -292,22 +292,37 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /mgmt/balance/{address}:
-    get:
-      operationId: mgmtWalletBalance
+  /massa/addresses:
+    post:
+      operationId: massaGetAddresses
       parameters:
-        - in: path
-          name: address
-          type: string
+        - in: body
+          name: body
           required: true
-          description: Wallet's address
+          x-nullable: false
+          schema:
+            type: object
+            required:
+              - addresses
+              - options
+            properties:
+              addresses :
+                description: Addresses to fetch info from
+                type: array
+                items : 
+                  type: string
+              options :    
+                description: which output is required, for the moment only option avalaible is "balances"
+                type: array
+                items : 
+                  type: string
       produces:
         - application/json
       responses:
         "200":
           description: Balance retrieved
           schema:
-            $ref: "#/definitions/Data"
+            $ref: "#/definitions/Get_addresses"
         "400":
           description: Bad request.
           schema:
@@ -1052,13 +1067,22 @@ definitions:
       address:
         description: Event caller.
         type: string
-  Data:
-    type: object
-    description: Data object (V0)
-    properties:
-      data:
-        description: data.
-        type: string
+  Get_addresses : 
+    type : object
+    description : rpc get_addresses call
+    properties : 
+      pendingBalances : 
+        description : the pending balances of addresses
+        type : array
+        items : 
+          type : string
+        x-nullable : false  
+      finalBalances : 
+        description : the final balances of addresses
+        type : array
+        items : 
+          type : string 
+        x-nullable : false
   Registry:
     type: object
     description: Registry object (V0).
