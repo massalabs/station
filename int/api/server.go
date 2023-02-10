@@ -5,7 +5,7 @@ import (
 	"os"
 	"sync"
 
-	"fyne.io/fyne"
+	"fyne.io/fyne/v2"
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
