@@ -18,7 +18,7 @@ function PluginBlock(p: PluginProps) {
     // Toggle status state
     const [toggleStatus, setStatus] = useState(isUp(p.props.status));
 
-    const [playStatusClassName, setPlayStatusClassName] = useState(definePlayStatus());
+    const [playStatusClassName, setPlayStatusClassName] = useState(defineRunStatus());
 
     // fetch info from plugin to get fresh data on demand
     async function fetchPluginStatus(): Promise<AxiosResponse<string>> {
@@ -37,7 +37,7 @@ function PluginBlock(p: PluginProps) {
     }
 
     // Launch or stop plugin
-    async function launchAndStopPlugins() {
+    async function launchOrStop() {
         let resultPluginInfo: AxiosResponse<string>;
         // fetch info from plugin to get fresh data
         resultPluginInfo = await fetchPluginStatus();
@@ -111,7 +111,7 @@ function PluginBlock(p: PluginProps) {
     }
 
     // Change the play status icon color and update the status if we want to force it
-    function definePlayStatus() {
+    function defineRunStatus() {
         if (isUp(pluginProperties.status)) {
             return "w-6 h-6 text-green-500";
         } else {
@@ -155,7 +155,7 @@ function PluginBlock(p: PluginProps) {
                         type="checkbox"
                         className="toggle toggle-success"
                         checked={toggleStatus}
-                        onChange={launchAndStopPlugins}
+                        onChange={launchOrStop}
                     />
 
                     <button>
