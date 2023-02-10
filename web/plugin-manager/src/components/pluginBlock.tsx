@@ -11,7 +11,7 @@ function PluginBlock(p: PluginProps) {
         p.setErrorData(errorType, errorMessage);
     }
     // Data to display
-    let dataMemoized = useMemo(() => {
+    let pluginProperties = useMemo(() => {
         return p.props;
     }, [p.props]);
 
@@ -24,12 +24,13 @@ function PluginBlock(p: PluginProps) {
     async function fetchPluginStatus(): Promise<AxiosResponse<string>> {
         let result: AxiosResponse<string> = {} as AxiosResponse<string>;
         try {
-            return (result = await axiosServices.getpluginInfo(dataMemoized.id));
+            return (result = await axiosServices.getpluginInfo(pluginProperties.id));
         } catch (error: any) {
             console.log(error);
             sendErrorData(
                 "error",
-                `Plugins infos failed to get infos from plugin name : ${dataMemoized.name} on id: ${dataMemoized.id}, error: ${error.message}}`
+                `Plugins infos failed to get infos from 
+                plugin name : ${pluginProperties.name} on id: ${pluginProperties.id}, error: ${error.message}}`
             );
         }
         return result;
@@ -47,9 +48,9 @@ function PluginBlock(p: PluginProps) {
         if (toggleStatus) {
             // Stop plugin
             try {
-                result = await axiosServices.manageLifePlugins(dataMemoized.id, "stop");
+                result = await axiosServices.manageLifePlugins(pluginProperties.id, "stop");
                 forcePlayStatus(false);
-                setStatus(!toggleStatus);
+                setStatus(false);
                 return result;
             } catch (error: any) {
                 sendErrorData("error", `Stop plugin failed , error ${error.message}`);
@@ -57,8 +58,8 @@ function PluginBlock(p: PluginProps) {
         } else {
             // Launch plugin
             try {
-                result = await axiosServices.manageLifePlugins(dataMemoized.id, "start");
-                setStatus(!toggleStatus);
+                result = await axiosServices.manageLifePlugins(pluginProperties.id, "start");
+                setStatus(true);
                 forcePlayStatus(true);
                 return result;
             } catch (error: any) {
@@ -85,7 +86,7 @@ function PluginBlock(p: PluginProps) {
     }
     // Open plugin homepage
     function openHomepagePlugins() {
-        if (isUp(dataMemoized.status)) window.open(dataMemoized.home);
+        if (isUp(pluginProperties.status)) window.open(pluginProperties.home);
         else {
             sendErrorData("error", "Plugin is not running can't be launched , launch it first");
         }
@@ -93,7 +94,7 @@ function PluginBlock(p: PluginProps) {
     // Uninstall plugin
     function removePlugins() {
         try {
-            axiosServices.deletePlugins(dataMemoized.id);
+            axiosServices.deletePlugins(pluginProperties.id);
             p.triggerRefreshPluginList();
             sendErrorData("success", "Plugin removed");
         } catch (error:any) {
@@ -111,7 +112,7 @@ function PluginBlock(p: PluginProps) {
 
     // Change the play status icon color and update the status if we want to force it
     function definePlayStatus() {
-        if (isUp(dataMemoized.status)) {
+        if (isUp(pluginProperties.status)) {
             return "w-6 h-6 text-green-500";
         } else {
             return "w-6 h-6 text-red-500";
