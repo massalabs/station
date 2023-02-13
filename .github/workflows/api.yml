@@ -17,10 +17,10 @@ jobs:
           os: ubuntu-latest
       - name: Update version
         run: echo -e "${GITHUB_REF_NAME}" > cmd/thyra-server/version.txt
-      - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
+      - name: Build thyra binary
         run: GOOS=linux GOARCH=amd64 CGO_ENABLED=1 CC=gcc CXX=g++ go build cmd/thyra-server/main.go
       - name: Run thyra
-        run: sudo apt install xvfb && xvfb-run ./main &
+        run: mkdir /home/runner/.config/thyra && sudo apt install xvfb && xvfb-run ./main &
       - name: Define my.massa
         run: sudo echo "127.0.0.1 my.massa" | sudo tee -a /etc/hosts
       - uses: matt-ball/newman-action@master
