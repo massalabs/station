@@ -22,7 +22,7 @@ jobs:
       - name: Run thyra
         run: ./main &
       - name: Define my.massa
-        run: sudo echo "127.0.0.1 my.massa" > /etc/hosts
+        run: sudo echo "127.0.0.1 my.massa" | sudo tee -a /etc/hosts
       - uses: matt-ball/newman-action@master
         with:
           collection: api/test/plugin_manager.postman_collection.json

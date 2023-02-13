@@ -1,5 +1,6 @@
 consumes:
   - application/json
+  
 info:
   description: Thyra HTTP server API.
   title: thyra-server
