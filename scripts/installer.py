@@ -38,7 +38,7 @@ class Installer:
     """
     Prints the error given in parameter and exits the program
     """
-    def printErrorAndExit(self, error):
+    def printErrorAndExit(error):
         logging.error(error)
         os._exit(-1)
 

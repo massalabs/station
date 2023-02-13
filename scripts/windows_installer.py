@@ -25,7 +25,7 @@ class WindowsInstaller(Installer):
         else:
             self.printErrorAndExit(f"Unsupported architecture {platform.machine()}")
 
-    def printErrorAndExit(self, error):
+    def printErrorAndExit(error):
         logging.error(error)
         os.system("pause")
         os._exit(-1)
@@ -91,14 +91,10 @@ class WindowsInstaller(Installer):
 
 if __name__ == "__main__":
     if platform.system() != "Windows":
-        logging.error("This script is only compatible with Windows")
-        os.system("pause")
-        os._exit(-1)
+        WindowsInstaller.printErrorAndExit("This script is only compatible with Windows")
 
     if ctypes.windll.shell32.IsUserAnAdmin() == 0:
-        logging.error("This script must be run as administrator")
-        os.system("pause")
-        os._exit(-1)
+        WindowsInstaller.printErrorAndExit("This script must be run as administrator")
 
     WindowsInstaller().startInstall()
     os.system("pause")

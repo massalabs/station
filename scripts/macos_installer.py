@@ -49,7 +49,6 @@ class MacOSInstaller(Installer):
 
 if __name__ == "__main__":
     if platform.system() != "Darwin":
-        logging.error("This script is only for MacOS")
-        os._exit(-1)
+        MacOSInstaller.printErrorAndExit("This script is only for MacOS")
 
     MacOSInstaller().startInstall()
