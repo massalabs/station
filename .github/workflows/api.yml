@@ -21,7 +21,8 @@ jobs:
         run: GOOS=linux GOARCH=amd64 CGO_ENABLED=1 CC=gcc CXX=g++ go build
       - name: Run thyra
         run: ./main &
-      - uses: actions/checkout@master
+      - name: Define my.massa
+        run: echo "127.0.0.1    my.massa" > /etc/hosts
       - uses: matt-ball/newman-action@master
         with:
           collection: api/test/plugin_manager.postman_collection.json
