@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "Install Hello world plugin",
+			"name": "Install plugin",
 			"event": [
 				{
 					"listen": "test",

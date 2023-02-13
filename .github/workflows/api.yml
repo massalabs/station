@@ -24,5 +24,5 @@ jobs:
       - uses: actions/checkout@master
       - uses: matt-ball/newman-action@master
         with:
-          collection: postman_collection.json
-          environment: postman_environment.json
+          collection: api/test/plugin_manager.postman_collection.json
+          environment: api/test/plugin_manager.postman_environment.json
