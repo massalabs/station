@@ -1,6 +1,8 @@
 package massa
 
 import (
+	"fmt"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
@@ -10,52 +12,39 @@ import (
 func AddressesHandler(params operations.MassaGetAddressesParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
-	addressesDetails, err := node.Addresses(client, params.Body.Addresses)
+	addressesDetails, err := node.Addresses(client, params.Query)
 	if err != nil {
 		return operations.NewMassaGetAddressesInternalServerError().
 			WithPayload(
 				&models.Error{
-					Code:    "get_Addresses error",
-					Message: "Error : Cannot get result from Address: " + err.Error(),
+					Code:    errorCodeMassaAddresses,
+					Message: fmt.Sprintf("while getting details of addresses %v: %s\n", params.Query, err),
 				},
 			)
 	}
+
 	//nolint: prealloc
-	var PendingBalances []string
+	var pendingBalances []string
 	for _, addressDetails := range addressesDetails {
 		//nolint: staticcheck, nolintlint
-		PendingBalances = append(PendingBalances, addressDetails.CandidateBalance)
+		pendingBalances = append(pendingBalances, addressDetails.CandidateBalance)
 	}
+
 	//nolint: prealloc
-	var FinalBalances []string
+	var finalBalances []string
 	for _, addressDetails := range addressesDetails {
 		//nolint: staticcheck, nolintlint
-		FinalBalances = append(FinalBalances, addressDetails.CandidateBalance)
+		finalBalances = append(finalBalances, addressDetails.CandidateBalance)
 	}
 
-	if checkIfPresentInStringArray(params.Body.Options, "balances") {
-		return operations.NewMassaGetAddressesOK().
-			WithPayload(
-				&models.GetAddresses{
-					FinalBalances:   FinalBalances,
-					PendingBalances: FinalBalances,
-				})
+	addressMap := make(models.AddressesAttributes, len(addressesDetails))
+
+	for _, details := range addressesDetails {
+		balance := &models.AddressesAttributesAnonBalance{Pending: details.CandidateBalance, Final: details.FinalBalance}
+
+		addressMap[details.Address] = models.AddressesAttributesAnon{Balance: balance}
 	}
 
-	return operations.NewMassaGetAddressesBadRequest().
-		WithPayload(
-			&models.Error{
-				Code:    "MassaAddress Error",
-				Message: "Options missing or invalid",
-			})
-}
-
-func checkIfPresentInStringArray(arr []string, toCheck string) bool {
-	for _, ar := range arr {
-		if ar == toCheck {
-			return true
-		}
-	}
-
-	return false
+	return operations.NewMassaGetAddressesOK().
+		WithPayload(addressMap)
 }

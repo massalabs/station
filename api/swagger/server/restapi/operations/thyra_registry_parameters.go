@@ -14,18 +14,11 @@ import (
 )
 
 // NewThyraRegistryParams creates a new ThyraRegistryParams object
-// with the default values initialized.
+//
+// There are no default values defined in the spec.
 func NewThyraRegistryParams() ThyraRegistryParams {
 
-	var (
-		// initialize parameters with default values
-
-		resourceDefault = string("index.html")
-	)
-
-	return ThyraRegistryParams{
-		Resource: resourceDefault,
-	}
+	return ThyraRegistryParams{}
 }
 
 // ThyraRegistryParams contains all the bound params for the thyra registry operation
@@ -40,7 +33,6 @@ type ThyraRegistryParams struct {
 	/*Website resource.
 	  Required: true
 	  In: path
-	  Default: "index.html"
 	*/
 	Resource string
 }

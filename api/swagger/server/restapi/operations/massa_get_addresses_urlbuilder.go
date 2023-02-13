@@ -9,11 +9,17 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
+
+	"github.com/go-openapi/swag"
 )
 
 // MassaGetAddressesURL generates an URL for the massa get addresses operation
 type MassaGetAddressesURL struct {
+	Query []string
+
 	_basePath string
+	// avoid unkeyed usage
+	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
@@ -39,6 +45,24 @@ func (o *MassaGetAddressesURL) Build() (*url.URL, error) {
 
 	_basePath := o._basePath
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
+
+	qs := make(url.Values)
+
+	var queryIR []string
+	for _, queryI := range o.Query {
+		queryIS := queryI
+		if queryIS != "" {
+			queryIR = append(queryIR, queryIS)
+		}
+	}
+
+	query := swag.JoinByFormat(queryIR, "multi")
+
+	for _, qsv := range query {
+		qs.Add("query", qsv)
+	}
+
+	_result.RawQuery = qs.Encode()
 
 	return &_result, nil
 }

@@ -86,7 +86,6 @@ func init() {
           },
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -338,47 +337,33 @@ func init() {
       }
     },
     "/massa/addresses": {
-      "post": {
+      "get": {
         "produces": [
           "application/json"
         ],
         "operationId": "massaGetAddresses",
         "parameters": [
           {
-            "x-nullable": false,
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "addresses",
-                "options"
+            "type": "array",
+            "items": {
+              "enum": [
+                "balances"
               ],
-              "properties": {
-                "addresses": {
-                  "description": "Addresses to fetch info from",
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "options": {
-                  "description": "which output is required, for the moment only option avalaible is \"balances\"",
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "x-nullable": false,
+            "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nBalance: returns the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations).\n",
+            "name": "query",
+            "in": "query",
+            "required": true
           }
         ],
         "responses": {
           "200": {
-            "description": "Balance retrieved",
+            "description": "Addresses' infos retrieved",
             "schema": {
-              "$ref": "#/definitions/Get_addresses"
+              "$ref": "#/definitions/Addresses_attributes"
             }
           },
           "400": {
@@ -1136,7 +1121,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1170,7 +1154,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1231,7 +1214,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1259,7 +1241,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1293,7 +1274,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1513,6 +1493,26 @@ func init() {
     }
   },
   "definitions": {
+    "Addresses_attributes": {
+      "type": "object",
+      "additionalProperties": {
+        "description": "address key",
+        "type": "object",
+        "properties": {
+          "balance": {
+            "type": "object",
+            "properties": {
+              "final": {
+                "type": "string"
+              },
+              "pending": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
     "Error": {
       "description": "Error object.",
       "type": "object",
@@ -1544,28 +1544,6 @@ func init() {
         "data": {
           "description": "Event data.",
           "type": "string"
-        }
-      }
-    },
-    "Get_addresses": {
-      "description": "rpc get_addresses call",
-      "type": "object",
-      "properties": {
-        "finalBalances": {
-          "description": "the final balances of addresses",
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "x-nullable": false
-        },
-        "pendingBalances": {
-          "description": "the pending balances of addresses",
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "x-nullable": false
         }
       }
     },
@@ -1752,7 +1730,6 @@ func init() {
           },
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1957,47 +1934,33 @@ func init() {
       }
     },
     "/massa/addresses": {
-      "post": {
+      "get": {
         "produces": [
           "application/json"
         ],
         "operationId": "massaGetAddresses",
         "parameters": [
           {
-            "x-nullable": false,
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "addresses",
-                "options"
+            "type": "array",
+            "items": {
+              "enum": [
+                "balances"
               ],
-              "properties": {
-                "addresses": {
-                  "description": "Addresses to fetch info from",
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "options": {
-                  "description": "which output is required, for the moment only option avalaible is \"balances\"",
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "x-nullable": false,
+            "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nBalance: returns the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations).\n",
+            "name": "query",
+            "in": "query",
+            "required": true
           }
         ],
         "responses": {
           "200": {
-            "description": "Balance retrieved",
+            "description": "Addresses' infos retrieved",
             "schema": {
-              "$ref": "#/definitions/Get_addresses"
+              "$ref": "#/definitions/Addresses_attributes"
             }
           },
           "400": {
@@ -2717,7 +2680,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -2751,7 +2713,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -2812,7 +2773,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -2840,7 +2800,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -2874,7 +2833,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -3094,6 +3052,40 @@ func init() {
     }
   },
   "definitions": {
+    "AddressesAttributesAnon": {
+      "description": "address key",
+      "type": "object",
+      "properties": {
+        "balance": {
+          "type": "object",
+          "properties": {
+            "final": {
+              "type": "string"
+            },
+            "pending": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "AddressesAttributesAnonBalance": {
+      "type": "object",
+      "properties": {
+        "final": {
+          "type": "string"
+        },
+        "pending": {
+          "type": "string"
+        }
+      }
+    },
+    "Addresses_attributes": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/AddressesAttributesAnon"
+      }
+    },
     "CmdExecuteFunctionParamsBodyGaz": {
       "description": "Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.",
       "type": "object",
@@ -3141,28 +3133,6 @@ func init() {
         "data": {
           "description": "Event data.",
           "type": "string"
-        }
-      }
-    },
-    "Get_addresses": {
-      "description": "rpc get_addresses call",
-      "type": "object",
-      "properties": {
-        "finalBalances": {
-          "description": "the final balances of addresses",
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "x-nullable": false
-        },
-        "pendingBalances": {
-          "description": "the pending balances of addresses",
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "x-nullable": false
         }
       }
     },

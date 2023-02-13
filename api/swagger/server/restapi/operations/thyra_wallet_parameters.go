@@ -14,18 +14,11 @@ import (
 )
 
 // NewThyraWalletParams creates a new ThyraWalletParams object
-// with the default values initialized.
+//
+// There are no default values defined in the spec.
 func NewThyraWalletParams() ThyraWalletParams {
 
-	var (
-		// initialize parameters with default values
-
-		resourceDefault = string("index.html")
-	)
-
-	return ThyraWalletParams{
-		Resource: resourceDefault,
-	}
+	return ThyraWalletParams{}
 }
 
 // ThyraWalletParams contains all the bound params for the thyra wallet operation
@@ -40,7 +33,6 @@ type ThyraWalletParams struct {
 	/*Website resource.
 	  Required: true
 	  In: path
-	  Default: "index.html"
 	*/
 	Resource string
 }

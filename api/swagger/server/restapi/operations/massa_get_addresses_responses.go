@@ -17,7 +17,7 @@ import (
 const MassaGetAddressesOKCode int = 200
 
 /*
-MassaGetAddressesOK Balance retrieved
+MassaGetAddressesOK Addresses' infos retrieved
 
 swagger:response massaGetAddressesOK
 */
@@ -26,7 +26,7 @@ type MassaGetAddressesOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.GetAddresses `json:"body,omitempty"`
+	Payload models.AddressesAttributes `json:"body,omitempty"`
 }
 
 // NewMassaGetAddressesOK creates MassaGetAddressesOK with default headers values
@@ -36,13 +36,13 @@ func NewMassaGetAddressesOK() *MassaGetAddressesOK {
 }
 
 // WithPayload adds the payload to the massa get addresses o k response
-func (o *MassaGetAddressesOK) WithPayload(payload *models.GetAddresses) *MassaGetAddressesOK {
+func (o *MassaGetAddressesOK) WithPayload(payload models.AddressesAttributes) *MassaGetAddressesOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the massa get addresses o k response
-func (o *MassaGetAddressesOK) SetPayload(payload *models.GetAddresses) {
+func (o *MassaGetAddressesOK) SetPayload(payload models.AddressesAttributes) {
 	o.Payload = payload
 }
 
@@ -50,11 +50,14 @@ func (o *MassaGetAddressesOK) SetPayload(payload *models.GetAddresses) {
 func (o *MassaGetAddressesOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
+	payload := o.Payload
+	if payload == nil {
+		// return empty map
+		payload = models.AddressesAttributes{}
+	}
+
+	if err := producer.Produce(rw, payload); err != nil {
+		panic(err) // let the recovery middleware deal with this
 	}
 }
 

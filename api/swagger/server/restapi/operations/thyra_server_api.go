@@ -546,10 +546,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/kpi"] = NewKpi(o.context, o.KpiHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/massa/addresses"] = NewMassaGetAddresses(o.context, o.MassaGetAddressesHandler)
+	o.handlers["GET"]["/massa/addresses"] = NewMassaGetAddresses(o.context, o.MassaGetAddressesHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

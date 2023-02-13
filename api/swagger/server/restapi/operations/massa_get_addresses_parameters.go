@@ -6,12 +6,13 @@ package operations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"io"
+	"fmt"
 	"net/http"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
 )
 
@@ -32,11 +33,14 @@ type MassaGetAddressesParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*
+	/*Specifies the attributes to return. If no attributes are provided, they are all returned.
+	Balance: returns the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations).
+
 	  Required: true
-	  In: body
+	  In: query
+	  Collection Format: multi
 	*/
-	Body MassaGetAddressesBody
+	Query []string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -48,35 +52,43 @@ func (o *MassaGetAddressesParams) BindRequest(r *http.Request, route *middleware
 
 	o.HTTPRequest = r
 
-	if runtime.HasBody(r) {
-		defer r.Body.Close()
-		var body MassaGetAddressesBody
-		if err := route.Consumer.Consume(r.Body, &body); err != nil {
-			if err == io.EOF {
-				res = append(res, errors.Required("body", "body", ""))
-			} else {
-				res = append(res, errors.NewParseError("body", "body", "", err))
-			}
-		} else {
-			// validate body object
-			if err := body.Validate(route.Formats); err != nil {
-				res = append(res, err)
-			}
+	qs := runtime.Values(r.URL.Query())
 
-			ctx := validate.WithOperationRequest(r.Context())
-			if err := body.ContextValidate(ctx, route.Formats); err != nil {
-				res = append(res, err)
-			}
-
-			if len(res) == 0 {
-				o.Body = body
-			}
-		}
-	} else {
-		res = append(res, errors.Required("body", "body", ""))
+	qQuery, qhkQuery, _ := qs.GetOK("query")
+	if err := o.bindQuery(qQuery, qhkQuery, route.Formats); err != nil {
+		res = append(res, err)
 	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// bindQuery binds and validates array parameter Query from query.
+//
+// Arrays are parsed according to CollectionFormat: "multi" (defaults to "csv" when empty).
+func (o *MassaGetAddressesParams) bindQuery(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	if !hasKey {
+		return errors.Required("query", "query", rawData)
+	}
+	// CollectionFormat: multi
+	queryIC := rawData
+	if len(queryIC) == 0 {
+		return errors.Required("query", "query", queryIC)
+	}
+
+	var queryIR []string
+	for i, queryIV := range queryIC {
+		queryI := queryIV
+
+		if err := validate.EnumCase(fmt.Sprintf("%s.%v", "query", i), "query", queryI, []interface{}{"balances"}, true); err != nil {
+			return err
+		}
+
+		queryIR = append(queryIR, queryI)
+	}
+
+	o.Query = queryIR
+
 	return nil
 }

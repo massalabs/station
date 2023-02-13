@@ -14,18 +14,11 @@ import (
 )
 
 // NewThyraPluginManagerParams creates a new ThyraPluginManagerParams object
-// with the default values initialized.
+//
+// There are no default values defined in the spec.
 func NewThyraPluginManagerParams() ThyraPluginManagerParams {
 
-	var (
-		// initialize parameters with default values
-
-		resourceDefault = string("index.html")
-	)
-
-	return ThyraPluginManagerParams{
-		Resource: resourceDefault,
-	}
+	return ThyraPluginManagerParams{}
 }
 
 // ThyraPluginManagerParams contains all the bound params for the thyra plugin manager operation
@@ -40,7 +33,6 @@ type ThyraPluginManagerParams struct {
 	/*Website resource.
 	  Required: true
 	  In: path
-	  Default: "index.html"
 	*/
 	Resource string
 }
