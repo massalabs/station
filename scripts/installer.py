@@ -3,6 +3,7 @@ import logging
 import os
 import platform
 import shutil
+import socket
 import ssl
 import subprocess
 import urllib.request
@@ -30,7 +31,10 @@ class Installer:
 
     MKCERT_URL = ""
     MKCERT_FILENAME = ""
+
     CERTIFICATIONS_FOLDER_PATH = os.path.join(THYRA_CONFIG_FOLDER_PATH, "certs")
+    CERTIFICATION_FILENAME = "cert.pem"
+    CERTIFICATION_KEY_FILENAME = "cert-key.pem"
 
     def __init__(self):
         pass
@@ -82,10 +86,27 @@ class Installer:
         logging.info(filename + " downloaded successfully")
 
     """
+    Checks if my.massa is resolved. If it is, the DNS server is well installed and configured.
+    """
+    def shouldInstallDNS(self) -> bool:
+        try:
+            socket.gethostbyname("my.massa")
+            return False
+        except URLError:
+            return True
+
+    """
     This method must be implemented by the installer of each platform to install and configure the DNS server.
     """
     def setupDNS(self):
         pass
+
+    """
+    Checks if the HTTPS certificate for my.massa are already present in the thyra config folder.
+    The filenames of the certificate and the key are defined in the constants CERTIFICATION_FILENAME and CERTIFICATION_KEY_FILENAME.
+    """
+    def areCertificatesInstalled(self) -> bool:
+        return os.path.exists(os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_FILENAME)) and os.path.exists(os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_KEY_FILENAME))
 
     """
     Generates an HTTPS certificate for my.massa using mkcert and stores it in the thyra config folder.
@@ -102,13 +123,16 @@ class Installer:
         self.downloadFile(self.MKCERT_URL, self.MKCERT_FILENAME)
         os.chmod(self.MKCERT_FILENAME, 0o755)
 
-        self.executeCommand([
+        output = self.executeCommand([
             os.path.join(os.getcwd(), self.MKCERT_FILENAME), 
             "--install"])
+        if output is not None and len(output) > 0:
+            logging.log(output)
+
         self.executeCommand([
             os.path.join(os.getcwd() , self.MKCERT_FILENAME),
-            "--cert-file", os.path.join(self.CERTIFICATIONS_FOLDER_PATH , "cert.pem"),
-            "--key-file", os.path.join(self.CERTIFICATIONS_FOLDER_PATH, "cert-key.pem"),
+            "--cert-file", os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_FILENAME),
+            "--key-file", os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_KEY_FILENAME),
             "my.massa"])
 
         try:
@@ -118,35 +142,36 @@ class Installer:
         logging.info("HTTPS certificate successfully generated")
 
     """
-    Downloads thyra server and stores it in the thyra install folder.
+    Downloads and installs a binary from the given url and stores it in the given install path.
     """
-    def installThyraServer(self):
-        self.downloadFile(self.THYRA_SERVER_URL, self.THYRA_SERVER_FILENAME)
-        os.chmod(self.THYRA_SERVER_FILENAME, 0o755)
-        if os.getcwd() != self.THYRA_INSTALL_FOLDER_PATH:
+    def installBinary(self, install_path, binary_url, binary_filename):
+        logging.debug(f"Installing {binary_filename} from {binary_url}")
+        self.downloadFile(binary_url, binary_filename)
+        os.chmod(binary_filename, 0o755)
+        if os.getcwd() != install_path:
             try:
-                thyra_server_path = os.path.join(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_SERVER_FILENAME)
+                thyra_server_path = os.path.join(install_path, binary_filename)
                 if os.path.exists(thyra_server_path):
                     os.remove(thyra_server_path)
-                shutil.move(self.THYRA_SERVER_FILENAME, self.THYRA_INSTALL_FOLDER_PATH)
+                shutil.move(binary_filename, install_path)
             except OSError as err:
-                self.printErrorAndExit(f"Error while moving thyra server binary: {err}")
+                self.printErrorAndExit(f"Error while moving {binary_filename} binary: {err}")
+        logging.debug(f"{binary_filename} successfully installed")
+
+    """
+    Downloads thyra server and stores it in the thyra install folder.
+    Can be overriden by the installer of a specific platform if needed.
+    """
+    def installThyraServer(self):
+        self.installBinary(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_SERVER_URL, self.THYRA_SERVER_FILENAME)
         logging.info("Thyra server installed successfully")
 
     """
     Downloads thyra app and stores it in the thyra install folder.
+    Can be overriden by the installer of a specific platform if needed.
     """
     def installThyraApp(self):
-        self.downloadFile(self.THYRA_APP_URL, self.THYRA_APP_FILENAME)
-        os.chmod(self.THYRA_APP_FILENAME, 0o755)
-        if os.getcwd() != self.THYRA_INSTALL_FOLDER_PATH:
-            try:
-                thyra_app_path = os.path.join(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_APP_FILENAME)
-                if os.path.exists(thyra_app_path):
-                    os.remove(thyra_app_path)
-                shutil.move(self.THYRA_APP_FILENAME, self.THYRA_INSTALL_FOLDER_PATH)
-            except OSError as err:
-                self.printErrorAndExit(f"Error while moving thyra app binary: {err}")
+        self.installBinary(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_APP_URL, self.THYRA_APP_FILENAME)
         logging.info("Thyra app installed successfully")
 
     """
@@ -156,6 +181,12 @@ class Installer:
         logging.info("Starting installation of thyra")
         self.installThyraServer()
         self.installThyraApp()
-        self.setupDNS()
-        self.generateCertificate()
+        if self.shouldInstallDNS():
+            self.setupDNS()
+        else:
+            logging.info("DNS server already installed, skipping...")
+        if not self.areCertificatesInstalled():
+            self.generateCertificate()
+        else:
+            logging.info("HTTPS certificate already installed, skipping...")
         logging.info("Thyra installed successfully")
