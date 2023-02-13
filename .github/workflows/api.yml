@@ -1,0 +1,27 @@
+name: API
+
+on:
+  push:
+    paths:
+      - 'api/swagger/server/restapi/resource/swagger.yml'
+
+jobs:
+  test-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: installing dependencies
+        uses: ./.github/actions/install
+        with:
+          os: ubuntu-latest
+      - name: Update version
+        run: echo -e "${GITHUB_REF_NAME}" > cmd/thyra-server/version.txt
+      - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
+        run: GOOS=linux GOARCH=amd64 CGO_ENABLED=1 CC=gcc CXX=g++ go build
+      - name: Run thyra
+        run: ./main &
+      - uses: actions/checkout@master
+      - uses: matt-ball/newman-action@master
+        with:
+          collection: postman_collection.json
+          environment: postman_environment.json
