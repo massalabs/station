@@ -24,13 +24,11 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:{{port}}/plugin-manager?source={{pluginSource}}",
+					"raw": "http://my.massa:{{port}}/plugin-manager?source={{pluginSource}}",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"my",
+						"massa"
 					],
 					"port": "{{port}}",
 					"path": [
@@ -187,13 +185,11 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:{{port}}/plugin-manager",
+					"raw": "http://my.massa:{{port}}/plugin-manager",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"my",
+						"massa"
 					],
 					"port": "{{port}}",
 					"path": [
@@ -222,13 +218,11 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:{{port}}/plugin-manager/{{pluginId}}",
+					"raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"my",
+						"massa"
 					],
 					"port": "{{port}}",
 					"path": [
@@ -263,13 +257,11 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:{{port}}/plugin-manager/register",
+					"raw": "http://my.massa:{{port}}/plugin-manager/register",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"my",
+						"massa"
 					],
 					"port": "{{port}}",
 					"path": [
@@ -503,13 +495,11 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:{{port}}/plugin-manager/{{pluginId}}/execute",
+					"raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}/execute",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"my",
+						"massa"
 					],
 					"port": "{{port}}",
 					"path": [
@@ -558,13 +548,11 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:{{port}}/plugin-manager/{{pluginId}}/execute",
+					"raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}/execute",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"my",
+						"massa"
 					],
 					"port": "{{port}}",
 					"path": [
@@ -613,13 +601,11 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:{{port}}/plugin-manager/{{pluginId}}/execute",
+					"raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}/execute",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"my",
+						"massa"
 					],
 					"port": "{{port}}",
 					"path": [
@@ -650,13 +636,11 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:{{port}}/plugin-manager/{{pluginId}}",
+					"raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"my",
+						"massa"
 					],
 					"port": "{{port}}",
 					"path": [
