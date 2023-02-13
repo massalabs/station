@@ -50,7 +50,7 @@ class Installer:
     """
     Executes the command given in parameter and returns the output of the command
     """
-    def executeCommand(self, command, shell=False) -> tuple[str, str]:
+    def executeCommand(self, command, shell=False, allow_failure=False) -> tuple[str, str]:
         logging.debug(f'Executing command: {command}')
         try:
             process = subprocess.Popen(command, shell=shell,
@@ -62,7 +62,7 @@ class Installer:
             if stdout is not None and len(stdout) > 0:
                 logging.debug(f'Command output: {stdout.decode(locale.getpreferredencoding(False))}')
 
-            if process.returncode != 0:
+            if allow_failure == False and process.returncode != 0:
                 self.printErrorAndExit(f"Command failed with error : {stderr.decode(locale.getpreferredencoding(False))}")
 
             return (stdout.decode(locale.getpreferredencoding(False)), stderr.decode(locale.getpreferredencoding(False)))

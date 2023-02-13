@@ -33,8 +33,12 @@ class MacOSInstaller(Installer):
         self.executeCommand("sudo brew services restart dnsmasq", True)
 
     def setupDNS(self):
-        runningDNS = self.executeCommand("sudo lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//'", True)
-        runningDNS = runningDNS[:-1]
+        stdout, _stderr = self.executeCommand("sudo lsof -i :53", True, allow_failure=True)        
+        runningDNS = ""
+        if stdout:
+            runningDNS = stdout.splitlines()[1].split()
+            runningDNS = runningDNS[:-1]
+
         if runningDNS == "dnsmasq":
             logging.info("dnsmasq is already installed")
             self.configureDNSMasq()
