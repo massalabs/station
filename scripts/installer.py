@@ -42,6 +42,7 @@ class Installer:
     """
     Prints the error given in parameter and exits the program
     """
+    @staticmethod
     def printErrorAndExit(error):
         logging.error(error)
         os._exit(-1)
@@ -92,7 +93,7 @@ class Installer:
         try:
             socket.gethostbyname("my.massa")
             return False
-        except URLError:
+        except:
             return True
 
     """
