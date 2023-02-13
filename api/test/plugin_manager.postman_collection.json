@@ -162,7 +162,7 @@
 			]
 		},
 		{
-			"name": "List plugins",
+			"name": "List plugin",
 			"event": [
 				{
 					"listen": "test",
