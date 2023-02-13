@@ -49,7 +49,7 @@ class Installer:
     """
     Executes the command given in parameter and returns the output of the command
     """
-    def executeCommand(self, command, shell=False) -> str:
+    def executeCommand(self, command, shell=False) -> tuple[str, str]:
         logging.debug(f'Executing command: {command}')
         try:
             process = subprocess.Popen(command, shell=shell,
@@ -64,7 +64,7 @@ class Installer:
             if process.returncode != 0:
                 self.printErrorAndExit(f"Command failed with error : {stderr.decode(locale.getpreferredencoding(False))}")
 
-            return stdout.decode(locale.getpreferredencoding(False))
+            return (stdout.decode(locale.getpreferredencoding(False)), stderr.decode(locale.getpreferredencoding(False)))
         except OSError as err:
             self.printErrorAndExit(f"Error while executing command: {err}")
 
@@ -123,17 +123,19 @@ class Installer:
         self.downloadFile(self.MKCERT_URL, self.MKCERT_FILENAME)
         os.chmod(self.MKCERT_FILENAME, 0o755)
 
-        output = self.executeCommand([
+        stdout, stderr = self.executeCommand([
             os.path.join(os.getcwd(), self.MKCERT_FILENAME), 
             "--install"])
-        if output is not None and len(output) > 0:
-            logging.log(output)
+        if stderr is not None and len(stderr) > 0:
+            logging.info(stderr)
 
-        self.executeCommand([
+        stdout, stderr = self.executeCommand([
             os.path.join(os.getcwd() , self.MKCERT_FILENAME),
             "--cert-file", os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_FILENAME),
             "--key-file", os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_KEY_FILENAME),
             "my.massa"])
+        if stderr is not None and len(stderr) > 0:
+            logging.info(stderr)
 
         try:
             os.remove(self.MKCERT_FILENAME)
