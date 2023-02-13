@@ -234,7 +234,7 @@
 			"response": []
 		},
 		{
-			"name": "Register hello world plugin",
+			"name": "Register plugin",
 			"request": {
 				"method": "POST",
 				"header": [
