@@ -1,18 +1,30 @@
 {
 	"info": {
-		"_postman_id": "c6d018e5-1b9b-4e57-a17b-7c00ea056c55",
+		"_postman_id": "de4e02d0-21bb-490c-b29f-a0acac8b20aa",
 		"name": "Plugin",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "25577112"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Install Hello world plugin",
+			"name": "Install plugin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", () => {",
+							"  pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "http://my.massa:{{port}}/plugin-manager?source=https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.1/thyra-plugin-hello-world_linux-amd64.zip",
+					"raw": "http://my.massa:{{port}}/plugin-manager?source={{pluginSource}}",
 					"protocol": "http",
 					"host": [
 						"my",
@@ -25,7 +37,7 @@
 					"query": [
 						{
 							"key": "source",
-							"value": "https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.1/thyra-plugin-hello-world_linux-amd64.zip"
+							"value": "{{pluginSource}}"
 						}
 					]
 				}
@@ -55,10 +67,10 @@
 							]
 						}
 					},
-					"_postman_previewlanguage": null,
-					"header": null,
+					"_postman_previewlanguage": "Text",
+					"header": [],
 					"cookie": [],
-					"body": null
+					"body": ""
 				},
 				{
 					"name": "Install Hello world plugin (MAC-arm64)",
@@ -84,10 +96,10 @@
 							]
 						}
 					},
-					"_postman_previewlanguage": null,
-					"header": null,
+					"_postman_previewlanguage": "Text",
+					"header": [],
 					"cookie": [],
-					"body": null
+					"body": ""
 				},
 				{
 					"name": "Install Hello world plugin Linux-HTTP",
@@ -113,10 +125,10 @@
 							]
 						}
 					},
-					"_postman_previewlanguage": null,
-					"header": null,
+					"_postman_previewlanguage": "Text",
+					"header": [],
 					"cookie": [],
-					"body": null
+					"body": ""
 				},
 				{
 					"name": "Install Hello world plugin Windows",
@@ -142,22 +154,28 @@
 							]
 						}
 					},
-					"_postman_previewlanguage": null,
-					"header": null,
+					"_postman_previewlanguage": "Text",
+					"header": [],
 					"cookie": [],
-					"body": null
+					"body": ""
 				}
 			]
 		},
 		{
-			"name": "List plugins",
+			"name": "List plugin",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
 							"var jsonData = JSON.parse(responseBody);",
-							"postman.setEnvironmentVariable(\"pluginId\", jsonData[0].id);"
+							"postman.setGlobalVariable(\"pluginId\", jsonData[0].id);",
+							"",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -183,11 +201,24 @@
 		},
 		{
 			"name": "Plugin info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"  pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://my.massa:{{port}}/plugin-manager/3591821377382057431",
+					"raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}",
 					"protocol": "http",
 					"host": [
 						"my",
@@ -196,14 +227,14 @@
 					"port": "{{port}}",
 					"path": [
 						"plugin-manager",
-						"3591821377382057431"
+						"{{pluginId}}"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Register hello world plugin",
+			"name": "Register plugin",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -429,6 +460,19 @@
 		},
 		{
 			"name": "Stop plugin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", () => {",
+							"  pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
@@ -451,7 +495,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://my.massa:{{port}}/plugin-manager/5703465146927131168/execute",
+					"raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}/execute",
 					"protocol": "http",
 					"host": [
 						"my",
@@ -460,7 +504,7 @@
 					"port": "{{port}}",
 					"path": [
 						"plugin-manager",
-						"5703465146927131168",
+						"{{pluginId}}",
 						"execute"
 					]
 				}
@@ -469,6 +513,19 @@
 		},
 		{
 			"name": "Start plugin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", () => {",
+							"  pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
@@ -491,7 +548,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://my.massa:{{port}}/plugin-manager/5703465146927131168/execute",
+					"raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}/execute",
 					"protocol": "http",
 					"host": [
 						"my",
@@ -500,7 +557,7 @@
 					"port": "{{port}}",
 					"path": [
 						"plugin-manager",
-						"5703465146927131168",
+						"{{pluginId}}",
 						"execute"
 					]
 				}
@@ -509,6 +566,19 @@
 		},
 		{
 			"name": "Restart plugin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", () => {",
+							"  pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
@@ -531,7 +601,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://my.massa:{{port}}/plugin-manager/5700082451828458625/execute",
+					"raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}/execute",
 					"protocol": "http",
 					"host": [
 						"my",
@@ -540,7 +610,7 @@
 					"port": "{{port}}",
 					"path": [
 						"plugin-manager",
-						"5700082451828458625",
+						"{{pluginId}}",
 						"execute"
 					]
 				}
@@ -549,11 +619,24 @@
 		},
 		{
 			"name": "Remove plugin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", () => {",
+							"  pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://my.massa:{{port}}/plugin-manager/5703465146927131168",
+					"raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}",
 					"protocol": "http",
 					"host": [
 						"my",
@@ -562,17 +645,31 @@
 					"port": "{{port}}",
 					"path": [
 						"plugin-manager",
-						"5703465146927131168"
+						"{{pluginId}}"
 					]
 				}
 			},
 			"response": []
 		}
 	],
-	"variable": [
+	"event": [
 		{
-			"key": "pluginId",
-			"value": "123456"
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
