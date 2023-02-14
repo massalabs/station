@@ -1,8 +1,7 @@
 import logging
-import os
 import platform
-from installer import Installer
 
+from installer import Installer
 
 class MacOSInstaller(Installer):
     def __init__(self):
