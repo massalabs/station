@@ -65,7 +65,7 @@ func (o *MassaGetAddresses) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 type MassaGetAddressesOKBody struct {
 
 	// addresses attributes
-	AddressesAttributes map[string]MassaGetAddressesOKBodyAddressesAttributesAnon `json:"AddressesAttributes,omitempty"`
+	AddressesAttributes map[string]MassaGetAddressesOKBodyAddressesAttributesAnon `json:"addressesAttributes,omitempty"`
 }
 
 // Validate validates this massa get addresses o k body
@@ -95,9 +95,9 @@ func (o *MassaGetAddressesOKBody) validateAddressesAttributes(formats strfmt.Reg
 		if val, ok := o.AddressesAttributes[k]; ok {
 			if err := val.Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("massaGetAddressesOK" + "." + "AddressesAttributes" + "." + k)
+					return ve.ValidateName("massaGetAddressesOK" + "." + "addressesAttributes" + "." + k)
 				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("massaGetAddressesOK" + "." + "AddressesAttributes" + "." + k)
+					return ce.ValidateName("massaGetAddressesOK" + "." + "addressesAttributes" + "." + k)
 				}
 				return err
 			}

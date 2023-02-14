@@ -22,31 +22,32 @@ func AddressesHandler(params operations.MassaGetAddressesParams) middleware.Resp
 				},
 			)
 	}
-
-	addressMap := make(map[string]operations.MassaGetAddressesOKBodyAddressesAttributesAnon, len(addressesDetails))
+	//nolint: lll
+	addressesAttributes := make(map[string]operations.MassaGetAddressesOKBodyAddressesAttributesAnon, len(addressesDetails))
 
 	for _, details := range addressesDetails {
 		//nolint: exhaustruct
-		attribute := operations.MassaGetAddressesOKBodyAddressesAttributesAnon{}
+		attributes := operations.MassaGetAddressesOKBodyAddressesAttributesAnon{}
 
-		if requestedAttributesContains(params, "balance") || requestedAttributeIsEmpty(params) {
-			attribute.Balance = &operations.MassaGetAddressesOKBodyAddressesAttributesAnonBalance{
+		if hasAttribute(params, "balance") || hasNotAttribute(params) {
+			attributes.Balance = &operations.MassaGetAddressesOKBodyAddressesAttributesAnonBalance{
 				Pending: details.CandidateBalance,
 				Final:   details.FinalBalance,
 			}
 		}
 
-		addressMap[details.Address] = attribute
+		addressesAttributes[details.Address] = attributes
 	}
 
 	return operations.NewMassaGetAddressesOK().
-		//nolint: govet,nolintlint
-		WithPayload(&operations.MassaGetAddressesOKBody{addressMap})
+		WithPayload(&operations.MassaGetAddressesOKBody{
+			AddressesAttributes: addressesAttributes,
+		})
 }
 
-func requestedAttributesContains(requestedAttributes operations.MassaGetAddressesParams, valueToCheck string) bool {
-	for _, v := range requestedAttributes.Query {
-		if v == valueToCheck {
+func hasAttribute(request operations.MassaGetAddressesParams, attribute string) bool {
+	for _, v := range request.Query {
+		if v == attribute {
 			return true
 		}
 	}
@@ -54,6 +55,6 @@ func requestedAttributesContains(requestedAttributes operations.MassaGetAddresse
 	return false
 }
 
-func requestedAttributeIsEmpty(requestedAttributes operations.MassaGetAddressesParams) bool {
-	return requestedAttributes.Query[0] == ""
+func hasNotAttribute(request operations.MassaGetAddressesParams) bool {
+	return request.Query[0] == ""
 }

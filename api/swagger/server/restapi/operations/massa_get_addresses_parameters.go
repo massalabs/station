@@ -34,7 +34,7 @@ type MassaGetAddressesParams struct {
 	HTTPRequest *http.Request `json:"-"`
 
 	/*Specifies the attributes to return. If no attributes are provided, they are all returned.
-	possible values:
+	Possible values:
 
 	| Attribute | Content |
 	| ----------- | -----------|

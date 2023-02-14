@@ -323,7 +323,7 @@ paths:
           collectionFormat: multi
           description: |
                      Specifies the attributes to return. If no attributes are provided, they are all returned.
-                     possible values:
+                     Possible values:
 
                      | Attribute | Content |
                      | ----------- | -----------|
@@ -340,7 +340,7 @@ paths:
           schema:
             type : object
             properties: 
-              AddressesAttributes: 
+              addressesAttributes: 
                 type: object 
                 additionalProperties:
                   description : address key

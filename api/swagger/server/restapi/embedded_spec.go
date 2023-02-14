@@ -353,7 +353,7 @@ func init() {
             },
             "collectionFormat": "multi",
             "x-nullable": false,
-            "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\npossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
+            "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nPossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
             "name": "query",
             "in": "query",
             "required": true
@@ -365,7 +365,7 @@ func init() {
             "schema": {
               "type": "object",
               "properties": {
-                "AddressesAttributes": {
+                "addressesAttributes": {
                   "type": "object",
                   "additionalProperties": {
                     "description": "address key",
@@ -1952,7 +1952,7 @@ func init() {
             },
             "collectionFormat": "multi",
             "x-nullable": false,
-            "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\npossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
+            "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nPossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
             "name": "query",
             "in": "query",
             "required": true
@@ -1964,7 +1964,7 @@ func init() {
             "schema": {
               "type": "object",
               "properties": {
-                "AddressesAttributes": {
+                "addressesAttributes": {
                   "type": "object",
                   "additionalProperties": {
                     "$ref": "#/definitions/AddressesAttributesAnon"
