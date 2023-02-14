@@ -106,14 +106,14 @@ class Installer:
     Checks if the HTTPS certificate for my.massa are already present in the thyra config folder.
     The filenames of the certificate and the key are defined in the constants CERTIFICATION_FILENAME and CERTIFICATION_KEY_FILENAME.
     """
-    def areCertificatesInstalled(self) -> bool:
+    def isCACertificateInstalled(self) -> bool:
         return os.path.exists(os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_FILENAME)) and os.path.exists(os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_KEY_FILENAME))
 
     """
     Installs a local Certificate Authority and generates a HTTPS certificate for my.massa.
     """
-    def generateCertificate(self):
-        logging.info("Generating HTTPS certificate for my.massa")
+    def generateCACertificate(self):
+        logging.info("Generating CA certificate and adding it to the browsers' CA list")
 
         if not os.path.exists(self.CERTIFICATIONS_FOLDER_PATH):
             try:
@@ -142,7 +142,7 @@ class Installer:
             os.remove(self.MKCERT_FILENAME)
         except OSError as err:
             self.printErrorAndExit(f"Error while deleting mkcert binary: {err}")
-        logging.info("HTTPS certificate successfully generated")
+        logging.info("CA certificate successfully generated")
 
     """
     Downloads and installs a binary from the given url and stores it in the given install path.
@@ -187,9 +187,9 @@ class Installer:
         if self.shouldInstallDNS():
             self.setupDNS()
         else:
-            logging.info("DNS server already installed, skipping...")
-        if not self.areCertificatesInstalled():
-            self.generateCertificate()
+            logging.info("DNS server already installed.")
+        if not self.isCACertificateInstalled():
+            self.generateCACertificate()
         else:
-            logging.info("HTTPS certificate already installed, skipping...")
+            logging.info("CA certificate already installed.")
         logging.info("Thyra installed successfully")
