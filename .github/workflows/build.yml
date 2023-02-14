@@ -95,6 +95,10 @@ jobs:
             arch: arm64
             target: darwin
             script: scripts/macos_installer.py
+          - os: ubuntu-latest
+            arch: amd64
+            target: linux
+            script: scripts/linux_installer.py
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -110,6 +114,7 @@ jobs:
         with:
           name: thyra-installer-${{ matrix.target }}-${{ matrix.arch }}-binary
           path: |
+            ./dist/${{ matrix.target }}/linux_installer
             ./dist/${{ matrix.target }}/macos_installer
             ./dist/${{ matrix.target }}/windows_installer.exe
       - name: Create release and upload binaries
@@ -121,5 +126,6 @@ jobs:
           prerelease: ${{ inputs.prerelease }}
           generate_release_notes: ${{ inputs.generate_release_notes }}
           files: |
+            ./dist/${{ matrix.target }}/linux_installer
             ./dist/${{ matrix.target }}/macos_installer
             ./dist/${{ matrix.target }}/windows_installer.exe
