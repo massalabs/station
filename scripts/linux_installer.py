@@ -11,7 +11,7 @@ class LinuxInstaller(Installer):
         self.MKCERT_FILENAME = "mkcert"
 
         self.THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_linux_amd64"
-        self.THYRA_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_linux-amd64.exe"
+        self.THYRA_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_linux-amd64"
         self.MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
 
     def configureNetworkManager(self):
