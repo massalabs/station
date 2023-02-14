@@ -85,12 +85,9 @@ function isExcludedOSAndFirefox() {
     // isWindows checks if current os is Windows
     let isWindows = userAgent.indexOf("Windows") != -1;
 
-    // isMac checks if current os is MacOS
-    let isMac = userAgent.indexOf("Macintosh") != -1;
-
     // isFirefox checks if current navigator is Firefox
     let isFirefox = userAgent.indexOf("Firefox") != -1;
 
-    return isFirefox && (isWindows || isMac);
+    return isFirefox && isWindows;
 }
 window.isExcludedOSAndFirefox = isExcludedOSAndFirefox;
