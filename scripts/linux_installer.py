@@ -51,7 +51,7 @@ class LinuxInstaller(Installer):
             logging.info("dnsmasq is already installed")
             self.configureDNSMasq()
         elif runningDNS == "systemd-r":
-            logging.warn("Your computer is using systemd-resolved for DNS. Thyra needs dnsmasq to redirect .massa domains to localhost.")
+            logging.warning("Your computer is using systemd-resolved for DNS. Thyra needs dnsmasq to redirect .massa domains to localhost.")
             user_answer = input("Do you want to install dnsmasq and configure it to redirect .massa domains to localhost? [y/n] ")
             user_answer = user_answer.lower()
             if user_answer == "y" or user_answer == "yes":
@@ -60,7 +60,7 @@ class LinuxInstaller(Installer):
             else:
                 self.printErrorAndExit("Aborting installation.")
         else:
-            logging.warn(f"Unsupported DNS application: {runningDNS}")
+            logging.warning(f"Unsupported DNS application: {runningDNS}")
 
 
 if __name__ == "__main__":
