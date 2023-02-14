@@ -91,7 +91,12 @@ func GenerateSignedCertificate(
 		return nil, nil, errors.New("while generating certificate: server name is empty")
 	}
 
-	uniqueSiteNameID := sha256.New().Sum([]byte(serverName))
+	now, err := time.Now().MarshalBinary()
+	if err != nil {
+		return nil, nil, fmt.Errorf("while marshaling now: %w", err)
+	}
+
+	uniqueSiteNameID := sha256.New().Sum(append([]byte(serverName), now...))
 
 	//nolint:exhaustruct
 	template := &x509.Certificate{
