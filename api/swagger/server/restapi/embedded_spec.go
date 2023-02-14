@@ -354,7 +354,19 @@ func init() {
             "collectionFormat": "multi",
             "x-nullable": false,
             "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nPossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
-            "name": "query",
+            "name": "attributes",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "x-nullable": false,
+            "description": "list of wanted addresses",
+            "name": "addresses",
             "in": "query",
             "required": true
           }
@@ -1953,7 +1965,19 @@ func init() {
             "collectionFormat": "multi",
             "x-nullable": false,
             "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nPossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
-            "name": "query",
+            "name": "attributes",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "x-nullable": false,
+            "description": "list of wanted addresses",
+            "name": "addresses",
             "in": "query",
             "required": true
           }

@@ -12,13 +12,13 @@ import (
 func AddressesHandler(params operations.MassaGetAddressesParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
-	addressesDetails, err := node.Addresses(client, params.Query)
+	addressesDetails, err := node.Addresses(client, params.Addresses)
 	if err != nil {
 		return operations.NewMassaGetAddressesInternalServerError().
 			WithPayload(
 				&models.Error{
 					Code:    errorCodeMassaAddresses,
-					Message: fmt.Sprintf("while getting details of addresses %v: %s\n", params.Query, err),
+					Message: fmt.Sprintf("while getting details of addresses %v: %s\n", params.Addresses, err),
 				},
 			)
 	}
@@ -29,7 +29,7 @@ func AddressesHandler(params operations.MassaGetAddressesParams) middleware.Resp
 		//nolint: exhaustruct
 		attributes := operations.MassaGetAddressesOKBodyAddressesAttributesAnon{}
 
-		if hasAttribute(params, "balance") || hasNotAttribute(params) {
+		if hasAttribute(params.Attributes, "balance") || hasNotAttribute(params.Attributes) {
 			attributes.Balance = &operations.MassaGetAddressesOKBodyAddressesAttributesAnonBalance{
 				Pending: details.CandidateBalance,
 				Final:   details.FinalBalance,
@@ -45,8 +45,8 @@ func AddressesHandler(params operations.MassaGetAddressesParams) middleware.Resp
 		})
 }
 
-func hasAttribute(request operations.MassaGetAddressesParams, attribute string) bool {
-	for _, v := range request.Query {
+func hasAttribute(request []string, attribute string) bool {
+	for _, v := range request {
 		if v == attribute {
 			return true
 		}
@@ -55,6 +55,6 @@ func hasAttribute(request operations.MassaGetAddressesParams, attribute string) 
 	return false
 }
 
-func hasNotAttribute(request operations.MassaGetAddressesParams) bool {
-	return request.Query[0] == ""
+func hasNotAttribute(request []string) bool {
+	return len(request) == 0
 }

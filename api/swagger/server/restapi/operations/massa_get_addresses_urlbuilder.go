@@ -15,7 +15,8 @@ import (
 
 // MassaGetAddressesURL generates an URL for the massa get addresses operation
 type MassaGetAddressesURL struct {
-	Query []string
+	Addresses  []string
+	Attributes []string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -48,18 +49,32 @@ func (o *MassaGetAddressesURL) Build() (*url.URL, error) {
 
 	qs := make(url.Values)
 
-	var queryIR []string
-	for _, queryI := range o.Query {
-		queryIS := queryI
-		if queryIS != "" {
-			queryIR = append(queryIR, queryIS)
+	var addressesIR []string
+	for _, addressesI := range o.Addresses {
+		addressesIS := addressesI
+		if addressesIS != "" {
+			addressesIR = append(addressesIR, addressesIS)
 		}
 	}
 
-	query := swag.JoinByFormat(queryIR, "multi")
+	addresses := swag.JoinByFormat(addressesIR, "multi")
 
-	for _, qsv := range query {
-		qs.Add("query", qsv)
+	for _, qsv := range addresses {
+		qs.Add("addresses", qsv)
+	}
+
+	var attributesIR []string
+	for _, attributesI := range o.Attributes {
+		attributesIS := attributesI
+		if attributesIS != "" {
+			attributesIR = append(attributesIR, attributesIS)
+		}
+	}
+
+	attributes := swag.JoinByFormat(attributesIR, "multi")
+
+	for _, qsv := range attributes {
+		qs.Add("attributes", qsv)
 	}
 
 	_result.RawQuery = qs.Encode()

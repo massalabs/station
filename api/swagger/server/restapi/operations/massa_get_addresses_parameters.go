@@ -33,6 +33,12 @@ type MassaGetAddressesParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
+	/*list of wanted addresses
+	  Required: true
+	  In: query
+	  Collection Format: multi
+	*/
+	Addresses []string
 	/*Specifies the attributes to return. If no attributes are provided, they are all returned.
 	Possible values:
 
@@ -44,7 +50,7 @@ type MassaGetAddressesParams struct {
 	  In: query
 	  Collection Format: multi
 	*/
-	Query []string
+	Attributes []string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -58,8 +64,13 @@ func (o *MassaGetAddressesParams) BindRequest(r *http.Request, route *middleware
 
 	qs := runtime.Values(r.URL.Query())
 
-	qQuery, qhkQuery, _ := qs.GetOK("query")
-	if err := o.bindQuery(qQuery, qhkQuery, route.Formats); err != nil {
+	qAddresses, qhkAddresses, _ := qs.GetOK("addresses")
+	if err := o.bindAddresses(qAddresses, qhkAddresses, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qAttributes, qhkAttributes, _ := qs.GetOK("attributes")
+	if err := o.bindAttributes(qAttributes, qhkAttributes, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
@@ -68,31 +79,56 @@ func (o *MassaGetAddressesParams) BindRequest(r *http.Request, route *middleware
 	return nil
 }
 
-// bindQuery binds and validates array parameter Query from query.
+// bindAddresses binds and validates array parameter Addresses from query.
 //
 // Arrays are parsed according to CollectionFormat: "multi" (defaults to "csv" when empty).
-func (o *MassaGetAddressesParams) bindQuery(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *MassaGetAddressesParams) bindAddresses(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	if !hasKey {
-		return errors.Required("query", "query", rawData)
+		return errors.Required("addresses", "query", rawData)
 	}
 	// CollectionFormat: multi
-	queryIC := rawData
-	if len(queryIC) == 0 {
-		return errors.Required("query", "query", queryIC)
+	addressesIC := rawData
+	if len(addressesIC) == 0 {
+		return errors.Required("addresses", "query", addressesIC)
 	}
 
-	var queryIR []string
-	for i, queryIV := range queryIC {
-		queryI := queryIV
+	var addressesIR []string
+	for _, addressesIV := range addressesIC {
+		addressesI := addressesIV
 
-		if err := validate.EnumCase(fmt.Sprintf("%s.%v", "query", i), "query", queryI, []interface{}{"balance"}, true); err != nil {
+		addressesIR = append(addressesIR, addressesI)
+	}
+
+	o.Addresses = addressesIR
+
+	return nil
+}
+
+// bindAttributes binds and validates array parameter Attributes from query.
+//
+// Arrays are parsed according to CollectionFormat: "multi" (defaults to "csv" when empty).
+func (o *MassaGetAddressesParams) bindAttributes(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	if !hasKey {
+		return errors.Required("attributes", "query", rawData)
+	}
+	// CollectionFormat: multi
+	attributesIC := rawData
+	if len(attributesIC) == 0 {
+		return errors.Required("attributes", "query", attributesIC)
+	}
+
+	var attributesIR []string
+	for i, attributesIV := range attributesIC {
+		attributesI := attributesIV
+
+		if err := validate.EnumCase(fmt.Sprintf("%s.%v", "attributes", i), "query", attributesI, []interface{}{"balance"}, true); err != nil {
 			return err
 		}
 
-		queryIR = append(queryIR, queryI)
+		attributesIR = append(attributesIR, attributesI)
 	}
 
-	o.Query = queryIR
+	o.Attributes = attributesIR
 
 	return nil
 }

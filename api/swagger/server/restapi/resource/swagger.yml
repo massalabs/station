@@ -316,7 +316,7 @@ paths:
       operationId: massaGetAddresses
       parameters:
         - in: query
-          name: query
+          name: attributes
           required: true
           x-nullable: false
           type : array
@@ -331,7 +331,15 @@ paths:
           items : 
             type: string
             enum: [balance]
-
+        - in: query  
+          name : addresses
+          required : true
+          x-nullable: false
+          type : array
+          collectionFormat: multi
+          description : list of wanted addresses
+          items:
+            type: string
       produces:
         - application/json
       responses:
