@@ -32,7 +32,8 @@ func AddressesHandler(params operations.MassaGetAddressesParams) middleware.Resp
 		if requestedAttributesContains(params, "balance") || requestedAttributeIsEmpty(params) {
 			attribute.Balance = &operations.MassaGetAddressesOKBodyAddressesAttributesAnonBalance{
 				Pending: details.CandidateBalance,
-				Final:   details.FinalBalance}
+				Final:   details.FinalBalance,
+			}
 		}
 
 		addressMap[details.Address] = attribute
