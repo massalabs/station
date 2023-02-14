@@ -347,13 +347,13 @@ func init() {
             "type": "array",
             "items": {
               "enum": [
-                "balances"
+                "balance"
               ],
               "type": "string"
             },
             "collectionFormat": "multi",
             "x-nullable": false,
-            "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nBalance: returns the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations).\n",
+            "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\npossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
             "name": "query",
             "in": "query",
             "required": true
@@ -363,7 +363,29 @@ func init() {
           "200": {
             "description": "Addresses' infos retrieved",
             "schema": {
-              "$ref": "#/definitions/Addresses_attributes"
+              "type": "object",
+              "properties": {
+                "AddressesAttributes": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "description": "address key",
+                    "type": "object",
+                    "properties": {
+                      "balance": {
+                        "type": "object",
+                        "properties": {
+                          "final": {
+                            "type": "string"
+                          },
+                          "pending": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           },
           "400": {
@@ -1493,26 +1515,6 @@ func init() {
     }
   },
   "definitions": {
-    "Addresses_attributes": {
-      "type": "object",
-      "additionalProperties": {
-        "description": "address key",
-        "type": "object",
-        "properties": {
-          "balance": {
-            "type": "object",
-            "properties": {
-              "final": {
-                "type": "string"
-              },
-              "pending": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    },
     "Error": {
       "description": "Error object.",
       "type": "object",
@@ -1944,13 +1946,13 @@ func init() {
             "type": "array",
             "items": {
               "enum": [
-                "balances"
+                "balance"
               ],
               "type": "string"
             },
             "collectionFormat": "multi",
             "x-nullable": false,
-            "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nBalance: returns the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations).\n",
+            "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\npossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
             "name": "query",
             "in": "query",
             "required": true
@@ -1960,7 +1962,15 @@ func init() {
           "200": {
             "description": "Addresses' infos retrieved",
             "schema": {
-              "$ref": "#/definitions/Addresses_attributes"
+              "type": "object",
+              "properties": {
+                "AddressesAttributes": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions/AddressesAttributesAnon"
+                  }
+                }
+              }
             }
           },
           "400": {
@@ -3078,12 +3088,6 @@ func init() {
         "pending": {
           "type": "string"
         }
-      }
-    },
-    "Addresses_attributes": {
-      "type": "object",
-      "additionalProperties": {
-        "$ref": "#/definitions/AddressesAttributesAnon"
       }
     },
     "CmdExecuteFunctionParamsBodyGaz": {

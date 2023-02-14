@@ -34,7 +34,11 @@ type MassaGetAddressesParams struct {
 	HTTPRequest *http.Request `json:"-"`
 
 	/*Specifies the attributes to return. If no attributes are provided, they are all returned.
-	Balance: returns the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations).
+	possible values:
+
+	| Attribute | Content |
+	| ----------- | -----------|
+	| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |
 
 	  Required: true
 	  In: query
@@ -81,7 +85,7 @@ func (o *MassaGetAddressesParams) bindQuery(rawData []string, hasKey bool, forma
 	for i, queryIV := range queryIC {
 		queryI := queryIV
 
-		if err := validate.EnumCase(fmt.Sprintf("%s.%v", "query", i), "query", queryI, []interface{}{"balances"}, true); err != nil {
+		if err := validate.EnumCase(fmt.Sprintf("%s.%v", "query", i), "query", queryI, []interface{}{"balance"}, true); err != nil {
 			return err
 		}
 

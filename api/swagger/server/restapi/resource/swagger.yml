@@ -323,10 +323,14 @@ paths:
           collectionFormat: multi
           description: |
                      Specifies the attributes to return. If no attributes are provided, they are all returned.
-                     Balance: returns the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations).
+                     possible values:
+
+                     | Attribute | Content |
+                     | ----------- | -----------|
+                     | balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |
           items : 
             type: string
-            enum: [balances]
+            enum: [balance]
 
       produces:
         - application/json
@@ -334,7 +338,22 @@ paths:
         "200":
           description: Addresses' infos retrieved
           schema:
-            $ref: "#/definitions/Addresses_attributes"
+            type : object
+            properties: 
+              AddressesAttributes: 
+                type: object 
+                additionalProperties:
+                  description : address key
+                  type: object
+                  properties:
+                    balance:
+                      type: object
+                      properties:
+                        pending:
+                          type: string
+                        final:
+                          type: string
+            
         "400":
           description: Bad request.
           schema:
@@ -1078,19 +1097,6 @@ definitions:
       address:
         description: Event caller.
         type: string
-  Addresses_attributes : 
-    type: object
-    additionalProperties:
-        description : address key
-        type: object
-        properties:
-          balance:
-            type: object
-            properties:
-              pending:
-                type: string
-              final:
-                type: string
   Registry:
     type: object
     description: Registry object (V0).

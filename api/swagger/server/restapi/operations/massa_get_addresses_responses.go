@@ -26,7 +26,7 @@ type MassaGetAddressesOK struct {
 	/*
 	  In: Body
 	*/
-	Payload models.AddressesAttributes `json:"body,omitempty"`
+	Payload *MassaGetAddressesOKBody `json:"body,omitempty"`
 }
 
 // NewMassaGetAddressesOK creates MassaGetAddressesOK with default headers values
@@ -36,13 +36,13 @@ func NewMassaGetAddressesOK() *MassaGetAddressesOK {
 }
 
 // WithPayload adds the payload to the massa get addresses o k response
-func (o *MassaGetAddressesOK) WithPayload(payload models.AddressesAttributes) *MassaGetAddressesOK {
+func (o *MassaGetAddressesOK) WithPayload(payload *MassaGetAddressesOKBody) *MassaGetAddressesOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the massa get addresses o k response
-func (o *MassaGetAddressesOK) SetPayload(payload models.AddressesAttributes) {
+func (o *MassaGetAddressesOK) SetPayload(payload *MassaGetAddressesOKBody) {
 	o.Payload = payload
 }
 
@@ -50,14 +50,11 @@ func (o *MassaGetAddressesOK) SetPayload(payload models.AddressesAttributes) {
 func (o *MassaGetAddressesOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	payload := o.Payload
-	if payload == nil {
-		// return empty map
-		payload = models.AddressesAttributes{}
-	}
-
-	if err := producer.Produce(rw, payload); err != nil {
-		panic(err) // let the recovery middleware deal with this
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
 	}
 }
 

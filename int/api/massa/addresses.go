@@ -23,28 +23,36 @@ func AddressesHandler(params operations.MassaGetAddressesParams) middleware.Resp
 			)
 	}
 
-	//nolint: prealloc
-	var pendingBalances []string
-	for _, addressDetails := range addressesDetails {
-		//nolint: staticcheck, nolintlint
-		pendingBalances = append(pendingBalances, addressDetails.CandidateBalance)
-	}
-
-	//nolint: prealloc
-	var finalBalances []string
-	for _, addressDetails := range addressesDetails {
-		//nolint: staticcheck, nolintlint
-		finalBalances = append(finalBalances, addressDetails.CandidateBalance)
-	}
-
-	addressMap := make(models.AddressesAttributes, len(addressesDetails))
+	addressMap := make(map[string]operations.MassaGetAddressesOKBodyAddressesAttributesAnon, len(addressesDetails))
 
 	for _, details := range addressesDetails {
-		balance := &models.AddressesAttributesAnonBalance{Pending: details.CandidateBalance, Final: details.FinalBalance}
+		//nolint: exhaustruct
+		attribute := operations.MassaGetAddressesOKBodyAddressesAttributesAnon{}
 
-		addressMap[details.Address] = models.AddressesAttributesAnon{Balance: balance}
+		if requestedAttributesContains(params, "balance") || requestedAttributeIsEmpty(params) {
+			attribute.Balance = &operations.MassaGetAddressesOKBodyAddressesAttributesAnonBalance{
+				Pending: details.CandidateBalance,
+				Final:   details.FinalBalance}
+		}
+
+		addressMap[details.Address] = attribute
 	}
 
 	return operations.NewMassaGetAddressesOK().
-		WithPayload(addressMap)
+		//nolint: govet,nolintlint
+		WithPayload(&operations.MassaGetAddressesOKBody{addressMap})
+}
+
+func requestedAttributesContains(requestedAttributes operations.MassaGetAddressesParams, valueToCheck string) bool {
+	for _, v := range requestedAttributes.Query {
+		if v == valueToCheck {
+			return true
+		}
+	}
+
+	return false
+}
+
+func requestedAttributeIsEmpty(requestedAttributes operations.MassaGetAddressesParams) bool {
+	return requestedAttributes.Query[0] == ""
 }

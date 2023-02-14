@@ -6,9 +6,13 @@ package operations
 // Editing this file might prove futile when you re-run the generate command
 
 import (
+	"context"
 	"net/http"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 )
 
 // MassaGetAddressesHandlerFunc turns a function with the right signature into a massa get addresses handler
@@ -53,4 +57,230 @@ func (o *MassaGetAddresses) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	res := o.Handler.Handle(Params) // actually handle the request
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
+}
+
+// MassaGetAddressesOKBody massa get addresses o k body
+//
+// swagger:model MassaGetAddressesOKBody
+type MassaGetAddressesOKBody struct {
+
+	// addresses attributes
+	AddressesAttributes map[string]MassaGetAddressesOKBodyAddressesAttributesAnon `json:"AddressesAttributes,omitempty"`
+}
+
+// Validate validates this massa get addresses o k body
+func (o *MassaGetAddressesOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateAddressesAttributes(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *MassaGetAddressesOKBody) validateAddressesAttributes(formats strfmt.Registry) error {
+	if swag.IsZero(o.AddressesAttributes) { // not required
+		return nil
+	}
+
+	for k := range o.AddressesAttributes {
+
+		if swag.IsZero(o.AddressesAttributes[k]) { // not required
+			continue
+		}
+		if val, ok := o.AddressesAttributes[k]; ok {
+			if err := val.Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("massaGetAddressesOK" + "." + "AddressesAttributes" + "." + k)
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("massaGetAddressesOK" + "." + "AddressesAttributes" + "." + k)
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this massa get addresses o k body based on the context it is used
+func (o *MassaGetAddressesOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateAddressesAttributes(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *MassaGetAddressesOKBody) contextValidateAddressesAttributes(ctx context.Context, formats strfmt.Registry) error {
+
+	for k := range o.AddressesAttributes {
+
+		if val, ok := o.AddressesAttributes[k]; ok {
+			if err := val.ContextValidate(ctx, formats); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *MassaGetAddressesOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *MassaGetAddressesOKBody) UnmarshalBinary(b []byte) error {
+	var res MassaGetAddressesOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+// MassaGetAddressesOKBodyAddressesAttributesAnon address key
+//
+// swagger:model MassaGetAddressesOKBodyAddressesAttributesAnon
+type MassaGetAddressesOKBodyAddressesAttributesAnon struct {
+
+	// balance
+	Balance *MassaGetAddressesOKBodyAddressesAttributesAnonBalance `json:"balance,omitempty"`
+}
+
+// Validate validates this massa get addresses o k body addresses attributes anon
+func (o *MassaGetAddressesOKBodyAddressesAttributesAnon) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateBalance(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *MassaGetAddressesOKBodyAddressesAttributesAnon) validateBalance(formats strfmt.Registry) error {
+	if swag.IsZero(o.Balance) { // not required
+		return nil
+	}
+
+	if o.Balance != nil {
+		if err := o.Balance.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("balance")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("balance")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this massa get addresses o k body addresses attributes anon based on the context it is used
+func (o *MassaGetAddressesOKBodyAddressesAttributesAnon) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateBalance(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *MassaGetAddressesOKBodyAddressesAttributesAnon) contextValidateBalance(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Balance != nil {
+		if err := o.Balance.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("balance")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("balance")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *MassaGetAddressesOKBodyAddressesAttributesAnon) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *MassaGetAddressesOKBodyAddressesAttributesAnon) UnmarshalBinary(b []byte) error {
+	var res MassaGetAddressesOKBodyAddressesAttributesAnon
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+// MassaGetAddressesOKBodyAddressesAttributesAnonBalance massa get addresses o k body addresses attributes anon balance
+//
+// swagger:model MassaGetAddressesOKBodyAddressesAttributesAnonBalance
+type MassaGetAddressesOKBodyAddressesAttributesAnonBalance struct {
+
+	// final
+	Final string `json:"final,omitempty"`
+
+	// pending
+	Pending string `json:"pending,omitempty"`
+}
+
+// Validate validates this massa get addresses o k body addresses attributes anon balance
+func (o *MassaGetAddressesOKBodyAddressesAttributesAnonBalance) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this massa get addresses o k body addresses attributes anon balance based on context it is used
+func (o *MassaGetAddressesOKBodyAddressesAttributesAnonBalance) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *MassaGetAddressesOKBodyAddressesAttributesAnonBalance) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *MassaGetAddressesOKBodyAddressesAttributesAnonBalance) UnmarshalBinary(b []byte) error {
+	var res MassaGetAddressesOKBodyAddressesAttributesAnonBalance
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
 }
