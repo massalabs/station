@@ -17,12 +17,12 @@ class LinuxInstaller(Installer):
     def configureNetworkManager(self):
         logging.info("Configuring NetworkManager...")
         self.executeCommand("sudo cp /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf.backup_thyra_install", True)
-        stdout, _stderr = self.executeCommand("grep '^dns=' /etc/NetworkManager/NetworkManager.conf", True)
+        stdout, _stderr = self.executeCommand("grep '^dns=' /etc/NetworkManager/NetworkManager.conf", True, allow_failure=True)
         dns = stdout.removeprefix("dns=").strip()
         if dns == "dnsmasq":
             logging.info("NetworkManager is already configured")
         elif dns == "":
-            self.executeCommand("sudo sed -i 's/^\[main\]$/\[main\]\ndns=dnsmasq/g' /etc/NetworkManager/NetworkManager.conf", True)
+            self.executeCommand("sudo sed -i 's/^\[main\]$/\[main\]\\ndns=dnsmasq/g' /etc/NetworkManager/NetworkManager.conf", True)
         else:
             self.executeCommand("sudo sed -i 's/^dns=.*/dns=dnsmasq/g' /etc/NetworkManager/NetworkManager.conf", True)
 
@@ -40,8 +40,8 @@ class LinuxInstaller(Installer):
         runningDNS = ""
         if stdout:
             runningDNS = stdout.splitlines()[1].split()
-            runningDNS = runningDNS[:-1]
-        
+            runningDNS = runningDNS[0]
+
         if runningDNS == "":
             logging.info("Installing dnsmasq...")
             self.executeCommand("sudo apt-get install -y dnsmasq", True)
