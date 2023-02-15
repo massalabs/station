@@ -13,7 +13,6 @@ import (
 	"github.com/massalabs/thyra/int/api/cmd"
 	"github.com/massalabs/thyra/int/api/massa"
 	"github.com/massalabs/thyra/int/api/myplugin"
-
 	"github.com/massalabs/thyra/int/api/plugin"
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
