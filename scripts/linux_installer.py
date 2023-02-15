@@ -62,6 +62,13 @@ class LinuxInstaller(Installer):
         else:
             logging.warning(f"Unsupported DNS application: {runningDNS}")
 
+    def generateCACertificate(self):
+        stdout, _stderr = self.executeCommand("dpkg -s firefox | grep Status", True, allow_failure=True)
+        if stdout and "installed" in stdout:
+            self.executeCommand("sudo apt-get install -y libnss3-tools", True)
+
+        super().generateCACertificate()
+
 
 if __name__ == "__main__":
     if platform.system() != "Linux":

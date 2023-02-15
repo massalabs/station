@@ -49,6 +49,12 @@ class MacOSInstaller(Installer):
             logging.info(runningDNS)
             self.printErrorAndExit("Unsupported DNS server")
 
+    def generateCACertificate(self):
+        stdout, _stderr = self.executeCommand("find /Applications/ -type d -iname '*Firefox*.app'", True, allow_failure=True)
+        if stdout and "Firefox" in stdout:
+            self.executeCommand("brew install nss", True)
+
+        super().generateCACertificate()
 
 if __name__ == "__main__":
     if platform.system() != "Darwin":
