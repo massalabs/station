@@ -44,6 +44,7 @@ func cmdDeploySCHandler(params operations.CmdDeploySCParams, app *fyne.App) midd
 					Message: err.Error(),
 				})
 	}
+
 	return operations.NewCmdDeploySCOK().
 		WithPayload(address)
 }
