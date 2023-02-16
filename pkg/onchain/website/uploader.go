@@ -39,7 +39,7 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	}
 
 	// Prepare address to webstorage.
-	scAddress, err := onchain.DeploySC(client, *wallet, websiteStorer)
+	scAddress, err := onchain.DeploySC(client, *wallet, websiteStorer, "website deployer")
 	if err != nil {
 		return "", fmt.Errorf("deploying webstorage SC: %w", err)
 	}
