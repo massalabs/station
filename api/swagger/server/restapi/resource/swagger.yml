@@ -19,9 +19,11 @@ paths:
         - in: path
           name: author-name
           type: string
+          required : true
           description: Author of the plugin.
         - in: path
           name: plugin-name
+          required : true
           type: string
           description: Name of the plugin.
       responses:
@@ -40,6 +42,7 @@ paths:
       parameters:
         - in: path
           name: resource
+          required : true
           type: string
           description: Website resource.
       responses:
@@ -62,6 +65,7 @@ paths:
       parameters:
         - in: path
           name: resource
+          required : true
           type: string
           description: Website resource.
       responses:
@@ -84,6 +88,7 @@ paths:
       parameters:
         - in: path
           name: resource
+          required : true
           type: string
           description: Website resource.
       responses:
@@ -102,6 +107,7 @@ paths:
       parameters:
         - in: path
           name: resource
+          required : true
           type: string
           description: Website resource.
       responses:
@@ -124,6 +130,7 @@ paths:
       parameters:
         - in: path
           name: resource
+          required : true
           type: string
           description: Website resource.
       responses:
@@ -140,11 +147,13 @@ paths:
         - application/json
       parameters:
         - in: path
+          required : true
           name: str
           type: string
           description: Data content of the event.
         - in: path
           name: caller
+          required : true
           type: string
           description: Creator of the transaction that triggered the event.
       responses:
@@ -245,6 +254,7 @@ paths:
       parameters:
         - in: path
           name: nickname
+          required : true
           type: string
           description: Wallet's short name.
       produces:
@@ -275,6 +285,7 @@ paths:
       parameters:
         - in: path
           name: nickname
+          required : true
           type: string
           description: Wallet's short name.
       produces:
@@ -300,6 +311,63 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /massa/addresses:
+    get:
+      operationId: massaGetAddresses
+      parameters:
+        - in: query
+          name: attributes
+          type : array
+          collectionFormat: multi
+          description: |
+                     Specifies the attributes to return. If no attributes are provided, they are all returned.
+                     Possible values:
+
+                     | Attribute | Content |
+                     | ----------- | -----------|
+                     | balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |
+          items : 
+            type: string
+            enum: [balance]
+        - in: query  
+          name : addresses
+          required : true
+          x-nullable: false
+          type : array
+          collectionFormat: multi
+          description : list of wanted addresses
+          items:
+            type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Addresses' infos retrieved
+          schema:
+            type : object
+            properties: 
+              addressesAttributes: 
+                type: object 
+                additionalProperties:
+                  description : address key
+                  type: object
+                  properties:
+                    balance:
+                      type: object
+                      properties:
+                        pending:
+                          type: string
+                        final:
+                          type: string
+            
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
   /my/domains/{nickname}:
     get:
       operationId: myDomainsGetter
@@ -307,6 +375,7 @@ paths:
         - in: path
           name: nickname
           type: string
+          required : true
           description: Wallet's short name.
       produces:
         - application/json
@@ -847,6 +916,7 @@ paths:
         - in: path
           name: id
           type: string
+          required : true
           description: Plugin identifier.
       responses:
         "200":
@@ -880,6 +950,7 @@ paths:
       parameters:
         - in: path
           name: id
+          required : true
           type: string
           description: Plugin identifier.
       responses:
@@ -908,6 +979,7 @@ paths:
         - in: path
           name: id
           type: string
+          required : true
           description: Plugin unique identifier.
         - in: body
           name: body

@@ -13,41 +13,41 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewThyraRegistryParams creates a new ThyraRegistryParams object
+// NewMgmtWalletBalanceParams creates a new MgmtWalletBalanceParams object
 //
 // There are no default values defined in the spec.
-func NewThyraRegistryParams() ThyraRegistryParams {
+func NewMgmtWalletBalanceParams() MgmtWalletBalanceParams {
 
-	return ThyraRegistryParams{}
+	return MgmtWalletBalanceParams{}
 }
 
-// ThyraRegistryParams contains all the bound params for the thyra registry operation
+// MgmtWalletBalanceParams contains all the bound params for the mgmt wallet balance operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters thyraRegistry
-type ThyraRegistryParams struct {
+// swagger:parameters mgmtWalletBalance
+type MgmtWalletBalanceParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*Website resource.
+	/*Wallet's address
 	  Required: true
 	  In: path
 	*/
-	Resource string
+	Address string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewThyraRegistryParams() beforehand.
-func (o *ThyraRegistryParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewMgmtWalletBalanceParams() beforehand.
+func (o *MgmtWalletBalanceParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
 
-	rResource, rhkResource, _ := route.Params.GetOK("resource")
-	if err := o.bindResource(rResource, rhkResource, route.Formats); err != nil {
+	rAddress, rhkAddress, _ := route.Params.GetOK("address")
+	if err := o.bindAddress(rAddress, rhkAddress, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
@@ -56,8 +56,8 @@ func (o *ThyraRegistryParams) BindRequest(r *http.Request, route *middleware.Mat
 	return nil
 }
 
-// bindResource binds and validates parameter Resource from path.
-func (o *ThyraRegistryParams) bindResource(rawData []string, hasKey bool, formats strfmt.Registry) error {
+// bindAddress binds and validates parameter Address from path.
+func (o *MgmtWalletBalanceParams) bindAddress(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -65,7 +65,7 @@ func (o *ThyraRegistryParams) bindResource(rawData []string, hasKey bool, format
 
 	// Required: true
 	// Parameter is provided by construction from the route
-	o.Resource = raw
+	o.Address = raw
 
 	return nil
 }

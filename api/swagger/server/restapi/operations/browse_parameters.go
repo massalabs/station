@@ -14,18 +14,11 @@ import (
 )
 
 // NewBrowseParams creates a new BrowseParams object
-// with the default values initialized.
+//
+// There are no default values defined in the spec.
 func NewBrowseParams() BrowseParams {
 
-	var (
-		// initialize parameters with default values
-
-		resourceDefault = string("index.html")
-	)
-
-	return BrowseParams{
-		Resource: resourceDefault,
-	}
+	return BrowseParams{}
 }
 
 // BrowseParams contains all the bound params for the browse operation
@@ -45,7 +38,6 @@ type BrowseParams struct {
 	/*Website resource.
 	  Required: true
 	  In: path
-	  Default: "index.html"
 	*/
 	Resource string
 }
