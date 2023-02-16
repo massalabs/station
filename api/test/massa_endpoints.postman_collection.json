@@ -1,0 +1,134 @@
+{
+	"info": {
+		"_postman_id": "b0d9e16d-4fc4-489e-8b79-8768d5c4f9f6",
+		"name": "Massa endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16586582"
+	},
+	"item": [
+		{
+			"name": "Addresses - get attributes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Having two address\", function () {",
+							"    var jsonData = (pm.response.json()).addressesAttributes;",
+							"    pm.expect(Object.keys(jsonData).length).to.eql(2);",
+							"});",
+							"",
+							"pm.test(\"Having final balances\", function () {",
+							"    var jsonData = (pm.response.json()).addressesAttributes;",
+							"    pm.expect(jsonData[Object.keys(jsonData)[0]].balance.final).to.eql(\"0\");",
+							"    pm.expect(jsonData[Object.keys(jsonData)[1]].balance.final).to.eql(\"0\");",
+							"});",
+							"",
+							"pm.test(\"Having pending balances\", function () {",
+							"    var jsonData = pm.response.json()[\"addressesAttributes\"];",
+							"    pm.expect(jsonData[Object.keys(jsonData)[0]].balance.pending).to.eql(\"0\");",
+							"    pm.expect(jsonData[Object.keys(jsonData)[1]].balance.pending).to.eql(\"0\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://my.massa/massa/addresses?addresses=A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
+					"protocol": "http",
+					"host": [
+						"my",
+						"massa"
+					],
+					"path": [
+						"massa",
+						"addresses"
+					],
+					"query": [
+						{
+							"key": "addresses",
+							"value": "A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
+						},
+						{
+							"key": "addresses",
+							"value": "A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Addresses - get balances",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Having two address\", function () {",
+							"    var jsonData = (pm.response.json()).addressesAttributes;",
+							"    pm.expect(Object.keys(jsonData).length).to.eql(2);",
+							"});",
+							"",
+							"pm.test(\"Having final balances\", function () {",
+							"    var jsonData = (pm.response.json()).addressesAttributes;",
+							"    pm.expect(jsonData[Object.keys(jsonData)[0]].balance.final).to.eql(\"0\");",
+							"    pm.expect(jsonData[Object.keys(jsonData)[1]].balance.final).to.eql(\"0\");",
+							"});",
+							"",
+							"pm.test(\"Having pending balances\", function () {",
+							"    var jsonData = pm.response.json()[\"addressesAttributes\"];",
+							"    pm.expect(jsonData[Object.keys(jsonData)[0]].balance.pending).to.eql(\"0\");",
+							"    pm.expect(jsonData[Object.keys(jsonData)[1]].balance.pending).to.eql(\"0\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://my.massa/massa/addresses?attributes=balance&addresses=A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
+					"protocol": "http",
+					"host": [
+						"my",
+						"massa"
+					],
+					"path": [
+						"massa",
+						"addresses"
+					],
+					"query": [
+						{
+							"key": "attributes",
+							"value": "balance"
+						},
+						{
+							"key": "addresses",
+							"value": "A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
+						},
+						{
+							"key": "addresses",
+							"value": "A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

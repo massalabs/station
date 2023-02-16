@@ -317,8 +317,6 @@ paths:
       parameters:
         - in: query
           name: attributes
-          required: true
-          x-nullable: false
           type : array
           collectionFormat: multi
           description: |

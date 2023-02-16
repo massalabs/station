@@ -46,7 +46,6 @@ type MassaGetAddressesParams struct {
 	| ----------- | -----------|
 	| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |
 
-	  Required: true
 	  In: query
 	  Collection Format: multi
 	*/
@@ -108,13 +107,10 @@ func (o *MassaGetAddressesParams) bindAddresses(rawData []string, hasKey bool, f
 //
 // Arrays are parsed according to CollectionFormat: "multi" (defaults to "csv" when empty).
 func (o *MassaGetAddressesParams) bindAttributes(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	if !hasKey {
-		return errors.Required("attributes", "query", rawData)
-	}
 	// CollectionFormat: multi
 	attributesIC := rawData
 	if len(attributesIC) == 0 {
-		return errors.Required("attributes", "query", attributesIC)
+		return nil
 	}
 
 	var attributesIR []string
