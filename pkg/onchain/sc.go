@@ -77,7 +77,7 @@ func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet, expiryDelta
 	return operationID, nil
 }
 
-func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (string, error) {
+func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte, eventParameter string) (string, error) {
 	datastore := make(map[[3]uint8][]uint8)
 
 	datastore[[3]uint8{1, 2, 3}] = []uint8{1, 2, 3}
@@ -111,10 +111,23 @@ func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (strin
 			return "", fmt.Errorf("waiting SC deployment: %w", err)
 		}
 
+		event := events[0].Data
+		address := strings.Split(event, ":")[1]
+
 		if len(events) > 0 {
-			return strings.Split(events[0].Data, ":")[1], nil
+			//  Catch Run Time Error and return it
+			if strings.Contains(event, "massa_execution_error") {
+				return "", errors.New("runtime error")
+			}
+
+			// Catch Address with generic event parameter, and check if it's a valid address
+			if strings.Contains(event, eventParameter) {
+				if wallet.CheckAddressValidity(address) {
+					return address, nil
+				}
+			}
 		}
 	}
-
-	return "", errors.New("deployment time is out")
+	// If no event received, return an error
+	return "", errors.New("sc deployed successfully but no event received")
 }

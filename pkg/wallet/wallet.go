@@ -224,8 +224,17 @@ func Delete(nickname string) (err error) {
 	return nil
 }
 
-func CheckAddress(address string) bool {
-	return len(address) > MinAddressLength
+func (w *Wallet) CheckAddressValidity(address string) bool {
+	// Check if the address is long enough
+	if len(address) > MinAddressLength {
+		return false
+	}
+	// Check if the address is valid and start with "A"
+	if address[0] != 'A' {
+		return false
+	}
+
+	return true
 }
 
 func CreateWalletFromKeys(nickname string, privKeyBytes []byte, pubKeyBytes []byte, addr [32]byte) (*Wallet, error) {

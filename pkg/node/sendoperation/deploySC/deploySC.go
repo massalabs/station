@@ -35,7 +35,7 @@ func cmdDeploySCHandler(params operations.CmdDeploySCParams, app *fyne.App) midd
 				})
 	}
 
-	address, err := onchain.DeploySC(client, *wallet, file)
+	address, err := onchain.DeploySC(client, *wallet, file, "Website deployer")
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().
 			WithPayload(
