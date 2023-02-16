@@ -1,0 +1,56 @@
+{
+	"info": {
+		"_postman_id": "87c5b13d-f24d-44e4-95b5-0e11a352f384",
+		"name": "Thyra Collection API Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24086813"
+	},
+	"item": [
+		{
+			"name": "/cmd/deploySC",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "Wasmfile",
+							"type": "file",
+							"src": "/C:/Dev/Repos/hackathons/massaTube/token.wasm"
+						},
+						{
+							"key": "nickname",
+							"value": "aa",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://my.massa:{{port}}/cmd/deploySC",
+					"protocol": "http",
+					"host": [
+						"my",
+						"massa"
+					],
+					"port": "{{port}}",
+					"path": [
+						"cmd",
+						"deploySC"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
