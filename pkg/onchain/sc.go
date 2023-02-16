@@ -111,10 +111,9 @@ func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte, eventP
 			return "", fmt.Errorf("waiting SC deployment: %w", err)
 		}
 
-		event := events[0].Data
-		address := strings.Split(event, ":")[1]
-
 		if len(events) > 0 {
+			event := events[0].Data
+			address := strings.Split(event, ":")[1]
 			//  Catch Run Time Error and return it
 			if strings.Contains(event, "massa_execution_error") {
 				return "", errors.New("runtime error")
