@@ -635,7 +635,7 @@ paths:
           type: file
           required: true
           x-nullable: false
-          description: Website contents in a ZIP file.
+          description: Smart contract file in a Wasm file.
         - in : formData
           name : gazPrice
           type: number 
@@ -644,7 +644,7 @@ paths:
         - in : formData
           name : gazLimit
           type : integer
-          description: Maximum number of gaz unit that a node will be able consume.
+          description: Maximum number of gaz unit that a node will be able to consume.
           default: 700000000
         - in: formData
           name : coins
@@ -664,7 +664,7 @@ paths:
         - in: formData
           name : keyId 
           type: string
-          description: Defines the key to used to sign the transaction.
+          description: Defines the key used to sign the transaction.
           default: default
       produces:
         - application/json

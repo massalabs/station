@@ -77,7 +77,9 @@ func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet, expiryDelta
 	return operationID, nil
 }
 
-func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte, eventParameter string) (string, error) {
+// DeploySC deploys a smart contract on the blockchain. It returns the address of the smart contract and an Error.
+// The smart contract is deployed with the given wallet.
+func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (string, error) {
 	datastore := make(map[[3]uint8][]uint8)
 
 	datastore[[3]uint8{1, 2, 3}] = []uint8{1, 2, 3}
@@ -113,20 +115,15 @@ func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte, eventP
 
 		if len(events) > 0 {
 			event := events[0].Data
-			address := strings.Split(event, ":")[1]
 			//  Catch Run Time Error and return it
 			if strings.Contains(event, "massa_execution_error") {
-				return "", errors.New("runtime error")
+				// return the event containing the error
+				return "", errors.New(event)
 			}
-
-			// Catch Address with generic event parameter, and check if it's a valid address
-			if strings.Contains(event, eventParameter) {
-				if wallet.CheckAddressValidity(address) {
-					return address, nil
-				}
-			}
+			// if there is an event, return the first event
+			return event, nil
 		}
 	}
-	// If no event received, return an error
-	return "", errors.New("sc deployed successfully but no event received")
+	// If no event received, return a message to announce sc is deployed
+	return "sc deployed successfully but no event received", nil
 }
