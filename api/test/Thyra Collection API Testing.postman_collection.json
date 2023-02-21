@@ -26,8 +26,7 @@
 					"formdata": [
 						{
 							"key": "Wasmfile",
-							"type": "file",
-							"src": "/C:/Dev/Repos/hackathons/massaTube/token.wasm"
+							"type": "file"
 						},
 						{
 							"key": "nickname",
@@ -50,6 +49,20 @@
 					]
 				}
 			},
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"response": []
 		}
 	]

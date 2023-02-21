@@ -619,7 +619,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
   /cmd/deploySC:
-    put:
+    post:
       operationId: cmdDeploySC
       consumes:
         - multipart/form-data
@@ -629,13 +629,13 @@ paths:
           type: string
           required: true
           x-nullable: false
-          description: Name of the Wallet in which the website will be deployed.
+          description: Name of the Wallet associated to the SmartContract using to deployed.
         - in: formData
           name: Wasmfile
           type: file
           required: true
           x-nullable: false
-          description: Smart contract file in a Wasm file.
+          description: Smart contract file in a Wasm format.
         - in : formData
           name : gazPrice
           type: number 
@@ -654,18 +654,18 @@ paths:
         - in: formData
           name : expiry
           type : integer
-          description: Set the expiry duration (in number of slots) of the transaction
+          description: Set the expiry duration (in number of slots) of the transaction.
           default: 3
-        - in: formData
-          name : fee
-          type : number
-          description: Set the fee amount (in massa) that will be given to the block creator.
-          default : 0
-        - in: formData
-          name : keyId 
-          type: string
-          description: Defines the key used to sign the transaction.
-          default: default
+        # - in: formData
+        #   name : fee
+        #   type : number
+        #   description: Set the fee amount (in massa) that will be given to the block creator.
+        #   default : 0
+        # - in: formData
+        #   name : keyId 
+        #   type: string
+        #   description: Defines the key used to sign the transaction.
+        #   default: default
       produces:
         - application/json
       responses:
@@ -1157,9 +1157,6 @@ definitions:
         type: array
         items:
           type: string
-  SCDeployed:
-    type: string
-    description: Smart Contract's address.
   Events:
     type: object
     description: Events object (V0)
