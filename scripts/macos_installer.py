@@ -31,9 +31,9 @@ class MacOSInstaller(Installer):
         networkAdaptersNames = [adapter.strip() for adapter in networkAdaptersNames]
 
         for adapter in networkAdaptersNames:
-            self.executeCommand(f"networksetup -setdnsservers {adapter} 127.0.0.1", True)
+            self.executeCommand(f'networksetup -setdnsservers "{adapter}" 127.0.0.1', True)
 
-        logging.info ("Network interface configured")
+        logging.info("Network interface configured")
 
     def configureDNSMasq(self):
         logging.info("Configuring DNSMasq...")
