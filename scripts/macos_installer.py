@@ -22,6 +22,19 @@ class MacOSInstaller(Installer):
         else:
             self.printErrorAndExit(f"Unsupported architecture {platform.machine()}")
 
+    def configureNetworkInterface(self):
+        logging.info("Configuring network interface...")
+        stdout, _stderr = self.executeCommand("networksetup -listallnetworkservices", True)
+
+        networkAdaptersNames = list(filter(None, stdout.split('\n')))
+        networkAdaptersNames.pop(0)
+        networkAdaptersNames = [adapter.strip() for adapter in networkAdaptersNames]
+
+        for adapter in networkAdaptersNames:
+            self.executeCommand(f"networksetup -setdnsservers {adapter} 127.0.0.1", True)
+
+        logging.info ("Network interface configured")
+
     def configureDNSMasq(self):
         logging.info("Configuring DNSMasq...")
 
@@ -41,14 +54,14 @@ class MacOSInstaller(Installer):
 
         if runningDNS == "dnsmasq":
             logging.info("dnsmasq is already installed")
-            self.configureDNSMasq()
         elif runningDNS == "":
             logging.info("Installing dnsmasq...")
             self.executeCommand("brew install dnsmasq", True)
-            self.configureDNSMasq()
         else:
             logging.info(runningDNS)
             self.printErrorAndExit("Unsupported DNS server")
+        self.configureDNSMasq()
+        self.configureNetworkInterface()
 
 
 if __name__ == "__main__":
