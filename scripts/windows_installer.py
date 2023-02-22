@@ -25,6 +25,7 @@ class WindowsInstaller(Installer):
         else:
             self.printErrorAndExit(f"Unsupported architecture {platform.machine()}")
 
+    @staticmethod
     def printErrorAndExit(error):
         logging.error(error)
         os.system("pause")
@@ -52,9 +53,9 @@ class WindowsInstaller(Installer):
 
     def configureNetworkInterface(self):
         logging.info("Configuring network interface...")
-        commandOutput = self.executeCommand("wmic nic where \"netenabled=true\" get netconnectionID", True)
+        stdout, _stderr = self.executeCommand("wmic nic where \"netenabled=true\" get netconnectionID", True)
 
-        networkAdpatersNames = list(filter(None, commandOutput.split('\n')))
+        networkAdpatersNames = list(filter(None, stdout.split('\n')))
         networkAdpatersNames.pop(0)
         networkAdpatersNames = [name.strip() for name in networkAdpatersNames]
 
