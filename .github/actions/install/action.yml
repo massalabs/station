@@ -23,8 +23,9 @@ runs:
       with:
         node-version: 18
         cache: 'npm'
-        cache-dependency-path: web/thyra-frontend/package-lock.json
-
+        cache-dependency-path: |
+          web/thyra-frontend/package-lock.json
+          web/plugin-manager/package-lock.json
     - name: Build react frontend
       shell: bash
-      run: go generate gen-frontend.go
+      run: go generate ./web/...
