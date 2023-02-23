@@ -38,7 +38,17 @@ class MacOSInstaller(Installer):
     def configureDNSMasq(self):
         logging.info("Configuring DNSMasq...")
 
-        self.executeCommand("sudo bash -c 'echo ""address=/.massa/127.0.0.1"" > $(brew --prefix)/etc/dnsmasq.d/massa.conf'", True)
+        servers = [
+            "8.8.8.8",
+            "8.8.4.4",
+        ]
+
+        self.executeCommand("sudo bash -c 'echo -e ""address=/.massa/127.0.0.1"" > $(brew --prefix)/etc/dnsmasq.d/massa.conf'", True)
+        self.executeCommand("sudo bash -c 'echo -e ""no-resolv"" >> $(brew --prefix)/etc/dnsmasq.d/massa.conf'", True)
+        for server in servers:
+            test = f'echo -e ""server={server}"" >> $(brew --prefix)/etc/dnsmasq.d/massa.conf'
+            self.executeCommand(f"sudo bash -c '{test}'", True)
+
         self.executeCommand("sudo mkdir -p /etc/resolver", True)
         self.executeCommand("sudo bash -c 'echo ""nameserver 127.0.0.1"" > /etc/resolver/massa'", True)
 
@@ -50,7 +60,7 @@ class MacOSInstaller(Installer):
         runningDNS = ""
         if stdout:
             runningDNS = stdout.splitlines()[1].split()
-            runningDNS = runningDNS[:-1]
+            runningDNS = runningDNS[0]
 
         if runningDNS == "dnsmasq":
             logging.info("dnsmasq is already installed")
@@ -59,7 +69,7 @@ class MacOSInstaller(Installer):
             self.executeCommand("brew install dnsmasq", True)
         else:
             logging.info(runningDNS)
-            self.printErrorAndExit("Unsupported DNS server")
+            self.printErrorAndExit(f"Unsupported DNS server {runningDNS}")
         self.configureDNSMasq()
         self.configureNetworkInterface()
 
