@@ -6,17 +6,13 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"net/http"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strconv"
-	"strings"
 	"sync"
 
 	"github.com/go-cmd/cmd"
 	"github.com/massalabs/thyra/pkg/config"
-	"github.com/xyproto/unzip"
 )
 
 const (
@@ -95,7 +91,8 @@ func DetectPlugin(path string) (*PluginManifest, error) {
 }
 
 func StartPlugin(plugin PluginItem, waitG *sync.WaitGroup) {
-	log.Println("Starting plugin '" + plugin.Manifest.Name + "' on port " + strconv.Itoa(plugin.Port))
+	port := strconv.Itoa(plugin.Port)
+	log.Println("Starting plugin '" + plugin.Manifest.Name + "' on port " + port)
 
 	cmdOptions := cmd.Options{ //nolint:exhaustruct
 		Buffered:  false,
@@ -103,7 +100,7 @@ func StartPlugin(plugin PluginItem, waitG *sync.WaitGroup) {
 	}
 	// Launching system command could be a security issue. This topic should be tackle, and security layers should be added
 	cmd := cmd.NewCmdOptions(cmdOptions, filepath.Join(plugin.Path, plugin.Manifest.Bin),
-		"--port", strconv.Itoa(plugin.Port), "--path", plugin.Path)
+		"--port", port, "--path", plugin.Path)
 
 	// Print STDOUT and STDERR lines streaming from Cmd
 	printChannel := make(chan struct{})
@@ -198,147 +195,5 @@ func New(hostPort int, hostTLSPort int) (*PluginManager, error) {
 		}
 	}
 
-	err = manager.InstallNodeManager()
-	if err != nil {
-		return nil, fmt.Errorf("error: installing NodeManager plugin: %w", err)
-	}
-
 	return &manager, nil
-}
-
-// TEMPORARY. This code should be removed once the NodeManager plugin tests are done.
-//
-//nolint:funlen,cyclop
-func (manager *PluginManager) InstallNodeManager() error {
-	for _, plugin := range manager.plugins {
-		if plugin.Manifest.Name == "Node Manager plugin" {
-			return nil
-		}
-	}
-
-	log.Println("NodeManager plugin not found, installing it...")
-
-	configDir, err := config.GetConfigDir()
-	if err != nil {
-		return fmt.Errorf("reading config directory '%s': %w", configDir, err)
-	}
-
-	pluginDir := filepath.Join(configDir, "plugins")
-
-	err = os.MkdirAll(pluginDir, fileMode)
-	if err != nil {
-		return fmt.Errorf("creating plugin directory '%s': %w", pluginDir, err)
-	}
-
-	zipPath := filepath.Join(pluginDir, "plugin.zip")
-
-	err = downloadFile(zipPath)
-	if err != nil {
-		return fmt.Errorf("downloading plugin: %w", err)
-	}
-
-	err = unzip.Extract(zipPath, pluginDir)
-	if err != nil {
-		return fmt.Errorf("extracting the plugin at %s: %w", zipPath, err)
-	}
-
-	err = os.Remove(zipPath)
-	if err != nil {
-		return fmt.Errorf("removing zip file '%s': %w", zipPath, err)
-	}
-
-	pluginPath := filepath.Join(pluginDir, "thyra-node-manager-plugin")
-
-	manifest, err := DetectPlugin(pluginPath)
-	if err != nil {
-		log.Println(err)
-	}
-
-	if runtime.GOOS == "windows" && !strings.HasSuffix(manifest.Bin, ".exe") {
-		err = os.Rename(filepath.Join(pluginPath, manifest.Bin), filepath.Join(pluginPath, manifest.Bin+".exe"))
-		if err != nil {
-			return fmt.Errorf("renaming plugin executable '%s': %w", filepath.Join(pluginPath, manifest.Bin), err)
-		}
-
-		manifest.Bin += ".exe"
-	}
-
-	err = os.Chmod(filepath.Join(pluginPath, manifest.Bin), fileMode)
-	if err != nil {
-		return fmt.Errorf("chmod on plugin executable '%s': %w", filepath.Join(pluginPath, manifest.Bin), err)
-	}
-
-	var plugin PluginItem
-	plugin.Manifest = *manifest
-	plugin.Path = pluginPath
-	plugin.Port = 4222
-
-	plugin.stopChannel = make(chan bool)
-	manager.plugins = append(manager.plugins, plugin)
-
-	return nil
-}
-
-func downloadFile(filepath string) error {
-	pluginURL, err := getDownloadURL()
-	if err != nil {
-		return fmt.Errorf("getting download url: %w", err)
-	}
-
-	resp, err := http.Get(pluginURL) //nolint:gosec,noctx
-	if err != nil {
-		return fmt.Errorf("downloading file '%s': %w", pluginURL, err)
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("downloading file '%s': HTTP response status: %s", pluginURL, resp.Status)
-	}
-
-	out, err := os.Create(filepath)
-	if err != nil {
-		return fmt.Errorf("creating file '%s': %w", filepath, err)
-	}
-
-	defer func() {
-		err := out.Close()
-		if err != nil {
-			log.Println("error closing file: " + err.Error())
-		}
-
-		err = resp.Body.Close()
-		if err != nil {
-			log.Println("error closing response body: " + err.Error())
-		}
-	}()
-
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		return fmt.Errorf("writing file '%s': %w", filepath, err)
-	}
-
-	return nil
-}
-
-func getDownloadURL() (string, error) {
-	pluginURL := ""
-
-	switch os := runtime.GOOS; os { //nolint:varnamelen
-	case "linux":
-		pluginURL = "https://github.com/massalabs/thyra-node-manager-plugin/releases/download/v0.0.2/node-manager-plugin-linux_amd64.zip" //nolint:lll
-	case "darwin":
-		switch arch := runtime.GOARCH; arch {
-		case "amd64":
-			pluginURL = "https://github.com/massalabs/thyra-node-manager-plugin/releases/download/v0.0.2/node-manager-plugin-darwin_amd64.zip" //nolint:lll
-		case "arm64":
-			pluginURL = "https://github.com/massalabs/thyra-node-manager-plugin/releases/download/v0.0.2/node-manager-plugin-darwin_arm64.zip" //nolint:lll
-		default:
-			return "", fmt.Errorf("unsupported OS '%s' and arch '%s'", os, arch)
-		}
-	case "windows":
-		pluginURL = "https://github.com/massalabs/thyra-node-manager-plugin/releases/download/v0.0.2/node-manager-plugin-windows_amd64.zip" //nolint:lll
-	default:
-		return "", fmt.Errorf("unsupported OS '%s'", os)
-	}
-
-	return pluginURL, nil
 }

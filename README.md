@@ -8,13 +8,15 @@ An entrance to the Massa blockchain.
 
 ## ⚠️ WIP
 
-This project is still WIP. It is a prototype. 
+This project is still WIP. It is a prototype.
 
 ⚠️ Potential breaking changes ahead ⚠️
 
 ## Contribute
+
 go to [Contributing](./CONTRIBUTING.md)
-## How to...
+
+## How to
 
 ### ... install Thyra on my computer?
 
@@ -25,12 +27,13 @@ Follow the instructions for your computer in the wiki:
 - [Windows](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#windows)
 
 ### ... manage my wallet?
-1. Create / delete your wallet 
+
+1. Create / delete your wallet
 
 You can access to Thyra wallet interface at URL : <https://my.massa/thyra/wallet/index.html>
 
 By inputing the 'Nickname' & 'Password', you'll be able to create an encrypted wallet locally on your machine.
-To delete your wallet, simply use the interface. 
+To delete your wallet, simply use the interface.
 ⚠️ If you delete your wallet, you won't be able to edit the website linked to it anymore.
 
 2. Get coins on your wallet
@@ -47,7 +50,7 @@ In order to register a website on Thyra you'll need to :
 
 - Deploy a Smart Contract that will handle the storage of your website, your DNS name will fetch the Address of this Smart Contract - this step is handled by Thyra, don't worry. But at least you know what's happening behind the wood.
 - Upload the build of your application.
-  * If you don't have an application or website handy but still want to test this functionality, here are some websites you can use:
+  - If you don't have an application or website handy but still want to test this functionality, here are some websites you can use:
     - [bbx.zip](https://github.com/massalabs/thyra/files/10169142/bbx.zip)
     - [flappy.zip](https://github.com/massalabs/thyra/files/10169143/flappy.zip)
     - [tic-tac-toe.zip](https://github.com/massalabs/thyra/files/10169144/tic-tac-toe.zip)
@@ -57,8 +60,6 @@ Important note: At the moment, we have defined that 1 chunk (=280ko) of data wor
 - Visit the registry to find your .massa website and see others
 
 **Troubleshooting** If you got any problem at any steps of the process, join us on [Discord dedicated channel](https://discord.com/channels/828270821042159636/851942484212318259) or [report a problem](https://github.com/massalabs/thyra/issues/new/choose)
-
-
 
 ### ... pass options to `thyra-server`?
 
@@ -77,12 +78,6 @@ To use this option with a constant, you have to execute :
 `thyra-server --node-server=LABNET`
 To use this option with a custom IP address, you have to execute :
 `thyra-server --node-server=192.168.X.X`
-
-### ... code with auto-reload
-
-You can run the application with this command: `air`.
-
-It will generate and reload thyra each time a file is modified.
 
 ## Usage
 
