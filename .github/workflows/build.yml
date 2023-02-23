@@ -77,7 +77,7 @@ jobs:
           files: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
 
   build-installer:
-    if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
+#    if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
     needs: [lint, tests]
     name: build and upload installers binaries
     strategy:
@@ -87,14 +87,17 @@ jobs:
             arch: x86_64
             target: windows
             script: scripts/windows_installer.py
+            displayed_arch: amd64
           - os: macos-latest
             arch: x86_64
             target: darwin
             script: scripts/macos_installer.py
+            displayed_arch: amd64
           - os: macos-latest
             arch: arm64
             target: darwin
             script: scripts/macos_installer.py
+            displayed_arch: arm64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -104,14 +107,14 @@ jobs:
           python3 -m pip install pyinstaller
       - name: Build installer binary
         run: |
-          pyinstaller --clean --onefile -y --target-arch ${{ matrix.arch }} --dist ./dist/${{ matrix.target }} --workpath /tmp ${{ matrix.script }}
+          pyinstaller --clean --onefile -y --target-arch ${{ matrix.arch }} --dist ./dist/${{ matrix.target }} --workpath /tmp ${{ matrix.script }} --name thyra-installer_${{ matrix.target }}_${{ matrix.displayed_arch }}
       - name: Upload installer artifacts
         uses: actions/upload-artifact@v3
         with:
           name: thyra-installer-${{ matrix.target }}-${{ matrix.arch }}-binary
           path: |
-            ./dist/${{ matrix.target }}/macos_installer
-            ./dist/${{ matrix.target }}/windows_installer.exe
+            ./dist/${{ matrix.target }}/thyra-installer_${{ matrix.target }}_${{ matrix.displayed_arch }}
+            ./dist/${{ matrix.target }}/thyra-installer_${{ matrix.target }}_${{ matrix.displayed_arch }}.exe
       - name: Create release and upload binaries
         if: ${{ inputs.tag_name != '' }}
         uses: softprops/action-gh-release@v1
@@ -121,5 +124,5 @@ jobs:
           prerelease: ${{ inputs.prerelease }}
           generate_release_notes: ${{ inputs.generate_release_notes }}
           files: |
-            ./dist/${{ matrix.target }}/macos_installer
-            ./dist/${{ matrix.target }}/windows_installer.exe
+            ./dist/${{ matrix.target }}/thyra-installer_${{ matrix.target }}_${{ matrix.displayed_arch }}
+            ./dist/${{ matrix.target }}/thyra-installer_${{ matrix.target }}_${{ matrix.displayed_arch }}.exe
