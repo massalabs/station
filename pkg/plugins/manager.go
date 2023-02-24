@@ -200,7 +200,7 @@ func New(hostPort int, hostTLSPort int) (*PluginManager, error) {
 
 	err = manager.InstallNodeManager()
 	if err != nil {
-		return nil, fmt.Errorf("installing NodeManager plugin: %w", err)
+		return nil, fmt.Errorf("error: installing NodeManager plugin: %w", err)
 	}
 
 	return &manager, nil
@@ -290,6 +290,10 @@ func downloadFile(filepath string) error {
 		return fmt.Errorf("downloading file '%s': %w", pluginURL, err)
 	}
 
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("downloading file '%s': HTTP response status: %s", pluginURL, resp.Status)
+	}
+
 	out, err := os.Create(filepath)
 	if err != nil {
 		return fmt.Errorf("creating file '%s': %w", filepath, err)
@@ -320,18 +324,18 @@ func getDownloadURL() (string, error) {
 
 	switch os := runtime.GOOS; os { //nolint:varnamelen
 	case "linux":
-		pluginURL = "https://github.com/massalabs/thyra-node-manager-plugin/releases/latest/download/node-manager-plugin-linux_amd64.zip" //nolint:lll
+		pluginURL = "https://github.com/massalabs/thyra-node-manager-plugin/releases/download/v0.0.2/node-manager-plugin-linux_amd64.zip" //nolint:lll
 	case "darwin":
 		switch arch := runtime.GOARCH; arch {
 		case "amd64":
-			pluginURL = "https://github.com/massalabs/thyra-node-manager-plugin/releases/latest/download/node-manager-plugin-darwin_amd64.zip" //nolint:lll
+			pluginURL = "https://github.com/massalabs/thyra-node-manager-plugin/releases/download/v0.0.2/node-manager-plugin-darwin_amd64.zip" //nolint:lll
 		case "arm64":
-			pluginURL = "https://github.com/massalabs/thyra-node-manager-plugin/releases/latest/download/node-manager-plugin-darwin_arm64.zip" //nolint:lll
+			pluginURL = "https://github.com/massalabs/thyra-node-manager-plugin/releases/download/v0.0.2/node-manager-plugin-darwin_arm64.zip" //nolint:lll
 		default:
 			return "", fmt.Errorf("unsupported OS '%s' and arch '%s'", os, arch)
 		}
 	case "windows":
-		pluginURL = "https://github.com/massalabs/thyra-node-manager-plugin/releases/latest/download/node-manager-plugin-windows_amd64.zip" //nolint:lll
+		pluginURL = "https://github.com/massalabs/thyra-node-manager-plugin/releases/download/v0.0.2/node-manager-plugin-windows_amd64.zip" //nolint:lll
 	default:
 		return "", fmt.Errorf("unsupported OS '%s'", os)
 	}
