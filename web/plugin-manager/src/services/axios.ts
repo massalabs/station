@@ -1,10 +1,10 @@
-import React from 'react'
-import axios, { AxiosError, AxiosResponse } from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { Plugin } from '../../../shared/interfaces/IPlugin'
 
 export class axiosServices {
-  constructor() {
-  
+
+  static installPlugin (url: string) : Promise<AxiosResponse<number>> {
+    return axios.post<any>(`/plugin-manager?source=${url}`)
   }
 
   static manageLifePlugins (ID:string, command:string) : Promise<AxiosResponse<number>> {

@@ -5,12 +5,10 @@ import { PluginProps } from "../../../shared/interfaces/IPlugin";
 import { isUp } from "../helpers/isUp";
 
 function PluginBlock(p: PluginProps) {
-    console.log("load plugin PluginBlock:",p)
-    console.log("isUp?:",isUp(p.plugin.status))
-    // Callback to set error on parent
-    function sendErrorData(errorType: string, errorMessage: string) {
-        p.setErrorData(errorType, errorMessage);
+    if(!p) {
+        return <div></div>
     }
+
     // Toggle status state
     const [isPluginUp, setStatus] = useState(isUp(p.plugin.status));
     useEffect(() => setStatus(isUp(p.plugin.status)));
@@ -24,7 +22,7 @@ function PluginBlock(p: PluginProps) {
             return status.data
         } catch (error: any) {
             console.log(error);
-            sendErrorData(
+            p.setErrorData(
                 "error",
                 `Plugins infos failed to get infos from 
                 plugin name : ${p.plugin.name} on id: ${p.plugin.id}, error: ${error.message}}`
@@ -39,7 +37,7 @@ function PluginBlock(p: PluginProps) {
             setStatus(!isPluginUp);
             await axiosServices.manageLifePlugins(p.plugin.id, isPluginUp ? "stop" : "start");
         } catch (error: any) {
-            sendErrorData("error", `Start plugin failed , error :${error.message}`);
+            p.setErrorData("error", `Start plugin failed , error :${error.message}`);
         }
         fetchPluginStatus()
     }
@@ -65,7 +63,7 @@ function PluginBlock(p: PluginProps) {
         if (isPluginUp)
          window.open(p.plugin.home);
         else {
-            sendErrorData("error", "Plugin is not running, launch it first");
+            p.setErrorData("error", "Plugin is not running, launch it first");
         }
     }
     // Uninstall plugin
@@ -73,13 +71,16 @@ function PluginBlock(p: PluginProps) {
         try {
             axiosServices.deletePlugins(p.plugin.id);
             p.getPluginsInfo();
-            sendErrorData("success", "Plugin removed");
+            p.setErrorData("success", "Plugin removed");
         } catch (error: any) {
-            sendErrorData("error", `Plugins failed to be removed , error ${error.message}`);
+            p.setErrorData("error", `Plugins failed to be removed , error ${error.message}`);
         }
     }
     //Truncate the string so that it fits in the given lenght if needed.
     function minimize(str: string, length: number) {
+        if(!str) {
+            return ""
+        }
         if (str.length > length) {
             return str.substring(0, length) + "...";
         } else {

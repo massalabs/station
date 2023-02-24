@@ -5,6 +5,7 @@ import massaLogoLight from "../assets/MASSA_LIGHT_Detailed.png";
 import axiosServices from "../services/axios";
 import alertHelper from "../helpers/alertHelpers";
 import { PuffLoader } from "react-spinners";
+import InstallPlugin from "../components/installPluginBlock";
 function Manager() {
     //State to store error
     const [error, setError] = useState(<></>);
@@ -54,7 +55,7 @@ function Manager() {
             {/* Good First Issue For Community : Rework Css Classname to align bottom line of icon on bottom of container
             Need to delete FlexWrap and rework the container */}
             <div className="flex flex-wrap mx-auto max-w-6xl justify-center content-center">
-                {plugins.length ? plugins
+                {plugins?.length ? plugins
                     // sort plugins by Id
                     .sort((a, b) => parseInt(a.id) > parseInt(b.id) ? 1 : 0)
                     .map(plugin => (
@@ -64,8 +65,12 @@ function Manager() {
                             getPluginsInfo={getPluginsInfo}
                         />
                     ))
-                    : <PuffLoader/>
+                    : <PuffLoader />
                 }
+                <InstallPlugin
+                    setErrorData={setErrorHandler}
+                    getPluginsInfo={getPluginsInfo}
+                />
                 {error}
             </div>
         </>
