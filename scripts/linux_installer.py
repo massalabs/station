@@ -6,7 +6,7 @@ from installer import Installer
 class LinuxInstaller(Installer):
     def __init__(self):
         super().__init__()
-        self.THYRA_SERVER_FILENAME = "thyra_server"
+        self.THYRA_SERVER_FILENAME = "thyra-server"
         self.THYRA_APP_FILENAME = "thyra-app"
         self.MKCERT_FILENAME = "mkcert"
 
@@ -22,7 +22,8 @@ class LinuxInstaller(Installer):
         if dns == "dnsmasq":
             logging.info("NetworkManager is already configured")
         elif dns == "":
-            self.executeCommand("sudo sed -i 's/^\[main\]$/\[main\]\\ndns=dnsmasq/g' /etc/NetworkManager/NetworkManager.conf", True)
+            # add dns=dnsmasq after [main] line
+            self.executeCommand("sudo sed -i 's/^\[main\]$/\[main\]\\ndns=dnsmasq/' /etc/NetworkManager/NetworkManager.conf", True)
         else:
             self.executeCommand("sudo sed -i 's/^dns=.*/dns=dnsmasq/g' /etc/NetworkManager/NetworkManager.conf", True)
 
@@ -63,11 +64,15 @@ class LinuxInstaller(Installer):
             logging.warning(f"Unsupported DNS application: {runningDNS}")
 
     def generateCACertificate(self):
-        stdout, _stderr = self.executeCommand("dpkg -s firefox | grep Status", True, allow_failure=True)
+        stdout, _stderr = self.executeCommand("firefox -v && echo \"firefox installed\"", True, allow_failure=True)
         if stdout and "installed" in stdout:
             self.executeCommand("sudo apt-get install -y libnss3-tools", True)
 
         super().generateCACertificate()
+
+
+        sudo apt install libqt6widgets6
+
 
 
 if __name__ == "__main__":
