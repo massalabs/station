@@ -2,6 +2,7 @@ package website
 
 import (
 	"fmt"
+	"mime"
 	"net/http"
 	"path/filepath"
 
@@ -30,19 +31,14 @@ func removeEmptyStrings(s []string) []string {
 	return result
 }
 
-func setContentType(rsc string, writer http.ResponseWriter) {
-	switch filepath.Ext(rsc) {
-	case ".css":
-		writer.Header().Set("Content-Type", "text/css")
-	case ".js":
-		writer.Header().Set("Content-Type", "application/json")
-	case ".html":
-		writer.Header().Set("Content-Type", "text/html")
-	case ".webp":
-		writer.Header().Set("Content-Type", "text/webp")
-	case ".png":
-		writer.Header().Set("Content-Type", "image/png")
+func setContentType(file string, writer http.ResponseWriter) {
+	ctype := mime.TypeByExtension(filepath.Ext(file))
+
+	if ctype == "" {
+		ctype = "text/plain"
 	}
+
+	writer.Header().Set("Content-Type", ctype)
 }
 
 func Request(writer http.ResponseWriter, reader *http.Request, client *node.Client, address string, resource string) {

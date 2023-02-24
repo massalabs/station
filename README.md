@@ -16,12 +16,44 @@ This project is still WIP. It is a prototype.
 
 ### Install dev dependencies
 
+#### Linux:
+
+```bash
+sudo apt update
+sudo apt install -y build-essential libgl1-mesa-dev xorg-dev p7zip
+```
+
+#### all OS:
+
 To develop on this project you will need :
 
 - [go](https://go.dev/doc/install)
 - [swagger](https://github.com/go-swagger/go-swagger) to generate go code from API documentation
 
-Once Golang is installed on your system, you can install the swagger dependency by running the following command outside of a go module directory:
+#### build generated files:
+
+This command will build all generated files, including, go swagger code, Stringers.
+
+Go swagger generate go code from API documentation, it can be installed using this command:
+
+```bash
+go install github.com/go-swagger/go-swagger/cmd/swagger@latest
+```
+
+launch code generation:
+
+```bash
+go generate
+```
+
+#### build front-end:
+
+The frontend is built with react. Its source code needs to be compiled to be used locally.
+You will need npm and node to be installed.
+
+```bash
+go generate ./web/...
+```
 
 - `go install github.com/go-swagger/go-swagger/cmd/swagger@latest`
 
@@ -49,7 +81,7 @@ run gofumpt locally on your source code `gofumpt -l -w .`
 
 gci need to be installed locally `go install github.com/daixiang0/gci@latest`
 
-run gofumpt locally on your source code `gci --write .`
+run gci locally on your source code `gci --write .`
 
 ## How to...
 
@@ -64,7 +96,7 @@ Follow the instructions for your computer in the wiki:
 ### ... manage my wallet?
 1. Create / delete your wallet 
 
-You can access to Thyra wallet interface at URL : <http://my.massa/thyra/wallet/index.html>
+You can access to Thyra wallet interface at URL : <https://my.massa/thyra/wallet/index.html>
 
 By inputing the 'Nickname' & 'Password', you'll be able to create an encrypted wallet locally on your machine.
 To delete your wallet, simply use the interface. 
@@ -121,28 +153,9 @@ Accepts a URL, an IP address or one of the following values :
 - LOCALHOST : Expect Massa's network to be hosted at 127.0.0.1
 
 To use this option with a constant, you have to execute :
-`thyra-server node-server=LABNET`
+`thyra-server --node-server=LABNET`
 To use this option with a custom IP address, you have to execute :
-`thyra-server node-server=192.168.X.X`
-
-### ... secure HTTPS configuration?
-
-Using HTTPS configuration without specifying your own certificate and key triggers a warning: `insecure HTTPS configuration`.
-
-To solve this you need to create your own certificate. You can do so by using openssl:
-
-```shell
-openssl req -newkey rsa:4096 \
-            -x509 \
-            -sha256 \
-            -days 365 \
-            -nodes \
-            -out my_thyra.crt \
-            -keyout my_thyra.key
-```
-
-You can now execute a thyra-server using the following command changing _path to ..._ to proper values:
-`thyra-server --tls-certificate <path to my_thyra.crt> --tls-key <path to my_thyra.key>`.
+`thyra-server --node-server=192.168.X.X`
 
 ### ... code with auto-reload
 

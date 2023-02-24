@@ -1,16 +1,18 @@
 package convert
 
 import (
+	"bytes"
 	"encoding/binary"
+	"log"
 	"unicode/utf16"
 )
 
-const bytesPerUint64 = 8
+const BytesPerUint64 = 8
 
 // Encode uint64 to byte array.
 func U64ToBytes(nb int) (bytes []byte) {
 	u64 := uint64(nb)
-	bytes = make([]byte, bytesPerUint64)
+	bytes = make([]byte, BytesPerUint64)
 	binary.LittleEndian.PutUint64(bytes, u64)
 
 	return
@@ -47,4 +49,51 @@ func BytesToString(entry []byte) string {
 	content := entry[bytesPerUint32:] // content is always prefixed by its size encoded using a u32.
 
 	return string(content)
+}
+
+func ByteToStringArray(entry []byte) []string {
+	var result []string
+
+	content := entry
+	// with args you will have at least 5 bytes for a string (4 for the size and 1 for the value).
+	minimumNbBytes := bytesPerUint32 + 1
+	// we parse the content until there is no more string left inside.
+	for len(content) >= minimumNbBytes {
+		// we check the string length and we update the offset.
+		stringLength := binary.LittleEndian.Uint32(content[:bytesPerUint32])
+		offset := bytesPerUint32 + int(stringLength)
+
+		str := string(content[bytesPerUint32:offset])
+
+		result = append(result, str)
+
+		// we remove the string and its length header from the content.
+		content = content[bytesPerUint32+int(stringLength):]
+	}
+
+	return result
+}
+
+// this function encodes a string array to an array of byte arrays.
+func StringArrayToArrayOfByteArray(stringArray []string) [][]byte {
+	stringArrayLength := len(stringArray)
+
+	var result [][]byte
+
+	for i := 0; i < stringArrayLength; i++ {
+		result = append(result, StringToBytes(stringArray[i]))
+	}
+
+	return result
+}
+
+func BytesToU64(byteArray []byte) uint64 {
+	var u64 uint64
+
+	err := binary.Read(bytes.NewReader(byteArray), binary.LittleEndian, &u64)
+	if err != nil {
+		log.Printf("error converting bytesToU64 :%v\n", err)
+	}
+
+	return u64
 }

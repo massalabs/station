@@ -1,6 +1,7 @@
 package websites
 
 import (
+	"bytes"
 	"fmt"
 	"sort"
 	"strings"
@@ -10,33 +11,22 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/node/ledger"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
-	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 const (
 	dateFormat          = "2006-01-02"
-	recordKey           = "record"
 	metaKey             = "META"
+	ownedPrefix         = "owned"
+	ownerKey            = "owner"
+	blackListKey        = "blackList"
 	secondsToMilliCoeff = 1000
 )
 
-//nolint:nolintlint,ireturn
 func RegistryHandler(params operations.AllDomainsGetterParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
-	addressesResult, err := ledger.Addresses(client, []string{dns.DNSRawAddress})
-	if err != nil {
-		return operations.NewMyDomainsGetterInternalServerError().
-			WithPayload(
-				&models.Error{
-					Code:    errorCodeGetRegistry,
-					Message: err.Error(),
-				})
-	}
-
-	results, err := Registry(client, addressesResult[0].CandidateDatastoreKeys)
+	results, err := Registry(client)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().
 			WithPayload(
@@ -55,54 +45,78 @@ smart contract Thyra is connected to. Once this data has been fetched from the D
 the various website storer contracts, the function builds an array of Registry objects
 and returns it to the frontend for display on the Registry page.
 */
-func Registry(client *node.Client, candidateDatastoreKeys [][]byte) ([]*models.Registry, error) {
-	// array of strings of website names : (recordflappy).
-	recordKeysStrings, err := ledger.KeysFiltered(client, dns.DNSRawAddress, recordKey)
+func Registry(client *node.Client) ([]*models.Registry, error) {
+	websiteNames, err := filterEntriesToDisplay(client)
 	if err != nil {
-		return nil, fmt.Errorf("filtering keys with '%+v' failed : %w", recordKey, err)
+		return nil, fmt.Errorf("filtering keys to be displayed at '%s': %w", dns.Address(), err)
 	}
-	// convert array of strings to array of [array of bytes]
-	recordKeysBytes := make([][]byte, len(recordKeysStrings))
-	for i, v := range recordKeysStrings {
-		recordKeysBytes[i] = convert.StringToBytes(v)
-	}
-	// retrieve the records owners values : addresses who own the websites.
-	recordResult, err := node.ContractDatastoreEntries(client, dns.DNSRawAddress, recordKeysBytes)
+
+	dnsValues, err := node.ContractDatastoreEntries(client, dns.Address(), websiteNames)
 	if err != nil {
-		return nil, fmt.Errorf("searching Owners of records (addresses) failed : %w", err)
+		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, dns.Address(), err)
 	}
 
-	var websiteStorers []node.DatastoreEntriesKeysAsString
+	// in website name key, value are stored in this order -> website Address, website Owner Address
+	indexOfWebsiteAddress := 0
 
-	for _, record := range recordResult {
-		if wallet.CheckAddress(convert.BytesToString(record.CandidateValue)) {
-			websiteStorerKey := node.DatastoreEntriesKeysAsString{
-				Address: convert.BytesToString(record.CandidateValue),
-				Key:     convert.StringToBytes(metaKey + string(record.CandidateValue)),
-			}
+	registry := make([]*models.Registry, len(dnsValues))
 
-			websiteStorers = append(websiteStorers, websiteStorerKey)
+	for index := 0; index < len(dnsValues); index++ {
+		websiteStorerAddress := convert.ByteToStringArray(dnsValues[index].CandidateValue)[indexOfWebsiteAddress]
+
+		websiteMetadata, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes(metaKey))
+		if err != nil {
+			return nil, fmt.Errorf("reading key '%s' at '%s': %w", metaKey, websiteStorerAddress, err)
 		}
-	}
 
-	websitesMetadata, err := node.DatastoreEntries(client, websiteStorers)
-	if err != nil {
-		return nil, fmt.Errorf("metadata reaching on dnsContractStorers failed : %w", err)
-	}
-
-	registry := make([]*models.Registry, len(websitesMetadata))
-
-	for index := 0; index < len(websitesMetadata); index++ {
 		registry[index] = &models.Registry{
-			Name:     strings.Split(recordKeysStrings[index], recordKey)[1], // name of website : flappy.
-			Address:  websiteStorers[index].Address,                         // owner of Website Address.
-			Metadata: websitesMetadata[index].CandidateValue,                // website metadata.
+			Name:     convert.BytesToString(websiteNames[index]), // name of website : flappy.
+			Address:  websiteStorerAddress,                       // website Address
+			Metadata: websiteMetadata.CandidateValue,             // website metadata.
 		}
 	}
+
 	// sort website names with alphanumeric order.
 	sort.Slice(registry, func(i, j int) bool {
 		return registry[i].Name < registry[j].Name
 	})
 
 	return registry, nil
+}
+
+/*
+The dns SC has 4 differents kinds of key :
+-the website names
+-keys owned concatenated with the owner's address
+-a key blackList
+-a owner key
+we only want to keep the website names keys.
+*/
+func filterEntriesToDisplay(client *node.Client) ([][]byte, error) {
+	// we first remove the owned type keys
+	keyList, err := node.FilterSCKeysByPrefix(client, dns.Address(), ownedPrefix, false)
+	if err != nil {
+		return nil, fmt.Errorf("fetching all keys without '%s' prefix at '%s': %w", ownedPrefix, dns.Address(), err)
+	}
+
+	// we then read the blacklisted websites
+	blackListedWebsites, err := node.DatastoreEntry(client, dns.Address(), convert.StringToBytes(blackListKey))
+	if err != nil {
+		return nil, fmt.Errorf("reading entry '%s' prefix at '%s': %w", blackListKey, dns.Address(), err)
+	}
+
+	var keyListToRemove []string
+	if !bytes.Equal(blackListedWebsites.CandidateValue, make([]byte, 0)) {
+		keyListToRemove = strings.Split(convert.BytesToString(blackListedWebsites.CandidateValue), ",")
+	}
+
+	// we add the keys blackList and ownerKey to the list of key to be removed
+	keyListToRemove = append(keyListToRemove, blackListKey, ownerKey)
+
+	// we encode the list as a slice of byteArray
+	keyListToRemoveAsArrayOfByteArray := convert.StringArrayToArrayOfByteArray(keyListToRemove)
+
+	websiteNames := node.RemoveKeysFromKeyList(keyList, keyListToRemoveAsArrayOfByteArray)
+
+	return websiteNames, nil
 }

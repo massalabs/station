@@ -1,7 +1,5 @@
 on:
   push:
-    branches: [ main ]
-  pull_request:
   workflow_call:
 
 jobs:
@@ -13,4 +11,5 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
+          version: v1.50.1
           args: --timeout=3m

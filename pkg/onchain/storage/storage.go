@@ -8,8 +8,10 @@ import (
 	"io"
 	"strconv"
 
+	"github.com/massalabs/thyra/pkg/cache"
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
+	"github.com/massalabs/thyra/pkg/onchain/dns"
 )
 
 func readZipFile(z *zip.File) ([]byte, error) {
@@ -27,16 +29,8 @@ func readZipFile(z *zip.File) ([]byte, error) {
 	return content, nil
 }
 
-/*
-	This function fetch the datastore entries required to display
-	a website in the browser from the website storer contract, unzip them and
-	return the full unzipped website content.
-	Datastore entries fetched :
-	- total_chunks : Total number of chunks that are to be fetched.
-	- massa_web_XXX : Keys containing the website data, with XXX being the chunk ID.
-*/
-//nolint:nolintlint,ireturn,funlen
-func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, error) {
+// Fetch retrieves data from the blockchain ledger at the given address.
+func Fetch(client *node.Client, websiteStorerAddress string) ([]byte, error) {
 	chunkNumberKey := "total_chunks"
 
 	keyNumber, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes(chunkNumberKey))
@@ -46,10 +40,10 @@ func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, e
 
 	chunkNumber := int(binary.LittleEndian.Uint64(keyNumber.CandidateValue))
 
-	entries := []node.DatastoreEntriesKeysAsString{}
+	entries := []node.DatastoreEntriesKeys{}
 
 	for i := 0; i < chunkNumber; i++ {
-		entry := node.DatastoreEntriesKeysAsString{
+		entry := node.DatastoreEntriesKeys{
 			Address: websiteStorerAddress,
 			Key:     convert.StringToBytes("massa_web_" + strconv.Itoa(i)),
 		}
@@ -67,12 +61,52 @@ func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, e
 		dataStore = append(dataStore, response[i].CandidateValue[4:]...)
 	}
 
-	zipReader, err := zip.NewReader(bytes.NewReader(dataStore), int64(len(dataStore)))
+	return dataStore, nil
+}
+
+// Get tries to get the file from the cache and fallback to Fetch from the datastore.
+// New files are automatically added to the cache.
+// New website version at the same address are handled thanks to the LastUpdateTimestamp.
+func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, error) {
+	content := make(map[string][]byte)
+
+	metaData, err := dns.FetchRecordMetaData(client, websiteStorerAddress)
 	if err != nil {
-		return nil, fmt.Errorf("instantiating zip reader from decoded datastore entries '%s' at  '%w'", dataStore, err)
+		return nil, fmt.Errorf("getting metadata for '%s' : %w", websiteStorerAddress, err)
 	}
 
-	content := make(map[string][]byte)
+	lastTimestamp := metaData.LastUpdateTimestamp
+
+	if lastTimestamp == 0 {
+		lastTimestamp = metaData.CreationTimeStamp
+	}
+
+	fileName := fmt.Sprintf("%s-%d", websiteStorerAddress, lastTimestamp)
+
+	var fileContent []byte
+
+	// we check if the website is in cache, if not we fetch it from the blockchain
+	if cache.IsPresent(fileName) {
+		fileContent, err = cache.Read(fileName)
+		if err != nil {
+			return nil, fmt.Errorf("reading file '%s': %w", fileName, err)
+		}
+	} else {
+		fileContent, err = Fetch(client, websiteStorerAddress)
+		if err != nil {
+			return nil, fmt.Errorf("fetching website content at %s from blockchain: %w", websiteStorerAddress, err)
+		}
+
+		err = cache.Save(fileName, fileContent)
+		if err != nil {
+			return nil, fmt.Errorf("caching %s: %w", fileName, err)
+		}
+	}
+
+	zipReader, err := zip.NewReader(bytes.NewReader(fileContent), int64(len(fileContent)))
+	if err != nil {
+		return nil, fmt.Errorf("instantiating zip reader from '%s': %w", fileName, err)
+	}
 
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {

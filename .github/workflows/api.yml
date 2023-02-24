@@ -1,0 +1,37 @@
+name: API
+
+on:
+  push:
+    paths:
+      - 'api/swagger/server/restapi/resource/swagger.yml'
+      - 'api/test/*'
+
+jobs:
+  test-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project directory
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        uses: ./.github/actions/install
+        with:
+          os: ubuntu-latest
+      - name: Update version
+        run: echo -e "${GITHUB_REF_NAME}" > cmd/thyra-server/version.txt
+      - name: Build thyra binary
+        run: GOOS=linux GOARCH=amd64 CGO_ENABLED=1 CC=gcc CXX=g++ go build cmd/thyra-server/main.go
+      - name: Prepare thyra to be runned
+        run: mkdir /home/runner/.config/thyra && sudo setcap CAP_NET_BIND_SERVICE=+eip ./main && sudo apt install xvfb
+      - name: Running thyra
+        run: xvfb-run ./main &
+      - name: Define my.massa
+        run: sudo echo "127.0.0.1 my.massa" | sudo tee -a /etc/hosts
+      - name: Test plugin manager API
+        uses: matt-ball/newman-action@master
+        with:
+          collection: api/test/plugin_manager.postman_collection.json
+          environment: api/test/plugin_manager.postman_environment.json
+      - name: Test massa API
+        uses: matt-ball/newman-action@master
+        with:
+          collection: api/test/massa_endpoints.postman_collection.json

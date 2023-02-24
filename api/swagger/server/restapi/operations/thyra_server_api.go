@@ -69,6 +69,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		KpiHandler: KpiHandlerFunc(func(params KpiParams) middleware.Responder {
 			return middleware.NotImplemented("operation Kpi has not yet been implemented")
 		}),
+		MassaGetAddressesHandler: MassaGetAddressesHandlerFunc(func(params MassaGetAddressesParams) middleware.Responder {
+			return middleware.NotImplemented("operation MassaGetAddresses has not yet been implemented")
+		}),
 		MgmtPluginsListHandler: MgmtPluginsListHandlerFunc(func(params MgmtPluginsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation MgmtPluginsList has not yet been implemented")
 		}),
@@ -90,8 +93,35 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		MyDomainsGetterHandler: MyDomainsGetterHandlerFunc(func(params MyDomainsGetterParams) middleware.Responder {
 			return middleware.NotImplemented("operation MyDomainsGetter has not yet been implemented")
 		}),
+		PluginManagerExecuteCommandHandler: PluginManagerExecuteCommandHandlerFunc(func(params PluginManagerExecuteCommandParams) middleware.Responder {
+			return middleware.NotImplemented("operation PluginManagerExecuteCommand has not yet been implemented")
+		}),
+		PluginManagerGetInformationHandler: PluginManagerGetInformationHandlerFunc(func(params PluginManagerGetInformationParams) middleware.Responder {
+			return middleware.NotImplemented("operation PluginManagerGetInformation has not yet been implemented")
+		}),
+		PluginManagerInstallHandler: PluginManagerInstallHandlerFunc(func(params PluginManagerInstallParams) middleware.Responder {
+			return middleware.NotImplemented("operation PluginManagerInstall has not yet been implemented")
+		}),
+		PluginManagerListHandler: PluginManagerListHandlerFunc(func(params PluginManagerListParams) middleware.Responder {
+			return middleware.NotImplemented("operation PluginManagerList has not yet been implemented")
+		}),
+		PluginManagerRegisterHandler: PluginManagerRegisterHandlerFunc(func(params PluginManagerRegisterParams) middleware.Responder {
+			return middleware.NotImplemented("operation PluginManagerRegister has not yet been implemented")
+		}),
+		PluginManagerUninstallHandler: PluginManagerUninstallHandlerFunc(func(params PluginManagerUninstallParams) middleware.Responder {
+			return middleware.NotImplemented("operation PluginManagerUninstall has not yet been implemented")
+		}),
+		PluginRouterHandler: PluginRouterHandlerFunc(func(params PluginRouterParams) middleware.Responder {
+			return middleware.NotImplemented("operation PluginRouter has not yet been implemented")
+		}),
 		ThyraEventsGetterHandler: ThyraEventsGetterHandlerFunc(func(params ThyraEventsGetterParams) middleware.Responder {
 			return middleware.NotImplemented("operation ThyraEventsGetter has not yet been implemented")
+		}),
+		ThyraHomeHandler: ThyraHomeHandlerFunc(func(params ThyraHomeParams) middleware.Responder {
+			return middleware.NotImplemented("operation ThyraHome has not yet been implemented")
+		}),
+		ThyraPluginManagerHandler: ThyraPluginManagerHandlerFunc(func(params ThyraPluginManagerParams) middleware.Responder {
+			return middleware.NotImplemented("operation ThyraPluginManager has not yet been implemented")
 		}),
 		ThyraRegistryHandler: ThyraRegistryHandlerFunc(func(params ThyraRegistryParams) middleware.Responder {
 			return middleware.NotImplemented("operation ThyraRegistry has not yet been implemented")
@@ -173,6 +203,8 @@ type ThyraServerAPI struct {
 	CmdExecuteFunctionHandler CmdExecuteFunctionHandler
 	// KpiHandler sets the operation handler for the kpi operation
 	KpiHandler KpiHandler
+	// MassaGetAddressesHandler sets the operation handler for the massa get addresses operation
+	MassaGetAddressesHandler MassaGetAddressesHandler
 	// MgmtPluginsListHandler sets the operation handler for the mgmt plugins list operation
 	MgmtPluginsListHandler MgmtPluginsListHandler
 	// MgmtWalletCreateHandler sets the operation handler for the mgmt wallet create operation
@@ -187,8 +219,26 @@ type ThyraServerAPI struct {
 	MgmtWalletImportHandler MgmtWalletImportHandler
 	// MyDomainsGetterHandler sets the operation handler for the my domains getter operation
 	MyDomainsGetterHandler MyDomainsGetterHandler
+	// PluginManagerExecuteCommandHandler sets the operation handler for the plugin manager execute command operation
+	PluginManagerExecuteCommandHandler PluginManagerExecuteCommandHandler
+	// PluginManagerGetInformationHandler sets the operation handler for the plugin manager get information operation
+	PluginManagerGetInformationHandler PluginManagerGetInformationHandler
+	// PluginManagerInstallHandler sets the operation handler for the plugin manager install operation
+	PluginManagerInstallHandler PluginManagerInstallHandler
+	// PluginManagerListHandler sets the operation handler for the plugin manager list operation
+	PluginManagerListHandler PluginManagerListHandler
+	// PluginManagerRegisterHandler sets the operation handler for the plugin manager register operation
+	PluginManagerRegisterHandler PluginManagerRegisterHandler
+	// PluginManagerUninstallHandler sets the operation handler for the plugin manager uninstall operation
+	PluginManagerUninstallHandler PluginManagerUninstallHandler
+	// PluginRouterHandler sets the operation handler for the plugin router operation
+	PluginRouterHandler PluginRouterHandler
 	// ThyraEventsGetterHandler sets the operation handler for the thyra events getter operation
 	ThyraEventsGetterHandler ThyraEventsGetterHandler
+	// ThyraHomeHandler sets the operation handler for the thyra home operation
+	ThyraHomeHandler ThyraHomeHandler
+	// ThyraPluginManagerHandler sets the operation handler for the thyra plugin manager operation
+	ThyraPluginManagerHandler ThyraPluginManagerHandler
 	// ThyraRegistryHandler sets the operation handler for the thyra registry operation
 	ThyraRegistryHandler ThyraRegistryHandler
 	// ThyraWalletHandler sets the operation handler for the thyra wallet operation
@@ -308,6 +358,9 @@ func (o *ThyraServerAPI) Validate() error {
 	if o.KpiHandler == nil {
 		unregistered = append(unregistered, "KpiHandler")
 	}
+	if o.MassaGetAddressesHandler == nil {
+		unregistered = append(unregistered, "MassaGetAddressesHandler")
+	}
 	if o.MgmtPluginsListHandler == nil {
 		unregistered = append(unregistered, "MgmtPluginsListHandler")
 	}
@@ -329,8 +382,35 @@ func (o *ThyraServerAPI) Validate() error {
 	if o.MyDomainsGetterHandler == nil {
 		unregistered = append(unregistered, "MyDomainsGetterHandler")
 	}
+	if o.PluginManagerExecuteCommandHandler == nil {
+		unregistered = append(unregistered, "PluginManagerExecuteCommandHandler")
+	}
+	if o.PluginManagerGetInformationHandler == nil {
+		unregistered = append(unregistered, "PluginManagerGetInformationHandler")
+	}
+	if o.PluginManagerInstallHandler == nil {
+		unregistered = append(unregistered, "PluginManagerInstallHandler")
+	}
+	if o.PluginManagerListHandler == nil {
+		unregistered = append(unregistered, "PluginManagerListHandler")
+	}
+	if o.PluginManagerRegisterHandler == nil {
+		unregistered = append(unregistered, "PluginManagerRegisterHandler")
+	}
+	if o.PluginManagerUninstallHandler == nil {
+		unregistered = append(unregistered, "PluginManagerUninstallHandler")
+	}
+	if o.PluginRouterHandler == nil {
+		unregistered = append(unregistered, "PluginRouterHandler")
+	}
 	if o.ThyraEventsGetterHandler == nil {
 		unregistered = append(unregistered, "ThyraEventsGetterHandler")
+	}
+	if o.ThyraHomeHandler == nil {
+		unregistered = append(unregistered, "ThyraHomeHandler")
+	}
+	if o.ThyraPluginManagerHandler == nil {
+		unregistered = append(unregistered, "ThyraPluginManagerHandler")
 	}
 	if o.ThyraRegistryHandler == nil {
 		unregistered = append(unregistered, "ThyraRegistryHandler")
@@ -469,6 +549,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/massa/addresses"] = NewMassaGetAddresses(o.context, o.MassaGetAddressesHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/mgmt/plugins"] = NewMgmtPluginsList(o.context, o.MgmtPluginsListHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
@@ -494,10 +578,46 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/my/domains/{nickname}"] = NewMyDomainsGetter(o.context, o.MyDomainsGetterHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/plugin-manager/{id}/execute"] = NewPluginManagerExecuteCommand(o.context, o.PluginManagerExecuteCommandHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/plugin-manager/{id}"] = NewPluginManagerGetInformation(o.context, o.PluginManagerGetInformationHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/plugin-manager"] = NewPluginManagerInstall(o.context, o.PluginManagerInstallHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/plugin-manager"] = NewPluginManagerList(o.context, o.PluginManagerListHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/plugin-manager/register"] = NewPluginManagerRegister(o.context, o.PluginManagerRegisterHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/plugin-manager/{id}"] = NewPluginManagerUninstall(o.context, o.PluginManagerUninstallHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/thyra/plugin/{author-name}/{plugin-name}"] = NewPluginRouter(o.context, o.PluginRouterHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/thyra/events/{str}/{caller}"] = NewThyraEventsGetter(o.context, o.ThyraEventsGetterHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/thyra/home/{resource}"] = NewThyraHome(o.context, o.ThyraHomeHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/thyra/plugin-manager/{resource}"] = NewThyraPluginManager(o.context, o.ThyraPluginManagerHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

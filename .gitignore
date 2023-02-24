@@ -6,6 +6,9 @@ tmp/
 
 # IDE
 .idea
-.vscode
 
 /plugins/
+
+# Thyra builded react files
+int/api/dist/
+main

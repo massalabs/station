@@ -11,6 +11,24 @@ schemes:
   - https
 swagger: "2.0"
 paths:
+  /thyra/plugin/{author-name}/{plugin-name}:
+    get:
+      operationId: pluginRouter
+      description: virtual endpoint handling requests for third party plugin. The actual handler is defined as an HTTP handler middleware.
+      parameters:
+        - in: path
+          name: author-name
+          type: string
+          required : true
+          description: Author of the plugin.
+        - in: path
+          name: plugin-name
+          required : true
+          type: string
+          description: Name of the plugin.
+      responses:
+        "200":
+          description: Dumb response. All content and HTTP code are possible for this endpoint.
   /thyra/wallet/{resource}:
     get:
       operationId: thyraWallet
@@ -24,9 +42,8 @@ paths:
       parameters:
         - in: path
           name: resource
+          required : true
           type: string
-          default: index.html
-          required: true
           description: Website resource.
       responses:
         "200":
@@ -48,9 +65,8 @@ paths:
       parameters:
         - in: path
           name: resource
+          required : true
           type: string
-          default: index.html
-          required: true
           description: Website resource.
       responses:
         "200":
@@ -72,13 +88,58 @@ paths:
       parameters:
         - in: path
           name: resource
+          required : true
           type: string
-          default: index.html
-          required: true
           description: Website resource.
       responses:
         "200":
           description: Page found
+  /thyra/home/{resource}:
+    get:
+      operationId: thyraHome
+      produces:
+        - application/json
+        - text/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          required : true
+          type: string
+          description: Website resource.
+      responses:
+        "200":
+          description: Page found
+        "404":
+          description: Resource not found.
+          schema:
+            $ref: "#/definitions/Error"
+  /thyra/plugin-manager/{resource}:
+    get:
+      operationId: thyraPluginManager
+      produces:
+        - application/json
+        - text/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          required : true
+          type: string
+          description: Website resource.
+      responses:
+        "200":
+          description: Page found
+        "404":
+          description: Resource not found.
+          schema:
+            $ref: "#/definitions/Error"
   /thyra/events/{str}/{caller}:
     get:
       operationId: thyraEventsGetter
@@ -86,14 +147,14 @@ paths:
         - application/json
       parameters:
         - in: path
+          required : true
           name: str
           type: string
-          required: true
           description: Data content of the event.
         - in: path
           name: caller
+          required : true
           type: string
-          required: true
           description: Creator of the transaction that triggered the event.
       responses:
         "200":
@@ -193,8 +254,8 @@ paths:
       parameters:
         - in: path
           name: nickname
+          required : true
           type: string
-          required: true
           description: Wallet's short name.
       produces:
         - application/json
@@ -224,8 +285,8 @@ paths:
       parameters:
         - in: path
           name: nickname
+          required : true
           type: string
-          required: true
           description: Wallet's short name.
       produces:
         - application/json
@@ -250,6 +311,63 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /massa/addresses:
+    get:
+      operationId: massaGetAddresses
+      parameters:
+        - in: query
+          name: attributes
+          type : array
+          collectionFormat: multi
+          description: |
+                     Specifies the attributes to return. If no attributes are provided, they are all returned.
+                     Possible values:
+
+                     | Attribute | Content |
+                     | ----------- | -----------|
+                     | balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |
+          items : 
+            type: string
+            enum: [balance]
+        - in: query  
+          name : addresses
+          required : true
+          x-nullable: false
+          type : array
+          collectionFormat: multi
+          description : list of wanted addresses
+          items:
+            type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Addresses' infos retrieved
+          schema:
+            type : object
+            properties: 
+              addressesAttributes: 
+                type: object 
+                additionalProperties:
+                  description : address key
+                  type: object
+                  properties:
+                    balance:
+                      type: object
+                      properties:
+                        pending:
+                          type: string
+                        final:
+                          type: string
+            
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
   /my/domains/{nickname}:
     get:
       operationId: myDomainsGetter
@@ -257,7 +375,7 @@ paths:
         - in: path
           name: nickname
           type: string
-          required: true
+          required : true
           description: Wallet's short name.
       produces:
         - application/json
@@ -582,7 +700,6 @@ paths:
         - in: path
           name: resource
           type: string
-          default: index.html
           required: true
           description: Website resource.
       responses:
@@ -638,6 +755,267 @@ paths:
             $ref: "#/definitions/Error"
         "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+  /plugin-manager:
+    post:
+      operationId: pluginManagerInstall
+      parameters:
+        - in: query
+          name: source
+          type: string
+          format: url
+          required: true
+          x-nullable: false
+          description: URL from which to retrieve the plug-in.
+      produces:
+        - application/json
+      responses:
+        "204":
+          description: Plugin successfully installed
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+    get:
+      operationId: pluginManagerList
+      responses:
+        "200":
+          description: List all installed plugins.
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  description: Plugin identifier.
+                  type: string
+                  x-nullable: false
+                name:
+                  description: Plugin name.
+                  type: string
+                  x-nullable: false
+                description:
+                  description: Plugin description.
+                  type: string
+                  x-nullable: false
+                home:
+                  description: Plugin home Url.
+                  type: string
+                  x-nullable: false
+                status:
+                  description: Plugin status.
+                  enum: ["Starting", "Up", "Down", "ShuttingDown", "Crashed"]
+                  x-nullable: false
+                logo:
+                  description: Plugin logo Url.
+                  type: string
+                  x-nullable: false
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+  /plugin-manager/register:
+    post:
+      operationId: pluginManagerRegister
+      parameters:
+        - in: body
+          name: body
+          required: true
+          x-nullable: false
+          schema:
+            type: object
+            required:
+              - id
+              - name
+              - author
+              - description
+              - logo
+              - url
+              - api-spec
+            properties:
+                id:
+                  description: Plugin identifier.
+                  type: string
+                  x-nullable: false
+                name:
+                  description: Plugin name.
+                  type: string
+                  x-nullable: false
+                author:
+                  description: Plugin author.
+                  type: string
+                  x-nullable: false
+                description:
+                  description: Plugin description.
+                  type: string
+                  x-nullable: false
+                logo:
+                  description: Plugin logo.
+                  type: string
+                  x-nullable: false
+                home:
+                  description: Plugin home url.
+                  type: string
+                  x-nullable: false
+                url:
+                  description: URL authority to use to connect to the plugin
+                  type: string
+                  x-nullable: false
+                api_spec:
+                  description: Plugin API specification
+                  type: string
+                  x-nullable: false
+      responses:
+        "204":
+          description: Plugin successfully installed
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+  /plugin-manager/{id}:
+    get:
+      operationId: pluginManagerGetInformation
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required : true
+          description: Plugin identifier.
+      responses:
+        "200":
+          description: Get execution information from the plugin.
+          schema:
+            type: object
+            properties:
+              status:
+                description: Plugin status.
+                type: string
+                enum: ["Starting", "Up", "Down", "ShuttingDown", "Crashed"]
+                x-nullable: false
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      operationId: pluginManagerUninstall
+      parameters:
+        - in: path
+          name: id
+          required : true
+          type: string
+          description: Plugin identifier.
+      responses:
+        "204":
+          description: Plugin successfuly remove from the system.
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+  /plugin-manager/{id}/execute:
+    post:
+      operationId: pluginManagerExecuteCommand
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required : true
+          description: Plugin unique identifier.
+        - in: body
+          name: body
+          required: true
+          x-nullable: false
+          schema:
+            type: object
+            required:
+              - command
+            properties:
+                command:
+                  description: Command to execute.
+                  type: string
+                  enum: ["update", "stop", "start", "restart"]
+                  x-nullable: false
+      responses:
+        "204":
+          description: Command successfuly executed.
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+        "501":
+          description: Not Implemented - the server does not support the functionality required to fulfill the request.
           schema:
             $ref: "#/definitions/Error"
 definitions:

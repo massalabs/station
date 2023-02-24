@@ -6,6 +6,7 @@ SCRIPT="Linux"
 MKCERT_URL="https://dl.filippo.io/mkcert/latest?for=linux/amd64"
 
 THYRA_CONF_DIR=$HOME/.config/thyra
+THYRA_PLUGINS_DIR=$THYRA_CONF_DIR/plugins
 
 green () { echo -e "\033[01;32m$1:\033[0m $2"; }
 
@@ -35,6 +36,9 @@ install_thyra () {
 
     # Create config dir
     mkdir -p $THYRA_CONF_DIR
+
+    # Create plugins dir
+    mkdir -p $THYRA_PLUGINS_DIR
 }
 
 configure_network_manager () {
@@ -70,7 +74,10 @@ set_local_dns () {
 }
 
 generate_certificate () {
-    green "INFO" "Installing MKcert and generating HTTPS certificates:"
+    green "INFO" "Installing MKcert, its dependencies and then generating HTTPS certificates:"
+
+    [[ $(dpkg -s firefox | grep Status) ]] && (sudo apt install libnss3-tools || fatal "impossible to install certutil. Thyra will not work on Firefox.")
+
     curl -sL $MKCERT_URL -o mkcert
     chmod +x mkcert
     ./mkcert -install

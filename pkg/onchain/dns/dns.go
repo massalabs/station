@@ -3,6 +3,7 @@ package dns
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
@@ -12,31 +13,33 @@ import (
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-const DNSRawAddress = "A15e47ChESAK1SdmGe3b92bybnBvMX2eFaxg23wn3rSdRzFHHGB"
+const EnvKey = "THYRA_DNS_ADDRESS"
+
+func Address() string {
+	return os.Getenv(EnvKey)
+}
 
 /*
 This function fetch the address of the website storer associated with the name given in parameter
 from the DNS smart contract and returns it.
 */
 func Resolve(client *node.Client, name string) (string, error) {
-	const dnsPrefix = "record"
-
-	entry, err := node.DatastoreEntry(client, DNSRawAddress, convert.StringToBytes(dnsPrefix+name))
+	entry, err := node.DatastoreEntry(client, Address(), convert.StringToBytes(name))
 	if err != nil {
-		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", DNSRawAddress, dnsPrefix+name, err)
+		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", Address(), name, err)
 	}
 
 	if len(entry.CandidateValue) == 0 {
 		return "", errors.New("name not found")
 	}
-	// we remove from the address its header length expressed as a U32
-	return convert.BytesToString(entry.CandidateValue), nil
+	// entry.CandidateValue contains the website address + the owner address, we keep only the website address.
+	return convert.ByteToStringArray(entry.CandidateValue)[0], nil
 }
 
 func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContract string) (string, error) {
-	addr, _, err := base58.VersionedCheckDecode(DNSRawAddress[1:])
+	addr, _, err := base58.VersionedCheckDecode(Address()[1:])
 	if err != nil {
-		return "", fmt.Errorf("checking address '%s': %w", DNSRawAddress[1:], err)
+		return "", fmt.Errorf("checking address '%s': %w", Address()[1:], err)
 	}
 
 	// Set Resolver prepare data
@@ -51,4 +54,29 @@ func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContr
 	}
 
 	return result, nil
+}
+
+type MetaData struct {
+	CreationTimeStamp   uint64
+	LastUpdateTimestamp uint64
+}
+
+// FetchRecordMetaData returns the website meta data from the DNS samrt contract stored on the blockchain.
+func FetchRecordMetaData(client *node.Client, websiteStorerAddress string) (MetaData, error) {
+	data, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes("META"))
+	if err != nil {
+		return MetaData{}, fmt.Errorf("while getting meta data: %w", err)
+	}
+
+	creation := convert.BytesToU64(data.CandidateValue)
+	update := uint64(0)
+
+	if len(data.CandidateValue) == 2*convert.BytesPerUint64 {
+		update = convert.BytesToU64(data.CandidateValue[convert.BytesPerUint64:])
+	}
+
+	return MetaData{
+		CreationTimeStamp:   creation,
+		LastUpdateTimestamp: update,
+	}, nil
 }

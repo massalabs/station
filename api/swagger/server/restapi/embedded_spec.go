@@ -86,7 +86,6 @@ func init() {
           },
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -332,6 +331,85 @@ func init() {
                   }
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/massa/addresses": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "massaGetAddresses",
+        "parameters": [
+          {
+            "type": "array",
+            "items": {
+              "enum": [
+                "balance"
+              ],
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "x-nullable": false,
+            "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nPossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
+            "name": "attributes",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "x-nullable": false,
+            "description": "list of wanted addresses",
+            "name": "addresses",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Addresses' infos retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "addressesAttributes": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "description": "address key",
+                    "type": "object",
+                    "properties": {
+                      "balance": {
+                        "type": "object",
+                        "properties": {
+                          "final": {
+                            "type": "string"
+                          },
+                          "pending": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           }
         }
@@ -624,6 +702,401 @@ func init() {
         }
       }
     },
+    "/plugin-manager": {
+      "get": {
+        "operationId": "pluginManagerList",
+        "responses": {
+          "200": {
+            "description": "List all installed plugins.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "description": "Plugin description.",
+                    "type": "string",
+                    "x-nullable": false
+                  },
+                  "home": {
+                    "description": "Plugin home Url.",
+                    "type": "string",
+                    "x-nullable": false
+                  },
+                  "id": {
+                    "description": "Plugin identifier.",
+                    "type": "string",
+                    "x-nullable": false
+                  },
+                  "logo": {
+                    "description": "Plugin logo Url.",
+                    "type": "string",
+                    "x-nullable": false
+                  },
+                  "name": {
+                    "description": "Plugin name.",
+                    "type": "string",
+                    "x-nullable": false
+                  },
+                  "status": {
+                    "description": "Plugin status.",
+                    "enum": [
+                      "Starting",
+                      "Up",
+                      "Down",
+                      "ShuttingDown",
+                      "Crashed"
+                    ],
+                    "x-nullable": false
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "pluginManagerInstall",
+        "parameters": [
+          {
+            "type": "string",
+            "format": "url",
+            "x-nullable": false,
+            "description": "URL from which to retrieve the plug-in.",
+            "name": "source",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Plugin successfully installed"
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/plugin-manager/register": {
+      "post": {
+        "operationId": "pluginManagerRegister",
+        "parameters": [
+          {
+            "x-nullable": false,
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "author",
+                "description",
+                "logo",
+                "url",
+                "api-spec"
+              ],
+              "properties": {
+                "api_spec": {
+                  "description": "Plugin API specification",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "author": {
+                  "description": "Plugin author.",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "description": {
+                  "description": "Plugin description.",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "home": {
+                  "description": "Plugin home url.",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "id": {
+                  "description": "Plugin identifier.",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "logo": {
+                  "description": "Plugin logo.",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "name": {
+                  "description": "Plugin name.",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "url": {
+                  "description": "URL authority to use to connect to the plugin",
+                  "type": "string",
+                  "x-nullable": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Plugin successfully installed"
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/plugin-manager/{id}": {
+      "get": {
+        "operationId": "pluginManagerGetInformation",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Plugin identifier.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get execution information from the plugin.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "description": "Plugin status.",
+                  "type": "string",
+                  "enum": [
+                    "Starting",
+                    "Up",
+                    "Down",
+                    "ShuttingDown",
+                    "Crashed"
+                  ],
+                  "x-nullable": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "pluginManagerUninstall",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Plugin identifier.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Plugin successfuly remove from the system."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/plugin-manager/{id}/execute": {
+      "post": {
+        "operationId": "pluginManagerExecuteCommand",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Plugin unique identifier.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "x-nullable": false,
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "command"
+              ],
+              "properties": {
+                "command": {
+                  "description": "Command to execute.",
+                  "type": "string",
+                  "enum": [
+                    "update",
+                    "stop",
+                    "start",
+                    "restart"
+                  ],
+                  "x-nullable": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Command successfuly executed."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "501": {
+            "description": "Not Implemented - the server does not support the functionality required to fulfill the request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/events/{str}/{caller}": {
       "get": {
         "produces": [
@@ -668,6 +1141,99 @@ func init() {
         }
       }
     },
+    "/thyra/home/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "text/javascript",
+          "text/html",
+          "text/css",
+          "text/webp",
+          "image/png"
+        ],
+        "operationId": "thyraHome",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/thyra/plugin-manager/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "text/javascript",
+          "text/html",
+          "text/css",
+          "text/webp",
+          "image/png"
+        ],
+        "operationId": "thyraPluginManager",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/thyra/plugin/{author-name}/{plugin-name}": {
+      "get": {
+        "description": "virtual endpoint handling requests for third party plugin. The actual handler is defined as an HTTP handler middleware.",
+        "operationId": "pluginRouter",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Author of the plugin.",
+            "name": "author-name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Name of the plugin.",
+            "name": "plugin-name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dumb response. All content and HTTP code are possible for this endpoint."
+          }
+        }
+      }
+    },
     "/thyra/registry/{resource}": {
       "get": {
         "produces": [
@@ -682,7 +1248,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -710,7 +1275,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -744,7 +1308,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1181,7 +1744,6 @@ func init() {
           },
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1380,6 +1942,71 @@ func init() {
                   }
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/massa/addresses": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "massaGetAddresses",
+        "parameters": [
+          {
+            "type": "array",
+            "items": {
+              "enum": [
+                "balance"
+              ],
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "x-nullable": false,
+            "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nPossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
+            "name": "attributes",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "x-nullable": false,
+            "description": "list of wanted addresses",
+            "name": "addresses",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Addresses' infos retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "addressesAttributes": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions/AddressesAttributesAnon"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           }
         }
@@ -1672,6 +2299,363 @@ func init() {
         }
       }
     },
+    "/plugin-manager": {
+      "get": {
+        "operationId": "pluginManagerList",
+        "responses": {
+          "200": {
+            "description": "List all installed plugins.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PluginManagerListOKBodyItems0"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "pluginManagerInstall",
+        "parameters": [
+          {
+            "type": "string",
+            "format": "url",
+            "x-nullable": false,
+            "description": "URL from which to retrieve the plug-in.",
+            "name": "source",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Plugin successfully installed"
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/plugin-manager/register": {
+      "post": {
+        "operationId": "pluginManagerRegister",
+        "parameters": [
+          {
+            "x-nullable": false,
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "author",
+                "description",
+                "logo",
+                "url",
+                "api-spec"
+              ],
+              "properties": {
+                "api_spec": {
+                  "description": "Plugin API specification",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "author": {
+                  "description": "Plugin author.",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "description": {
+                  "description": "Plugin description.",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "home": {
+                  "description": "Plugin home url.",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "id": {
+                  "description": "Plugin identifier.",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "logo": {
+                  "description": "Plugin logo.",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "name": {
+                  "description": "Plugin name.",
+                  "type": "string",
+                  "x-nullable": false
+                },
+                "url": {
+                  "description": "URL authority to use to connect to the plugin",
+                  "type": "string",
+                  "x-nullable": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Plugin successfully installed"
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/plugin-manager/{id}": {
+      "get": {
+        "operationId": "pluginManagerGetInformation",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Plugin identifier.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get execution information from the plugin.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "description": "Plugin status.",
+                  "type": "string",
+                  "enum": [
+                    "Starting",
+                    "Up",
+                    "Down",
+                    "ShuttingDown",
+                    "Crashed"
+                  ],
+                  "x-nullable": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "pluginManagerUninstall",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Plugin identifier.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Plugin successfuly remove from the system."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/plugin-manager/{id}/execute": {
+      "post": {
+        "operationId": "pluginManagerExecuteCommand",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Plugin unique identifier.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "x-nullable": false,
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "command"
+              ],
+              "properties": {
+                "command": {
+                  "description": "Command to execute.",
+                  "type": "string",
+                  "enum": [
+                    "update",
+                    "stop",
+                    "start",
+                    "restart"
+                  ],
+                  "x-nullable": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Command successfuly executed."
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "501": {
+            "description": "Not Implemented - the server does not support the functionality required to fulfill the request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/events/{str}/{caller}": {
       "get": {
         "produces": [
@@ -1716,6 +2700,99 @@ func init() {
         }
       }
     },
+    "/thyra/home/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "image/png",
+          "text/css",
+          "text/html",
+          "text/javascript",
+          "text/webp"
+        ],
+        "operationId": "thyraHome",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/thyra/plugin-manager/{resource}": {
+      "get": {
+        "produces": [
+          "application/json",
+          "image/png",
+          "text/css",
+          "text/html",
+          "text/javascript",
+          "text/webp"
+        ],
+        "operationId": "thyraPluginManager",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Website resource.",
+            "name": "resource",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page found"
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/thyra/plugin/{author-name}/{plugin-name}": {
+      "get": {
+        "description": "virtual endpoint handling requests for third party plugin. The actual handler is defined as an HTTP handler middleware.",
+        "operationId": "pluginRouter",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Author of the plugin.",
+            "name": "author-name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Name of the plugin.",
+            "name": "plugin-name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dumb response. All content and HTTP code are possible for this endpoint."
+          }
+        }
+      }
+    },
     "/thyra/registry/{resource}": {
       "get": {
         "produces": [
@@ -1730,7 +2807,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1758,7 +2834,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1792,7 +2867,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -2012,6 +3086,34 @@ func init() {
     }
   },
   "definitions": {
+    "AddressesAttributesAnon": {
+      "description": "address key",
+      "type": "object",
+      "properties": {
+        "balance": {
+          "type": "object",
+          "properties": {
+            "final": {
+              "type": "string"
+            },
+            "pending": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "AddressesAttributesAnonBalance": {
+      "type": "object",
+      "properties": {
+        "final": {
+          "type": "string"
+        },
+        "pending": {
+          "type": "string"
+        }
+      }
+    },
     "CmdExecuteFunctionParamsBodyGaz": {
       "description": "Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.",
       "type": "object",
@@ -2102,6 +3204,47 @@ func init() {
         "port": {
           "description": "Plugin's port.",
           "type": "integer"
+        }
+      }
+    },
+    "PluginManagerListOKBodyItems0": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Plugin description.",
+          "type": "string",
+          "x-nullable": false
+        },
+        "home": {
+          "description": "Plugin home Url.",
+          "type": "string",
+          "x-nullable": false
+        },
+        "id": {
+          "description": "Plugin identifier.",
+          "type": "string",
+          "x-nullable": false
+        },
+        "logo": {
+          "description": "Plugin logo Url.",
+          "type": "string",
+          "x-nullable": false
+        },
+        "name": {
+          "description": "Plugin name.",
+          "type": "string",
+          "x-nullable": false
+        },
+        "status": {
+          "description": "Plugin status.",
+          "enum": [
+            "Starting",
+            "Up",
+            "Down",
+            "ShuttingDown",
+            "Crashed"
+          ],
+          "x-nullable": false
         }
       }
     },

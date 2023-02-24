@@ -11,10 +11,13 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/int/api/cmd"
+	"github.com/massalabs/thyra/int/api/massa"
+	"github.com/massalabs/thyra/int/api/myplugin"
 	"github.com/massalabs/thyra/int/api/plugin"
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/node"
+	"github.com/massalabs/thyra/pkg/onchain/dns"
 	pluginmanager "github.com/massalabs/thyra/pkg/plugins"
 )
 
@@ -24,6 +27,7 @@ type StartServerFlags struct {
 	TLSCertificate    string
 	TLSCertificateKey string
 	MassaNodeServer   string
+	DNSAddress        string
 	Version           bool
 }
 
@@ -40,20 +44,34 @@ func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 	}
 
 	parseNetworkFlag(&startFlags.MassaNodeServer)
+
+	if startFlags.DNSAddress != "" {
+		os.Setenv(dns.EnvKey, startFlags.DNSAddress)
+	}
 }
 
 func parseNetworkFlag(massaNodeServerPtr *string) {
+	var dnsAddress string
+
 	switch *massaNodeServerPtr {
 	case "TESTNET":
 		*massaNodeServerPtr = "https://test.massa.net/api/v2"
+		// testnet19
+		dnsAddress = "A1WDKYGwiq4h9wfHxidnju5gD4EtU9ruwih3BKAUhpZyJhqpBj4"
+
 	case "LABNET":
 		*massaNodeServerPtr = "https://labnet.massa.net/api/v2"
+		dnsAddress = "A12RgLPuRQaVTue2CtPws6deXUfUnk6nfveZS9bedyzoNS8WyYtg"
+
 	case "INNONET":
-		*massaNodeServerPtr = "https://inno.massa.net/test15"
+		*massaNodeServerPtr = "https://inno.massa.net/test19"
+		dnsAddress = "A1tnNcCY9Z8nE45snYjs7aC1GqCXkqiYaY5bbwqKkt11aH9HftJ"
+
 	case "LOCALHOST":
 		*massaNodeServerPtr = "http://127.0.0.1:33035"
 	}
 
+	os.Setenv(dns.EnvKey, dnsAddress)
 	os.Setenv("MASSA_NODE_URL", *massaNodeServerPtr)
 }
 
@@ -79,7 +97,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *p
 	localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
 	localAPI.MgmtWalletImportHandler = wallet.NewImport(&walletStorage, app)
 	localAPI.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage, app)
-
+	localAPI.MassaGetAddressesHandler = operations.MassaGetAddressesHandlerFunc(massa.AddressesHandler)
 	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(
 		websites.CreatePrepareForWebsiteHandler(app),
 	)
@@ -93,12 +111,15 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *p
 	localAPI.AllDomainsGetterHandler = operations.AllDomainsGetterHandlerFunc(websites.RegistryHandler)
 
 	localAPI.ThyraRegistryHandler = operations.ThyraRegistryHandlerFunc(ThyraRegistryHandler)
-
+	localAPI.ThyraHomeHandler = operations.ThyraHomeHandlerFunc(ThyraHomeHandler)
 	localAPI.ThyraEventsGetterHandler = operations.ThyraEventsGetterHandlerFunc(EventListenerHandler)
 	localAPI.BrowseHandler = operations.BrowseHandlerFunc(BrowseHandler)
+	localAPI.ThyraPluginManagerHandler = operations.ThyraPluginManagerHandlerFunc(ThyraPluginManagerHandler)
 
 	localAPI.ThyraWalletHandler = operations.ThyraWalletHandlerFunc(ThyraWalletHandler)
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
+
+	myplugin.InitializePluginAPI(localAPI)
 }
 
 func StartServer(app *fyne.App, startFlags StartServerFlags) {
@@ -126,12 +147,14 @@ func StartServer(app *fyne.App, startFlags StartServerFlags) {
 
 	log.Printf("Connected to node server %s (version %s)\n", os.Getenv("MASSA_NODE_URL"), nodeVersion)
 
-	// Run plugins
+	// Load plugins
 	manager, err := pluginmanager.New(server.Port, server.TLSPort)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
+	// Start plugins
+	manager.StartPlugins()
 	defer stopServer(app, server, manager)
 
 	initLocalAPI(localAPI, app, manager)

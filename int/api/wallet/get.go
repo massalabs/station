@@ -8,11 +8,9 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/node/ledger"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
-//nolint:nolintlint,ireturn
 func NewGet(walletStorage *sync.Map) operations.MgmtWalletGetHandler {
 	return &walletGet{walletStorage: walletStorage}
 }
@@ -21,7 +19,6 @@ type walletGet struct {
 	walletStorage *sync.Map
 }
 
-//nolint:nolintlint,ireturn
 func (c *walletGet) Handle(params operations.MgmtWalletGetParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
@@ -37,7 +34,7 @@ func (c *walletGet) Handle(params operations.MgmtWalletGetParams) middleware.Res
 	var wal []*models.Wallet
 
 	for i := 0; i < len(wallets); i++ { //nolint:varnamelen
-		address, err := ledger.Addresses(client, []string{wallets[i].Address})
+		address, err := node.Addresses(client, []string{wallets[i].Address})
 		if err != nil {
 			return operations.NewMgmtWalletGetInternalServerError().WithPayload(
 				&models.Error{
