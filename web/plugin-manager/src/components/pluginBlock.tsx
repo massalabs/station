@@ -1,71 +1,47 @@
-import { SetStateAction, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowPathIcon, TrashIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
 import axiosServices from "../services/axios";
-import { AxiosResponse } from "axios";
 import { PluginProps } from "../../../shared/interfaces/IPlugin";
 import { isUp } from "../helpers/isUp";
 
 function PluginBlock(p: PluginProps) {
+    console.log("load plugin PluginBlock:",p)
+    console.log("isUp?:",isUp(p.plugin.status))
     // Callback to set error on parent
     function sendErrorData(errorType: string, errorMessage: string) {
         p.setErrorData(errorType, errorMessage);
     }
-    // Data to display
-    let pluginProperties = useMemo(() => {
-        return p.props;
-    }, [p.props]);
-
     // Toggle status state
-    const [toggleStatus, setStatus] = useState(isUp(p.props.status));
-
-    const [playStatusClassName, setPlayStatusClassName] = useState(defineRunStatus());
+    const [isPluginUp, setStatus] = useState(isUp(p.plugin.status));
+    useEffect(() => setStatus(isUp(p.plugin.status)));
 
     // fetch info from plugin to get fresh data on demand
-    async function fetchPluginStatus(): Promise<AxiosResponse<string>> {
-        let result: AxiosResponse<string> = {} as AxiosResponse<string>;
+    async function fetchPluginStatus(): Promise<string | undefined> {
         try {
-            return (result = await axiosServices.getpluginInfo(pluginProperties.id));
+            const status = await axiosServices.getpluginInfo(p.plugin.id);
+            console.log("fetchPluginStatus:",status.data)
+            setStatus(isUp(status.data))
+            return status.data
         } catch (error: any) {
             console.log(error);
             sendErrorData(
                 "error",
                 `Plugins infos failed to get infos from 
-                plugin name : ${pluginProperties.name} on id: ${pluginProperties.id}, error: ${error.message}}`
+                plugin name : ${p.plugin.name} on id: ${p.plugin.id}, error: ${error.message}}`
             );
         }
-        return result;
     }
 
     // Launch or stop plugin
     async function launchOrStop() {
-        let resultPluginInfo: AxiosResponse<string>;
-        // fetch info from plugin to get fresh data
-        resultPluginInfo = await fetchPluginStatus();
-        // Update data
-        setStatus(isUp(resultPluginInfo.data));
-
-        let result: AxiosResponse<number>;
-        if (toggleStatus) {
-            // Stop plugin
-            try {
-                await axiosServices.manageLifePlugins(pluginProperties.id, "stop");
-                forceRunStatus(false);
-                setStatus(false);
-                pluginProperties.status = "Down";
-                return
-            } catch (error: any) {
-                sendErrorData("error", `Stop plugin failed , error ${error.message}`);
-            }
-        }
         // Launch plugin
         try {
-            await axiosServices.manageLifePlugins(pluginProperties.id, "start");
-            setStatus(true);
-            forceRunStatus(true);
-            pluginProperties.status = "Up";
+            setStatus(!isPluginUp);
+            await axiosServices.manageLifePlugins(p.plugin.id, isPluginUp ? "stop" : "start");
         } catch (error: any) {
             sendErrorData("error", `Start plugin failed , error :${error.message}`);
         }
+        fetchPluginStatus()
     }
 
     // Update plugin
@@ -86,16 +62,17 @@ function PluginBlock(p: PluginProps) {
     }
     // Open plugin homepage
     function openHomepagePlugins() {
-        if (isUp(pluginProperties.status)) window.open(pluginProperties.home);
+        if (isPluginUp)
+         window.open(p.plugin.home);
         else {
-            sendErrorData("error", "Plugin is not running can't be launched , launch it first");
+            sendErrorData("error", "Plugin is not running, launch it first");
         }
     }
     // Uninstall plugin
     function removePlugins() {
         try {
-            axiosServices.deletePlugins(pluginProperties.id);
-            p.triggerRefreshPluginList();
+            axiosServices.deletePlugins(p.plugin.id);
+            p.getPluginsInfo();
             sendErrorData("success", "Plugin removed");
         } catch (error: any) {
             sendErrorData("error", `Plugins failed to be removed , error ${error.message}`);
@@ -111,19 +88,11 @@ function PluginBlock(p: PluginProps) {
     }
 
     // Change the play status icon color and update the status if we want to force it
-    function defineRunStatus() {
-        if (isUp(pluginProperties.status)) {
+    function setRunStatusColor() {
+        if (isPluginUp) {
             return "w-6 h-6 text-green-500";
         } else {
             return "w-6 h-6 text-red-500";
-        }
-    }
-
-    function forceRunStatus(status: boolean) {
-        if (status) {
-            setPlayStatusClassName("w-6 h-6 text-green-500");
-        } else {
-            setPlayStatusClassName("w-6 h-6 text-red-500");
         }
     }
 
@@ -139,28 +108,28 @@ function PluginBlock(p: PluginProps) {
             <div className=" flex-row h-full text-white ">
                 {/* First block Display plugin name and description */}
                 <div className="flex">
-                    <img className="w-10 h-10 pt-3 mx-2" src={p.props.logo} alt="Plugin Logo" />
+                    <img className="w-10 h-10 pt-3 mx-2" src={p.plugin.logo} alt="Plugin Logo" />
                     <div className="w-full">
-                        <h1 className="font-bold">{minimize(p.props.name, 90)}</h1>
+                        <h1 className="font-bold">{minimize(p.plugin.name, 90)}</h1>
                         <p className="font-light max-sm:text-sm">
-                            {minimize(p.props.description, 100)}
+                            {minimize(p.plugin.description, 100)}
                         </p>
                     </div>
                 </div>
                 {/* Second Block with Icons  */}
                 <div className="flex w-full pt-7 justify-around items-center">
                     {/* Delete hidden when version will be send through the API */}
-                    <p className="hidden font-light">V: {p.props.version}</p>
+                    <p className="hidden font-light">V: {p.plugin.version ?? "0.0.0"}</p>
                     <input
                         type="checkbox"
                         className="toggle toggle-success"
-                        checked={toggleStatus}
+                        checked={isPluginUp}
                         onChange={launchOrStop}
                     />
 
                     <button>
                         <PlayCircleIcon
-                            className={playStatusClassName}
+                            className={setRunStatusColor()}
                             onClick={openHomepagePlugins}
                         />
                     </button>
