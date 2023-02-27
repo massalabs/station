@@ -7,7 +7,6 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/onchain"
 )
@@ -23,8 +22,6 @@ func CreateCmdDeploySCHandler(
 func cmdDeploySCHandler(params operations.CmdDeploySCParams, app *fyne.App) middleware.Responder {
 	client := node.NewDefaultClient()
 
-	wallet, _ := websites.LoadAndUnprotectWallet(params.Nickname, app)
-
 	file, err := io.ReadAll(params.Wasmfile)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().
@@ -35,7 +32,7 @@ func cmdDeploySCHandler(params operations.CmdDeploySCParams, app *fyne.App) midd
 				})
 	}
 
-	address, err := onchain.DeploySC(client, *wallet, file)
+	address, err := onchain.DeploySCV2(client, params.Nickname, file)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().
 			WithPayload(

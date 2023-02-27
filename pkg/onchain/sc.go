@@ -77,8 +77,6 @@ func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet, expiryDelta
 	return operationID, nil
 }
 
-// DeploySC deploys a smart contract on the blockchain. It returns the address of the smart contract and an Error.
-// The smart contract is deployed with the given wallet.
 func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (string, error) {
 	datastore := make(map[[3]uint8][]uint8)
 
@@ -101,6 +99,57 @@ func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (strin
 
 	ticker := time.NewTicker(time.Second * evenHeartbeat)
 
+	for ; true; <-ticker.C {
+		counter++
+
+		if counter > maxWaitingTimeInSeconds*evenHeartbeat {
+			break
+		}
+
+		events, err := node.Events(client, nil, nil, nil, nil, &opID)
+		if err != nil {
+			return "", fmt.Errorf("waiting SC deployment: %w", err)
+		}
+
+		if len(events) > 0 {
+			event := events[0].Data
+			//  Catch Run Time Error and return it
+			if strings.Contains(event, "massa_execution_error") {
+				// return the event containing the error
+				return "", errors.New(event)
+			}
+			// if there is an event, return the first event
+			return event, nil
+		}
+	}
+	// If no event received, return a message to announce sc is deployed
+	return "sc deployed successfully but no event received", nil
+}
+
+// DeploySC deploys a smart contract on the blockchain. It returns the address of the smart contract and an Error.
+// The smart contract is deployed with the given wallet.
+func DeploySCV2(client *node.Client, nickname string, contract []byte) (string, error) {
+	datastore := make(map[[3]uint8][]uint8)
+
+	datastore[[3]uint8{1, 2, 3}] = []uint8{1, 2, 3}
+	exeSC := executesc.New(contract,
+		sendOperation.DefaultGazLimit,
+		sendOperation.NoCoin, datastore)
+
+	opID, err := sendOperation.CallV2(
+		client,
+		sendOperation.DefaultSlotsDuration,
+		sendOperation.NoFee,
+		exeSC,
+		nickname)
+	if err != nil {
+		return "", fmt.Errorf("calling executeSC: %w", err)
+	}
+
+	counter := 0
+
+	ticker := time.NewTicker(time.Second * evenHeartbeat)
+	fmt.Println("Waiting for events...")
 	for ; true; <-ticker.C {
 		counter++
 
