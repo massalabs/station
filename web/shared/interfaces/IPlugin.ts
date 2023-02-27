@@ -12,7 +12,7 @@ export interface Plugin {
 
 export interface PluginProps {
     plugin: Plugin;
-    setErrorData: (errorType: string, errorMessage: string) => void;
+    errorHandler: (errorType: string, errorMessage: string) => void;
     getPluginsInfo: () => void;
 }
 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axiosServices from '../services/axios';
 
 export interface InstallProps {
-    setErrorData: (errorType: string, errorMessage: string) => void;
+    errorHandler: (errorType: string, errorMessage: string) => void;
     getPluginsInfo: () => void;
 }
 
@@ -18,10 +18,10 @@ function InstallPlugin(p: InstallProps) {
 
         try {
             await axiosServices.installPlugin(pluginUrl);
-            p.setErrorData("success", "Plugin installed");
+            p.errorHandler("success", "Plugin installed");
 
         } catch (error: any) {
-            p.setErrorData("error", `Plugins installation failed: ${error.message}`);
+            p.errorHandler("error", `Plugins installation failed: ${error.response?.data?.message}`);
         }
         p.getPluginsInfo()
     }
