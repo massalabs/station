@@ -69,6 +69,7 @@ function Manager() {
                 }
                 <InstallPlugin
                     errorHandler={errorHandler}
+                    plugins={plugins}
                     getPluginsInfo={getPluginsInfo}
                 />
                 {plugins?.some(p => p.name === "Node Manager") ?

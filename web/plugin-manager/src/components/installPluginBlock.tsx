@@ -1,13 +1,26 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axiosServices from '../services/axios';
+import { Circles } from 'react-loader-spinner'
+import { Plugin } from '../../../shared/interfaces/IPlugin';
 
 export interface InstallProps {
     errorHandler: (errorType: string, errorMessage: string) => void;
+    plugins: Plugin[];
     getPluginsInfo: () => void;
 }
 
 function InstallPlugin(p: InstallProps) {
     const [pluginUrl, setPluginUrl] = useState('');
+    const [isInstalling, setIsInstalling] = useState<boolean>(false);
+
+    let nbPluginsTmp = 0;
+    useEffect(() => {
+        // Wait for the plugin to be installed to clean things
+        if(isInstalling && p.plugins.length > nbPluginsTmp) {
+            setIsInstalling(false)
+            setPluginUrl("");
+        }
+    }, [p.plugins]);
 
     function handlePluginUrlChange(event: any) {
         setPluginUrl(event.target.value);
@@ -16,6 +29,8 @@ function InstallPlugin(p: InstallProps) {
     async function handleInstallPlugin(event: any) {
         event.preventDefault();
 
+        setIsInstalling(true)
+        nbPluginsTmp = p.plugins.length;
         try {
             await axiosServices.installPlugin(pluginUrl);
             p.errorHandler("success", "Plugin installed");
@@ -39,7 +54,7 @@ function InstallPlugin(p: InstallProps) {
                     <form onSubmit={handleInstallPlugin}>
                         <div className="mb-4">
                             <label htmlFor="plugin-url" className="block font-bold mb-2">
-                                Plugin URL:
+                                {isInstalling ? "Installing..." : "Plugin URL:"}
                             </label>
                             <input
                                 id="plugin-url"
@@ -48,17 +63,28 @@ function InstallPlugin(p: InstallProps) {
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 value={pluginUrl}
                                 onChange={handlePluginUrlChange}
+                                hidden={isInstalling}
                             />
                         </div>
                         <div className="flex justify-end">
                             <button
                                 type="submit"
+                                hidden={isInstalling}
                                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             >
                                 Install
                             </button>
                         </div>
                     </form>
+                    <Circles
+                        height="60"
+                        width="60"
+                        color="#dc091e"
+                        ariaLabel="circles-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                        visible={isInstalling}
+                    />
                 </div>
                 </div>
         </section>
