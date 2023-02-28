@@ -795,26 +795,6 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /mgmt/plugins:
-    get:
-      operationId: mgmtPluginsList
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Plugins list
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Plugin"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
   /all/domains:
     get:
       operationId: allDomainsGetter

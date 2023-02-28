@@ -516,37 +516,6 @@ func init() {
         }
       }
     },
-    "/mgmt/plugins": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtPluginsList",
-        "responses": {
-          "200": {
-            "description": "Plugins list",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Plugin"
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
     "/mgmt/wallet": {
       "get": {
         "produces": [
@@ -2303,37 +2272,6 @@ func init() {
                     "$ref": "#/definitions/AddressesAttributesAnon"
                   }
                 }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/mgmt/plugins": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtPluginsList",
-        "responses": {
-          "200": {
-            "description": "Plugins list",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Plugin"
               }
             }
           },
