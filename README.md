@@ -13,8 +13,7 @@ This project is still WIP. It is a prototype.
 ⚠️ Potential breaking changes ahead ⚠️
 
 ## Contribute
-
-see [contributing section](./Contribute.md)
+go to [Contributing](./CONTRIBUTING.md)
 ## How to...
 
 ### ... install Thyra on my computer?
