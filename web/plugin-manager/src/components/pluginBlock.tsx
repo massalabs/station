@@ -5,9 +5,6 @@ import { PluginProps } from "../../../shared/interfaces/IPlugin";
 import { isUp } from "../helpers/isUp";
 
 function PluginBlock(p: PluginProps) {
-    if (!p) {
-        return <div></div>
-    }
 
     const [isPluginUp, setStatus] = useState(isUp(p.plugin.status));
     useEffect(() => setStatus(isUp(p.plugin.status)), [p.plugin.status]);
@@ -16,9 +13,10 @@ function PluginBlock(p: PluginProps) {
     async function getpluginInfo(): Promise<string | undefined> {
         try {
             const res = await axiosServices.getpluginInfo(p.plugin.id);
-            setStatus(isUp(res.data.status))
+            const status = res.data.status
+            setStatus(isUp(status))
 
-            return res.data?.status
+            return status
         } catch (error: any) {
             p.errorHandler(
                 "error",

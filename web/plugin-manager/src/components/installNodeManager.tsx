@@ -28,16 +28,16 @@ function InstallNodeManager(p: InstallProps) {
 
     const [isInstalling, setIsInstalling] = useState<boolean>(false);
 
-    const [Os, setOs] = useState<string | undefined>(undefined);
+    const [os, setOs] = useState<string | undefined>(undefined);
     useEffect(() => setOs(getOperatingSystem()), []);
 
     async function handleInstallPlugin(_: any) {
-        if (!Os) {
+        if (!os) {
             p.errorHandler("error", `Unable to detect operating system`);
             return
         }
         let url = "https://github.com/massalabs/thyra-node-manager-plugin/releases/latest/download/thyra-plugin-node-manager_";
-        switch (Os) {
+        switch (os) {
             case "win": url =
                 url = url + "windows-amd64.zip";
                 break;
@@ -75,7 +75,7 @@ function InstallNodeManager(p: InstallProps) {
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         onClick={handleInstallPlugin}
                     >
-                        Install{Os ? ` for ${Os}` : ""}
+                        Install{os ? ` for ${os}` : ""}
                     </button>
                     {isInstalling ? "Installing..." : ""}
                     <Circles

@@ -2,14 +2,13 @@ import { useEffect, useState } from 'react';
 import axiosServices from '../services/axios';
 import { Circles } from 'react-loader-spinner'
 import { Plugin } from '../../../shared/interfaces/IPlugin';
+import { InstallProps } from './installNodeManager';
 
-export interface InstallProps {
-    errorHandler: (errorType: string, errorMessage: string) => void;
+export interface InstallZipProps extends InstallProps {
     plugins: Plugin[];
-    getPluginsInfo: () => void;
 }
 
-function InstallPlugin(p: InstallProps) {
+function InstallPlugin(p: InstallZipProps) {
     const [pluginUrl, setPluginUrl] = useState('');
     const [isInstalling, setIsInstalling] = useState<boolean>(false);
 
