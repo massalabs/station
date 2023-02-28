@@ -97,9 +97,19 @@ func Call(client *node.Client,
 
 	msg := message(expiry, fee, operation)
 
+	fmt.Println("OPEARTION CONTENT : ", operation.Message())
+
 	digest := blake3.Sum256(append(pubKey, msg...))
 
+	fmt.Println("DIGEST : ", digest)
+
 	signature := ed25519.Sign(privKey, digest[:])
+
+	fmt.Println("SIGNATURE : ", signature)
+
+	fmt.Println("B58 SIGNATURE : ", base58.CheckEncode(signature))
+
+	fmt.Println("B58 PKEY : ", "P"+base58.VersionedCheckEncode(pubKey, 0))
 
 	rawResponse, err := client.RPCClient.Call(
 		context.Background(),
@@ -156,6 +166,8 @@ func CallV2(client *node.Client,
 
 	msg := message(expiry, fee, operation)
 
+	fmt.Println("OPEARTION CONTENT : ", operation.Message())
+
 	str := b64.StdEncoding.EncodeToString(msg)
 
 	var jsonData = []byte(`{
@@ -204,7 +216,12 @@ func CallV2(client *node.Client,
 		return "", fmt.Errorf("decoding b64: %w", err)
 	}
 
-	fmt.Println("DECODED SIGNATURE : ", signature)
+	fmt.Println("B64 DECODED SIGNATURE : ", signature)
+
+	fmt.Println("B58 SIGNATURE : ", signature)
+
+	fmt.Println("B58 PKEY : ", res.PublicKey)
+
 	rawResponse, err := client.RPCClient.Call(
 		context.Background(),
 		"send_operations",
