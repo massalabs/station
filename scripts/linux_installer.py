@@ -6,6 +6,8 @@ from installer import Installer
 class LinuxInstaller(Installer):
     def __init__(self):
         super().__init__()
+
+        self.THYRA_INSTALL_FOLDER_PATH = "/usr/local/bin"
         self.THYRA_SERVER_FILENAME = "thyra-server"
         self.THYRA_APP_FILENAME = "thyra-app"
         self.MKCERT_FILENAME = "mkcert"
@@ -69,11 +71,19 @@ class LinuxInstaller(Installer):
             self.executeCommand("sudo apt-get install -y libnss3-tools", True)
 
         super().generateCACertificate()
+    
+    def _moveFile(self, file, destination):
+        self.executeCommand(f"sudo mv {file} {destination}", True)
 
+    def _deleteFile(self, file):
+        self.executeCommand(f"sudo rm {file}", True)
 
-        sudo apt install libqt6widgets6
-
-
+    """
+    Override installThyraServer defined at installer level.
+    """
+    def installThyraServer(self):
+        super().installThyraApp()
+        self.executeCommand(f"sudo setcap CAP_NET_BIND_SERVICE=+eip {self.THYRA_INSTALL_FOLDER_PATH}/{self.THYRA_SERVER_FILENAME}", True)
 
 if __name__ == "__main__":
     if platform.system() != "Linux":

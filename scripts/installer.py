@@ -144,6 +144,12 @@ class Installer:
             self.printErrorAndExit(f"Error while deleting mkcert binary: {err}")
         logging.info("CA certificate successfully generated")
 
+    def _moveFile(self, file, destination):
+        shutil.move(file, destination)
+    
+    def _deleteFile(self, file):
+        os.remove(thyra_server_path)
+
     """
     Downloads and installs a binary from the given url and stores it in the given install path.
     """
@@ -155,8 +161,8 @@ class Installer:
             try:
                 thyra_server_path = os.path.join(install_path, binary_filename)
                 if os.path.exists(thyra_server_path):
-                    os.remove(thyra_server_path)
-                shutil.move(binary_filename, install_path)
+                    self._deleteFile(thyra_server_path)
+                self._moveFile(binary_filename, install_path)
             except OSError as err:
                 self.printErrorAndExit(f"Error while moving {binary_filename} binary: {err}")
         logging.debug(f"{binary_filename} successfully installed")
