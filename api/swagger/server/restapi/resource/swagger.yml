@@ -629,7 +629,7 @@ paths:
           type: string
           required: true
           x-nullable: false
-          description: Name of the Wallet associated to the SmartContract using to deployed.
+          description: Name of the wallet used to deploy the smart contract.
         - in: formData
           name: Wasmfile
           type: file
@@ -649,8 +649,8 @@ paths:
         - in: formData
           name : coins
           type: number
-          description: Set the fee amount (in massa) that will be given to the block creator.
-          default: 100
+          description: Set the number of coins that will be sent along the deployment call.
+          default: 0
         - in: formData
           name : expiry
           type : integer
