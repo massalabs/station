@@ -12,13 +12,17 @@ Before you can start contributing, you'll need to complete the following steps:
 ```bash
   sudo apt update
   sudo apt install -y build-essential libgl1-mesa-dev xorg-dev p7zip
-
+```
 - Install Go: Go is required to build and run Thyra. You can install Go by following the instructions at [https://go.dev/doc/install](https://go.dev/doc/install).
 
 - Install Swagger: Thyra uses Swagger to generate code from the API documentation. You can install Swagger by running the following command:
 
 ```bash
 go install github.com/go-swagger/go-swagger/cmd/swagger@latest
+```
+- Install Stringer: it genreates declarations for enum types. You can install Stringer by running the following command:
+```bash 
+go install golang.org/x/tools/cmd/stringer@latest
 ```
 
 You can find more information about Swagger at [https://github.com/go-swagger/go-swagger](https://github.com/go-swagger/go-swagger).
@@ -29,13 +33,16 @@ You can find more information about Swagger at [https://github.com/go-swagger/go
 go generate ./...
 ```
 
-- Run from source: Once you've completed the above steps, you can run Thyra from source by running the following commands:
+- Build from source: Once you've completed the above steps, you can build Thyra from source by running the following commands:
 
 ```bash
 go build -o thyra-server cmd/thyra-server/main.go
-sudo setcap CAP_NET_BIND_SERVICE=+eip thyra-server
-./thyra-server
 ```
+
+> **_NOTE:_** On Linux, you can add the possibility to bind to a port lower than 1024 without the program being executed as root by doing `sudo setcap CAP_NET_BIND_SERVICE=+eip thyra-server`
+
+- Run Thyra: you can finaly launch thyra by executing `thyra-server` binary.
+
 ## Code Formatting
 
 We take code formatting seriously in Thyra to maintain a consistent code style. Please follow these guidelines to ensure that your code is properly formatted:
