@@ -87,7 +87,7 @@ There are many ways to contribute to Thyra, including but not limited to:
 
 To ensure that your contribution is accepted, please follow these guidelines:
 
-- Follow the Go coding style guide: Thyra follows the standard Go coding style guide. Please make sure to follow the same style when submitting your changes.
+- Follow the Go coding style guide: Thyra follows the standard [Go coding style guide](https://google.github.io/styleguide/go/guide) and [best practices](https://go.dev/doc/effective_go). Please make sure to follow the same style when submitting your changes.
 
 - Write tests: Thyra values code quality and reliability. Please make sure to write tests for your changes to ensure that they work as expected.
 
