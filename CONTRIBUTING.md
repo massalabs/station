@@ -48,7 +48,7 @@ For Go code, we use the formatter included in https://marketplace.visualstudio.c
 
 ### golangci-lint
 
-We use `golangci-lint` to run linters in parallel. We recommend installing it locally and running it on your source code before pushing any modifications, otherwise some potential lint errors will be caught by the pipeline.
+We use `golangci-lint` to run linters in parallel. We recommend installing it locally and running it on your source code before pushing any modifications, otherwise some potential lint errors will be caught by the CI pipeline.
 
 To run `golangci-lint` locally:
 ```bash 
