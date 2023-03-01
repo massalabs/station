@@ -178,9 +178,9 @@ class Installer:
         logging.info("Thyra app installed successfully")
 
     def startThyraApp(self):
-        THYRA_APP_PATH = os.path.join(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_APP_FILENAME)
-        if os.path.exists(THYRA_APP_PATH):
-            subprocess.Popen([THYRA_APP_PATH], start_new_session=True)
+        thyra_app_path = os.path.join(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_APP_FILENAME)
+        if os.path.exists(thyra_app_path):
+            subprocess.Popen([thyra_app_path], start_new_session=True)
             logging.info("Thyra App will now start. You can right click on the tray icon to start Thyra.")
 
 
@@ -201,7 +201,7 @@ class Installer:
             logging.info("CA certificate already installed.")
 
         logging.info("Thyra installed successfully !")
-        logging.info(f"Thyra has been installed in {self.THYRA_INSTALL_FOLDER_PATH}")
+        logging.info(f"{self.THYRA_SERVER_FILENAME} and {self.THYRA_APP_FILENAME} has been installed in {self.THYRA_INSTALL_FOLDER_PATH}")
 
         self.startThyraApp()
 
