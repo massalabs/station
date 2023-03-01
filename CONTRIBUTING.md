@@ -26,7 +26,7 @@ You can find more information about Swagger at [https://github.com/go-swagger/go
 - Build generated files: Thyra generates code using Stringer and Go Swagger. You can build all generated files by running the following command:
 
 ```bash 
-go generate ./web/...
+go generate ./...
 ```
 
 - Run from source: Once you've completed the above steps, you can run Thyra from source by running the following commands:
