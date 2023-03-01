@@ -60,7 +60,7 @@ golangci-lint run .
 
 gofumpt need to be installed locally `go install mvdan.cc/gofumpt@latest`
 
-run gofumpt locally on your source code `gofumpt -l -w .`
+run gofumpt locally on your source code `gofumpt -l -w ./...`
 
 - File is not `gci`
 
