@@ -7,7 +7,7 @@ from installer import Installer
 class MacOSInstaller(Installer):
     def __init__(self):
         super().__init__()
-        self.THYRA_SERVER_FILENAME = "thyra_server"
+        self.THYRA_SERVER_FILENAME = "thyra-server"
         self.THYRA_APP_FILENAME = "thyra-app"
         self.MKCERT_FILENAME = "mkcert"
 
