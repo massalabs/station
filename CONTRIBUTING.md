@@ -66,7 +66,7 @@ run gofumpt locally on your source code `gofumpt -l -w ./...`
 
 gci need to be installed locally `go install github.com/daixiang0/gci@latest`
 
-run gci locally on your source code `gci --write .`
+run gci locally on your source code `gci --write ./...`
 
 
 ## Ways to Contribute
