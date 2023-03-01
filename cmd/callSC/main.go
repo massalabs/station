@@ -20,7 +20,7 @@ func main() {
 
 	client := node.NewDefaultClient()
 
-	addr, _, err := base58.VersionedCheckDecode(rawAddr[1:])
+	addr, _, err := base58.VersionedCheckDecode(rawAddr[2:])
 	if err != nil {
 		panic(err)
 	}
