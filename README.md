@@ -59,16 +59,6 @@ Important note: At the moment, we have defined that 1 chunk (=280ko) of data wor
 **Troubleshooting** If you got any problem at any steps of the process, join us on [Discord dedicated channel](https://discord.com/channels/828270821042159636/851942484212318259) or [report a problem](https://github.com/massalabs/thyra/issues/new/choose)
 
 
-### ... get the latest dev version of `thyra-server`?
-
-To install the latest dev version of the `thyra-server` application you need to:
-
-- [install go](https://go.dev/doc/install)
-- execute `go install github.com/massalabs/thyra/cmd/thyra-server@latest` in your terminal
-
-Note: you can change `main` to a tag or a commit value if needed.
-
-That's it, thyra-server is installed in '$HOME/go/bin/' dir and you can use it by executing `thyra-server` in your terminal.
 
 ### ... pass options to `thyra-server`?
 
