@@ -47,11 +47,6 @@ go build -o thyra-server cmd/thyra-server/main.go
 
 We take code formatting seriously in Thyra to maintain a consistent code style. Please follow these guidelines to ensure that your code is properly formatted:
 
-### Setup Code Formatting Tool
-
-We use Prettier to format our code. We recommend installing the Prettier extension for your IDE to format on save.
-
-For Go code, we use the formatter included in https://marketplace.visualstudio.com/items?itemName=golang.go.
 
 ### golangci-lint
 
