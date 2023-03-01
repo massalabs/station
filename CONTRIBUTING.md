@@ -7,6 +7,11 @@ Thank you for considering contributing to Thyra! We welcome contributions from t
 To contribute to Thyra, you should have a basic understanding of the Go programming language and Git version control system. If you're new to Go, we recommend checking out [A Tour of Go](https://tour.golang.org/welcome/1) to get started.
 
 Before you can start contributing, you'll need to complete the following steps:
+- install the dependencies :
+```bash
+  sudo apt update
+  sudo apt install -y build-essential libgl1-mesa-dev xorg-dev p7zip
+```
 
 - Install Go: Go is required to build and run Thyra. You can install Go by following the instructions at [https://go.dev/doc/install](https://go.dev/doc/install).
 
@@ -31,6 +36,37 @@ go build -o thyra-server cmd/thyra-server/main.go
 sudo setcap CAP_NET_BIND_SERVICE=+eip thyra-server
 ./thyra-server
 ```
+## Code Formatting
+
+We take code formatting seriously in Thyra to maintain a consistent code style. Please follow these guidelines to ensure that your code is properly formatted:
+
+### Setup Code Formatting Tool
+
+We use Prettier to format our code. We recommend installing the Prettier extension for your IDE to format on save.
+
+For Go code, we use the formatter included in https://marketplace.visualstudio.com/items?itemName=golang.go.
+
+### golangci-lint
+
+We use `golangci-lint` to run linters in parallel. We recommend installing it locally and running it on your source code before pushing any modifications, otherwise some potential lint errors will be caught by the pipeline.
+
+To run `golangci-lint` locally:
+```bash 
+golangci-lint run .
+```
+#### How to resolve golangci-lint recurring errors ?
+
+- File is not `gofumpt`
+
+gofumpt need to be installed locally `go install mvdan.cc/gofumpt@latest`
+
+run gofumpt locally on your source code `gofumpt -l -w .`
+
+- File is not `gci`
+
+gci need to be installed locally `go install github.com/daixiang0/gci@latest`
+
+run gci locally on your source code `gci --write .`
 
 
 ## Ways to Contribute
