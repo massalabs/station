@@ -52,7 +52,7 @@ We use `golangci-lint` to run linters in parallel. We recommend installing it lo
 
 To run `golangci-lint` locally:
 ```bash 
-golangci-lint run .
+golangci-lint run ./...
 ```
 #### How to resolve golangci-lint recurring errors ?
 
