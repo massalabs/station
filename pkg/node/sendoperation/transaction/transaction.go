@@ -34,7 +34,7 @@ func New(recipientAddress []byte, amount uint64) *Transaction {
 func (t *Transaction) Content() interface{} {
 	return &Operation{
 		Transaction: OperationDetails{
-			RecipientAddress: "AU" + base58.CheckEncode(append(make([]byte, 1), t.recipientAddress...)),
+			RecipientAddress: "AU" + base58.VersionedCheckEncode(t.recipientAddress, 0),
 			Amount:           fmt.Sprint(t.amount),
 		},
 	}
