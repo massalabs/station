@@ -183,6 +183,14 @@ class Installer:
         self.installBinary(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_APP_URL, self.THYRA_APP_FILENAME)
         logging.info("Thyra app installed successfully")
 
+    def createConfigFolder(self):
+        logging.info("Creating config folder")
+        if not os.path.exists(self.THYRA_CONFIG_FOLDER_PATH):
+            try:
+                os.makedirs(self.THYRA_CONFIG_FOLDER_PATH)
+                os.makedirs(self.THYRA_PLUGINS_PATH)
+            except OSError as err:
+                self.printErrorAndExit(f"Error while creating config folder: {err}")
 
     def startThyraApp(self):
         thyra_app_path = os.path.join(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_APP_FILENAME)
