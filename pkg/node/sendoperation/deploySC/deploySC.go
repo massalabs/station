@@ -3,7 +3,6 @@ package deploysc
 import (
 	"io"
 
-	"fyne.io/fyne/v2"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
@@ -11,15 +10,14 @@ import (
 	"github.com/massalabs/thyra/pkg/onchain"
 )
 
-func CreateCmdDeploySCHandler(
-	app *fyne.App,
-) func(params operations.CmdDeploySCParams) middleware.Responder {
+func CreateCmdDeploySCHandler() func(params operations.CmdDeploySCParams) middleware.Responder {
+	//nolint:gocritic
 	return func(params operations.CmdDeploySCParams) middleware.Responder {
-		return cmdDeploySCHandler(params, app)
+		return cmdDeploySCHandler(params)
 	}
 }
 
-func cmdDeploySCHandler(params operations.CmdDeploySCParams, app *fyne.App) middleware.Responder {
+func cmdDeploySCHandler(params operations.CmdDeploySCParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
 	file, err := io.ReadAll(params.Wasmfile)

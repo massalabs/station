@@ -4,12 +4,11 @@ import (
 	"bytes"
 	"context"
 	"crypto/ed25519"
-	"encoding/base64"
 	b64 "encoding/base64"
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -37,6 +36,9 @@ const OneMassa = 1000000000
 
 const WalletPluginURL = "http://127.0.0.1:8080/rest/wallet/"
 
+const HTTPRequestTimeout = 30 * time.Second
+
+//nolint:tagliatelle
 type signOperationResponse struct {
 	PublicKey string `json:"publicKey"`
 	Signature string `json:"signature"`
@@ -99,19 +101,9 @@ func Call(client *node.Client,
 
 	msg := message(expiry, fee, operation)
 
-	fmt.Println("OPEARTION CONTENT : ", msg)
-
 	digest := blake3.Sum256(append(pubKey, msg...))
 
-	fmt.Println("DIGEST : ", digest)
-
 	signature := ed25519.Sign(privKey, digest[:])
-
-	fmt.Println("SIGNATURE : ", signature)
-
-	fmt.Println("B58 SIGNATURE : ", base58.CheckEncode(signature))
-
-	fmt.Println("B58 PKEY : ", "P"+base58.VersionedCheckEncode(pubKey, 0))
 
 	rawResponse, err := client.RPCClient.Call(
 		context.Background(),
@@ -154,6 +146,9 @@ func Call(client *node.Client,
 	return resp[0], nil
 }
 
+// CallV2 uses the plugin wallet instead of Thyra integrated wallet.
+//
+//nolint:funlen
 func CallV2(client *node.Client,
 	expiry uint64, fee uint64,
 	operation Operation,
@@ -170,43 +165,23 @@ func CallV2(client *node.Client,
 
 	b64EncodedMsg := b64.StdEncoding.EncodeToString(msg)
 
-	request, err := http.NewRequest("POST", WalletPluginURL+nickname+"/signOperation",
+	httpRawResponse, err := executeHTTPRequest(http.MethodPost, WalletPluginURL+nickname+"/signOperation",
 		bytes.NewBuffer([]byte(`{
-			"operation": "`+b64EncodedMsg+`"
-	}`)))
-
+		"operation": "`+b64EncodedMsg+`"
+		}`)))
 	if err != nil {
-		return "", fmt.Errorf("creating signOperation HTTP request: %w", err)
+		return "", fmt.Errorf("calling executeHTTPRequest: %w", err)
 	}
 
-	request.Header.Set("Content-Type", "application/json;")
-
-	HTTPClient := &http.Client{Timeout: 30 * time.Second}
-	walletResp, err := HTTPClient.Do(request)
-
-	if err != nil {
-		return "", fmt.Errorf("aborting during HTTP request: %w", err)
-	}
-
-	if walletResp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("signOperation failed with HTTP request status: %w", err)
-	}
-
-	body, err := ioutil.ReadAll(walletResp.Body)
-	if err != nil {
-		return "", fmt.Errorf("reading request body: %w", err)
-	}
-
-	defer walletResp.Body.Close()
-
+	//nolint:exhaustruct
 	res := signOperationResponse{}
-	err = json.Unmarshal(body, &res)
+	err = json.Unmarshal(httpRawResponse, &res)
 
 	if err != nil {
 		return "", fmt.Errorf("unmarshalling json: %w", err)
 	}
 
-	signature, err := base64.StdEncoding.DecodeString(res.Signature)
+	signature, err := b64.StdEncoding.DecodeString(res.Signature)
 	if err != nil {
 		return "", fmt.Errorf("decoding b64: %w", err)
 	}
@@ -250,4 +225,37 @@ func CallV2(client *node.Client,
 	}
 
 	return resp[0], nil
+}
+
+func executeHTTPRequest(methodType string, url string, reader io.Reader) ([]byte, error) {
+	request, err := http.NewRequestWithContext(
+		context.Background(),
+		methodType,
+		url,
+		reader)
+	if err != nil {
+		return nil, fmt.Errorf("creating HTTP request: %w", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json;")
+
+	HTTPClient := &http.Client{Timeout: HTTPRequestTimeout, Transport: nil, Jar: nil, CheckRedirect: nil}
+
+	walletResp, err := HTTPClient.Do(request)
+	if err != nil {
+		return nil, fmt.Errorf("aborting during HTTP request: %w", err)
+	}
+
+	if walletResp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("request failed with status: %w", err)
+	}
+
+	body, err := io.ReadAll(walletResp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("reading request body: %w", err)
+	}
+
+	defer walletResp.Body.Close()
+
+	return body, nil
 }
