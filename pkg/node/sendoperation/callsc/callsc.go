@@ -33,7 +33,7 @@ type CallSC struct {
 
 func New(address []byte, function string, parameters []byte, gazLimit uint64, coins uint64,
 ) *CallSC {
-	//New testnet20 addresses needs a byte 0 for AU addresses and byte 1 for AS addresses
+	// New testnet20 addresses needs a byte 0 for AU addresses and byte 1 for AS addresses
 	addressVersioned := append([]byte{byte(1)}, address...)
 
 	return &CallSC{
@@ -44,8 +44,6 @@ func New(address []byte, function string, parameters []byte, gazLimit uint64, co
 
 func (c *CallSC) Content() interface{} {
 	versionByte := byte(1)
-	fmt.Println("🚀 ~ file: callsc.go:49 ~ func ~ TargetAddr:  + base58.VersionedCheckEncode(c.address, versionByte):", "AS"+base58.VersionedCheckEncode(c.address, versionByte))
-
 	return &Operation{
 		CallSC: OperationDetails{
 			MaxGaz:     int64(c.gazLimit),

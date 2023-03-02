@@ -55,11 +55,11 @@
 					"query": [
 						{
 							"key": "addresses",
-							"value": "A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
+							"value": "AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
 						},
 						{
 							"key": "addresses",
-							"value": "A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
+							"value": "A1U2tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
 						}
 					]
 				}
@@ -119,11 +119,11 @@
 						},
 						{
 							"key": "addresses",
-							"value": "A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
+							"value": "AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
 						},
 						{
 							"key": "addresses",
-							"value": "A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
+							"value": "AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
 						}
 					]
 				}
