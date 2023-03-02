@@ -149,7 +149,7 @@ func DeploySCV2(client *node.Client, nickname string, contract []byte) (string, 
 	counter := 0
 
 	ticker := time.NewTicker(time.Second * evenHeartbeat)
-	fmt.Println("Waiting for events...")
+
 	for ; true; <-ticker.C {
 		counter++
 

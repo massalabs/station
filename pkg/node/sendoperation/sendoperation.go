@@ -35,6 +35,8 @@ const HundredMassa = 100000000000
 
 const OneMassa = 1000000000
 
+const WalletPluginURL = "http://127.0.0.1:8080/rest/wallet/"
+
 type signOperationResponse struct {
 	PublicKey string `json:"publicKey"`
 	Signature string `json:"signature"`
@@ -97,7 +99,7 @@ func Call(client *node.Client,
 
 	msg := message(expiry, fee, operation)
 
-	fmt.Println("OPEARTION CONTENT : ", operation.Message())
+	fmt.Println("OPEARTION CONTENT : ", msg)
 
 	digest := blake3.Sum256(append(pubKey, msg...))
 
@@ -166,18 +168,15 @@ func CallV2(client *node.Client,
 
 	msg := message(expiry, fee, operation)
 
-	fmt.Println("OPEARTION CONTENT : ", operation.Message())
+	b64EncodedMsg := b64.StdEncoding.EncodeToString(msg)
 
-	str := b64.StdEncoding.EncodeToString(msg)
-
-	var jsonData = []byte(`{
-		"operation": "` + str + `"
-	}`)
-
-	request, err := http.NewRequest("POST", "http://127.0.0.1:8080/rest/wallet/"+nickname+"/signOperation", bytes.NewBuffer(jsonData))
+	request, err := http.NewRequest("POST", WalletPluginURL+nickname+"/signOperation",
+		bytes.NewBuffer([]byte(`{
+			"operation": "`+b64EncodedMsg+`"
+	}`)))
 
 	if err != nil {
-		return "", fmt.Errorf("calling signOperation HTTP request: %w", err)
+		return "", fmt.Errorf("creating signOperation HTTP request: %w", err)
 	}
 
 	request.Header.Set("Content-Type", "application/json;")
@@ -186,8 +185,11 @@ func CallV2(client *node.Client,
 	walletResp, err := HTTPClient.Do(request)
 
 	if err != nil {
-		fmt.Println(err)
 		return "", fmt.Errorf("aborting during HTTP request: %w", err)
+	}
+
+	if walletResp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("signOperation failed with HTTP request status: %w", err)
 	}
 
 	body, err := ioutil.ReadAll(walletResp.Body)
@@ -197,30 +199,17 @@ func CallV2(client *node.Client,
 
 	defer walletResp.Body.Close()
 
-	if walletResp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("signOperation HTTP request status: %w", err)
-	}
-
 	res := signOperationResponse{}
 	err = json.Unmarshal(body, &res)
 
 	if err != nil {
-		fmt.Println(err)
 		return "", fmt.Errorf("unmarshalling json: %w", err)
 	}
 
-	fmt.Println("RES IS : \n", res.PublicKey, "\n", res.Signature)
 	signature, err := base64.StdEncoding.DecodeString(res.Signature)
 	if err != nil {
-		fmt.Println(err)
 		return "", fmt.Errorf("decoding b64: %w", err)
 	}
-
-	fmt.Println("B64 DECODED SIGNATURE : ", signature)
-
-	fmt.Println("B58 SIGNATURE : ", signature)
-
-	fmt.Println("B58 PKEY : ", res.PublicKey)
 
 	rawResponse, err := client.RPCClient.Call(
 		context.Background(),

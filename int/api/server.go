@@ -66,7 +66,7 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 
 	case "INNONET":
 		*massaNodeServerPtr = "https://inno.massa.net/test19"
-		dnsAddress = "A1tnNcCY9Z8nE45snYjs7aC1GqCXkqiYaY5bbwqKkt11aH9HftJ"
+		dnsAddress = "A1wsBqyXY2xZqXeJ7aXxcJiMnfVoS7keCFxJGNtQTr6QZ4uhryd"
 
 	case "LOCALHOST":
 		*massaNodeServerPtr = "http://127.0.0.1:33035"
