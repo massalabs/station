@@ -177,6 +177,13 @@ class Installer:
         self.installBinary(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_APP_URL, self.THYRA_APP_FILENAME)
         logging.info("Thyra app installed successfully")
 
+    def startThyraApp(self):
+        thyra_app_path = os.path.join(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_APP_FILENAME)
+        if os.path.exists(thyra_app_path):
+            subprocess.Popen([thyra_app_path], start_new_session=True)
+            logging.info("Thyra App will now start. You can right click on the tray icon to start Thyra.")
+
+
     """
     Installs thyra server, thyra app and a DNS server.
     """
@@ -192,4 +199,10 @@ class Installer:
             self.generateCACertificate()
         else:
             logging.info("CA certificate already installed.")
-        logging.info("Thyra installed successfully")
+
+        logging.info("Thyra installed successfully !")
+        logging.info(f"{self.THYRA_SERVER_FILENAME} and {self.THYRA_APP_FILENAME} has been installed in {self.THYRA_INSTALL_FOLDER_PATH}")
+
+        self.startThyraApp()
+
+        logging.info("You can now close this window.")

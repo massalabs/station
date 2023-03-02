@@ -13,76 +13,7 @@ This project is still WIP. It is a prototype.
 ⚠️ Potential breaking changes ahead ⚠️
 
 ## Contribute
-
-### Install dev dependencies
-
-#### Linux:
-
-```bash
-sudo apt update
-sudo apt install -y build-essential libgl1-mesa-dev xorg-dev p7zip
-```
-
-#### all OS:
-
-To develop on this project you will need :
-
-- [go](https://go.dev/doc/install)
-- [swagger](https://github.com/go-swagger/go-swagger) to generate go code from API documentation
-
-#### build generated files:
-
-This command will build all generated files, including, go swagger code, Stringers.
-
-Go swagger generate go code from API documentation, it can be installed using this command:
-
-```bash
-go install github.com/go-swagger/go-swagger/cmd/swagger@latest
-```
-
-launch code generation:
-
-```bash
-go generate
-```
-
-#### build front-end:
-
-The frontend is built with react. Its source code needs to be compiled to be used locally.
-You will need npm and node to be installed.
-
-```bash
-go generate ./web/...
-```
-
-- `go install github.com/go-swagger/go-swagger/cmd/swagger@latest`
-
-### Setup code formatting tool
-
-Use prettrier to format de code. We recommend to install IDE prettier extension to format on save.
-
-For go code, we use the formatter included in <https://marketplace.visualstudio.com/items?itemName=golang.go>.
-
-
-### golangci-lint
-
-- golangci-lint is used to run linters in parallel.. We recommend to [install](https://golangci-lint.run/usage/install/) it locally and run it on your source code, before pushing any modification, otherwise some potential lint errors will be catched by the pipeline.
-- to run golangci-lint locally : `golangci-lint run .`
-
-#### How to resolve golangci-lint recurring errors ?
-
-- File is not `gofumpt`
-
-gofumpt need to be installed locally `go install mvdan.cc/gofumpt@latest`
-
-run gofumpt locally on your source code `gofumpt -l -w .`
-
-- File is not `gci`
-
-gci need to be installed locally `go install github.com/daixiang0/gci@latest`
-
-run gci locally on your source code `gci --write .`
-
+go to [Contributing](./CONTRIBUTING.md)
 ## How to...
 
 ### ... install Thyra on my computer?
@@ -128,16 +59,6 @@ Important note: At the moment, we have defined that 1 chunk (=280ko) of data wor
 **Troubleshooting** If you got any problem at any steps of the process, join us on [Discord dedicated channel](https://discord.com/channels/828270821042159636/851942484212318259) or [report a problem](https://github.com/massalabs/thyra/issues/new/choose)
 
 
-### ... get the latest dev version of `thyra-server`?
-
-To install the latest dev version of the `thyra-server` application you need to:
-
-- [install go](https://go.dev/doc/install)
-- execute `go install github.com/massalabs/thyra/cmd/thyra-server@latest` in your terminal
-
-Note: you can change `main` to a tag or a commit value if needed.
-
-That's it, thyra-server is installed in '$HOME/go/bin/' dir and you can use it by executing `thyra-server` in your terminal.
 
 ### ... pass options to `thyra-server`?
 
