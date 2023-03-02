@@ -21,10 +21,33 @@ class MacOSInstaller(Installer):
         else:
             self.printErrorAndExit(f"Unsupported architecture {platform.machine()}")
 
+    def configureNetworkInterface(self):
+        logging.info("Configuring network interface...")
+        stdout, _stderr = self.executeCommand("networksetup -listallnetworkservices", True)
+
+        networkAdaptersNames = list(filter(None, stdout.split('\n')))
+        networkAdaptersNames.pop(0)
+        networkAdaptersNames = [adapter.strip() for adapter in networkAdaptersNames]
+
+        for adapter in networkAdaptersNames:
+            self.executeCommand(f'networksetup -setdnsservers "{adapter}" 127.0.0.1', True)
+
+        logging.info("Network interface configured")
+
     def configureDNSMasq(self):
         logging.info("Configuring DNSMasq...")
 
-        self.executeCommand("sudo bash -c 'echo ""address=/.massa/127.0.0.1"" > $(brew --prefix)/etc/dnsmasq.d/massa.conf'", True)
+        servers = [
+            "8.8.8.8",
+            "8.8.4.4",
+        ]
+
+        self.executeCommand("sudo bash -c 'echo -e ""address=/.massa/127.0.0.1"" > $(brew --prefix)/etc/dnsmasq.d/massa.conf'", True)
+        self.executeCommand("sudo bash -c 'echo -e ""no-resolv"" >> $(brew --prefix)/etc/dnsmasq.d/massa.conf'", True)
+        for server in servers:
+            test = f'echo -e ""server={server}"" >> $(brew --prefix)/etc/dnsmasq.d/massa.conf'
+            self.executeCommand(f"sudo bash -c '{test}'", True)
+
         self.executeCommand("sudo mkdir -p /etc/resolver", True)
         self.executeCommand("sudo bash -c 'echo ""nameserver 127.0.0.1"" > /etc/resolver/massa'", True)
 
@@ -36,18 +59,18 @@ class MacOSInstaller(Installer):
         runningDNS = ""
         if stdout:
             runningDNS = stdout.splitlines()[1].split()
-            runningDNS = runningDNS[:-1]
+            runningDNS = runningDNS[0]
 
         if runningDNS == "dnsmasq":
             logging.info("dnsmasq is already installed")
-            self.configureDNSMasq()
         elif runningDNS == "":
             logging.info("Installing dnsmasq...")
             self.executeCommand("brew install dnsmasq", True)
-            self.configureDNSMasq()
         else:
             logging.info(runningDNS)
-            self.printErrorAndExit("Unsupported DNS server")
+            self.printErrorAndExit(f"Unsupported DNS server {runningDNS}")
+        self.configureDNSMasq()
+        self.configureNetworkInterface()
 
     def generateCACertificate(self):
         stdout, _stderr = self.executeCommand("find /Applications/ -type d -iname '*Firefox*.app'", True, allow_failure=True)

@@ -11,6 +11,7 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/int/api/cmd"
+	"github.com/massalabs/thyra/int/api/massa"
 	"github.com/massalabs/thyra/int/api/myplugin"
 	"github.com/massalabs/thyra/int/api/plugin"
 	"github.com/massalabs/thyra/int/api/wallet"
@@ -56,14 +57,15 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 	case "TESTNET":
 		*massaNodeServerPtr = "https://test.massa.net/api/v2"
 		// testnet19
-		dnsAddress = "A129ULhQzqNfhK69wEoZTpBS49QReuA7Py4AU5TPRYP88ERH4T5a"
+		dnsAddress = "A1WDKYGwiq4h9wfHxidnju5gD4EtU9ruwih3BKAUhpZyJhqpBj4"
+
 	case "LABNET":
 		*massaNodeServerPtr = "https://labnet.massa.net/api/v2"
 		dnsAddress = "A12RgLPuRQaVTue2CtPws6deXUfUnk6nfveZS9bedyzoNS8WyYtg"
 
 	case "INNONET":
-		*massaNodeServerPtr = "https://inno.massa.net/test18"
-		dnsAddress = "A1pNR4RCdEYCD5yCGP6yvcuUULUauhcwr4pjwoFp7w2ew5sG6Ni"
+		*massaNodeServerPtr = "https://inno.massa.net/test19"
+		dnsAddress = "A1tnNcCY9Z8nE45snYjs7aC1GqCXkqiYaY5bbwqKkt11aH9HftJ"
 
 	case "LOCALHOST":
 		*massaNodeServerPtr = "http://127.0.0.1:33035"
@@ -95,7 +97,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *p
 	localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
 	localAPI.MgmtWalletImportHandler = wallet.NewImport(&walletStorage, app)
 	localAPI.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage, app)
-
+	localAPI.MassaGetAddressesHandler = operations.MassaGetAddressesHandlerFunc(massa.AddressesHandler)
 	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(
 		websites.CreatePrepareForWebsiteHandler(app),
 	)

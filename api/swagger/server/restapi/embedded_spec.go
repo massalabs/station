@@ -86,7 +86,6 @@ func init() {
           },
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -332,6 +331,85 @@ func init() {
                   }
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/massa/addresses": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "massaGetAddresses",
+        "parameters": [
+          {
+            "type": "array",
+            "items": {
+              "enum": [
+                "balance"
+              ],
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "x-nullable": false,
+            "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nPossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
+            "name": "attributes",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "x-nullable": false,
+            "description": "list of wanted addresses",
+            "name": "addresses",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Addresses' infos retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "addressesAttributes": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "description": "address key",
+                    "type": "object",
+                    "properties": {
+                      "balance": {
+                        "type": "object",
+                        "properties": {
+                          "final": {
+                            "type": "string"
+                          },
+                          "pending": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           }
         }
@@ -1077,7 +1155,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1111,7 +1188,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1172,7 +1248,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1200,7 +1275,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1234,7 +1308,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1671,7 +1744,6 @@ func init() {
           },
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -1870,6 +1942,71 @@ func init() {
                   }
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/massa/addresses": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "massaGetAddresses",
+        "parameters": [
+          {
+            "type": "array",
+            "items": {
+              "enum": [
+                "balance"
+              ],
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "x-nullable": false,
+            "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nPossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
+            "name": "attributes",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "x-nullable": false,
+            "description": "list of wanted addresses",
+            "name": "addresses",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Addresses' infos retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "addressesAttributes": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions/AddressesAttributesAnon"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           }
         }
@@ -2577,7 +2714,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -2611,7 +2747,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -2672,7 +2807,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -2700,7 +2834,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -2734,7 +2867,6 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "default": "index.html",
             "description": "Website resource.",
             "name": "resource",
             "in": "path",
@@ -2954,6 +3086,34 @@ func init() {
     }
   },
   "definitions": {
+    "AddressesAttributesAnon": {
+      "description": "address key",
+      "type": "object",
+      "properties": {
+        "balance": {
+          "type": "object",
+          "properties": {
+            "final": {
+              "type": "string"
+            },
+            "pending": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "AddressesAttributesAnonBalance": {
+      "type": "object",
+      "properties": {
+        "final": {
+          "type": "string"
+        },
+        "pending": {
+          "type": "string"
+        }
+      }
+    },
     "CmdExecuteFunctionParamsBodyGaz": {
       "description": "Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.",
       "type": "object",
