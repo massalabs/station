@@ -44,6 +44,7 @@ func New(address []byte, function string, parameters []byte, gazLimit uint64, co
 
 func (c *CallSC) Content() interface{} {
 	versionByte := byte(1)
+
 	return &Operation{
 		CallSC: OperationDetails{
 			MaxGaz:     int64(c.gazLimit),
