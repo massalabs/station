@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	rawAddr := "A1JEEbgWPQMt97pJmZ3akxU64yW82wmZRe8EefjnEPxyCHgv1Yn"
+	rawAddr := "AS1JEEbgWPQMt97pJmZ3akxU64yW82wmZRe8EefjnEPxyCHgv1Yn"
 
 	wlt, err := wallet.New("massa")
 	if err != nil {
