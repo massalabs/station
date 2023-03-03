@@ -11,9 +11,9 @@ export interface Plugin {
 }
 
 export interface PluginProps {
-    props: Plugin;
-    setErrorData: (errorType: string, errorMessage: string) => void;
-    triggerRefreshPluginList: () => void;
+    plugin: Plugin;
+    errorHandler: (errorType: string, errorMessage: string) => void;
+    getPluginsInfo: () => void;
 }
 
 export enum PluginStatus {

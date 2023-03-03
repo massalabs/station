@@ -1,15 +1,11 @@
 export const isUp = (status: string) => {
     switch (status) {
         case "Up":
-            return true;
-        case "Down":
-            return false;
         case "Starting":
             return true;
+        case "Down":
         case "Stopping":
-            return false;
         case "Error":
-            return false;
         default:
             return false;
     }

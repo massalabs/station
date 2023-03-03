@@ -1,40 +1,39 @@
 import { useEffect, useState } from "react";
 import PluginBlock from "../components/pluginBlock";
-import { Plugin, PluginProps } from "../../../shared/interfaces/IPlugin";
+import { Plugin } from "../../../shared/interfaces/IPlugin";
 import massaLogoLight from "../assets/MASSA_LIGHT_Detailed.png";
 import axiosServices from "../services/axios";
-import { AxiosResponse } from "axios";
 import alertHelper from "../helpers/alertHelpers";
 import { PuffLoader } from "react-spinners";
+import InstallPlugin from "../components/installPluginBlock";
+import InstallNodeManager from "../components/installNodeManager";
 function Manager() {
-    let pluginsInfos: AxiosResponse<any, any> = {} as AxiosResponse<any, any>;
-
     //State to store error
     const [error, setError] = useState(<></>);
-    //State to store plugins populated
-    const [pluginsPopulated, setpluginsPopulated] = useState([<PuffLoader/>])
+
+    const [plugins, setPlugins] = useState<Plugin[]>([]);
+
     //Callback to remove Error
     function removeError(): void {
         setError(<></>);
     }
-    function setErrorHandler(errorType: string, errorMessage: string): void {
+
+    function errorHandler(errorType: string, errorMessage: string): void {
         setError(alertHelper(errorType, errorMessage, removeError));
         setInterval(() => {
             removeError();
         }, 10000);
     }
 
-    async function getPluginsInfo () {
+    async function getPluginsInfo() {
         try {
-            pluginsInfos = await axiosServices.getPluginsInfo();
-            populatePlugins();
-        } catch (error:any) {
-            setErrorHandler("error", `Get plugins infos failed ,  error ${error.message} `);
+            const pluginsInfos = await axiosServices.getPluginsInfo();
+            setPlugins(pluginsInfos.data);
+        } catch (error: any) {
+            errorHandler("error", `Get plugins infos failed ,  error ${error.message} `);
         }
     };
 
-
-    // Update plugin status each 10 seconds
     // Create a loop to fetch getPluginsInfo and update the status
     useEffect(() => {
         //Initialize Ui on first render
@@ -42,52 +41,12 @@ function Manager() {
         // Set interval to update plugin status periodically
         const interval = setInterval(async () => {
             getPluginsInfo();
-        }, 10000);
+        }, 1000);
         return () => clearInterval(interval);
     }, []);
 
-    const mock: Plugin = {
-        name: "Plugin 1",
-        logo:massaLogoLight,
-        description: "If you see this you probably have a problem with the plugin manager",
-        version: "1.0.0",
-        status: "Down",
-        home: "/urlOfPlugin",
-        // isUpdate: true,
-        id: "1",
-    };
-    // Mocks in case we don't have the plugin manager
-    let mocks = [mock];
-
-    function populatePlugins () {
-        if (pluginsInfos.status == 200) {
-            setpluginsPopulated(pluginsInfos.data.map((mock: Plugin) => {
-                let pluginProps: PluginProps = {
-                    props: mock,
-                    setErrorData: setErrorHandler,
-                    triggerRefreshPluginList: function (): void {
-                        getPluginsInfo();
-                    }
-                };
-                return <PluginBlock {...pluginProps} />;
-            }));
-        } else {
-            setpluginsPopulated (mocks.map((mock: Plugin) => {
-                let pluginProps: PluginProps = {
-                    props: mock,
-                    setErrorData: setErrorHandler,
-                    triggerRefreshPluginList: function (): void {
-                        getPluginsInfo();
-                    }
-                };
-                return <PluginBlock {...pluginProps} />;
-            }));
-        }
-    }
-    
-
     return (
-        <>
+        <div>
             <div className="p-5 flex items-center">
                 <img className="max-h-6" src={massaLogoLight} alt="Thyra Logo" />
                 <h1 className="text-xl ml-6 font-bold text-white">Thyra</h1>
@@ -96,10 +55,33 @@ function Manager() {
             {/* Good First Issue For Community : Rework Css Classname to align bottom line of icon on bottom of container
             Need to delete FlexWrap and rework the container */}
             <div className="flex flex-wrap mx-auto max-w-6xl justify-center content-center">
-                {pluginsPopulated}
+                {plugins?.length ? plugins.filter(p => !!p.name)
+                    // sort plugins by names
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map(plugin => (
+                        <PluginBlock
+                            plugin={plugin}
+                            errorHandler={errorHandler}
+                            getPluginsInfo={getPluginsInfo}
+                        />
+                    ))
+                    : <PuffLoader />
+                }
+                <InstallPlugin
+                    errorHandler={errorHandler}
+                    plugins={plugins}
+                    getPluginsInfo={getPluginsInfo}
+                />
+                {plugins?.some(p => p.name === "Node Manager") ?
+                    "" :
+                    <InstallNodeManager
+                        errorHandler={errorHandler}
+                        getPluginsInfo={getPluginsInfo}
+                    />
+                }
                 {error}
             </div>
-        </>
+        </div>
     );
 }
 
