@@ -56,6 +56,51 @@ func (o *CmdDeploySCOK) WriteResponse(rw http.ResponseWriter, producer runtime.P
 	}
 }
 
+// CmdDeploySCBadRequestCode is the HTTP code returned for type CmdDeploySCBadRequest
+const CmdDeploySCBadRequestCode int = 400
+
+/*
+CmdDeploySCBadRequest Bad request.
+
+swagger:response cmdDeploySCBadRequest
+*/
+type CmdDeploySCBadRequest struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.Error `json:"body,omitempty"`
+}
+
+// NewCmdDeploySCBadRequest creates CmdDeploySCBadRequest with default headers values
+func NewCmdDeploySCBadRequest() *CmdDeploySCBadRequest {
+
+	return &CmdDeploySCBadRequest{}
+}
+
+// WithPayload adds the payload to the cmd deploy s c bad request response
+func (o *CmdDeploySCBadRequest) WithPayload(payload *models.Error) *CmdDeploySCBadRequest {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the cmd deploy s c bad request response
+func (o *CmdDeploySCBadRequest) SetPayload(payload *models.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *CmdDeploySCBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(400)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}
+
 // CmdDeploySCUnprocessableEntityCode is the HTTP code returned for type CmdDeploySCUnprocessableEntity
 const CmdDeploySCUnprocessableEntityCode int = 422
 

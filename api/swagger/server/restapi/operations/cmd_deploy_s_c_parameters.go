@@ -32,12 +32,11 @@ func NewCmdDeploySCParams() CmdDeploySCParams {
 	var (
 		// initialize parameters with default values
 
-		coinsDefault    = float64(100)
-		expiryDefault   = int64(3)
-		feeDefault      = float64(0)
-		gazLimitDefault = int64(7e+08)
-		gazPriceDefault = float64(0)
-		keyIDDefault    = string("default")
+		coinsDefault    = uint64(0)
+		expiryDefault   = uint64(2)
+		feeDefault      = uint64(0)
+		gazLimitDefault = uint64(7e+08)
+		gazPriceDefault = uint64(0)
 	)
 
 	return CmdDeploySCParams{
@@ -50,8 +49,6 @@ func NewCmdDeploySCParams() CmdDeploySCParams {
 		GazLimit: &gazLimitDefault,
 
 		GazPrice: &gazPriceDefault,
-
-		KeyID: &keyIDDefault,
 	}
 }
 
@@ -64,42 +61,42 @@ type CmdDeploySCParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*Website contents in a ZIP file.
+	/*Smart contract file in a Wasm format.
 	  Required: true
 	  In: formData
 	*/
 	Wasmfile io.ReadCloser
-	/*Set the fee amount (in massa) that will be given to the block creator.
-	  In: formData
-	  Default: 100
-	*/
-	Coins *float64
-	/*Set the expiry duration (in number of slots) of the transaction
-	  In: formData
-	  Default: 3
-	*/
-	Expiry *int64
-	/*Set the fee amount (in massa) that will be given to the block creator.
+	/*Set the number of coins that will be sent along the deployment call.
+	  Minimum: 0
 	  In: formData
 	  Default: 0
 	*/
-	Fee *float64
-	/*Maximum number of gaz unit that a node will be able consume.
+	Coins *uint64
+	/*Set the expiry duration (in number of slots) of the transaction.
+	  Minimum: 0
+	  In: formData
+	  Default: 2
+	*/
+	Expiry *uint64
+	/*Set the fee amount (in massa) that will be given to the block creator.
+	  Minimum: 0
+	  In: formData
+	  Default: 0
+	*/
+	Fee *uint64
+	/*Maximum number of gaz unit that a node will be able to consume.
+	  Minimum: 0
 	  In: formData
 	  Default: 7e+08
 	*/
-	GazLimit *int64
+	GazLimit *uint64
 	/*Price of a gaz unit.
+	  Minimum: 0
 	  In: formData
 	  Default: 0
 	*/
-	GazPrice *float64
-	/*Defines the key to used to sign the transaction.
-	  In: formData
-	  Default: "default"
-	*/
-	KeyID *string
-	/*Name of the Wallet in which the website will be deployed.
+	GazPrice *uint64
+	/*Name of the wallet used to deploy the smart contract.
 	  Required: true
 	  In: formData
 	*/
@@ -159,11 +156,6 @@ func (o *CmdDeploySCParams) BindRequest(r *http.Request, route *middleware.Match
 		res = append(res, err)
 	}
 
-	fdKeyID, fdhkKeyID, _ := fds.GetOK("keyId")
-	if err := o.bindKeyID(fdKeyID, fdhkKeyID, route.Formats); err != nil {
-		res = append(res, err)
-	}
-
 	fdNickname, fdhkNickname, _ := fds.GetOK("nickname")
 	if err := o.bindNickname(fdNickname, fdhkNickname, route.Formats); err != nil {
 		res = append(res, err)
@@ -195,11 +187,25 @@ func (o *CmdDeploySCParams) bindCoins(rawData []string, hasKey bool, formats str
 		return nil
 	}
 
-	value, err := swag.ConvertFloat64(raw)
+	value, err := swag.ConvertUint64(raw)
 	if err != nil {
-		return errors.InvalidType("coins", "formData", "float64", raw)
+		return errors.InvalidType("coins", "formData", "uint64", raw)
 	}
 	o.Coins = &value
+
+	if err := o.validateCoins(formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateCoins carries on validations for parameter Coins
+func (o *CmdDeploySCParams) validateCoins(formats strfmt.Registry) error {
+
+	if err := validate.MinimumUint("coins", "formData", *o.Coins, 0, false); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -218,11 +224,25 @@ func (o *CmdDeploySCParams) bindExpiry(rawData []string, hasKey bool, formats st
 		return nil
 	}
 
-	value, err := swag.ConvertInt64(raw)
+	value, err := swag.ConvertUint64(raw)
 	if err != nil {
-		return errors.InvalidType("expiry", "formData", "int64", raw)
+		return errors.InvalidType("expiry", "formData", "uint64", raw)
 	}
 	o.Expiry = &value
+
+	if err := o.validateExpiry(formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateExpiry carries on validations for parameter Expiry
+func (o *CmdDeploySCParams) validateExpiry(formats strfmt.Registry) error {
+
+	if err := validate.MinimumUint("expiry", "formData", *o.Expiry, 0, false); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -241,11 +261,25 @@ func (o *CmdDeploySCParams) bindFee(rawData []string, hasKey bool, formats strfm
 		return nil
 	}
 
-	value, err := swag.ConvertFloat64(raw)
+	value, err := swag.ConvertUint64(raw)
 	if err != nil {
-		return errors.InvalidType("fee", "formData", "float64", raw)
+		return errors.InvalidType("fee", "formData", "uint64", raw)
 	}
 	o.Fee = &value
+
+	if err := o.validateFee(formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateFee carries on validations for parameter Fee
+func (o *CmdDeploySCParams) validateFee(formats strfmt.Registry) error {
+
+	if err := validate.MinimumUint("fee", "formData", *o.Fee, 0, false); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -264,11 +298,25 @@ func (o *CmdDeploySCParams) bindGazLimit(rawData []string, hasKey bool, formats 
 		return nil
 	}
 
-	value, err := swag.ConvertInt64(raw)
+	value, err := swag.ConvertUint64(raw)
 	if err != nil {
-		return errors.InvalidType("gazLimit", "formData", "int64", raw)
+		return errors.InvalidType("gazLimit", "formData", "uint64", raw)
 	}
 	o.GazLimit = &value
+
+	if err := o.validateGazLimit(formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateGazLimit carries on validations for parameter GazLimit
+func (o *CmdDeploySCParams) validateGazLimit(formats strfmt.Registry) error {
+
+	if err := validate.MinimumUint("gazLimit", "formData", *o.GazLimit, 0, false); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -287,29 +335,25 @@ func (o *CmdDeploySCParams) bindGazPrice(rawData []string, hasKey bool, formats 
 		return nil
 	}
 
-	value, err := swag.ConvertFloat64(raw)
+	value, err := swag.ConvertUint64(raw)
 	if err != nil {
-		return errors.InvalidType("gazPrice", "formData", "float64", raw)
+		return errors.InvalidType("gazPrice", "formData", "uint64", raw)
 	}
 	o.GazPrice = &value
+
+	if err := o.validateGazPrice(formats); err != nil {
+		return err
+	}
 
 	return nil
 }
 
-// bindKeyID binds and validates parameter KeyID from formData.
-func (o *CmdDeploySCParams) bindKeyID(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
+// validateGazPrice carries on validations for parameter GazPrice
+func (o *CmdDeploySCParams) validateGazPrice(formats strfmt.Registry) error {
 
-	// Required: false
-
-	if raw == "" { // empty values pass all other validations
-		// Default values have been previously initialized by NewCmdDeploySCParams()
-		return nil
+	if err := validate.MinimumUint("gazPrice", "formData", *o.GazPrice, 0, false); err != nil {
+		return err
 	}
-	o.KeyID = &raw
 
 	return nil
 }

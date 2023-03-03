@@ -30,7 +30,7 @@ func NewCmdDeploySC(ctx *middleware.Context, handler CmdDeploySCHandler) *CmdDep
 }
 
 /*
-	CmdDeploySC swagger:route PUT /cmd/deploySC cmdDeploySC
+	CmdDeploySC swagger:route POST /cmd/deploySC cmdDeploySC
 
 CmdDeploySC cmd deploy s c API
 */

@@ -546,10 +546,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/browse/{address}/{resource}"] = NewBrowse(o.context, o.BrowseHandler)
-	if o.handlers["PUT"] == nil {
-		o.handlers["PUT"] = make(map[string]http.Handler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/cmd/deploySC"] = NewCmdDeploySC(o.context, o.CmdDeploySCHandler)
+	o.handlers["POST"]["/cmd/deploySC"] = NewCmdDeploySC(o.context, o.CmdDeploySCHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
