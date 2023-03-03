@@ -58,6 +58,7 @@ class LinuxInstaller(Installer):
             user_answer = input("Do you want to install dnsmasq and configure it to redirect .massa domains to localhost? [y/n] ")
             user_answer = user_answer.lower()
             if user_answer == "y" or user_answer == "yes":
+                self.executeCommand("sudo apt install -y dnsmasq", True)
                 self.configureNetworkManager()
                 self.configureDNSMasq()
             else:

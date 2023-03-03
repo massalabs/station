@@ -148,7 +148,7 @@ class Installer:
         shutil.move(file, destination)
     
     def _deleteFile(self, file):
-        os.remove(thyra_server_path)
+        os.remove(file)
 
     """
     Downloads and installs a binary from the given url and stores it in the given install path.
