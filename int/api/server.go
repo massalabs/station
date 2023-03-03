@@ -102,10 +102,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *p
 	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(
 		websites.CreatePrepareForWebsiteHandler(app),
 	)
-
-	localAPI.CmdDeploySCHandler = operations.CmdDeploySCHandlerFunc(
-		deploysc.CreateCmdDeploySCHandler(),
-	)
+	localAPI.CmdDeploySCHandler = operations.CmdDeploySCHandlerFunc(deploysc.Handler)
 	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(
 		websites.CreateUploadWebsiteHandler(app),
 	)

@@ -26,6 +26,10 @@ type ExecuteSC struct {
 	dataStore map[[3]uint8][]uint8
 }
 
+/*
+The dataStore parameter represents a storage that is accessible by the SC in the constructor
+function when it gets deployed. For now it is not used by anyone.
+*/
 func New(data []byte, maxGas uint64, coins uint64, dataStore map[[3]uint8][]uint8) *ExecuteSC {
 	gob.Register(map[[3]uint8]interface{}{})
 

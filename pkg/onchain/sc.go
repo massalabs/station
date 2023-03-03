@@ -128,18 +128,24 @@ func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (strin
 
 // DeploySC deploys a smart contract on the blockchain. It returns the address of the smart contract and an Error.
 // The smart contract is deployed with the given wallet.
-func DeploySCV2(client *node.Client, nickname string, contract []byte) (string, error) {
-	datastore := make(map[[3]uint8][]uint8)
-
-	datastore[[3]uint8{1, 2, 3}] = []uint8{1, 2, 3}
-	exeSC := executesc.New(contract,
-		sendOperation.DefaultGazLimit,
-		sendOperation.NoCoin, datastore)
+func DeploySCV2(client *node.Client,
+	nickname string,
+	gazLimit uint64,
+	coins uint64,
+	fee uint64,
+	expiry uint64,
+	contract []byte,
+) (string, error) {
+	exeSC := executesc.New(
+		contract,
+		gazLimit,
+		coins,
+		nil)
 
 	opID, err := sendOperation.CallV2(
 		client,
-		sendOperation.DefaultSlotsDuration,
-		sendOperation.NoFee,
+		expiry,
+		fee,
 		exeSC,
 		nickname)
 	if err != nil {

@@ -10,19 +10,12 @@ import (
 	"github.com/massalabs/thyra/pkg/onchain"
 )
 
-func CreateCmdDeploySCHandler() func(params operations.CmdDeploySCParams) middleware.Responder {
-	//nolint:gocritic
-	return func(params operations.CmdDeploySCParams) middleware.Responder {
-		return cmdDeploySCHandler(params)
-	}
-}
-
-func cmdDeploySCHandler(params operations.CmdDeploySCParams) middleware.Responder {
+func Handler(params operations.CmdDeploySCParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
 	file, err := io.ReadAll(params.Wasmfile)
 	if err != nil {
-		return operations.NewCmdDeploySCInternalServerError().
+		return operations.NewCmdDeploySCBadRequest().
 			WithPayload(
 				&models.Error{
 					Code:    err.Error(),
@@ -30,7 +23,13 @@ func cmdDeploySCHandler(params operations.CmdDeploySCParams) middleware.Responde
 				})
 	}
 
-	address, err := onchain.DeploySCV2(client, params.Nickname, file)
+	address, err := onchain.DeploySCV2(client,
+		params.Nickname,
+		*params.GazLimit,
+		*params.Coins,
+		*params.Fee,
+		*params.Expiry,
+		file)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().
 			WithPayload(

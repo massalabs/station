@@ -163,11 +163,11 @@ func CallV2(client *node.Client,
 
 	msg := message(expiry, fee, operation)
 
-	b64EncodedMsg := b64.StdEncoding.EncodeToString(msg)
+	msgB64 := b64.StdEncoding.EncodeToString(msg)
 
 	httpRawResponse, err := executeHTTPRequest(http.MethodPost, WalletPluginURL+nickname+"/signOperation",
 		bytes.NewBuffer([]byte(`{
-		"operation": "`+b64EncodedMsg+`"
+		"operation": "`+msgB64+`"
 		}`)))
 	if err != nil {
 		return "", fmt.Errorf("calling executeHTTPRequest: %w", err)
@@ -178,43 +178,35 @@ func CallV2(client *node.Client,
 	err = json.Unmarshal(httpRawResponse, &res)
 
 	if err != nil {
-		return "", fmt.Errorf("unmarshalling json: %w", err)
+		return "", fmt.Errorf("unmarshalling '%s' JSON: %w", res, err)
 	}
 
 	signature, err := b64.StdEncoding.DecodeString(res.Signature)
 	if err != nil {
-		return "", fmt.Errorf("decoding b64: %w", err)
+		return "", fmt.Errorf("decoding '%s' B64: %w", res.Signature, err)
+	}
+
+	sendOpParams := [][]sendOperationsReq{
+		{
+			sendOperationsReq{
+				SerializedContent: msg,
+				Signature:         base58.CheckEncode(signature),
+				PublicKey:         res.PublicKey,
+			},
+		},
 	}
 
 	rawResponse, err := client.RPCClient.Call(
 		context.Background(),
 		"send_operations",
-		[][]sendOperationsReq{
-			{
-				sendOperationsReq{
-					SerializedContent: msg,
-					Signature:         base58.CheckEncode(signature),
-					PublicKey:         res.PublicKey,
-				},
-			},
-		},
+		sendOpParams,
 	)
 	if err != nil {
-		return "", fmt.Errorf("calling send_operations jsonrpc with '%+v': %w",
-			[][]sendOperationsReq{
-				{
-					sendOperationsReq{
-						SerializedContent: msg,
-						Signature:         base58.CheckEncode(signature),
-						PublicKey:         res.PublicKey,
-					},
-				},
-			},
-			err)
+		return "", fmt.Errorf("calling send_operations jsonrpc with '%+v': %w", sendOpParams, err)
 	}
 
 	if rawResponse.Error != nil {
-		return "", rawResponse.Error
+		return "", fmt.Errorf("receiving  send_operation response: %w", rawResponse.Error)
 	}
 
 	var resp []string
@@ -247,7 +239,7 @@ func executeHTTPRequest(methodType string, url string, reader io.Reader) ([]byte
 	}
 
 	if walletResp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("request failed with status: %w", err)
+		return nil, fmt.Errorf("request failed with status: %s", walletResp.Status)
 	}
 
 	body, err := io.ReadAll(walletResp.Body)
