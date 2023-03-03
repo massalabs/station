@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"fmt"
+	"log"
 	weakRand "math/rand"
 	"os"
 	"path"
@@ -218,6 +219,13 @@ func (m *Manager) Install(url string) error {
 		return fmt.Errorf("grabbing a plugin at %s: %w", url, err)
 	}
 
+	defer func() {
+		err = os.Remove(resp.Filename)
+		if err != nil {
+			log.Printf("deleting archive %s: %s", resp.Filename, err)
+		}
+	}()
+
 	archiveName := filepath.Base(resp.Filename)
 	pluginName := strings.Split(archiveName, ".zip")[0]
 	pluginDirectory := filepath.Join(pluginsDir, pluginName)
@@ -229,16 +237,13 @@ func (m *Manager) Install(url string) error {
 		if err != nil {
 			return fmt.Errorf("creating %s plugin directory: creating folder %s: %w", archiveName, pluginDirectory, err)
 		}
+	} else {
+		return fmt.Errorf("creating %s plugin directory: Plugin Already Exists", archiveName)
 	}
 
 	err = unzip.Extract(resp.Filename, pluginDirectory)
 	if err != nil {
 		return fmt.Errorf("extracting the plugin at %s: %w", resp.Filename, err)
-	}
-
-	err = os.Remove(resp.Filename)
-	if err != nil {
-		return fmt.Errorf("deleting extracted archive %s: %w", resp.Filename, err)
 	}
 
 	err = m.InitPlugin(filepath.Join(pluginDirectory, pluginName))

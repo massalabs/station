@@ -144,6 +144,12 @@ class Installer:
             self.printErrorAndExit(f"Error while deleting mkcert binary: {err}")
         logging.info("CA certificate successfully generated")
 
+    def _moveFile(self, file, destination):
+        shutil.move(file, destination)
+    
+    def _deleteFile(self, file):
+        os.remove(file)
+
     """
     Downloads and installs a binary from the given url and stores it in the given install path.
     """
@@ -155,8 +161,8 @@ class Installer:
             try:
                 thyra_server_path = os.path.join(install_path, binary_filename)
                 if os.path.exists(thyra_server_path):
-                    os.remove(thyra_server_path)
-                shutil.move(binary_filename, install_path)
+                    self._deleteFile(thyra_server_path)
+                self._moveFile(binary_filename, install_path)
             except OSError as err:
                 self.printErrorAndExit(f"Error while moving {binary_filename} binary: {err}")
         logging.debug(f"{binary_filename} successfully installed")
@@ -177,18 +183,27 @@ class Installer:
         self.installBinary(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_APP_URL, self.THYRA_APP_FILENAME)
         logging.info("Thyra app installed successfully")
 
+    def createConfigFolder(self):
+        logging.info("Creating config folder")
+        if not os.path.exists(self.THYRA_CONFIG_FOLDER_PATH):
+            try:
+                os.makedirs(self.THYRA_CONFIG_FOLDER_PATH)
+                os.makedirs(self.THYRA_PLUGINS_PATH)
+            except OSError as err:
+                self.printErrorAndExit(f"Error while creating config folder: {err}")
+
     def startThyraApp(self):
         thyra_app_path = os.path.join(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_APP_FILENAME)
         if os.path.exists(thyra_app_path):
             subprocess.Popen([thyra_app_path], start_new_session=True)
             logging.info("Thyra App will now start. You can right click on the tray icon to start Thyra.")
 
-
     """
     Installs thyra server, thyra app and a DNS server.
     """
     def startInstall(self):
         logging.info("Starting installation of thyra")
+        self.createConfigFolder()
         self.installThyraServer()
         self.installThyraApp()
         if self.shouldInstallDNS():

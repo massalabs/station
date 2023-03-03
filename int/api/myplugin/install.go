@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -22,7 +23,7 @@ type install struct {
 func (i *install) Handle(param operations.PluginManagerInstallParams) middleware.Responder {
 	log.Printf("[POST /plugin-manager] source: %s", param.Source)
 
-	_, err := url.ParseRequestURI(param.Source)
+	_, err := url.ParseRequestURI(strings.TrimSpace(param.Source))
 	if err != nil {
 		return operations.NewPluginManagerInstallBadRequest().WithPayload(
 			&models.Error{
