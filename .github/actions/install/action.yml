@@ -26,6 +26,7 @@ runs:
         cache-dependency-path: |
           web/thyra-frontend/package-lock.json
           web/plugin-manager/package-lock.json
+
     - name: Build react frontend
       shell: bash
       run: go generate ./web/...
