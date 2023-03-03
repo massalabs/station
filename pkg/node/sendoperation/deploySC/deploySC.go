@@ -23,6 +23,10 @@ func Handler(params operations.CmdDeploySCParams) middleware.Responder {
 				})
 	}
 
+	/* All the pointers below cannot be null as the swagger hydrate
+	each one with their default value defined in swagger.yml,
+	if no values are provided for these parameters.
+	*/
 	address, err := onchain.DeploySCV2(client,
 		params.Nickname,
 		*params.GazLimit,
