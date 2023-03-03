@@ -8,6 +8,7 @@ import (
 )
 
 const CallSCOpID = uint64(4)
+const versionByte = byte(1)
 
 //nolint:tagliatelle
 type OperationDetails struct {
@@ -34,17 +35,15 @@ type CallSC struct {
 func New(address []byte, function string, parameters []byte, gazLimit uint64, coins uint64,
 ) *CallSC {
 	// New testnet20 addresses needs a byte 0 for AU addresses and byte 1 for AS addresses
-	addressVersioned := append([]byte{byte(1)}, address...)
+	versionedAddress := append([]byte{versionByte}, address...)
 
 	return &CallSC{
-		address: addressVersioned, function: function, parameters: parameters,
+		address: versionedAddress, function: function, parameters: parameters,
 		gazLimit: gazLimit, coins: coins,
 	}
 }
 
 func (c *CallSC) Content() interface{} {
-	versionByte := byte(1)
-
 	return &Operation{
 		CallSC: OperationDetails{
 			MaxGaz:     int64(c.gazLimit),
