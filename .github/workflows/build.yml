@@ -99,6 +99,11 @@ jobs:
             target: darwin
             script: scripts/macos_installer.py
             displayed_arch: arm64
+          - os: ubuntu-latest
+            arch: amd64
+            target: linux
+            script: scripts/linux_installer.py
+            displayed_arch: amd64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3

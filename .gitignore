@@ -1,6 +1,13 @@
 wallet_*.json
 *.exe
 
+*.log
+*.spec
+
+# pysintaller
+scripts/build
+scripts/dist
+
 # air temporary directory
 tmp/
 
