@@ -8,6 +8,7 @@ import (
 )
 
 const CallSCOpID = uint64(4)
+
 const versionByte = byte(1)
 
 //nolint:tagliatelle
