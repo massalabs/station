@@ -6,17 +6,15 @@
 
 An entrance to the Massa blockchain.
 
-## ⚠️ WIP
-
-This project is still WIP. It is a prototype. 
-
-⚠️ Potential breaking changes ahead ⚠️
 
 ## Contribute
 go to [Contributing](./CONTRIBUTING.md)
-## How to...
 
-### ... install Thyra on my computer?
+## Install thyra 
+
+go to [installation](./INSTALLATION.md)
+
+## Install Thyra on my computer?
 
 Follow the instructions for your computer in the wiki:
 
@@ -24,37 +22,10 @@ Follow the instructions for your computer in the wiki:
 - [Linux](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#linux)
 - [Windows](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#windows)
 
-### ... manage my wallet?
-1. Create / delete your wallet 
+## Install a plugin
 
-You can access to Thyra wallet interface at URL : <https://my.massa/thyra/wallet/index.html>
+go to 
 
-By inputing the 'Nickname' & 'Password', you'll be able to create an encrypted wallet locally on your machine.
-To delete your wallet, simply use the interface. 
-⚠️ If you delete your wallet, you won't be able to edit the website linked to it anymore.
-
-2. Get coins on your wallet
-
-To get coins on your wallet, you have to send your address on [Massa faucet channel](https://discord.com/channels/828270821042159636/866190913030193172)
-Make sure that you use the latest version of Thyra (and defacto Testnet) [here](https://github.com/massalabs/thyra/releases/latest/), otherwise the faucet won't work.
-NB: if you just installed Thyra, you're using the latest version!
-
-### ... store a website on chain?
-
-You can access to Thyra web hosting interface at URL : <http://my.massa/thyra/websiteCreator/index.html>
-
-In order to register a website on Thyra you'll need to :
-
-- Deploy a Smart Contract that will handle the storage of your website, your DNS name will fetch the Address of this Smart Contract - this step is handled by Thyra, don't worry. But at least you know what's happening behind the wood.
-- Upload the build of your application.
-  * If you don't have an application or website handy but still want to test this functionality, here are some websites you can use:
-    - [bbx.zip](https://github.com/massalabs/thyra/files/10169142/bbx.zip)
-    - [flappy.zip](https://github.com/massalabs/thyra/files/10169143/flappy.zip)
-    - [tic-tac-toe.zip](https://github.com/massalabs/thyra/files/10169144/tic-tac-toe.zip)
-
-- Use a wallet with sufficient coins to upload it on the blockchain
-Important note: At the moment, we have defined that 1 chunk (=280ko) of data worth 100 MAS. It will change and become more and more specific and precise as the Testnet and Thyra are evolving. In the mean time, we have defined it arbitrarily.
-- Visit the registry to find your .massa website and see others
 
 **Troubleshooting** If you got any problem at any steps of the process, join us on [Discord dedicated channel](https://discord.com/channels/828270821042159636/851942484212318259) or [report a problem](https://github.com/massalabs/thyra/issues/new/choose)
 
