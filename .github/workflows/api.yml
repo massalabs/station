@@ -2,10 +2,6 @@ name: API
 
 on:
   push:
-    paths:
-      - 'api/swagger/server/restapi/resource/swagger.yml'
-      - 'api/test/*'
-
 jobs:
   test-api:
     runs-on: ubuntu-latest

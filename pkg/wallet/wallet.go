@@ -203,7 +203,7 @@ func Imported(nickname string, privateKeyB58V string) (*Wallet, error) {
 
 	addr := blake3.Sum256(pubKeyBytes)
 	version := byte(0)
-	address := "A" + base58.VersionedCheckEncode(addr[:], version)
+	address := "AU" + base58.VersionedCheckEncode(addr[:], version)
 
 	if slices.IndexFunc(
 		wallets,
@@ -246,7 +246,7 @@ func CreateWalletFromKeys(nickname string, privKeyBytes []byte, pubKeyBytes []by
 	wallet := Wallet{
 		Version:  0,
 		Nickname: nickname,
-		Address:  "A" + base58.CheckEncode(append(make([]byte, 1), addr[:]...)),
+		Address:  "AU" + base58.CheckEncode(append(make([]byte, 1), addr[:]...)),
 		KeyPairs: []KeyPair{{
 			PrivateKey: privKeyBytes,
 			PublicKey:  pubKeyBytes,

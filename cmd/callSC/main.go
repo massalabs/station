@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	rawAddr := "A1JEEbgWPQMt97pJmZ3akxU64yW82wmZRe8EefjnEPxyCHgv1Yn"
+	rawAddr := "AS1JEEbgWPQMt97pJmZ3akxU64yW82wmZRe8EefjnEPxyCHgv1Yn"
 
 	wlt, err := wallet.New("massa")
 	if err != nil {
@@ -20,7 +20,7 @@ func main() {
 
 	client := node.NewDefaultClient()
 
-	addr, _, err := base58.VersionedCheckDecode(rawAddr[1:])
+	addr, _, err := base58.VersionedCheckDecode(rawAddr[2:])
 	if err != nil {
 		panic(err)
 	}

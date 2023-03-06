@@ -56,9 +56,9 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 func Upload(atAddress string, content []byte, wallet wallet.Wallet) ([]string, error) {
 	client := node.NewDefaultClient()
 
-	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
+	addr, _, err := base58.VersionedCheckDecode(atAddress[2:])
 	if err != nil {
-		return nil, fmt.Errorf("decoding address '%s': %w", atAddress[1:], err)
+		return nil, fmt.Errorf("decoding address '%s': %w", atAddress[2:], err)
 	}
 
 	blocks := chunk(content, blockLength)
@@ -107,9 +107,9 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wal
 func UploadMissedChunks(atAddress string, content []byte, wallet *wallet.Wallet, missedChunks string) ([]string, error) {
 	client := node.NewDefaultClient()
 
-	addr, _, err := base58.VersionedCheckDecode(atAddress[1:])
+	addr, _, err := base58.VersionedCheckDecode(atAddress[2:])
 	if err != nil {
-		return nil, fmt.Errorf("decoding address '%s': %w", atAddress[1:], err)
+		return nil, fmt.Errorf("decoding address '%s': %w", atAddress[2:], err)
 	}
 
 	blocks := chunk(content, blockLength)

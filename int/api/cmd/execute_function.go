@@ -21,13 +21,13 @@ func CreateExecuteFunctionHandler(app *fyne.App) func(params operations.CmdExecu
 }
 
 func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyne.App) middleware.Responder {
-	addr, err := base58.CheckDecode(params.Body.At[1:])
+	addr, err := base58.CheckDecode(params.Body.At[2:])
 	if err != nil {
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
 			&models.Error{Code: errorCodeUnknownKeyID, Message: "Error : cannot decode Smart contract address : " + err.Error()})
 	}
 
-	addr = addr[1:]
+	addr = addr[2:]
 
 	wallet, err := wallet.Load(params.Body.Nickname)
 	if err != nil {
