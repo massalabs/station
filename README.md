@@ -24,12 +24,16 @@ Follow the instructions for your computer in the wiki:
 
 ## Install a plugin
 
-go to 
+soon
 
+-----
 
 **Troubleshooting** If you got any problem at any steps of the process, join us on [Discord dedicated channel](https://discord.com/channels/828270821042159636/851942484212318259) or [report a problem](https://github.com/massalabs/thyra/issues/new/choose)
 
+-----
 
+
+## Going further 
 
 ### ... pass options to `thyra-server`?
 
@@ -55,13 +59,14 @@ You can run the application with this command: `air`.
 
 It will generate and reload thyra each time a file is modified.
 
-## Usage
+## Pre-requisite
 
-### Upload a website
+### ... Upload a website
 
 With Thyra you can upload a website. It will be hosted on the Massa blockchain and available as a `.massa` URL. You can access this URL through Tyhra.
 
 For this to work, the file you upload must be a zip archive (file ending with `.zip`). This archive must contain a `index.html` file at the root.
+
 
 ## Additional information
 
