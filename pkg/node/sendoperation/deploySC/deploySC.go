@@ -1,6 +1,7 @@
 package deploysc
 
 import (
+	"encoding/base64"
 	"io"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -13,7 +14,20 @@ import (
 func Handler(params operations.CmdDeploySCParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
-	file, err := io.ReadAll(params.Wasmfile)
+	file, err := io.ReadAll(params.SmartContract)
+	if err != nil {
+		return operations.NewCmdDeploySCBadRequest().
+			WithPayload(
+				&models.Error{
+					Code:    err.Error(),
+					Message: err.Error(),
+				})
+	}
+	/* All the pointers below cannot be null as the swagger hydrate
+	each one with their default value defined in swagger.yml,
+	if no values are provided for these parameters.
+	*/
+	decodedDatastore, err := base64.StdEncoding.DecodeString(*params.Datastore)
 	if err != nil {
 		return operations.NewCmdDeploySCBadRequest().
 			WithPayload(
@@ -23,17 +37,14 @@ func Handler(params operations.CmdDeploySCParams) middleware.Responder {
 				})
 	}
 
-	/* All the pointers below cannot be null as the swagger hydrate
-	each one with their default value defined in swagger.yml,
-	if no values are provided for these parameters.
-	*/
 	address, err := onchain.DeploySCV2(client,
-		params.Nickname,
+		params.WalletNickname,
 		*params.GazLimit,
 		*params.Coins,
 		*params.Fee,
 		*params.Expiry,
-		file)
+		file,
+		decodedDatastore)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().
 			WithPayload(

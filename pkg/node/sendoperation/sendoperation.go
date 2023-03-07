@@ -36,7 +36,7 @@ const OneMassa = 1000000000
 
 const WalletPluginURL = "http://127.0.0.1:8080/rest/wallet/"
 
-const HTTPRequestTimeout = 30 * time.Second
+const HTTPRequestTimeout = 60 * time.Second
 
 //nolint:tagliatelle
 type signOperationResponse struct {

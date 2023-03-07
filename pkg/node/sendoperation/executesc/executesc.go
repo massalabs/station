@@ -12,7 +12,7 @@ type OperationDetails struct {
 	Data   []byte `json:"data"`
 	MaxGas uint64 `json:"max_gas"`
 	//nolint:tagliatelle
-	DataStore map[[3]uint8][]uint8 `json:"datastore"`
+	DataStore []byte `json:"datastore"`
 }
 
 //nolint:tagliatelle
@@ -23,15 +23,14 @@ type Operation struct {
 type ExecuteSC struct {
 	data      []byte
 	maxGas    uint64
-	dataStore map[[3]uint8][]uint8
+	dataStore []byte
 }
 
 /*
 The dataStore parameter represents a storage that is accessible by the SC in the constructor
-function when it gets deployed. For now it is not used by anyone.
+function when it gets deployed.
 */
-func New(data []byte, maxGas uint64, coins uint64, dataStore map[[3]uint8][]uint8) *ExecuteSC {
-	gob.Register(map[[3]uint8]interface{}{})
+func New(data []byte, maxGas uint64, coins uint64, dataStore []byte) *ExecuteSC {
 
 	return &ExecuteSC{
 		data:      data,
@@ -67,10 +66,16 @@ func (e *ExecuteSC) Message() []byte {
 	msg = append(msg, buf[:nbBytes]...)
 	msg = append(msg, e.data...)
 
+	if e.dataStore != nil {
+		msg = append(msg, e.dataStore...)
+
+		return msg
+	}
 	// datastore
 	// Number of entries in the datastore
 	nbBytes = binary.PutUvarint(buf, uint64(len(e.dataStore)))
 	msg = append(msg, buf[:nbBytes]...)
+	msg = append(msg, e.dataStore...)
 
 	for key, value := range e.dataStore {
 		compactAndAppendBytes(&msg, key)
@@ -80,6 +85,14 @@ func (e *ExecuteSC) Message() []byte {
 	return msg
 }
 
+/*
+This function serialize the content of the datastore in a byte array and should be used in the following way :
+
+	for key, value := range dataStore {
+		compactAndAppendBytes(&byteArray, key)
+		compactAndAppendBytes(&byteArray, value)
+	}
+*/
 func compactAndAppendBytes(msg *[]byte, value interface{}) {
 	buf := make([]byte, binary.MaxVarintLen64)
 	bytesBuffer := new(bytes.Buffer)

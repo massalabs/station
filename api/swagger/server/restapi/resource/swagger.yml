@@ -625,13 +625,13 @@ paths:
         - multipart/form-data
       parameters:
         - in: formData
-          name: nickname
+          name: walletNickname
           type: string
           required: true
           x-nullable: false
           description: Name of the wallet used to deploy the smart contract.
         - in: formData
-          name: Wasmfile
+          name: smartContract
           type: file
           required: true
           x-nullable: false
@@ -671,6 +671,11 @@ paths:
           format: uint64
           description: Set the fee amount (in massa) that will be given to the block creator.
           default : 0
+        - in: formData
+          name: datastore
+          type: string
+          default: ""
+          description: b64 encoded datastore that will be sent along the smart contract.
       produces:
         - application/json
       responses:

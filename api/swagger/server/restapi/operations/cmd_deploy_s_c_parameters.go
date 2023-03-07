@@ -32,15 +32,18 @@ func NewCmdDeploySCParams() CmdDeploySCParams {
 	var (
 		// initialize parameters with default values
 
-		coinsDefault    = uint64(0)
-		expiryDefault   = uint64(2)
-		feeDefault      = uint64(0)
-		gazLimitDefault = uint64(7e+08)
-		gazPriceDefault = uint64(0)
+		coinsDefault     = uint64(0)
+		datastoreDefault = string("")
+		expiryDefault    = uint64(2)
+		feeDefault       = uint64(0)
+		gazLimitDefault  = uint64(7e+08)
+		gazPriceDefault  = uint64(0)
 	)
 
 	return CmdDeploySCParams{
 		Coins: &coinsDefault,
+
+		Datastore: &datastoreDefault,
 
 		Expiry: &expiryDefault,
 
@@ -61,17 +64,17 @@ type CmdDeploySCParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*Smart contract file in a Wasm format.
-	  Required: true
-	  In: formData
-	*/
-	Wasmfile io.ReadCloser
 	/*Set the number of coins that will be sent along the deployment call.
 	  Minimum: 0
 	  In: formData
 	  Default: 0
 	*/
 	Coins *uint64
+	/*Datastore that will be sent along the smart contract.
+	  In: formData
+	  Default: ""
+	*/
+	Datastore *string
 	/*Set the expiry duration (in number of slots) of the transaction.
 	  Minimum: 0
 	  In: formData
@@ -96,11 +99,16 @@ type CmdDeploySCParams struct {
 	  Default: 0
 	*/
 	GazPrice *uint64
+	/*Smart contract file in a Wasm format.
+	  Required: true
+	  In: formData
+	*/
+	SmartContract io.ReadCloser
 	/*Name of the wallet used to deploy the smart contract.
 	  Required: true
 	  In: formData
 	*/
-	Nickname string
+	WalletNickname string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -121,18 +129,13 @@ func (o *CmdDeploySCParams) BindRequest(r *http.Request, route *middleware.Match
 	}
 	fds := runtime.Values(r.Form)
 
-	wasmfile, wasmfileHeader, err := r.FormFile("Wasmfile")
-	if err != nil {
-		res = append(res, errors.New(400, "reading file %q failed: %v", "wasmfile", err))
-	} else if err := o.bindWasmfile(wasmfile, wasmfileHeader); err != nil {
-		// Required: true
-		res = append(res, err)
-	} else {
-		o.Wasmfile = &runtime.File{Data: wasmfile, Header: wasmfileHeader}
-	}
-
 	fdCoins, fdhkCoins, _ := fds.GetOK("coins")
 	if err := o.bindCoins(fdCoins, fdhkCoins, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	fdDatastore, fdhkDatastore, _ := fds.GetOK("datastore")
+	if err := o.bindDatastore(fdDatastore, fdhkDatastore, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -156,20 +159,23 @@ func (o *CmdDeploySCParams) BindRequest(r *http.Request, route *middleware.Match
 		res = append(res, err)
 	}
 
-	fdNickname, fdhkNickname, _ := fds.GetOK("nickname")
-	if err := o.bindNickname(fdNickname, fdhkNickname, route.Formats); err != nil {
+	smartContract, smartContractHeader, err := r.FormFile("smartContract")
+	if err != nil {
+		res = append(res, errors.New(400, "reading file %q failed: %v", "smartContract", err))
+	} else if err := o.bindSmartContract(smartContract, smartContractHeader); err != nil {
+		// Required: true
+		res = append(res, err)
+	} else {
+		o.SmartContract = &runtime.File{Data: smartContract, Header: smartContractHeader}
+	}
+
+	fdWalletNickname, fdhkWalletNickname, _ := fds.GetOK("walletNickname")
+	if err := o.bindWalletNickname(fdWalletNickname, fdhkWalletNickname, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-// bindWasmfile binds file parameter Wasmfile.
-//
-// The only supported validations on files are MinLength and MaxLength
-func (o *CmdDeploySCParams) bindWasmfile(file multipart.File, header *multipart.FileHeader) error {
 	return nil
 }
 
@@ -206,6 +212,24 @@ func (o *CmdDeploySCParams) validateCoins(formats strfmt.Registry) error {
 	if err := validate.MinimumUint("coins", "formData", *o.Coins, 0, false); err != nil {
 		return err
 	}
+
+	return nil
+}
+
+// bindDatastore binds and validates parameter Datastore from formData.
+func (o *CmdDeploySCParams) bindDatastore(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+
+	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewCmdDeploySCParams()
+		return nil
+	}
+	o.Datastore = &raw
 
 	return nil
 }
@@ -358,10 +382,17 @@ func (o *CmdDeploySCParams) validateGazPrice(formats strfmt.Registry) error {
 	return nil
 }
 
-// bindNickname binds and validates parameter Nickname from formData.
-func (o *CmdDeploySCParams) bindNickname(rawData []string, hasKey bool, formats strfmt.Registry) error {
+// bindSmartContract binds file parameter SmartContract.
+//
+// The only supported validations on files are MinLength and MaxLength
+func (o *CmdDeploySCParams) bindSmartContract(file multipart.File, header *multipart.FileHeader) error {
+	return nil
+}
+
+// bindWalletNickname binds and validates parameter WalletNickname from formData.
+func (o *CmdDeploySCParams) bindWalletNickname(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	if !hasKey {
-		return errors.Required("nickname", "formData", rawData)
+		return errors.Required("walletNickname", "formData", rawData)
 	}
 	var raw string
 	if len(rawData) > 0 {
@@ -370,10 +401,10 @@ func (o *CmdDeploySCParams) bindNickname(rawData []string, hasKey bool, formats 
 
 	// Required: true
 
-	if err := validate.RequiredString("nickname", "formData", raw); err != nil {
+	if err := validate.RequiredString("walletNickname", "formData", raw); err != nil {
 		return err
 	}
-	o.Nickname = raw
+	o.WalletNickname = raw
 
 	return nil
 }

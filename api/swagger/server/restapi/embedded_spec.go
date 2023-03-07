@@ -118,7 +118,7 @@ func init() {
       }
     },
     "/cmd/deploySC": {
-      "put": {
+      "post": {
         "consumes": [
           "multipart/form-data"
         ],
@@ -130,21 +130,22 @@ func init() {
           {
             "type": "string",
             "x-nullable": false,
-            "description": "Name of the Wallet in which the website will be deployed.",
-            "name": "nickname",
+            "description": "Name of the wallet used to deploy the smart contract.",
+            "name": "walletNickname",
             "in": "formData",
             "required": true
           },
           {
             "type": "file",
             "x-nullable": false,
-            "description": "Website contents in a ZIP file.",
-            "name": "Wasmfile",
+            "description": "Smart contract file in a Wasm format.",
+            "name": "smartContract",
             "in": "formData",
             "required": true
           },
           {
-            "type": "number",
+            "type": "integer",
+            "format": "uint64",
             "default": 0,
             "description": "Price of a gaz unit.",
             "name": "gazPrice",
@@ -152,27 +153,31 @@ func init() {
           },
           {
             "type": "integer",
+            "format": "uint64",
             "default": 700000000,
-            "description": "Maximum number of gaz unit that a node will be able consume.",
+            "description": "Maximum number of gaz unit that a node will be able to consume.",
             "name": "gazLimit",
             "in": "formData"
           },
           {
-            "type": "number",
-            "default": 100,
-            "description": "Set the fee amount (in massa) that will be given to the block creator.",
+            "type": "integer",
+            "format": "uint64",
+            "default": 0,
+            "description": "Set the number of coins that will be sent along the deployment call.",
             "name": "coins",
             "in": "formData"
           },
           {
             "type": "integer",
-            "default": 3,
-            "description": "Set the expiry duration (in number of slots) of the transaction",
+            "format": "uint64",
+            "default": 2,
+            "description": "Set the expiry duration (in number of slots) of the transaction.",
             "name": "expiry",
             "in": "formData"
           },
           {
-            "type": "number",
+            "type": "integer",
+            "format": "uint64",
             "default": 0,
             "description": "Set the fee amount (in massa) that will be given to the block creator.",
             "name": "fee",
@@ -180,9 +185,9 @@ func init() {
           },
           {
             "type": "string",
-            "default": "default",
-            "description": "Defines the key to used to sign the transaction.",
-            "name": "keyId",
+            "default": "",
+            "description": "Datastore that will be sent along the smart contract.",
+            "name": "datastore",
             "in": "formData"
           }
         ],
@@ -192,6 +197,12 @@ func init() {
             "schema": {
               "description": "Operation id.",
               "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           },
           "422": {
@@ -1684,10 +1695,6 @@ func init() {
         }
       }
     },
-    "SCDeployed": {
-      "description": "Smart Contract's address.",
-      "type": "string"
-    },
     "Wallet": {
       "description": "Wallet object (V0).",
       "type": "object",
@@ -1870,7 +1877,7 @@ func init() {
       }
     },
     "/cmd/deploySC": {
-      "put": {
+      "post": {
         "consumes": [
           "multipart/form-data"
         ],
@@ -1882,49 +1889,59 @@ func init() {
           {
             "type": "string",
             "x-nullable": false,
-            "description": "Name of the Wallet in which the website will be deployed.",
-            "name": "nickname",
+            "description": "Name of the wallet used to deploy the smart contract.",
+            "name": "walletNickname",
             "in": "formData",
             "required": true
           },
           {
             "type": "file",
             "x-nullable": false,
-            "description": "Website contents in a ZIP file.",
-            "name": "Wasmfile",
+            "description": "Smart contract file in a Wasm format.",
+            "name": "smartContract",
             "in": "formData",
             "required": true
           },
           {
-            "type": "number",
+            "minimum": 0,
+            "type": "integer",
+            "format": "uint64",
             "default": 0,
             "description": "Price of a gaz unit.",
             "name": "gazPrice",
             "in": "formData"
           },
           {
+            "minimum": 0,
             "type": "integer",
+            "format": "uint64",
             "default": 700000000,
-            "description": "Maximum number of gaz unit that a node will be able consume.",
+            "description": "Maximum number of gaz unit that a node will be able to consume.",
             "name": "gazLimit",
             "in": "formData"
           },
           {
-            "type": "number",
-            "default": 100,
-            "description": "Set the fee amount (in massa) that will be given to the block creator.",
+            "minimum": 0,
+            "type": "integer",
+            "format": "uint64",
+            "default": 0,
+            "description": "Set the number of coins that will be sent along the deployment call.",
             "name": "coins",
             "in": "formData"
           },
           {
+            "minimum": 0,
             "type": "integer",
-            "default": 3,
-            "description": "Set the expiry duration (in number of slots) of the transaction",
+            "format": "uint64",
+            "default": 2,
+            "description": "Set the expiry duration (in number of slots) of the transaction.",
             "name": "expiry",
             "in": "formData"
           },
           {
-            "type": "number",
+            "minimum": 0,
+            "type": "integer",
+            "format": "uint64",
             "default": 0,
             "description": "Set the fee amount (in massa) that will be given to the block creator.",
             "name": "fee",
@@ -1932,9 +1949,9 @@ func init() {
           },
           {
             "type": "string",
-            "default": "default",
-            "description": "Defines the key to used to sign the transaction.",
-            "name": "keyId",
+            "default": "",
+            "description": "Datastore that will be sent along the smart contract.",
+            "name": "datastore",
             "in": "formData"
           }
         ],
@@ -1944,6 +1961,12 @@ func init() {
             "schema": {
               "description": "Operation id.",
               "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           },
           "422": {
@@ -3450,10 +3473,6 @@ func init() {
           "type": "string"
         }
       }
-    },
-    "SCDeployed": {
-      "description": "Smart Contract's address.",
-      "type": "string"
     },
     "StackingItems0": {
       "type": "object",
