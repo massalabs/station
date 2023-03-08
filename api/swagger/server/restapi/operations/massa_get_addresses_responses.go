@@ -16,7 +16,8 @@ import (
 // MassaGetAddressesOKCode is the HTTP code returned for type MassaGetAddressesOK
 const MassaGetAddressesOKCode int = 200
 
-/*MassaGetAddressesOK Addresses' infos retrieved
+/*
+MassaGetAddressesOK Addresses' infos retrieved
 
 swagger:response massaGetAddressesOK
 */
@@ -60,7 +61,8 @@ func (o *MassaGetAddressesOK) WriteResponse(rw http.ResponseWriter, producer run
 // MassaGetAddressesBadRequestCode is the HTTP code returned for type MassaGetAddressesBadRequest
 const MassaGetAddressesBadRequestCode int = 400
 
-/*MassaGetAddressesBadRequest Bad request.
+/*
+MassaGetAddressesBadRequest Bad request.
 
 swagger:response massaGetAddressesBadRequest
 */
@@ -104,7 +106,8 @@ func (o *MassaGetAddressesBadRequest) WriteResponse(rw http.ResponseWriter, prod
 // MassaGetAddressesInternalServerErrorCode is the HTTP code returned for type MassaGetAddressesInternalServerError
 const MassaGetAddressesInternalServerErrorCode int = 500
 
-/*MassaGetAddressesInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
+/*
+MassaGetAddressesInternalServerError Internal Server Error - The server has encountered a situation it does not know how to handle.
 
 swagger:response massaGetAddressesInternalServerError
 */
