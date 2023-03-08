@@ -31,7 +31,6 @@ The dataStore parameter represents a storage that is accessible by the SC in the
 function when it gets deployed.
 */
 func New(data []byte, maxGas uint64, coins uint64, dataStore []byte) *ExecuteSC {
-
 	return &ExecuteSC{
 		data:      data,
 		maxGas:    maxGas,
@@ -49,6 +48,10 @@ func (e *ExecuteSC) Content() interface{} {
 	}
 }
 
+// To date the datastore sent by the deploySC endpoint is always serialized.
+// However the web on chain features make use of a non-serialized, nil datastore.
+// Hence here we check that if datastore is not nil (and it means it comes from the deploySC endpoint)
+// we do not encode it further but rather send it as is to the node.
 func (e *ExecuteSC) Message() []byte {
 	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
@@ -66,6 +69,7 @@ func (e *ExecuteSC) Message() []byte {
 	msg = append(msg, buf[:nbBytes]...)
 	msg = append(msg, e.data...)
 
+	//
 	if e.dataStore != nil {
 		msg = append(msg, e.dataStore...)
 

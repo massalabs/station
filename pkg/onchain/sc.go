@@ -58,6 +58,14 @@ func CallFunction(client *node.Client, wallet wallet.Wallet,
 	return operationID, errors.New("timeout")
 }
 
+/*
+This function send a callSC request to the node.
+After a sucessfulll execution, listening to the events emitted by the operation
+should be done on front end side by the consumer.
+However in the current state of things the easiest way to unblock us is to
+listen to these events in Thyra and return them as a response.
+Hence this function also listen for the first event emitted in an OP and returns it.
+*/
 func CallFunctionV2(client *node.Client, nickname string,
 	addr []byte, function string, parameter []byte, coins uint64,
 ) (string, error) {

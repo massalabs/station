@@ -37,36 +37,13 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyn
 				})
 	}
 
-	// callSC := callSC.New(
-	// 	addr,
-	// 	params.Body.Name,
-	// 	args,
-	// 	uint64(*params.Body.Gaz.Limit),
-	// 	uint64(params.Body.Coins))
-
 	c := node.NewDefaultClient()
 
 	event, err := onchain.CallFunctionV2(c, params.Body.Nickname, addr, params.Body.Name, args, uint64(params.Body.Coins))
-
-	// operationID, err := onchain.CallFunctionV2(
-	// 	c,
-	// 	sendOperation.DefaultSlotsDuration,
-	// 	uint64(params.Body.Fee),
-	// 	callSC,
-	// 	wallet.KeyPairs[0].PublicKey, wallet.KeyPairs[0].PrivateKey)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
 			&models.Error{Code: errorCodeSendOperation, Message: "Error : callSC failed " + err.Error()})
 	}
 
 	return operations.NewCmdExecuteFunctionOK().WithPayload(event)
-}
-
-func createInternalServerError(errorCode string, errorMessage string) middleware.Responder {
-	return operations.NewCmdExecuteFunctionInternalServerError().
-		WithPayload(
-			&models.Error{
-				Code:    errorCode,
-				Message: errorMessage,
-			})
 }
