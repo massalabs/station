@@ -33,10 +33,10 @@ func NewMassaGetAddresses(ctx *middleware.Context, handler MassaGetAddressesHand
 	return &MassaGetAddresses{Context: ctx, Handler: handler}
 }
 
-/* MassaGetAddresses swagger:route GET /massa/addresses massaGetAddresses
+/*
+	MassaGetAddresses swagger:route GET /massa/addresses massaGetAddresses
 
 MassaGetAddresses massa get addresses API
-
 */
 type MassaGetAddresses struct {
 	Context *middleware.Context

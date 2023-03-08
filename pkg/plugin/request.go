@@ -93,7 +93,7 @@ func Interceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
 	return req
 }
 
-// modifyRequest rewrite the incoming request URL to match what the pkugin is expecting to receive.
+// modifyRequest rewrite the incoming request URL to match what the plugin is expecting to receive.
 // All the `/thyra/plugin/{author-name}/{plugin-name}` template is removed.
 func modifyRequest(req *http.Request) {
 	urlExternal := req.URL.String()

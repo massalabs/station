@@ -352,11 +352,9 @@ func init() {
               "type": "string"
             },
             "collectionFormat": "multi",
-            "x-nullable": false,
             "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nPossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
             "name": "attributes",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "array",
@@ -1963,11 +1961,9 @@ func init() {
               "type": "string"
             },
             "collectionFormat": "multi",
-            "x-nullable": false,
             "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nPossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
             "name": "attributes",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "array",
