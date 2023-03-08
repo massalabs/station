@@ -10,21 +10,20 @@
 
 ## Introduction
 
-From this point you'll start your custom Massa journey thanks to Thyra. If you want to learn more about the Thyra's objective and mindset, go here; if you're curious about the technical aspect, go there. 
+From this point you'll start to custom Massa's journey thanks to Thyra. If you want to learn more about Thyra's objectives and mindset, go here; if you're curious about the technical aspects and want to contribute go [there](./CONTRIBUTING.md).
 
 This document will guide you through the installation process and the first steps to get started with Thyra.
 
 
 > **_TROUBLESHOOTING:_** If you have trouble following this procedure, feel free to [open a question](https://github.com/massalabs/thyra/issues/new) describing your problem.
 
-## Instruction by Devices
+## Instructions by Devices
 
 By following these instructions, you will: 
 * Install Thyra to access and perform actions on the blockchain. 
 * Install Thyra application to interact and use Thyra and its plugins very easily.
 
 ### Desktop
-
 
 #### MacOS
 Before installing Thyra, make sure that you have Node.js and npm (Node Package Manager) installed on your machine. You can verify this by running the following command in your terminal:
@@ -34,13 +33,16 @@ node -v && npm -v
 If you do not have Node.js and npm installed, you can download them from the official [website](https://nodejs.org/en/download/).
 
 1. Go on [this page](https://.com/massalabs/thyra/releases/latest) and download the installer that corresponds to your MacOS configuration
-* If you have M1 chip or more, chose "thyra-installer_darwin_arm64" installer 
+* If you have M1 chip or more, chose "thyra-installer_darwin_arm64" installer
 * Otherwise, chose "thyra-installer_darwin_amd64" installer
-2. Once downloaded, double clik on the file 
+2. Once downloaded, double clik on the file
 > **_NOTE:_** You may need to authorise the download of this file as your Mac won't recognise it.
 3. A terminal should open automatically where you can follow the steps of the installation. Just watch it working, and at some point you'll need to add your password.
-* Why do you need to enter your password? Simply because Thyra is an application and to add this application to your Mac you need to validate that you wish to install this app; like you do from the app store. 
-4. Once the installation is finished, you will see a new icon on the top nav bar (see screenshot below). You can now close your terminal if not done already and start browsing the blockchain and all our applications available. 
+* Why do you need to enter your password? Simply because Thyra is an application and to add this application to your Mac you need to validate that you wish to install this app; like you do for app from the app store. 
+4. Once the installation is finished, you will see a new icon on the top nav bar (see screenshot below). You can now close your terminal (if not done already) and start browsing the blockchain and all our applications available.
+<img width="177" alt="image" src="https://user-images.githubusercontent.com/109611779/223798813-92a16141-19f6-415b-b9d8-2554eb814edc.png">
+
+4. Once the installation is finished, you will see a new icon on the top nav bar. You can now close your terminal (if not done already) and start browsing the blockchain and all our applications available.
 
 > **_NOTE:_** If you quit Thyra, the icon tray will disappear. Normal! If you want to add it back, open your finder and look for "thyra" in all your mac. You should see the following file "XXXX"; click on it and the app will be back on your top nav bar. 
 
@@ -52,7 +54,6 @@ You can now browse the **websites on-chain** seamlessly. If you need to take the
 If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
 
 
-
 #### Linux
 
 > **_NOTE:_** Only Linux Ubuntu is currently supported.
@@ -62,8 +63,8 @@ Before installing Thyra, make sure that you have Node.js and npm (Node Package M
 node -v && npm -v
 ```
 If you do not have Node.js and npm installed, you can run `sudo apt install nodejs npm`
-1. Go on [this page](https://github.com/massalabs/thyra/releases/latest) and download the installer "thyra-server_linux_amd64".
-2. Once downloaded, double clik on the file 
+1. Click [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_linux_amd64) to download Thyra on your desktop.
+2. Once downloaded, double clik on the file.
 3. A terminal should open automatically where you can follow the steps of the installation. Just watch it working, and at some point you'll need to add your password.
 4. Once the installation is finished, you will see a new icon on the top nav bar (see screenshot below). You can now close your terminal if not done already and start browsing the blockchain and all our applications available. 
 
@@ -86,7 +87,7 @@ node -v && npm -v
 ```
 If you do not have Node.js and npm installed, you can download them from the official [website](https://nodejs.org/en/download/).
 
-Follow [this link](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer.exe) to download the Thyra installer on your computer. Then:
+Click [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer.exe) to download the Thyra installer on your desktop. Then:
 1. Open it by double clicking
 2. The installer will:
   * Check if you have the latest version of Thyra and install it if not.
