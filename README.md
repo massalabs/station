@@ -11,20 +11,11 @@ An entrance to the Massa blockchain.
 go to [Contributing](./CONTRIBUTING.md)
 
 ## Install thyra 
-
-go to [installation](./INSTALLATION.md)
-
-## Install Thyra on my computer?
-
-Follow the instructions for your computer in the wiki:
-
-- [MacOS](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#macos)
-- [Linux](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#linux)
-- [Windows](https://github.com/massalabs/thyra/blob/main/INSTALLATION.md#windows)
+go to [Installation](./INSTALLATION.md)
 
 ## Install a plugin
 
-soon
+Soon
 
 -----
 
@@ -35,7 +26,7 @@ soon
 
 ## Going further 
 
-### ... pass options to `thyra-server`?
+### To pass options to `thyra-server`?
 
 Thyra accepts different options that you can specify when you start the program.
 In this section you will find a non-exhaustive list of such options and examples of how you can use them.
@@ -53,7 +44,7 @@ To use this option with a constant, you have to execute :
 To use this option with a custom IP address, you have to execute :
 `thyra-server --node-server=192.168.X.X`
 
-### ... code with auto-reload
+### To code with auto-reload
 
 You can run the application with this command: `air`.
 
@@ -61,11 +52,11 @@ It will generate and reload thyra each time a file is modified.
 
 ## Pre-requisite
 
-### ... Upload a website
+### To Upload a website
 
-With Thyra you can upload a website. It will be hosted on the Massa blockchain and available as a `.massa` URL. You can access this URL through Tyhra.
+With Thyra you can upload a website on-chain. It will be hosted on the Massa blockchain and available as a `.massa` URL. You can access this URL through Tyhra.
 
-For this to work, the file you upload must be a zip archive (file ending with `.zip`). This archive must contain a `index.html` file at the root.
+For this to work, the file you upload must be a zip archive (file ending with `.zip`). This archive must contain a `index.html` file at the root. By installing Thyra following instructions [here](./INSTALLATION.md), you will be able to find and use our Web on-chain module.
 
 
 ## Additional information
