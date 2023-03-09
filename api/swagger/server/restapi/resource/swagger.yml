@@ -618,6 +618,84 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /cmd/deploySC:
+    post:
+      operationId: cmdDeploySC
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: walletNickname
+          type: string
+          required: true
+          x-nullable: false
+          description: Name of the wallet used to deploy the smart contract.
+        - in: formData
+          name: smartContract
+          type: file
+          required: true
+          x-nullable: false
+          description: Smart contract file in a Wasm format.
+        - in : formData
+          name : gazPrice
+          type: integer 
+          format: uint64
+          minimum: 0
+          description : Price of a gaz unit.
+          default : 0
+        - in : formData
+          name : gazLimit
+          type : integer
+          format: uint64
+          minimum: 0
+          description: Maximum number of gaz unit that a node will be able to consume.
+          default: 700000000
+        - in: formData
+          name : coins
+          type: integer
+          format: uint64
+          minimum: 0
+          description: Set the number of coins that will be sent along the deployment call.
+          default: 0
+        - in: formData
+          name : expiry
+          type : integer
+          format: uint64
+          minimum: 0
+          description: Set the expiry duration (in number of slots) of the transaction.
+          default: 2
+        - in: formData
+          name : fee
+          type : integer
+          minimum: 0
+          format: uint64
+          description: Set the fee amount (in massa) that will be given to the block creator.
+          default : 0
+        - in: formData
+          name: datastore
+          type: string
+          default: ""
+          description: b64 encoded datastore that will be sent along the smart contract.
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK.
+          schema:
+            type: string
+            description: Operation id.
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
   /kpi:
     get:
       operationId: kpi

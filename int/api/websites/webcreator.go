@@ -40,7 +40,7 @@ func listFileName(zipReader *zip.Reader) []string {
 }
 
 func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams, app *fyne.App) middleware.Responder {
-	wallet, _ := loadAndUnprotectWallet(params.Nickname, app)
+	wallet, _ := LoadAndUnprotectWallet(params.Nickname, app)
 	archive, _ := readAndCheckArchive(params.Zipfile, app)
 
 	address, err := website.PrepareForUpload(params.URL, wallet)
@@ -93,7 +93,7 @@ func CreateUploadWebsiteHandler(app *fyne.App) func(params operations.WebsiteCre
 }
 
 func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams, app *fyne.App) middleware.Responder {
-	wallet, _ := loadAndUnprotectWallet(params.Nickname, app)
+	wallet, _ := LoadAndUnprotectWallet(params.Nickname, app)
 	archive, _ := readAndCheckArchive(params.Zipfile, app)
 
 	_, err := website.Upload(params.Address, archive, *wallet)
@@ -124,7 +124,7 @@ func CreateUploadMissingChunksHandler(app *fyne.App) func(params operations.Webs
 
 //nolint:lll
 func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChunksParams, app *fyne.App) middleware.Responder {
-	wallet, _ := loadAndUnprotectWallet(params.Nickname, app)
+	wallet, _ := LoadAndUnprotectWallet(params.Nickname, app)
 	archive, _ := readAndCheckArchive(params.Zipfile, app)
 
 	_, err := website.UploadMissedChunks(params.Address, archive, wallet, params.MissedChunks)
@@ -140,8 +140,7 @@ func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChu
 		})
 }
 
-//nolint:unparam
-func loadAndUnprotectWallet(nickname string, app *fyne.App) (*wallet.Wallet, middleware.Responder) {
+func LoadAndUnprotectWallet(nickname string, app *fyne.App) (*wallet.Wallet, middleware.Responder) {
 	wallet, err := wallet.Load(nickname)
 	if err != nil {
 		return nil, createInternalServerError(errorCodeGetWallet, err.Error())

@@ -39,10 +39,12 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	}
 
 	// Prepare address to webstorage.
-	scAddress, err := onchain.DeploySC(client, *wallet, websiteStorer)
+	deploymentEvent, err := onchain.DeploySC(client, *wallet, websiteStorer)
 	if err != nil {
 		return "", fmt.Errorf("deploying webstorage SC: %w", err)
 	}
+
+	scAddress := strings.Split(deploymentEvent, ":")[1]
 
 	// Set DNS.
 	_, err = dns.SetRecord(client, *wallet, url, scAddress)

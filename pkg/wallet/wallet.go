@@ -224,10 +224,6 @@ func Delete(nickname string) (err error) {
 	return nil
 }
 
-func CheckAddress(address string) bool {
-	return len(address) > MinAddressLength
-}
-
 func CreateWalletFromKeys(nickname string, privKeyBytes []byte, pubKeyBytes []byte, addr [32]byte) (*Wallet, error) {
 	var salt [16]byte
 

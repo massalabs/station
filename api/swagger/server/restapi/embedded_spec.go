@@ -117,6 +117,109 @@ func init() {
         }
       }
     },
+    "/cmd/deploySC": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "cmdDeploySC",
+        "parameters": [
+          {
+            "type": "string",
+            "x-nullable": false,
+            "description": "Name of the wallet used to deploy the smart contract.",
+            "name": "walletNickname",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "x-nullable": false,
+            "description": "Smart contract file in a Wasm format.",
+            "name": "smartContract",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "default": 0,
+            "description": "Price of a gaz unit.",
+            "name": "gazPrice",
+            "in": "formData"
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "default": 700000000,
+            "description": "Maximum number of gaz unit that a node will be able to consume.",
+            "name": "gazLimit",
+            "in": "formData"
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "default": 0,
+            "description": "Set the number of coins that will be sent along the deployment call.",
+            "name": "coins",
+            "in": "formData"
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "default": 2,
+            "description": "Set the expiry duration (in number of slots) of the transaction.",
+            "name": "expiry",
+            "in": "formData"
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "default": 0,
+            "description": "Set the fee amount (in massa) that will be given to the block creator.",
+            "name": "fee",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "default": "",
+            "description": "Datastore that will be sent along the smart contract.",
+            "name": "datastore",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "schema": {
+              "description": "Operation id.",
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/cmd/executeFunction": {
       "post": {
         "produces": [
@@ -1760,6 +1863,114 @@ func init() {
           },
           "404": {
             "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/cmd/deploySC": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "cmdDeploySC",
+        "parameters": [
+          {
+            "type": "string",
+            "x-nullable": false,
+            "description": "Name of the wallet used to deploy the smart contract.",
+            "name": "walletNickname",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "x-nullable": false,
+            "description": "Smart contract file in a Wasm format.",
+            "name": "smartContract",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "format": "uint64",
+            "default": 0,
+            "description": "Price of a gaz unit.",
+            "name": "gazPrice",
+            "in": "formData"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "format": "uint64",
+            "default": 700000000,
+            "description": "Maximum number of gaz unit that a node will be able to consume.",
+            "name": "gazLimit",
+            "in": "formData"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "format": "uint64",
+            "default": 0,
+            "description": "Set the number of coins that will be sent along the deployment call.",
+            "name": "coins",
+            "in": "formData"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "format": "uint64",
+            "default": 2,
+            "description": "Set the expiry duration (in number of slots) of the transaction.",
+            "name": "expiry",
+            "in": "formData"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "format": "uint64",
+            "default": 0,
+            "description": "Set the fee amount (in massa) that will be given to the block creator.",
+            "name": "fee",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "default": "",
+            "description": "Datastore that will be sent along the smart contract.",
+            "name": "datastore",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "schema": {
+              "description": "Operation id.",
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
             "schema": {
               "$ref": "#/definitions/Error"
             }

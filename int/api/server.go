@@ -17,6 +17,7 @@ import (
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/node"
+	deploysc "github.com/massalabs/thyra/pkg/node/sendoperation/deploySC"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
 	pluginmanager "github.com/massalabs/thyra/pkg/plugins"
 )
@@ -65,7 +66,7 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 
 	case "INNONET":
 		*massaNodeServerPtr = "https://inno.massa.net/test19"
-		dnsAddress = "A1tnNcCY9Z8nE45snYjs7aC1GqCXkqiYaY5bbwqKkt11aH9HftJ"
+		dnsAddress = "A1wsBqyXY2xZqXeJ7aXxcJiMnfVoS7keCFxJGNtQTr6QZ4uhryd"
 
 	case "LOCALHOST":
 		*massaNodeServerPtr = "http://127.0.0.1:33035"
@@ -101,6 +102,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *p
 	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(
 		websites.CreatePrepareForWebsiteHandler(app),
 	)
+	localAPI.CmdDeploySCHandler = operations.CmdDeploySCHandlerFunc(deploysc.Handler)
 	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(
 		websites.CreateUploadWebsiteHandler(app),
 	)
