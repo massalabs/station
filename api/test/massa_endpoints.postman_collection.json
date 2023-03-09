@@ -266,33 +266,42 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "nickname",
+							"key": "walletNickname",
 							"value": "execSCwallet",
 							"type": "text"
 						},
 						{
-							"key": "Wasmfile",
+							"key": "smartContract",
 							"type": "file",
-							"src": "/C:/Users/hugon/massa_repos/thyra/pkg/onchain/website/sc/websiteStorer.wasm"
+							"src": []
 						},
 						{
 							"key": "coins",
-							"value": "1",
-							"type": "text"
+							"value": "0",
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "fee",
-							"value": "2",
-							"type": "text"
+							"value": "0",
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "expiry",
-							"value": "3",
-							"type": "text"
+							"value": "2",
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "gazLimit",
 							"value": "100000000",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "datastore",
+							"value": "",
 							"type": "text"
 						}
 					]
@@ -327,12 +336,12 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "nickname",
+									"key": "walletNickname",
 									"value": "execSCwallet",
 									"type": "text"
 								},
 								{
-									"key": "Wasmfile",
+									"key": "smartContract",
 									"type": "file",
 									"src": "/C:/Users/hugon/massa_repos/thyra/pkg/onchain/website/sc/websiteStorer.wasm"
 								},
