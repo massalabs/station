@@ -37,6 +37,10 @@ func Handler(params operations.CmdDeploySCParams) middleware.Responder {
 				})
 	}
 
+	if len(decodedDatastore) == 0 {
+		decodedDatastore = nil
+	}
+
 	address, err := onchain.DeploySCV2(client,
 		params.WalletNickname,
 		*params.GazLimit,
