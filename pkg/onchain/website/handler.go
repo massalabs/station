@@ -61,17 +61,10 @@ func RedirectToDefaultResourceInterceptor(req *interceptor.Interceptor) *interce
 		splited := removeEmptyStrings(strings.Split(req.Request.URL.Path[len(prefix):], "/"))
 
 		if len(splited) == 1 {
-			protocol := "https"
-			if req.Request.TLS == nil {
-				protocol = "http"
-			}
-
 			http.Redirect(
-				req.Writer,
-				req.Request,
-				protocol+"://"+req.Request.Host+prefix+splited[0]+"/index.html",
-				http.StatusSeeOther,
-			)
+				req.Writer, req.Request,
+				"http://"+req.Request.Host+prefix+splited[0]+"/"+"index.html",
+				http.StatusSeeOther)
 
 			return nil
 		}
