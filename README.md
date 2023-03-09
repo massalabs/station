@@ -41,7 +41,7 @@ NB: if you just installed Thyra, you're using the latest version!
 
 ### ... store a website on chain?
 
-You can access to Thyra web hosting interface at URL : <https://my.massa/thyra/websiteCreator/index.html>
+You can access to Thyra web hosting interface at URL : <http://my.massa/thyra/websiteCreator/index.html>
 
 In order to register a website on Thyra you'll need to :
 
