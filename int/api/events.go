@@ -10,6 +10,12 @@ import (
 	"github.com/massalabs/thyra/pkg/node"
 )
 
+const (
+	periodThreshold = 1
+	tickerDuration  = time.Second
+)
+
+//nolint:funlen
 func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
@@ -27,12 +33,16 @@ func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.
 		Thread: 0,
 	}
 
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(tickerDuration)
 
 	var event node.Event
 
 	for ; true; <-ticker.C {
 		trigger := false
+
+		// In some cases, the event has been emitted in the previous period and we miss it.
+		// So we check a given number of previous periods to be sure to catch it.
+		slotStart.Period -= periodThreshold
 
 		events, err := node.Events(client, &slotStart, nil, &params.Caller, nil, nil)
 		if err != nil {
