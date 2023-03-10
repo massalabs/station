@@ -120,7 +120,7 @@ jobs:
       - name: Archive installer binary
         if: ${{ matrix.os != 'windows-latest' }}
         run: |
-          tar -czvf thyra-installer_${{ matrix.target }}_${{ matrix.displayed_arch }}${{ matrix.ext }} -C ./dist/${{ matrix.target }} thyra-installer_${{ matrix.target }}_${{ matrix.displayed_arch }}
+          tar -czvf ./dist/${{ matrix.target }}/thyra-installer_${{ matrix.target }}_${{ matrix.displayed_arch }}${{ matrix.ext }} -C ./dist/${{ matrix.target }} thyra-installer_${{ matrix.target }}_${{ matrix.displayed_arch }}
       - name: Upload installer artifacts
         uses: actions/upload-artifact@v3
         with:
