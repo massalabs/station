@@ -25,7 +25,7 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyn
 			&models.Error{Code: errorCodeUnknownKeyID, Message: "Error : cannot decode Smart contract address : " + err.Error()})
 	}
 
-	addr = addr[2:]
+	addr = addr[1:]
 
 	args, err := base64.StdEncoding.DecodeString(params.Body.Args)
 	if err != nil {
