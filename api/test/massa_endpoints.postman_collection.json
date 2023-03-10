@@ -42,7 +42,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://my.massa/massa/addresses?addresses=A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
+					"raw": "http://my.massa/massa/addresses?addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
 					"protocol": "http",
 					"host": [
 						"my",
@@ -55,11 +55,11 @@
 					"query": [
 						{
 							"key": "addresses",
-							"value": "A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
+							"value": "AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
 						},
 						{
 							"key": "addresses",
-							"value": "A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
+							"value": "AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
 						}
 					]
 				}
@@ -71,7 +71,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://my.massa/massa/addresses?addresses=A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
+							"raw": "http://my.massa/massa/addresses?addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
 							"protocol": "http",
 							"host": [
 								"my",
@@ -84,11 +84,11 @@
 							"query": [
 								{
 									"key": "addresses",
-									"value": "A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
+									"value": "AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
 								},
 								{
 									"key": "addresses",
-									"value": "A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
+									"value": "AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
 								}
 							]
 						}
@@ -119,7 +119,7 @@
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"addressesAttributes\": {\n        \"A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5\": {\n            \"balance\": {\n                \"final\": \"0\",\n                \"pending\": \"0\"\n            }\n        },\n        \"A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS\": {\n            \"balance\": {\n                \"final\": \"0\",\n                \"pending\": \"0\"\n            }\n        }\n    }\n}"
+					"body": "{\n    \"addressesAttributes\": {\n        \"AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5\": {\n            \"balance\": {\n                \"final\": \"0\",\n                \"pending\": \"0\"\n            }\n        },\n        \"AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS\": {\n            \"balance\": {\n                \"final\": \"0\",\n                \"pending\": \"0\"\n            }\n        }\n    }\n}"
 				}
 			]
 		},
@@ -159,7 +159,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://my.massa/massa/addresses?attributes=balance&addresses=A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
+					"raw": "http://my.massa/massa/addresses?attributes=balance&addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
 					"protocol": "http",
 					"host": [
 						"my",
@@ -192,7 +192,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://my.massa/massa/addresses?attributes=balance&addresses=A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
+							"raw": "http://my.massa/massa/addresses?attributes=balance&addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
 							"protocol": "http",
 							"host": [
 								"my",
@@ -209,11 +209,11 @@
 								},
 								{
 									"key": "addresses",
-									"value": "A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
+									"value": "AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
 								},
 								{
 									"key": "addresses",
-									"value": "A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
+									"value": "AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
 								}
 							]
 						}
@@ -244,7 +244,7 @@
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"addressesAttributes\": {\n        \"A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5\": {\n            \"balance\": {\n                \"final\": \"0\",\n                \"pending\": \"0\"\n            }\n        },\n        \"A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS\": {\n            \"balance\": {\n                \"final\": \"0\",\n                \"pending\": \"0\"\n            }\n        }\n    }\n}"
+					"body": "{\n    \"addressesAttributes\": {\n        \"AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5\": {\n            \"balance\": {\n                \"final\": \"0\",\n                \"pending\": \"0\"\n            }\n        },\n        \"AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS\": {\n            \"balance\": {\n                \"final\": \"0\",\n                \"pending\": \"0\"\n            }\n        }\n    }\n}"
 				}
 			]
 		},
@@ -407,7 +407,7 @@
 						}
 					],
 					"cookie": [],
-					"body": "\"Website Deployer is deployed at :A1MuW9NXqE54txD4xag7f9pPttA9o8fxwb2imbqjgcVwdy1nU9W\""
+					"body": "\"Website Deployer is deployed at :AS1MuW9NXqE54txD4xag7f9pPttA9o8fxwb2imbqjgcVwdy1nU9W\""
 				}
 			]
 		}
