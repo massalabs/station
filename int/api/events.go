@@ -15,6 +15,7 @@ const (
 	tickerDuration  = time.Second
 )
 
+//nolint:funlen
 func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.Responder {
 	client := node.NewDefaultClient()
 
