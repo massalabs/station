@@ -83,7 +83,7 @@ class LinuxInstaller(Installer):
     Override installThyraServer defined at installer level.
     """
     def installThyraServer(self):
-        super().installThyraApp()
+        super().installThyraServer()
         self.executeCommand(f"sudo setcap CAP_NET_BIND_SERVICE=+eip {self.THYRA_INSTALL_FOLDER_PATH}/{self.THYRA_SERVER_FILENAME}", True)
 
 if __name__ == "__main__":
