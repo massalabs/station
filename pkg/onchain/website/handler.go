@@ -38,6 +38,16 @@ func MassaTLDInterceptor(req *interceptor.Interceptor) *interceptor.Interceptor 
 	massaIndex := strings.Index(req.Request.Host, ".massa")
 
 	if massaIndex > 0 && !strings.HasPrefix(req.Request.Host, "my.massa") {
+		// If the request is not https, redirect to https.
+		if req.Request.TLS == nil {
+			http.Redirect(
+				req.Writer,
+				req.Request,
+				"https://"+req.Request.Host+req.Request.URL.Path,
+				http.StatusPermanentRedirect,
+			)
+		}
+
 		handleMassaDomainRequest(req.Writer, req.Request, massaIndex)
 
 		return nil
