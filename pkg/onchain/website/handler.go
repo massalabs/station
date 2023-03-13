@@ -29,6 +29,26 @@ func handleMassaDomainRequest(writer http.ResponseWriter, reader *http.Request, 
 	Request(writer, reader, rpcClient, addr, target)
 }
 
+// Redirects a given request to https.
+func redirectTLDToHTTPS(req *interceptor.Interceptor) {
+	url := "https://" + req.Request.Host + req.Request.URL.Path
+
+	if len(req.Request.URL.RawQuery) > 0 {
+		url += "?" + req.Request.URL.RawQuery
+	}
+
+	if len(req.Request.URL.Fragment) > 0 {
+		url += "#" + req.Request.URL.Fragment
+	}
+
+	http.Redirect(
+		req.Writer,
+		req.Request,
+		url,
+		http.StatusPermanentRedirect,
+	)
+}
+
 // MassaTLDInterceptor intercepts request for web on-chain.
 func MassaTLDInterceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
 	if req == nil {
@@ -40,22 +60,7 @@ func MassaTLDInterceptor(req *interceptor.Interceptor) *interceptor.Interceptor 
 	if massaIndex > 0 && !strings.HasPrefix(req.Request.Host, "my.massa") {
 		// If the request is not https, redirect to https.
 		if req.Request.TLS == nil {
-			url := "https://" + req.Request.Host + req.Request.URL.Path
-
-			if len(req.Request.URL.RawQuery) > 0 {
-				url += "?" + req.Request.URL.RawQuery
-			}
-
-			if len(req.Request.URL.Fragment) > 0 {
-				url += "#" + req.Request.URL.Fragment
-			}
-
-			http.Redirect(
-				req.Writer,
-				req.Request,
-				url,
-				http.StatusPermanentRedirect,
-			)
+			redirectTLDToHTTPS(req)
 		}
 
 		handleMassaDomainRequest(req.Writer, req.Request, massaIndex)
