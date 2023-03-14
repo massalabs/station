@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const { createThemes } = require('tw-colors');
+const plugin = require('tailwindcss/plugin')
 module.exports = {
     content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
     theme: {
@@ -38,7 +40,7 @@ module.exports = {
                 font: "#FFFFFF",
             },
         }),
-        plugin(function ({ addBase, theme }) {
+        plugin(function ({ addComponents, theme }) {
             addComponents({
               ".display": {
                 fontSize: "72px",
