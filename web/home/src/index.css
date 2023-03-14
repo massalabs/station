@@ -4,9 +4,9 @@
 
 @font-face {
     font-family: "MaisonNeue";
-    src: url("../public/fonts/MaisonNeueExtended-Black.otf");
+    src: url("../public/fonts/MaisonNeueExtended/MaisonNeueExtended-Black.otf");
   }
   @font-face {
     font-family: "TTCommons";
-    src: url("../public/fonts/TTCommonsBlack.otf");
+    src: url("../public/fonts/TTCommons/TTCommonsBlack.otf");
   }
