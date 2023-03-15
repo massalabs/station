@@ -16,6 +16,7 @@ module.exports = {
         require("daisyui"),
         createThemes({
             light: {
+                primaryBG: "#F3F3F3",
                 bgCard: "#FFFFFF",
                 primaryButton: "#FFFFFF",
                 secondaryButton: "#000000",
@@ -28,6 +29,7 @@ module.exports = {
                 border: "#F3F3F3",
             },
             dark: {
+                primaryBG: "#171A1D",
                 bgCard: "#21252A",
                 primaryButton: "#21252A",
                 secondaryButton: "#000000",

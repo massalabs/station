@@ -5,13 +5,17 @@ import { useQuery } from "react-query";
 import gearingLogo from "../../assets/gearing.png";
 import axios from "axios";
 import { PluginHomePage } from "../../../../shared/interfaces/IPlugin";
-
+import pluginCard from "../../components/pluginCard";
 
 /**
  * Homepage of Thyra with a list of plugins installed
  *
  */
-function Home() {
+type Props = {
+    setTheme: (theme: string) => void;
+};
+
+function Home(props : Props) {
     // Fetch plugins installed by calling get /plugin/manager
 
     // List of plugins
@@ -117,15 +121,17 @@ function Home() {
             <div className="m-4 grid mx-auto w-fit grid-cols-2 rounded-lg sm:grid-cols-4">
                 {pluginList}
             </div>
+            {/* Plugin Manager */}
             <div className="mx-auto cursor-pointer" onClick={() => {window.open("/thyra/plugin-manager")}}>
                     {/* Will change when manager page is done */}
                     <img
                         className="max-w-9 max-h-9 mx-auto block mb-2"
                         src={gearingLogo}
                         alt="Gearing Logo"
-                    />
+                        />
                     <p className="text-center text-m font text-white">Plugin Manager</p>
             </div>
+                        {pluginCard()}
         </div>
     );
 }
