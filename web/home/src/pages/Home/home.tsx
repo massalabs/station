@@ -16,6 +16,7 @@ import webOnChain from '../../assets/logo/plugins/WebOnChain.svg';
 import MainTitle from '../../components/MainTitle';
 
 
+import { UIStore } from "../../store/UIStore";
 /**
  * Homepage of Thyra with a list of plugins installed
  *
