@@ -15,6 +15,18 @@ import (
 //go:embed version.txt
 var version string
 
+func createDirectoryIfNotExists(dir string) {
+	const dirPerm = 0o755
+
+	_, err := os.Stat(dir)
+	if err != nil {
+		err = os.MkdirAll(dir, dirPerm)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
 func ParseFlags() api.StartServerFlags {
 	const httpPort = 80
 
@@ -23,8 +35,13 @@ func ParseFlags() api.StartServerFlags {
 	var flags api.StartServerFlags
 
 	configDir, _ := config.GetConfigDir()
-	defaultCertFile := path.Join(configDir, "certs", "cert.pem")
-	defaultCertKeyFile := path.Join(configDir, "certs", "cert-key.pem")
+	createDirectoryIfNotExists(configDir)
+
+	certDir := path.Join(configDir, "certs")
+	createDirectoryIfNotExists(certDir)
+
+	defaultCertFile := path.Join(certDir, "cert.pem")
+	defaultCertKeyFile := path.Join(certDir, "cert-key.pem")
 
 	flag.IntVar(&flags.Port, "http-port", httpPort, "HTTP port to listen to")
 	flag.IntVar(&flags.TLSPort, "https-port", httpsPort, "HTTPS port to listen to")
