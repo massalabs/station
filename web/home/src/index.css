@@ -10,3 +10,14 @@
     font-family: "TTCommons";
     src: url("../public/fonts/TTCommons/TTCommonsBlack.otf");
   }
+
+  .custom-classname.react-toggle--checked .react-toggle-track {
+    background-color: #000000;
+  }
+  .custom-classname.react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
+    background-color: #D2D2D2;
+}
+.custom-classname.react-toggle--checked .react-toggle-thumb{
+  background-color: #FFFFFF;
+    border-color: #000000;
+}

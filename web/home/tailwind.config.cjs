@@ -26,7 +26,7 @@ module.exports = {
                 brand: "#FF0000",
                 live: "#14FF00",
                 font: "#000000",
-                border: "#F3F3F3",
+                border: "#000000",
             },
             dark: {
                 primaryBG: "#171A1D",

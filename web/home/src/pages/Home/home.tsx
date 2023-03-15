@@ -5,17 +5,22 @@ import { useQuery } from "react-query";
 import gearingLogo from "../../assets/gearing.png";
 import axios from "axios";
 import { PluginHomePage } from "../../../../shared/interfaces/IPlugin";
-import pluginCard from "../../components/pluginCard";
+import {PluginCard} from "../../components/PluginCard";
+import toggleTheme from "../../components/toggleTheme";
+import Header from "../../components/Header";
+import ArrowEntry from "../../assets/pictos/ArrowEntry.svg";
 
+import { UIStore } from "../../store/UIStore";
 /**
  * Homepage of Thyra with a list of plugins installed
  *
  */
 type Props = {
-    setTheme: (theme: string) => void;
-};
+}
 
 function Home(props : Props) {
+
+    
     // Fetch plugins installed by calling get /plugin/manager
 
     // List of plugins
@@ -88,33 +93,23 @@ function Home(props : Props) {
                     <div className="tooltip" data-tip={plugin.description}>
                         <img className="w-9 h-9 self-center bg-slate-800" src={massaLogomark}></img>
                     </div>
-                    <h1 className="text-xs text-center text-white">{plugin.name}</h1>
+                    <h1 className="text-xs text-center text-font">{plugin.name}</h1>
                 </div>
             </button>
         );
     });
 
     return (
-        <div className="p-3">
-            <div className="flex items-center ">
-                <img className="max-h-6" src={massaLogoLight} alt="Thyra Logo" />
-                <h1 className="text-xl ml-6 font-bold text-white">Thyra</h1>
-            </div>
-            <div className="flex">
-                <div className="">
-                    <p className="text-xl p-5 text-white">
-                        θύρα (thýra) in ancient Greek means door, entrance. To pronounce "thoo-rah".
-                    </p>
-                </div>
-            </div>
-            <div className="">
+        <div className="">
+            <Header/>
+            <div className="mx-auto flex-row">
+                <p className="display block text-center flex-row">
                 <img
-                    className="max-w-32 max-h-32 mx-auto block mb-10"
-                    src={thyraLogo}
+                    className="w-16 h-16"
+                    src={ArrowEntry}
                     alt="Thyra Logo"
                 />
-                <p className="text-center text-4xl font text-white">
-                    A gateway to Massa blockchain
+                    Which plugin
                 </p>
             </div>
             {/* Display the plugins in a grid */}
@@ -129,9 +124,10 @@ function Home(props : Props) {
                         src={gearingLogo}
                         alt="Gearing Logo"
                         />
-                    <p className="text-center text-m font text-white">Plugin Manager</p>
+                    <p className="text-center text-m font text-font">Plugin Manager</p>
             </div>
-                        {pluginCard()}
+                        <PluginCard {...{logo: massaLogoLight, name: "Hello", description:"holaholaholahol aholaholaholahol aholaholahola holaholaholaholaholaholaholaholaholah olaholaholaholaholaholaholaholaholaholaholahola" }}/>
+
         </div>
     );
 }

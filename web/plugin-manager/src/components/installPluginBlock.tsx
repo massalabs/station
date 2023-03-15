@@ -42,7 +42,7 @@ function InstallPlugin(p: InstallZipProps) {
 
     return (
         <section className="bg-slate-800 h-48 max-w-lg w-96 p-3 m-4 rounded-2xl">
-            <div className=" flex-row h-full text-white ">
+            <div className=" flex-row h-full text-font ">
 
                 <div className="bg-slate-800 sm:px-6 sm:flex justify-center">
                     <h1 className="text-lg leading-6 font-bold" id="modal-headline">
@@ -69,7 +69,7 @@ function InstallPlugin(p: InstallZipProps) {
                             <button
                                 type="submit"
                                 hidden={isInstalling}
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                className="bg-blue-500 hover:bg-blue-700 text-font font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             >
                                 Install
                             </button>

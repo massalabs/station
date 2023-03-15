@@ -1,28 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import Toggle from "react-toggle";
-import moon from "../../public/pictos/moon.svg";
-import sun from "../../public/pictos/sun.svg";
-type Props = {
-    state: boolean;
-    setState: (state: boolean) => void;
-};
+import moon from "../assets/pictos/moon.svg";
+import sun from "../assets/pictos/sunWhite.svg";
+import { UIStore } from "../store/UIStore";
+import "react-toggle/style.css"
+import "../index.css"
 
-const toggleTheme = (props: Props) => {
+const toggleTheme = () => {
+    UIStore.useState(s => (s.theme));
     const handleChange = () => {
-        props.setState(!props.state);
+        UIStore.update(s => {
+            s.theme = s.theme == "dark" ? "light" : "dark";
+        })
     };
     return (
-        <label>
             <Toggle
-                defaultChecked={false}
+                defaultChecked={UIStore.useState(s => (s.theme == "light" ? true : false))}
                 icons={{
-                    checked: moon,
-                    unchecked: sun,
+                    checked: <img src={sun} />,
+                    unchecked: <img src={moon} />,
                 }}
+                className="custom-classname"
                 onChange={handleChange}
+                // className={props.state ? "bg-[#000000]" : "bg-[#D2D2D2]"}
             />
-            <span>Custom icons</span>
-        </label>
     );
 };
 
