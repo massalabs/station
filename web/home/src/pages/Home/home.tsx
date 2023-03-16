@@ -63,7 +63,7 @@ function Home(props: Props) {
       case 'Web On Chain':
         url = '/thyra/websiteCreator';
         break;
-      case 'Wallet':
+      case "Massa's Wallet":
         url = '/thyra/wallet';
         break;
       default:
