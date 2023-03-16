@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 )
 
@@ -141,7 +142,7 @@ func (p *Plugin) Start() error {
 	// start a goroutine to wait on the command
 	go func() {
 		err := p.command.Wait()
-		if err != nil && !(err.Error() == "signal: killed" || err.Error() == "exit status 1") {
+		if err != nil && !(err.Error() == "signal: killed" || strings.Contains(err.Error(), "exit status")) {
 			log.Printf("plugin '%s' exiting with error: %s\n", pluginName, err)
 
 			p.status = Crashed
