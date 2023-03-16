@@ -4,11 +4,11 @@
 
 @font-face {
     font-family: "MaisonNeue";
-    src: url("../public/fonts/MaisonNeueExtended/MaisonNeueExtended-Black.otf");
+    src: url("/fonts/MaisonNeueExtended/MaisonNeueExtended-Medium.otf");
   }
   @font-face {
     font-family: "TTCommons";
-    src: url("../public/fonts/TTCommons/TTCommonsBlack.otf");
+    src: url("/fonts/TTCommons/TTCommonsBlack.otf");
   }
 
   .custom-classname.react-toggle--checked .react-toggle-track {
@@ -20,4 +20,8 @@
 .custom-classname.react-toggle--checked .react-toggle-thumb{
   background-color: #FFFFFF;
     border-color: #000000;
+}
+.react-toggle-track-check{
+  width: 14px;
+  height: 14px;
 }

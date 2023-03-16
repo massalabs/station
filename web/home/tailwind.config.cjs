@@ -47,8 +47,9 @@ module.exports = {
               ".display": {
                 fontSize: "72px",
                 fontWeight: "500",
-                fontFamily: theme("fontFamily.sans"),
+                fontFamily: theme("fontFamily.MaisonNeue"),
                 lineHeight: "87px",
+                fontStyle: "normal",
             },
             ".label": {
                 fontSize: "32px",
