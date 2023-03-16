@@ -29,4 +29,5 @@ export interface PluginHomePage {
     description: string;
     logo: string;
     status: string;
+    home?: string;
 }

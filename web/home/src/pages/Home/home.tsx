@@ -52,10 +52,16 @@ function Home(props: Props) {
     },
   ];
   const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
+  interface PluginHome {
+    name: string;
+    home: string
+  }
+  const [pluginsHomeName, setPluginsHomeName] = useState<PluginHome[]>([{name:'',home:''}]);
   const handleOpenPlugin = (pluginName: string) => {
     let url;
     // Handle Fake plugins for now and only for massa plugins
     // TODO: Remove this when we have the API with authors of plugins
+    
     switch (pluginName) {
       case 'Registry':
         url = '/thyra/registry';
@@ -68,12 +74,20 @@ function Home(props: Props) {
         break;
       default:
         // If it's not a special case we just redirect to the plugin's home caller
-        url = `/thyra/massa/${pluginName}`;
+        url = findPluginHome(pluginName);
         break;
     }
     window.open(url, '_blank');
   };
-
+  const findPluginHome = (pluginName:string) => {
+    let home = '';
+    pluginsHomeName.forEach((element) => {
+      if (element.name == pluginName) {
+        home = element.home;
+      }
+    });
+    return home;
+  };
   // List of plugins
   const getPlugins = async () => {
     const init = {
@@ -83,8 +97,6 @@ function Home(props: Props) {
       },
     };
     const res = await axios.get(`/plugin-manager`, init);
-    //To delete when Api is merged.
-
     return res.data;
   };
   
@@ -92,6 +104,7 @@ function Home(props: Props) {
   useEffect(() => {
     getPlugins().then((res) => {
       res.forEach((element: PluginHomePage) => {
+        setPluginsHomeName((prev) => [...prev, {name:element.name,home:element.home || ''}]);
         setPlugins((prev) => [...prev, element]);
       });
     });
@@ -123,7 +136,6 @@ function Home(props: Props) {
   return (
     <div className=" min-h-screen bg-img" style={{backgroundImage: `url(${grid1})`}} >
 
-
       <Header />
 
       <p className=" display flex-row flex justify-center text-font">
@@ -137,8 +149,6 @@ function Home(props: Props) {
           <ManagePluginCard />
         </>
       </div>
-      {/* <img src={grid1} className="relative bg-scroll ">
-      </img> */}
       </div>
   );
 }
