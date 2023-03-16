@@ -121,7 +121,7 @@ function Home(props: Props) {
   };
 
   return (
-    <div className=" h-screen bg-img" style={{backgroundImage: `url(${grid1})`}} >
+    <div className=" min-h-screen bg-img" style={{backgroundImage: `url(${grid1})`}} >
 
 
       <Header />
@@ -131,7 +131,7 @@ function Home(props: Props) {
       </p>
 
       {/* Display the plugins in a grid */}
-      <div className="mt-24 gap-8 grid mx-auto w-fit rounded-lg grid-cols-4 place-items-center">
+      <div className="mt-24 gap-8 grid mx-auto w-fit rounded-lg grid-cols-4 place-items-center max-lg:grid-cols-3">
         {mapPluginList()}
         <>
           <ManagePluginCard />
