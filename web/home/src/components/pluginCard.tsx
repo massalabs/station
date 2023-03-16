@@ -1,9 +1,11 @@
 import React, { MouseEventHandler, MouseEvent} from 'react';
 import Arrow6 from '../assets/pictos/arrow6.svg';
+import ArrowWhite6 from '../assets/pictos/ArrowWhite6.svg'
 import { PluginHomePage } from '../../../shared/interfaces/IPlugin';
+import { UIStore } from '../store/UIStore';
 type Props = {
   plugin: PluginHomePage;
-  handleOpenPlugin: (event: MouseEvent<HTMLDivElement>) => void;
+  handleOpenPlugin: (pluginName:string) => void;
   key: string;
 };
 
@@ -11,11 +13,12 @@ export const PluginCard = (props: Props) => {
   const handleCardClick = () => {
     props.handleOpenPlugin(props.plugin.name);
   };
+  const Arrow =  UIStore.useState(s => (s.theme == "light" ? Arrow6 : ArrowWhite6));
   return (
     <div
       onClick={handleCardClick}
-      className="flex flex-col justify-center items-start ml-2 p-5 gap-4 w-64 h-72 
-                    border-[1px] border-solid border-black rounded-2xl bg-bgCard cursor-pointer"
+      className="flex flex-col justify-center items-start p-5 gap-4 w-64 h-72 
+                    border-[1px] border-solid border-border rounded-2xl bg-bgCard cursor-pointer hover:bg-hoverbgCard"
     >
       <img
         src={props.plugin.logo}
@@ -28,7 +31,7 @@ export const PluginCard = (props: Props) => {
           {props.plugin.description}
         </p>
       </div>
-      <img src={Arrow6} alt="Album" className="w-6 h-6" />
+      <img src={Arrow} alt="Album" className="w-6 h-6" />
     </div>
   );
 };

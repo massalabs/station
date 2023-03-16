@@ -1,16 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+/* Add Fonts */
 @font-face {
     font-family: "MaisonNeue";
     src: url("/fonts/MaisonNeueExtended/MaisonNeueExtended-Medium.otf");
   }
   @font-face {
     font-family: "TTCommons";
-    src: url("/fonts/TTCommons/TTCommonsBlack.otf");
+    src: url("/fonts/TTCommons/TTCommonsMedium.otf");
   }
 
+  /* Toggle Theme */
   .custom-classname.react-toggle--checked .react-toggle-track {
     background-color: #000000;
   }
@@ -24,4 +25,11 @@
 .react-toggle-track-check{
   width: 14px;
   height: 14px;
+}
+/* Background SVG for HomePage */
+.bg-img {
+  background-position: bottom left;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 50%;
 }
