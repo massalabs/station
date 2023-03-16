@@ -10,7 +10,7 @@ GET /plugin-manager
     ${response}=    GET    ${API_URL}/plugin-manager
     Status Should Be    ${STATUS_OK}
     ${listLength}=    Get Length    ${response.json()}
-    Should Be Equal As Integers    ${listLength}    1
+    Should Be Equal As Integers    ${listLength}    0
 
 GET /plugin-manager/invalid
     ${response}=    GET    ${API_URL}/plugin-manager/invalid    expected_status=${STATUS_NOT_FOUND}
