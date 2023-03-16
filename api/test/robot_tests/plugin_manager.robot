@@ -1,31 +1,21 @@
 *** Settings ***
-Library         REST   http://localhost
-Resource        variables.resource
-Documentation   This is a test suite for Thyra Plugin Manager endpoints.
+Documentation       This is a test suite for Thyra Plugin Manager endpoints.
+
+Library             RequestsLibrary
+Resource            variables.resource
+
 
 *** Test Cases ***
 GET /plugin-manager
-    GET             /plugin-manager
-    Integer         response status            ${OK}
-    Array           response body              minItems=1  maxItems=1  uniqueItems=true
-    [Teardown]      Output   response body
-
+    ${response}=    GET    ${API_URL}/plugin-manager
+    Status Should Be    ${STATUS_OK}
+    ${listLength}=    Get Length    ${response.json()}
+    Should Be Equal As Integers    ${listLength}    1
 
 GET /plugin-manager/invalid
-    GET             /plugin-manager/invalid
-    Integer         response status            ${NOT_FOUND}
-    String          response body code         "Plugin-0001"
-    [Teardown]      Output   response body
+    ${response}=    GET    ${API_URL}/plugin-manager/invalid    expected_status=${STATUS_NOT_FOUND}
+    Should Be Equal As Strings    ${response.json()['code']}    Plugin-0001
 
 GET /thyra/plugin/invalid/invalid
-    GET             /thyra/plugin/invalid/invalid
-    Integer         response status            ${NOT_IMPLEMENTED}
-    [Teardown]      Output   response body
-
-Test get Operating System
-    ${system}=    Evaluate    platform.system()    platform
-    log to console    \nI am running on ${system}
-
-Test get Architecture
-    ${arch}=    Evaluate    platform.machine()    platform
-    log to console    \nI am running on ${arch}
+    ${response}=    GET    ${API_URL}/thyra/plugin/invalid/invalid    expected_status=${STATUS_NOT_IMPLEMENTED}
+    Should Be Equal As Strings    ${response.json()}    operation PluginRouter has not yet been implemented
