@@ -148,7 +148,6 @@ function Home() {
           <ManagePluginCard />
         </>
       </div>
-    </div>
   );
 }
 
