@@ -13,6 +13,7 @@ import grid1 from '../../assets/element/grid1.svg'
 import wallet from '../../assets/logo/plugins/Wallet.svg'
 import registry from '../../assets/logo/plugins/Registry.svg'
 import webOnChain from '../../assets/logo/plugins/WebOnChain.svg'
+import MainTitle from '../../components/MainTitle';
 
 /**
  * Homepage of Thyra with a list of plugins installed
@@ -135,9 +136,7 @@ function Home(props: Props) {
 
       <Header />
 
-      <p className=" display flex-row flex justify-center text-font">
-        <p className="text-brand">↳</p> Which plugin
-      </p>
+      <MainTitle title="Which Plugins" />
 
       {/* Display the plugins in a grid */}
       <div className="mt-24 gap-8 grid mx-auto w-fit rounded-lg grid-cols-4 place-items-center max-lg:grid-cols-3">
