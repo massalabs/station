@@ -1,4 +1,3 @@
-import React from 'react'
 import plusSmall from '../assets/pictos/plusSmall.svg'
 import PlusSmallWhite from '../assets/pictos/PlusSmallWhite.svg'
 import { UIStore } from '../store/UIStore';

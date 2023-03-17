@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import Toggle from "react-toggle";
 import moon from "../assets/pictos/moon.svg";
 import sun from "../assets/pictos/sunWhite.svg";
@@ -22,7 +21,6 @@ const toggleTheme = () => {
                 }}
                 className="custom-classname"
                 onChange={handleChange}
-                // className={props.state ? "bg-[#000000]" : "bg-[#D2D2D2]"}
             />
     );
 };

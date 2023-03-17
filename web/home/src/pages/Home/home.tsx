@@ -1,22 +1,19 @@
-import React, { MouseEventHandler, MouseEvent, useEffect, useMemo, useState } from 'react';
-import thyraLogo from '../../assets/ThyraLogo-V0-Detailed.png';
-import massaLogoLight from '../../assets/MASSA_LIGHT_Detailed.png';
+import {  useEffect, useState } from 'react';
+
 import massaLogomark from '../../assets/massa_logomark_detailed.png';
-import { useQuery } from 'react-query';
-import gearingLogo from '../../assets/gearing.png';
+
 import axios from 'axios';
 import { PluginHomePage } from '../../../../shared/interfaces/IPlugin';
 import { PluginCard } from '../../components/pluginCard';
-import toggleTheme from '../../components/toggleTheme';
+
 import Header from '../../components/Header';
-import ArrowEntry from '../../assets/pictos/ArrowEntry.svg';
-import { UIStore } from '../../store/UIStore';
+
 import ManagePluginCard from '../../components/managePluginCard';
 import grid1 from '../../assets/element/grid1.svg'
 import wallet from '../../assets/logo/plugins/Wallet.svg'
 import registry from '../../assets/logo/plugins/Registry.svg'
 import webOnChain from '../../assets/logo/plugins/WebOnChain.svg'
-import ArrowWhite6 from '../../assets/pictos/ArrowWhite6.svg'
+
 /**
  * Homepage of Thyra with a list of plugins installed
  *

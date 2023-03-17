@@ -1,4 +1,3 @@
-import React, { MouseEventHandler, MouseEvent} from 'react';
 import Arrow6 from '../assets/pictos/arrow6.svg';
 import ArrowWhite6 from '../assets/pictos/ArrowWhite6.svg'
 import { PluginHomePage } from '../../../shared/interfaces/IPlugin';
