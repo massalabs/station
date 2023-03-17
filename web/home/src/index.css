@@ -4,11 +4,11 @@
 /* Add Fonts */
 @font-face {
     font-family: "Maison Neue";
-    src: url("/fonts/MaisonNeueExtended/MaisonNeueExtended-Medium.otf");
+    src: url("./assets/fonts/MaisonNeueExtended/MaisonNeueExtended-Medium.otf");
   }
   @font-face {
     font-family: "TT Commons";
-    src: url("/fonts/TTCommons/TTCommonsMedium.otf");
+    src: url("./assets/fonts/TTCommons/TTCommonsMedium.otf");
   }
 
   /* Toggle Theme */
