@@ -31,8 +31,8 @@ runs:
       shell: bash
       run: |
         cd web/home
-        npm install
         ls -la
+        npm install
         npm run build
         cd ../..
         cd web/plugin-manager
