@@ -6,8 +6,8 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-              MaisonNeue: ["MaisonNeue", "sans-serif"],
-              TTCommons: ["TTCommons", "sans-serif"],
+              MaisonNeue: ["Maison Neue", "sans-serif"],
+              TTCommons: ["TT Commons", "sans-serif"],
             },
         },
     },

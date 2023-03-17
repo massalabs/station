@@ -3,12 +3,12 @@
 @tailwind utilities;
 /* Add Fonts */
 @font-face {
-    font-family: "MaisonNeue";
-    src: url("/fonts/MaisonNeueExtended/MaisonNeueExtended-Medium.otf");
+    font-family: "Maison Neue";
+    src: url("https://fonts.cdnfonts.com/css/maison-neue");
   }
   @font-face {
-    font-family: "TTCommons";
-    src: url("/fonts/TTCommons/TTCommonsMedium.otf");
+    font-family: "TT Commons";
+    src: url("https://fonts.cdnfonts.com/css/tt-commons");
   }
 
   /* Toggle Theme */
