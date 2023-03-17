@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Add Fonts */
+@font-face {
+    font-family: "Maison Neue";
+    src: url("./assets/fonts/MaisonNeueExtended/MaisonNeueExtended-Medium.otf");
+  }
+  @font-face {
+    font-family: "TT Commons";
+    src: url("./assets/fonts/TTCommons/TTCommonsMedium.otf");
+  }
+
+  /* Toggle Theme */
+.custom-classname.react-toggle--checked .react-toggle-track {
+    background-color: #000000;
+  }
+.custom-classname.react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
+    background-color: #D2D2D2;
+}
+.custom-classname.react-toggle--checked .react-toggle-thumb{
+  background-color: #FFFFFF;
+    border-color: #000000;
+}
+.custom-classname.react-toggle-track-check{
+  width: 14px;
+  height: 14px;
+}
+
+/* Toggle Plugin*/
+/* DarkMode*/
+.custom-TogglePlugindark.react-toggle--checked .react-toggle-track{
+  background-color: #000000;
+}
+
+.custom-TogglePlugindark.react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track{
+  background-color: #D2D2D2;
+}
+
+.custom-TogglePlugindark.react-toggle--checked .react-toggle-thumb{
+  background-color: #FFFFFF;
+  border-color: #000000;
+}
+
+.custom-TogglePlugindark.react-toggle-track-check{
+  width: 14px;
+  height: 14px;
+}
+
+/* LightMode*/
+
+.custom-TogglePluginlight.react-toggle--checked .react-toggle-track{
+  background-color: #FFFFFF;
+}
+
+.custom-TogglePluginlight.react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track{
+  background-color: #D2D2D2;
+}
+
+
+
+.custom-TogglePluginlight.react-toggle--checked .react-toggle-thumb{
+  background-color: #FFFFFF;
+  border-color: #FFFFFF;
+}
+
+
+.custom-TogglePluginlight.react-toggle--checked .react-toggle-track{
+  background-color: #000000;
+  border-color: #000000;
+}
+
+.custom-TogglePluginlight.react-toggle .react-toggle-thumb{
+  background-color: #000000;
+  border-color: #FFFFFF;
+}
+/* .custom-TogglePluginlight.react-toggle .react-toggle-track{
+  background-color: #FFFFFF;
+  border-color: #000000;
+} */
+
+.custom-TogglePluginlight.react-toggle-track-check{
+  width: 14px;
+  height: 14px;
+}
+
+/* Custom CSS */
+
+
+/* Background SVG for HomePage */
+.bg-img {
+  background-position: bottom left;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 50%;
+}

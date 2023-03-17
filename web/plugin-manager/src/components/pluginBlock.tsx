@@ -3,25 +3,42 @@ import { ArrowPathIcon, TrashIcon, PlayCircleIcon } from "@heroicons/react/24/ou
 import axiosServices from "../services/axios";
 import { PluginProps } from "../../../shared/interfaces/IPlugin";
 import { isUp } from "../helpers/isUp";
+import TogglePlugin from "./TogglePlugin";
+import plugin from "@tailwindcss/typography";
 
-function PluginBlock(p: PluginProps) {
+function PluginBlock(props: PluginProps) {
 
-    const [isPluginUp, setStatus] = useState(isUp(p.plugin.status));
-    useEffect(() => setStatus(isUp(p.plugin.status)), [p.plugin.status]);
+    // Donc on va faire un truc si c'est un fake plugin 
+    // on le fait quand même passé mais on met un bool? pour capter que c'est un fake plugin coté front
+    // par exemple button delete disabled si fake plugins pareil pour le toggle button 
 
+    // Not installed on a NodeManager et Hello World
+
+    // Installed on à 
+    // 1. Wallet
+    // 2. Registry
+    // 3. Web on chain
+
+
+    const [isPluginUp, setStatus] = useState(isUp(props.plugin.status));
+    useEffect(() => setStatus(isUp(props.plugin.status)), [props.plugin.status]);
+
+    const handleCardClick = () => {
+        props.handleOpenPlugin(props.plugin.name);
+      };
     // fetch info from plugin to get fresh data on demand
     async function getpluginInfo(): Promise<string | undefined> {
         try {
-            const res = await axiosServices.getpluginInfo(p.plugin.id);
+            const res = await axiosServices.getpluginInfo(props.plugin.id);
             const status = res.data.status
             setStatus(isUp(status))
 
             return status
         } catch (error: any) {
-            p.errorHandler(
+            props.errorHandler(
                 "error",
                 `Plugins infos failed to get infos from 
-                plugin name : ${p.plugin.name} on id: ${p.plugin.id}, error: ${error.message}}`
+                plugin name : ${props.plugin.name} on id: ${props.plugin.id}, error: ${error.message}}`
             );
         }
     }
@@ -32,9 +49,9 @@ function PluginBlock(p: PluginProps) {
 
         // Launch plugin
         try {
-            await axiosServices.manageLifePlugins(p.plugin.id, isPluginUp ? "stop" : "start");
+            await axiosServices.manageLifePlugins(props.plugin.id, isPluginUp ? "stop" : "start");
         } catch (error: any) {
-            p.errorHandler("error", `Start plugin failed , error :${error.message}`);
+            props.errorHandler("error", `Start plugin failed , error :${error.message}`);
         }
 
         getpluginInfo()
@@ -59,19 +76,19 @@ function PluginBlock(p: PluginProps) {
     // Open plugin homepage
     function openHomepagePlugins() {
         if (isPluginUp)
-            window.open(p.plugin.home);
+            window.open(props.plugin.home);
         else {
-            p.errorHandler("error", "Plugin is not running, launch it first");
+            props.errorHandler("error", "Plugin is not running, launch it first");
         }
     }
     // Uninstall plugin
     async function removePlugins() {
         try {
-            await axiosServices.deletePlugins(p.plugin.id);
-            p.getPluginsInfo();
-            p.errorHandler("success", "Plugin removed");
+            await axiosServices.deletePlugins(props.plugin.id);
+            props.getPluginsInfo();
+            props.errorHandler("success", "Plugin removed");
         } catch (error: any) {
-            p.errorHandler("error", `Plugins failed to be removed , error ${error.message}`);
+            props.errorHandler("error", `Plugins failed to be removed , error ${error.message}`);
         }
     }
     //Truncate the string so that it fits in the given lenght if needed.
@@ -99,32 +116,39 @@ function PluginBlock(p: PluginProps) {
     function defineUpdateStatus() {
         return "w-6 h-6 text-yellow-500";
         //Uncomment when update process is implemented
-        //  return p.props.updateAvailable ? "w-6 h-6 text-yellow-500" : "w-6 h-6 text-green-500";
+        //  return props.props.updateAvailable ? "w-6 h-6 text-yellow-500" : "w-6 h-6 text-green-500";
     }
 
     return (
-        <section className="bg-slate-800 h-48 max-w-lg w-96 p-3 m-4 rounded-2xl">
-            <div className=" flex-row h-full text-font ">
+            <div className="flex flex-col justify-center items-start p-5 gap-4 w-64 h-72 
+                    border-[1px] border-solid border-border rounded-2xl bg-bgCard cursor-pointer hover:bg-hoverbgCard">
                 {/* First block Display plugin name and description */}
-                <div className="flex">
-                    <img className="w-10 h-10 pt-3 mx-2" src={p.plugin.logo} alt="Plugin Logo" />
-                    <div className="w-full">
-                        <h1 className="font-bold">{minimize(p.plugin.name, 90)}</h1>
-                        <p className="font-light max-sm:text-sm">
-                            {minimize(p.plugin.description, 100)}
-                        </p>
-                    </div>
-                </div>
-                {/* Second Block with Icons  */}
-                <div className="flex w-full pt-7 justify-around items-center">
-                    {/* Delete hidden when version will be send through the API */}
-                    <p className="hidden font-light">V: {p.plugin.version ?? "0.0.0"}</p>
-                    <input
+                <div className="flex flex-row items-center justify-between w-full">
+                <img
+        src={props.plugin.logo}
+        alt="Album"
+        className="rounded-3xl w-10 h-10"
+      />
+                          <input
                         type="checkbox"
                         className="toggle toggle-success"
                         checked={isPluginUp}
                         onChange={launchOrStop}
                     />
+                    <TogglePlugin handleChange={launchOrStop} checked={isPluginUp} />
+
+                </div>
+                    <div className="w-full">
+                        <h1 className="font-bold">{minimize(props.plugin.name, 90)}</h1>
+                        <p className="font-light max-sm:text-sm">
+                            {minimize(props.plugin.description, 100)}
+                        </p>
+                    </div>
+                {/* Second Block with Icons  */}
+                <div className="flex w-full pt-7 justify-around items-center">
+                    {/* Delete hidden when version will be send through the API */}
+                    <p className="hidden font-light">V: {props.plugin.version ?? "0.0.0"}</p>
+
                     <button>
                         <PlayCircleIcon
                             className={setRunStatusColor()}
@@ -140,7 +164,6 @@ function PluginBlock(p: PluginProps) {
                     </button>
                 </div>
             </div>
-        </section>
     );
 }
 

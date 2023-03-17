@@ -3,6 +3,23 @@ import { Plugin } from '../../../shared/interfaces/IPlugin'
 
 export class axiosServices {
 
+  //Developement process to get the plugin-manager API in local environment
+  //1. Run Thyra
+  //4. Run the plugin-manager UI in local environment
+
+  static LocalPort = () => {
+    return "http://localhost:4200"
+  }
+
+  
+
+  static localinstallPlugin(url: string): Promise<AxiosResponse<number>> {
+    return axios.post<any>(`${this.LocalPort}/plugin-manager?source=${url}`)
+  }
+
+
+//
+
   static installPlugin(url: string): Promise<AxiosResponse<number>> {
     return axios.post<any>(`/plugin-manager?source=${url}`)
   }
