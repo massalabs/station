@@ -20,6 +20,7 @@ runs:
 
     - name: Install Node.js
       uses: actions/setup-node@v3
+      run: npm cache clean --force
       with:
         node-version: 18
         cache: 'npm'
@@ -29,4 +30,6 @@ runs:
 
     - name: Build react frontend
       shell: bash
+      run: ls -la
       run: go generate ./web/...
+      
