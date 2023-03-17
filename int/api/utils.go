@@ -12,8 +12,11 @@ import (
 func contentType(rsc string) map[string]string {
 	var contentType map[string]string
 
-	ctype := mime.TypeByExtension(filepath.Ext(rsc))
+	if filepath.Ext(rsc) == ".otf" {
+		return map[string]string{"Content-Type": "font/otf"}
+	}
 
+	ctype := mime.TypeByExtension(filepath.Ext(rsc))
 	if ctype == "" {
 		contentType = map[string]string{"Content-Type": "text/plain"}
 	} else {
