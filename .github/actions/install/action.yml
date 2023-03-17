@@ -26,7 +26,6 @@ runs:
 
     - name: Install Node.js
       uses: actions/setup-node@v3
-      clean: true
       with:
         node-version: 18
         cache: 'npm'
