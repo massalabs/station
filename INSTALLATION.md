@@ -42,8 +42,8 @@ Simply use copy/paste the cmd line below in your terminal. The installation proc
 > **_NOTE:_** To complete the installation, you have to restart your browser.
 
 Congratulation, your version of Thyra is now installed on your system and can be run by executing `thyra-server` in your terminal.
-You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
+You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](https://flappy.massa) can help.
+If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/wallet) right away!
 
 
 
@@ -62,8 +62,8 @@ Congratulation, your version of Thyra is now installed on your system and can be
 > **_NOTE:_** To complete the installation, you have to restart your browser.
 
 
-You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
+You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](https://flappy.massa) can help.
+If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/wallet) right away!
 
 > **_NOTE:_** Only Linux Ubuntu is currently supported.
 
@@ -82,7 +82,7 @@ Follow [this link](https://github.com/massalabs/thyra/releases/latest/download/t
 
 Congratulation, your version of Thyra is now installed on your system and you can "Start" your journey using the icon tray.
 
-You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
+You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](https://flappy.massa) can help.
+If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/wallet) right away!
 
 
