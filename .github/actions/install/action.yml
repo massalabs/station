@@ -32,6 +32,7 @@ runs:
       run: |
         cd web/home
         npm install
+        ls -la
         npm run build
         cd ../..
         cd web/plugin-manager
