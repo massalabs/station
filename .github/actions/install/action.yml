@@ -20,16 +20,25 @@ runs:
 
     - name: Install Node.js
       uses: actions/setup-node@v3
-      run: npm cache clean --force
+      clean: true
       with:
         node-version: 18
         cache: 'npm'
         cache-dependency-path: |
-          web/thyra-frontend/package-lock.json
+          web/home/package-lock.json
           web/plugin-manager/package-lock.json
 
     - name: Build react frontend
       shell: bash
-      run: ls -la
-      run: go generate ./web/...
+      run: |
+        cd web/home
+        npm install
+        npm run build
+        cd ../..
+        cd web/plugin-manager
+        npm install
+        npm run build
+        cd ../..
+
+      # go generate ./web/...
       
