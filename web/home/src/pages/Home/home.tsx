@@ -82,7 +82,7 @@ function Home() {
   useEffect(() => {
     // Fetch the plugins on first render
     let previousFetch: PluginHomePage[] = [];
-    getPlugins().then((res) => {
+    getPlugins().then((res: PluginHomePage[]) => {
       previousFetch = res;
       res.forEach((element: PluginHomePage) => {
         setPlugins((prev) => [...prev, element]);
@@ -104,7 +104,6 @@ function Home() {
 
   const mapPluginList = () => {
     return plugins.map((plugin) => {
-      console.log("jesuis plugin :",plugin.name," mon status est :" ,plugin.status)
       if (plugin.status == 'Starting' || plugin.status == 'Up'){
         return (
           <PluginCard
