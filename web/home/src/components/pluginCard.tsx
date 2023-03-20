@@ -1,10 +1,10 @@
 import Arrow6 from '../assets/pictos/arrow6.svg';
-import ArrowWhite6 from '../assets/pictos/ArrowWhite6.svg'
+import ArrowWhite6 from '../assets/pictos/ArrowWhite6.svg';
 import { PluginHomePage } from '../../../shared/interfaces/IPlugin';
 import { UIStore } from '../store/UIStore';
 type Props = {
   plugin: PluginHomePage;
-  handleOpenPlugin: (pluginName:string) => void;
+  handleOpenPlugin: (pluginName: string) => void;
   key: string;
 };
 
@@ -12,7 +12,9 @@ export const PluginCard = (props: Props) => {
   const handleCardClick = () => {
     props.handleOpenPlugin(props.plugin.name);
   };
-  const Arrow =  UIStore.useState(s => (s.theme == "light" ? Arrow6 : ArrowWhite6));
+  const Arrow = UIStore.useState((s) =>
+    s.theme == 'light' ? Arrow6 : ArrowWhite6,
+  );
   return (
     <div
       onClick={handleCardClick}

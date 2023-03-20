@@ -1,4 +1,4 @@
-import {  useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import massaLogomark from '../../assets/massa_logomark_detailed.png';
 
@@ -9,10 +9,10 @@ import { PluginCard } from '../../components/pluginCard';
 import Header from '../../components/Header';
 
 import ManagePluginCard from '../../components/managePluginCard';
-import grid1 from '../../assets/element/grid1.svg'
-import wallet from '../../assets/logo/plugins/Wallet.svg'
-import registry from '../../assets/logo/plugins/Registry.svg'
-import webOnChain from '../../assets/logo/plugins/WebOnChain.svg'
+import grid1 from '../../assets/element/grid1.svg';
+import wallet from '../../assets/logo/plugins/Wallet.svg';
+import registry from '../../assets/logo/plugins/Registry.svg';
+import webOnChain from '../../assets/logo/plugins/WebOnChain.svg';
 import MainTitle from '../../components/MainTitle';
 
 /**
@@ -23,12 +23,12 @@ type Props = {};
 
 function Home(props: Props) {
   // Fetch plugins installed by calling get /plugin/manager
-  
-  const fakePluginsList:PluginHomePage[] = [
+
+  const fakePluginsList: PluginHomePage[] = [
     {
       name: "Massa's Wallet",
       description:
-      'Create and manage your smart wallets to buy, sell, transfer and exchange tokens',
+        'Create and manage your smart wallets to buy, sell, transfer and exchange tokens',
       id: '420',
       logo: wallet,
       status: '',
@@ -52,14 +52,16 @@ function Home(props: Props) {
   const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
   interface PluginHome {
     name: string;
-    home: string
+    home: string;
   }
-  const [pluginsHomeName, setPluginsHomeName] = useState<PluginHome[]>([{name:'',home:''}]);
+  const [pluginsHomeName, setPluginsHomeName] = useState<PluginHome[]>([
+    { name: '', home: '' },
+  ]);
   const handleOpenPlugin = (pluginName: string) => {
     let url;
     // Handle Fake plugins for now and only for massa plugins
     // TODO: Remove this when we have the API with authors of plugins
-    
+
     switch (pluginName) {
       case 'Registry':
         url = '/thyra/registry';
@@ -77,7 +79,7 @@ function Home(props: Props) {
     }
     window.open(url, '_blank');
   };
-  const findPluginHome = (pluginName:string) => {
+  const findPluginHome = (pluginName: string) => {
     let home = '';
     pluginsHomeName.forEach((element) => {
       if (element.name == pluginName) {
@@ -97,16 +99,18 @@ function Home(props: Props) {
     const res = await axios.get(`/plugin-manager`, init);
     return res.data;
   };
-  
+
   // Add the fake plugins
   useEffect(() => {
     getPlugins().then((res) => {
       res.forEach((element: PluginHomePage) => {
-        setPluginsHomeName((prev) => [...prev, {name:element.name,home:element.home || ''}]);
+        setPluginsHomeName((prev) => [
+          ...prev,
+          { name: element.name, home: element.home || '' },
+        ]);
         setPlugins((prev) => [...prev, element]);
       });
     });
-    
   }, []);
 
   const mapPluginList = () => {
@@ -132,8 +136,10 @@ function Home(props: Props) {
   };
 
   return (
-    <div className=" min-h-screen bg-img" style={{backgroundImage: `url(${grid1})`}} >
-
+    <div
+      className=" min-h-screen bg-img"
+      style={{ backgroundImage: `url(${grid1})` }}
+    >
       <Header />
 
       <MainTitle title="Which Plugins" />
@@ -145,7 +151,7 @@ function Home(props: Props) {
           <ManagePluginCard />
         </>
       </div>
-      </div>
+    </div>
   );
 }
 
