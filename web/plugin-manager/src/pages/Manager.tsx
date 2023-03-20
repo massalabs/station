@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PluginBlock from "../components/pluginBlock";
-import { Plugin, PluginHomePage } from "../../../shared/interfaces/IPlugin";
+import { Plugin, PluginHomePage, PluginNotInstalled } from "../../../shared/interfaces/IPlugin";
 import axiosServices from "../services/axios";
 import alertHelper from "../helpers/alertHelpers";
 import { PuffLoader } from "react-spinners";
@@ -48,6 +48,7 @@ function Manager() {
     const [error, setError] = useState(<></>);
 
     const [plugins, setPlugins] = useState<Plugin[]>(fakePluginsList);
+    const [pluginsNotInstalled, setPluginsNotInstalled] = useState<PluginNotInstalled[]>([]);
 
     //Callback to remove Error
     function removeError(): void {
@@ -61,23 +62,41 @@ function Manager() {
         }, 10000);
     }
 
+
+
     async function getPluginsInfo() {
         try {
             const pluginsInfos = await axiosServices.getPluginsInfo();
-            setPlugins(pluginsInfos.data);
+            let combinedPlugins = [ ...fakePluginsList, ...pluginsInfos.data];
+            setPlugins(combinedPlugins);
         } catch (error: any) {
             errorHandler("error", `Get plugins infos failed ,  error ${error.message} `);
         }
     };
+
+    async function getPluginsInfoNotInstalled() {
+      try {
+          const pluginsInfos = await axiosServices.getNotInstalledPlugins();
+          let combinedPlugins = [pluginsInfos.data];
+          setPluginsNotInstalled(combinedPlugins);
+
+      } catch (error: any) {
+          errorHandler("error", `Get plugins infos failed ,  error ${error.message} `);
+      }
+  };
 
     // Create a loop to fetch getPluginsInfo and update the status
     useEffect(() => {
         //Initialize Ui on first render
         getPluginsInfo();
         // Set interval to update plugin status periodically
+        // let previousFetch: Plugin[] = [];
         const interval = setInterval(async () => {
-            getPluginsInfo();
-        }, 1000);
+          // Nice to have control on precedent fetch to avoid rerender if no change
+            getPluginsInfo()
+            
+            // .then((res: Plugin[]) => {previousFetch = res});
+        }, 5000);
         return () => clearInterval(interval);
     }, []);
 
@@ -125,12 +144,14 @@ function Manager() {
         });
       };
 
-
+    const setColsLength = () => {
+        return plugins.length > 3 ? " grid-cols-4" : " grid-cols-3";
+      };
     return (
-        <>
+        <div>
             <Header />
             <MainTitle title="Plugin Manager" />
-            <div className="">
+            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-24" + setColsLength()}>
                 {plugins?.length ? plugins.filter(p => !!p.name)
                     // sort plugins by names
                     .sort((a, b) => a.name.localeCompare(b.name))
@@ -140,11 +161,30 @@ function Manager() {
                             errorHandler={errorHandler}
                             getPluginsInfo={getPluginsInfo}
                             handleOpenPlugin={handleOpenPlugin}
-                        />
+                            />
                     ))
                     : <PuffLoader />
                 }
-                <InstallPlugin
+              
+            </div>
+            <div className="divider mx-auto mt-16 w-[1307px]"></div> 
+            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-24" + setColsLength()}>
+                {pluginsNotInstalled?.length ? plugins.filter(p => !!p.name)
+                    // sort plugins by names
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map(plugin => (
+                        <PluginBlock
+                            plugin={plugin}
+                            errorHandler={errorHandler}
+                            getPluginsInfo={getPluginsInfo}
+                            handleOpenPlugin={handleOpenPlugin}
+                            />
+                    ))
+                    : <PuffLoader />
+                }
+            </div>
+            {/* <div className="grid grid-flow-row  grid-cols-4 max-w-full">
+            <InstallPlugin
                     errorHandler={errorHandler}
                     plugins={plugins}
                     getPluginsInfo={getPluginsInfo}
@@ -156,9 +196,9 @@ function Manager() {
                         getPluginsInfo={getPluginsInfo}
                     />
                 }
-                {error}
-            </div>
-        </>
+                {/* {error} */}
+            {/* </div> */}
+        </div>
     );
 }
 
