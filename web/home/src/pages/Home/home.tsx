@@ -32,6 +32,7 @@ function Home(props: Props) {
       id: '420',
       logo: wallet,
       status: '',
+      home: '/thyra/wallet'
     },
     {
       name: 'Web On Chain',
@@ -40,6 +41,7 @@ function Home(props: Props) {
       id: '421',
       logo: webOnChain,
       status: '',
+      home: '/thyra/websiteCreator'
     },
     {
       name: 'Registry',
@@ -47,45 +49,22 @@ function Home(props: Props) {
       id: '423',
       logo: registry,
       status: '',
+      home: '/thyra/registry'
     },
   ];
   const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
-  interface PluginHome {
-    name: string;
-    home: string;
-  }
-  const [pluginsHomeName, setPluginsHomeName] = useState<PluginHome[]>([
-    { name: '', home: '' },
-  ]);
-  const handleOpenPlugin = (pluginName: string) => {
-    let url;
-    // Handle Fake plugins for now and only for massa plugins
-    // TODO: Remove this when we have the API with authors of plugins
 
-    switch (pluginName) {
-      case 'Registry':
-        url = '/thyra/registry';
-        break;
-      case 'Web On Chain':
-        url = '/thyra/websiteCreator';
-        break;
-      case "Massa's Wallet":
-        url = '/thyra/wallet';
-        break;
-      default:
-        // If it's not a special case we just redirect to the plugin's home caller
-        url = findPluginHome(pluginName);
-        break;
-    }
-    window.open(url, '_blank');
+  const handleOpenPlugin = (pluginName: string) => {
+    window.open(findPluginHome(pluginName), '_blank');
   };
   const findPluginHome = (pluginName: string) => {
     let home = '';
-    pluginsHomeName.forEach((element) => {
-      if (element.name == pluginName) {
-        home = element.home;
+    plugins.forEach((element) => {
+      if (element.name == pluginName && element.home) {
+        return element.home;
       }
     });
+    console.log('Link to the plugin not found')
     return home;
   };
   // List of plugins
@@ -104,10 +83,6 @@ function Home(props: Props) {
   useEffect(() => {
     getPlugins().then((res) => {
       res.forEach((element: PluginHomePage) => {
-        setPluginsHomeName((prev) => [
-          ...prev,
-          { name: element.name, home: element.home || '' },
-        ]);
         setPlugins((prev) => [...prev, element]);
       });
     });
