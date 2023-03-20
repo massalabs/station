@@ -12,6 +12,7 @@ import registry from '../assets/logo/plugins/Registry.svg'
 import webOnChain from '../assets/logo/plugins/WebOnChain.svg'
 import massaLogomark from '../assets/massa_logomark_detailed.png';
 import MainTitle from '../components/MainTitle';
+import grid1 from '../assets/element/grid1.svg';
 function Manager() {
     
     const fakePluginsList:Plugin[] = [
@@ -149,9 +150,16 @@ function Manager() {
       };
     return (
         <div>
+              <div
+      className=" min-h-screen bg-img"
+      style={{ backgroundImage: `url(${grid1})` }}
+    >
             <Header />
             <MainTitle title="Plugin Manager" />
-            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-24" + setColsLength()}>
+            <div className="w-[1307px] mx-auto">
+
+            <p className="Secondary mt-24">Installed</p>
+            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-3 " + setColsLength()}>
                 {plugins?.length ? plugins.filter(p => !!p.name)
                     // sort plugins by names
                     .sort((a, b) => a.name.localeCompare(b.name))
@@ -167,8 +175,9 @@ function Manager() {
                 }
               
             </div>
-            <div className="divider mx-auto mt-16 w-[1307px]"></div> 
-            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-24" + setColsLength()}>
+            <div className="divider mx-auto mt-16 w-2/3 "/>
+            <p className="Secondary mt-12">Not installed</p> 
+            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-3" + setColsLength()}>
                 {pluginsNotInstalled?.length ? plugins.filter(p => !!p.name)
                     // sort plugins by names
                     .sort((a, b) => a.name.localeCompare(b.name))
@@ -192,12 +201,14 @@ function Manager() {
                 {plugins?.some(p => p.name === "Node Manager") ?
                     "" :
                     <InstallNodeManager
-                        errorHandler={errorHandler}
-                        getPluginsInfo={getPluginsInfo}
+                    errorHandler={errorHandler}
+                    getPluginsInfo={getPluginsInfo}
                     />
-                }
-                {/* {error} */}
+                  }
+                  {/* {error} */}
             {/* </div> */}
+                  </div>
+        </div>
         </div>
     );
 }

@@ -130,12 +130,11 @@ function PluginBlock(props: PluginProps) {
                 {/* Delete hidden when version will be send through the API */}
                 <p className="hidden text3 text-font">V: {props.plugin.version ?? "0.0.0"}</p>
                 {props.plugin.isNotInstalled ? (
-                    <div className="flex w-64 content-between justify-between mx-auto gap-4">
+                    <div className="flex w-64 content-between justify-between mx-auto gap-4 w-">
                         <SecondaryButton
                             label={"Download"}
                             onClick={downloadPlugins}
-                            iconPathDark={Arrow6}
-                            iconPathLight={ArrowWhite6}
+                            width={"w-64"}
                         />
                     </div>
                 ) : (
@@ -143,15 +142,13 @@ function PluginBlock(props: PluginProps) {
                         <PrimaryButton
                             label={"Open"}
                             onClick={openHomepagePlugins}
-                            isprimary={true}
                             iconPathDark={Arrow6}
                             iconPathLight={ArrowWhite6}
                         />
                         <SecondaryButton
                             label={"Delete"}
                             onClick={removePlugins}
-                            iconPathDark={Arrow6}
-                            iconPathLight={ArrowWhite6}
+
                         />
                     </div>
                 )}

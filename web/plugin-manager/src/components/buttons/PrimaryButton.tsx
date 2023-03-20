@@ -4,7 +4,6 @@ import { UIStore } from '../../store/UIStore';
 type Props = {
   label : string,
   onClick : () => void,
-  isprimary? : boolean,
   iconPathLight? : string,
   iconPathDark? : string,
 }

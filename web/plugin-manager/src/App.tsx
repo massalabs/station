@@ -6,7 +6,7 @@ function App() {
 
   return (
     <html className={"theme-"+UIStore.useState(s => (s.theme))}>
-    <div className="min-h-screen bg-bgCard">
+    <div className="min-h-screen bg-primaryBG">
       <Manager/>
     </div>
     </html>
