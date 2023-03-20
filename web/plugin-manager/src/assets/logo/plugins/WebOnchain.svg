@@ -3,7 +3,7 @@
   <defs>
     <style>
       .cls-1 {
-        isolation: isolate;
+        isolation: isolate; 
       }
 
       .cls-2 {

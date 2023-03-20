@@ -49,9 +49,9 @@
 
 /* LightMode*/
 
-.custom-TogglePluginlight.react-toggle--checked .react-toggle-track{
+/* .custom-TogglePluginlight.react-toggle--checked .react-toggle-track{
   background-color: #FFFFFF;
-}
+} */
 
 .custom-TogglePluginlight.react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track{
   background-color: #D2D2D2;
@@ -67,10 +67,15 @@
 
 .custom-TogglePluginlight.react-toggle--checked .react-toggle-track{
   background-color: #000000;
+  border-color: #FFFFFF;
+}
+
+.custom-TogglePluginlight.react-toggle:not(:checked) .react-toggle-track{
+  background-color: #FFFFFF;
   border-color: #000000;
 }
 
-.custom-TogglePluginlight.react-toggle .react-toggle-thumb{
+.custom-TogglePluginlight.react-toggle:not(:checked) .react-toggle-thumb{
   background-color: #000000;
   border-color: #FFFFFF;
 }

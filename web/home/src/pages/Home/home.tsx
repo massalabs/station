@@ -79,7 +79,7 @@ function Home() {
     const res = await axios.get(`/plugin-manager`, init);
     return res.data;
   };
-  
+
   // Add the fake plugins
   useEffect(() => {
     // Fetch the plugins on first render
@@ -148,7 +148,7 @@ function Home() {
           <ManagePluginCard />
         </>
       </div>
-      </div>
+    </div>
   );
 }
 
