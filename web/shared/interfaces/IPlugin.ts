@@ -8,6 +8,8 @@ export interface Plugin {
     // isUpdate: boolean;
     status: string;
     logo: string;
+    isNotInstalled?: boolean;
+    url?: string;
 }
 
 export interface PluginProps {
@@ -31,4 +33,11 @@ export interface PluginHomePage {
     logo: string;
     status: string;
     home?: string;
+}
+export interface PluginNotInstalled {
+    id: string;
+    name: string;
+    description: string;
+    url: string;
+    logo: string;
 }

@@ -7,7 +7,9 @@ const Header = () => {
     const isThemeLight = UIStore.useState(s => (s.theme == "light" ? true : false));
   return (
       <div className="flex p-12 items-center content-center justify-between ">
-        <img className="max-h-6" src={isThemeLight ? logoLight : logoDark} alt="Thyra Logo" />
+        <button onClick={() => window.open("/thyra/home")}>
+          <img className="max-h-6" src={isThemeLight ? logoLight : logoDark} alt="Thyra Logo" />
+        </button>
         {toggleTheme()}
     </div>
   )

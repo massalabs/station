@@ -18,14 +18,15 @@ module.exports = {
             light: {
                 primaryBG: "#F3F3F3",
                 bgCard: "#FFFFFF",
-                primaryButton: "#FFFFFF",
-                secondaryButton: "#000000",
+                primaryButton: "#000000",
+                secondaryButton: "#FFFFFF",
                 hoverbgCard: "#EBEBEB",
                 hoverPrimaryButton: "#D2D2D2",
                 hoverSecondaryButton: "#21252A",
                 brand: "#FF0000",
                 live: "#14FF00",
                 font: "#000000",
+                invertedfont: "#FFFFFF",
                 border: "#000000",
                 disabledButton: "#8F8989",
                 disabledText:"#D2D2D2"
@@ -33,8 +34,8 @@ module.exports = {
             dark: {
                 primaryBG: "#171A1D",
                 bgCard: "#21252A",
-                primaryButton: "#21252A",
-                secondaryButton: "#000000",
+                primaryButton: "#FFFFFF",
+                secondaryButton: "#21252A",
                 hoverbgCard: "#2D333A",
                 hoverPrimaryButton: "#2D333A",
                 hoverSecondaryButton: "#D2D2D2",
@@ -42,6 +43,7 @@ module.exports = {
                 live: "#14FF00",
                 border: "#F3F3F3",
                 font: "#FFFFFF",
+                invertedfont: "#000000",
                 disabledButton: "#8F8989",
                 disabledText:"#D2D2D2"
             },
