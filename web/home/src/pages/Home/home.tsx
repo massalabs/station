@@ -19,9 +19,8 @@ import MainTitle from '../../components/MainTitle';
  * Homepage of Thyra with a list of plugins installed
  *
  */
-type Props = {};
 
-function Home(props: Props) {
+function Home() {
   // Fetch plugins installed by calling get /plugin/manager
 
   const fakePluginsList: PluginHomePage[] = [
@@ -31,7 +30,7 @@ function Home(props: Props) {
         'Create and manage your smart wallets to buy, sell, transfer and exchange tokens',
       id: '420',
       logo: wallet,
-      status: '',
+      status: 'Up',
       home: '/thyra/wallet'
     },
     {
@@ -40,7 +39,7 @@ function Home(props: Props) {
         'Buy your .massa domain and upload websites on the blockchain',
       id: '421',
       logo: webOnChain,
-      status: '',
+      status: 'Up',
       home: '/thyra/websiteCreator'
     },
     {
@@ -48,7 +47,7 @@ function Home(props: Props) {
       description: 'Browse Massa blockchain and its .massa websites',
       id: '423',
       logo: registry,
-      status: '',
+      status: 'Up',
       home: '/thyra/registry'
     },
   ];
@@ -78,37 +77,59 @@ function Home(props: Props) {
     const res = await axios.get(`/plugin-manager`, init);
     return res.data;
   };
-
+  
   // Add the fake plugins
   useEffect(() => {
+    // Fetch the plugins on first render
+    let previousFetch: PluginHomePage[] = [];
     getPlugins().then((res) => {
+      previousFetch = res;
       res.forEach((element: PluginHomePage) => {
         setPlugins((prev) => [...prev, element]);
       });
     });
+    
+    setInterval(() => {
+    getPlugins().then((res : PluginHomePage[]) => {
+      let combinedPlugins = [ ...fakePluginsList, ...res];
+      // If the list of plugins has changed, update the state
+      if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
+        setPlugins(combinedPlugins);
+        previousFetch = res;
+      }
+    });
+      
+    }, 10000);
   }, []);
 
   const mapPluginList = () => {
     return plugins.map((plugin) => {
-      return (
-        <PluginCard
-          {...{
-            plugin: {
-              id: plugin.id,
-              logo: plugin.logo ? plugin.logo : massaLogomark,
-              name: plugin ? plugin.name : 'Plugin Problem',
-              description: plugin.description
-                ? plugin.description
-                : 'Plugin Problem',
-              status: plugin.status ? plugin.status : 'Plugin Problem',
-            },
-            handleOpenPlugin: handleOpenPlugin,
-            key: plugin.id,
-          }}
-        />
-      );
-    });
-  };
+      console.log("jesuis plugin :",plugin.name," mon status est :" ,plugin.status)
+      if (plugin.status == 'Starting' || plugin.status == 'Up'){
+        return (
+          <PluginCard
+            {...{
+              plugin: {
+                id: plugin.id,
+                logo: plugin.logo ? plugin.logo : massaLogomark,
+                name: plugin ? plugin.name : 'Plugin Problem',
+                description: plugin.description
+                  ? plugin.description
+                  : 'Plugin Problem',
+                status: plugin.status ? plugin.status : 'Plugin Problem',
+              },
+              handleOpenPlugin: handleOpenPlugin,
+              key: plugin.id,
+            }}
+          />
+        );
+      }
+      else{
+        return (<></>)
+      }
+    })
+      
+  }
 
   return (
     <div
