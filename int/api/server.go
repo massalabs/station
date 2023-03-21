@@ -14,6 +14,7 @@ import (
 	"github.com/massalabs/thyra/int/api/massa"
 	"github.com/massalabs/thyra/int/api/myplugin"
 	"github.com/massalabs/thyra/int/api/plugin"
+	"github.com/massalabs/thyra/int/api/pluginstore"
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/node"
@@ -122,6 +123,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *p
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
 
 	myplugin.InitializePluginAPI(localAPI)
+	pluginstore.InitializePluginStoreAPI(localAPI)
 }
 
 func StartServer(app *fyne.App, startFlags StartServerFlags) {

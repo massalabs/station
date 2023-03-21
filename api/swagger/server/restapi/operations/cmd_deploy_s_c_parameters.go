@@ -70,7 +70,7 @@ type CmdDeploySCParams struct {
 	  Default: 0
 	*/
 	Coins *uint64
-	/*Datastore that will be sent along the smart contract.
+	/*b64 encoded datastore that will be sent along the smart contract.
 	  In: formData
 	  Default: ""
 	*/

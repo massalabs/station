@@ -9,22 +9,17 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
-	"strings"
 )
 
-// MgmtWalletBalanceURL generates an URL for the mgmt wallet balance operation
-type MgmtWalletBalanceURL struct {
-	Address string
-
+// GetPluginStoreURL generates an URL for the get plugin store operation
+type GetPluginStoreURL struct {
 	_basePath string
-	// avoid unkeyed usage
-	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *MgmtWalletBalanceURL) WithBasePath(bp string) *MgmtWalletBalanceURL {
+func (o *GetPluginStoreURL) WithBasePath(bp string) *GetPluginStoreURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -32,22 +27,15 @@ func (o *MgmtWalletBalanceURL) WithBasePath(bp string) *MgmtWalletBalanceURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *MgmtWalletBalanceURL) SetBasePath(bp string) {
+func (o *GetPluginStoreURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *MgmtWalletBalanceURL) Build() (*url.URL, error) {
+func (o *GetPluginStoreURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/mgmt/balance/{address}"
-
-	address := o.Address
-	if address != "" {
-		_path = strings.Replace(_path, "{address}", address, -1)
-	} else {
-		return nil, errors.New("address is required on MgmtWalletBalanceURL")
-	}
+	var _path = "/plugin-store"
 
 	_basePath := o._basePath
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
@@ -56,7 +44,7 @@ func (o *MgmtWalletBalanceURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *MgmtWalletBalanceURL) Must(u *url.URL, err error) *url.URL {
+func (o *GetPluginStoreURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -67,17 +55,17 @@ func (o *MgmtWalletBalanceURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *MgmtWalletBalanceURL) String() string {
+func (o *GetPluginStoreURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *MgmtWalletBalanceURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *GetPluginStoreURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on MgmtWalletBalanceURL")
+		return nil, errors.New("scheme is required for a full url on GetPluginStoreURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on MgmtWalletBalanceURL")
+		return nil, errors.New("host is required for a full url on GetPluginStoreURL")
 	}
 
 	base, err := o.Build()
@@ -91,6 +79,6 @@ func (o *MgmtWalletBalanceURL) BuildFull(scheme, host string) (*url.URL, error) 
 }
 
 // StringFull returns the string representation of a complete url
-func (o *MgmtWalletBalanceURL) StringFull(scheme, host string) string {
+func (o *GetPluginStoreURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

@@ -2,8 +2,10 @@ package resource
 
 import "fmt"
 
-const indexHTML = "index.html"
-const NotFoundHTML = "404.html"
+const (
+	indexHTML    = "index.html"
+	NotFoundHTML = "404.html"
+)
 
 var ErrNotExist = fmt.Errorf("resource not found")
 
