@@ -9,6 +9,22 @@ module.exports = {
               MaisonNeue: ["Maison Neue", "sans-serif"],
               TTCommons: ["TT Commons", "sans-serif"],
             },
+            keyframes:{
+                rotate180Smooth:{
+                    "0%": { transform: "rotate(0deg)" },
+                    "12%": { transform: "rotate(22deg)" },
+                    "25%": { transform: "rotate(45deg)" },
+                    "37%": { transform: "rotate(67deg)" },
+                    "50%": { transform: "rotate(90deg)" },
+                    "62%": { transform: "rotate(112deg)" },
+                    "75%": { transform: "rotate(135deg)" },
+                    "87%": { transform: "rotate(157deg)" },
+                    "100%": { transform: "rotate(180deg)" },
+                }
+            },
+            animation:{
+                rotate180Smooth: "rotate180Smooth 0.5s forwards ",
+            }
         },
     },
     plugins: [

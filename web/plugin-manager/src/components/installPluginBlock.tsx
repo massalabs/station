@@ -4,6 +4,7 @@ import { Circles } from 'react-loader-spinner'
 import { Plugin } from '../../../shared/interfaces/IPlugin';
 import { InstallProps } from './installNodeManager';
 import Arrow2 from '../assets/pictos/Arrow2.svg';
+import SmallCardExtended from './SmallCardExtended';
 export interface InstallZipProps extends InstallProps {
     plugins: Plugin[];
 }
@@ -40,9 +41,24 @@ function InstallPlugin(p: InstallZipProps) {
         p.getPluginsInfo()
     }
 
+    
+
     return (
-        <section className="h-28 w-80 max-w-lg p-6 gap-3 border-[1px] border-solid border-border rounded-2xl bg-bgCard">
-            <div className='flex flex-row'>
+        <>
+        <SmallCardExtended label2={'Install a plugin'} text3={'Manually install a plugin using .zip URL'} propsLabelButton={{
+            callbackToParent: function (data: string): void {
+                setIsInstalling(true)
+            },
+            label: 'Plugin link',
+            placeholder: 'Set .zip Url Link',
+            buttonValue: 'Install',
+            axiosCall: function (data: string): void {
+                axiosServices.installPlugin(data);
+            }
+        }}/>
+        </>)
+        // <section className="h-28 w-80 max-w-lg p-6 gap-3 border-[1px] border-solid border-border rounded-2xl bg-bgCard">
+            /* <div className='flex flex-row'>
             <div className='flex flex-col gap-3'>
                 <p className='label2 text-font'>
                     Install a plugin
@@ -52,11 +68,11 @@ function InstallPlugin(p: InstallZipProps) {
                 </p>
             </div>
             <div className='flex self-center mx-auto'>
-                <img className='w-8 h-4 hover:rotate-180' src={Arrow2} alt="" />
+                <img className='w-8 h-4 hover:animate-rotate180Smooth' src={Arrow2} alt="" />
                 {/* contains the icon to grow the container */}
-            </div>
-            </div>
-            <div className=" flex-row h-full text-font ">
+            {/* </div> */}
+            {/* </div> */}
+            {/* <div className=" flex-row h-full text-font ">
                 <div className="flex w-full pt-2 justify-around items-center">
                     <form onSubmit={handleInstallPlugin}>
                         <div className="mb-4">
@@ -93,9 +109,8 @@ function InstallPlugin(p: InstallZipProps) {
                         visible={isInstalling}
                     />
                 </div>
-                </div>
-        </section>
-    );
-}
+                </div> */}
+        // </section>
+
 
 export default InstallPlugin;

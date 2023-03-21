@@ -180,7 +180,7 @@ function Manager() {
             </div>
             <div className="divider mx-auto mt-16 w-2/3"/>
             <p className="Secondary mt-12 text-font">Not installed</p> 
-            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-3" + setColsLength(pluginsNotInstalled.length)}>
+            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto my-3" + setColsLength(pluginsNotInstalled.length)}>
                 {pluginsNotInstalled?.length ? plugins.filter(p => !!p.name)
                     // sort plugins by names
                     .sort((a, b) => a.name.localeCompare(b.name))
