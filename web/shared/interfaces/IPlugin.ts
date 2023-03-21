@@ -10,6 +10,7 @@ export interface Plugin {
     logo: string;
     isNotInstalled?: boolean;
     url?: string;
+    isFake?: boolean;
 }
 
 export interface PluginProps {

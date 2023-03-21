@@ -24,7 +24,8 @@ function Manager() {
           logo: wallet,
           status: '',
           version: '1.0.0',
-          home:'/thyra/wallet'
+          home:'/thyra/wallet',
+          isFake: true
         },
         {
           name: 'Web On Chain',
@@ -33,7 +34,8 @@ function Manager() {
           id: '421',          logo: webOnChain,
           status: '',
           version: '1.0.0',
-          home:'/thyra/websiteCreator'
+          home:'/thyra/websiteCreator',
+          isFake: true
         },
         {
           name: 'Registry',
@@ -42,7 +44,8 @@ function Manager() {
           logo: registry,
           status: '',
           version: '1.0.0',
-          home:'/thyra/registry'
+          home:'/thyra/registry',
+          isFake: true
         },
       ];
     //State to store error

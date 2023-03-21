@@ -145,11 +145,12 @@ function PluginBlock(props: PluginProps) {
                             iconPathDark={Arrow6}
                             iconPathLight={ArrowWhite6}
                         />
+                        { props.plugin.isFake ? null :
                         <SecondaryButton
                             label={"Delete"}
                             onClick={removePlugins}
 
-                        />
+                        />}
                     </div>
                 )}
             </div>
