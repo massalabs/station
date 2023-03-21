@@ -186,7 +186,7 @@ func init() {
           {
             "type": "string",
             "default": "",
-            "description": "Datastore that will be sent along the smart contract.",
+            "description": "b64 encoded datastore that will be sent along the smart contract.",
             "name": "datastore",
             "in": "formData"
           }
@@ -1198,6 +1198,51 @@ func init() {
         }
       }
     },
+    "/plugin-store": {
+      "get": {
+        "description": "Returns a list of PluginStoreItem structs",
+        "produces": [
+          "application/json"
+        ],
+        "summary": "Get list of available plugins from store",
+        "operationId": "getPluginStore",
+        "responses": {
+          "200": {
+            "description": "List of plugins",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PluginStoreItem"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/events/{str}/{caller}": {
       "get": {
         "produces": [
@@ -1662,6 +1707,21 @@ func init() {
         }
       }
     },
+    "File": {
+      "type": "object",
+      "required": [
+        "url",
+        "checksum"
+      ],
+      "properties": {
+        "checksum": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
     "Plugin": {
       "description": "Plugin object (V0).",
       "type": "object",
@@ -1673,6 +1733,48 @@ func init() {
         "port": {
           "description": "Plugin's port.",
           "type": "integer"
+        }
+      }
+    },
+    "PluginStoreItem": {
+      "description": "Plugin item from store.",
+      "type": "object",
+      "required": [
+        "name",
+        "description",
+        "version",
+        "url",
+        "assets"
+      ],
+      "properties": {
+        "assets": {
+          "type": "object",
+          "properties": {
+            "linux": {
+              "$ref": "#/definitions/File"
+            },
+            "macos-amd64": {
+              "$ref": "#/definitions/File"
+            },
+            "macos-arm64": {
+              "$ref": "#/definitions/File"
+            },
+            "windows": {
+              "$ref": "#/definitions/File"
+            }
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
         }
       }
     },
@@ -1950,7 +2052,7 @@ func init() {
           {
             "type": "string",
             "default": "",
-            "description": "Datastore that will be sent along the smart contract.",
+            "description": "b64 encoded datastore that will be sent along the smart contract.",
             "name": "datastore",
             "in": "formData"
           }
@@ -2863,6 +2965,51 @@ func init() {
         }
       }
     },
+    "/plugin-store": {
+      "get": {
+        "description": "Returns a list of PluginStoreItem structs",
+        "produces": [
+          "application/json"
+        ],
+        "summary": "Get list of available plugins from store",
+        "operationId": "getPluginStore",
+        "responses": {
+          "200": {
+            "description": "List of plugins",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PluginStoreItem"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/events/{str}/{caller}": {
       "get": {
         "produces": [
@@ -3371,6 +3518,21 @@ func init() {
         }
       }
     },
+    "File": {
+      "type": "object",
+      "required": [
+        "url",
+        "checksum"
+      ],
+      "properties": {
+        "checksum": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
     "NodeItems0": {
       "type": "object",
       "properties": {
@@ -3452,6 +3614,65 @@ func init() {
             "Crashed"
           ],
           "x-nullable": false
+        }
+      }
+    },
+    "PluginStoreItem": {
+      "description": "Plugin item from store.",
+      "type": "object",
+      "required": [
+        "name",
+        "description",
+        "version",
+        "url",
+        "assets"
+      ],
+      "properties": {
+        "assets": {
+          "type": "object",
+          "properties": {
+            "linux": {
+              "$ref": "#/definitions/File"
+            },
+            "macos-amd64": {
+              "$ref": "#/definitions/File"
+            },
+            "macos-arm64": {
+              "$ref": "#/definitions/File"
+            },
+            "windows": {
+              "$ref": "#/definitions/File"
+            }
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "PluginStoreItemAssets": {
+      "type": "object",
+      "properties": {
+        "linux": {
+          "$ref": "#/definitions/File"
+        },
+        "macos-amd64": {
+          "$ref": "#/definitions/File"
+        },
+        "macos-arm64": {
+          "$ref": "#/definitions/File"
+        },
+        "windows": {
+          "$ref": "#/definitions/File"
         }
       }
     },

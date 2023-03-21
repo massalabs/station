@@ -11,6 +11,7 @@ import (
 
 func contentType(rsc string) map[string]string {
 	var contentType map[string]string
+
 	fileExtension := filepath.Ext(rsc)
 	if fileExtension == ".otf" {
 		return map[string]string{"Content-Type": "font/otf"}

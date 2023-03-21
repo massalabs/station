@@ -69,6 +69,9 @@ func NewThyraServerAPI(spec *loads.Document) *ThyraServerAPI {
 		CmdExecuteFunctionHandler: CmdExecuteFunctionHandlerFunc(func(params CmdExecuteFunctionParams) middleware.Responder {
 			return middleware.NotImplemented("operation CmdExecuteFunction has not yet been implemented")
 		}),
+		GetPluginStoreHandler: GetPluginStoreHandlerFunc(func(params GetPluginStoreParams) middleware.Responder {
+			return middleware.NotImplemented("operation GetPluginStore has not yet been implemented")
+		}),
 		KpiHandler: KpiHandlerFunc(func(params KpiParams) middleware.Responder {
 			return middleware.NotImplemented("operation Kpi has not yet been implemented")
 		}),
@@ -206,6 +209,8 @@ type ThyraServerAPI struct {
 	CmdDeploySCHandler CmdDeploySCHandler
 	// CmdExecuteFunctionHandler sets the operation handler for the cmd execute function operation
 	CmdExecuteFunctionHandler CmdExecuteFunctionHandler
+	// GetPluginStoreHandler sets the operation handler for the get plugin store operation
+	GetPluginStoreHandler GetPluginStoreHandler
 	// KpiHandler sets the operation handler for the kpi operation
 	KpiHandler KpiHandler
 	// MassaGetAddressesHandler sets the operation handler for the massa get addresses operation
@@ -362,6 +367,9 @@ func (o *ThyraServerAPI) Validate() error {
 	}
 	if o.CmdExecuteFunctionHandler == nil {
 		unregistered = append(unregistered, "CmdExecuteFunctionHandler")
+	}
+	if o.GetPluginStoreHandler == nil {
+		unregistered = append(unregistered, "GetPluginStoreHandler")
 	}
 	if o.KpiHandler == nil {
 		unregistered = append(unregistered, "KpiHandler")
@@ -554,6 +562,10 @@ func (o *ThyraServerAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/cmd/executeFunction"] = NewCmdExecuteFunction(o.context, o.CmdExecuteFunctionHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/plugin-store"] = NewGetPluginStore(o.context, o.GetPluginStoreHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
