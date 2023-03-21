@@ -99,3 +99,16 @@
   background-attachment: fixed;
   background-size: 50%;
 }
+
+.divider {
+  @apply my-4 h-4 whitespace-nowrap;
+  &:before {
+    @apply bg-font bg-opacity-10;
+  }
+  &:after {
+    @apply bg-font bg-opacity-10;
+  }
+  &:not(:empty) {
+    @apply gap-4;
+  }
+}

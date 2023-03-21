@@ -3,7 +3,7 @@ import axiosServices from '../services/axios';
 import { Circles } from 'react-loader-spinner'
 import { Plugin } from '../../../shared/interfaces/IPlugin';
 import { InstallProps } from './installNodeManager';
-
+import Arrow2 from '../assets/pictos/Arrow2.svg';
 export interface InstallZipProps extends InstallProps {
     plugins: Plugin[];
 }
@@ -41,14 +41,22 @@ function InstallPlugin(p: InstallZipProps) {
     }
 
     return (
-        <section className="bg-slate-800 h-48 max-w-lg w-96 p-3 m-4 rounded-2xl">
+        <section className="h-28 w-80 max-w-lg p-6 gap-3 border-[1px] border-solid border-border rounded-2xl bg-bgCard">
+            <div className='flex flex-row'>
+            <div className='flex flex-col gap-3'>
+                <p className='label2 text-font'>
+                    Install a plugin
+                </p>
+                <p className='text3 text-font'>
+                    Install a plugin using .zip URL
+                </p>
+            </div>
+            <div className='flex self-center mx-auto'>
+                <img className='w-8 h-4 hover:rotate-180' src={Arrow2} alt="" />
+                {/* contains the icon to grow the container */}
+            </div>
+            </div>
             <div className=" flex-row h-full text-font ">
-
-                <div className="bg-slate-800 sm:px-6 sm:flex justify-center">
-                    <h1 className="text-lg leading-6 font-bold" id="modal-headline">
-                        Install Plugin from zip
-                    </h1>
-                </div>
                 <div className="flex w-full pt-2 justify-around items-center">
                     <form onSubmit={handleInstallPlugin}>
                         <div className="mb-4">

@@ -148,8 +148,8 @@ function Manager() {
         });
       };
 
-    const setColsLength = () => {
-        return plugins.length > 3 ? " grid-cols-4" : " grid-cols-3";
+    const setColsLength = (length:number) => {
+        return length > 3 ? " grid-cols-4" : " grid-cols-3";
       };
     return (
         <div>
@@ -161,8 +161,8 @@ function Manager() {
             <MainTitle title="Plugin Manager" />
             <div className="w-[1307px] mx-auto">
 
-            <p className="Secondary mt-24">Installed</p>
-            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-3 " + setColsLength()}>
+            <p className="Secondary mt-24 text-font">Installed</p>
+            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-3 " + setColsLength(plugins.length)}>
                 {plugins?.length ? plugins.filter(p => !!p.name)
                     // sort plugins by names
                     .sort((a, b) => a.name.localeCompare(b.name))
@@ -174,13 +174,13 @@ function Manager() {
                             handleOpenPlugin={handleOpenPlugin}
                             />
                     ))
-                    : <PuffLoader />
+                    : <PuffLoader color="font" />
                 }
               
             </div>
-            <div className="divider mx-auto mt-16 w-2/3 "/>
-            <p className="Secondary mt-12">Not installed</p> 
-            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-3" + setColsLength()}>
+            <div className="divider mx-auto mt-16 w-2/3"/>
+            <p className="Secondary mt-12 text-font">Not installed</p> 
+            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-3" + setColsLength(pluginsNotInstalled.length)}>
                 {pluginsNotInstalled?.length ? plugins.filter(p => !!p.name)
                     // sort plugins by names
                     .sort((a, b) => a.name.localeCompare(b.name))
@@ -193,14 +193,14 @@ function Manager() {
                             />
                     ))
                     : <PuffLoader />
-                }
+                  }
+                  <InstallPlugin
+                          errorHandler={errorHandler}
+                          plugins={plugins}
+                          getPluginsInfo={getPluginsInfo}
+                      />
             </div>
             {/* <div className="grid grid-flow-row  grid-cols-4 max-w-full">
-            <InstallPlugin
-                    errorHandler={errorHandler}
-                    plugins={plugins}
-                    getPluginsInfo={getPluginsInfo}
-                />
                 {plugins?.some(p => p.name === "Node Manager") ?
                     "" :
                     <InstallNodeManager
