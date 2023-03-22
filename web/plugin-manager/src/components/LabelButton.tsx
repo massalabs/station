@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { axiosServices } from '../services/axios';
+import PrimaryButton from './buttons/PrimaryButton';
 import SecondaryButton from './buttons/SecondaryButton';
 
 type Props  = {
@@ -8,6 +9,7 @@ type Props  = {
     placeholder: string;
     buttonValue: string;
     axiosCall: (data: string) => void;
+    error?:string;
 }
 
 const LabelButton = (props: Props) => {
@@ -24,9 +26,9 @@ const LabelButton = (props: Props) => {
 
   return (
     <div className=''>
-        <p className='text-font my-2'>{props.label}</p>
-        <input type="text" className="w-full mb-2" placeholder={props.placeholder} onChange={handleInputValueChange} />
-        <SecondaryButton label={props.buttonValue} onClick={handleSubmit} width={"w-full"}/>
+        <p className='text-font my-1'>{props.label}</p>
+        <input type="text" className="text-font w-full mb-4 rounded-md bg-primaryBG" placeholder={props.placeholder} onChange={handleInputValueChange} />
+        <PrimaryButton label={props.buttonValue} onClick={handleSubmit} width={" w-full"}/>
     </div>
   )
 }

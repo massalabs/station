@@ -43,6 +43,8 @@ function InstallPlugin(p: InstallZipProps) {
 
     
 
+    
+
     return (
         <>
         <SmallCardExtended label2={'Install a plugin'} text3={'Manually install a plugin using .zip URL'} propsLabelButton={{
@@ -54,7 +56,8 @@ function InstallPlugin(p: InstallZipProps) {
             buttonValue: 'Install',
             axiosCall: function (data: string): void {
                 axiosServices.installPlugin(data);
-            }
+            },
+            error: 'error'
         }}/>
         </>)
         // <section className="h-28 w-80 max-w-lg p-6 gap-3 border-[1px] border-solid border-border rounded-2xl bg-bgCard">

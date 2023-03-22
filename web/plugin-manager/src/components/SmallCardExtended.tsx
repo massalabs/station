@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import halfArrow from '../assets/pictos/halfArrow.svg'
+import halfArrowWhite from '../assets/pictos/halfArrowWhite.svg'
+import { UIStore } from '../store/UIStore'
 import LabelButton from './LabelButton'
+
 type Props = {
     label2:  string
     text3 : string
@@ -10,10 +13,12 @@ type Props = {
         placeholder: string;
         buttonValue: string;
         axiosCall: (data: string) => void;
+        error?:string;
     }
 }
 
 const SmallCardExtended = (props: Props) => {
+    const isThemeLight = UIStore.useState(s => (s.theme == "light" ? true : false));
     const [isExtended, setIsExtended] = useState(false)
     const HandleOnClickExtend = () => {
         setIsExtended(!isExtended)
@@ -41,7 +46,7 @@ const SmallCardExtended = (props: Props) => {
                 </p>
             </div>
             <div className='flex self-center mx-auto'>
-                <img className='w-8 h-4 hover:animate-rotate180Smooth' src={halfArrow} alt="" onClick={HandleOnClickExtend} />
+                <img className='w-8 h-4 hover:animate-rotate180Smooth' src={isThemeLight ? halfArrow : halfArrowWhite} alt="" onClick={HandleOnClickExtend} />
                 {/* contains the icon to grow the container */}
             </div>
             </div>
