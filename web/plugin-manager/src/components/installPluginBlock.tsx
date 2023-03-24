@@ -79,60 +79,6 @@ function InstallPlugin(p: InstallZipProps) {
             error: errorPluginInstall
         }}/>
         </>)
-        // <section className="h-28 w-80 max-w-lg p-6 gap-3 border-[1px] border-solid border-border rounded-2xl bg-bgCard">
-            /* <div className='flex flex-row'>
-            <div className='flex flex-col gap-3'>
-                <p className='label2 text-font'>
-                    Install a plugin
-                </p>
-                <p className='text3 text-font'>
-                    Install a plugin using .zip URL
-                </p>
-            </div>
-            <div className='flex self-center mx-auto'>
-                <img className='w-8 h-4 hover:animate-rotate180Smooth' src={Arrow2} alt="" />
-                {/* contains the icon to grow the container */}
-            {/* </div> */}
-            {/* </div> */}
-            {/* <div className=" flex-row h-full text-font ">
-                <div className="flex w-full pt-2 justify-around items-center">
-                    <form onSubmit={handleInstallPlugin}>
-                        <div className="mb-4">
-                            <label htmlFor="plugin-url" className="block font-bold mb-2">
-                                {isInstalling ? "Installing..." : "Plugin URL:"}
-                            </label>
-                            <input
-                                id="plugin-url"
-                                name="plugin-url"
-                                type="text"
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                value={pluginUrl}
-                                onChange={handlePluginUrlChange}
-                                hidden={isInstalling}
-                            />
-                        </div>
-                        <div className="flex justify-end">
-                            <button
-                                type="submit"
-                                hidden={isInstalling}
-                                className="bg-blue-500 hover:bg-blue-700 text-font font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                            >
-                                Install
-                            </button>
-                        </div>
-                    </form>
-                    <Circles
-                        height="60"
-                        width="60"
-                        color="#dc091e"
-                        ariaLabel="circles-loading"
-                        wrapperStyle={{}}
-                        wrapperClass=""
-                        visible={isInstalling}
-                    />
-                </div>
-                </div> */}
-        // </section>
-
-
+    
+    }
 export default InstallPlugin;

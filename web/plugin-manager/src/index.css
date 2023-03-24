@@ -46,15 +46,14 @@
 
 .custom-TogglePlugin-dark.react-toggle--checked .react-toggle-track{
   background-color: #fff !important;
+  /* Nice to implement */
+  /* background-color: hsl(var(--twc-bgCard)); */
+  
 }
 
 .custom-TogglePlugin-dark .react-toggle-thumb {
   background-color: #fff;
 }
-
-/* .custom-TogglePlugin-dark .react-toggle-thumb {
-  background-color: #000;
-} */
 
 .custom-TogglePlugin-dark .react-toggle-track {
   background-color: transparent;
@@ -62,19 +61,9 @@
   border-width: 1px;
 }
 
-.custom-TogglePlugin-dark .react-toggle-track-check {
-  width: 14px;
-  height: 14px;
+.custom-TogglePlugin-dark .react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
+  background-color: #d2d2d2;
 }
-
-.custom-TogglePlugin-dark .react-toggle--checked .react-toggle-thumb {
-  background-color: #fff !important;
-}
-
-.custom-TogglePlugin-dark .react-toggle--checked .react-toggle-track {
-  background-color: #000;
-}
-
 
 
 /* Light Mode */
@@ -96,26 +85,6 @@
 
 .custom-TogglePlugin-light .react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
   background-color: #d2d2d2;
-}
-
-.custom-TogglePlugin-light .react-toggle:not(.react-toggle--checked) .react-toggle-thumb {
-  background-color: #fff;
-}
-
-/* .custom-TogglePlugin-light .react-toggle:not(.react-toggle--checked) .react-toggle-track {
-  background-color: #fff;
-  border-color: #000;
-  border-width: 1px;
-} */
-
-/* When toggle is not checked */
-.custom-TogglePlugin-light .react-toggle:not(.react-toggle--checked) .react-toggle-track {
-  background-color: #fff !important;
-  border-color: #000;
-  border-width: 1px;
-}
-.custom-TogglePlugin-light.react-toggle--checked .react-toggle-thumb {
-  background-color: #fff !important;
 }
 
 .custom-TogglePlugin-light .react-toggle-thumb {
