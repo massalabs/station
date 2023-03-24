@@ -18,7 +18,7 @@ const TogglePlugin = (props: Props) => {
         <Toggle
             defaultChecked={props.checked}
             icons={false}
-            className={`custom-TogglePlugin${UIStore.useState((s) => s.theme)}`}
+            className={`custom-TogglePlugin-${UIStore.useState((s) => s.theme)}`}
             onChange={handleChange}
         />
     );

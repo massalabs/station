@@ -22,77 +22,106 @@
   background-color: #FFFFFF;
     border-color: #000000;
 }
-.custom-classname.react-toggle-track-check{
+.custom-classname .react-toggle-track-check{
   width: 14px;
   height: 14px;
 }
 
-/* Toggle Plugin*/
-/* DarkMode*/
-.custom-TogglePlugindark.react-toggle--checked .react-toggle-track{
-  background-color: #000000;
-}
-
-.custom-TogglePlugindark.react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track{
-  background-color: #D2D2D2;
-}
-
-.custom-TogglePlugindark.react-toggle--checked .react-toggle-thumb{
-  background-color: #FFFFFF;
-  border-color: #000000;
-}
-
-.custom-TogglePlugindark.react-toggle-track-check{
-  width: 14px;
-  height: 14px;
-}
-
-/* LightMode*/
-
-/* .custom-TogglePluginlight.react-toggle--checked .react-toggle-track{
-  background-color: #FFFFFF;
-} */
-
-.custom-TogglePluginlight.react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track{
-  background-color: #D2D2D2;
-}
-
-
-
-.custom-TogglePluginlight.react-toggle--checked .react-toggle-thumb{
-  background-color: #FFFFFF;
-  border-color: #FFFFFF;
-}
-
-
-.custom-TogglePluginlight.react-toggle--checked .react-toggle-track{
-  background-color: #000000;
-  border-color: #FFFFFF;
-}
-
-.custom-TogglePluginlight.react-toggle:not(:checked) .react-toggle-track{
-  background-color: #FFFFFF;
-  border-color: #000000;
-}
-
-.custom-TogglePluginlight.react-toggle:not(:checked) .react-toggle-thumb{
-  background-color: #000000;
-  border-color: #FFFFFF;
-}
-/* .custom-TogglePluginlight.react-toggle .react-toggle-track{
-  background-color: #FFFFFF;
-  border-color: #000000;
-} */
-
-.custom-TogglePluginlight.react-toggle-track-check{
-  width: 14px;
-  height: 14px;
-}
+/* Theme Toggle with icons */
 .react-toggle-track-check
 {
   width: 14px;
+  height: 14px !important;
+}
+
+/* Toggle Plugin*/
+
+/* Dark Mode */
+
+/* Dark Mode */
+.custom-TogglePlugin-dark.react-toggle--checked .react-toggle-thumb {
+  background-color: #000 !important;
+  border-color: #000 !important;
+}
+
+.custom-TogglePlugin-dark.react-toggle--checked .react-toggle-track{
+  background-color: #fff !important;
+}
+
+.custom-TogglePlugin-dark .react-toggle-thumb {
+  background-color: #fff;
+}
+
+/* .custom-TogglePlugin-dark .react-toggle-thumb {
+  background-color: #000;
+} */
+
+.custom-TogglePlugin-dark .react-toggle-track {
+  background-color: transparent;
+  border-color: #ffffff;
+  border-width: 1px;
+}
+
+.custom-TogglePlugin-dark .react-toggle-track-check {
+  width: 14px;
   height: 14px;
 }
+
+.custom-TogglePlugin-dark .react-toggle--checked .react-toggle-thumb {
+  background-color: #fff !important;
+}
+
+.custom-TogglePlugin-dark .react-toggle--checked .react-toggle-track {
+  background-color: #000;
+}
+
+
+
+/* Light Mode */
+
+.custom-TogglePlugin-light.react-toggle--checked .react-toggle-thumb {
+  background-color: #fff;
+  border-color: #fff !important;
+}
+
+.custom-TogglePlugin-light .react-toggle-track {
+  background-color: transparent;
+  border-color: #000;
+  border-width: 1px;
+}
+
+.custom-TogglePlugin-light.react-toggle--checked .react-toggle-track{
+  background-color: #000 !important;
+}
+
+.custom-TogglePlugin-light .react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
+  background-color: #d2d2d2;
+}
+
+.custom-TogglePlugin-light .react-toggle:not(.react-toggle--checked) .react-toggle-thumb {
+  background-color: #fff;
+}
+
+/* .custom-TogglePlugin-light .react-toggle:not(.react-toggle--checked) .react-toggle-track {
+  background-color: #fff;
+  border-color: #000;
+  border-width: 1px;
+} */
+
+/* When toggle is not checked */
+.custom-TogglePlugin-light .react-toggle:not(.react-toggle--checked) .react-toggle-track {
+  background-color: #fff !important;
+  border-color: #000;
+  border-width: 1px;
+}
+.custom-TogglePlugin-light.react-toggle--checked .react-toggle-thumb {
+  background-color: #fff !important;
+}
+
+.custom-TogglePlugin-light .react-toggle-thumb {
+  background-color: #000;
+}
+
 /* Custom CSS */
 
 

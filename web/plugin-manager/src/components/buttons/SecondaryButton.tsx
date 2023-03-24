@@ -12,7 +12,7 @@ type Props = {
 const SecondaryButton = (props: Props) => {
   return (
 
-        <button type={props.type ?? "button"} onClick={props.onClick} className={"flex flex-row justify-center items-center gap-2 h-12 border-[1px] border-solid border-border rounded-md " + (props.width ?? "w-28") + ((props.isDisabled) ? " bg-disabledButton " : " bg-secondaryButton hover:bg-hoverPrimaryButton cursor-pointer") }>
+        <button type={props.type ?? "button"} onClick={props.onClick} className={"flex flex-row justify-center items-center gap-2 h-12 border-[1px] border-solid border-border rounded-md " + (props.width ?? "w-28") + ((props.isDisabled) ? " bg-disabledButton cursor-not-allowed" : " bg-secondaryButton hover:bg-hoverPrimaryButton cursor-pointer") }>
           <p className={"text-font"}>{props.label}</p>
         </button>
   )

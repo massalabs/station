@@ -20,7 +20,6 @@ const LabelButton = (props: Props) => {
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        console.log("callback to parent", value)
         props.callbackToParent(value);
     }
 

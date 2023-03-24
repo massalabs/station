@@ -55,10 +55,10 @@ function InstallPlugin(p: InstallZipProps) {
     };
 
     const installPluginHandler = async (url: string) => {
-        console.log(url)
         if (verifyUrl(url)) {
-            await axiosServices.installPlugin(url);
             setIsInstalling(true)
+            await axiosServices.installPlugin(url);
+            p.getPluginsInfo()
         } else {
             console.log("Invalid URL")
             setErrorPluginInstall('Invalid URL');

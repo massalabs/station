@@ -9,16 +9,6 @@ import PrimaryButton from "./buttons/PrimaryButton";
 import SecondaryButton from "./buttons/SecondaryButton";
 
 function PluginBlock(props: PluginProps) {
-    // Donc on va faire un truc si c'est un fake plugin
-    // on le fait quand même passé mais on met un bool? pour capter que c'est un fake plugin coté front
-    // par exemple button delete disabled si fake plugins pareil pour le toggle button
-
-    // Not installed on a NodeManager et Hello World
-
-    // Installed on à
-    // 1. Wallet
-    // 2. Registry
-    // 3. Web on chain
 
     const [isPluginUp, setStatus] = useState(isUp(props.plugin.status));
     useEffect(() => setStatus(isUp(props.plugin.status)), [props.plugin.status]);
@@ -83,9 +73,8 @@ function PluginBlock(props: PluginProps) {
         try {
             await axiosServices.deletePlugins(props.plugin.id);
             props.getPluginsInfo();
-            props.errorHandler("success", "Plugin removed");
         } catch (error: any) {
-            props.errorHandler("error", `Plugins failed to be removed , error ${error.message}`);
+            console.log(`Plugins failed to be removed , error ${error.message}`);
         }
     }
     // Uninstall plugin
@@ -93,9 +82,8 @@ function PluginBlock(props: PluginProps) {
         try {
             await axiosServices.installPlugin(props.plugin.url ?? "");
             props.getPluginsInfo();
-            props.errorHandler("success", "Plugin removed");
         } catch (error: any) {
-            props.errorHandler("error", `Plugins failed to be removed , error ${error.message}`);
+            console.log( `Plugins failed to be downloaded , error ${error.message}`);
         }
     }
     //Truncate the string so that it fits in the given lenght if needed.
@@ -118,7 +106,7 @@ function PluginBlock(props: PluginProps) {
             {/* First block Display plugin name and description */}
             <div className="flex flex-row items-center justify-between w-full">
                 <img src={props.plugin.logo} alt="Album" className="rounded-3xl w-10 h-10" />
-                {!props.plugin.isFake && (
+                {props.plugin.isFake && (
                     <TogglePlugin handleChange={launchOrStop} checked={isPluginUp} />
                 )}
             </div>

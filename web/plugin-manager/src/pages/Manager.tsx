@@ -159,8 +159,6 @@ function Manager() {
             <p className="Secondary mt-24 text-font">Installed</p>
             <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-3 gap-4 " + setColsLength(plugins.length)}>
                 {plugins?.length ? plugins.filter(p => !!p.name)
-                    // sort plugins by names
-                    .sort((a, b) => a.name.localeCompare(b.name))
                     .map(plugin => (
                         <PluginBlock
                             plugin={plugin}
@@ -192,16 +190,6 @@ function Manager() {
                     : <PuffLoader />
                   }
             </div>
-            {/* <div className="grid grid-flow-row  grid-cols-4 max-w-full">
-                {plugins?.some(p => p.name === "Node Manager") ?
-                    "" :
-                    <InstallNodeManager
-                    errorHandler={errorHandler}
-                    getPluginsInfo={getPluginsInfo}
-                    />
-                  }
-                  {/* {error} */}
-            {/* </div> */}
                   </div>
         </div>
         </div>
