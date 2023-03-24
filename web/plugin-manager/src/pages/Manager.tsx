@@ -22,7 +22,7 @@ function Manager() {
           'Create and manage your smart wallets to buy, sell, transfer and exchange tokens',
           id: '420',
           logo: wallet,
-          status: '',
+          status: 'Up',
           version: '1.0.0',
           home:'/thyra/wallet',
           isFake: true
@@ -32,7 +32,7 @@ function Manager() {
           description:
             'Buy your .massa domain and upload websites on the blockchain',
           id: '421',          logo: webOnChain,
-          status: '',
+          status: 'Up',
           version: '1.0.0',
           home:'/thyra/websiteCreator',
           isFake: true
@@ -42,12 +42,12 @@ function Manager() {
           description: 'Browse Massa blockchain and its .massa websites',
           id: '423',
           logo: registry,
-          status: '',
+          status: 'Up',
           version: '1.0.0',
           home:'/thyra/registry',
           isFake: true
         },
-      ];
+      ]
     //State to store error
     const [error, setError] = useState(<></>);
 
@@ -81,7 +81,15 @@ function Manager() {
     async function getPluginsInfoNotInstalled() {
       try {
           const pluginsInfos = await axiosServices.getNotInstalledPlugins();
-          let combinedPlugins = [pluginsInfos.data];
+          let combinedPlugins : PluginNotInstalled[] = [];
+          pluginsInfos.data.forEach(element => {
+            combinedPlugins.push({
+              name: element.name,
+              description: element.description,
+              url: element.url,
+              logo: massaLogomark
+            })
+          });
           setPluginsNotInstalled(combinedPlugins);
 
       } catch (error: any) {
@@ -109,18 +117,6 @@ function Manager() {
         name: string;
         home: string
       }
-      const findPluginHome = (pluginName:string) => {
-        let home = '';
-        plugins.forEach((element) => {
-          if (element.name == pluginName) {
-            home = element.home;
-          }
-        });
-        return home;
-      };
-      const handleOpenPlugin = (pluginName: string) => {  
-        window.open(findPluginHome(pluginName), '_blank');
-      };
 
     const mapPluginList = () => {
         return plugins.map((plugin) => {
@@ -138,7 +134,6 @@ function Manager() {
                   home: plugin.home ? plugin.home : 'Plugin Problem',
                   version : plugin.version ? plugin.version : 'Plugin Problem',
                 },
-                handleOpenPlugin: handleOpenPlugin,
                 key: plugin.id,
                 errorHandler: errorHandler,
                 getPluginsInfo: getPluginsInfo,
@@ -162,7 +157,7 @@ function Manager() {
             <div className="w-[1307px] mx-auto">
 
             <p className="Secondary mt-24 text-font">Installed</p>
-            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-3 " + setColsLength(plugins.length)}>
+            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-3 gap-4 " + setColsLength(plugins.length)}>
                 {plugins?.length ? plugins.filter(p => !!p.name)
                     // sort plugins by names
                     .sort((a, b) => a.name.localeCompare(b.name))
@@ -171,12 +166,15 @@ function Manager() {
                             plugin={plugin}
                             errorHandler={errorHandler}
                             getPluginsInfo={getPluginsInfo}
-                            handleOpenPlugin={handleOpenPlugin}
                             />
                     ))
                     : <PuffLoader color="font" />
                 }
-              
+                                <InstallPlugin
+                          errorHandler={errorHandler}
+                          plugins={plugins}
+                          getPluginsInfo={getPluginsInfo}
+                      />
             </div>
             <div className="divider mx-auto mt-8 w-2/3"/>
             <p className="Secondary mt-12 text-font">Not installed</p> 
@@ -189,16 +187,10 @@ function Manager() {
                             plugin={plugin}
                             errorHandler={errorHandler}
                             getPluginsInfo={getPluginsInfo}
-                            handleOpenPlugin={handleOpenPlugin}
                             />
                     ))
                     : <PuffLoader />
                   }
-                  <InstallPlugin
-                          errorHandler={errorHandler}
-                          plugins={plugins}
-                          getPluginsInfo={getPluginsInfo}
-                      />
             </div>
             {/* <div className="grid grid-flow-row  grid-cols-4 max-w-full">
                 {plugins?.some(p => p.name === "Node Manager") ?

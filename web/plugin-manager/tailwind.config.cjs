@@ -3,6 +3,8 @@ const { createThemes } = require('tw-colors');
 const plugin = require('tailwindcss/plugin')
 module.exports = {
     content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+
+     important: true,
     theme: {
         extend: {
             fontFamily: {
@@ -20,10 +22,23 @@ module.exports = {
                     "75%": { transform: "rotate(135deg)" },
                     "87%": { transform: "rotate(157deg)" },
                     "100%": { transform: "rotate(180deg)" },
+                },
+                rotateReverse180Smooth:{
+                    "0%": { transform: "rotate(180deg)" },
+                    "12%": { transform: "rotate(157deg)" },
+                    "25%": { transform: "rotate(135deg)" },
+                    "37%": { transform: "rotate(112deg)" },
+                    "50%": { transform: "rotate(90deg)" },
+                    "62%": { transform: "rotate(67deg)" },
+                    "75%": { transform: "rotate(45deg)" },
+                    "87%": { transform: "rotate(22deg)" },
+                    "100%": { transform: "rotate(0deg)" },
                 }
+                
             },
             animation:{
                 rotate180Smooth: "rotate180Smooth 0.5s forwards ",
+                rotateReverse180Smooth: "rotateReverse180Smooth 0.5s forwards"
             }
         },
     },

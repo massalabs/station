@@ -72,6 +72,7 @@ function PluginBlock(props: PluginProps) {
     }
     // Open plugin homepage
     function openHomepagePlugins() {
+        console.log("hello", props.plugin.name);
         if (isPluginUp) window.open(props.plugin.home);
         else {
             props.errorHandler("error", "Plugin is not running, launch it first");
@@ -111,13 +112,15 @@ function PluginBlock(props: PluginProps) {
 
     return (
         <div
-            className="flex flex-col justify-center items-start p-6 gap-4 w-[309px] h-[251px] 
+            className="flex flex-col justify-center items-start p-6 gap-4 w-80 h-56 
                     border-[1px] border-solid border-border rounded-2xl bg-bgCard "
         >
             {/* First block Display plugin name and description */}
             <div className="flex flex-row items-center justify-between w-full">
                 <img src={props.plugin.logo} alt="Album" className="rounded-3xl w-10 h-10" />
-                <TogglePlugin handleChange={launchOrStop} checked={isPluginUp} />
+                {!props.plugin.isFake && (
+                    <TogglePlugin handleChange={launchOrStop} checked={isPluginUp} />
+                )}
             </div>
             <div className="w-full">
                 <h1 className="label2 text-font">{minimize(props.plugin.name, 90)}</h1>
@@ -129,30 +132,30 @@ function PluginBlock(props: PluginProps) {
             <div className="flex">
                 {/* Delete hidden when version will be send through the API */}
                 <p className="hidden text3 text-font">V: {props.plugin.version ?? "0.0.0"}</p>
-                {props.plugin.isNotInstalled ? (
-                    <div className="flex w-64 content-between justify-between mx-auto gap-4 w-">
+                <div className="flex w-64 content-between justify-between mx-auto gap-4">
+                    {props.plugin.isNotInstalled ? (
                         <SecondaryButton
                             label={"Download"}
                             onClick={downloadPlugins}
                             width={"w-64"}
                         />
-                    </div>
-                ) : (
-                    <div className="flex w-64 content-between justify-between mx-auto gap-4 ">
-                        <PrimaryButton
-                            label={"Open"}
-                            onClick={openHomepagePlugins}
-                            iconPathDark={Arrow6}
-                            iconPathLight={ArrowWhite6}
-                        />
-                        
-                        <SecondaryButton
-                            label={"Delete"}
-                            onClick={removePlugins}
-                            isDisabled={props.plugin.isFake}
-                        />
-                    </div>
-                )}
+                    ) : (
+                        <>
+                            <PrimaryButton
+                                label={"Open"}
+                                onClick={openHomepagePlugins}
+                                iconPathDark={Arrow6}
+                                iconPathLight={ArrowWhite6}
+                            />
+
+                            <SecondaryButton
+                                label={"Delete"}
+                                onClick={removePlugins}
+                                isDisabled={props.plugin.isFake}
+                            />
+                        </>
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
-import { Plugin, PluginNotInstalled } from '../../../shared/interfaces/IPlugin'
+import { Plugin, PluginNotInstalled, PluginStoreItemRequest } from '../../../shared/interfaces/IPlugin'
 
 export class axiosServices {
 
@@ -18,14 +18,15 @@ export class axiosServices {
   }
 
 
+
 //
 
   static installPlugin(url: string): Promise<AxiosResponse<number>> {
     return axios.post<any>(`/plugin-manager?source=${url}`)
   }
 
-  static getNotInstalledPlugins(): Promise<AxiosResponse<PluginNotInstalled>> {
-    return axios.post<any>(`/plugin-manager/available-plugins`)
+  static getNotInstalledPlugins(): Promise<AxiosResponse<PluginStoreItemRequest[]>> {
+    return axios.post<any>(`/plugin-store`)
   }
 
   static manageLifePlugins(ID: string, command: string): Promise<AxiosResponse<number>> {

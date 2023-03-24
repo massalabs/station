@@ -15,7 +15,6 @@ export interface Plugin {
 
 export interface PluginProps {
     plugin: Plugin;
-    handleOpenPlugin: (pluginName:string) => void;
     errorHandler: (errorType: string, errorMessage: string) => void;
     getPluginsInfo: () => void;
 }
@@ -36,9 +35,26 @@ export interface PluginHomePage {
     home?: string;
 }
 export interface PluginNotInstalled {
-    id: string;
+
     name: string;
     description: string;
     url: string;
     logo: string;
+}
+
+export interface PluginStoreItemRequest{
+    name:string
+    description:string
+    version: string
+    url:string
+    assets:{
+        windows: pluginStoreItemFile
+        linux: pluginStoreItemFile
+        macos_arm64: pluginStoreItemFile
+        macos_amd64: pluginStoreItemFile
+    }
+}
+export interface pluginStoreItemFile{
+    url:string
+    checksum:string
 }

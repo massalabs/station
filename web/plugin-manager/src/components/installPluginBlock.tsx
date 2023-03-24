@@ -12,6 +12,7 @@ export interface InstallZipProps extends InstallProps {
 function InstallPlugin(p: InstallZipProps) {
     const [pluginUrl, setPluginUrl] = useState('');
     const [isInstalling, setIsInstalling] = useState<boolean>(false);
+    const [errorPluginInstall, setErrorPluginInstall] = useState("")
 
     let nbPluginsTmp = 0;
     useEffect(() => {
@@ -41,23 +42,41 @@ function InstallPlugin(p: InstallZipProps) {
         p.getPluginsInfo()
     }
 
-    
+    const verifyUrl = (url: string) => {
+        const regex = new RegExp(
+            '^(https?:\\/\\/)?' + // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+            '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+            '(\\#[-a-z\\d_]*)?$',
+            'i'
+        ); // fragment locator
+        return regex.test(url);
+    };
 
+    const installPluginHandler = async (url: string) => {
+        console.log(url)
+        if (verifyUrl(url)) {
+            await axiosServices.installPlugin(url);
+            setIsInstalling(true)
+        } else {
+            console.log("Invalid URL")
+            setErrorPluginInstall('Invalid URL');
+        }
+    };
+    
     
 
     return (
         <>
         <SmallCardExtended label2={'Install a plugin'} text3={'Manually install a plugin using .zip URL'} propsLabelButton={{
             callbackToParent: function (data: string): void {
-                setIsInstalling(true)
+                installPluginHandler(data);
             },
             label: 'Plugin link',
             placeholder: 'Set .zip Url Link',
             buttonValue: 'Install',
-            axiosCall: function (data: string): void {
-                axiosServices.installPlugin(data);
-            },
-            error: 'error'
+            error: errorPluginInstall
         }}/>
         </>)
         // <section className="h-28 w-80 max-w-lg p-6 gap-3 border-[1px] border-solid border-border rounded-2xl bg-bgCard">

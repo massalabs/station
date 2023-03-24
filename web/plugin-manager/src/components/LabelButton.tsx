@@ -1,14 +1,13 @@
-import React, { useState } from 'react'
-import { axiosServices } from '../services/axios';
+import { useState } from 'react'
+
 import PrimaryButton from './buttons/PrimaryButton';
-import SecondaryButton from './buttons/SecondaryButton';
+
 
 type Props  = {
     callbackToParent: (data: string) => void;
-    label:string;
+    label?:string;
     placeholder: string;
     buttonValue: string;
-    axiosCall: (data: string) => void;
     error?:string;
 }
 
@@ -19,17 +18,18 @@ const LabelButton = (props: Props) => {
         setValue(event.target.value);
     }
 
-    async function handleSubmit() {
-        props.axiosCall(value)
-        props.callbackToParent
+    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        console.log("callback to parent", value)
+        props.callbackToParent(value);
     }
 
   return (
-    <div className=''>
-        <p className='text-font my-1'>{props.label}</p>
+    <form onSubmit={handleSubmit} className=''>
+        {props.error && <p className='text-red-500'>{props.error}</p>}
         <input type="text" className="text-font w-full mb-4 rounded-md bg-primaryBG" placeholder={props.placeholder} onChange={handleInputValueChange} />
-        <PrimaryButton label={props.buttonValue} onClick={handleSubmit} width={" w-full"}/>
-    </div>
+        <PrimaryButton label={props.buttonValue} type="submit" width={" w-full"} onClick={() => props.callbackToParent(value)} />
+    </form>
   )
 }
 

@@ -1,4 +1,3 @@
-import "./index.css"
 import Manager from "./pages/Manager"
 import { UIStore } from "./store/UIStore";
 
