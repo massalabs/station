@@ -31,7 +31,8 @@ function Manager() {
           name: 'Web On Chain',
           description:
             'Buy your .massa domain and upload websites on the blockchain',
-          id: '421',          logo: webOnChain,
+          id: '421',          
+          logo: webOnChain,
           status: 'Up',
           version: '1.0.0',
           home:'/thyra/websiteCreator',
@@ -73,6 +74,7 @@ function Manager() {
             const pluginsInfos = await axiosServices.getPluginsInfo();
             let combinedPlugins = [ ...fakePluginsList, ...pluginsInfos.data];
             setPlugins(combinedPlugins);
+            getPluginsInfoNotInstalled();
         } catch (error: any) {
             errorHandler("error", `Get plugins infos failed ,  error ${error.message} `);
         }
@@ -112,12 +114,8 @@ function Manager() {
         return () => clearInterval(interval);
     }, []);
 
-
-      interface PluginHome {
-        name: string;
-        home: string
-      }
-
+    //To talk in code review is it better to doing stuff 
+    //like this or to repeat the filters mapping on bottom
     const mapPluginList = () => {
         return plugins.map((plugin) => {
           return (
