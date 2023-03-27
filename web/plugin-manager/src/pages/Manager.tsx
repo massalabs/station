@@ -6,7 +6,7 @@ import alertHelper from "../helpers/alertHelpers";
 import { PuffLoader } from "react-spinners";
 import wallet from '../assets/logo/plugins/Wallet.svg'
 import registry from '../assets/logo/plugins/Registry.svg'
-import webOnChain from '../assets/logo/plugins/WebOnChain.svg'
+import webOnChain from '../assets/logo/plugins/webOnChain.svg'
 import notInstalled from '../assets/logo/plugins/notInstalledRed.png';
 import massaLogomark from '../assets/massa_logomark_detailed.png';
 import grid1 from '../assets/element/grid1.svg';
