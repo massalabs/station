@@ -33,7 +33,12 @@ runs:
           web/home/package-lock.json
           web/plugin-manager/package-lock.json
 
-    - name: Build react frontend
+    - name: install go deps
+      shell: bash
+      run: |
+        go install github.com/go-swagger/go-swagger/cmd/swagger@latest
+        go install golang.org/x/tools/cmd/stringer@latest
+
+    - name: Build react frontend and swagger api
       shell: bash
       run: go generate ./...
-      
