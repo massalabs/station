@@ -12,7 +12,7 @@ import ManagePluginCard from '../../components/managePluginCard';
 import grid1 from '../../assets/element/grid1.svg';
 import wallet from '../../assets/logo/plugins/Wallet.svg';
 import registry from '../../assets/logo/plugins/Registry.svg';
-import webOnChain from '../../assets/logo/plugins/WebOnChain.svg';
+import webOnChain from '../../assets/logo/plugins/webOnChain.svg';
 import MainTitle from '../../components/MainTitle';
 
 
