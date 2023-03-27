@@ -154,8 +154,8 @@ function Manager() {
             <MainTitle title="Plugin Manager" />
             <div className="w-[1307px] mx-auto">
 
-            <p className="Secondary mt-24 text-font">Installed</p>
-            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-3 gap-4 " + setColsLength(plugins.length)}>
+            <p className="Secondary mt-24 text-font sm:max-xl:ml-6">Installed</p>
+            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto mt-3 gap-4 sm:max-xl:grid-cols-2 ml-6 xl: " + setColsLength(plugins.length)}>
                 {plugins?.length ? plugins.filter(p => !!p.name)
                     .map(plugin => (
                         <PluginBlock
@@ -174,7 +174,7 @@ function Manager() {
             </div>
             <div className="divider mx-auto mt-8 w-2/3"/>
             <p className="Secondary mt-12 text-font">Not installed</p> 
-            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto my-3" + setColsLength(pluginsNotInstalled.length)}>
+            <div className= {"grid grid-flow-row-dense w-[1307px] mx-auto my-3 sm:max-xl:grid-cols-2 ml-6 xl: " + setColsLength(pluginsNotInstalled.length)}>
                 {pluginsNotInstalled?.length ? plugins.filter(p => !!p.name)
                     // sort plugins by names
                     .sort((a, b) => a.name.localeCompare(b.name))
