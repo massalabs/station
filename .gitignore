@@ -19,3 +19,7 @@ tmp/
 # Thyra builded react files
 int/api/dist/
 main
+
+# Go swagger generated files
+api/swagger/server/models/
+api/swagger/server/restapi/operations/
