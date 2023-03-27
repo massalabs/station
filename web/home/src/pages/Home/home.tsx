@@ -55,18 +55,18 @@ function Home() {
   const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
 
   const handleOpenPlugin = (pluginName: string) => {
-    window.open(findPluginHome(pluginName), '_blank');
+    window.open(findPluginHome(pluginName));
   };
   const findPluginHome = (pluginName: string) => {
-    let home = '';
-    plugins.forEach((element) => {
-      if (element.name == pluginName && element.home) {
-        return element.home;
-      }
-    });
-    console.log('Link to the plugin not found')
-    return home;
+    const plugin = plugins.find((element) => element.name === pluginName);
+    if (plugin) {
+      return plugin.home;
+    } else {
+      console.log('Link to the plugin not found');
+      return 'error';
+    }
   };
+  
   // List of plugins
   const getPlugins = async () => {
     const init = {
