@@ -60,7 +60,10 @@ module.exports = {
                 invertedfont: "#FFFFFF",
                 border: "#000000",
                 disabledButton: "#8F8989",
-                disabledText:"#D2D2D2"
+                disabledText:"#D2D2D2",
+                toggleHover: '#D2D2D2',
+                toggleChecked: '#FFFFFF',
+                dark: '#000'
             },
             dark: {
                 primaryBG: "#171A1D",
@@ -76,7 +79,10 @@ module.exports = {
                 font: "#FFFFFF",
                 invertedfont: "#000000",
                 disabledButton: "#8F8989",
-                disabledText:"#D2D2D2"
+                disabledText:"#D2D2D2",
+                toggleHover: '#D2D2D2',
+                toggleChecked: '#FFFFFF',
+                dark: '#000'
             },
         }),
         plugin(function ({ addComponents, theme }) {

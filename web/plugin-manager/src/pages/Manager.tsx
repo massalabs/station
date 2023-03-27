@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import PluginBlock from "../components/pluginBlock";
-import { Plugin, PluginHomePage, PluginNotInstalled } from "../../../shared/interfaces/IPlugin";
+import { Plugin, PluginNotInstalled } from "../../../shared/interfaces/IPlugin";
 import axiosServices from "../services/axios";
 import alertHelper from "../helpers/alertHelpers";
 import { PuffLoader } from "react-spinners";
-import InstallPlugin from "../components/installPluginBlock";
-import InstallNodeManager from "../components/installNodeManager";
-import Header from "../components/Header";
 import wallet from '../assets/logo/plugins/Wallet.svg'
 import registry from '../assets/logo/plugins/Registry.svg'
 import webOnChain from '../assets/logo/plugins/WebOnChain.svg'
+import notInstalled from '../assets/logo/plugins/notInstalledRed.png';
 import massaLogomark from '../assets/massa_logomark_detailed.png';
-import MainTitle from '../components/MainTitle';
 import grid1 from '../assets/element/grid1.svg';
+import InstallPlugin from "../components/installPluginBlock";
+import Header from "../components/Header";
+import MainTitle from '../components/MainTitle';
 function Manager() {
     
     const fakePluginsList:Plugin[] = [
@@ -89,7 +89,7 @@ function Manager() {
               name: element.name,
               description: element.description,
               url: element.url,
-              logo: massaLogomark
+              logo: notInstalled
             })
           });
           setPluginsNotInstalled(combinedPlugins);
