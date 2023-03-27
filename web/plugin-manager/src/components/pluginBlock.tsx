@@ -3,7 +3,7 @@ import axiosServices from "../services/axios";
 import { PluginProps } from "../../../shared/interfaces/IPlugin";
 import { isUp } from "../helpers/isUp";
 import TogglePlugin from "./TogglePlugin";
-import Arrow6 from "../assets/pictos/Arrow6.svg";
+import Arrow6 from "../assets/pictos/arrow6.svg";
 import ArrowWhite6 from "../assets/pictos/ArrowWhite6.svg";
 import PrimaryButton from "./buttons/PrimaryButton";
 import SecondaryButton from "./buttons/SecondaryButton";
