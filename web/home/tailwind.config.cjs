@@ -27,6 +27,8 @@ module.exports = {
         live: '#14FF00',
         font: '#000000',
         border: '#000000',
+        toggleHover: '#D2D2D2',
+        toggleChecked: '#FFFFFF',
       },
       dark: {
         primaryBG: '#171A1D',
@@ -38,8 +40,10 @@ module.exports = {
         hoverSecondaryButton: '#D2D2D2',
         brand: '#FF0000',
         live: '#14FF00',
-        border: '#F3F3F3',
         font: '#FFFFFF',
+        border: '#F3F3F3',
+        toggleHover: '#D2D2D2',
+        toggleChecked: '#FFFFFF',
       },
     }),
     plugin(function ({ addComponents, theme }) {

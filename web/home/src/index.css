@@ -13,14 +13,15 @@
 
   /* Toggle Theme */
   .custom-classname.react-toggle--checked .react-toggle-track {
-    background-color: #000000;
+    background-color: hsl(var(--twc-secondaryButton));
   }
   .custom-classname.react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
-    background-color: #D2D2D2;
+    background-color: hsl(var(--twc-toggleHover));
 }
 .custom-classname.react-toggle--checked .react-toggle-thumb{
-  background-color: #FFFFFF;
-    border-color: #000000;
+  background-color: hsl(var(--twc-toggleChecked));
+  border-color: hsl(var(--twc-secondaryButton));
+
 }
 .react-toggle-track-check{
   width: 14px;

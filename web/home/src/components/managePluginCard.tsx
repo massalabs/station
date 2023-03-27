@@ -1,5 +1,5 @@
 import plusSmall from '../assets/pictos/plusSmall.svg';
-import PlusSmallWhite from '../assets/pictos/PlusSmallWhite.svg';
+import PlusSmallWhite from '../assets/pictos/plusSmallWhite.svg';
 import { UIStore } from '../store/UIStore';
 const ManagePluginCard = () => {
   const plus = UIStore.useState((s) =>

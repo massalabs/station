@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import massaLogomark from '../../assets/massa_logomark_detailed.png';
 
 import axios from 'axios';
-import { PluginHomePage } from '../../../../shared/interfaces/IPlugin';
+import { PluginHomePage , PluginStatus } from '../../../../shared/interfaces/IPlugin';
 import { PluginCard } from '../../components/pluginCard';
 
 import Header from '../../components/Header';
@@ -14,6 +14,7 @@ import wallet from '../../assets/logo/plugins/Wallet.svg';
 import registry from '../../assets/logo/plugins/Registry.svg';
 import webOnChain from '../../assets/logo/plugins/WebOnChain.svg';
 import MainTitle from '../../components/MainTitle';
+
 
 /**
  * Homepage of Thyra with a list of plugins installed
@@ -104,7 +105,7 @@ function Home() {
 
   const mapPluginList = () => {
     return plugins.map((plugin) => {
-      if (plugin.status == 'Starting' || plugin.status == 'Up'){
+      if (plugin.status == PluginStatus.Starting || plugin.status == PluginStatus.Up){
         return (
           <PluginCard
             {...{
