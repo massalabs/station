@@ -21,7 +21,7 @@ function PluginBlock(props: PluginProps) {
 
             return status;
         } catch (error: any) {
-            props.errorHandler(
+            console.error(
                 "error",
                 `Plugins infos failed to get infos from 
                 plugin name : ${props.plugin.name} on id: ${props.plugin.id}, error: ${error.message}}`
@@ -37,7 +37,7 @@ function PluginBlock(props: PluginProps) {
         try {
             await axiosServices.manageLifePlugins(props.plugin.id, isPluginUp ? "stop" : "start");
         } catch (error: any) {
-            props.errorHandler("error", `Start plugin failed , error :${error.message}`);
+            console.error("error", `Start plugin failed , error :${error.message}`);
         }
 
         getpluginInfo();
@@ -64,7 +64,7 @@ function PluginBlock(props: PluginProps) {
         console.log("hello", props.plugin.name);
         if (isPluginUp) window.open(props.plugin.home);
         else {
-            props.errorHandler("error", "Plugin is not running, launch it first");
+            console.error("error", "Plugin is not running, launch it first");
         }
     }
     // Uninstall plugin

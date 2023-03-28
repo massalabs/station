@@ -15,7 +15,6 @@ export interface Plugin {
 
 export interface PluginProps {
     plugin: Plugin;
-    errorHandler: (errorType: string, errorMessage: string) => void;
     getPluginsInfo: () => void;
 }
 
@@ -49,13 +48,16 @@ export interface PluginStoreItemRequest{
     description:string
     version: string
     url:string
-    assets:{
-        windows: pluginStoreItemFile
-        linux: pluginStoreItemFile
-        macos_arm64: pluginStoreItemFile
-        macos_amd64: pluginStoreItemFile
-    }
+    assets:PluginStoreAssets
 }
+
+export interface PluginStoreAssets{
+    windows: pluginStoreItemFile
+    linux: pluginStoreItemFile
+    macos_arm64: pluginStoreItemFile
+    macos_amd64: pluginStoreItemFile
+}
+
 export interface pluginStoreItemFile{
     url:string
     checksum:string
