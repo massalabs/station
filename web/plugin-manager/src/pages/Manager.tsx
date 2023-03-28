@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PluginBlock from "../components/pluginBlock";
-import { Plugin, PluginNotInstalled } from "../../../shared/interfaces/IPlugin";
+import { Plugin, PluginNotInstalled, PluginStatus } from "../../../shared/interfaces/IPlugin";
 import axiosServices from "../services/axios";
 import alertHelper from "../helpers/alertHelpers";
 import { PuffLoader } from "react-spinners";
@@ -21,7 +21,7 @@ function Manager() {
                 "Create and manage your smart wallets to buy, sell, transfer and exchange tokens",
             id: "420",
             logo: wallet,
-            status: "Up",
+            status: PluginStatus.Up,
             version: "1.0.0",
             home: "/thyra/wallet",
             isFake: true,
@@ -31,7 +31,7 @@ function Manager() {
             description: "Buy your .massa domain and upload websites on the blockchain",
             id: "421",
             logo: webOnChain,
-            status: "Up",
+            status: PluginStatus.Up,
             version: "1.0.0",
             home: "/thyra/websiteCreator",
             isFake: true,
@@ -41,7 +41,7 @@ function Manager() {
             description: "Browse Massa blockchain and its .massa websites",
             id: "423",
             logo: registry,
-            status: "Up",
+            status: PluginStatus.Up,
             version: "1.0.0",
             home: "/thyra/registry",
             isFake: true,
@@ -51,7 +51,7 @@ function Manager() {
     const [error, setError] = useState(<></>);
 
     const [plugins, setPlugins] = useState<Plugin[]>(fakePluginsList);
-    const [pluginsNotInstalled, setPluginsNotInstalled] = useState<PluginNotInstalled[]>([]);
+    const [pluginsNotInstalled, setPluginsNotInstalled] = useState<Plugin[]>([]);
 
     //Callback to remove Error
     function removeError(): void {
@@ -79,15 +79,22 @@ function Manager() {
     async function getPluginsInfoNotInstalled() {
         try {
             const pluginsInfos = await axiosServices.getNotInstalledPlugins();
-            let combinedPlugins: PluginNotInstalled[] = [];
-            pluginsInfos.data.forEach((element) => {
+            let combinedPlugins: Plugin[] = [];
+            for (let index = 0; index < pluginsInfos.data.length; index++) {
+                const element = pluginsInfos.data[index];
                 combinedPlugins.push({
                     name: element.name,
                     description: element.description,
                     url: element.url,
                     logo: notInstalled,
+                    status: PluginStatus.NotInstalled,
+                    id: 1000+index.toString(),
+                    home: "",
+                    isNotInstalled: true,
+                    isFake:false,
+                    
                 });
-            });
+            }
             setPluginsNotInstalled(combinedPlugins);
         } catch (error: any) {
             errorHandler("error", `Get plugins infos failed ,  error ${error.message} `);
@@ -111,28 +118,28 @@ function Manager() {
 
     //To talk in code review is it better to doing stuff
     //like this or to repeat the filters mapping on bottom
-    const mapPluginList = () => {
-        return plugins.map((plugin) => {
-            return (
-                <PluginBlock
-                    {...{
-                        plugin: {
-                            id: plugin.id,
-                            logo: plugin.logo ? plugin.logo : massaLogomark,
-                            name: plugin ? plugin.name : "Plugin Problem",
-                            description: plugin.description ? plugin.description : "Plugin Problem",
-                            status: plugin.status ? plugin.status : "Plugin Problem",
-                            home: plugin.home ? plugin.home : "Plugin Problem",
-                            version: plugin.version ? plugin.version : "Plugin Problem",
-                        },
-                        key: plugin.id,
-                        errorHandler: errorHandler,
-                        getPluginsInfo: getPluginsInfo,
-                    }}
-                />
-            );
-        });
-    };
+    // const mapPluginList = () => {
+    //     return plugins.map((plugin) => {
+    //         return (
+    //             <PluginBlock
+    //                 {...{
+    //                     plugin: {
+    //                         id: plugin.id,
+    //                         logo: plugin.logo ? plugin.logo : massaLogomark,
+    //                         name: plugin ? plugin.name : "Plugin Problem",
+    //                         description: plugin.description ? plugin.description : "Plugin Problem",
+    //                         status: plugin.status ? plugin.status : PluginStatus.Down,
+    //                         home: plugin.home ? plugin.home : "Plugin Problem",
+    //                         version: plugin.version ? plugin.version : "Plugin Problem",
+    //                     },
+    //                     key: plugin.id,
+    //                     errorHandler: errorHandler,
+    //                     getPluginsInfo: getPluginsInfo,
+    //                 }}
+    //             />
+    //         );
+    //     });
+    // };
 
     const setColsLength = (length: number) => {
         return length > 3 ? " grid-cols-4" : " grid-cols-3";
@@ -143,7 +150,7 @@ function Manager() {
                 <Header />
                 <MainTitle title="Plugin Manager" />
                 <div className="w-[1307px] mx-auto">
-                    <p className="Secondary mt-24 text-font sm:max-xl:ml-6">Installed</p>
+                    <p className="Secondary mt-24 text-font ml-6">Installed</p>
                     <div
                         className={
                             "grid grid-flow-row-dense w-[1307px] mx-auto mt-3 gap-4 xs:max-xl:grid-cols-2 ml-6 xl: " +
@@ -170,15 +177,15 @@ function Manager() {
                         />
                     </div>
                     <div className="divider mx-auto mt-8 w-2/3" />
-                    <p className="Secondary mt-12 text-font">Not installed</p>
+                    <p className="Secondary mt-12 text-font ml-6">Not installed</p>
                     <div
                         className={
-                            "grid grid-flow-row-dense w-[1307px] mx-auto my-3 xs:max-xl:grid-cols-2 ml-6 xl: " +
+                            "grid grid-flow-row-dense w-[1307px] mx-auto my-3 gap-4 xs:max-xl:grid-cols-2 ml-6 xl: " +
                             setColsLength(pluginsNotInstalled.length)
                         }
                     >
                         {pluginsNotInstalled?.length ? (
-                            plugins
+                            pluginsNotInstalled
                                 .filter((p) => !!p.name)
                                 // sort plugins by names
                                 .sort((a, b) => a.name.localeCompare(b.name))

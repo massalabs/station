@@ -105,7 +105,7 @@ function PluginBlock(props: PluginProps) {
             {/* First block Display plugin name and description */}
             <div className="flex flex-row items-center justify-between w-full">
                 <img src={props.plugin.logo} alt="Album" className="rounded-3xl w-10 h-10" />
-                {!props.plugin.isFake && (
+                {!props.plugin.isFake && !props.plugin.isNotInstalled && (
                     <TogglePlugin handleChange={launchOrStop} checked={isPluginUp} />
                 )}
             </div>

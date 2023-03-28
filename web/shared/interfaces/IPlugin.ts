@@ -3,10 +3,10 @@ export interface Plugin {
     id: string;
     name: string;
     description: string;
-    version: string;
+    version?: string;
     home: string;
     // isUpdate: boolean;
-    status: string;
+    status: PluginStatus;
     logo: string;
     isNotInstalled?: boolean;
     url?: string;
@@ -25,6 +25,7 @@ export enum PluginStatus {
     Starting = "Starting",
     Stopping = "Stopping",
     Error = "Error",
+    NotInstalled = "NotInstalled",
 }
 export interface PluginHomePage {
     id:string;
@@ -35,11 +36,12 @@ export interface PluginHomePage {
     home?: string;
 }
 export interface PluginNotInstalled {
-
+    id: string;
     name: string;
     description: string;
     url: string;
     logo: string;
+    status: PluginStatus;
 }
 
 export interface PluginStoreItemRequest{

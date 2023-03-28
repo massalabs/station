@@ -12,7 +12,7 @@ export class axiosServices {
     }
 
     static getNotInstalledPlugins(): Promise<AxiosResponse<PluginStoreItemRequest[]>> {
-        return axios.post<any>(`/plugin-store`);
+        return axios.get<any>(`/plugin-store`);
     }
 
     static manageLifePlugins(ID: string, command: string): Promise<AxiosResponse<number>> {
