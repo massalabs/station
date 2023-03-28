@@ -1,12 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 /* Add Fonts */
 @font-face {
-  font-family: "Maison Neue";
-  src: url("./assets/fonts/MaisonNeueExtended/MaisonNeueExtended-Medium.otf");
-}
+    font-family: "Maison Neue";
+    src: url("./assets/fonts/MaisonNeueExtended/MaisonNeueExtended-Medium.otf");
+  }
+  @font-face {
+    font-family: "TT Commons";
+    src: url("./assets/fonts/TTCommons/TTCommonsMedium.otf");
+  }
 
   /* Toggle Theme */
   .custom-classname.react-toggle--checked .react-toggle-track {

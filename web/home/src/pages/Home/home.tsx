@@ -80,76 +80,76 @@ function Home() {
     return res.data;
   };
 
-  // Add the fake plugins
-  useEffect(() => {
-    // Fetch the plugins on first render
-    let previousFetch: PluginHomePage[] = [];
-    getPlugins().then((res: PluginHomePage[]) => {
+// Add the fake plugins
+useEffect(() => {
+  // Fetch the plugins on first render
+  let previousFetch: PluginHomePage[] = [];
+  getPlugins().then((res: PluginHomePage[]) => {
+    previousFetch = res;
+    res.forEach((element: PluginHomePage) => {
+      setPlugins((prev) => [...prev, element]);
+    });
+  });
+
+  setInterval(() => {
+  getPlugins().then((res : PluginHomePage[]) => {
+    let combinedPlugins = [ ...fakePluginsList, ...res];
+    // If the list of plugins has changed, update the state
+    if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
+      setPlugins(combinedPlugins);
       previousFetch = res;
-      res.forEach((element: PluginHomePage) => {
-        setPlugins((prev) => [...prev, element]);
-      });
-    });
-    
-    setInterval(() => {
-    getPlugins().then((res : PluginHomePage[]) => {
-      let combinedPlugins = [ ...fakePluginsList, ...res];
-      // If the list of plugins has changed, update the state
-      if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
-        setPlugins(combinedPlugins);
-        previousFetch = res;
-      }
-    });
-      
-    }, 10000);
-  }, []);
+    }
+  });
 
-  const mapPluginList = () => {
-    return plugins.map((plugin) => {
-      if (plugin.status == PluginStatus.Starting || plugin.status == PluginStatus.Up){
-        return (
-          <PluginCard
-            {...{
-              plugin: {
-                id: plugin.id,
-                logo: plugin.logo ? plugin.logo : massaLogomark,
-                name: plugin ? plugin.name : 'Plugin Problem',
-                description: plugin.description
-                  ? plugin.description
-                  : 'Plugin Problem',
-                status: plugin.status ? plugin.status : 'Plugin Problem',
-              },
-              handleOpenPlugin: handleOpenPlugin,
-              key: plugin.id,
-            }}
-          />
-        );
-      }
-      else{
-        return (<></>)
-      }
-    })
-      
-  }
+  }, 10000);
+}, []);
 
-  return (
-    <div
-      className=" min-h-screen bg-img"
-      style={{ backgroundImage: `url(${grid1})` }}
-    >
-      <Header />
+const mapPluginList = () => {
+  return plugins.map((plugin) => {
+    if (plugin.status == PluginStatus.Starting || plugin.status == PluginStatus.Up){
+      return (
+        <PluginCard
+          {...{
+            plugin: {
+              id: plugin.id,
+              logo: plugin.logo ? plugin.logo : massaLogomark,
+              name: plugin ? plugin.name : 'Plugin Problem',
+              description: plugin.description
+                ? plugin.description
+                : 'Plugin Problem',
+              status: plugin.status ? plugin.status : 'Plugin Problem',
+            },
+            handleOpenPlugin: handleOpenPlugin,
+            key: plugin.id,
+          }}
+        />
+      );
+    }
+    else{
+      return (<></>)
+    }
+  })
 
-      <MainTitle title="Which Plugins" />
+}
 
-      {/* Display the plugins in a grid */}
-      <div className="mt-24 gap-8 grid mx-auto w-fit rounded-lg grid-cols-4 place-items-center max-lg:grid-cols-3">
-        {mapPluginList()}
-        <>
-          <ManagePluginCard />
-        </>
-      </div>
+return (
+  <div
+    className=" min-h-screen bg-img"
+    style={{ backgroundImage: `url(${grid1})` }}
+  >
+    <Header />
+
+    <MainTitle title="Which Plugins" />
+
+    {/* Display the plugins in a grid */}
+    <div className="mt-24 gap-8 grid mx-auto w-fit rounded-lg grid-cols-4 place-items-center max-lg:grid-cols-3">
+      {mapPluginList()}
+      <>
+        <ManagePluginCard />
+      </>
     </div>
-  );
+  </div>
+);
 }
 
 export default Home;
