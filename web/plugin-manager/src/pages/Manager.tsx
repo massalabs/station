@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PluginBlock from "../components/pluginBlock";
-import { Plugin, PluginNotInstalled, PluginStatus } from "../../../shared/interfaces/IPlugin";
+import { Plugin, PluginNotInstalled, PluginStatus, PluginStoreAssets, PluginStoreItemRequest } from "../../../shared/interfaces/IPlugin";
 import axiosServices from "../services/axios";
 import alertHelper from "../helpers/alertHelpers";
 import { PuffLoader } from "react-spinners";
@@ -13,6 +13,7 @@ import grid1 from "../assets/element/grid1.svg";
 import InstallPlugin from "../components/installPluginBlock";
 import Header from "../components/Header";
 import MainTitle from "../components/MainTitle";
+import { getOs } from "../services/getOs";
 function Manager() {
     const fakePluginsList: Plugin[] = [
         {
@@ -47,23 +48,10 @@ function Manager() {
             isFake: true,
         },
     ];
-    //State to store error
-    const [error, setError] = useState(<></>);
 
     const [plugins, setPlugins] = useState<Plugin[]>(fakePluginsList);
     const [pluginsNotInstalled, setPluginsNotInstalled] = useState<Plugin[]>([]);
 
-    //Callback to remove Error
-    function removeError(): void {
-        setError(<></>);
-    }
-
-    function errorHandler(errorType: string, errorMessage: string): void {
-        setError(alertHelper(errorType, errorMessage, removeError));
-        setInterval(() => {
-            removeError();
-        }, 10000);
-    }
 
     async function getPluginsInfo() {
         try {
@@ -72,20 +60,34 @@ function Manager() {
             setPlugins(combinedPlugins);
             getPluginsInfoNotInstalled();
         } catch (error: any) {
-            errorHandler("error", `Get plugins infos failed ,  error ${error.message} `);
+            console.error("error", `Get plugins infos failed ,  error ${error.message} `);
         }
     }
-
+    const setDownloadLinkForPlatform = (pluginStoreItem: PluginStoreAssets) => {
+        switch (getOs()) {
+            case "windows":
+                return pluginStoreItem.windows.url;             
+            case "macos arm64":
+                return pluginStoreItem.macos_arm64.url;               
+            case "macos amd64":
+                return pluginStoreItem.macos_amd64.url;
+            case "linux":
+                return pluginStoreItem.linux.url;      
+            default:
+                break;
+        }
+    }
     async function getPluginsInfoNotInstalled() {
         try {
             const pluginsInfos = await axiosServices.getNotInstalledPlugins();
             let combinedPlugins: Plugin[] = [];
             for (let index = 0; index < pluginsInfos.data.length; index++) {
                 const element = pluginsInfos.data[index];
+        
                 combinedPlugins.push({
                     name: element.name,
                     description: element.description,
-                    url: element.url,
+                    url: setDownloadLinkForPlatform(element.assets),
                     logo: notInstalled,
                     status: PluginStatus.NotInstalled,
                     id: 1000+index.toString(),
@@ -97,7 +99,7 @@ function Manager() {
             }
             setPluginsNotInstalled(combinedPlugins);
         } catch (error: any) {
-            errorHandler("error", `Get plugins infos failed ,  error ${error.message} `);
+            console.error("error", `Get plugins infos failed ,  error ${error.message} `);
         }
     }
 
@@ -163,7 +165,6 @@ function Manager() {
                                 .map((plugin) => (
                                     <PluginBlock
                                         plugin={plugin}
-                                        errorHandler={errorHandler}
                                         getPluginsInfo={getPluginsInfo}
                                     />
                                 ))
@@ -171,7 +172,6 @@ function Manager() {
                             <PuffLoader color="font" />
                         )}
                         <InstallPlugin
-                            errorHandler={errorHandler}
                             plugins={plugins}
                             getPluginsInfo={getPluginsInfo}
                         />
@@ -192,7 +192,6 @@ function Manager() {
                                 .map((plugin) => (
                                     <PluginBlock
                                         plugin={plugin}
-                                        errorHandler={errorHandler}
                                         getPluginsInfo={getPluginsInfo}
                                     />
                                 ))

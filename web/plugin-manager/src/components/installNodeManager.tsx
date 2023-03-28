@@ -3,7 +3,6 @@ import axiosServices from "../services/axios";
 import { Circles } from "react-loader-spinner";
 
 export interface InstallProps {
-    errorHandler: (errorType: string, errorMessage: string) => void;
     getPluginsInfo: () => void;
 }
 
@@ -32,7 +31,7 @@ function InstallNodeManager(p: InstallProps) {
 
     async function handleInstallPlugin(_: any) {
         if (!os) {
-            p.errorHandler("error", `Unable to detect operating system`);
+            console.error("error", `Unable to detect operating system`);
             return;
         }
         let url =
@@ -56,9 +55,9 @@ function InstallNodeManager(p: InstallProps) {
         try {
             await axiosServices.installPlugin(url);
         } catch (err: any) {
-            p.errorHandler("error", `Plugins installation failed: ${err.response?.data?.message}`);
+            console.error("error", `Plugins installation failed: ${err.response?.data?.message}`);
         }
-        p.errorHandler("success", "Plugin installation started");
+        console.error("success", "Plugin installation started");
         p.getPluginsInfo();
     }
 
