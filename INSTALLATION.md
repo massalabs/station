@@ -26,11 +26,6 @@ By following these instructions, you will:
 ### Desktop
 
 #### MacOS
-Before installing Thyra, make sure that you have Node.js and npm (Node Package Manager) installed on your machine. You can verify this by running the following command in your terminal:
-```bash
-node -v && npm -v
-```
-If you do not have Node.js and npm installed, you can download them from the official [website](https://nodejs.org/en/download/).
 
 1. Go on [this page](https://.com/massalabs/thyra/releases/latest) and download the installer that corresponds to your MacOS configuration
 * If you have M1 chip or more, chose "thyra-installer_darwin_arm64" installer
@@ -58,13 +53,8 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 > **_NOTE:_** Only Linux Ubuntu is currently supported.
 
-Before installing Thyra, make sure that you have Node.js and npm (Node Package Manager) installed on your machine. You can verify this by running the following command in your terminal:
-```bash
-node -v && npm -v
-```
-If you do not have Node.js and npm installed, you can run `sudo apt install nodejs npm`
-1. Click [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-server_linux_amd64) to download Thyra on your desktop.
-2. Once downloaded, double clik on the file.
+1. Go on [this page](https://github.com/massalabs/thyra/releases/latest) and download the installer "thyra-server_linux_amd64".
+2. Once downloaded, double clik on the file 
 3. A terminal should open automatically where you can follow the steps of the installation. Just watch it working, and at some point you'll need to add your password.
 4. Once the installation is finished, you will see a new icon on the top nav bar (see screenshot below). You can now close your terminal if not done already and start browsing the blockchain and all our applications available. 
 
@@ -81,11 +71,6 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 #### Windows
 
-Before installing Thyra, make sure that you have Node.js and npm (Node Package Manager) installed on your machine. You can verify this by running the following command in your terminal:
-```bash
-node -v && npm -v
-```
-If you do not have Node.js and npm installed, you can download them from the official [website](https://nodejs.org/en/download/).
 
 Click [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer.exe) to download the Thyra installer on your desktop. Then:
 1. Open it by double clicking
