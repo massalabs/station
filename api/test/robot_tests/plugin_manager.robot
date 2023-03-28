@@ -2,20 +2,189 @@
 Documentation       This is a test suite for Thyra Plugin Manager endpoints.
 
 Library             RequestsLibrary
+Library             String
 Resource            variables.resource
+Resource            keywords.resource
+
+Suite Setup         Suite Setup
 
 
 *** Test Cases ***
-GET /plugin-manager
+GET /plugin-manager with no plugins
     ${response}=    GET    ${API_URL}/plugin-manager
     Status Should Be    ${STATUS_OK}
     ${listLength}=    Get Length    ${response.json()}
     Should Be Equal As Integers    ${listLength}    0
 
-GET /plugin-manager/invalid
+POST /plugin-manager?source={{pluginSource}}
+    ${source}=    Set Variable
+    ...    https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.3/thyra-plugin-hello-world_${OS}-${ARCH}.zip
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager
+    ...    params=source=${source}
+    ...    expected_status=${STATUS_NO_CONTENT}
+    Sleep    1 seconds    # Wait for the plugin to be registered
+
+GET /plugin-manager with one plugin
+    ${response}=    GET    ${API_URL}/plugin-manager
+    Status Should Be    ${STATUS_OK}
+    ${listLength}=    Get Length    ${response.json()}
+    Should Be Equal As Integers    ${listLength}    1
+
+GET /plugin-manager/{id}
+    ${response}=    GET    ${API_URL}/plugin-manager
+    ${id}=    Set Variable    ${response.json()[0]['id']}
+    ${response}=    GET    ${API_URL}/plugin-manager/${id}
+    Status Should Be    ${STATUS_OK}
+    Should Be Equal As Strings    ${response.json()['status']}    Up
+
+POST /plugin-manager/{id}/execute with stop command
+    ${id}=    Get Plugin ID From Author and Name    massalabs    hello world
+    ${data}=    Create Dictionary    command=stop
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager/${id}/execute
+    ...    expected_status=${STATUS_NO_CONTENT}
+    ...    json=${data}
+
+POST /plugin-manager/{id}/execute with start command
+    ${id}=    Get Plugin ID From Author and Name    massalabs    hello world
+    ${data}=    Create Dictionary    command=start
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager/${id}/execute
+    ...    expected_status=${STATUS_NO_CONTENT}
+    ...    json=${data}
+    Sleep    1 seconds    # Wait for the plugin to be started
+
+POST /plugin-manager/{id}/execute with restart command
+    ${id}=    Get Plugin ID From Author and Name    massalabs    hello world
+    ${data}=    Create Dictionary    command=restart
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager/${id}/execute
+    ...    expected_status=${STATUS_NO_CONTENT}
+    ...    json=${data}
+    Sleep    1 seconds    # Wait for the plugin to be restarted
+
+# Error cases
+
+POST /plugins-manager/{id}/execute already started
+    ${id}=    Get Plugin ID From Author and Name    massalabs    hello world
+    ${data}=    Create Dictionary    command=start
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager/${id}/execute
+    ...    expected_status=${STATUS_BAD_REQUEST}
+    ...    json=${data}
+
+    ${expectedError}=    Set Variable
+    ...    "[start]${SPACE}${SPACE}(Error while starting plugin thyra-plugin-hello-world_${OS}-${ARCH}: plugin is not ready to start.\n). Current plugin status is Up."
+    Should Be Equal As Strings    ${response.json()['code']}    Plugin-0030
+    Should Be Equal As Strings    "${response.json()['message']}"    ${expectedError}
+
+GET /plugin-manager/{id} with invalid id
     ${response}=    GET    ${API_URL}/plugin-manager/invalid    expected_status=${STATUS_NOT_FOUND}
     Should Be Equal As Strings    ${response.json()['code']}    Plugin-0001
+    Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching id invalid
 
-GET /thyra/plugin/invalid/invalid
+GET /thyra/plugin/${author}/${name} with invalid author and name
     ${response}=    GET    ${API_URL}/thyra/plugin/invalid/invalid    expected_status=${STATUS_NOT_IMPLEMENTED}
     Should Be Equal As Strings    ${response.json()}    operation PluginRouter has not yet been implemented
+
+POST /plugin-manager/{id}/execute with invalid id
+    ${data}=    Create Dictionary    command=start
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager/invalid/execute
+    ...    expected_status=${STATUS_NOT_FOUND}
+    ...    json=${data}
+    Should Be Equal As Strings    ${response.json()['code']}    Plugin-0001
+    Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching id invalid
+
+DELETE /plugin-manager/{id} with invalid id
+    ${response}=    DELETE    ${API_URL}/plugin-manager/3829029    expected_status=${STATUS_INTERNAL_SERVER_ERROR}
+    Should Be Equal As Strings
+    ...    ${response.json()['message']}
+    ...    deleting plugin 3829029: no plugin matching id 3829029
+
+POST /plugin-manager/{id}/execute with invalid body
+    ${data}=    Create Dictionary    command=test
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager/invalid/execute
+    ...    expected_status=${STATUS_UNPROCESSABLE_ENTITY}
+    ...    json=${data}
+    Should Be Equal As Strings    ${response.json()['code']}    606
+    Should Be Equal As Strings
+    ...    ${response.json()['message']}
+    ...    body.command in body should be one of [update stop start restart]
+
+# Is called by a plugin once started, so we need to install a plugin before
+
+POST /plugin-manager/register
+    ${data}=    Create Dictionary
+    ...    id=1
+    ...    name=ut aliqua non
+    ...    author=adipisicing
+    ...    description=minim consectetur dolore,
+    ...    logo=id et sunt irure,
+    ...    home=sunt
+    ...    api_spec=culpa enim sint aliqua
+    ...    url=oluptate
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager/register
+    ...    expected_status=${STATUS_NOT_FOUND}
+    ...    json=${data}
+
+    Should Be Equal As Strings    ${response.json()['code']}    Plugin-0001
+    Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching id 1
+
+POST /plugin-manager/register with invalid body
+    ${data}=    Create Dictionary
+    ...    id=-65217
+    ...    name=ut aliqua non
+    ...    author=adipisicing
+    ...    description=minim consectetur dolore,
+    ...    logo=id et sunt irure,
+    ...    home=sunt
+    ...    api_spec=culpa enim sint aliqua
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager/register
+    ...    expected_status=${STATUS_UNPROCESSABLE_ENTITY}
+    ...    json=${data}
+    Should Be Equal As Strings    ${response.json()['code']}    602
+    Should Be Equal As Strings    ${response.json()['message']}    body.url in body is required
+
+POST /plugin-manager/{id}/execute with NotImplemented update command
+    ${id}=    Get Plugin ID From Author and Name    massalabs    hello world
+    ${data}=    Create Dictionary    command=update
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager/${id}/execute
+    ...    expected_status=${STATUS_NOT_IMPLEMENTED}
+    ...    json=${data}
+
+
+*** Keywords ***
+Suite Setup
+    [Documentation]    Suite Setup specific to this test suite
+    Basic Suite Setup
+    Delete all plugins
+
+Delete all plugins
+    Log To Console    message    format
+    ${response}=    GET    ${API_URL}/plugin-manager
+    FOR    ${element}    IN    @{response.json()}
+        ${response}=    DELETE    ${API_URL}/plugin-manager/${element['id']}
+        Status Should Be    ${STATUS_NO_CONTENT}
+    END
+
+Get Plugin ID From Author and Name
+    [Arguments]    ${author}    ${name}
+    ${response}=    GET    ${API_URL}/plugin-manager
+
+    ${pluginId}=    Set Variable    ${EMPTY}
+    ${expectedURL}=    Set Variable    /thyra/plugin/${author}/${name}/
+
+    FOR    ${element}    IN    @{response.json()}
+        ${pluginURL}=    Evaluate    urllib.parse.unquote("${element['home']}")    modules=urllib.parse
+        IF    "${expectedURL}" == "/thyra/plugin/massalabs/hello world/"
+            ${pluginId}=    Set Variable    ${element['id']}
+            BREAK
+        END
+    END
+    RETURN    ${pluginId}
