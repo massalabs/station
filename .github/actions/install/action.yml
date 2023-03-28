@@ -18,15 +18,22 @@ runs:
       with:
         go-version: 1.19.2
 
+    - name: install go deps
+      shell: bash
+      run: |
+        go install github.com/go-swagger/go-swagger/cmd/swagger@latest
+        go install golang.org/x/tools/cmd/stringer@latest
+
     - name: Install Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 18
         cache: 'npm'
         cache-dependency-path: |
-          web/thyra-frontend/package-lock.json
+          web/home/package-lock.json
           web/plugin-manager/package-lock.json
 
     - name: Build react frontend
       shell: bash
-      run: go generate ./web/...
+      run: go generate ./...
+      

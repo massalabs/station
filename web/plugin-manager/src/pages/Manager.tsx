@@ -49,7 +49,7 @@ function Manager() {
         <div>
             <div className="p-5 flex items-center">
                 <img className="max-h-6" src={massaLogoLight} alt="Thyra Logo" />
-                <h1 className="text-xl ml-6 font-bold text-white">Thyra</h1>
+                <h1 className="text-xl ml-6 font-bold text-font">Thyra</h1>
             </div>
             {/* FlexWrap is blocking align content in Plugin Block*/}
             {/* Good First Issue For Community : Rework Css Classname to align bottom line of icon on bottom of container

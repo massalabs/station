@@ -26,8 +26,8 @@ export enum PluginStatus {
 export interface PluginHomePage {
     id:string;
     name: string;
-    home: string;
     description: string;
     logo: string;
     status: string;
+    home?: string;
 }

@@ -104,7 +104,7 @@ function PluginBlock(p: PluginProps) {
 
     return (
         <section className="bg-slate-800 h-48 max-w-lg w-96 p-3 m-4 rounded-2xl">
-            <div className=" flex-row h-full text-white ">
+            <div className=" flex-row h-full text-font ">
                 {/* First block Display plugin name and description */}
                 <div className="flex">
                     <img className="w-10 h-10 pt-3 mx-2" src={p.plugin.logo} alt="Plugin Logo" />
