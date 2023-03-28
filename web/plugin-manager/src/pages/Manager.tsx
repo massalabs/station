@@ -146,7 +146,7 @@ function Manager() {
                     <p className="Secondary mt-24 text-font sm:max-xl:ml-6">Installed</p>
                     <div
                         className={
-                            "grid grid-flow-row-dense w-[1307px] mx-auto mt-3 gap-4 sm:max-xl:grid-cols-2 ml-6 xl: " +
+                            "grid grid-flow-row-dense w-[1307px] mx-auto mt-3 gap-4 xs:max-xl:grid-cols-2 ml-6 xl: " +
                             setColsLength(plugins.length)
                         }
                     >
@@ -173,7 +173,7 @@ function Manager() {
                     <p className="Secondary mt-12 text-font">Not installed</p>
                     <div
                         className={
-                            "grid grid-flow-row-dense w-[1307px] mx-auto my-3 sm:max-xl:grid-cols-2 ml-6 xl: " +
+                            "grid grid-flow-row-dense w-[1307px] mx-auto my-3 xs:max-xl:grid-cols-2 ml-6 xl: " +
                             setColsLength(pluginsNotInstalled.length)
                         }
                     >
