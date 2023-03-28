@@ -7,12 +7,36 @@ Thank you for considering contributing to Thyra! We welcome contributions from t
 To contribute to Thyra, you should have a basic understanding of the Go programming language and Git version control system. If you're new to Go, we recommend checking out [A Tour of Go](https://tour.golang.org/welcome/1) to get started.
 
 Before you can start contributing, you'll need to complete the following steps:
-- install the dependencies:
+- Install the dependencies:
   - Ubuntu like:
 ```bash
   sudo apt update
   sudo apt install -y build-essential libgl1-mesa-dev xorg-dev p7zip
 ```
+- Install Node.js and NPM:
+
+    - Windows:
+        - Download the Node.js installer from https://nodejs.org/en/download/.
+        - Run the installer and follow the prompts to install Node.js and NPM.
+
+    - macOS:
+
+        - Install Homebrew by following the instructions at https://brew.sh/.
+
+        - Run the following command to install Node.js and NPM:
+        ```bash
+        brew install node
+        ```
+    - Ubuntu:
+        - Run the following command to update the package lists:
+        ```bash
+        sudo apt update
+        ```
+        - Run the following command to install Node.js and NPM:
+        ```bash
+        sudo apt install nodejs npm
+        ```
+
 - Install Go: Go is required to build and run Thyra. You can install Go by following the instructions at [https://go.dev/doc/install](https://go.dev/doc/install).
 
 - Install Swagger: Thyra uses Swagger to generate code from the API documentation. You can install Swagger by running the following command:
