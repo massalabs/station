@@ -9,7 +9,6 @@ import PrimaryButton from "./buttons/PrimaryButton";
 import SecondaryButton from "./buttons/SecondaryButton";
 
 function PluginBlock(props: PluginProps) {
-
     const [isPluginUp, setStatus] = useState(isUp(props.plugin.status));
     useEffect(() => setStatus(isUp(props.plugin.status)), [props.plugin.status]);
 
@@ -83,7 +82,7 @@ function PluginBlock(props: PluginProps) {
             await axiosServices.installPlugin(props.plugin.url ?? "");
             props.getPluginsInfo();
         } catch (error: any) {
-            console.log( `Plugins failed to be downloaded , error ${error.message}`);
+            console.log(`Plugins failed to be downloaded , error ${error.message}`);
         }
     }
     //Truncate the string so that it fits in the given lenght if needed.

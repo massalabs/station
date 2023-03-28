@@ -31,21 +31,20 @@ const SmallCardExtended = (props: Props) => {
             return "h-28 w-80 max-w-lg p-6 gap-3 border-[1px] border-solid border-border rounded-2xl bg-bgCard hover:bg-hoverbgCard";
         }
     };
-    const imgClassName = () =>{
-        if (isExtended){
-            return 'animate-rotate180Smooth'
+    const imgClassName = () => {
+        if (isExtended) {
+            return "animate-rotate180Smooth";
+        } else {
+            return "animate-rotateReverse180Smooth";
         }
-        else{
-            return 'animate-rotateReverse180Smooth'
-        }
-    }
+    };
     return (
         <section className={sectionClassName()}>
             {/* Definition de la card  */}
-            <div className="flex flex-row "onClick={HandleOnClickExtend}>
+            <div className="flex flex-row " onClick={HandleOnClickExtend}>
                 <div className="flex flex-col gap-3">
-                    <p className="label2 text-font">Install a plugin</p>
-                    <p className="text3 text-font">Install a plugin using .zip URL</p>
+                    <p className="label2 text-font">{props.label2}</p>
+                    <p className="text3 text-font">{props.text3}</p>
                 </div>
                 <div className="flex self-center mx-auto">
                     <img

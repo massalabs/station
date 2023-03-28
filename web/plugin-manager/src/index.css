@@ -5,33 +5,32 @@
 @font-face {
     font-family: "Maison Neue";
     src: url("./assets/fonts/MaisonNeueExtended/MaisonNeueExtended-Medium.otf");
-  }
-  @font-face {
+}
+@font-face {
     font-family: "TT Commons";
     src: url("./assets/fonts/TTCommons/TTCommonsMedium.otf");
-  }
+}
 
 /* Toggle Theme */
 .custom-classname.react-toggle--checked .react-toggle-track {
-  background-color: hsl(var(--twc-secondaryButton));
+    background-color: hsl(var(--twc-secondaryButton));
 }
 .custom-classname.react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
-  background-color: hsl(var(--twc-toggleHover));
+    background-color: hsl(var(--twc-toggleHover));
 }
-.custom-classname.react-toggle--checked .react-toggle-thumb{
-background-color: hsl(var(--twc-toggleChecked));
-border-color: hsl(var(--twc-secondaryButton));
+.custom-classname.react-toggle--checked .react-toggle-thumb {
+    background-color: hsl(var(--twc-toggleChecked));
+    border-color: hsl(var(--twc-secondaryButton));
 }
-.custom-classname .react-toggle-track-check{
-  width: 14px;
-  height: 14px;
+.custom-classname .react-toggle-track-check {
+    width: 14px;
+    height: 14px;
 }
 
 /* Theme Toggle with icons */
-.react-toggle-track-check
-{
-  width: 14px;
-  height: 14px !important;
+.react-toggle-track-check {
+    width: 14px;
+    height: 14px !important;
 }
 
 /* Toggle Plugin*/
@@ -40,77 +39,74 @@ border-color: hsl(var(--twc-secondaryButton));
 
 /* Dark Mode */
 .custom-TogglePlugin-dark.react-toggle--checked .react-toggle-thumb {
-  background-color: #000 !important;
-  border-color: #000 !important;
+    background-color: #000 !important;
+    border-color: #000 !important;
 }
 
-.custom-TogglePlugin-dark.react-toggle--checked .react-toggle-track{
-  background-color: #fff !important;
-  /* Nice to implement */
-  /* background-color: hsl(var(--twc-bgCard)); */
-  
+.custom-TogglePlugin-dark.react-toggle--checked .react-toggle-track {
+    background-color: #fff !important;
+    /* Nice to implement */
+    /* background-color: hsl(var(--twc-bgCard)); */
 }
 
 .custom-TogglePlugin-dark .react-toggle-thumb {
-  background-color: #fff;
+    background-color: #fff;
 }
 
 .custom-TogglePlugin-dark .react-toggle-track {
-  background-color: transparent;
-  border-color: #ffffff;
-  border-width: 1px;
+    background-color: transparent;
+    border-color: #ffffff;
+    border-width: 1px;
 }
 
 .custom-TogglePlugin-dark .react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
-  background-color: #d2d2d2;
+    background-color: #d2d2d2;
 }
-
 
 /* Light Mode */
 
 .custom-TogglePlugin-light.react-toggle--checked .react-toggle-thumb {
-  background-color: #fff;
-  border-color: #fff !important;
+    background-color: #fff;
+    border-color: #fff !important;
 }
 
 .custom-TogglePlugin-light .react-toggle-track {
-  background-color: transparent;
-  border-color: #000;
-  border-width: 1px;
+    background-color: transparent;
+    border-color: #000;
+    border-width: 1px;
 }
 
-.custom-TogglePlugin-light.react-toggle--checked .react-toggle-track{
-  background-color: #000 !important;
+.custom-TogglePlugin-light.react-toggle--checked .react-toggle-track {
+    background-color: #000 !important;
 }
 
 .custom-TogglePlugin-light .react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
-  background-color: #d2d2d2;
+    background-color: #d2d2d2;
 }
 
 .custom-TogglePlugin-light .react-toggle-thumb {
-  background-color: #000;
+    background-color: #000;
 }
 
 /* Custom CSS */
 
-
 /* Background SVG for HomePage */
 .bg-img {
-  background-position: bottom left;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: 50%;
+    background-position: bottom left;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 50%;
 }
 
 .divider {
-  @apply my-4 h-4 whitespace-nowrap;
-  &:before {
-    @apply bg-font bg-opacity-10;
-  }
-  &:after {
-    @apply bg-font bg-opacity-10;
-  }
-  &:not(:empty) {
-    @apply gap-4;
-  }
+    @apply my-4 h-4 whitespace-nowrap;
+    &:before {
+        @apply bg-font bg-opacity-10;
+    }
+    &:after {
+        @apply bg-font bg-opacity-10;
+    }
+    &:not(:empty) {
+        @apply gap-4;
+    }
 }

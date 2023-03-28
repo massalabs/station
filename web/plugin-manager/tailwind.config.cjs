@@ -1,18 +1,18 @@
 /** @type {import('tailwindcss').Config} */
-const { createThemes } = require('tw-colors');
-const plugin = require('tailwindcss/plugin')
+const { createThemes } = require("tw-colors");
+const plugin = require("tailwindcss/plugin");
 module.exports = {
     content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
 
-     important: true,
+    important: true,
     theme: {
         extend: {
             fontFamily: {
-              MaisonNeue: ["Maison Neue", "sans-serif"],
-              TTCommons: ["TT Commons", "sans-serif"],
+                MaisonNeue: ["Maison Neue", "sans-serif"],
+                TTCommons: ["TT Commons", "sans-serif"],
             },
-            keyframes:{
-                rotate180Smooth:{
+            keyframes: {
+                rotate180Smooth: {
                     "0%": { transform: "rotate(0deg)" },
                     "12%": { transform: "rotate(22deg)" },
                     "25%": { transform: "rotate(45deg)" },
@@ -23,7 +23,7 @@ module.exports = {
                     "87%": { transform: "rotate(157deg)" },
                     "100%": { transform: "rotate(180deg)" },
                 },
-                rotateReverse180Smooth:{
+                rotateReverse180Smooth: {
                     "0%": { transform: "rotate(180deg)" },
                     "12%": { transform: "rotate(157deg)" },
                     "25%": { transform: "rotate(135deg)" },
@@ -33,13 +33,12 @@ module.exports = {
                     "75%": { transform: "rotate(45deg)" },
                     "87%": { transform: "rotate(22deg)" },
                     "100%": { transform: "rotate(0deg)" },
-                }
-                
+                },
             },
-            animation:{
+            animation: {
                 rotate180Smooth: "rotate180Smooth 0.5s forwards ",
-                rotateReverse180Smooth: "rotateReverse180Smooth 0.5s forwards"
-            }
+                rotateReverse180Smooth: "rotateReverse180Smooth 0.5s forwards",
+            },
         },
     },
     plugins: [
@@ -60,10 +59,10 @@ module.exports = {
                 invertedfont: "#FFFFFF",
                 border: "#000000",
                 disabledButton: "#8F8989",
-                disabledText:"#D2D2D2",
-                toggleHover: '#D2D2D2',
-                toggleChecked: '#FFFFFF',
-                dark: '#000'
+                disabledText: "#D2D2D2",
+                toggleHover: "#D2D2D2",
+                toggleChecked: "#FFFFFF",
+                dark: "#000",
             },
             dark: {
                 primaryBG: "#171A1D",
@@ -79,76 +78,76 @@ module.exports = {
                 font: "#FFFFFF",
                 invertedfont: "#000000",
                 disabledButton: "#8F8989",
-                disabledText:"#D2D2D2",
-                toggleHover: '#D2D2D2',
-                toggleChecked: '#FFFFFF',
-                dark: '#000'
+                disabledText: "#D2D2D2",
+                toggleHover: "#D2D2D2",
+                toggleChecked: "#FFFFFF",
+                dark: "#000",
             },
         }),
         plugin(function ({ addComponents, theme }) {
             addComponents({
-              ".display": {
-                fontSize: "72px",
-                fontWeight: "500",
-                fontFamily: theme("fontFamily.MaisonNeue"),
-                lineHeight: "87px",
-                fontStyle: "normal",
-            },
-            ".label": {
-                fontSize: "32px",
-                fontWeight: "600",
-                fontFamily: theme("fontFamily.MaisonNeue"),
-                lineHeight: "39px",
-            },
-            ".label2": {
-                fontSize: "24px",
-                fontWeight: "600",
-                fontFamily: theme("fontFamily.MaisonNeue"),
-                lineHeight: "29px",
-            },
-              ".button": {
-                fontSize: "18px",
-                fontWeight: "600",
-                fontFamily: theme("fontFamily.MaisonNeue"),
-                lineHeight: "22px",
-            },
-            ".buttonUnderline": {
-                fontSize: "18px",
-                fontWeight: "600",
-                fontFamily: theme("fontFamily.MaisonNeue"),
-                lineHeight: "22px",
-            },
-            ".text": {
-                fontSize: "24px",
-                fontWeight: "400",
-                fontFamily: theme("fontFamily.TTCommons"),
-                lineHeight: "29px",
-            },
-            ".text2": {
-                fontSize: "18px",
-                fontWeight: "400",
-                fontFamily: theme("fontFamily.TTCommons"),
-                lineHeight: "22px",
-            },
-            ".text3": {
-                fontSize: "14px",
-                fontWeight: "400",
-                fontFamily: theme("fontFamily.TTCommons"),
-                lineHeight: "17px",
-            },
-            ".textUnderline": {
-                fontSize: "18px",
-                fontWeight: "400",
-                fontFamily: theme("fontFamily.TTCommons"),
-                lineHeight: "22px",
-            },
-            ".Secondary": {
-                fontSize: "32px",
-                fontWeight: "400",
-                fontFamily: theme("fontFamily.TTCommons"),
-                lineHeight: "38px",
-            },
-          });
+                ".display": {
+                    fontSize: "72px",
+                    fontWeight: "500",
+                    fontFamily: theme("fontFamily.MaisonNeue"),
+                    lineHeight: "87px",
+                    fontStyle: "normal",
+                },
+                ".label": {
+                    fontSize: "32px",
+                    fontWeight: "600",
+                    fontFamily: theme("fontFamily.MaisonNeue"),
+                    lineHeight: "39px",
+                },
+                ".label2": {
+                    fontSize: "24px",
+                    fontWeight: "600",
+                    fontFamily: theme("fontFamily.MaisonNeue"),
+                    lineHeight: "29px",
+                },
+                ".button": {
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    fontFamily: theme("fontFamily.MaisonNeue"),
+                    lineHeight: "22px",
+                },
+                ".buttonUnderline": {
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    fontFamily: theme("fontFamily.MaisonNeue"),
+                    lineHeight: "22px",
+                },
+                ".text": {
+                    fontSize: "24px",
+                    fontWeight: "400",
+                    fontFamily: theme("fontFamily.TTCommons"),
+                    lineHeight: "29px",
+                },
+                ".text2": {
+                    fontSize: "18px",
+                    fontWeight: "400",
+                    fontFamily: theme("fontFamily.TTCommons"),
+                    lineHeight: "22px",
+                },
+                ".text3": {
+                    fontSize: "14px",
+                    fontWeight: "400",
+                    fontFamily: theme("fontFamily.TTCommons"),
+                    lineHeight: "17px",
+                },
+                ".textUnderline": {
+                    fontSize: "18px",
+                    fontWeight: "400",
+                    fontFamily: theme("fontFamily.TTCommons"),
+                    lineHeight: "22px",
+                },
+                ".Secondary": {
+                    fontSize: "32px",
+                    fontWeight: "400",
+                    fontFamily: theme("fontFamily.TTCommons"),
+                    lineHeight: "38px",
+                },
+            });
         }),
     ],
 };
