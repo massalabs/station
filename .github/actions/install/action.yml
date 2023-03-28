@@ -29,16 +29,5 @@ runs:
 
     - name: Build react frontend
       shell: bash
-      run: |
-        cd web/home
-        ls -la
-        npm install
-        npm run build
-        cd ../..
-        cd web/plugin-manager
-        npm install
-        npm run build
-        cd ../..
-
-      # go generate ./web/...
+      run: go generate ./...
       
