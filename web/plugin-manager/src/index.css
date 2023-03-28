@@ -13,7 +13,7 @@
 
 /* Toggle Theme */
 .custom-classname.react-toggle--checked .react-toggle-track {
-    background-color: hsl(var(--twc-secondaryButton));
+    background-color: hsl(var(--twc-dark));
 }
 .custom-classname.react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
     background-color: hsl(var(--twc-toggleHover));
