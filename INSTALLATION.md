@@ -31,7 +31,7 @@ By following these instructions, you will:
 * If you have M1 chip or more, chose "thyra-installer_darwin_arm64" installer
 * Otherwise, chose "thyra-installer_darwin_amd64" installer
 2. Once downloaded, double clik on the file
-> **_NOTE:_** You may need to authorise the download of this file as your Mac won't recognise it.
+> **_NOTE:_** You may need to authorise the download of this file as your Mac won't recognise it. You can authorise the installer to run by right clicking on the installer and click on `Open` from Finder. A dialog box will open asking you if you are sure, press the `Open` button and the installer should start.
 3. A terminal should open automatically where you can follow the steps of the installation. Just watch it working, and at some point you'll need to add your password.
 * Why do you need to enter your password? Simply because Thyra is an application and to add this application to your Mac you need to validate that you wish to install this app; like you do for app from the app store. 
 4. Once the installation is finished, you will see a new icon on the top nav bar (see screenshot below). You can now close your terminal (if not done already) and start browsing the blockchain and all our applications available.
