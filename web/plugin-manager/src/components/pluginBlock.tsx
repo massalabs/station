@@ -61,7 +61,6 @@ function PluginBlock(props: PluginProps) {
     }
     // Open plugin homepage
     function openHomepagePlugins() {
-        console.log("hello", props.plugin.name);
         if (isPluginUp) window.open(props.plugin.home);
         else {
             console.error("error", "Plugin is not running, launch it first");

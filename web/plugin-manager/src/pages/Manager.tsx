@@ -21,18 +21,7 @@ import Header from "../components/Header";
 import MainTitle from "../components/MainTitle";
 import { getOs } from "../services/getOs";
 function Manager() {
-    const fakePluginsList: Plugin[] = [
-        {
-            name: "Massa's Wallet",
-            description:
-                "Create and manage your smart wallets to buy, sell, transfer and exchange tokens",
-            id: "420",
-            logo: wallet,
-            status: PluginStatus.Up,
-            version: "1.0.0",
-            home: "/thyra/wallet",
-            isFake: true,
-        },
+const fakePluginsList: Plugin[] = [
         {
             name: "Web On Chain",
             description: "Buy your .massa domain and upload websites on the blockchain",
@@ -58,6 +47,10 @@ function Manager() {
     const [plugins, setPlugins] = useState<Plugin[]>(fakePluginsList);
     const [pluginsNotInstalled, setPluginsNotInstalled] = useState<Plugin[]>([]);
 
+    // This function get all the plugins info from the backend
+    // The backend will return a list of plugins
+    // The function will add the list of plugins to the plugins state
+    // The function will call getPluginsInfoNotInstalled in order to get the plugins that are not installed
     async function getPluginsInfo() {
         try {
             const pluginsInfos = await axiosServices.getPluginsInfo();
@@ -68,6 +61,8 @@ function Manager() {
             console.error("error", `Get plugins infos failed ,  error ${error.message} `);
         }
     }
+    // this function returns the url for the download link for the current platform
+
     const setDownloadLinkForPlatform = (pluginStoreItem: PluginStoreAssets) => {
         switch (getOs()) {
             case "windows":
@@ -84,68 +79,52 @@ function Manager() {
     };
     async function getPluginsInfoNotInstalled() {
         try {
+            // Get plugins that are not installed from the API
             const pluginsInfos = await axiosServices.getNotInstalledPlugins();
+            // Create an empty array to store the plugins
             let combinedPlugins: Plugin[] = [];
-            for (let index = 0; index < pluginsInfos.data.length; index++) {
-                const element = pluginsInfos.data[index];
+            // Transform the data to the format we need
+            combinedPlugins = pluginsInfos.data.map( (element, index) => ({
+                name: element.name,
+                description: element.description,
+                url: setDownloadLinkForPlatform(element.assets),
+                logo: notInstalled,
+                status: PluginStatus.NotInstalled,
+                id: 1000+index.toString(),
+                home: "",
+                isNotInstalled: true,
+                isFake:false,
 
-                combinedPlugins.push({
-                    name: element.name,
-                    description: element.description,
-                    url: setDownloadLinkForPlatform(element.assets),
-                    logo: notInstalled,
-                    status: PluginStatus.NotInstalled,
-                    id: 1000 + index.toString(),
-                    home: "",
-                    isNotInstalled: true,
-                    isFake: false,
-                });
-            }
+            }));
+            // Store the plugins in the state
             setPluginsNotInstalled(combinedPlugins);
         } catch (error: any) {
             console.error("error", `Get plugins infos failed ,  error ${error.message} `);
         }
     }
 
-    // Create a loop to fetch getPluginsInfo and update the status
+// Create a loop to fetch getPluginsInfo and update the status
     useEffect(() => {
         //Initialize Ui on first render
         getPluginsInfo();
         // Set interval to update plugin status periodically
-        // let previousFetch: Plugin[] = [];
         const interval = setInterval(async () => {
-            // Nice to have control on precedent fetch to avoid rerender if no change
-            getPluginsInfo();
-
-            // .then((res: Plugin[]) => {previousFetch = res});
+            try {
+                getPluginsInfo();
+            } catch (error) {
+                console.error("Error while updating plugins status", error);
+            }
         }, 5000);
         return () => clearInterval(interval);
     }, []);
 
-    //To talk in code review is it better to doing stuff
-    //like this or to repeat the filters mapping on bottom
-    // const mapPluginList = () => {
-    //     return plugins.map((plugin) => {
-    //         return (
-    //             <PluginBlock
-    //                 {...{
-    //                     plugin: {
-    //                         id: plugin.id,
-    //                         logo: plugin.logo ? plugin.logo : massaLogomark,
-    //                         name: plugin ? plugin.name : "Plugin Problem",
-    //                         description: plugin.description ? plugin.description : "Plugin Problem",
-    //                         status: plugin.status ? plugin.status : PluginStatus.Down,
-    //                         home: plugin.home ? plugin.home : "Plugin Problem",
-    //                         version: plugin.version ? plugin.version : "Plugin Problem",
-    //                     },
-    //                     key: plugin.id,
-    //                     errorHandler: errorHandler,
-    //                     getPluginsInfo: getPluginsInfo,
-    //                 }}
-    //             />
-    //         );
-    //     });
-    // };
+    const mapPluginList = (pluginsList : Plugin []) => {
+        return pluginsList.filter((p) => !!p.name).map((plugin) => {
+            return (
+                <PluginBlock plugin={plugin} getPluginsInfo={getPluginsInfo} />
+            );
+        });
+    };
 
     const setColsLength = (length: number) => {
         return length > 3 ? " grid-cols-4" : " grid-cols-3";
@@ -163,13 +142,7 @@ function Manager() {
                             setColsLength(plugins.length)
                         }
                     >
-                        {plugins?.length ? (
-                            plugins
-                                .filter((p) => !!p.name)
-                                .map((plugin) => (
-                                    <PluginBlock plugin={plugin} getPluginsInfo={getPluginsInfo} />
-                                ))
-                        ) : (
+                        {plugins?.length ? mapPluginList(plugins) : (
                             <PuffLoader color="font" />
                         )}
                         <InstallPlugin plugins={plugins} getPluginsInfo={getPluginsInfo} />
@@ -182,15 +155,7 @@ function Manager() {
                             setColsLength(pluginsNotInstalled.length)
                         }
                     >
-                        {pluginsNotInstalled?.length ? (
-                            pluginsNotInstalled
-                                .filter((p) => !!p.name)
-                                // sort plugins by names
-                                .sort((a, b) => a.name.localeCompare(b.name))
-                                .map((plugin) => (
-                                    <PluginBlock plugin={plugin} getPluginsInfo={getPluginsInfo} />
-                                ))
-                        ) : (
+                        {pluginsNotInstalled?.length ?  mapPluginList(pluginsNotInstalled) : (
                             <PuffLoader />
                         )}
                     </div>

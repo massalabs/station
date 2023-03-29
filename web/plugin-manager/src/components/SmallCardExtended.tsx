@@ -17,7 +17,7 @@ type Props = {
 };
 
 const SmallCardExtended = (props: Props) => {
-    const isThemeLight = UIStore.useState((s) => (s.theme == "light" ? true : false));
+    const isThemeLight = UIStore.useState((s) => (s.theme === "light"));
     const [isExtended, setIsExtended] = useState(false);
     const HandleOnClickExtend = () => {
         setIsExtended(!isExtended);
@@ -40,7 +40,7 @@ const SmallCardExtended = (props: Props) => {
     };
     return (
         <section className={sectionClassName()}>
-            {/* Definition de la card  */}
+            {/* Card Definition  */}
             <div className="flex flex-row " onClick={HandleOnClickExtend}>
                 <div className="flex flex-col gap-3">
                     <p className="label2 text-font">{props.label2}</p>
