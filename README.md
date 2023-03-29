@@ -50,14 +50,6 @@ You can run the application with this command: `air`.
 
 It will generate and reload thyra each time a file is modified.
 
-## Pre-requisite
-
-### To Upload a website
-
-With Thyra you can upload a website on-chain. It will be hosted on the Massa blockchain and available as a `.massa` URL. You can access this URL through Tyhra.
-
-For this to work, the file you upload must be a zip archive (file ending with `.zip`). This archive must contain a `index.html` file at the root. By installing Thyra following instructions [here](./INSTALLATION.md), you will be able to find and use our Web on-chain module.
-
 
 ## Additional information
 
