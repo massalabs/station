@@ -76,7 +76,7 @@ GET /thyra/plugin/{author}/{name}/
 #    ${id}=    Get Plugin ID From Author and Name    massalabs    hello world
 #    ${data}=    Create Dictionary
 #    ...    id=${id}
-#    ...    name=ut aliqua non
+#    ...    name=aliqua
 #    ...    author=adipisicing
 #    ...    description=minim consectetur dolore,
 #    ...    logo=id et sunt irure,
@@ -87,7 +87,7 @@ GET /thyra/plugin/{author}/{name}/
 #    ...    ${API_URL}/plugin-manager/register
 #    ...    expected_status=${STATUS_NO_CONTENT}
 #    ...    json=${data}
-#    ${newid}=    Get Plugin ID From Author and Name    adipisicing    ut aliqua non
+#    ${newid}=    Get Plugin ID From Author and Name    adipisicing    aliqua
 #    Should Be Equal As Strings    ${newid}    ${id}
 
 # Error cases
@@ -205,8 +205,10 @@ Get Plugin ID From Author and Name
     ${expectedURL}=    Set Variable    /thyra/plugin/${author}/${name}/
 
     FOR    ${element}    IN    @{response.json()}
-        ${pluginURL}=    Evaluate    urllib.parse.unquote("${element['home']}")    modules=urllib.parse
-        IF    "${expectedURL}" == "/thyra/plugin/massalabs/hello world/"
+        ${pluginURL}=    Get Regexp Matches    ${element['home']}    (\/.*){3}\/
+        ${pluginURL}=    Evaluate    urllib.parse.unquote("${pluginURL[0]}")    modules=urllib.parse
+
+        IF    "${expectedURL}" == "${pluginURL}"
             ${pluginId}=    Set Variable    ${element['id']}
             BREAK
         END
