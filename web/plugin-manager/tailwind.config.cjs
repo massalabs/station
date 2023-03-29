@@ -82,7 +82,7 @@ module.exports = {
                 toggleHover: "#D2D2D2",
                 toggleChecked: "#FFFFFF",
                 dark: "#000",
-            },            
+            },
         }),
         plugin(function ({ addComponents, theme }) {
             addComponents({

@@ -1,9 +1,8 @@
 export const getOs = () => {
-
     function getOperatingSystem(): string | undefined {
         const userAgent = navigator.userAgent.toLowerCase();
         const platform = navigator.platform.toLowerCase();
-    
+
         if (platform.includes("win")) {
             return "win";
         } else if (platform.includes("mac") || platform.includes("darwin")) {
@@ -17,4 +16,4 @@ export const getOs = () => {
         }
     }
     return getOperatingSystem();
-    }
+};

@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import PluginBlock from "../components/pluginBlock";
-import { Plugin, PluginNotInstalled, PluginStatus, PluginStoreAssets, PluginStoreItemRequest } from "../../../shared/interfaces/IPlugin";
+import {
+    Plugin,
+    PluginNotInstalled,
+    PluginStatus,
+    PluginStoreAssets,
+    PluginStoreItemRequest,
+} from "../../../shared/interfaces/IPlugin";
 import axiosServices from "../services/axios";
 import alertHelper from "../helpers/alertHelpers";
 import { PuffLoader } from "react-spinners";
@@ -52,7 +58,6 @@ function Manager() {
     const [plugins, setPlugins] = useState<Plugin[]>(fakePluginsList);
     const [pluginsNotInstalled, setPluginsNotInstalled] = useState<Plugin[]>([]);
 
-
     async function getPluginsInfo() {
         try {
             const pluginsInfos = await axiosServices.getPluginsInfo();
@@ -66,35 +71,34 @@ function Manager() {
     const setDownloadLinkForPlatform = (pluginStoreItem: PluginStoreAssets) => {
         switch (getOs()) {
             case "windows":
-                return pluginStoreItem.windows.url;             
+                return pluginStoreItem.windows.url;
             case "macos arm64":
-                return pluginStoreItem.macos_arm64.url;               
+                return pluginStoreItem.macos_arm64.url;
             case "macos amd64":
                 return pluginStoreItem.macos_amd64.url;
             case "linux":
-                return pluginStoreItem.linux.url;      
+                return pluginStoreItem.linux.url;
             default:
                 break;
         }
-    }
+    };
     async function getPluginsInfoNotInstalled() {
         try {
             const pluginsInfos = await axiosServices.getNotInstalledPlugins();
             let combinedPlugins: Plugin[] = [];
             for (let index = 0; index < pluginsInfos.data.length; index++) {
                 const element = pluginsInfos.data[index];
-        
+
                 combinedPlugins.push({
                     name: element.name,
                     description: element.description,
                     url: setDownloadLinkForPlatform(element.assets),
                     logo: notInstalled,
                     status: PluginStatus.NotInstalled,
-                    id: 1000+index.toString(),
+                    id: 1000 + index.toString(),
                     home: "",
                     isNotInstalled: true,
-                    isFake:false,
-                    
+                    isFake: false,
                 });
             }
             setPluginsNotInstalled(combinedPlugins);
@@ -163,18 +167,12 @@ function Manager() {
                             plugins
                                 .filter((p) => !!p.name)
                                 .map((plugin) => (
-                                    <PluginBlock
-                                        plugin={plugin}
-                                        getPluginsInfo={getPluginsInfo}
-                                    />
+                                    <PluginBlock plugin={plugin} getPluginsInfo={getPluginsInfo} />
                                 ))
                         ) : (
                             <PuffLoader color="font" />
                         )}
-                        <InstallPlugin
-                            plugins={plugins}
-                            getPluginsInfo={getPluginsInfo}
-                        />
+                        <InstallPlugin plugins={plugins} getPluginsInfo={getPluginsInfo} />
                     </div>
                     <div className="divider mx-auto mt-8 w-2/3" />
                     <p className="Secondary mt-12 text-font ml-6">Not installed</p>
@@ -190,10 +188,7 @@ function Manager() {
                                 // sort plugins by names
                                 .sort((a, b) => a.name.localeCompare(b.name))
                                 .map((plugin) => (
-                                    <PluginBlock
-                                        plugin={plugin}
-                                        getPluginsInfo={getPluginsInfo}
-                                    />
+                                    <PluginBlock plugin={plugin} getPluginsInfo={getPluginsInfo} />
                                 ))
                         ) : (
                             <PuffLoader />

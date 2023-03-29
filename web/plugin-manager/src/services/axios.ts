@@ -6,7 +6,6 @@ import {
 } from "../../../shared/interfaces/IPlugin";
 
 export class axiosServices {
-
     static installPlugin(url: string): Promise<AxiosResponse<number>> {
         return axios.post<any>(`/plugin-manager?source=${url}`);
     }
