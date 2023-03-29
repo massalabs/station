@@ -8,8 +8,9 @@ Resource    ../variables.resource
 Suite Setup
     [Documentation]    Suite Setup specific to this test suite
     Basic Suite Setup
-    Delete all plugins
+    Delete Hello World Plugin
 
+# Unused for now
 Delete all plugins
     Log To Console    Deleting all plugins
     ${response}=    GET    ${API_URL}/plugin-manager
@@ -17,6 +18,11 @@ Delete all plugins
         ${response}=    DELETE    ${API_URL}/plugin-manager/${element['id']}
         Status Should Be    ${STATUS_NO_CONTENT}
     END
+
+Delete Hello World Plugin
+    Log To Console    Deleting Hello World Plugin
+    ${pluginId}=    Get Plugin ID From Author and Name    massalabs    hello world
+    ${response}=    DELETE    ${API_URL}/plugin-manager/${pluginId}
 
 Get Plugin ID From Author and Name
     [Arguments]    ${author}    ${name}
