@@ -11,7 +11,7 @@ An entrance to the Massa blockchain.
 To contribute to this project, please read out please read our [Contributor's Guide](./CONTRIBUTING.md).
 
 ## Install thyra 
-go to [Installation](./INSTALLATION.md)
+To install Thyra, please follow the instructions available in the [Installation Guide](./INSTALL.md).
 
 ## Install a plugin
 
