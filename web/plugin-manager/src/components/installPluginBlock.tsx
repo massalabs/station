@@ -1,13 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axiosServices from "../services/axios";
-import { Circles } from "react-loader-spinner";
+
 import { Plugin } from "../../../shared/interfaces/IPlugin";
-import { InstallProps } from "./installNodeManager";
-import Arrow2 from "../assets/pictos/Arrow2.svg";
+
 import SmallCardExtended from "./SmallCardExtended";
 export interface InstallZipProps extends InstallProps {
     plugins: Plugin[];
 }
+
+export interface InstallProps {
+    getPluginsInfo: () => void;
+}
+
 
 function InstallPlugin(p: InstallZipProps) {
     const [errorPluginInstall, setErrorPluginInstall] = useState("");
