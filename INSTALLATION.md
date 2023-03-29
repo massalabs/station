@@ -72,7 +72,7 @@ If you want to get down to business, you can start your [Massalian journey](http
 #### Windows
 
 
-Click [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer.exe) to download the Thyra installer on your desktop. Then:
+Click [here](https://github.com/massalabs/thyra/releases/download/v0.1.11/thyra-installer_windows_amd64.exe) to download the Thyra installer on your desktop. Then:
 1. Open it by double clicking
 2. The installer will:
   * Check if you have the latest version of Thyra and install it if not.
