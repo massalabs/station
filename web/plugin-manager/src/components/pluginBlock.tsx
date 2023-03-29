@@ -78,7 +78,8 @@ function PluginBlock(props: PluginProps) {
     // Uninstall plugin
     async function downloadPlugins() {
         try {
-            await axiosServices.installPlugin(props.plugin.url ?? "");
+            if(props.plugin.url === undefined) return console.error("Plugin url is undefined");
+            await axiosServices.installPlugin(props.plugin.url);
             props.getPluginsInfo();
         } catch (error: any) {
             console.log(`Plugins failed to be downloaded , error ${error.message}`);
