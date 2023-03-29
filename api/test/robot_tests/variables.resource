@@ -1,5 +1,5 @@
 *** Variables ***
-${API_URL}=                 http://localhost
+${API_URL}=                 http://my.massa
 
 
 ${STATUS_OK}=                       200

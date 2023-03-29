@@ -64,6 +64,32 @@ POST /plugin-manager/{id}/execute with restart command
     ...    json=${data}
     Sleep    1 seconds    # Wait for the plugin to be restarted
 
+GET /thyra/plugin/{author}/{name}/
+    ${response}=    GET
+    ...    ${API_URL}/thyra/plugin/massalabs/hello%20world/
+    ...    expected_status=${STATUS_OK}
+    Should Contain    ${response.text}    Hello, world!
+
+# We can register multiple times the same plugin, but the aliases list isn't updated correctly.
+# This causes the previous plugin alias to be considered as still valid.
+# POST /plugin-manager/register
+#    ${id}=    Get Plugin ID From Author and Name    massalabs    hello world
+#    ${data}=    Create Dictionary
+#    ...    id=${id}
+#    ...    name=ut aliqua non
+#    ...    author=adipisicing
+#    ...    description=minim consectetur dolore,
+#    ...    logo=id et sunt irure,
+#    ...    home=sunt
+#    ...    api_spec=culpa enim sint aliqua
+#    ...    url=oluptate
+#    ${response}=    POST
+#    ...    ${API_URL}/plugin-manager/register
+#    ...    expected_status=${STATUS_NO_CONTENT}
+#    ...    json=${data}
+#    ${newid}=    Get Plugin ID From Author and Name    adipisicing    ut aliqua non
+#    Should Be Equal As Strings    ${newid}    ${id}
+
 # Error cases
 
 POST /plugins-manager/{id}/execute already started
@@ -85,8 +111,8 @@ GET /plugin-manager/{id} with invalid id
     Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching id invalid
 
 GET /thyra/plugin/${author}/${name} with invalid author and name
-    ${response}=    GET    ${API_URL}/thyra/plugin/invalid/invalid    expected_status=${STATUS_NOT_IMPLEMENTED}
-    Should Be Equal As Strings    ${response.json()}    operation PluginRouter has not yet been implemented
+    ${response}=    GET    ${API_URL}/thyra/plugin/invalid/invalid    expected_status=${STATUS_NOT_FOUND}
+    Should Be Equal As Strings    ${response.text}    plugin not found for alias invalid/invalid
 
 POST /plugin-manager/{id}/execute with invalid id
     ${data}=    Create Dictionary    command=start
@@ -114,9 +140,7 @@ POST /plugin-manager/{id}/execute with invalid body
     ...    ${response.json()['message']}
     ...    body.command in body should be one of [update stop start restart]
 
-# Is called by a plugin once started, so we need to install a plugin before
-
-POST /plugin-manager/register
+POST /plugin-manager/register with invalid id
     ${data}=    Create Dictionary
     ...    id=1
     ...    name=ut aliqua non
@@ -166,7 +190,7 @@ Suite Setup
     Delete all plugins
 
 Delete all plugins
-    Log To Console    message    format
+    Log To Console    Deleting all plugins
     ${response}=    GET    ${API_URL}/plugin-manager
     FOR    ${element}    IN    @{response.json()}
         ${response}=    DELETE    ${API_URL}/plugin-manager/${element['id']}
