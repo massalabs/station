@@ -43,8 +43,7 @@ const fakePluginsList: Plugin[] = [
             isFake: true,
         },
     ];
-
-    const [plugins, setPlugins] = useState<Plugin[]>(fakePluginsList);
+    const [plugins, setPlugins] = useState<Plugin[]>([]);
     const [pluginsNotInstalled, setPluginsNotInstalled] = useState<Plugin[]>([]);
 
     // This function get all the plugins info from the backend
@@ -54,7 +53,7 @@ const fakePluginsList: Plugin[] = [
     async function getPluginsInfo() {
         try {
             const pluginsInfos = await axiosServices.getPluginsInfo();
-            let combinedPlugins = [...fakePluginsList, ...pluginsInfos.data];
+            let combinedPlugins = [ ...pluginsInfos.data];
             setPlugins(combinedPlugins);
             getPluginsInfoNotInstalled();
         } catch (error: any) {
@@ -118,8 +117,8 @@ const fakePluginsList: Plugin[] = [
         return () => clearInterval(interval);
     }, []);
 
-    const mapPluginList = (pluginsList : Plugin []) => {
-        return pluginsList.filter((p) => !!p.name).map((plugin) => {
+    const mapPluginList = (pluginsList : Plugin []) => {        
+        return pluginsList.filter((p) => !!p.name).sort((a, b) => a.name.localeCompare(b.name)).map((plugin) => {
             return (
                 <PluginBlock plugin={plugin} getPluginsInfo={getPluginsInfo} />
             );
@@ -139,10 +138,10 @@ const fakePluginsList: Plugin[] = [
                     <div
                         className={
                             "grid grid-flow-row-dense w-[1307px] mx-auto mt-3 gap-4 xs:max-xl:grid-cols-2 ml-6 xl: " +
-                            setColsLength(plugins.length)
+                            setColsLength(plugins.length + fakePluginsList.length)
                         }
                     >
-                        {plugins?.length ? mapPluginList(plugins) : (
+                        {plugins?.length ? <>{mapPluginList(fakePluginsList)} {mapPluginList(plugins)} </>  : (
                             <PuffLoader color="font" />
                         )}
                         <InstallPlugin plugins={plugins} getPluginsInfo={getPluginsInfo} />

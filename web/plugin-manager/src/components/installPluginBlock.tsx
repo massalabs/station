@@ -17,7 +17,7 @@ function InstallPlugin(p: InstallZipProps) {
     const [errorPluginInstall, setErrorPluginInstall] = useState("");
 
     const verifyUrl = (url: string) => {
-        const regex = /^(http|www)[^\s]*\.zip$/i; // fragment locator
+        const regex = /^(http)[^\s]*\.zip$/i; // fragment locator
         return regex.test(url);
     };
 
