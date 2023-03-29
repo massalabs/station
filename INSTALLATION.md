@@ -84,8 +84,8 @@ Click [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-i
 
 Congratulation, your version of Thyra is now installed on your system and you can "Start" your journey using the icon tray.
 
-You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
+You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](https://flappy.massa) can help.
+If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/wallet) right away!
 
 
 ### Mobile 

@@ -14,9 +14,11 @@ import (
 	"github.com/massalabs/thyra/int/api/massa"
 	"github.com/massalabs/thyra/int/api/myplugin"
 	"github.com/massalabs/thyra/int/api/plugin"
+	"github.com/massalabs/thyra/int/api/pluginstore"
 	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/node"
+	deploysc "github.com/massalabs/thyra/pkg/node/sendoperation/deploySC"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
 	pluginmanager "github.com/massalabs/thyra/pkg/plugins"
 )
@@ -56,16 +58,16 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 	switch *massaNodeServerPtr {
 	case "TESTNET":
 		*massaNodeServerPtr = "https://test.massa.net/api/v2"
-		// testnet19
-		dnsAddress = "A1WDKYGwiq4h9wfHxidnju5gD4EtU9ruwih3BKAUhpZyJhqpBj4"
+		// testnet20.1
+		dnsAddress = "AS1e4w2rAtZr9NxzAqpSqRC3oS3Ze8huDdLq3vRd14CKAvExDZTX"
 
 	case "LABNET":
 		*massaNodeServerPtr = "https://labnet.massa.net/api/v2"
-		dnsAddress = "A12RgLPuRQaVTue2CtPws6deXUfUnk6nfveZS9bedyzoNS8WyYtg"
+		dnsAddress = "AS1PV17jWkbUs7mfXsn8Xfs9AK6tHiJoxuGu7RySFMV8GYdMeUSh"
 
 	case "INNONET":
-		*massaNodeServerPtr = "https://inno.massa.net/test19"
-		dnsAddress = "A1tnNcCY9Z8nE45snYjs7aC1GqCXkqiYaY5bbwqKkt11aH9HftJ"
+		*massaNodeServerPtr = "https://inno.massa.net/test20"
+		dnsAddress = "AS1qqCv7g5z1ES3DygbduDF8wVmJ7CdTwpq3K3gfgfhnzoAciMcd"
 
 	case "LOCALHOST":
 		*massaNodeServerPtr = "http://127.0.0.1:33035"
@@ -101,6 +103,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *p
 	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(
 		websites.CreatePrepareForWebsiteHandler(app),
 	)
+	localAPI.CmdDeploySCHandler = operations.CmdDeploySCHandlerFunc(deploysc.Handler)
 	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(
 		websites.CreateUploadWebsiteHandler(app),
 	)
@@ -120,6 +123,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *p
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
 
 	myplugin.InitializePluginAPI(localAPI)
+	pluginstore.InitializePluginStoreAPI(localAPI)
 }
 
 func StartServer(app *fyne.App, startFlags StartServerFlags) {

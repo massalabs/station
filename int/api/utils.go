@@ -1,9 +1,10 @@
 package api
 
 import (
-	"html/template"
+	"mime"
 	"net/http"
 	"path/filepath"
+	"text/template"
 
 	"github.com/go-openapi/runtime"
 )
@@ -11,19 +12,16 @@ import (
 func contentType(rsc string) map[string]string {
 	var contentType map[string]string
 
-	switch filepath.Ext(rsc) {
-	case ".css":
-		contentType = map[string]string{"Content-Type": "text/css"}
-	case ".js":
-		contentType = map[string]string{"Content-Type": "text/javascript"}
-	case ".html":
-		contentType = map[string]string{"Content-Type": "text/html"}
-	case ".webp":
-		contentType = map[string]string{"Content-Type": "text/webp"}
-	case ".png":
-		contentType = map[string]string{"Content-Type": "image/png"}
-	default:
-		contentType = map[string]string{}
+	fileExtension := filepath.Ext(rsc)
+	if fileExtension == ".otf" {
+		return map[string]string{"Content-Type": "font/otf"}
+	}
+
+	ctype := mime.TypeByExtension(fileExtension)
+	if ctype == "" {
+		contentType = map[string]string{"Content-Type": "text/plain"}
+	} else {
+		contentType = map[string]string{"Content-Type": ctype}
 	}
 
 	return contentType

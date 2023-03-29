@@ -37,9 +37,9 @@ func Resolve(client *node.Client, name string) (string, error) {
 }
 
 func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContract string) (string, error) {
-	addr, _, err := base58.VersionedCheckDecode(Address()[1:])
+	addr, _, err := base58.VersionedCheckDecode(Address()[2:])
 	if err != nil {
-		return "", fmt.Errorf("checking address '%s': %w", Address()[1:], err)
+		return "", fmt.Errorf("checking address '%s': %w", Address()[2:], err)
 	}
 
 	// Set Resolver prepare data

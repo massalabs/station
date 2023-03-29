@@ -117,6 +117,109 @@ func init() {
         }
       }
     },
+    "/cmd/deploySC": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "cmdDeploySC",
+        "parameters": [
+          {
+            "type": "string",
+            "x-nullable": false,
+            "description": "Name of the wallet used to deploy the smart contract.",
+            "name": "walletNickname",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "x-nullable": false,
+            "description": "Smart contract file in a Wasm format.",
+            "name": "smartContract",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "default": 0,
+            "description": "Price of a gaz unit.",
+            "name": "gazPrice",
+            "in": "formData"
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "default": 700000000,
+            "description": "Maximum number of gaz unit that a node will be able to consume.",
+            "name": "gazLimit",
+            "in": "formData"
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "default": 0,
+            "description": "Set the number of coins that will be sent along the deployment call.",
+            "name": "coins",
+            "in": "formData"
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "default": 2,
+            "description": "Set the expiry duration (in number of slots) of the transaction.",
+            "name": "expiry",
+            "in": "formData"
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "default": 0,
+            "description": "Set the fee amount (in massa) that will be given to the block creator.",
+            "name": "fee",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "default": "",
+            "description": "b64 encoded datastore that will be sent along the smart contract.",
+            "name": "datastore",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "schema": {
+              "description": "Operation id.",
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/cmd/executeFunction": {
       "post": {
         "produces": [
@@ -352,11 +455,9 @@ func init() {
               "type": "string"
             },
             "collectionFormat": "multi",
-            "x-nullable": false,
             "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nPossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
             "name": "attributes",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "array",
@@ -1097,6 +1198,51 @@ func init() {
         }
       }
     },
+    "/plugin-store": {
+      "get": {
+        "description": "Returns a list of PluginStoreItem structs",
+        "produces": [
+          "application/json"
+        ],
+        "summary": "Get list of available plugins from store",
+        "operationId": "getPluginStore",
+        "responses": {
+          "200": {
+            "description": "List of plugins",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PluginStoreItem"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/events/{str}/{caller}": {
       "get": {
         "produces": [
@@ -1561,6 +1707,21 @@ func init() {
         }
       }
     },
+    "File": {
+      "type": "object",
+      "required": [
+        "url",
+        "checksum"
+      ],
+      "properties": {
+        "checksum": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
     "Plugin": {
       "description": "Plugin object (V0).",
       "type": "object",
@@ -1572,6 +1733,48 @@ func init() {
         "port": {
           "description": "Plugin's port.",
           "type": "integer"
+        }
+      }
+    },
+    "PluginStoreItem": {
+      "description": "Plugin item from store.",
+      "type": "object",
+      "required": [
+        "name",
+        "description",
+        "version",
+        "url",
+        "assets"
+      ],
+      "properties": {
+        "assets": {
+          "type": "object",
+          "properties": {
+            "linux": {
+              "$ref": "#/definitions/File"
+            },
+            "macos-amd64": {
+              "$ref": "#/definitions/File"
+            },
+            "macos-arm64": {
+              "$ref": "#/definitions/File"
+            },
+            "windows": {
+              "$ref": "#/definitions/File"
+            }
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
         }
       }
     },
@@ -1775,6 +1978,114 @@ func init() {
         }
       }
     },
+    "/cmd/deploySC": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "cmdDeploySC",
+        "parameters": [
+          {
+            "type": "string",
+            "x-nullable": false,
+            "description": "Name of the wallet used to deploy the smart contract.",
+            "name": "walletNickname",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "x-nullable": false,
+            "description": "Smart contract file in a Wasm format.",
+            "name": "smartContract",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "format": "uint64",
+            "default": 0,
+            "description": "Price of a gaz unit.",
+            "name": "gazPrice",
+            "in": "formData"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "format": "uint64",
+            "default": 700000000,
+            "description": "Maximum number of gaz unit that a node will be able to consume.",
+            "name": "gazLimit",
+            "in": "formData"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "format": "uint64",
+            "default": 0,
+            "description": "Set the number of coins that will be sent along the deployment call.",
+            "name": "coins",
+            "in": "formData"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "format": "uint64",
+            "default": 2,
+            "description": "Set the expiry duration (in number of slots) of the transaction.",
+            "name": "expiry",
+            "in": "formData"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "format": "uint64",
+            "default": 0,
+            "description": "Set the fee amount (in massa) that will be given to the block creator.",
+            "name": "fee",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "default": "",
+            "description": "b64 encoded datastore that will be sent along the smart contract.",
+            "name": "datastore",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "schema": {
+              "description": "Operation id.",
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/cmd/executeFunction": {
       "post": {
         "produces": [
@@ -1963,11 +2274,9 @@ func init() {
               "type": "string"
             },
             "collectionFormat": "multi",
-            "x-nullable": false,
             "description": "Specifies the attributes to return. If no attributes are provided, they are all returned.\nPossible values:\n\n| Attribute | Content |\n| ----------- | -----------|\n| balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |\n",
             "name": "attributes",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "array",
@@ -2656,6 +2965,51 @@ func init() {
         }
       }
     },
+    "/plugin-store": {
+      "get": {
+        "description": "Returns a list of PluginStoreItem structs",
+        "produces": [
+          "application/json"
+        ],
+        "summary": "Get list of available plugins from store",
+        "operationId": "getPluginStore",
+        "responses": {
+          "200": {
+            "description": "List of plugins",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PluginStoreItem"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/thyra/events/{str}/{caller}": {
       "get": {
         "produces": [
@@ -3164,6 +3518,21 @@ func init() {
         }
       }
     },
+    "File": {
+      "type": "object",
+      "required": [
+        "url",
+        "checksum"
+      ],
+      "properties": {
+        "checksum": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
     "NodeItems0": {
       "type": "object",
       "properties": {
@@ -3245,6 +3614,65 @@ func init() {
             "Crashed"
           ],
           "x-nullable": false
+        }
+      }
+    },
+    "PluginStoreItem": {
+      "description": "Plugin item from store.",
+      "type": "object",
+      "required": [
+        "name",
+        "description",
+        "version",
+        "url",
+        "assets"
+      ],
+      "properties": {
+        "assets": {
+          "type": "object",
+          "properties": {
+            "linux": {
+              "$ref": "#/definitions/File"
+            },
+            "macos-amd64": {
+              "$ref": "#/definitions/File"
+            },
+            "macos-arm64": {
+              "$ref": "#/definitions/File"
+            },
+            "windows": {
+              "$ref": "#/definitions/File"
+            }
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "PluginStoreItemAssets": {
+      "type": "object",
+      "properties": {
+        "linux": {
+          "$ref": "#/definitions/File"
+        },
+        "macos-amd64": {
+          "$ref": "#/definitions/File"
+        },
+        "macos-arm64": {
+          "$ref": "#/definitions/File"
+        },
+        "windows": {
+          "$ref": "#/definitions/File"
         }
       }
     },

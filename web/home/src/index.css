@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Add Fonts */
+@font-face {
+    font-family: "Maison Neue";
+    src: url("./assets/fonts/MaisonNeueExtended/MaisonNeueExtended-Medium.otf");
+  }
+  @font-face {
+    font-family: "TT Commons";
+    src: url("./assets/fonts/TTCommons/TTCommonsMedium.otf");
+  }
+
+  /* Toggle Theme */
+  .custom-classname.react-toggle--checked .react-toggle-track {
+    background-color: hsl(var(--twc-secondaryButton));
+  }
+  .custom-classname.react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
+    background-color: hsl(var(--twc-toggleHover));
+}
+.custom-classname.react-toggle--checked .react-toggle-thumb{
+  background-color: hsl(var(--twc-toggleChecked));
+  border-color: hsl(var(--twc-secondaryButton));
+
+}
+.react-toggle-track-check{
+  width: 14px;
+  height: 14px;
+}
+/* Background SVG for HomePage */
+.bg-img {
+  background-position: bottom left;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 50%;
+}

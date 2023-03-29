@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "b0d9e16d-4fc4-489e-8b79-8768d5c4f9f6",
+		"_postman_id": "9eac6d65-61c9-468a-b448-82f0b869fe91",
 		"name": "Massa endpoints",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "16586582"
+		"_exporter_id": "23452245"
 	},
 	"item": [
 		{
@@ -42,7 +42,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://my.massa/massa/addresses?addresses=A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
+					"raw": "http://my.massa/massa/addresses?addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
 					"protocol": "http",
 					"host": [
 						"my",
@@ -55,16 +55,73 @@
 					"query": [
 						{
 							"key": "addresses",
-							"value": "A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
+							"value": "AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
 						},
 						{
 							"key": "addresses",
-							"value": "A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
+							"value": "AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
 						}
 					]
 				}
 			},
-			"response": []
+			"response": [
+				{
+					"name": "Addresses - get attributes",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://my.massa/massa/addresses?addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
+							"protocol": "http",
+							"host": [
+								"my",
+								"massa"
+							],
+							"path": [
+								"massa",
+								"addresses"
+							],
+							"query": [
+								{
+									"key": "addresses",
+									"value": "AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
+								},
+								{
+									"key": "addresses",
+									"value": "AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 03 Mar 2023 09:01:09 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "216"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"addressesAttributes\": {\n        \"AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5\": {\n            \"balance\": {\n                \"final\": \"0\",\n                \"pending\": \"0\"\n            }\n        },\n        \"AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS\": {\n            \"balance\": {\n                \"final\": \"0\",\n                \"pending\": \"0\"\n            }\n        }\n    }\n}"
+				}
+			]
 		},
 		{
 			"name": "Addresses - get balances",
@@ -102,7 +159,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://my.massa/massa/addresses?attributes=balance&addresses=A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
+					"raw": "http://my.massa/massa/addresses?attributes=balance&addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
 					"protocol": "http",
 					"host": [
 						"my",
@@ -119,16 +176,240 @@
 						},
 						{
 							"key": "addresses",
-							"value": "A12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
+							"value": "AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
 						},
 						{
 							"key": "addresses",
-							"value": "A12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
+							"value": "AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
 						}
 					]
 				}
 			},
-			"response": []
+			"response": [
+				{
+					"name": "Addresses - get balances",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://my.massa/massa/addresses?attributes=balance&addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
+							"protocol": "http",
+							"host": [
+								"my",
+								"massa"
+							],
+							"path": [
+								"massa",
+								"addresses"
+							],
+							"query": [
+								{
+									"key": "attributes",
+									"value": "balance"
+								},
+								{
+									"key": "addresses",
+									"value": "AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5"
+								},
+								{
+									"key": "addresses",
+									"value": "AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 03 Mar 2023 09:07:47 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "216"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"addressesAttributes\": {\n        \"AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5\": {\n            \"balance\": {\n                \"final\": \"0\",\n                \"pending\": \"0\"\n            }\n        },\n        \"AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS\": {\n            \"balance\": {\n                \"final\": \"0\",\n                \"pending\": \"0\"\n            }\n        }\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Deploy SC",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "walletNickname",
+							"value": "execSCwallet",
+							"type": "text"
+						},
+						{
+							"key": "smartContract",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "coins",
+							"value": "0",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "fee",
+							"value": "0",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "expiry",
+							"value": "2",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "gazLimit",
+							"value": "100000000",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "datastore",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://my.massa:80/cmd/deploySC",
+					"protocol": "http",
+					"host": [
+						"my",
+						"massa"
+					],
+					"port": "80",
+					"path": [
+						"cmd",
+						"deploySC"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Deploy SC",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "walletNickname",
+									"value": "execSCwallet",
+									"type": "text"
+								},
+								{
+									"key": "smartContract",
+									"type": "file",
+									"src": "/C:/Users/hugon/massa_repos/thyra/pkg/onchain/website/sc/websiteStorer.wasm"
+								},
+								{
+									"key": "coins",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "fee",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "expiry",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "gazLimit",
+									"value": "100000000",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://my.massa:80/cmd/deploySC",
+							"protocol": "http",
+							"host": [
+								"my",
+								"massa"
+							],
+							"port": "80",
+							"path": [
+								"cmd",
+								"deploySC"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 03 Mar 2023 11:05:16 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "87"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "\"Website Deployer is deployed at :AS1MuW9NXqE54txD4xag7f9pPttA9o8fxwb2imbqjgcVwdy1nU9W\""
+				}
+			]
 		}
 	]
 }

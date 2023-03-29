@@ -1,6 +1,13 @@
 wallet_*.json
 *.exe
 
+*.log
+*.spec
+
+# pysintaller
+scripts/build
+scripts/dist
+
 # air temporary directory
 tmp/
 
@@ -12,3 +19,7 @@ tmp/
 # Thyra builded react files
 int/api/dist/
 main
+
+# Go swagger generated files
+api/swagger/server/models/
+api/swagger/server/restapi/operations/
