@@ -10,13 +10,10 @@ import Header from '../../components/Header';
 
 import ManagePluginCard from '../../components/managePluginCard';
 import grid1 from '../../assets/element/grid1.svg';
-import wallet from '../../assets/logo/plugins/Wallet.svg';
 import registry from '../../assets/logo/plugins/Registry.svg';
 import webOnChain from '../../assets/logo/plugins/webOnChain.svg';
 import MainTitle from '../../components/MainTitle';
 
-
-import { UIStore } from "../../store/UIStore";
 /**
  * Homepage of Thyra with a list of plugins installed
  *
@@ -26,15 +23,6 @@ function Home() {
   // Fetch plugins installed by calling get /plugin/manager
 
   const fakePluginsList: PluginHomePage[] = [
-    {
-      name: "Massa's Wallet",
-      description:
-        'Create and manage your smart wallets to buy, sell, transfer and exchange tokens',
-      id: '420',
-      logo: wallet,
-      status: 'Up',
-      home: '/thyra/wallet'
-    },
     {
       name: 'Web On Chain',
       description:
@@ -53,7 +41,6 @@ function Home() {
       home: '/thyra/registry'
     },
   ];
-  const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
 
   const handleOpenPlugin = (pluginName: string) => {
     window.open(findPluginHome(pluginName));
@@ -81,28 +68,36 @@ function Home() {
   };
 
 // Add the fake plugins
-useEffect(() => {
-  // Fetch the plugins on first render
-  let previousFetch: PluginHomePage[] = [];
-  getPlugins().then((res: PluginHomePage[]) => {
-    previousFetch = res;
-    res.forEach((element: PluginHomePage) => {
-      setPlugins((prev) => [...prev, element]);
-    });
-  });
 
-  setInterval(() => {
-  getPlugins().then((res : PluginHomePage[]) => {
-    let combinedPlugins = [ ...fakePluginsList, ...res];
-    // If the list of plugins has changed, update the state
-    if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
-      setPlugins(combinedPlugins);
-      previousFetch = res;
-    }
-  });
+  const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
 
-  }, 10000);
-}, []);
+  // fetch plugins every 10 seconds
+  useEffect(() => {
+    // used to check if plugin list has changed
+    let previousFetch: PluginHomePage[] = [];
+    // fetch plugins
+    const interval = setInterval(() => {
+      getPlugins().then((res: PluginHomePage[]) => {
+        let combinedPlugins: PluginHomePage[] = [
+          ...fakePluginsList,
+          ...res,
+        ];
+        // If the list of plugins has changed, update the state
+        if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
+          setPlugins(combinedPlugins);
+          previousFetch = res;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        // If there is an error, use the previous list
+        setPlugins(previousFetch);
+      });
+
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
 
 const mapPluginList = () => {
   return plugins.map((plugin) => {
@@ -144,9 +139,7 @@ return (
     {/* Display the plugins in a grid */}
     <div className="mt-24 gap-8 grid mx-auto w-fit rounded-lg grid-cols-4 place-items-center max-lg:grid-cols-3">
       {mapPluginList()}
-      <>
-        <ManagePluginCard />
-      </>
+      <ManagePluginCard />
     </div>
   </div>
 );
