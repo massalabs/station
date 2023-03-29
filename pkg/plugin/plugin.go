@@ -119,6 +119,7 @@ func (p *Plugin) Start() error {
 	log.Printf("Starting plugin '%s' with id %s\n", pluginName, p.ID)
 
 	p.mutex.Lock()
+	defer p.mutex.Unlock()
 
 	status := p.Status()
 
@@ -154,8 +155,6 @@ func (p *Plugin) Start() error {
 	}()
 
 	p.status = Up
-
-	p.mutex.Unlock()
 
 	return nil
 }
