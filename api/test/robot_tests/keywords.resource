@@ -19,5 +19,9 @@ Basic Suite Setup
     ${OS}=    Convert To Lower Case    ${OS}
     ${ARCH}=    Get Architecture
 
+    IF    "${ARCH}" == "x86_64"
+        ${ARCH}=    Set Variable    amd64
+    END
+
     Set Global Variable    ${OS}
     Set Global Variable    ${ARCH}
