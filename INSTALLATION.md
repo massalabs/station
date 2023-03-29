@@ -53,7 +53,7 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 > **_NOTE:_** Only Linux Ubuntu is currently supported.
 
-1. Go on [this page](https://github.com/massalabs/thyra/releases/latest) and download the installer "thyra-server_linux_amd64".
+1. Click to download Linux installer [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer_linux_amd64)
 2. Once downloaded, double clik on the file 
 3. A terminal should open automatically where you can follow the steps of the installation. Just watch it working, and at some point you'll need to add your password.
 4. Once the installation is finished, you will see a new icon on the top nav bar (see screenshot below). You can now close your terminal if not done already and start browsing the blockchain and all our applications available. 
@@ -72,7 +72,7 @@ If you want to get down to business, you can start your [Massalian journey](http
 #### Windows
 
 
-Click [here](https://github.com/massalabs/thyra/releases/download/v0.1.11/thyra-installer_windows_amd64.exe) to download the Thyra installer on your desktop. Then:
+Click [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer_windows_amd64.exe) to download the Thyra installer on your desktop. Then:
 1. Open it by double clicking
 2. The installer will:
   * Check if you have the latest version of Thyra and install it if not.
