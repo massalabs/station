@@ -3,10 +3,7 @@ Documentation       This is a test suite for Thyra /cmd endpoints.
 
 Library             RequestsLibrary
 Resource            variables.resource
-
-
-*** Variables ***
-${WALLET_NICKNAME}=     testnet
+Resource            ../variables.resource
 
 
 *** Test Cases ***

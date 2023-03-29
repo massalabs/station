@@ -31,21 +31,22 @@ robot robot_tests
 To run a specific test suite, you can run the following command:
 
 ```bash
-robot robot_tests/<test_file>.robot
+robot robot_tests/<scope>/<test_file>.robot
 ```
 
 To run a specific test case, you can run the following command:
 
 ```bash
-robot -t <test_case_name> robot_tests/<test_file>.robot
+robot -t <test_case_name> robot_tests/<scope>/<test_file>.robot
 ```
 
 > To know more about the Robot Framework, you can read the [User Guide](https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html).
 
 ## Adding new tests
 
-To add new tests, you can simply write your tests in the corresponding `.robot` file. If the corresponding file doesn't exist, create it by following the style of the other `.robot` tests files. 
+To add new tests, you can simply write your tests in the corresponding `.robot` file. If the corresponding file doesn't exist, create the corresponding directory and then create the corresponding `.robot` file by following the style of the other `.robot` tests files.
 
-If you need to add new variables, you can add them in the `variables.resource` file.
+You can add new variables in a `variables.resource` file.
+If the variable is specific to a given scope, you can add it in the `variables.resource` file of the corresponding scope directory.
 
 > To learn more about the Request Library, you can read the [documentation](https://marketsquare.github.io/robotframework-requests/doc/RequestsLibrary.html).
