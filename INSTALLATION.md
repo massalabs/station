@@ -27,7 +27,7 @@ By following these instructions, you will:
 
 #### MacOS
 
-1. Go on [this page](https://.com/massalabs/thyra/releases/latest) and download the installer that corresponds to your MacOS configuration
+1. Go to the [Thyra release page](https://.com/massalabs/thyra/releases/latest) and download the installer that corresponds to your MacOS configuration
 * If you have M1 chip or more, chose "thyra-installer_darwin_arm64" installer
 * Otherwise, chose "thyra-installer_darwin_amd64" installer
 2. Once downloaded, double clik on the file
