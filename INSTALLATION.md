@@ -10,7 +10,7 @@
 
 ## Introduction
 
-From this point you'll start to custom Massa's journey thanks to Thyra. If you want to learn more about Thyra's objectives and mindset, go here; if you're curious about the technical aspects and want to contribute go [there](./CONTRIBUTING.md).
+From this point you'll start to custom your Massa's journey thanks to Thyra. If you want to learn more about Thyra's objectives and mindset, go here; if you're curious about the technical aspects and want to contribute go [there](./CONTRIBUTING.md).
 
 This document will guide you through the installation process and the first steps to get started with Thyra.
 
