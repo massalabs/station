@@ -37,7 +37,6 @@ By following these instructions, you will:
 4. Once the installation is finished, you will see a new icon on the top nav bar (see screenshot below). You can now close your terminal (if not done already) and start browsing the blockchain and all our applications available.
 <img width="177" alt="image" src="https://user-images.githubusercontent.com/109611779/223798813-92a16141-19f6-415b-b9d8-2554eb814edc.png">
 
-4. Once the installation is finished, you will see a new icon on the top nav bar. You can now close your terminal (if not done already) and start browsing the blockchain and all our applications available.
 
 > **_NOTE:_** If you quit Thyra, the icon tray will disappear. Normal! If you want to add it back, open your finder and look for "thyra" in all your mac. You should see the following file "XXXX"; click on it and the app will be back on your top nav bar. 
 
