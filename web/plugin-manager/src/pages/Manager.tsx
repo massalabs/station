@@ -42,30 +42,6 @@ function Manager() {
             home: "/thyra/registry",
             isFake: true,
         },
-        {
-            name: "Registrya",
-            description: "Browse Massa blockchain and its .massa websites",
-            id: "423",
-            logo: registry,
-            status: PluginStatus.Up,
-            home: "/thyra/registry",
-        },
-        {
-            name: "Registryz",
-            description: "Browse Massa blockchain and its .massa websites",
-            id: "423",
-            logo: registry,
-            status: PluginStatus.Up,
-            home: "/thyra/registry",
-        },
-        {
-            name: "Registryqq",
-            description: "Browse Massa blockchain and its .massa websites",
-            id: "423",
-            logo: registry,
-            status: PluginStatus.Up,
-            home: "/thyra/registry",
-        },
     ];
     const [plugins, setPlugins] = useState<Plugin[]>([]);
     const [pluginsNotInstalled, setPluginsNotInstalled] = useState<Plugin[]>([]);
@@ -150,7 +126,6 @@ function Manager() {
     };
 
     const setColsLength = (length: number) => {
-        console.log(length)
         const cols = length > 3 ? "grid-cols-4" : " grid-cols-3";
         return (
             'max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-xl:grid-cols-4'
