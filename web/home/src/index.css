@@ -23,10 +23,15 @@
   border-color: hsl(var(--twc-secondaryButton));
 
 }
+.custom-classname .react-toggle-track-check {
+  width: 14px;
+  height: 14px;
+}
 
+/* Theme Toggle with icons */
 .react-toggle-track-check {
-  width: "14px";
-  height: "14px";
+  width: 14px;
+  height: 14px !important;
 }
 
 /* Background SVG for HomePage */

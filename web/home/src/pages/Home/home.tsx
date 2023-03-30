@@ -91,7 +91,11 @@ function Home() {
       .catch((err) => {
         console.log(err);
         // If there is an error, use the previous list
-        setPlugins(previousFetch);
+        setPlugins((previousFetch) =>
+          previousFetch.length > 0
+            ? previousFetch
+            : fakePluginsList
+        );
       });
 
     }, 10000);
