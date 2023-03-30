@@ -58,8 +58,8 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 	switch *massaNodeServerPtr {
 	case "TESTNET":
 		*massaNodeServerPtr = "https://test.massa.net/api/v2"
-		// testnet20.1
-		dnsAddress = "AS1e4w2rAtZr9NxzAqpSqRC3oS3Ze8huDdLq3vRd14CKAvExDZTX"
+		// testnet20.2
+		dnsAddress = "AS12YMz7NjyP3aeEWcSsiC58Hba8UxHapfGv7i4PmNMS2eKfmaqqC"
 
 	case "LABNET":
 		*massaNodeServerPtr = "https://labnet.massa.net/api/v2"
