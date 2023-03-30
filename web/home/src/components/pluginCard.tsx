@@ -28,7 +28,7 @@ export const PluginCard = (props: Props) => {
       />
       <div className="flex flex-col gap-2">
         <h2 className="label2 text-font">{props.plugin.name}</h2>
-        <p className="text2 text-font overflow-hidden whitespace-pre-wrap max-w-full">
+        <p className="text2 text-font overflow-hidden whitespace-pre-wrap max-w-full h-[68px]">
           {props.plugin.description}
         </p>
       </div>
