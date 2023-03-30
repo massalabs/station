@@ -22,7 +22,9 @@ Delete all plugins
 Delete Hello World Plugin
     Log To Console    Deleting Hello World Plugin
     ${pluginId}=    Get Plugin ID From Author and Name    massalabs    hello world
-    ${response}=    DELETE    ${API_URL}/plugin-manager/${pluginId}
+    IF    "${pluginId}" != "${EMPTY}"
+        ${response}=    DELETE    ${API_URL}/plugin-manager/${pluginId}
+    END
 
 Get Plugin ID From Author and Name
     [Arguments]    ${author}    ${name}
