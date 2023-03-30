@@ -16,20 +16,24 @@ export interface InstallProps {
 function InstallPlugin(p: InstallZipProps) {
     const [errorPluginInstall, setErrorPluginInstall] = useState("");
 
-    const verifyUrl = (url: string) => {
+    const isValidUrl = (url: string) => {
         const regex = /^(http)[^\s]*\.zip$/i; // fragment locator
         return regex.test(url);
     };
 
     const installPluginHandler = async (url: string) => {
-        if (verifyUrl(url)) {
+        if (!isValidUrl(url)) {
+            setErrorPluginInstall("Invalid URL");
+            return
+        }
+        try {
             await axiosServices.installPlugin(url);
             p.getPluginsInfo();
-        } else {
-            console.log("Invalid URL");
-            setErrorPluginInstall("Invalid URL");
+        } catch (err: any) {
+            console.error(err.response?.data?.message)
+            setErrorPluginInstall("Error fetching plugin URL");
         }
-    };
+    }
 
     return (
         <>
