@@ -2,26 +2,22 @@ import { useEffect, useState } from "react";
 import PluginBlock from "../components/pluginBlock";
 import {
     Plugin,
-    PluginNotInstalled,
     PluginStatus,
     PluginStoreAssets,
-    PluginStoreItemRequest,
 } from "../../../shared/interfaces/IPlugin";
 import axiosServices from "../services/axios";
-import alertHelper from "../helpers/alertHelpers";
 import { PuffLoader } from "react-spinners";
-import wallet from "../assets/logo/plugins/Wallet.svg";
 import registry from "../assets/logo/plugins/Registry.svg";
 import webOnChain from "../assets/logo/plugins/webOnChain.svg";
 import notInstalled from "../assets/logo/plugins/notInstalledRed.png";
-import massaLogomark from "../assets/massa_logomark_detailed.png";
 import grid1 from "../assets/element/grid1.svg";
 import InstallPlugin from "../components/installPluginBlock";
 import Header from "../components/Header";
 import MainTitle from "../components/MainTitle";
 import { getOs } from "../services/getOs";
+
 function Manager() {
-const fakePluginsList: Plugin[] = [
+    const fakePluginsList: Plugin[] = [
         {
             name: "Web On Chain",
             description: "Buy your .massa domain and upload websites on the blockchain",
@@ -53,9 +49,8 @@ const fakePluginsList: Plugin[] = [
     async function getPluginsInfo() {
         try {
             const pluginsInfos = await axiosServices.getPluginsInfo();
-            let combinedPlugins = [ ...pluginsInfos.data];
-            setPlugins(combinedPlugins);
-            getPluginsInfoNotInstalled();
+            setPlugins(pluginsInfos.data);
+            getStorePlugins(pluginsInfos.data);
         } catch (error: any) {
             console.error("error", `Get plugins infos failed ,  error ${error.message} `);
         }
@@ -76,25 +71,25 @@ const fakePluginsList: Plugin[] = [
                 break;
         }
     };
-    async function getPluginsInfoNotInstalled() {
+    async function getStorePlugins(installedPlugins: Plugin[]) {
         try {
             // Get plugins that are not installed from the API
             const pluginsInfos = await axiosServices.getNotInstalledPlugins();
-            // Create an empty array to store the plugins
-            let combinedPlugins: Plugin[] = [];
             // Transform the data to the format we need
-            combinedPlugins = pluginsInfos.data.map( (element, index) => ({
+            const combinedPlugins = pluginsInfos.data.map((element, index) => ({
                 name: element.name,
                 description: element.description,
                 url: setDownloadLinkForPlatform(element.assets),
                 logo: notInstalled,
                 status: PluginStatus.NotInstalled,
-                id: 1000+index.toString(),
+                id: 1000 + index.toString(),
                 home: "",
                 isNotInstalled: true,
-                isFake:false,
+                isFake: false,
 
-            }));
+            }))
+                // filter already installed based on the name
+                .filter(p => !installedPlugins.map(p => p.name).includes(p.name));
             // Store the plugins in the state
             setPluginsNotInstalled(combinedPlugins);
         } catch (error: any) {
@@ -102,7 +97,7 @@ const fakePluginsList: Plugin[] = [
         }
     }
 
-// Create a loop to fetch getPluginsInfo and update the status
+    // Create a loop to fetch getPluginsInfo and update the status
     useEffect(() => {
         //Initialize Ui on first render
         getPluginsInfo();
@@ -117,7 +112,7 @@ const fakePluginsList: Plugin[] = [
         return () => clearInterval(interval);
     }, []);
 
-    const mapPluginList = (pluginsList : Plugin []) => {        
+    const mapPluginList = (pluginsList: Plugin[]) => {
         return pluginsList.filter((p) => !!p.name).sort((a, b) => a.name.localeCompare(b.name)).map((plugin) => {
             return (
                 <PluginBlock plugin={plugin} getPluginsInfo={getPluginsInfo} />
@@ -141,24 +136,26 @@ const fakePluginsList: Plugin[] = [
                             setColsLength(plugins.length + fakePluginsList.length)
                         }
                     >
-                        {plugins?.length ? <>{mapPluginList(fakePluginsList)} {mapPluginList(plugins)} </>  : (
+                        {plugins?.length ? <>{mapPluginList(fakePluginsList)} {mapPluginList(plugins)} </> : (
                             <PuffLoader color="font" />
                         )}
                         <InstallPlugin plugins={plugins} getPluginsInfo={getPluginsInfo} />
                     </div>
                     <div className="divider mx-auto mt-8 w-2/3" />
-                    <p className="Secondary mt-12 text-font ml-6">Not installed</p>
+                    {pluginsNotInstalled.length ?
+                        (<p className="Secondary mt-12 text-font ml-6">Plugin Store</p>)
+                        : (<></>)
+                    }
                     <div
                         className={
                             "grid grid-flow-row-dense w-[1307px] mx-auto my-3 gap-4 xs:max-xl:grid-cols-2 ml-6 xl: " +
                             setColsLength(pluginsNotInstalled.length)
                         }
                     >
-                        {pluginsNotInstalled?.length ?  mapPluginList(pluginsNotInstalled) : (
-                            <PuffLoader />
-                        )}
+                        {mapPluginList(pluginsNotInstalled)}
                     </div>
                 </div>
+
             </div>
         </div>
     );
