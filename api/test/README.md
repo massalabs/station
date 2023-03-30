@@ -4,11 +4,7 @@ This directory contains tests for the API.
 
 ## Prerequisites
 
-To run the tests, you need to have the following installed:
-- [Python 3](https://www.python.org/downloads/)
-- [Pip](https://pip.pypa.io/en/stable/installation/)
-- [Robot Framework](https://robotframework.org/)
-- [Requests Library](http://marketsquare.github.io/robotframework-requests/)
+The tests are written using the [Robot Framework](https://robotframework.org/) and the [Requests Library](http://marketsquare.github.io/robotframework-requests/). To install the dependencies, you need to have [Python 3](https://www.python.org/downloads/) and [Pip](https://pip.pypa.io/en/stable/installation/) installed.
 
 Once you have `Python 3` and `Pip` installed, you can install the others dependencies by running the following command:
 
