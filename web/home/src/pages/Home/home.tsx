@@ -43,6 +43,38 @@ function Home() {
       status: 'Up',
       home: '/thyra/registry',
     },
+    {
+      name: "Registryze",
+      description: "Browse Massa blockchain and its .massa websites",
+      id: "423",
+      logo: registry,
+      status: PluginStatus.Up,
+      home: "/thyra/registry",
+  },
+  {
+      name: "Registrya",
+      description: "Browse Massa blockchain and its .massa websites",
+      id: "423",
+      logo: registry,
+      status: PluginStatus.Up,
+      home: "/thyra/registry",
+  },
+  {
+      name: "Registryz",
+      description: "Browse Massa blockchain and its .massa websites",
+      id: "423",
+      logo: registry,
+      status: PluginStatus.Up,
+      home: "/thyra/registry",
+  },
+  {
+      name: "Registryqq",
+      description: "Browse Massa blockchain and its .massa websites",
+      id: "423",
+      logo: registry,
+      status: PluginStatus.Up,
+      home: "/thyra/registry",
+  },
   ];
 
   const handleOpenPlugin = (pluginName: string) => {
@@ -70,23 +102,18 @@ function Home() {
     return res.data;
   };
 
-  // Add the fake plugins
-
+    // Contains the list of plugins populated by fakeplugins
   const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
-
-  // fetch plugins every 10 seconds
-  useEffect(() => {
-    // used to check if plugin list has changed
-    let previousFetch: PluginHomePage[] = [];
-    // fetch plugins
-    const interval = setInterval(() => {
-      getPlugins()
+  // Keep track of the previous fetch
+  const [previousFetch , setPreviousFetch ] = useState<PluginHomePage[]>([]);
+  const displayPlugins = () => {
+    getPlugins()
         .then((res: PluginHomePage[]) => {
           let combinedPlugins: PluginHomePage[] = [...fakePluginsList, ...res];
           // If the list of plugins has changed, update the state
           if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
             setPlugins(combinedPlugins);
-            previousFetch = res;
+            setPreviousFetch(res);
           }
         })
         .catch((err) => {
@@ -96,6 +123,13 @@ function Home() {
             previousFetch.length > 0 ? previousFetch : fakePluginsList,
           );
         });
+  }
+  // fetch plugins every 10 seconds
+  useEffect(() => {
+    displayPlugins();
+    // fetch plugins
+    const interval = setInterval(() => {
+      displayPlugins();
     }, 10000);
 
     return () => clearInterval(interval);
@@ -136,34 +170,35 @@ function Home() {
   const setColsLength = (length: number) => {
     const cols = length > 3 ? 'grid-cols-4 ' : ' grid-cols-3 ';
     return (
-      'max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:' +
-      cols
+      'max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 max-xl:grid-cols-4 xl:grid-cols-4'
     );
   };
 
   return (
+    <div>
+
     <div
       className=" min-h-screen bg-img"
       style={{ backgroundImage: `url(${grid1})` }}
     >
       <Header />
 
-      <MainTitle title="Which Plugins" />
 
       {/* Display the plugins in a grid */}
-      <div className="mx-auto max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] xl:w-[1280px]">
+      <div className="mx-auto max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] max-xl:w-[1024px] xl:w-[1280px]">
+      <MainTitle title="Which Plugins" />
         <div
           className={
-            'grid grid-flow-row-dense w-[1650px] grid-cols-4 mx-auto mt-6 gap-4 ' +
-            setColsLength(plugins.length + fakePluginsList.length) +
-            ' max-sm:w-[300px] sm:w-[640px] md:w-[720px] lg:w-[980px] max-xl:grid-cols-3 w-[1280px] xl:w-[1280px]'
+            'grid grid-cols-4 mt-6 gap-4 w-full ' +
+            setColsLength(plugins.length + fakePluginsList.length) 
           }
+          style={{ justifyItems: 'center' }}
         >
           {mapPluginList()}
-          <ManagePluginCard />
         </div>
       </div>
     </div>
+            </div>
   );
 }
 

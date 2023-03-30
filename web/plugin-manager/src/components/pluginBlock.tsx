@@ -99,7 +99,7 @@ function PluginBlock(props: PluginProps) {
 
     return (
         <div
-            className="flex flex-col justify-center items-start p-6 gap-4 w-80 h-56 
+            className="flex flex-col justify-center items-start p-6 gap-4 w-72 h-56 
                     border-[1px] border-solid border-border rounded-2xl bg-bgCard "
         >
             {/* First block Display plugin name and description */}
@@ -119,12 +119,12 @@ function PluginBlock(props: PluginProps) {
             <div className="flex">
                 {/* Delete hidden when version will be send through the API */}
                 <p className="hidden text3 text-font">V: {props.plugin.version ?? "0.0.0"}</p>
-                <div className="flex w-64 content-between justify-between mx-auto gap-4">
+                <div className="flex w-full content-between justify-between mx-auto gap-4">
                     {props.plugin.isNotInstalled ? (
                         <SecondaryButton
                             label={"Download"}
                             onClick={downloadPlugins}
-                            width={"w-64"}
+                            width={"w-full"}
                         />
                     ) : (
                         <>

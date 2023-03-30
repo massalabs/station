@@ -18,8 +18,8 @@ export const PluginCard = (props: Props) => {
   return (
     <div
       onClick={handleCardClick}
-      className="flex flex-col justify-center items-start p-5 gap-4 w-64 h-72 
-                    border-[1px] border-solid border-border rounded-2xl bg-bgCard cursor-pointer hover:bg-hoverbgCard"
+      className="flex flex-col justify-center items-start p-6 gap-4 w-72 h-56 
+      border-[1px] border-solid border-border rounded-2xl bg-bgCard hover:bg-hoverbgCard"
     >
       <img
         src={props.plugin.logo}

@@ -42,6 +42,30 @@ function Manager() {
             home: "/thyra/registry",
             isFake: true,
         },
+        {
+            name: "Registrya",
+            description: "Browse Massa blockchain and its .massa websites",
+            id: "423",
+            logo: registry,
+            status: PluginStatus.Up,
+            home: "/thyra/registry",
+        },
+        {
+            name: "Registryz",
+            description: "Browse Massa blockchain and its .massa websites",
+            id: "423",
+            logo: registry,
+            status: PluginStatus.Up,
+            home: "/thyra/registry",
+        },
+        {
+            name: "Registryqq",
+            description: "Browse Massa blockchain and its .massa websites",
+            id: "423",
+            logo: registry,
+            status: PluginStatus.Up,
+            home: "/thyra/registry",
+        },
     ];
     const [plugins, setPlugins] = useState<Plugin[]>([]);
     const [pluginsNotInstalled, setPluginsNotInstalled] = useState<Plugin[]>([]);
@@ -126,12 +150,10 @@ function Manager() {
     };
 
     const setColsLength = (length: number) => {
+        console.log(length)
         const cols = length > 3 ? "grid-cols-4" : " grid-cols-3";
         return (
-            "max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 " +
-            cols +
-            " xl: " +
-            cols
+            'max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-xl:grid-cols-4'
         );
 
     };
@@ -139,29 +161,34 @@ function Manager() {
         <div>
             <div className=" min-h-screen bg-img" style={{ backgroundImage: `url(${grid1})` }}>
                 <Header />
+                <div className="mx-auto 
+                w-fit
+                max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] max-xl:w-[1024px] xl:w-[1280px]"
+                >
                 <MainTitle title="Plugin Manager" />
-                <div className="mx-auto max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] xl:w-[1280px]">
-                    <p className="Secondary mt-24 text-font ml-6">Installed</p>
+                    <p className="Secondary mt-2 text-font ml-6">Installed</p>
                     <div
                         className={
-                            "grid grid-flow-row-dense w-[1444px] mx-auto mt-3 gap-4 grid-cols-2 " +
-                            setColsLength(plugins.length + fakePluginsList.length) +
-                            " max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] xl:w-[1280px]"
+                            "grid grid-flow-row-dense mx-auto mt-3 gap-4 grid-cols-4 " +
+                            setColsLength(plugins.length + fakePluginsList.length) 
+                            // +
+                            // " max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] xl:w-[1280px]"
                         }
                     >
-                        <>
+                        
                             {mapPluginList(fakePluginsList)}
                             {mapPluginList(plugins)}
-                        </>
+                        
                         <InstallPlugin plugins={plugins} getPluginsInfo={getPluginsInfo} />
                     </div>
-                    <div className="divider mx-auto mt-8 w-2/3" />
+                    <div className="divider mx-auto mt-8 w-3/4" />
                     <p className="Secondary mt-12 text-font ml-6">Not installed</p>
                     <div
                         className={
-                            "grid grid-flow-row-dense w-[1444px] mx-auto mt-3 gap-4 grid-cols-2 " +
-                            setColsLength(pluginsNotInstalled.length) +
-                            " max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] xl:w-[1280px]"
+                            "grid grid-flow-row-dense mx-auto mt-3 gap-4 grid-cols-4 " +
+                            setColsLength(pluginsNotInstalled.length) 
+                            // +
+                            // " max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] xl:w-[1280px]"
                         }
                     >
                         {pluginsNotInstalled?.length ? (
