@@ -3,7 +3,10 @@ import { useEffect, useState } from 'react';
 import massaLogomark from '../../assets/massa_logomark_detailed.png';
 
 import axios from 'axios';
-import { PluginHomePage , PluginStatus } from '../../../../shared/interfaces/IPlugin';
+import {
+  PluginHomePage,
+  PluginStatus,
+} from '../../../../shared/interfaces/IPlugin';
 import { PluginCard } from '../../components/pluginCard';
 
 import Header from '../../components/Header';
@@ -30,7 +33,7 @@ function Home() {
       id: '421',
       logo: webOnChain,
       status: 'Up',
-      home: '/thyra/websiteCreator'
+      home: '/thyra/websiteCreator',
     },
     {
       name: 'Registry',
@@ -38,7 +41,23 @@ function Home() {
       id: '423',
       logo: registry,
       status: 'Up',
-      home: '/thyra/registry'
+      home: '/thyra/registry',
+    },
+    {
+      name: 'Registrvy',
+      description: 'Browse Massa blockchain and its .massa websites',
+      id: '423',
+      logo: registry,
+      status: 'Up',
+      home: '/thyra/registry',
+    },
+    {
+      name: 'Registrya',
+      description: 'Browse Massa blockchain and its .massa websites',
+      id: '423',
+      logo: registry,
+      status: 'Up',
+      home: '/thyra/registry',
     },
   ];
 
@@ -54,7 +73,7 @@ function Home() {
       return 'error';
     }
   };
-  
+
   // List of plugins
   const getPlugins = async () => {
     const init = {
@@ -67,7 +86,7 @@ function Home() {
     return res.data;
   };
 
-// Add the fake plugins
+  // Add the fake plugins
 
   const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
 
@@ -77,76 +96,91 @@ function Home() {
     let previousFetch: PluginHomePage[] = [];
     // fetch plugins
     const interval = setInterval(() => {
-      getPlugins().then((res: PluginHomePage[]) => {
-        let combinedPlugins: PluginHomePage[] = [
-          ...fakePluginsList,
-          ...res,
-        ];
-        // If the list of plugins has changed, update the state
-        if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
-          setPlugins(combinedPlugins);
-          previousFetch = res;
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        // If there is an error, use the previous list
-        setPlugins((previousFetch) =>
-          previousFetch.length > 0
-            ? previousFetch
-            : fakePluginsList
-        );
-      });
-
+      getPlugins()
+        .then((res: PluginHomePage[]) => {
+          let combinedPlugins: PluginHomePage[] = [...fakePluginsList, ...res];
+          // If the list of plugins has changed, update the state
+          if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
+            setPlugins(combinedPlugins);
+            previousFetch = res;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          // If there is an error, use the previous list
+          setPlugins((previousFetch) =>
+            previousFetch.length > 0 ? previousFetch : fakePluginsList,
+          );
+        });
     }, 10000);
 
     return () => clearInterval(interval);
   }, []);
 
-const mapPluginList = () => {
-  return plugins.map((plugin) => {
-    if (plugin.status == PluginStatus.Starting || plugin.status == PluginStatus.Up){
-      return (
-        <PluginCard
-          {...{
-            plugin: {
-              id: plugin.id,
-              logo: plugin.logo ? plugin.logo : massaLogomark,
-              name: plugin ? plugin.name : 'Plugin Problem',
-              description: plugin.description
-                ? plugin.description
-                : 'Plugin Problem',
-              status: plugin.status ? plugin.status : 'Plugin Problem',
-            },
-            handleOpenPlugin: handleOpenPlugin,
-            key: plugin.id,
-          }}
-        />
-      );
-    }
-    else{
-      return (<></>)
-    }
-  })
+  const mapPluginList = () => {
+    return plugins
+      .filter((p) => !!p.name)
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((plugin) => {
+        if (
+          plugin.status == PluginStatus.Starting ||
+          plugin.status == PluginStatus.Up
+        ) {
+          return (
+            <PluginCard
+              {...{
+                plugin: {
+                  id: plugin.id,
+                  logo: plugin.logo ? plugin.logo : massaLogomark,
+                  name: plugin ? plugin.name : 'Plugin Problem',
+                  description: plugin.description
+                    ? plugin.description
+                    : 'Plugin Problem',
+                  status: plugin.status ? plugin.status : 'Plugin Problem',
+                },
+                handleOpenPlugin: handleOpenPlugin,
+                key: plugin.id,
+              }}
+            />
+          );
+        } else {
+          return <></>;
+        }
+      });
+  };
 
-}
+  const setColsLength = (length: number) => {
+    const cols = length > 3 ? 'grid-cols-4 ' : ' grid-cols-3 ';
+    return (
+      'max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:' +
+      cols
+    );
+  };
 
-return (
-  <div
-    className=" min-h-screen bg-img"
-    style={{ backgroundImage: `url(${grid1})` }}
-  >
-    <Header />
+  return (
+    <div
+      className=" min-h-screen bg-img"
+      style={{ backgroundImage: `url(${grid1})` }}
+    >
+      <Header />
 
-    <MainTitle title="Which Plugins" />
+      <MainTitle title="Which Plugins" />
 
-    {/* Display the plugins in a grid */}
-    <div className="mt-24 gap-8 grid mx-auto w-fit rounded-lg grid-cols-4 place-items-center max-lg:grid-cols-3">
-      {mapPluginList()}
-      <ManagePluginCard />
+      {/* Display the plugins in a grid */}
+      <div className="mx-auto max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] xl:w-[1280px]">
+        <div
+          className={
+            'grid grid-flow-row-dense w-[1650px] grid-cols-4 mx-auto mt-6 gap-4 ' +
+            setColsLength(plugins.length + fakePluginsList.length) +
+            ' max-sm:w-[300px] sm:w-[640px] md:w-[720px] lg:w-[980px] max-xl:grid-cols-3 w-[1280px] xl:w-[1280px]'
+          }
+        >
+          {mapPluginList()}
+          <ManagePluginCard />
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
 }
 
 export default Home;
