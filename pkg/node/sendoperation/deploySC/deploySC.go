@@ -41,7 +41,7 @@ func Handler(params operations.CmdDeploySCParams) middleware.Responder {
 		decodedDatastore = nil
 	}
 
-	address, err := onchain.DeploySCV2(client,
+	address, err := onchain.DeploySC(client,
 		params.WalletNickname,
 		*params.GazLimit,
 		*params.Coins,

@@ -1,16 +1,15 @@
 package plugin
 
 import (
+	"crypto/rand"
 	"fmt"
 	"log"
-	weakRand "math/rand"
+	"math/big"
 	"os"
 	"path"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/cavaliergopher/grab/v3"
 	"github.com/massalabs/thyra/pkg/config"
@@ -45,7 +44,6 @@ type Manager struct {
 
 // NewManager instantiates a manager struct.
 func NewManager() (*Manager, error) {
-	weakRand.Seed(time.Now().Unix())
 	//nolint:exhaustruct
 	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string)}
 
@@ -57,7 +55,7 @@ func NewManager() (*Manager, error) {
 	return manager, nil
 }
 
-// ID returns the list of all the plugin id.
+// ID returns the list of all the plugin correlationID.
 func (m *Manager) ID() []string {
 	keys := make([]string, len(m.plugins))
 
@@ -73,31 +71,29 @@ func (m *Manager) ID() []string {
 
 // SetAlias adds an alias to an existing plugin.
 // Alias can be defined during plugin register once the name and author of the plugin can be found.
-//
-//nolint:varnamelen
-func (m *Manager) SetAlias(alias string, id string) error {
+func (m *Manager) SetAlias(alias string, correlationID string) error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	if m.plugins[id] == nil {
-		return fmt.Errorf("while setting alias for %s: no plugin matching the given id %s", alias, id)
+	if m.plugins[correlationID] == nil {
+		return fmt.Errorf("while setting alias for %s: no plugin matching the given correlationID %s", alias, correlationID)
 	}
 
 	registeredID, exist := m.authorNameToID[alias]
-	if exist && registeredID != id {
+	if exist && registeredID != correlationID {
 		return fmt.Errorf("while setting alias for %s: a plugin with the same alias already exists", alias)
 	}
 
-	m.authorNameToID[alias] = id
+	m.authorNameToID[alias] = correlationID
 
 	return nil
 }
 
 // PluginByAlias returns a plugin from the manager using an alias.
 func (m *Manager) PluginByAlias(alias string) (*Plugin, error) {
-	id, exist := m.authorNameToID[alias]
+	correlationID, exist := m.authorNameToID[alias]
 	if exist {
-		p, err := m.Plugin(id)
+		p, err := m.Plugin(correlationID)
 		if err != nil {
 			return nil, fmt.Errorf("getting plugin by alias %w", err)
 		}
@@ -109,27 +105,23 @@ func (m *Manager) PluginByAlias(alias string) (*Plugin, error) {
 }
 
 // Plugin returns a plugin from the manager.
-//
-//nolint:varnamelen
-func (m *Manager) Plugin(id string) (*Plugin, error) {
+func (m *Manager) Plugin(correlationID string) (*Plugin, error) {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
 
-	p, ok := m.plugins[id]
+	p, ok := m.plugins[correlationID]
 	if !ok {
-		return nil, fmt.Errorf("no plugin matching id %s", id)
+		return nil, fmt.Errorf("no plugin matching correlationID %s", correlationID)
 	}
 
 	return p, nil
 }
 
 // Delete kills a plugin and remove it from the manager.
-//
-//nolint:varnamelen
-func (m *Manager) Delete(id string) error {
-	plgn, err := m.Plugin(id)
+func (m *Manager) Delete(correlationID string) error {
+	plgn, err := m.Plugin(correlationID)
 	if err != nil {
-		return fmt.Errorf("deleting plugin %s: %w", id, err)
+		return fmt.Errorf("deleting plugin %s: %w", correlationID, err)
 	}
 
 	m.mutex.Lock()
@@ -142,45 +134,46 @@ func (m *Manager) Delete(id string) error {
 
 	delete(m.authorNameToID, alias)
 
-	delete(m.plugins, id)
+	delete(m.plugins, correlationID)
 
 	m.mutex.Unlock()
 
 	err = os.RemoveAll(filepath.Dir(plgn.BinPath))
 	if err != nil {
-		return fmt.Errorf("deleting plugin %s: %w", id, err)
+		return fmt.Errorf("deleting plugin %s: %w", correlationID, err)
 	}
 
 	return nil
 }
 
-// generateCorrelationID generate a unique correlation id.
+// generateCorrelationID generate a unique correlation correlationID.
 func (m *Manager) generateCorrelationID() string {
 	for {
-		//nolint:varnamelen
-		id := strconv.Itoa(weakRand.Int())
+		var maxInt int64 = 10_000
+		idInteger, _ := rand.Int(rand.Reader, big.NewInt(maxInt))
 
-		_, exist := m.plugins[id]
+		correlationID := idInteger.String()
+
+		_, exist := m.plugins[correlationID]
 		if exist {
 			continue
 		}
 
-		return id
+		return correlationID
 	}
 }
 
 // InitPlugin starts new plugin and adds it to manager.
 func (m *Manager) InitPlugin(binPath string) error {
-	//nolint:varnamelen
-	id := m.generateCorrelationID()
+	correlationID := m.generateCorrelationID()
 
-	plugin, err := New(binPath, id)
+	plugin, err := New(binPath, correlationID)
 	if err != nil {
 		return err
 	}
 
 	m.mutex.Lock()
-	m.plugins[id] = plugin
+	m.plugins[correlationID] = plugin
 	m.mutex.Unlock()
 
 	return nil

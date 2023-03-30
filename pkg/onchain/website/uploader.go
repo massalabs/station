@@ -9,7 +9,7 @@ import (
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
-	"github.com/massalabs/thyra/pkg/node/sendoperation"
+	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
 	"github.com/massalabs/thyra/pkg/wallet"
@@ -39,7 +39,16 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	}
 
 	// Prepare address to webstorage.
-	deploymentEvent, err := onchain.DeploySC(client, *wallet, websiteStorer)
+	deploymentEvent, err := onchain.DeploySC(
+		client,
+		wallet.Nickname,
+		sendOperation.DefaultGazLimit,
+		sendOperation.NoCoin,
+		sendOperation.NoFee,
+		sendOperation.DefaultSlotsDuration,
+		websiteStorer,
+		nil,
+	)
 	if err != nil {
 		return "", fmt.Errorf("deploying webstorage SC: %w", err)
 	}
@@ -77,7 +86,7 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wal
 	operations := make([]string, len(chunks)+1)
 
 	opID, err := onchain.CallFunction(client, wallet, addr, "initializeWebsite", convert.U64ToBytes(len(chunks)),
-		sendoperation.OneMassa)
+		sendOperation.OneMassa)
 	if err != nil {
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
 	}
