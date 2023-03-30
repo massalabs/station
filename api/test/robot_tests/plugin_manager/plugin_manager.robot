@@ -72,6 +72,7 @@ GET /thyra/plugin/{author}/{name}/
 
 # We can register multiple times the same plugin, but the aliases list isn't updated correctly.
 # This causes the previous plugin alias to be considered as still valid.
+# TODO: Uncomment this test and make sure it passes once https://github.com/massalabs/thyra/issues/574 is fixed.
 # POST /plugin-manager/register
 #    ${id}=    Get Plugin ID From Author and Name    massalabs    hello world
 #    ${data}=    Create Dictionary
