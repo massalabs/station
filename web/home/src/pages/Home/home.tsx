@@ -43,22 +43,6 @@ function Home() {
       status: 'Up',
       home: '/thyra/registry',
     },
-    {
-      name: 'Registrvy',
-      description: 'Browse Massa blockchain and its .massa websites',
-      id: '423',
-      logo: registry,
-      status: 'Up',
-      home: '/thyra/registry',
-    },
-    {
-      name: 'Registrya',
-      description: 'Browse Massa blockchain and its .massa websites',
-      id: '423',
-      logo: registry,
-      status: 'Up',
-      home: '/thyra/registry',
-    },
   ];
 
   const handleOpenPlugin = (pluginName: string) => {
