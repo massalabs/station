@@ -109,10 +109,10 @@ function PluginBlock(props: PluginProps) {
                     <TogglePlugin handleChange={launchOrStop} checked={isPluginUp} />
                 )}
             </div>
-            <div className="w-full">
-                <h1 className="label2 text-font">{minimize(props.plugin.name, 90)}</h1>
-                <p className="text3 text-font max-sm:text-sm">
-                    {minimize(props.plugin.description, 100)}
+            <div className="w-full h-16">
+                <h1 className="label2 text-font h-8">{minimize(props.plugin.name, 17)}</h1>
+                <p className="text3 text-font h-8 max-sm:text-sm">
+                    {minimize(props.plugin.description, 80)}
                 </p>
             </div>
             {/* Second Block with Icons  */}

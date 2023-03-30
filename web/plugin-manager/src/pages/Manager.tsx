@@ -21,7 +21,7 @@ import Header from "../components/Header";
 import MainTitle from "../components/MainTitle";
 import { getOs } from "../services/getOs";
 function Manager() {
-const fakePluginsList: Plugin[] = [
+    const fakePluginsList: Plugin[] = [
         {
             name: "Web On Chain",
             description: "Buy your .massa domain and upload websites on the blockchain",
@@ -53,7 +53,7 @@ const fakePluginsList: Plugin[] = [
     async function getPluginsInfo() {
         try {
             const pluginsInfos = await axiosServices.getPluginsInfo();
-            let combinedPlugins = [ ...pluginsInfos.data];
+            let combinedPlugins = [...pluginsInfos.data];
             setPlugins(combinedPlugins);
             getPluginsInfoNotInstalled();
         } catch (error: any) {
@@ -83,17 +83,16 @@ const fakePluginsList: Plugin[] = [
             // Create an empty array to store the plugins
             let combinedPlugins: Plugin[] = [];
             // Transform the data to the format we need
-            combinedPlugins = pluginsInfos.data.map( (element, index) => ({
+            combinedPlugins = pluginsInfos.data.map((element, index) => ({
                 name: element.name,
                 description: element.description,
                 url: setDownloadLinkForPlatform(element.assets),
                 logo: notInstalled,
                 status: PluginStatus.NotInstalled,
-                id: 1000+index.toString(),
+                id: 1000 + index.toString(),
                 home: "",
                 isNotInstalled: true,
-                isFake:false,
-
+                isFake: false,
             }));
             // Store the plugins in the state
             setPluginsNotInstalled(combinedPlugins);
@@ -102,7 +101,7 @@ const fakePluginsList: Plugin[] = [
         }
     }
 
-// Create a loop to fetch getPluginsInfo and update the status
+    // Create a loop to fetch getPluginsInfo and update the status
     useEffect(() => {
         //Initialize Ui on first render
         getPluginsInfo();
@@ -117,44 +116,57 @@ const fakePluginsList: Plugin[] = [
         return () => clearInterval(interval);
     }, []);
 
-    const mapPluginList = (pluginsList : Plugin []) => {        
-        return pluginsList.filter((p) => !!p.name).sort((a, b) => a.name.localeCompare(b.name)).map((plugin) => {
-            return (
-                <PluginBlock plugin={plugin} getPluginsInfo={getPluginsInfo} />
-            );
-        });
+    const mapPluginList = (pluginsList: Plugin[]) => {
+        return pluginsList
+            .filter((p) => !!p.name)
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((plugin) => {
+                return <PluginBlock plugin={plugin} getPluginsInfo={getPluginsInfo} />;
+            });
     };
 
     const setColsLength = (length: number) => {
-        return length > 3 ? " grid-cols-4" : " grid-cols-3";
+        const cols = length > 3 ? "grid-cols-4" : " grid-cols-3";
+        return (
+            "max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 " +
+            cols +
+            " xl: " +
+            cols
+        );
+
     };
     return (
         <div>
             <div className=" min-h-screen bg-img" style={{ backgroundImage: `url(${grid1})` }}>
                 <Header />
                 <MainTitle title="Plugin Manager" />
-                <div className="w-[1307px] mx-auto">
+                <div className="mx-auto max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] xl:w-[1280px]">
                     <p className="Secondary mt-24 text-font ml-6">Installed</p>
                     <div
                         className={
-                            "grid grid-flow-row-dense w-[1307px] mx-auto mt-3 gap-4 xs:max-xl:grid-cols-2 ml-6 xl: " +
-                            setColsLength(plugins.length + fakePluginsList.length)
+                            "grid grid-flow-row-dense w-[1444px] mx-auto mt-3 gap-4 grid-cols-2 " +
+                            setColsLength(plugins.length + fakePluginsList.length) +
+                            " max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] xl:w-[1280px]"
                         }
                     >
-                        {plugins?.length ? <>{mapPluginList(fakePluginsList)} {mapPluginList(plugins)} </>  : (
-                            <PuffLoader color="font" />
-                        )}
+                        <>
+                            {mapPluginList(fakePluginsList)}
+                            {mapPluginList(plugins)}
+                        </>
                         <InstallPlugin plugins={plugins} getPluginsInfo={getPluginsInfo} />
                     </div>
                     <div className="divider mx-auto mt-8 w-2/3" />
                     <p className="Secondary mt-12 text-font ml-6">Not installed</p>
                     <div
                         className={
-                            "grid grid-flow-row-dense w-[1307px] mx-auto my-3 gap-4 xs:max-xl:grid-cols-2 ml-6 xl: " +
-                            setColsLength(pluginsNotInstalled.length)
+                            "grid grid-flow-row-dense w-[1444px] mx-auto mt-3 gap-4 grid-cols-2 " +
+                            setColsLength(pluginsNotInstalled.length) +
+                            " max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] xl:w-[1280px]"
                         }
                     >
-                        {pluginsNotInstalled?.length ?  mapPluginList(pluginsNotInstalled) : (
+                        {pluginsNotInstalled?.length ? (
+                            mapPluginList(pluginsNotInstalled)
+                        ) : (
                             <PuffLoader />
                         )}
                     </div>
