@@ -1,11 +1,13 @@
+import { PluginStatus } from "../../../shared/interfaces/IPlugin";
 export const isUp = (status: string) => {
     switch (status) {
-        case "Up":
-        case "Starting":
+        case PluginStatus.Up:
+        case PluginStatus.Starting:
             return true;
-        case "Down":
-        case "Stopping":
-        case "Error":
+        case PluginStatus.Down:
+        case PluginStatus.Stopping:
+        case PluginStatus.Error:
+        case PluginStatus.NotInstalled:
         default:
             return false;
     }

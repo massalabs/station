@@ -23,10 +23,12 @@
   border-color: hsl(var(--twc-secondaryButton));
 
 }
-.react-toggle-track-check{
-  width: 14px;
-  height: 14px;
+
+.react-toggle-track-check {
+  width: "14px";
+  height: "14px";
 }
+
 /* Background SVG for HomePage */
 .bg-img {
   background-position: bottom left;

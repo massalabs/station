@@ -1,9 +1,9 @@
 import { Store } from "pullstate";
 
 interface IUIStore {
-  theme: string;
+    theme: string;
 }
 
 export const UIStore = new Store<IUIStore>({
-  theme: "light",
+    theme: "light",
 });

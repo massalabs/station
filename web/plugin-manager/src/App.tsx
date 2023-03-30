@@ -1,13 +1,14 @@
-import "./App.css"
-import Manager from "./pages/Manager"
+import Manager from "./pages/Manager";
+import { UIStore } from "./store/UIStore";
 
 function App() {
-
-  return (
-    <div className="min-h-screen bg-slate-900">
-      <Manager/>
-    </div>
-  )
+    return (
+        <html className={"theme-" + UIStore.useState((s) => s.theme)}>
+            <div className="min-h-screen bg-primaryBG">
+                <Manager />
+            </div>
+        </html>
+    );
 }
 
-export default App
+export default App;

@@ -10,11 +10,9 @@ import Header from '../../components/Header';
 
 import ManagePluginCard from '../../components/managePluginCard';
 import grid1 from '../../assets/element/grid1.svg';
-import wallet from '../../assets/logo/plugins/Wallet.svg';
 import registry from '../../assets/logo/plugins/Registry.svg';
-import webOnChain from '../../assets/logo/plugins/WebOnChain.svg';
+import webOnChain from '../../assets/logo/plugins/webOnChain.svg';
 import MainTitle from '../../components/MainTitle';
-
 
 /**
  * Homepage of Thyra with a list of plugins installed
@@ -25,15 +23,6 @@ function Home() {
   // Fetch plugins installed by calling get /plugin/manager
 
   const fakePluginsList: PluginHomePage[] = [
-    {
-      name: "Massa's Wallet",
-      description:
-        'Create and manage your smart wallets to buy, sell, transfer and exchange tokens',
-      id: '420',
-      logo: wallet,
-      status: 'Up',
-      home: '/thyra/wallet'
-    },
     {
       name: 'Web On Chain',
       description:
@@ -52,7 +41,6 @@ function Home() {
       home: '/thyra/registry'
     },
   ];
-  const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
 
   const handleOpenPlugin = (pluginName: string) => {
     window.open(findPluginHome(pluginName));
@@ -78,77 +66,83 @@ function Home() {
     const res = await axios.get(`/plugin-manager`, init);
     return res.data;
   };
-  
-  // Add the fake plugins
+
+// Add the fake plugins
+
+  const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
+
+  // fetch plugins every 10 seconds
   useEffect(() => {
-    // Fetch the plugins on first render
+    // used to check if plugin list has changed
     let previousFetch: PluginHomePage[] = [];
-    getPlugins().then((res: PluginHomePage[]) => {
-      previousFetch = res;
-      res.forEach((element: PluginHomePage) => {
-        setPlugins((prev) => [...prev, element]);
+    // fetch plugins
+    const interval = setInterval(() => {
+      getPlugins().then((res: PluginHomePage[]) => {
+        let combinedPlugins: PluginHomePage[] = [
+          ...fakePluginsList,
+          ...res,
+        ];
+        // If the list of plugins has changed, update the state
+        if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
+          setPlugins(combinedPlugins);
+          previousFetch = res;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        // If there is an error, use the previous list
+        setPlugins(previousFetch);
       });
-    });
-    
-    setInterval(() => {
-    getPlugins().then((res : PluginHomePage[]) => {
-      let combinedPlugins = [ ...fakePluginsList, ...res];
-      // If the list of plugins has changed, update the state
-      if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
-        setPlugins(combinedPlugins);
-        previousFetch = res;
-      }
-    });
-      
+
     }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  const mapPluginList = () => {
-    return plugins.map((plugin) => {
-      if (plugin.status == PluginStatus.Starting || plugin.status == PluginStatus.Up){
-        return (
-          <PluginCard
-            {...{
-              plugin: {
-                id: plugin.id,
-                logo: plugin.logo ? plugin.logo : massaLogomark,
-                name: plugin ? plugin.name : 'Plugin Problem',
-                description: plugin.description
-                  ? plugin.description
-                  : 'Plugin Problem',
-                status: plugin.status ? plugin.status : 'Plugin Problem',
-              },
-              handleOpenPlugin: handleOpenPlugin,
-              key: plugin.id,
-            }}
-          />
-        );
-      }
-      else{
-        return (<></>)
-      }
-    })
-      
-  }
+const mapPluginList = () => {
+  return plugins.map((plugin) => {
+    if (plugin.status == PluginStatus.Starting || plugin.status == PluginStatus.Up){
+      return (
+        <PluginCard
+          {...{
+            plugin: {
+              id: plugin.id,
+              logo: plugin.logo ? plugin.logo : massaLogomark,
+              name: plugin ? plugin.name : 'Plugin Problem',
+              description: plugin.description
+                ? plugin.description
+                : 'Plugin Problem',
+              status: plugin.status ? plugin.status : 'Plugin Problem',
+            },
+            handleOpenPlugin: handleOpenPlugin,
+            key: plugin.id,
+          }}
+        />
+      );
+    }
+    else{
+      return (<></>)
+    }
+  })
 
-  return (
-    <div
-      className=" min-h-screen bg-img"
-      style={{ backgroundImage: `url(${grid1})` }}
-    >
-      <Header />
+}
 
-      <MainTitle title="Which Plugins" />
+return (
+  <div
+    className=" min-h-screen bg-img"
+    style={{ backgroundImage: `url(${grid1})` }}
+  >
+    <Header />
 
-      {/* Display the plugins in a grid */}
-      <div className="mt-24 gap-8 grid mx-auto w-fit rounded-lg grid-cols-4 place-items-center max-lg:grid-cols-3">
-        {mapPluginList()}
-        <>
-          <ManagePluginCard />
-        </>
-      </div>
+    <MainTitle title="Which Plugins" />
+
+    {/* Display the plugins in a grid */}
+    <div className="mt-24 gap-8 grid mx-auto w-fit rounded-lg grid-cols-4 place-items-center max-lg:grid-cols-3">
+      {mapPluginList()}
+      <ManagePluginCard />
     </div>
-  );
+  </div>
+);
 }
 
 export default Home;
