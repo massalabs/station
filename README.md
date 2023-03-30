@@ -44,12 +44,6 @@ To use this option with a constant, you have to execute :
 To use this option with a custom IP address, you have to execute :
 `thyra-server --node-server=192.168.X.X`
 
-### To code with auto-reload
-
-You can run the application with this command: `air`.
-
-It will generate and reload thyra each time a file is modified.
-
 
 ## Additional information
 
