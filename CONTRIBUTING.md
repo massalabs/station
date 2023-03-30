@@ -70,6 +70,11 @@ gci need to be installed locally `go install github.com/daixiang0/gci@latest`
 
 run gci locally on your source code `gci --write ./...`
 
+## Code with auto-reload
+
+You can run the application with this command: `air`.
+
+It will generate and reload thyra each time a file is modified.
 
 ## Ways to Contribute
 
