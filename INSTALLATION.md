@@ -6,7 +6,6 @@
   * [MacOS](#macos)
   * [Linux](#linux)
   * [Windows](#windows)
-* [Mobile](#mobile)
 
 ## Introduction
 
@@ -85,10 +84,5 @@ Congratulation, your version of Thyra is now installed on your system and you ca
 
 You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](https://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/wallet) right away!
-
-
-### Mobile 
-
-Coming soon, [stay tuned!](discord.gg/massa) 
 
 
