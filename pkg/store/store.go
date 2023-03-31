@@ -17,8 +17,8 @@ type Plugin struct {
 	Assets      struct {
 		Windows    File `json:"windows"`
 		Linux      File `json:"linux"`
-		MacosArm64 File `json:"macos_arm64"`
-		MacosAmd64 File `json:"macos_amd64"`
+		MacosArm64 File `json:"macos-arm64"`
+		MacosAmd64 File `json:"macos-amd64"`
 	} `json:"assets"`
 	Version string `json:"version"`
 	URL     string `json:"url"`
