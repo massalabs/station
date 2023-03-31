@@ -110,7 +110,7 @@ function PluginBlock(props: PluginProps) {
                 )}
             </div>
             <div className="w-full h-16">
-                <h1 className="label2 text-font h-8">{minimize(props.plugin.name, 17)}</h1>
+                <h1 className="label2 text-font h-8">{minimize(props.plugin.name, 15)}</h1>
                 <p className="text3 text-font h-8 max-sm:text-sm">
                     {minimize(props.plugin.description, 80)}
                 </p>

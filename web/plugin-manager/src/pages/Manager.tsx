@@ -20,7 +20,7 @@ import InstallPlugin from "../components/installPluginBlock";
 import Header from "../components/Header";
 import MainTitle from "../components/MainTitle";
 import { getOs } from "../services/getOs";
-import {gridStyle , defineGridStyle} from "../../../shared/styles/grid";
+import { gridStyle, defineGridStyle } from "../../../shared/styles/grid";
 function Manager() {
     const fakePluginsList: Plugin[] = [
         {
@@ -56,7 +56,7 @@ function Manager() {
             const pluginsInfos = await axiosServices.getPluginsInfo();
             let combinedPlugins = [...pluginsInfos.data];
             setPlugins(combinedPlugins);
-            getPluginsInfoNotInstalled();
+            getStorePlugins(combinedPlugins);
         } catch (error: any) {
             console.error("error", `Get plugins infos failed ,  error ${error.message} `);
         }
@@ -74,10 +74,11 @@ function Manager() {
             case "linux":
                 return pluginStoreItem.linux.url;
             default:
+                console.error("Platform not supported");
                 break;
         }
     };
-    async function getPluginsInfoNotInstalled() {
+    async function getStorePlugins(installedPlugins: Plugin[]) {
         try {
             // Get plugins that are not installed from the API
             const pluginsInfos = await axiosServices.getNotInstalledPlugins();
@@ -94,7 +95,8 @@ function Manager() {
                 home: "",
                 isNotInstalled: true,
                 isFake: false,
-            }));
+            }))                // filter already installed based on the name
+            .filter(p => !installedPlugins.map(p => p.name).includes(p.name));;
             // Store the plugins in the state
             setPluginsNotInstalled(combinedPlugins);
         } catch (error: any) {
@@ -120,9 +122,9 @@ function Manager() {
         return () => clearInterval(interval);
     }, []);
 
-    const mapPluginList = (pluginsList: Plugin[], pluginListToCompare: Plugin[] = []) => {
+    const mapPluginList = (pluginsList: Plugin[]) => {
         return pluginsList
-            .filter((p) => !!p.name).filter((p) => !pluginListToCompare.find((p2) => p2.name === p.name))
+            .filter((p) => !!p.name)
             .sort((a, b) => a.name.localeCompare(b.name))
             .map((plugin) => {
                 return <PluginBlock plugin={plugin} getPluginsInfo={getPluginsInfo} />;
@@ -131,48 +133,34 @@ function Manager() {
 
     const defineGridStyle = (length: number) => {
         let styles = gridStyle;
-        return styles += (length <= 3 ? " grid-cols-3 "  : setResponsiveGrid);
+        return (styles += length <= 3 ? " grid-cols-3 " : setResponsiveGrid);
     };
-    const gridStyle = " grid grid-flow-row mx-auto mt-3 gap-4 grid-cols-4"
-    
-    
-    const setResponsiveGrid = " max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-xl:grid-cols-4 "
+    const gridStyle = " grid grid-flow-row mx-auto mt-3 gap-4 grid-cols-4";
+
+    const setResponsiveGrid =
+        " max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-xl:grid-cols-4 ";
 
     return (
         <div>
             <div className=" min-h-screen bg-img" style={{ backgroundImage: `url(${grid1})` }}>
                 <Header />
-                <div className="mx-auto 
+                <div
+                    className="mx-auto 
                 w-fit
                 max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] max-xl:w-[1024px] xl:w-[1280px]"
                 >
-                <MainTitle title="Plugin Manager" />
+                    <MainTitle title="Plugin Manager" />
                     <p className="Secondary mt-2 text-font ml-6">Installed</p>
-                    <div
-                        className={
-                            
-                            defineGridStyle(plugins.length+fakePluginsList.length)
-                        }
-                    >
-                        
-                            {mapPluginList(fakePluginsList)}
-                            {mapPluginList(plugins)}
-                        
+                    <div className={defineGridStyle(plugins.length + fakePluginsList.length)}>
+                        {mapPluginList(fakePluginsList)}
+                        {mapPluginList(plugins)}
+
                         <InstallPlugin plugins={plugins} getPluginsInfo={getPluginsInfo} />
                     </div>
                     <div className="divider mx-auto mt-8 w-3/4" />
-                    <p className="Secondary mt-12 text-font ml-6">Not installed</p>
-                    <div
-                        className={
-                            
-                            defineGridStyle(pluginsNotInstalled.length) 
-                        }
-                    >
-                        {pluginsNotInstalled?.length ? (
-                            mapPluginList(pluginsNotInstalled)
-                        ) : (
-                            <PuffLoader />
-                        )}
+                    <p className="Secondary mt-12 text-font ml-6">Plugin Store</p>
+                    <div className={defineGridStyle(pluginsNotInstalled.length)}>
+                        {mapPluginList(pluginsNotInstalled)}
                     </div>
                 </div>
             </div>

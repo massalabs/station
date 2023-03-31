@@ -4,7 +4,7 @@ export const getOs = () => {
         const platform = navigator.platform.toLowerCase();
 
         if (platform.includes("win")) {
-            return "win";
+            return "windows";
         } else if (platform.includes("mac") || platform.includes("darwin")) {
             if (userAgent.includes("intel")) {
                 return "macos amd64";

@@ -166,7 +166,6 @@ const setResponsiveGrid = " max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:
           className={
             defineGridStyle(plugins.length+fakePluginsList.length)
           }
-          style={{ justifyItems: 'center' }}
         >
           {mapPluginList()}
         </div>
