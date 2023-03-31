@@ -1234,9 +1234,9 @@ definitions:
             $ref: '#/definitions/File'
           linux:
             $ref: '#/definitions/File'
-          macos-arm64:
+          macos_arm64:
             $ref: '#/definitions/File'
-          macos-amd64:
+          macos_amd64:
             $ref: '#/definitions/File'
     required:
       - name

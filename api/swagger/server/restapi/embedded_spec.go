@@ -1722,10 +1722,10 @@ func init() {
             "linux": {
               "$ref": "#/definitions/File"
             },
-            "macos-amd64": {
+            "macos_amd64": {
               "$ref": "#/definitions/File"
             },
-            "macos-arm64": {
+            "macos_arm64": {
               "$ref": "#/definitions/File"
             },
             "windows": {
@@ -3572,10 +3572,10 @@ func init() {
             "linux": {
               "$ref": "#/definitions/File"
             },
-            "macos-amd64": {
+            "macos_amd64": {
               "$ref": "#/definitions/File"
             },
-            "macos-arm64": {
+            "macos_arm64": {
               "$ref": "#/definitions/File"
             },
             "windows": {
@@ -3603,10 +3603,10 @@ func init() {
         "linux": {
           "$ref": "#/definitions/File"
         },
-        "macos-amd64": {
+        "macos_amd64": {
           "$ref": "#/definitions/File"
         },
-        "macos-arm64": {
+        "macos_arm64": {
           "$ref": "#/definitions/File"
         },
         "windows": {
