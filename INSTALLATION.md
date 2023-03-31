@@ -43,8 +43,8 @@ By following these instructions, you will:
 
 
 🎉 Congratulations!! Your gate to Massa blockchain is now installed and you can start your massalian journey.
-You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](http://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](http://my.massa/thyra/wallet) right away!
+You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](https://flappy.massa) can help.
+If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/wallet) right away!
 
 
 #### Linux
