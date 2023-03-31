@@ -7,9 +7,11 @@ import Arrow6 from "../assets/pictos/arrow6.svg";
 import ArrowWhite6 from "../assets/pictos/ArrowWhite6.svg";
 import PrimaryButton from "./buttons/PrimaryButton";
 import SecondaryButton from "./buttons/SecondaryButton";
+import { BarLoader } from "react-spinners";
 
 function PluginBlock(props: PluginProps) {
     const [isPluginUp, setStatus] = useState(isUp(props.plugin.status));
+    const [isInstalling, setisInstalling] = useState(false)
     useEffect(() => setStatus(isUp(props.plugin.status)), [props.plugin.status]);
 
     // fetch info from plugin to get fresh data on demand
@@ -79,9 +81,11 @@ function PluginBlock(props: PluginProps) {
     async function downloadPlugins() {
         try {
             if (props.plugin.url === undefined) return console.error("Plugin url is undefined");
-            await axiosServices.installPlugin(props.plugin.url);
+            setisInstalling(true);
+            (await axiosServices.installPlugin(props.plugin.url)).status === (200 || 500) && setisInstalling(false);
             props.getPluginsInfo();
         } catch (error: any) {
+            setisInstalling(false);
             console.log(`Plugins failed to be downloaded , error ${error.message}`);
         }
     }
@@ -120,12 +124,13 @@ function PluginBlock(props: PluginProps) {
             <div className="flex w-full">
                 {/* Delete hidden when version will be send through the API */}
                 <div className="flex w-full content-between justify-between mx-auto gap-4">
-                    {props.plugin.isNotInstalled ? (
+                    {props.plugin.isNotInstalled ? (!isInstalling ? (
                         <SecondaryButton
                             label={"Download"}
                             onClick={downloadPlugins}
                             width={" w-full"}
-                        />
+                        />) :( 
+                            <BarLoader width={"100%"} color="hsl(var(--twc-brand))" />)
                     ) : (
                         <>
                             <PrimaryButton

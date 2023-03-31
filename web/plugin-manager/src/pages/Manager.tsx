@@ -72,10 +72,8 @@ function Manager() {
         try {
             // Get plugins that are not installed from the API
             const pluginsInfos = await axiosServices.getNotInstalledPlugins();
-            // Create an empty array to store the plugins
-            let combinedPlugins: Plugin[] = [];
             // Transform the data to the format we need
-            combinedPlugins = pluginsInfos.data
+            const combinedPlugins = pluginsInfos.data
                 .map((element, index) => ({
                     name: element.name,
                     description: element.description,
@@ -86,7 +84,8 @@ function Manager() {
                     home: "",
                     isNotInstalled: true,
                     isFake: false,
-                })) // filter already installed based on the name
+                })) 
+                // filter already installed based on the name
                 .filter((p) => !installedPlugins.map((p) => p.name).includes(p.name));
             // Store the plugins in the state
             setPluginsNotInstalled(combinedPlugins);
