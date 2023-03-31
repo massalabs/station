@@ -1,26 +1,16 @@
 import { useEffect, useState } from "react";
 import PluginBlock from "../components/pluginBlock";
-import {
-    Plugin,
-    PluginNotInstalled,
-    PluginStatus,
-    PluginStoreAssets,
-    PluginStoreItemRequest,
-} from "../../../shared/interfaces/IPlugin";
+import { Plugin, PluginStatus, PluginStoreAssets } from "../../../shared/interfaces/IPlugin";
 import axiosServices from "../services/axios";
-import alertHelper from "../helpers/alertHelpers";
-import { PuffLoader } from "react-spinners";
-import wallet from "../assets/logo/plugins/Wallet.svg";
 import registry from "../assets/logo/plugins/Registry.svg";
 import webOnChain from "../assets/logo/plugins/webOnChain.svg";
 import notInstalled from "../assets/logo/plugins/notInstalledRed.png";
-import massaLogomark from "../assets/massa_logomark_detailed.png";
 import grid1 from "../assets/element/grid1.svg";
 import InstallPlugin from "../components/installPluginBlock";
 import Header from "../components/Header";
 import MainTitle from "../components/MainTitle";
 import { getOs } from "../services/getOs";
-import { gridStyle, defineGridStyle } from "../../../shared/styles/grid";
+
 function Manager() {
     const fakePluginsList: Plugin[] = [
         {
@@ -85,18 +75,19 @@ function Manager() {
             // Create an empty array to store the plugins
             let combinedPlugins: Plugin[] = [];
             // Transform the data to the format we need
-            combinedPlugins = pluginsInfos.data.map((element, index) => ({
-                name: element.name,
-                description: element.description,
-                url: setDownloadLinkForPlatform(element.assets),
-                logo: notInstalled,
-                status: PluginStatus.NotInstalled,
-                id: 1000 + index.toString(),
-                home: "",
-                isNotInstalled: true,
-                isFake: false,
-            }))                // filter already installed based on the name
-            .filter(p => !installedPlugins.map(p => p.name).includes(p.name));;
+            combinedPlugins = pluginsInfos.data
+                .map((element, index) => ({
+                    name: element.name,
+                    description: element.description,
+                    url: setDownloadLinkForPlatform(element.assets),
+                    logo: notInstalled,
+                    status: PluginStatus.NotInstalled,
+                    id: 1000 + index.toString(),
+                    home: "",
+                    isNotInstalled: true,
+                    isFake: false,
+                })) // filter already installed based on the name
+                .filter((p) => !installedPlugins.map((p) => p.name).includes(p.name));
             // Store the plugins in the state
             setPluginsNotInstalled(combinedPlugins);
         } catch (error: any) {

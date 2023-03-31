@@ -12,7 +12,6 @@ export interface InstallProps {
     getPluginsInfo: () => void;
 }
 
-
 function InstallPlugin(p: InstallZipProps) {
     const [errorPluginInstall, setErrorPluginInstall] = useState("");
 

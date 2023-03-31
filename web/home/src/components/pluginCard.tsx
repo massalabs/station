@@ -40,7 +40,7 @@ export const PluginCard = (props: Props) => {
         className="rounded-3xl w-10 h-10"
       />
       <div className="flex flex-col gap-2">
-        <h2 className="label2 text-font h-10 ">{minimize(props.plugin.name, 15)}</h2>
+        <h2 className="label2 text-font h-8 ">{minimize(props.plugin.name, 15)}</h2>
         <p className="text2 text-font overflow-hidden whitespace-pre-wrap max-w-full h-[68px]">
         {minimize(props.plugin.description, 80)}
         </p>

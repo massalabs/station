@@ -17,7 +17,7 @@ type Props = {
 };
 
 const SmallCardExtended = (props: Props) => {
-    const isThemeLight = UIStore.useState((s) => (s.theme === "light"));
+    const isThemeLight = UIStore.useState((s) => s.theme === "light");
     const [isExtended, setIsExtended] = useState(false);
     const HandleOnClickExtend = () => {
         setIsExtended(!isExtended);

@@ -78,7 +78,7 @@ function PluginBlock(props: PluginProps) {
     // Uninstall plugin
     async function downloadPlugins() {
         try {
-            if(props.plugin.url === undefined) return console.error("Plugin url is undefined");
+            if (props.plugin.url === undefined) return console.error("Plugin url is undefined");
             await axiosServices.installPlugin(props.plugin.url);
             props.getPluginsInfo();
         } catch (error: any) {
@@ -115,7 +115,7 @@ function PluginBlock(props: PluginProps) {
                     {minimize(props.plugin.description, 80)}
                 </p>
             </div>
-                <p className="hidden text3 text-font">V: {props.plugin.version ?? "0.0.0"}</p>
+            <p className="hidden text3 text-font">V: {props.plugin.version ?? "0.0.0"}</p>
             {/* Second Block with Icons  */}
             <div className="flex w-full">
                 {/* Delete hidden when version will be send through the API */}

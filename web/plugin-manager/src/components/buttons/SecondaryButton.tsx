@@ -20,7 +20,7 @@ const SecondaryButton = (props: Props) => {
                 (props.isDisabled
                     ? " bg-disabledButton cursor-not-allowed"
                     : " bg-secondaryButton hover:bg-hoverPrimaryButton cursor-pointer")
-                }
+            }
         >
             <p className={"text-font"}>{props.label}</p>
         </button>

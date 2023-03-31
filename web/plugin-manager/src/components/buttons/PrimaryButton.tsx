@@ -11,7 +11,7 @@ type Props = {
 };
 
 const PrimaryButton = (props: Props) => {
-    const isThemeLight = UIStore.useState((s) => (s.theme === "light"));
+    const isThemeLight = UIStore.useState((s) => s.theme === "light");
     return (
         <button
             type={props.type ?? "button"}
