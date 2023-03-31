@@ -8,7 +8,7 @@ An entrance to the Massa blockchain.
 
 
 ## Contribute
-To contribute to this project, please read out please read our [Contributor's Guide](./CONTRIBUTING.md).
+To contribute to this project, please read our [Contributor's Guide](./CONTRIBUTING.md).
 
 
 ## Install thyra 
