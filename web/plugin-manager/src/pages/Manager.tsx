@@ -84,7 +84,7 @@ function Manager() {
                     home: "",
                     isNotInstalled: true,
                     isFake: false,
-                })) 
+                }))
                 // filter already installed based on the name
                 .filter((p) => !installedPlugins.map((p) => p.name).includes(p.name));
             // Store the plugins in the state

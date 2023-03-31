@@ -11,7 +11,7 @@ import { BarLoader } from "react-spinners";
 
 function PluginBlock(props: PluginProps) {
     const [isPluginUp, setStatus] = useState(isUp(props.plugin.status));
-    const [isInstalling, setisInstalling] = useState(false)
+    const [isInstalling, setisInstalling] = useState(false);
     useEffect(() => setStatus(isUp(props.plugin.status)), [props.plugin.status]);
 
     // fetch info from plugin to get fresh data on demand
@@ -82,7 +82,8 @@ function PluginBlock(props: PluginProps) {
         try {
             if (props.plugin.url === undefined) return console.error("Plugin url is undefined");
             setisInstalling(true);
-            (await axiosServices.installPlugin(props.plugin.url)).status === (200 || 500) && setisInstalling(false);
+            (await axiosServices.installPlugin(props.plugin.url)).status === (200 || 500) &&
+                setisInstalling(false);
             props.getPluginsInfo();
         } catch (error: any) {
             setisInstalling(false);
@@ -124,13 +125,16 @@ function PluginBlock(props: PluginProps) {
             <div className="flex w-full">
                 {/* Delete hidden when version will be send through the API */}
                 <div className="flex w-full content-between justify-between mx-auto gap-4">
-                    {props.plugin.isNotInstalled ? (!isInstalling ? (
-                        <SecondaryButton
-                            label={"Download"}
-                            onClick={downloadPlugins}
-                            width={" w-full"}
-                        />) :( 
-                            <BarLoader width={"100%"} color="hsl(var(--twc-brand))" />)
+                    {props.plugin.isNotInstalled ? (
+                        !isInstalling ? (
+                            <SecondaryButton
+                                label={"Download"}
+                                onClick={downloadPlugins}
+                                width={" w-full"}
+                            />
+                        ) : (
+                            <BarLoader width={"100%"} color="hsl(var(--twc-brand))" />
+                        )
                     ) : (
                         <>
                             <PrimaryButton
