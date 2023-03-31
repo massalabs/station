@@ -17,7 +17,7 @@ const PrimaryButton = (props: Props) => {
             type={props.type ?? "button"}
             onClick={props.onClick}
             className={
-                "flex flex-row justify-center items-center gap-2 h-12  bg-primaryButton border-[1px] border-solid border-border rounded-md cursor-pointer" +
+                "flex flex-row justify-center items-center gap-2 h-12  bg-primaryButton border-[1px] border-solid border-border rounded-md cursor-pointer " +
                 (props.width ?? " w-28 ") +
                 " hover:bg-hoverSecondaryButton "
             }

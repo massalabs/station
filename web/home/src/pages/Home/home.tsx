@@ -16,6 +16,7 @@ import grid1 from '../../assets/element/grid1.svg';
 import registry from '../../assets/logo/plugins/Registry.svg';
 import webOnChain from '../../assets/logo/plugins/webOnChain.svg';
 import MainTitle from '../../components/MainTitle';
+// import {gridStyle , defineGridStyle} from "../../../../shared/styles/grid";
 
 /**
  * Homepage of Thyra with a list of plugins installed
@@ -74,8 +75,8 @@ function Home() {
   const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
   // Keep track of the previous fetch
   const [previousFetch , setPreviousFetch ] = useState<PluginHomePage[]>([]);
-  const displayPlugins = () => {
-    getPlugins()
+  const displayPlugins = async () => {
+    await getPlugins()
         .then((res: PluginHomePage[]) => {
           let combinedPlugins: PluginHomePage[] = [...fakePluginsList, ...res];
           // If the list of plugins has changed, update the state
@@ -94,8 +95,12 @@ function Home() {
   }
   // fetch plugins every 10 seconds
   useEffect(() => {
-    displayPlugins();
+    
     // fetch plugins
+    const fetchData = async () => {
+      await displayPlugins();
+  };
+  fetchData();
     const interval = setInterval(() => {
       displayPlugins();
     }, 10000);
@@ -135,12 +140,14 @@ function Home() {
       });
   };
 
-  const setColsLength = (length: number) => {
-    const cols = length > 3 ? 'grid-cols-4 ' : ' grid-cols-3 ';
-    return (
-      'max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 max-xl:grid-cols-4 xl:grid-cols-4'
-    );
-  };
+const defineGridStyle = (length: number) => {
+    let styles = gridStyle;
+    return styles += (length <= 3 ? " grid-cols-3 "  : setResponsiveGrid);
+};
+const gridStyle = " grid grid-flow-row mx-auto mt-3 gap-4 grid-cols-4"
+
+
+const setResponsiveGrid = " max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-xl:grid-cols-4 "
 
   return (
     <div>
@@ -157,8 +164,7 @@ function Home() {
       <MainTitle title="Which Plugins" />
         <div
           className={
-            'grid grid-cols-4 mt-6 gap-4 w-full ' +
-            setColsLength(plugins.length + fakePluginsList.length) 
+            defineGridStyle(plugins.length+fakePluginsList.length)
           }
           style={{ justifyItems: 'center' }}
         >

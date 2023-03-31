@@ -20,6 +20,7 @@ import InstallPlugin from "../components/installPluginBlock";
 import Header from "../components/Header";
 import MainTitle from "../components/MainTitle";
 import { getOs } from "../services/getOs";
+import {gridStyle , defineGridStyle} from "../../../shared/styles/grid";
 function Manager() {
     const fakePluginsList: Plugin[] = [
         {
@@ -104,7 +105,10 @@ function Manager() {
     // Create a loop to fetch getPluginsInfo and update the status
     useEffect(() => {
         //Initialize Ui on first render
-        getPluginsInfo();
+        const fetchData = async () => {
+            await getPluginsInfo();
+        };
+        fetchData();
         // Set interval to update plugin status periodically
         const interval = setInterval(async () => {
             try {
@@ -116,22 +120,24 @@ function Manager() {
         return () => clearInterval(interval);
     }, []);
 
-    const mapPluginList = (pluginsList: Plugin[]) => {
+    const mapPluginList = (pluginsList: Plugin[], pluginListToCompare: Plugin[] = []) => {
         return pluginsList
-            .filter((p) => !!p.name)
+            .filter((p) => !!p.name).filter((p) => !pluginListToCompare.find((p2) => p2.name === p.name))
             .sort((a, b) => a.name.localeCompare(b.name))
             .map((plugin) => {
                 return <PluginBlock plugin={plugin} getPluginsInfo={getPluginsInfo} />;
             });
     };
 
-    const setColsLength = (length: number) => {
-        const cols = length > 3 ? "grid-cols-4" : " grid-cols-3";
-        return (
-            'max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-xl:grid-cols-4'
-        );
-
+    const defineGridStyle = (length: number) => {
+        let styles = gridStyle;
+        return styles += (length <= 3 ? " grid-cols-3 "  : setResponsiveGrid);
     };
+    const gridStyle = " grid grid-flow-row mx-auto mt-3 gap-4 grid-cols-4"
+    
+    
+    const setResponsiveGrid = " max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-xl:grid-cols-4 "
+
     return (
         <div>
             <div className=" min-h-screen bg-img" style={{ backgroundImage: `url(${grid1})` }}>
@@ -144,10 +150,8 @@ function Manager() {
                     <p className="Secondary mt-2 text-font ml-6">Installed</p>
                     <div
                         className={
-                            "grid grid-flow-row-dense mx-auto mt-3 gap-4 grid-cols-4 " +
-                            setColsLength(plugins.length + fakePluginsList.length) 
-                            // +
-                            // " max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] xl:w-[1280px]"
+                            
+                            defineGridStyle(plugins.length+fakePluginsList.length)
                         }
                     >
                         
@@ -160,10 +164,8 @@ function Manager() {
                     <p className="Secondary mt-12 text-font ml-6">Not installed</p>
                     <div
                         className={
-                            "grid grid-flow-row-dense mx-auto mt-3 gap-4 grid-cols-4 " +
-                            setColsLength(pluginsNotInstalled.length) 
-                            // +
-                            // " max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] xl:w-[1280px]"
+                            
+                            defineGridStyle(pluginsNotInstalled.length) 
                         }
                     >
                         {pluginsNotInstalled?.length ? (

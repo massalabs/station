@@ -115,16 +115,16 @@ function PluginBlock(props: PluginProps) {
                     {minimize(props.plugin.description, 80)}
                 </p>
             </div>
-            {/* Second Block with Icons  */}
-            <div className="flex">
-                {/* Delete hidden when version will be send through the API */}
                 <p className="hidden text3 text-font">V: {props.plugin.version ?? "0.0.0"}</p>
+            {/* Second Block with Icons  */}
+            <div className="flex w-full">
+                {/* Delete hidden when version will be send through the API */}
                 <div className="flex w-full content-between justify-between mx-auto gap-4">
                     {props.plugin.isNotInstalled ? (
                         <SecondaryButton
                             label={"Download"}
                             onClick={downloadPlugins}
-                            width={"w-full"}
+                            width={" w-full"}
                         />
                     ) : (
                         <>
