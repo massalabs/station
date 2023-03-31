@@ -18,12 +18,6 @@ To install Thyra, please follow the instructions available in the [Installation 
 
 Soon
 
------
-
-**Troubleshooting** If you got any problem at any steps of the process, join us on [Discord dedicated channel](https://discord.com/channels/828270821042159636/851942484212318259) or [report a problem](https://github.com/massalabs/thyra/issues/new/choose)
-
------
-
 
 ## Going further 
 
