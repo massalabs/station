@@ -16,17 +16,17 @@ export const PluginCard = (props: Props) => {
     s.theme == 'light' ? Arrow6 : ArrowWhite6,
   );
 
-      //Truncate the string so that it fits in the given lenght if needed.
-      function minimize(str: string, length: number) {
-        if (!str) {
-            return "";
-        }
-        if (str.length > length) {
-            return str.substring(0, length) + "...";
-        } else {
-            return str;
-        }
+  //Truncate the string so that it fits in the given lenght if needed.
+  function minimize(str: string, length: number) {
+    if (!str) {
+      return '';
     }
+    if (str.length > length) {
+      return str.substring(0, length) + '...';
+    } else {
+      return str;
+    }
+  }
 
   return (
     <div
@@ -40,9 +40,11 @@ export const PluginCard = (props: Props) => {
         className="rounded-3xl w-10 h-10"
       />
       <div className="flex flex-col gap-2">
-        <h2 className="label2 text-font h-8 ">{minimize(props.plugin.name, 15)}</h2>
+        <h2 className="label2 text-font h-8 ">
+          {minimize(props.plugin.name, 15)}
+        </h2>
         <p className="text2 text-font overflow-hidden whitespace-pre-wrap max-w-full h-[68px]">
-        {minimize(props.plugin.description, 80)}
+          {minimize(props.plugin.description, 80)}
         </p>
       </div>
       <img src={Arrow} alt="Album" className="w-6 h-6" />

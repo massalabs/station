@@ -71,36 +71,35 @@ function Home() {
     return res.data;
   };
 
-    // Contains the list of plugins populated by fakeplugins
+  // Contains the list of plugins populated by fakeplugins
   const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
   // Keep track of the previous fetch
-  const [previousFetch , setPreviousFetch ] = useState<PluginHomePage[]>([]);
+  const [previousFetch, setPreviousFetch] = useState<PluginHomePage[]>([]);
   const displayPlugins = async () => {
     await getPlugins()
-        .then((res: PluginHomePage[]) => {
-          let combinedPlugins: PluginHomePage[] = [...fakePluginsList, ...res];
-          // If the list of plugins has changed, update the state
-          if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
-            setPlugins(combinedPlugins);
-            setPreviousFetch(res);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          // If there is an error, use the previous list
-          setPlugins((previousFetch) =>
-            previousFetch.length > 0 ? previousFetch : fakePluginsList,
-          );
-        });
-  }
+      .then((res: PluginHomePage[]) => {
+        let combinedPlugins: PluginHomePage[] = [...fakePluginsList, ...res];
+        // If the list of plugins has changed, update the state
+        if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
+          setPlugins(combinedPlugins);
+          setPreviousFetch(res);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        // If there is an error, use the previous list
+        setPlugins((previousFetch) =>
+          previousFetch.length > 0 ? previousFetch : fakePluginsList,
+        );
+      });
+  };
   // fetch plugins every 10 seconds
   useEffect(() => {
-    
     // fetch plugins
     const fetchData = async () => {
       await displayPlugins();
-  };
-  fetchData();
+    };
+    fetchData();
     const interval = setInterval(() => {
       displayPlugins();
     }, 10000);
@@ -140,38 +139,34 @@ function Home() {
       });
   };
 
-const defineGridStyle = (length: number) => {
+  const defineGridStyle = (length: number) => {
     let styles = gridStyle;
-    return styles += (length <= 3 ? " grid-cols-3 "  : setResponsiveGrid);
-};
-const gridStyle = " grid grid-flow-row mx-auto mt-3 gap-4 grid-cols-4"
+    return (styles += length <= 3 ? ' grid-cols-3 ' : setResponsiveGrid);
+  };
+  const gridStyle = ' grid grid-flow-row mx-auto mt-3 gap-4 grid-cols-4';
 
-
-const setResponsiveGrid = " max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-xl:grid-cols-4 "
+  const setResponsiveGrid =
+    ' max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-xl:grid-cols-4 ';
 
   return (
     <div>
+      <div
+        className=" min-h-screen bg-img"
+        style={{ backgroundImage: `url(${grid1})` }}
+      >
+        <Header />
 
-    <div
-      className=" min-h-screen bg-img"
-      style={{ backgroundImage: `url(${grid1})` }}
-    >
-      <Header />
-
-
-      {/* Display the plugins in a grid */}
-      <div className="mx-auto max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] max-xl:w-[1024px] xl:w-[1280px]">
-      <MainTitle title="Which Plugins" />
-        <div
-          className={
-            defineGridStyle(plugins.length+fakePluginsList.length)
-          }
-        >
-          {mapPluginList()}
+        {/* Display the plugins in a grid */}
+        <div className="mx-auto max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] max-xl:w-[1024px] xl:w-[1280px]">
+          <MainTitle title="Which Plugins" />
+          <div
+            className={defineGridStyle(plugins.length + fakePluginsList.length)}
+          >
+            {mapPluginList()}
+          </div>
         </div>
       </div>
     </div>
-            </div>
   );
 }
 
