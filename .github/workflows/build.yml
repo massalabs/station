@@ -77,7 +77,7 @@ jobs:
           files: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
 
   build-installer:
-    if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
+    #if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
     needs: [lint, tests]
     name: build and upload installers binaries
     strategy:
