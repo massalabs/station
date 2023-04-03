@@ -3,7 +3,6 @@ package api
 import (
 	"log"
 	"os"
-	"sync"
 
 	"fyne.io/fyne/v2"
 	"github.com/go-openapi/loads"
@@ -14,7 +13,6 @@ import (
 	"github.com/massalabs/thyra/int/api/massa"
 	"github.com/massalabs/thyra/int/api/myplugin"
 	"github.com/massalabs/thyra/int/api/pluginstore"
-	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/node"
 	deploysc "github.com/massalabs/thyra/pkg/node/sendoperation/deploySC"
@@ -84,15 +82,9 @@ func stopServer(app *fyne.App, server *restapi.Server) {
 }
 
 func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App) {
-	var walletStorage sync.Map
-
 	localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(
 		cmd.CreateExecuteFunctionHandler(app))
 
-	localAPI.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
-	localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
-	localAPI.MgmtWalletImportHandler = wallet.NewImport(&walletStorage, app)
-	localAPI.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage, app)
 	localAPI.MassaGetAddressesHandler = operations.MassaGetAddressesHandlerFunc(massa.AddressesHandler)
 	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(
 		websites.CreatePrepareForWebsiteHandler(app),

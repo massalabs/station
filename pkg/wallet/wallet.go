@@ -174,17 +174,6 @@ func Load(nickname string) (*Wallet, error) {
 	return &wallet, nil
 }
 
-func New(nickname string) (*Wallet, error) {
-	pubKey, privKey, err := ed25519.GenerateKey(nil)
-	if err != nil {
-		return nil, fmt.Errorf("generating ed25519 keypair: %w", err)
-	}
-
-	addr := blake3.Sum256(pubKey)
-
-	return CreateWalletFromKeys(nickname, privKey, pubKey, addr)
-}
-
 func Imported(nickname string, privateKeyB58V string) (*Wallet, error) {
 	privateKeyBytes, _, err := base58.VersionedCheckDecode(privateKeyB58V[1:])
 	if err != nil {
@@ -213,15 +202,6 @@ func Imported(nickname string, privateKeyB58V string) (*Wallet, error) {
 	}
 
 	return CreateWalletFromKeys(nickname, privateKey, pubKeyBytes, addr)
-}
-
-func Delete(nickname string) (err error) {
-	err = os.Remove(GetWalletFile(nickname))
-	if err != nil {
-		return fmt.Errorf("deleting wallet 'wallet_%s.json': %w", nickname, err)
-	}
-
-	return nil
 }
 
 func CreateWalletFromKeys(nickname string, privKeyBytes []byte, pubKeyBytes []byte, addr [32]byte) (*Wallet, error) {
