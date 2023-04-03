@@ -1713,30 +1713,20 @@ func init() {
         "description",
         "version",
         "url",
-        "assets"
+        "file"
       ],
       "properties": {
-        "assets": {
-          "type": "object",
-          "properties": {
-            "linux": {
-              "$ref": "#/definitions/File"
-            },
-            "macos-amd64": {
-              "$ref": "#/definitions/File"
-            },
-            "macos-arm64": {
-              "$ref": "#/definitions/File"
-            },
-            "windows": {
-              "$ref": "#/definitions/File"
-            }
-          }
-        },
         "description": {
           "type": "string"
         },
+        "file": {
+          "type": "object",
+          "$ref": "#/definitions/File"
+        },
         "name": {
+          "type": "string"
+        },
+        "os": {
           "type": "string"
         },
         "url": {
@@ -3563,30 +3553,20 @@ func init() {
         "description",
         "version",
         "url",
-        "assets"
+        "file"
       ],
       "properties": {
-        "assets": {
-          "type": "object",
-          "properties": {
-            "linux": {
-              "$ref": "#/definitions/File"
-            },
-            "macos-amd64": {
-              "$ref": "#/definitions/File"
-            },
-            "macos-arm64": {
-              "$ref": "#/definitions/File"
-            },
-            "windows": {
-              "$ref": "#/definitions/File"
-            }
-          }
-        },
         "description": {
           "type": "string"
         },
+        "file": {
+          "type": "object",
+          "$ref": "#/definitions/File"
+        },
         "name": {
+          "type": "string"
+        },
+        "os": {
           "type": "string"
         },
         "url": {
@@ -3594,23 +3574,6 @@ func init() {
         },
         "version": {
           "type": "string"
-        }
-      }
-    },
-    "PluginStoreItemAssets": {
-      "type": "object",
-      "properties": {
-        "linux": {
-          "$ref": "#/definitions/File"
-        },
-        "macos-amd64": {
-          "$ref": "#/definitions/File"
-        },
-        "macos-arm64": {
-          "$ref": "#/definitions/File"
-        },
-        "windows": {
-          "$ref": "#/definitions/File"
         }
       }
     },
