@@ -45,7 +45,7 @@ type sendOperationsReq struct {
 	Signature         string        `json:"signature"`
 }
 
-type operation interface {
+type Operation interface {
 	Content() interface{}
 	Message() []byte
 }
@@ -64,7 +64,7 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 	return []byte(result), nil
 }
 
-func message(expiry uint64, fee uint64, operation operation) []byte {
+func message(expiry uint64, fee uint64, operation Operation) []byte {
 	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
 	// fee
@@ -85,7 +85,7 @@ func message(expiry uint64, fee uint64, operation operation) []byte {
 func Call(client *node.Client,
 	expiry uint64,
 	fee uint64,
-	operation operation,
+	operation Operation,
 	nickname string,
 ) (string, error) {
 	msg, msgB64, err := makeOperation(client, expiry, fee, operation)
@@ -155,7 +155,7 @@ func makeRPCCall(msg []byte, signature []byte, res signOperationResponse, client
 	return resp, nil
 }
 
-func makeOperation(client *node.Client, expiry uint64, fee uint64, operation operation) ([]byte, string, error) {
+func makeOperation(client *node.Client, expiry uint64, fee uint64, operation Operation) ([]byte, string, error) {
 	exp, err := node.NextSlot(client)
 	if err != nil {
 		return nil, "", fmt.Errorf("calling NextSlot: %w", err)
