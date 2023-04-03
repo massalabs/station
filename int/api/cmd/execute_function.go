@@ -3,7 +3,6 @@ package cmd
 import (
 	"encoding/base64"
 
-	"fyne.io/fyne/v2"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
@@ -12,13 +11,13 @@ import (
 	"github.com/massalabs/thyra/pkg/onchain"
 )
 
-func CreateExecuteFunctionHandler(app *fyne.App) func(params operations.CmdExecuteFunctionParams) middleware.Responder {
+func CreateExecuteFunctionHandler() func(params operations.CmdExecuteFunctionParams) middleware.Responder {
 	return func(params operations.CmdExecuteFunctionParams) middleware.Responder {
-		return ExecuteFunctionHandler(params, app)
+		return ExecuteFunctionHandler(params)
 	}
 }
 
-func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyne.App) middleware.Responder {
+func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams) middleware.Responder {
 	addr, err := base58.CheckDecode(params.Body.At[2:])
 	if err != nil {
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(

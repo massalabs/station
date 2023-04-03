@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 
-	"fyne.io/fyne/v2"
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
@@ -73,28 +72,26 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 	os.Setenv("MASSA_NODE_URL", *massaNodeServerPtr)
 }
 
-func stopServer(app *fyne.App, server *restapi.Server) {
+func stopServer(server *restapi.Server) {
 	if err := server.Shutdown(); err != nil {
 		log.Fatalln(err)
 	}
-
-	(*app).Quit()
 }
 
-func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App) {
+func initLocalAPI(localAPI *operations.ThyraServerAPI) {
 	localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(
-		cmd.CreateExecuteFunctionHandler(app))
+		cmd.CreateExecuteFunctionHandler())
 
 	localAPI.MassaGetAddressesHandler = operations.MassaGetAddressesHandlerFunc(massa.AddressesHandler)
 	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(
-		websites.CreatePrepareForWebsiteHandler(app),
+		websites.CreatePrepareForWebsiteHandler(),
 	)
 	localAPI.CmdDeploySCHandler = operations.CmdDeploySCHandlerFunc(deploysc.Handler)
 	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(
-		websites.CreateUploadWebsiteHandler(app),
+		websites.CreateUploadWebsiteHandler(),
 	)
 	localAPI.WebsiteUploadMissingChunksHandler = operations.WebsiteUploadMissingChunksHandlerFunc(
-		websites.CreateUploadMissingChunksHandler(app),
+		websites.CreateUploadMissingChunksHandler(),
 	)
 	localAPI.MyDomainsGetterHandler = operations.MyDomainsGetterHandlerFunc(websites.DomainsHandler)
 	localAPI.AllDomainsGetterHandler = operations.AllDomainsGetterHandlerFunc(websites.RegistryHandler)
@@ -112,7 +109,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App) {
 	pluginstore.InitializePluginStoreAPI(localAPI)
 }
 
-func StartServer(app *fyne.App, startFlags StartServerFlags) {
+func StartServer(startFlags StartServerFlags) {
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
@@ -137,9 +134,9 @@ func StartServer(app *fyne.App, startFlags StartServerFlags) {
 
 	log.Printf("Connected to node server %s (version %s)\n", os.Getenv("MASSA_NODE_URL"), nodeVersion)
 
-	defer stopServer(app, server)
+	defer stopServer(server)
 
-	initLocalAPI(localAPI, app)
+	initLocalAPI(localAPI)
 	server.ConfigureAPI()
 
 	if err := server.Serve(); err != nil {
