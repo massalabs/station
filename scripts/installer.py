@@ -6,6 +6,7 @@ import shutil
 import socket
 import ssl
 import subprocess
+import traceback
 import urllib.request
 from urllib.error import URLError
 
@@ -51,21 +52,24 @@ class Installer:
     Executes the command given in parameter and returns the output of the command
     """
     def executeCommand(self, command, shell=False, allow_failure=False) -> tuple[str, str]:
-        logging.debug(f'Executing command: {command}')
+        logging.info(f'Executing command: {command}')
         try:
             process = subprocess.Popen(command, shell=shell,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE
             )
             stdout, stderr = process.communicate()
+            try:
 
-            if stdout is not None and len(stdout) > 0:
-                logging.debug(f'Command output: {stdout.decode(locale.getpreferredencoding(False))}')
+                if stdout is not None and len(stdout) > 0:
+                    logging.debug(f'Command output: {stdout.decode(locale.getpreferredencoding(False))}')
 
-            if allow_failure == False and process.returncode != 0:
-                self.printErrorAndExit(f"Command failed with error : {stderr.decode(locale.getpreferredencoding(False))}")
+                if allow_failure == False and process.returncode != 0:
+                    self.printErrorAndExit(f"Command failed with error : {stderr.decode(locale.getpreferredencoding(False))}")
 
-            return (stdout.decode(locale.getpreferredencoding(False)), stderr.decode(locale.getpreferredencoding(False)))
+                return (stdout.decode(locale.getpreferredencoding(False)), stderr.decode(locale.getpreferredencoding(False)))
+            except :
+                return(stdout, stderr)
         except OSError as err:
             self.printErrorAndExit(f"Error while executing command: {err}")
 
@@ -127,6 +131,7 @@ class Installer:
         stdout, stderr = self.executeCommand([
             os.path.join(os.getcwd(), self.MKCERT_FILENAME), 
             "--install"])
+        logging
         if stderr is not None and len(stderr) > 0:
             logging.info(stderr)
 
@@ -203,21 +208,23 @@ class Installer:
     """
     def startInstall(self):
         logging.info("Starting installation of thyra")
-        self.createConfigFolder()
-        self.installThyraServer()
-        self.installThyraApp()
-        if self.shouldInstallDNS():
-            self.setupDNS()
-        else:
-            logging.info("DNS server already installed.")
-        if not self.isCACertificateInstalled():
-            self.generateCACertificate()
-        else:
-            logging.info("CA certificate already installed.")
+        try:
+            self.createConfigFolder()
+            self.installThyraServer()
+            self.installThyraApp()
+            if self.shouldInstallDNS():
+                self.setupDNS()
+            else:
+                logging.info("DNS server already installed.")
+            if not self.isCACertificateInstalled():
+                self.generateCACertificate()
+            else:
+                logging.info("CA certificate already installed.")
 
-        logging.info("Thyra installed successfully !")
-        logging.info(f"{self.THYRA_SERVER_FILENAME} and {self.THYRA_APP_FILENAME} has been installed in {self.THYRA_INSTALL_FOLDER_PATH}")
+            logging.info("Thyra installed successfully !")
+            logging.info(f"{self.THYRA_SERVER_FILENAME} and {self.THYRA_APP_FILENAME} has been installed in {self.THYRA_INSTALL_FOLDER_PATH}")
 
-        self.startThyraApp()
-
+            self.startThyraApp()
+        except Exception as e:
+             logging.error(traceback.format_exc())
         logging.info("You can now close this window.")
