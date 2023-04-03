@@ -98,6 +98,8 @@
     background-size: 50%;
 }
 
+.minimize { overflow: hidden; text-overflow: ellipsis; }
+
 .divider {
     @apply my-4 h-4 whitespace-nowrap;
     &:before {

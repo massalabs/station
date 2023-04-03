@@ -90,17 +90,6 @@ function PluginBlock(props: PluginProps) {
             console.log(`Plugins failed to be downloaded , error ${error.message}`);
         }
     }
-    //Truncate the string so that it fits in the given lenght if needed.
-    function minimize(str: string, length: number) {
-        if (!str) {
-            return "";
-        }
-        if (str.length > length) {
-            return str.substring(0, length) + "...";
-        } else {
-            return str;
-        }
-    }
 
     return (
         <div
@@ -115,9 +104,9 @@ function PluginBlock(props: PluginProps) {
                 )}
             </div>
             <div className="w-full h-16">
-                <h1 className="label2 text-font h-8">{minimize(props.plugin.name, 15)}</h1>
-                <p className="text3 text-font h-8 max-sm:text-sm">
-                    {minimize(props.plugin.description, 80)}
+                <h1 className={`label2 text-font h-8 minimize`}>{props.plugin.name}</h1>
+                <p className="text3 text-font h-8 minimize max-sm:text-sm">
+                    {props.plugin.description}
                 </p>
             </div>
             <p className="hidden text3 text-font">V: {props.plugin.version ?? "0.0.0"}</p>
@@ -130,7 +119,7 @@ function PluginBlock(props: PluginProps) {
                             <SecondaryButton
                                 label={"Download"}
                                 onClick={downloadPlugins}
-                                width={" w-full"}
+                                style={" w-full"}
                             />
                         ) : (
                             <BarLoader width={"100%"} color="hsl(var(--twc-brand))" />

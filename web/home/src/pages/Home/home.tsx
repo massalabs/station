@@ -11,12 +11,10 @@ import { PluginCard } from '../../components/pluginCard';
 
 import Header from '../../components/Header';
 
-import ManagePluginCard from '../../components/managePluginCard';
 import grid1 from '../../assets/element/grid1.svg';
 import registry from '../../assets/logo/plugins/Registry.svg';
 import webOnChain from '../../assets/logo/plugins/webOnChain.svg';
 import MainTitle from '../../components/MainTitle';
-// import {gridStyle , defineGridStyle} from "../../../../shared/styles/grid";
 
 /**
  * Homepage of Thyra with a list of plugins installed
@@ -122,11 +120,11 @@ function Home() {
                 plugin: {
                   id: plugin.id,
                   logo: plugin.logo ? plugin.logo : massaLogomark,
-                  name: plugin ? plugin.name : 'Plugin Problem',
+                  name: plugin ? plugin.name : '',
                   description: plugin.description
                     ? plugin.description
-                    : 'Plugin Problem',
-                  status: plugin.status ? plugin.status : 'Plugin Problem',
+                    : '',
+                  status: plugin.status ? plugin.status : '',
                 },
                 handleOpenPlugin: handleOpenPlugin,
                 key: plugin.id,

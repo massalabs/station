@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PluginBlock from "../components/pluginBlock";
-import { Plugin, PluginStatus, PluginStoreAssets } from "../../../shared/interfaces/IPlugin";
+import { Plugin, PluginStatus } from "../../../shared/interfaces/IPlugin";
 import axiosServices from "../services/axios";
 import registry from "../assets/logo/plugins/Registry.svg";
 import webOnChain from "../assets/logo/plugins/webOnChain.svg";
@@ -9,7 +9,6 @@ import grid1 from "../assets/element/grid1.svg";
 import InstallPlugin from "../components/installPluginBlock";
 import Header from "../components/Header";
 import MainTitle from "../components/MainTitle";
-import { getOs } from "../services/getOs";
 
 function Manager() {
     const fakePluginsList: Plugin[] = [
@@ -51,23 +50,7 @@ function Manager() {
             console.error("error", `Get plugins infos failed ,  error ${error.message} `);
         }
     }
-    // this function returns the url for the download link for the current platform
 
-    const setDownloadLinkForPlatform = (pluginStoreItem: PluginStoreAssets) => {
-        switch (getOs()) {
-            case "windows":
-                return pluginStoreItem.windows.url;
-            case "macos arm64":
-                return pluginStoreItem.macos_arm64.url;
-            case "macos amd64":
-                return pluginStoreItem.macos_amd64.url;
-            case "linux":
-                return pluginStoreItem.linux.url;
-            default:
-                console.error("Platform not supported");
-                break;
-        }
-    };
     async function getStorePlugins(installedPlugins: Plugin[]) {
         try {
             // Get plugins that are not installed from the API
@@ -77,7 +60,7 @@ function Manager() {
                 .map((element, index) => ({
                     name: element.name,
                     description: element.description,
-                    url: setDownloadLinkForPlatform(element.assets),
+                    url: element.file.url,
                     logo: notInstalled,
                     status: PluginStatus.NotInstalled,
                     id: 1000 + index.toString(),
@@ -112,18 +95,24 @@ function Manager() {
         return () => clearInterval(interval);
     }, []);
 
-    const mapPluginList = (pluginsList: Plugin[]) => {
+
+    const filterSortList = (pluginsList: Plugin[]) => {
         return pluginsList
             .filter((p) => !!p.name)
-            .sort((a, b) => a.name.localeCompare(b.name))
+            .sort((a, b) => a.name.localeCompare(b.name));
+    };
+
+    const mapPluginList = (pluginsList: Plugin[]) => {
+        return filterSortList(pluginsList)
             .map((plugin) => {
                 return <PluginBlock plugin={plugin} getPluginsInfo={getPluginsInfo} />;
             });
     };
 
     const defineGridStyle = (length: number) => {
+        const numberOfCols = 3
         let styles = gridStyle;
-        return (styles += length <= 3 ? " grid-cols-3 " : setResponsiveGrid);
+        return (styles += length <= numberOfCols ? " grid-cols-3 " : setResponsiveGrid);
     };
     const gridStyle = " grid grid-flow-row mx-auto mt-3 gap-4 grid-cols-4";
 

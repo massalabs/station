@@ -34,6 +34,8 @@
   height: 14px !important;
 }
 
+.minimize { overflow: hidden; text-overflow: ellipsis; }
+
 /* Background SVG for HomePage */
 .bg-img {
   background-position: bottom left;

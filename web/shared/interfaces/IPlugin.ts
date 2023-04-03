@@ -48,14 +48,7 @@ export interface PluginStoreItemRequest{
     description:string
     version: string
     url:string
-    assets:PluginStoreAssets
-}
-
-export interface PluginStoreAssets{
-    windows: pluginStoreItemFile
-    linux: pluginStoreItemFile
-    macos_arm64: pluginStoreItemFile
-    macos_amd64: pluginStoreItemFile
+    file:pluginStoreItemFile
 }
 
 export interface pluginStoreItemFile{
