@@ -52,7 +52,7 @@ class Installer:
     Executes the command given in parameter and returns the output of the command
     """
     def executeCommand(self, command, shell=False, allow_failure=False) -> tuple[str, str]:
-        logging.info(f'Executing command: {command}')
+        logging.debug(f'Executing command: {command}')
         try:
             process = subprocess.Popen(command, shell=shell,
                 stdout=subprocess.PIPE,
@@ -131,7 +131,6 @@ class Installer:
         stdout, stderr = self.executeCommand([
             os.path.join(os.getcwd(), self.MKCERT_FILENAME), 
             "--install"])
-        logging
         if stderr is not None and len(stderr) > 0:
             logging.info(stderr)
 
