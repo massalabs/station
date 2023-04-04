@@ -69,24 +69,7 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 	return []byte(result), nil
 }
 
-func message(expiry uint64, fee uint64, operation Operation) []byte {
-	msg := make([]byte, 0)
-	buf := make([]byte, binary.MaxVarintLen64)
-	// fee
-	nbBytes := binary.PutUvarint(buf, fee)
-	msg = append(msg, buf[:nbBytes]...)
-
-	// expiration
-	nbBytes = binary.PutUvarint(buf, expiry)
-	msg = append(msg, buf[:nbBytes]...)
-
-	// operation
-	msg = append(msg, operation.Message()...)
-
-	return msg
-}
-
-// Call uses the plugin wallet instead of Thyra integrated wallet.
+// Call uses the plugin wallet to sign an operation, then send the call to blockchain.
 func Call(client *node.Client,
 	expiry uint64,
 	fee uint64,
@@ -176,6 +159,23 @@ func makeOperation(client *node.Client, expiry uint64, fee uint64, operation Ope
 	msgB64 := b64.StdEncoding.EncodeToString(msg)
 
 	return msg, msgB64, nil
+}
+
+func message(expiry uint64, fee uint64, operation Operation) []byte {
+	msg := make([]byte, 0)
+	buf := make([]byte, binary.MaxVarintLen64)
+	// fee
+	nbBytes := binary.PutUvarint(buf, fee)
+	msg = append(msg, buf[:nbBytes]...)
+
+	// expiration
+	nbBytes = binary.PutUvarint(buf, expiry)
+	msg = append(msg, buf[:nbBytes]...)
+
+	// operation
+	msg = append(msg, operation.Message()...)
+
+	return msg
 }
 
 func ExecuteHTTPRequest(methodType string, url string, reader io.Reader) ([]byte, error) {

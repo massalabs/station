@@ -26,7 +26,6 @@ const (
 //
 //nolint:tagliatelle
 type KeyPair struct {
-
 	// Nonce used by the AES-GCM algorithm used to protect the key pair's private key.
 	// Required: true
 	Nonce string `json:"nonce"`
@@ -48,7 +47,6 @@ type KeyPair struct {
 //
 //nolint:tagliatelle
 type Wallet struct {
-
 	// wallet's address.
 	// Required: true
 	Address string `json:"address"`

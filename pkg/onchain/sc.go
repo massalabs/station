@@ -18,7 +18,7 @@ const evenHeartbeat = 2
 
 /*
 This function send a callSC request to the node.
-After a sucessfulll execution, listening to the events emitted by the operation
+After a successful execution, listening to the events emitted by the operation
 should be done on front end side by the consumer.
 However in the current state of things the easiest way to unblock us is to
 listen to these events in Thyra and return them as a response.
@@ -58,7 +58,7 @@ func CallFunction(client *node.Client, nickname string,
 
 		if len(events) > 0 {
 			event := events[0].Data
-			//  Catch Run Time Error and return it
+			// Catch Run Time Error and return it
 			if strings.Contains(event, "massa_execution_error") {
 				// return the event containing the error
 				return "", errors.New(event)
