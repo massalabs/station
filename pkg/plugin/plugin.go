@@ -45,6 +45,7 @@ type Plugin struct {
 	reverseProxy *httputil.ReverseProxy
 	BinPath      string
 	ID           string
+	quitChan     chan bool
 }
 
 func (p *Plugin) Information() *Information {
@@ -77,6 +78,8 @@ func (p *Plugin) Kill() error {
 	p.status = ShuttingDown
 
 	err := p.command.Process.Kill()
+	<-p.quitChan
+
 	if err != nil {
 		p.status = Crashed
 
@@ -142,6 +145,10 @@ func (p *Plugin) Start() error {
 
 	// start a goroutine to wait on the command
 	go func() {
+		defer func() {
+			p.quitChan <- true
+		}()
+
 		err := p.command.Wait()
 		if err != nil && !(err.Error() == "signal: killed" || strings.Contains(err.Error(), "exit status")) {
 			log.Printf("plugin '%s' exiting with error: %s\n", pluginName, err)
@@ -178,7 +185,7 @@ func New(binPath string, pluginID string) (*Plugin, error) {
 	}
 
 	//nolint:exhaustruct
-	plgn := &Plugin{status: Starting, BinPath: binPath + exe, ID: pluginID}
+	plgn := &Plugin{status: Starting, BinPath: binPath + exe, ID: pluginID, quitChan: make(chan bool)}
 
 	err := plgn.Start()
 	if err != nil {
