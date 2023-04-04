@@ -41,7 +41,7 @@ func setContentType(file string, writer http.ResponseWriter) {
 	writer.Header().Set("Content-Type", ctype)
 }
 
-func Request(writer http.ResponseWriter, reader *http.Request, client *node.Client, address string, resource string) {
+func Request(writer http.ResponseWriter, _ *http.Request, client *node.Client, address string, resource string) {
 	body, err := Fetch(client, address, resource)
 	if err != nil {
 		panic(err)

@@ -120,7 +120,6 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, nickname string) 
 	return operations, nil
 }
 
-//nolint:lll
 func UploadMissedChunks(atAddress string, content []byte, nickname string, missedChunks string) ([]string, error) {
 	client := node.NewDefaultClient()
 
@@ -159,7 +158,6 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, misse
 		//nolint:ineffassign,nolintlint
 		params = append(params, chunks[chunkID]...)
 
-		//nolint:lll
 		opID, err := onchain.CallFunctionUnwaited(client, nickname, maxExpiryPeriod(index), addr, "appendBytesToWebsite", params)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)

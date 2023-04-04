@@ -108,14 +108,12 @@ func checkContentType(archive []byte, fileType string) bool {
 	return contentType == fileType
 }
 
-//nolint:lll
 func CreateUploadMissingChunksHandler() func(params operations.WebsiteUploadMissingChunksParams) middleware.Responder {
 	return func(params operations.WebsiteUploadMissingChunksParams) middleware.Responder {
 		return websiteUploadMissingChunksHandler(params)
 	}
 }
 
-//nolint:lll
 func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChunksParams) middleware.Responder {
 	archive, _ := readAndCheckArchive(params.Zipfile)
 
