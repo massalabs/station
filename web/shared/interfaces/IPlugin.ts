@@ -49,6 +49,7 @@ export interface PluginStoreItemRequest{
     version: string
     url:string
     file:pluginStoreItemFile
+    os:string
 }
 
 export interface pluginStoreItemFile{

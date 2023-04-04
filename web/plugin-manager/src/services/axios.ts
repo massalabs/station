@@ -1,9 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import {
-    Plugin,
-    PluginNotInstalled,
-    PluginStoreItemRequest,
-} from "../../../shared/interfaces/IPlugin";
+import { Plugin, PluginStoreItemRequest } from "../../../shared/interfaces/IPlugin";
 
 export class axiosServices {
     static installPlugin(url: string): Promise<AxiosResponse<number>> {

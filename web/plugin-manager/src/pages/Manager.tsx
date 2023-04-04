@@ -95,22 +95,18 @@ function Manager() {
         return () => clearInterval(interval);
     }, []);
 
-
     const filterSortList = (pluginsList: Plugin[]) => {
-        return pluginsList
-            .filter((p) => !!p.name)
-            .sort((a, b) => a.name.localeCompare(b.name));
+        return pluginsList.filter((p) => !!p.name).sort((a, b) => a.name.localeCompare(b.name));
     };
 
     const mapPluginList = (pluginsList: Plugin[]) => {
-        return filterSortList(pluginsList)
-            .map((plugin) => {
-                return <PluginBlock plugin={plugin} getPluginsInfo={getPluginsInfo} />;
-            });
+        return filterSortList(pluginsList).map((plugin) => {
+            return <PluginBlock plugin={plugin} getPluginsInfo={getPluginsInfo} />;
+        });
     };
 
     const defineGridStyle = (length: number) => {
-        const numberOfCols = 3
+        const numberOfCols = 3;
         let styles = gridStyle;
         return (styles += length <= numberOfCols ? " grid-cols-3 " : setResponsiveGrid);
     };
