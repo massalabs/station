@@ -35,13 +35,14 @@ func listFileName(zipReader *zip.Reader) []string {
 }
 
 func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
+	archive, _ := readAndCheckArchive(params.Zipfile)
 
-	address, err := website.PrepareForUpload(params.URL, wallet)
+	address, err := website.PrepareForUpload(params.URL, params.Nickname)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorPrepare, err.Error())
 	}
 
-	_, err = website.Upload(address, archive, *wallet)
+	_, err = website.Upload(address, archive, params.Nickname)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
@@ -86,8 +87,9 @@ func CreateUploadWebsiteHandler() func(params operations.WebsiteCreatorUploadPar
 }
 
 func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middleware.Responder {
+	archive, _ := readAndCheckArchive(params.Zipfile)
 
-	_, err := website.Upload(params.Address, archive, *wallet)
+	_, err := website.Upload(params.Address, archive, params.Nickname)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
@@ -115,8 +117,9 @@ func CreateUploadMissingChunksHandler() func(params operations.WebsiteUploadMiss
 
 //nolint:lll
 func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChunksParams) middleware.Responder {
+	archive, _ := readAndCheckArchive(params.Zipfile)
 
-	_, err := website.UploadMissedChunks(params.Address, archive, wallet, params.MissedChunks)
+	_, err := website.UploadMissedChunks(params.Address, archive, params.Nickname, params.MissedChunks)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}

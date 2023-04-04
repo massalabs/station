@@ -38,7 +38,7 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams) middlewa
 
 	c := node.NewDefaultClient()
 
-	event, err := onchain.CallFunctionV2(c, params.Body.Nickname, addr, params.Body.Name, args, uint64(params.Body.Coins))
+	event, err := onchain.CallFunction(c, params.Body.Nickname, addr, params.Body.Name, args, uint64(params.Body.Coins))
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
 			&models.Error{Code: errorCodeSendOperation, Message: "Error : callSC failed " + err.Error()})

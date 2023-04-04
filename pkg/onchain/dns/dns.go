@@ -10,7 +10,6 @@ import (
 	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain"
-	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 const EnvKey = "THYRA_DNS_ADDRESS"
@@ -36,7 +35,7 @@ func Resolve(client *node.Client, name string) (string, error) {
 	return convert.ByteToStringArray(entry.CandidateValue)[0], nil
 }
 
-func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContract string) (string, error) {
+func SetRecord(client *node.Client, nickname string, url string, smartContract string) (string, error) {
 	addr, _, err := base58.VersionedCheckDecode(Address()[2:])
 	if err != nil {
 		return "", fmt.Errorf("checking address '%s': %w", Address()[2:], err)
@@ -48,7 +47,7 @@ func SetRecord(client *node.Client, wallet wallet.Wallet, url string, smartContr
 	rec = append(rec, convert.U32ToBytes(len(smartContract))...)
 	rec = append(rec, []byte(smartContract)...)
 
-	result, err := onchain.CallFunction(client, wallet, addr, "setResolver", rec, sendoperation.OneMassa)
+	result, err := onchain.CallFunction(client, nickname, addr, "setResolver", rec, sendoperation.OneMassa)
 	if err != nil {
 		return "", fmt.Errorf("calling setResolver with '%+v' at '%s': %w", rec, addr, err)
 	}

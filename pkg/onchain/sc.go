@@ -10,53 +10,11 @@ import (
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/node/sendoperation/callsc"
 	"github.com/massalabs/thyra/pkg/node/sendoperation/executesc"
-	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 const maxWaitingTimeInSeconds = 45
 
 const evenHeartbeat = 2
-
-func CallFunction(client *node.Client, wallet wallet.Wallet,
-	addr []byte, function string, parameter []byte, coins uint64,
-) (string, error) {
-	callSC := callsc.New(addr, function, parameter,
-		sendOperation.DefaultGazLimit,
-		coins)
-
-	operationID, err := sendOperation.Call(
-		client,
-		sendOperation.DefaultSlotsDuration, sendOperation.NoFee,
-		callSC,
-		wallet.Nickname)
-	if err != nil {
-		return "", fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
-	}
-
-	counter := 0
-
-	ticker := time.NewTicker(time.Second * evenHeartbeat)
-
-	for ; true; <-ticker.C {
-		counter++
-
-		if counter > maxWaitingTimeInSeconds*evenHeartbeat {
-			break
-		}
-
-		events, err := node.Events(client, nil, nil, nil, nil, &operationID)
-		if err != nil {
-			return operationID,
-				fmt.Errorf("waiting execution of function '%s' at '%s' with id '%s': %w", function, addr, operationID, err)
-		}
-
-		if len(events) > 0 {
-			return operationID, nil
-		}
-	}
-
-	return operationID, errors.New("timeout")
-}
 
 /*
 This function send a callSC request to the node.
@@ -66,7 +24,7 @@ However in the current state of things the easiest way to unblock us is to
 listen to these events in Thyra and return them as a response.
 Hence this function also listen for the first event emitted in an OP and returns it.
 */
-func CallFunctionV2(client *node.Client, nickname string,
+func CallFunction(client *node.Client, nickname string,
 	addr []byte, function string, parameter []byte, coins uint64,
 ) (string, error) {
 	callSC := callsc.New(addr, function, parameter,
@@ -113,7 +71,7 @@ func CallFunctionV2(client *node.Client, nickname string,
 	return "Function called successfully but no event generated", nil
 }
 
-func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet, expiryDelta uint64,
+func CallFunctionUnwaited(client *node.Client, nickname string, expiryDelta uint64,
 	addr []byte, function string, parameter []byte,
 ) (string, error) {
 	callSC := callsc.New(addr, function, parameter,
@@ -124,7 +82,7 @@ func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet, expiryDelta
 		client,
 		expiryDelta, sendOperation.NoFee,
 		callSC,
-		wallet.Nickname)
+		nickname)
 	if err != nil {
 		return "", fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
 	}

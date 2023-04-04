@@ -12,7 +12,6 @@ import (
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
-	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 //go:embed sc
@@ -28,7 +27,7 @@ func maxExpiryPeriod(index int) uint64 {
 	return baseOffset + uint64(index)*2
 }
 
-func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
+func PrepareForUpload(url string, nickname string) (string, error) {
 	client := node.NewDefaultClient()
 
 	basePath := "sc/"
@@ -41,7 +40,7 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	// Prepare address to webstorage.
 	deploymentEvent, err := onchain.DeploySC(
 		client,
-		wallet.Nickname,
+		nickname,
 		sendOperation.DefaultGazLimit,
 		sendOperation.NoCoin,
 		sendOperation.NoFee,
@@ -56,7 +55,7 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	scAddress := strings.Split(deploymentEvent, ":")[1]
 
 	// Set DNS.
-	_, err = dns.SetRecord(client, *wallet, url, scAddress)
+	_, err = dns.SetRecord(client, nickname, url, scAddress)
 	if err != nil {
 		return "", fmt.Errorf("adding DNS record '%s' => '%s': %w", url, scAddress, err)
 	}
@@ -64,7 +63,7 @@ func PrepareForUpload(url string, wallet *wallet.Wallet) (string, error) {
 	return scAddress, nil
 }
 
-func Upload(atAddress string, content []byte, wallet wallet.Wallet) ([]string, error) {
+func Upload(atAddress string, content []byte, nickname string) ([]string, error) {
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[2:])
@@ -74,7 +73,7 @@ func Upload(atAddress string, content []byte, wallet wallet.Wallet) ([]string, e
 
 	blocks := chunk(content, blockLength)
 
-	operations, err := upload(client, addr, blocks, wallet)
+	operations, err := upload(client, addr, blocks, nickname)
 	if err != nil {
 		return nil, err
 	}
@@ -82,10 +81,10 @@ func Upload(atAddress string, content []byte, wallet wallet.Wallet) ([]string, e
 	return operations, nil
 }
 
-func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wallet) ([]string, error) {
+func upload(client *node.Client, addr []byte, chunks [][]byte, nickname string) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
 
-	opID, err := onchain.CallFunction(client, wallet, addr, "initializeWebsite", convert.U64ToBytes(len(chunks)),
+	opID, err := onchain.CallFunction(client, nickname, addr, "initializeWebsite", convert.U64ToBytes(len(chunks)),
 		sendOperation.OneMassa)
 	if err != nil {
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
@@ -103,7 +102,14 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wal
 		// Chunk data encoding
 		params = append(params, chunks[index]...)
 
-		opID, err = onchain.CallFunctionUnwaited(client, wallet, maxExpiryPeriod(index), addr, "appendBytesToWebsite", params)
+		opID, err = onchain.CallFunctionUnwaited(
+			client,
+			nickname,
+			maxExpiryPeriod(index),
+			addr,
+			"appendBytesToWebsite",
+			params,
+		)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
@@ -115,7 +121,7 @@ func upload(client *node.Client, addr []byte, chunks [][]byte, wallet wallet.Wal
 }
 
 //nolint:lll
-func UploadMissedChunks(atAddress string, content []byte, wallet *wallet.Wallet, missedChunks string) ([]string, error) {
+func UploadMissedChunks(atAddress string, content []byte, nickname string, missedChunks string) ([]string, error) {
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[2:])
@@ -125,7 +131,7 @@ func UploadMissedChunks(atAddress string, content []byte, wallet *wallet.Wallet,
 
 	blocks := chunk(content, blockLength)
 
-	operations, err := uploadMissedChunks(client, addr, blocks, missedChunks, wallet)
+	operations, err := uploadMissedChunks(client, addr, blocks, missedChunks, nickname)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +140,7 @@ func UploadMissedChunks(atAddress string, content []byte, wallet *wallet.Wallet,
 }
 
 //nolint:lll
-func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, missedChunks string, wallet *wallet.Wallet) ([]string, error) {
+func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, missedChunks string, nickname string) ([]string, error) {
 	operations := make([]string, len(chunks)+1)
 	arrMissedChunks := strings.Split(missedChunks, ",")
 
@@ -154,7 +160,7 @@ func uploadMissedChunks(client *node.Client, addr []byte, chunks [][]byte, misse
 		params = append(params, chunks[chunkID]...)
 
 		//nolint:lll
-		opID, err := onchain.CallFunctionUnwaited(client, *wallet, maxExpiryPeriod(index), addr, "appendBytesToWebsite", params)
+		opID, err := onchain.CallFunctionUnwaited(client, nickname, maxExpiryPeriod(index), addr, "appendBytesToWebsite", params)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}

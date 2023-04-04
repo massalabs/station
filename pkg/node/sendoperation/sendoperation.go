@@ -52,6 +52,11 @@ type Operation interface {
 
 type JSONableSlice []uint8
 
+type RespError struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
+
 func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 	var result string
 
@@ -93,12 +98,15 @@ func Call(client *node.Client,
 		return "", err
 	}
 
-	httpRawResponse, err := executeHTTPRequest(http.MethodPost, WalletPluginURL+nickname+"/signOperation",
+	httpRawResponse, err := ExecuteHTTPRequest(http.MethodPost, WalletPluginURL+nickname+"/signOperation",
 		bytes.NewBuffer([]byte(`{
 		"operation": "`+msgB64+`"
 		}`)))
 	if err != nil {
-		return "", fmt.Errorf("calling executeHTTPRequest: %w", err)
+		res := RespError{"", ""}
+		_ = json.Unmarshal(httpRawResponse, &res)
+
+		return "", fmt.Errorf("calling executeHTTPRequest: %w, message: %s", err, res.Message)
 	}
 
 	res := signOperationResponse{"", ""}
@@ -170,7 +178,7 @@ func makeOperation(client *node.Client, expiry uint64, fee uint64, operation Ope
 	return msg, msgB64, nil
 }
 
-func executeHTTPRequest(methodType string, url string, reader io.Reader) ([]byte, error) {
+func ExecuteHTTPRequest(methodType string, url string, reader io.Reader) ([]byte, error) {
 	request, err := http.NewRequestWithContext(
 		context.Background(),
 		methodType,
@@ -184,21 +192,21 @@ func executeHTTPRequest(methodType string, url string, reader io.Reader) ([]byte
 
 	HTTPClient := &http.Client{Timeout: HTTPRequestTimeout, Transport: nil, Jar: nil, CheckRedirect: nil}
 
-	walletResp, err := HTTPClient.Do(request)
+	resp, err := HTTPClient.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf("aborting during HTTP request: %w", err)
 	}
 
-	if walletResp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("request failed with status: %s", walletResp.Status)
-	}
-
-	body, err := io.ReadAll(walletResp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("reading request body: %w", err)
 	}
 
-	defer walletResp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return body, fmt.Errorf("request failed with status: %s", resp.Status)
+	}
+
+	defer resp.Body.Close()
 
 	return body, nil
 }

@@ -1,25 +1,13 @@
 package wallet
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/ed25519"
-	"crypto/rand"
-	"crypto/sha256"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
-	"path"
-	"reflect"
-	"strings"
+	"net/http"
 
-	"github.com/massalabs/thyra/pkg/config"
-	"github.com/massalabs/thyra/pkg/node/base58"
-	"golang.org/x/crypto/pbkdf2"
-	"golang.org/x/exp/slices"
-	"gopkg.in/yaml.v3"
-	"lukechampine.com/blake3"
+	"github.com/massalabs/thyra/pkg/node/sendoperation"
 )
 
 var (
@@ -34,221 +22,65 @@ const (
 	MinAddressLength          = 49
 )
 
+// WalletKeyPair wallet's key pair.
+//
 //nolint:tagliatelle
 type KeyPair struct {
-	PrivateKey []byte   `yaml:",flow"`
-	PublicKey  []byte   `yaml:",flow"`
-	Salt       [16]byte `yaml:",flow"`
-	Nonce      [12]byte `yaml:",flow"`
-	Protected  bool
+
+	// Nonce used by the AES-GCM algorithm used to protect the key pair's private key.
+	// Required: true
+	Nonce string `json:"nonce"`
+
+	// Key pair's private key.
+	// Required: true
+	PrivateKey string `json:"privateKey"`
+
+	// Key pair's public key.
+	// Required: true
+	PublicKey string `json:"publicKey"`
+
+	// Salt used by the PBKDF that generates the secret key used to protect the key pair's private key.
+	// Required: true
+	Salt string `json:"salt"`
 }
 
+// Wallet object (V0).
+//
 //nolint:tagliatelle
 type Wallet struct {
-	Version  uint8     `json:"version"`
-	Nickname string    `json:"nickname"`
-	Address  string    `json:"address"`
-	KeyPairs []KeyPair `json:"keyPairs"`
+
+	// wallet's address.
+	// Required: true
+	Address string `json:"address"`
+
+	// key pair
+	// Required: true
+	KeyPair KeyPair `json:"keyPair"`
+
+	// wallet's nickname.
+	// Required: true
+	Nickname string `json:"nickname"`
 }
 
-type Config struct {
-	// address
-	Wallets []KeyPair `json:"wallets"`
-}
-
-func (w *Wallet) Protect(password string, keyPairIndex uint8) error {
-	secretKey := pbkdf2.Key([]byte(password), w.KeyPairs[keyPairIndex].Salt[:], PBKDF2NbRound, SecretKeyLength, sha256.New)
-
-	block, err := aes.NewCipher(secretKey)
+func Fetch(nickname string) (*Wallet, error) {
+	httpRawResponse, err := sendoperation.ExecuteHTTPRequest(
+		http.MethodGet,
+		sendoperation.WalletPluginURL+nickname,
+		bytes.NewBuffer([]byte("")),
+	)
 	if err != nil {
-		return fmt.Errorf("intializing block ciphering: %w", err)
-	}
+		res := sendoperation.RespError{Code: "", Message: ""}
+		_ = json.Unmarshal(httpRawResponse, &res)
 
-	aesgcm, err := cipher.NewGCM(block)
-	if err != nil {
-		return fmt.Errorf("intializing the AES block cipher wrapped in a Gallois Counter Mode ciphering: %w", err)
-	}
-
-	w.KeyPairs[keyPairIndex].PrivateKey = aesgcm.Seal(
-		nil,
-		w.KeyPairs[keyPairIndex].Nonce[:],
-		w.KeyPairs[keyPairIndex].PrivateKey,
-		nil)
-
-	w.KeyPairs[keyPairIndex].Protected = true
-
-	return nil
-}
-
-func (w *Wallet) Unprotect(password string, keyPairIndex uint8) error {
-	secretKey := pbkdf2.Key([]byte(password), w.KeyPairs[keyPairIndex].Salt[:], PBKDF2NbRound, SecretKeyLength, sha256.New)
-
-	block, err := aes.NewCipher(secretKey)
-	if err != nil {
-		return fmt.Errorf("intializing block ciphering: %w", err)
-	}
-
-	aesgcm, err := cipher.NewGCM(block)
-	if err != nil {
-		return fmt.Errorf("intializing the AES block cipher wrapped in a Gallois Counter Mode ciphering: %w", err)
-	}
-
-	pk, err := aesgcm.Open(nil, w.KeyPairs[keyPairIndex].Nonce[:], w.KeyPairs[keyPairIndex].PrivateKey, nil)
-	if err != nil {
-		return fmt.Errorf("opening the cipher seal: %w", err)
-	}
-
-	w.KeyPairs[keyPairIndex].PrivateKey = pk
-
-	w.KeyPairs[keyPairIndex].Protected = false
-
-	return nil
-}
-
-//nolint:wrapcheck
-func (w *Wallet) YAML() ([]byte, error) {
-	for _, v := range w.KeyPairs {
-		if !v.Protected {
-			return nil, ErrUnprotectedSerialization
-		}
-	}
-
-	return yaml.Marshal(w)
-}
-
-func FromYAML(raw []byte) (w Wallet, err error) {
-	err = yaml.Unmarshal(raw, &w)
-
-	return
-}
-
-func LoadAll() (wallets []Wallet, e error) {
-	wallets = []Wallet{}
-
-	configDir, err := config.GetConfigDir()
-	if err != nil {
-		return nil, fmt.Errorf("reading config directory '%s': %w", configDir, err)
-	}
-
-	files, err := os.ReadDir(configDir)
-	if err != nil {
-		return nil, fmt.Errorf("reading wallet directory '%s': %w", configDir, err)
-	}
-
-	for _, f := range files {
-		fileName := f.Name()
-
-		if strings.HasPrefix(fileName, "wallet_") && strings.HasSuffix(fileName, ".json") {
-			bytesInput, err := os.ReadFile(path.Join(configDir, fileName))
-			if err != nil {
-				return nil, fmt.Errorf("reading file '%s': %w", fileName, err)
-			}
-
-			wallet := Wallet{} //nolint:exhaustruct
-
-			err = json.Unmarshal(bytesInput, &wallet)
-			if err != nil {
-				return nil, fmt.Errorf("unmarshaling file '%s': %w", fileName, err)
-			}
-
-			wallets = append(wallets, wallet)
-		}
-	}
-
-	return wallets, nil
-}
-
-func Load(nickname string) (*Wallet, error) {
-	bytesInput, err := os.ReadFile(GetWalletFile(nickname))
-	if err != nil {
-		return nil, fmt.Errorf("reading file 'wallet_%s.json': %w", nickname, err)
+		return nil, fmt.Errorf("calling executeHTTPRequest: %w, message: %s", err, res.Message)
 	}
 
 	wallet := Wallet{} //nolint:exhaustruct
 
-	err = json.Unmarshal(bytesInput, &wallet)
+	err = json.Unmarshal(httpRawResponse, &wallet)
 	if err != nil {
 		return nil, fmt.Errorf("unmarshaling file 'wallet_%s.json': %w", nickname, err)
 	}
 
 	return &wallet, nil
-}
-
-func Imported(nickname string, privateKeyB58V string) (*Wallet, error) {
-	privateKeyBytes, _, err := base58.VersionedCheckDecode(privateKeyB58V[1:])
-	if err != nil {
-		return nil, fmt.Errorf("encoding private key B58: %w", err)
-	}
-
-	wallets, err := LoadAll()
-	if err != nil {
-		return nil, fmt.Errorf("error loading wallets %w", err)
-	}
-
-	// The ed25519 seed is in fact what we call a private key in cryptography...
-	privateKey := ed25519.NewKeyFromSeed(privateKeyBytes)
-
-	pubKeyBytes := reflect.ValueOf(privateKey.Public()).Bytes() // force conversion to byte array
-
-	addr := blake3.Sum256(pubKeyBytes)
-	version := byte(0)
-	address := "AU" + base58.VersionedCheckEncode(addr[:], version)
-
-	if slices.IndexFunc(
-		wallets,
-		func(wallet Wallet) bool { return wallet.Address == address },
-	) != -1 {
-		return nil, ErrWalletAlreadyImported
-	}
-
-	return CreateWalletFromKeys(nickname, privateKey, pubKeyBytes, addr)
-}
-
-func CreateWalletFromKeys(nickname string, privKeyBytes []byte, pubKeyBytes []byte, addr [32]byte) (*Wallet, error) {
-	var salt [16]byte
-
-	_, err := rand.Read(salt[:])
-	if err != nil {
-		return nil, fmt.Errorf("generating random salt: %w", err)
-	}
-
-	var nonce [12]byte
-
-	_, err = rand.Read(nonce[:])
-	if err != nil {
-		return nil, fmt.Errorf("generating random nonce: %w", err)
-	}
-
-	wallet := Wallet{
-		Version:  0,
-		Nickname: nickname,
-		Address:  "AU" + base58.CheckEncode(append(make([]byte, 1), addr[:]...)),
-		KeyPairs: []KeyPair{{
-			PrivateKey: privKeyBytes,
-			PublicKey:  pubKeyBytes,
-			Salt:       salt,
-			Nonce:      nonce,
-		}},
-	}
-
-	bytesOutput, err := json.Marshal(wallet)
-	if err != nil {
-		return nil, fmt.Errorf("marshalling wallet: %w", err)
-	}
-
-	err = os.WriteFile(GetWalletFile(nickname), bytesOutput, FileModeUserReadWriteOnly)
-	if err != nil {
-		return nil, fmt.Errorf("writing wallet to 'wallet_%s.json': %w", nickname, err)
-	}
-
-	return &wallet, nil
-}
-
-func GetWalletFile(nickname string) string {
-	configDir, err := config.GetConfigDir()
-	if err != nil {
-		return ""
-	}
-
-	return path.Join(configDir, "wallet_"+nickname+".json")
 }
