@@ -15,10 +15,7 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/rs/cors v1.8.2
 	github.com/shopspring/decimal v1.3.1
-	golang.org/x/crypto v0.0.0-20201216223049-8b5274cf687f
 	golang.org/x/net v0.2.0
-	gopkg.in/yaml.v3 v3.0.1
-	lukechampine.com/blake3 v1.1.7
 )
 
 require (
@@ -27,7 +24,6 @@ require (
 )
 
 require (
-	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	golang.org/x/sys v0.2.0 // indirect
