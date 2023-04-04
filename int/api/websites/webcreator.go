@@ -103,7 +103,7 @@ func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middlewa
 		archive,
 		params.Nickname,
 		sendOperation.OperationBatch{
-			NewBatch:      false,
+			NewBatch:      true,
 			CorrelationID: "",
 		},
 	)

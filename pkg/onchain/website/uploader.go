@@ -137,7 +137,10 @@ func upload(
 			addr,
 			"appendBytesToWebsite",
 			params,
-			operationBatch,
+			sendOperation.OperationBatch{
+				NewBatch:      false,
+				CorrelationID: operationWithEventResponse.OperationResponse.CorrelationID,
+			},
 		)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
