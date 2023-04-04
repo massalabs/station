@@ -8,6 +8,7 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
+	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain"
 )
 
@@ -38,11 +39,19 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams) middlewa
 
 	c := node.NewDefaultClient()
 
-	event, err := onchain.CallFunction(c, params.Body.Nickname, addr, params.Body.Name, args, uint64(params.Body.Coins))
+	operationWithEventResponse, err := onchain.CallFunction(
+		c,
+		params.Body.Nickname,
+		addr,
+		params.Body.Name,
+		args,
+		uint64(params.Body.Coins),
+		sendOperation.OperationBatch{NewBatch: false, CorrelationID: ""},
+	)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
 			&models.Error{Code: errorCodeSendOperation, Message: "Error : callSC failed " + err.Error()})
 	}
 
-	return operations.NewCmdExecuteFunctionOK().WithPayload(event)
+	return operations.NewCmdExecuteFunctionOK().WithPayload(operationWithEventResponse.Event)
 }

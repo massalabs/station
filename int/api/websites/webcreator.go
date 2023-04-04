@@ -11,6 +11,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain/website"
 	"golang.org/x/exp/slices"
 )
@@ -37,12 +38,20 @@ func listFileName(zipReader *zip.Reader) []string {
 func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
 	archive, _ := readAndCheckArchive(params.Zipfile)
 
-	address, err := website.PrepareForUpload(params.URL, params.Nickname)
+	address, correlationID, err := website.PrepareForUpload(params.URL, params.Nickname)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorPrepare, err.Error())
 	}
 
-	_, err = website.Upload(address, archive, params.Nickname)
+	_, err = website.Upload(
+		address,
+		archive,
+		params.Nickname,
+		sendOperation.OperationBatch{
+			NewBatch:      false,
+			CorrelationID: correlationID,
+		},
+	)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
@@ -89,7 +98,15 @@ func CreateUploadWebsiteHandler() func(params operations.WebsiteCreatorUploadPar
 func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middleware.Responder {
 	archive, _ := readAndCheckArchive(params.Zipfile)
 
-	_, err := website.Upload(params.Address, archive, params.Nickname)
+	_, err := website.Upload(
+		params.Address,
+		archive,
+		params.Nickname,
+		sendOperation.OperationBatch{
+			NewBatch:      false,
+			CorrelationID: "",
+		},
+	)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}

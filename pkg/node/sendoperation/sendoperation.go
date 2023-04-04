@@ -34,8 +34,9 @@ const HTTPRequestTimeout = 60 * time.Second
 
 //nolint:tagliatelle
 type signOperationResponse struct {
-	PublicKey string `json:"publicKey"`
-	Signature string `json:"signature"`
+	PublicKey     string `json:"publicKey"`
+	Signature     string `json:"signature"`
+	CorrelationID string `json:"correlationId,omitempty"`
 }
 
 //nolint:tagliatelle
@@ -48,6 +49,16 @@ type sendOperationsReq struct {
 type Operation interface {
 	Content() interface{}
 	Message() []byte
+}
+
+type OperationResponse struct {
+	OperationID   string
+	CorrelationID string
+}
+
+type OperationBatch struct {
+	NewBatch      bool
+	CorrelationID string
 }
 
 type JSONableSlice []uint8
@@ -75,41 +86,58 @@ func Call(client *node.Client,
 	fee uint64,
 	operation Operation,
 	nickname string,
-) (string, error) {
+	operationBatch OperationBatch,
+) (*OperationResponse, error) {
 	msg, msgB64, err := makeOperation(client, expiry, fee, operation)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	httpRawResponse, err := ExecuteHTTPRequest(http.MethodPost, WalletPluginURL+nickname+"/signOperation",
-		bytes.NewBuffer([]byte(`{
+	var httpRawResponse []byte
+	if operationBatch.NewBatch {
+		httpRawResponse, err = ExecuteHTTPRequest(http.MethodPost, WalletPluginURL+nickname+"/signOperation",
+			bytes.NewBuffer([]byte(`{
+		"operation": "`+msgB64+`",
+		"batch": true
+		}`)))
+	} else if operationBatch.CorrelationID != "" {
+		httpRawResponse, err = ExecuteHTTPRequest(http.MethodPost, WalletPluginURL+nickname+"/signOperation",
+			bytes.NewBuffer([]byte(`{
+		"operation": "`+msgB64+`",
+		"correlationId": "`+operationBatch.CorrelationID+`"
+		}`)))
+	} else {
+		httpRawResponse, err = ExecuteHTTPRequest(http.MethodPost, WalletPluginURL+nickname+"/signOperation",
+			bytes.NewBuffer([]byte(`{
 		"operation": "`+msgB64+`"
 		}`)))
+	}
+
 	if err != nil {
 		res := RespError{"", ""}
 		_ = json.Unmarshal(httpRawResponse, &res)
 
-		return "", fmt.Errorf("calling executeHTTPRequest: %w, message: %s", err, res.Message)
+		return nil, fmt.Errorf("calling executeHTTPRequest for call: %w, message: %s", err, res.Message)
 	}
 
-	res := signOperationResponse{"", ""}
+	res := signOperationResponse{"", "", ""}
 	err = json.Unmarshal(httpRawResponse, &res)
 
 	if err != nil {
-		return "", fmt.Errorf("unmarshalling '%s' JSON: %w", res, err)
+		return nil, fmt.Errorf("unmarshalling '%s' JSON: %w", res, err)
 	}
 
 	signature, err := b64.StdEncoding.DecodeString(res.Signature)
 	if err != nil {
-		return "", fmt.Errorf("decoding '%s' B64: %w", res.Signature, err)
+		return nil, fmt.Errorf("decoding '%s' B64: %w", res.Signature, err)
 	}
 
 	resp, err := makeRPCCall(msg, signature, res, client)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return resp[0], nil
+	return &OperationResponse{CorrelationID: res.CorrelationID, OperationID: resp[0]}, nil
 }
 
 func makeRPCCall(msg []byte, signature []byte, res signOperationResponse, client *node.Client) ([]string, error) {

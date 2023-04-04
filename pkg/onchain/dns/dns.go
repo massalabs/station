@@ -35,7 +35,13 @@ func Resolve(client *node.Client, name string) (string, error) {
 	return convert.ByteToStringArray(entry.CandidateValue)[0], nil
 }
 
-func SetRecord(client *node.Client, nickname string, url string, smartContract string) (string, error) {
+func SetRecord(
+	client *node.Client,
+	nickname string,
+	url string,
+	smartContract string,
+	operationBatch sendoperation.OperationBatch,
+) (string, error) {
 	addr, _, err := base58.VersionedCheckDecode(Address()[2:])
 	if err != nil {
 		return "", fmt.Errorf("checking address '%s': %w", Address()[2:], err)
@@ -47,12 +53,20 @@ func SetRecord(client *node.Client, nickname string, url string, smartContract s
 	rec = append(rec, convert.U32ToBytes(len(smartContract))...)
 	rec = append(rec, []byte(smartContract)...)
 
-	result, err := onchain.CallFunction(client, nickname, addr, "setResolver", rec, sendoperation.OneMassa)
+	operationWithEventResponse, err := onchain.CallFunction(
+		client,
+		nickname,
+		addr,
+		"setResolver",
+		rec,
+		sendoperation.OneMassa,
+		operationBatch,
+	)
 	if err != nil {
 		return "", fmt.Errorf("calling setResolver with '%+v' at '%s': %w", rec, addr, err)
 	}
 
-	return result, nil
+	return operationWithEventResponse.Event, nil
 }
 
 type MetaData struct {
