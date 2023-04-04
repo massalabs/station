@@ -1,3 +1,6 @@
+
+### legacy: to be deleted
+
 import platform
 import ssl
 import urllib.request

@@ -29,11 +29,9 @@ Now, let's move on to your OS section:
 * [Windows](#windows)
 * [MacOS](#macos)
 
-
 ### MacOS
 
 Simply use copy/paste the cmd line below in your terminal. The installation process will start and a success message will be displayed once done.
-
 
 ```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/macos_install.sh)"
@@ -45,13 +43,9 @@ Congratulation, your version of Thyra is now installed on your system and can be
 You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](https://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/wallet) right away!
 
-
-
 ### Linux
 
-
 Simply use copy/paste the cmd line below in your terminal. The installation process will start and a success message will be displayed once done.
-
 
 ```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/scripts/linux_install.sh)"
@@ -69,12 +63,13 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 ### Windows
 
-
 Follow [this link](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer.exe) to download the Thyra installer on your computer. Then:
+
 1. Open it by double clicking
 2. The installer will:
-  * Check if you have the latest version of Thyra and install it if not.
-  * Check if you have the latest version of ThyraApp and install it if not.
+
+* Check if you have the latest version of Thyra and install it if not.
+* Check if you have the latest version of ThyraApp and install it if not.
 
 ![windows_icontray_V0](https://user-images.githubusercontent.com/109611779/212294116-05e1dd37-ed3f-4e3e-b034-b02d782bc4ee.png)
 
@@ -84,5 +79,3 @@ Congratulation, your version of Thyra is now installed on your system and you ca
 
 You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](https://flappy.massa) can help.
 If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/wallet) right away!
-
-
