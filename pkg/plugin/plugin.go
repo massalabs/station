@@ -145,7 +145,6 @@ func (p *Plugin) Start() error {
 
 	// start a goroutine to wait on the command
 	go func() {
-
 		defer func() {
 			p.quitChan <- true
 		}()
