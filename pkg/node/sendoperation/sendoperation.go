@@ -93,26 +93,30 @@ func Call(client *node.Client,
 		return nil, err
 	}
 
-	var httpRawResponse []byte
-	if operationBatch.NewBatch {
-		httpRawResponse, err = ExecuteHTTPRequest(http.MethodPost, WalletPluginURL+nickname+"/signOperation",
-			bytes.NewBuffer([]byte(`{
-		"operation": "`+msgB64+`",
-		"batch": true
-		}`)))
-	} else if operationBatch.CorrelationID != "" {
-		httpRawResponse, err = ExecuteHTTPRequest(http.MethodPost, WalletPluginURL+nickname+"/signOperation",
-			bytes.NewBuffer([]byte(`{
-		"operation": "`+msgB64+`",
-		"correlationId": "`+operationBatch.CorrelationID+`"
-		}`)))
-	} else {
-		httpRawResponse, err = ExecuteHTTPRequest(http.MethodPost, WalletPluginURL+nickname+"/signOperation",
-			bytes.NewBuffer([]byte(`{
-		"operation": "`+msgB64+`"
-		}`)))
+	var content string
+
+	switch {
+	case operationBatch.NewBatch:
+		content = `{
+			"operation": "` + msgB64 + `",
+			"batch": true
+		}`
+	case operationBatch.CorrelationID != "":
+		content = `{
+			"operation": "` + msgB64 + `",
+			"correlationId": "` + operationBatch.CorrelationID + `"
+		}`
+	default:
+		content = `{
+			"operation": "` + msgB64 + `"
+		}`
 	}
 
+	httpRawResponse, err := ExecuteHTTPRequest(
+		http.MethodPost,
+		WalletPluginURL+nickname+"/signOperation",
+		bytes.NewBuffer([]byte(content)),
+	)
 	if err != nil {
 		res := RespError{"", ""}
 		_ = json.Unmarshal(httpRawResponse, &res)
