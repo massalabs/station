@@ -91,7 +91,7 @@ function Manager() {
             } catch (error) {
                 console.error("Error while updating plugins status", error);
             }
-        }, 5000);
+        }, 3000);
         return () => clearInterval(interval);
     }, []);
 
@@ -130,12 +130,12 @@ function Manager() {
                         {mapPluginList(fakePluginsList)}
                         {mapPluginList(plugins)}
 
-                        <InstallPlugin plugins={plugins} getPluginsInfo={getPluginsInfo} />
                     </div>
                     <div className="divider mx-auto mt-8 w-3/4" />
                     <p className="Secondary mt-12 text-font ml-6">Plugin Store</p>
                     <div className={defineGridStyle(pluginsNotInstalled.length)}>
                         {mapPluginList(pluginsNotInstalled)}
+                        <InstallPlugin plugins={plugins} getPluginsInfo={getPluginsInfo} />
                     </div>
                 </div>
             </div>

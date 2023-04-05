@@ -131,6 +131,7 @@ function PluginBlock(props: PluginProps) {
                                 onClick={openHomepagePlugins}
                                 iconPathDark={Arrow6}
                                 iconPathLight={ArrowWhite6}
+                                isDisabled={isPluginUp ? false : true}
                             />
 
                             <SecondaryButton
