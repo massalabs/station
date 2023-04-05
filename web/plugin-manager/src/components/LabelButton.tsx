@@ -9,11 +9,11 @@ type Props = {
     placeholder: string;
     buttonValue: string;
     error?: string;
+    processIsPending?: boolean;
 };
 
 const LabelButton = (props: Props) => {
     const [value, setValue] = useState("");
-    const [isPending, setIsPending] = useState(false);
 
     function handleInputValueChange(event: any) {
         setValue(event.target.value);
@@ -22,10 +22,6 @@ const LabelButton = (props: Props) => {
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         props.callbackToParent(value);
-        setIsPending(true);
-        setTimeout(() => {
-            setIsPending(false);
-        }, 4000);
     }
 
     return (
@@ -37,7 +33,7 @@ const LabelButton = (props: Props) => {
                 placeholder={props.placeholder}
                 onChange={handleInputValueChange}
             />
-            {!isPending ? (
+            {!props.processIsPending ? (
                 <PrimaryButton
                     label={props.buttonValue}
                     type="submit"

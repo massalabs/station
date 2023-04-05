@@ -105,11 +105,7 @@ function Manager() {
         });
     };
 
-    const defineGridStyle = () => {
-        const setResponsiveGrid = `max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`;
-        const gridStyle = "grid grid-flow-row mx-auto mt-3 gap-4";
-        return gridStyle + " " + setResponsiveGrid;
-    };
+    const GridStyle = `grid grid-flow-row mx-auto mt-3 gap-4 max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`;
 
     return (
         <div>
@@ -121,13 +117,13 @@ function Manager() {
                 >
                     <MainTitle title="Plugin Manager" />
                     <p className="Secondary mt-2 text-font ml-6">Installed</p>
-                    <div className={defineGridStyle()}>
+                    <div className={GridStyle}>
                         {mapPluginList(fakePluginsList)}
                         {mapPluginList(plugins)}
                     </div>
                     <div className="divider mx-auto mt-8 w-3/4" />
                     <p className="Secondary mt-12 text-font ml-6">Plugin Store</p>
-                    <div className={defineGridStyle()}>
+                    <div className={GridStyle}>
                         {mapPluginList(pluginsNotInstalled)}
                         <InstallPlugin plugins={plugins} getPluginsInfo={getPluginsInfo} />
                     </div>

@@ -14,7 +14,7 @@ export interface InstallProps {
 
 function InstallPlugin(p: InstallZipProps) {
     const [errorPluginInstall, setErrorPluginInstall] = useState("");
-    const [previousUrl, setPreviousUrl] = useState("");
+    const [installIsPending, setInstallIsPending] = useState(false);
     const isValidUrl = (url: string) => {
         const regex = /^(http)[^\s]*\.zip$/i; // fragment locator
         return regex.test(url);
@@ -25,15 +25,11 @@ function InstallPlugin(p: InstallZipProps) {
             setErrorPluginInstall("Invalid URL");
             return;
         }
-        // Avoid the double call function ..
-        // Todo : Rework this and detect why this function is call two times on each click
-        if (url === previousUrl && previousUrl !== "") {
-            return;
-        }
         try {
+            setInstallIsPending(true);
             await axiosServices.installPlugin(url);
             p.getPluginsInfo();
-            setPreviousUrl(url);
+            setInstallIsPending(false);
         } catch (err: any) {
             console.error(err.response?.data?.message);
             setErrorPluginInstall("Error while installing plugin");
@@ -66,6 +62,7 @@ function InstallPlugin(p: InstallZipProps) {
                     placeholder: "Set .zip Url Link",
                     buttonValue: "Install",
                     error: errorPluginInstall,
+                    processIsPending: installIsPending,
                 }}
             />
         </>
