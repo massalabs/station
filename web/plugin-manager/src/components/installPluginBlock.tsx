@@ -33,6 +33,7 @@ function InstallPlugin(p: InstallZipProps) {
         } catch (err: any) {
             console.error(err.response?.data?.message);
             setErrorPluginInstall("Error while installing plugin");
+            setInstallIsPending(false);
         }
     };
 
