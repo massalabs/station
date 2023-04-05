@@ -14,7 +14,7 @@ export interface InstallProps {
 
 function InstallPlugin(p: InstallZipProps) {
     const [errorPluginInstall, setErrorPluginInstall] = useState("");
-
+    const [previousUrl, setPreviousUrl] = useState("");
     const isValidUrl = (url: string) => {
         const regex = /^(http)[^\s]*\.zip$/i; // fragment locator
         return regex.test(url);
@@ -25,14 +25,33 @@ function InstallPlugin(p: InstallZipProps) {
             setErrorPluginInstall("Invalid URL");
             return;
         }
+        // Avoid the double call function ..
+        // Todo : Rework this and detect why this function is call two times on each click
+        if (url === previousUrl && previousUrl !== "") {
+            return;
+        }
         try {
             await axiosServices.installPlugin(url);
             p.getPluginsInfo();
+            setPreviousUrl(url);
         } catch (err: any) {
             console.error(err.response?.data?.message);
-            setErrorPluginInstall("Error fetching plugin URL");
+            setErrorPluginInstall("Error while installing plugin");
         }
     };
+
+    const debouncedInstallPluginHandler = debounce(installPluginHandler, 300);
+
+    function debounce<T extends (...args: any[]) => any>(
+        func: T,
+        delay: number
+    ): (...args: Parameters<T>) => void {
+        let timeoutId: ReturnType<typeof setTimeout>;
+        return function (this: any, ...args: Parameters<T>): void {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
 
     return (
         <>
@@ -41,7 +60,7 @@ function InstallPlugin(p: InstallZipProps) {
                 text3={"Install a plugin using .zip URL"}
                 propsLabelButton={{
                     callbackToParent: function (data: string): void {
-                        installPluginHandler(data);
+                        debouncedInstallPluginHandler(data);
                     },
                     label: "Plugin link",
                     placeholder: "Set .zip Url Link",

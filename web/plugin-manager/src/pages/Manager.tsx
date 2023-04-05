@@ -124,7 +124,6 @@ function Manager() {
                     <div className={defineGridStyle()}>
                         {mapPluginList(fakePluginsList)}
                         {mapPluginList(plugins)}
-
                     </div>
                     <div className="divider mx-auto mt-8 w-3/4" />
                     <p className="Secondary mt-12 text-font ml-6">Plugin Store</p>
