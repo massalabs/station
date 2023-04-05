@@ -21,7 +21,8 @@ const PrimaryButton = (props: Props) => {
                 "flex flex-row justify-center items-center gap-2 h-12 border-[1px] border-solid border-border rounded-md  " +
                 (props.width ?? " w-28 ") +
                 (props.isDisabled
-                    ? " bg-disabledButton cursor-not-allowed" : " bg-primaryButton cursor-pointer hover:bg-hoverSecondaryButton")
+                    ? " bg-disabledButton cursor-not-allowed"
+                    : " bg-primaryButton cursor-pointer hover:bg-hoverSecondaryButton")
             }
         >
             <p className="text-invertedfont">{props.label}</p>

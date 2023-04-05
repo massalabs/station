@@ -14,7 +14,7 @@ export interface InstallProps {
 
 function InstallPlugin(p: InstallZipProps) {
     const [errorPluginInstall, setErrorPluginInstall] = useState("");
-
+    const [installIsPending, setInstallIsPending] = useState(false);
     const isValidUrl = (url: string) => {
         const regex = /^(http)[^\s]*\.zip$/i; // fragment locator
         return regex.test(url);
@@ -26,13 +26,29 @@ function InstallPlugin(p: InstallZipProps) {
             return;
         }
         try {
+            setInstallIsPending(true);
             await axiosServices.installPlugin(url);
             p.getPluginsInfo();
+            setInstallIsPending(false);
         } catch (err: any) {
             console.error(err.response?.data?.message);
-            setErrorPluginInstall("Error fetching plugin URL");
+            setErrorPluginInstall("Error while installing plugin");
+            setInstallIsPending(false);
         }
     };
+
+    const debouncedInstallPluginHandler = debounce(installPluginHandler, 300);
+
+    function debounce<T extends (...args: any[]) => any>(
+        func: T,
+        delay: number
+    ): (...args: Parameters<T>) => void {
+        let timeoutId: ReturnType<typeof setTimeout>;
+        return function (this: any, ...args: Parameters<T>): void {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
 
     return (
         <>
@@ -41,12 +57,13 @@ function InstallPlugin(p: InstallZipProps) {
                 text3={"Install a plugin using .zip URL"}
                 propsLabelButton={{
                     callbackToParent: function (data: string): void {
-                        installPluginHandler(data);
+                        debouncedInstallPluginHandler(data);
                     },
                     label: "Plugin link",
                     placeholder: "Set .zip Url Link",
                     buttonValue: "Install",
                     error: errorPluginInstall,
+                    processIsPending: installIsPending,
                 }}
             />
         </>

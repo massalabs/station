@@ -121,9 +121,7 @@ function Home() {
                   id: plugin.id,
                   logo: plugin.logo ? plugin.logo : massaLogomark,
                   name: plugin ? plugin.name : '',
-                  description: plugin.description
-                    ? plugin.description
-                    : '',
+                  description: plugin.description ? plugin.description : '',
                   status: plugin.status ? plugin.status : '',
                 },
                 handleOpenPlugin: handleOpenPlugin,
@@ -136,15 +134,7 @@ function Home() {
         }
       });
   };
-
-  const defineGridStyle = (length: number) => {
-    let styles = gridStyle;
-    return (styles += length <= 3 ? ' grid-cols-3 ' : setResponsiveGrid);
-  };
-  const gridStyle = ' grid grid-flow-row mx-auto mt-3 gap-4 grid-cols-4';
-
-  const setResponsiveGrid =
-    ' max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-xl:grid-cols-4 ';
+  const GridStyle = `grid grid-flow-row mx-auto mt-3 gap-4 max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`;
 
   return (
     <div>
@@ -157,11 +147,7 @@ function Home() {
         {/* Display the plugins in a grid */}
         <div className="mx-auto max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] max-xl:w-[1024px] xl:w-[1280px]">
           <MainTitle title="Which Plugins" />
-          <div
-            className={defineGridStyle(plugins.length + fakePluginsList.length)}
-          >
-            {mapPluginList()}
-          </div>
+          <div className={GridStyle}>{mapPluginList()}</div>
         </div>
       </div>
     </div>

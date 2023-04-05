@@ -2,7 +2,7 @@ import { UIStore } from '../store/UIStore';
 import toggleTheme from './toggleTheme';
 import logoLight from '../assets/logo/logoLight.svg';
 import logoDark from '../assets/logo/logoDark.svg';
-import {THEMES} from "../../../shared/consts/theme";
+import { THEMES } from '../../../shared/consts/theme';
 const Header = () => {
   const isThemeLight = UIStore.useState((s) =>
     s.theme == THEMES.LIGHT ? true : false,

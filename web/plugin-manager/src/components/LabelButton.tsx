@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import PrimaryButton from "./buttons/PrimaryButton";
+import { BarLoader } from "react-spinners";
 
 type Props = {
     callbackToParent: (data: string) => void;
@@ -8,6 +9,7 @@ type Props = {
     placeholder: string;
     buttonValue: string;
     error?: string;
+    processIsPending?: boolean;
 };
 
 const LabelButton = (props: Props) => {
@@ -31,12 +33,16 @@ const LabelButton = (props: Props) => {
                 placeholder={props.placeholder}
                 onChange={handleInputValueChange}
             />
-            <PrimaryButton
-                label={props.buttonValue}
-                type="submit"
-                width={" w-full"}
-                onClick={() => props.callbackToParent(value)}
-            />
+            {!props.processIsPending ? (
+                <PrimaryButton
+                    label={props.buttonValue}
+                    type="submit"
+                    width={" w-full"}
+                    onClick={() => props.callbackToParent(value)}
+                />
+            ) : (
+                <BarLoader width={"100%"} color="hsl(var(--twc-brand))" />
+            )}
         </form>
     );
 };

@@ -105,15 +105,7 @@ function Manager() {
         });
     };
 
-    const defineGridStyle = (length: number) => {
-        const numberOfCols = 3;
-        let styles = gridStyle;
-        return (styles += length <= numberOfCols ? " grid-cols-3 " : setResponsiveGrid);
-    };
-    const gridStyle = " grid grid-flow-row mx-auto mt-3 gap-4 grid-cols-4";
-
-    const setResponsiveGrid =
-        " max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-xl:grid-cols-4 ";
+    const GridStyle = `grid grid-flow-row mx-auto mt-3 gap-4 max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`;
 
     return (
         <div>
@@ -121,19 +113,17 @@ function Manager() {
                 <Header />
                 <div
                     className="mx-auto 
-                w-fit
                 max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] max-xl:w-[1024px] xl:w-[1280px]"
                 >
                     <MainTitle title="Plugin Manager" />
                     <p className="Secondary mt-2 text-font ml-6">Installed</p>
-                    <div className={defineGridStyle(plugins.length + fakePluginsList.length)}>
+                    <div className={GridStyle}>
                         {mapPluginList(fakePluginsList)}
                         {mapPluginList(plugins)}
-
                     </div>
                     <div className="divider mx-auto mt-8 w-3/4" />
                     <p className="Secondary mt-12 text-font ml-6">Plugin Store</p>
-                    <div className={defineGridStyle(pluginsNotInstalled.length)}>
+                    <div className={GridStyle}>
                         {mapPluginList(pluginsNotInstalled)}
                         <InstallPlugin plugins={plugins} getPluginsInfo={getPluginsInfo} />
                     </div>

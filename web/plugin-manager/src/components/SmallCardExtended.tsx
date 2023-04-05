@@ -13,6 +13,7 @@ type Props = {
         placeholder: string;
         buttonValue: string;
         error?: string;
+        processIsPending?: boolean;
     };
 };
 
