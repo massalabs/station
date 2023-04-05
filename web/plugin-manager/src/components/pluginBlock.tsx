@@ -77,7 +77,7 @@ function PluginBlock(props: PluginProps) {
             console.log(`Plugins failed to be removed , error ${error.message}`);
         }
     }
-    // Uninstall plugin
+    // Download plugin
     async function downloadPlugins() {
         try {
             if (props.plugin.url === undefined) return console.error("Plugin url is undefined");
