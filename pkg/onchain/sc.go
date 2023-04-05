@@ -10,177 +10,89 @@ import (
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/node/sendoperation/callsc"
 	"github.com/massalabs/thyra/pkg/node/sendoperation/executesc"
-	"github.com/massalabs/thyra/pkg/wallet"
 )
 
 const maxWaitingTimeInSeconds = 45
 
 const evenHeartbeat = 2
 
-func CallFunction(client *node.Client, wallet wallet.Wallet,
-	addr []byte, function string, parameter []byte, coins uint64,
-) (string, error) {
-	callSC := callsc.New(addr, function, parameter,
-		sendOperation.DefaultGazLimit,
-		coins)
-
-	operationID, err := sendOperation.Call(
-		client,
-		sendOperation.DefaultSlotsDuration, sendOperation.NoFee,
-		callSC,
-		wallet.KeyPairs[0].PublicKey, wallet.KeyPairs[0].PrivateKey)
-	if err != nil {
-		return "", fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
-	}
-
-	counter := 0
-
-	ticker := time.NewTicker(time.Second * evenHeartbeat)
-
-	for ; true; <-ticker.C {
-		counter++
-
-		if counter > maxWaitingTimeInSeconds*evenHeartbeat {
-			break
-		}
-
-		events, err := node.Events(client, nil, nil, nil, nil, &operationID)
-		if err != nil {
-			return operationID,
-				fmt.Errorf("waiting execution of function '%s' at '%s' with id '%s': %w", function, addr, operationID, err)
-		}
-
-		if len(events) > 0 {
-			return operationID, nil
-		}
-	}
-
-	return operationID, errors.New("timeout")
+type OperationWithEventResponse struct {
+	Event             string
+	OperationResponse sendOperation.OperationResponse
 }
 
 /*
 This function send a callSC request to the node.
-After a sucessfulll execution, listening to the events emitted by the operation
+After a successful execution, listening to the events emitted by the operation
 should be done on front end side by the consumer.
 However in the current state of things the easiest way to unblock us is to
 listen to these events in Thyra and return them as a response.
 Hence this function also listen for the first event emitted in an OP and returns it.
 */
-func CallFunctionV2(client *node.Client, nickname string,
-	addr []byte, function string, parameter []byte, coins uint64,
-) (string, error) {
+func CallFunction(client *node.Client,
+	nickname string,
+	addr []byte,
+	function string,
+	parameter []byte,
+	coins uint64,
+	operationBatch sendOperation.OperationBatch,
+) (*OperationWithEventResponse, error) {
 	callSC := callsc.New(addr, function, parameter,
 		sendOperation.DefaultGazLimit,
 		coins)
 
-	operationID, err := sendOperation.CallV2(
+	operationResponse, err := sendOperation.Call(
 		client,
 		sendOperation.DefaultSlotsDuration, sendOperation.NoFee,
 		callSC,
-		nickname)
+		nickname,
+		operationBatch,
+	)
 	if err != nil {
-		return "", fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
+		return nil, fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
 	}
 
-	counter := 0
-
-	ticker := time.NewTicker(time.Second * evenHeartbeat)
-
-	for ; true; <-ticker.C {
-		counter++
-
-		if counter > maxWaitingTimeInSeconds*evenHeartbeat {
-			break
-		}
-
-		events, err := node.Events(client, nil, nil, nil, nil, &operationID)
-		if err != nil {
-			return "", fmt.Errorf("listening events: %w", err)
-		}
-
-		if len(events) > 0 {
-			event := events[0].Data
-			//  Catch Run Time Error and return it
-			if strings.Contains(event, "massa_execution_error") {
-				// return the event containing the error
-				return "", errors.New(event)
-			}
-			// if there is an event, return the first event
-			return event, nil
-		}
+	eventFound, operationWithEventResponse, err := listenEvents(client, operationResponse)
+	if eventFound {
+		return operationWithEventResponse, err
 	}
-	// If no event received, return a message to announce sc is deployed
-	return "Function called successfully but no event generated", nil
+
+	// If no event received, return a message to announce sc is called
+	return &OperationWithEventResponse{
+		Event:             "Function called successfully but no event generated",
+		OperationResponse: *operationResponse,
+	}, nil
 }
 
-func CallFunctionUnwaited(client *node.Client, wallet wallet.Wallet, expiryDelta uint64,
-	addr []byte, function string, parameter []byte,
-) (string, error) {
+func CallFunctionUnwaited(client *node.Client,
+	nickname string,
+	expiryDelta uint64,
+	addr []byte,
+	function string,
+	parameter []byte,
+	operationBatch sendOperation.OperationBatch,
+) (*sendOperation.OperationResponse, error) {
 	callSC := callsc.New(addr, function, parameter,
 		sendOperation.DefaultGazLimit,
 		sendOperation.HundredMassa)
 
-	operationID, err := sendOperation.Call(
+	operationResponse, err := sendOperation.Call(
 		client,
 		expiryDelta, sendOperation.NoFee,
 		callSC,
-		wallet.KeyPairs[0].PublicKey, wallet.KeyPairs[0].PrivateKey)
+		nickname,
+		operationBatch,
+	)
 	if err != nil {
-		return "", fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
+		return nil, fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
 	}
 
-	return operationID, nil
-}
-
-func DeploySC(client *node.Client, wallet wallet.Wallet, contract []byte) (string, error) {
-	exeSC := executesc.New(contract,
-		sendOperation.DefaultGazLimit,
-		sendOperation.NoCoin, nil)
-
-	opID, err := sendOperation.Call(
-		client,
-		sendOperation.DefaultSlotsDuration,
-		sendOperation.NoFee,
-		exeSC,
-		wallet.KeyPairs[0].PublicKey, wallet.KeyPairs[0].PrivateKey)
-	if err != nil {
-		return "", fmt.Errorf("calling executeSC: %w", err)
-	}
-
-	counter := 0
-
-	ticker := time.NewTicker(time.Second * evenHeartbeat)
-
-	for ; true; <-ticker.C {
-		counter++
-
-		if counter > maxWaitingTimeInSeconds*evenHeartbeat {
-			break
-		}
-
-		events, err := node.Events(client, nil, nil, nil, nil, &opID)
-		if err != nil {
-			return "", fmt.Errorf("waiting SC deployment: %w", err)
-		}
-
-		if len(events) > 0 {
-			event := events[0].Data
-			//  Catch Run Time Error and return it
-			if strings.Contains(event, "massa_execution_error") {
-				// return the event containing the error
-				return "", errors.New(event)
-			}
-			// if there is an event, return the first event
-			return event, nil
-		}
-	}
-	// If no event received, return a message to announce sc is deployed
-	return "sc deployed successfully but no event received", nil
+	return operationResponse, nil
 }
 
 // DeploySC deploys a smart contract on the blockchain. It returns the address of the smart contract and an Error.
-// The smart contract is deployed with the given wallet.
-func DeploySCV2(client *node.Client,
+// The smart contract is deployed with the given account nickname.
+func DeploySC(client *node.Client,
 	nickname string,
 	gazLimit uint64,
 	coins uint64,
@@ -188,23 +100,42 @@ func DeploySCV2(client *node.Client,
 	expiry uint64,
 	contract []byte,
 	datastore []byte,
-) (string, error) {
+	operationBatch sendOperation.OperationBatch,
+) (*OperationWithEventResponse, error) {
 	exeSC := executesc.New(
 		contract,
 		gazLimit,
 		coins,
 		datastore)
 
-	opID, err := sendOperation.CallV2(
+	operationResponse, err := sendOperation.Call(
 		client,
 		expiry,
 		fee,
 		exeSC,
-		nickname)
+		nickname,
+		operationBatch,
+	)
 	if err != nil {
-		return "", fmt.Errorf("calling executeSC: %w", err)
+		return nil, fmt.Errorf("calling executeSC: %w", err)
 	}
 
+	eventFound, operationWithEventResponse, err := listenEvents(client, operationResponse)
+	if eventFound {
+		return operationWithEventResponse, err
+	}
+
+	// If no event received, return a message to announce sc is deployed
+	return &OperationWithEventResponse{
+		Event:             "sc deployed successfully but no event received",
+		OperationResponse: *operationResponse,
+	}, nil
+}
+
+func listenEvents(
+	client *node.Client,
+	operationResponse *sendOperation.OperationResponse,
+) (bool, *OperationWithEventResponse, error) {
 	counter := 0
 
 	ticker := time.NewTicker(time.Second * evenHeartbeat)
@@ -216,22 +147,27 @@ func DeploySCV2(client *node.Client,
 			break
 		}
 
-		events, err := node.Events(client, nil, nil, nil, nil, &opID)
+		events, err := node.Events(client, nil, nil, nil, nil, &operationResponse.OperationID)
 		if err != nil {
-			return "", fmt.Errorf("waiting SC deployment: %w", err)
+			return true, nil, fmt.Errorf("waiting SC deployment: %w", err)
 		}
 
 		if len(events) > 0 {
 			event := events[0].Data
-			//  Catch Run Time Error and return it
+
+			// Catch Run Time Error and return it
 			if strings.Contains(event, "massa_execution_error") {
 				// return the event containing the error
-				return "", errors.New(event)
+				return true, nil, errors.New(event)
 			}
+
 			// if there is an event, return the first event
-			return event, nil
+			return true, &OperationWithEventResponse{
+				Event:             event,
+				OperationResponse: *operationResponse,
+			}, nil
 		}
 	}
-	// If no event received, return a message to announce sc is deployed
-	return "sc deployed successfully but no event received", nil
+
+	return false, nil, nil
 }

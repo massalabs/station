@@ -46,7 +46,7 @@ func getDLChecksumAndOs(plugin store.Plugin) (string, string, string, error) {
 	return pluginURL, os, checksum, nil
 }
 
-func (l *list) Handle(param operations.GetPluginStoreParams) middleware.Responder {
+func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 	log.Println("[GET /plugin-store]")
 
 	plugins, err := store.FetchPluginList()

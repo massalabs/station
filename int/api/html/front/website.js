@@ -147,7 +147,7 @@ function changeDefaultWallet(event) {
 
 async function getWallets() {
     axios
-        .get("/mgmt/wallet")
+        .get("/thyra/plugin/Massalabs/Massa%20Wallet/rest/wallet")
         .then((resp) => {
             if (resp) {
                 gWallets = resp.data;

@@ -3,22 +3,22 @@ package cmd
 import (
 	"encoding/base64"
 
-	"fyne.io/fyne/v2"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
+	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain"
 )
 
-func CreateExecuteFunctionHandler(app *fyne.App) func(params operations.CmdExecuteFunctionParams) middleware.Responder {
+func CreateExecuteFunctionHandler() func(params operations.CmdExecuteFunctionParams) middleware.Responder {
 	return func(params operations.CmdExecuteFunctionParams) middleware.Responder {
-		return ExecuteFunctionHandler(params, app)
+		return ExecuteFunctionHandler(params)
 	}
 }
 
-func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyne.App) middleware.Responder {
+func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams) middleware.Responder {
 	addr, err := base58.CheckDecode(params.Body.At[2:])
 	if err != nil {
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
@@ -39,11 +39,19 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams, app *fyn
 
 	c := node.NewDefaultClient()
 
-	event, err := onchain.CallFunctionV2(c, params.Body.Nickname, addr, params.Body.Name, args, uint64(params.Body.Coins))
+	operationWithEventResponse, err := onchain.CallFunction(
+		c,
+		params.Body.Nickname,
+		addr,
+		params.Body.Name,
+		args,
+		uint64(params.Body.Coins),
+		sendOperation.OperationBatch{NewBatch: false, CorrelationID: ""},
+	)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
 			&models.Error{Code: errorCodeSendOperation, Message: "Error : callSC failed " + err.Error()})
 	}
 
-	return operations.NewCmdExecuteFunctionOK().WithPayload(event)
+	return operations.NewCmdExecuteFunctionOK().WithPayload(operationWithEventResponse.Event)
 }

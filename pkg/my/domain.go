@@ -26,7 +26,7 @@ and returns it as an array of strings.
 func Domains(client *node.Client, nickname string) ([]string, error) {
 	const ownedPrefix = "owned"
 
-	wallet, err := wallet.Load(nickname)
+	wallet, err := wallet.Fetch(nickname)
 	if err != nil {
 		return nil, fmt.Errorf("loading wallet '%s': %w", nickname, err)
 	}

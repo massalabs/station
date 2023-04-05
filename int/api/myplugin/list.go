@@ -19,7 +19,7 @@ type list struct {
 	manager *plugin.Manager
 }
 
-func (l *list) Handle(param operations.PluginManagerListParams) middleware.Responder {
+func (l *list) Handle(_ operations.PluginManagerListParams) middleware.Responder {
 	log.Println("[GET /plugin-manager]")
 
 	ids := l.manager.ID()

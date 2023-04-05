@@ -21,16 +21,7 @@ permissions:
   contents: write
 
 jobs:
-
-  lint:
-    uses: ./.github/workflows/lint.yml
-
-  tests:
-    uses: ./.github/workflows/tests.yml
-
   build:
-    if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
-    needs: [lint, tests]
     name: build and upload artifacts
     strategy:
       matrix:
@@ -78,7 +69,6 @@ jobs:
 
   build-installer:
     if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
-    needs: [lint, tests]
     name: build and upload installers binaries
     strategy:
       matrix:
