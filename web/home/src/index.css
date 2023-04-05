@@ -23,11 +23,18 @@
   border-color: hsl(var(--twc-secondaryButton));
 
 }
-
-.react-toggle-track-check {
-  width: "14px";
-  height: "14px";
+.custom-classname .react-toggle-track-check {
+  width: 14px;
+  height: 14px;
 }
+
+/* Theme Toggle with icons */
+.react-toggle-track-check {
+  width: 14px;
+  height: 14px !important;
+}
+
+.minimize { overflow: hidden; text-overflow: ellipsis; }
 
 /* Background SVG for HomePage */
 .bg-img {

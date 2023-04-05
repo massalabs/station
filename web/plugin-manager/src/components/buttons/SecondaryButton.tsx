@@ -4,7 +4,7 @@ import { UIStore } from "../../store/UIStore";
 type Props = {
     label: string;
     onClick: () => void;
-    width?: string;
+    style?: string;
     isDisabled?: boolean;
     type?: "button" | "submit" | "reset";
 };
@@ -16,7 +16,7 @@ const SecondaryButton = (props: Props) => {
             onClick={props.onClick}
             className={
                 "flex flex-row justify-center items-center gap-2 h-12 border-[1px] border-solid border-border rounded-md " +
-                (props.width ?? "w-28") +
+                (props.style ?? " w-28") +
                 (props.isDisabled
                     ? " bg-disabledButton cursor-not-allowed"
                     : " bg-secondaryButton hover:bg-hoverPrimaryButton cursor-pointer")

@@ -7,9 +7,11 @@ import Arrow6 from "../assets/pictos/arrow6.svg";
 import ArrowWhite6 from "../assets/pictos/ArrowWhite6.svg";
 import PrimaryButton from "./buttons/PrimaryButton";
 import SecondaryButton from "./buttons/SecondaryButton";
+import { BarLoader } from "react-spinners";
 
 function PluginBlock(props: PluginProps) {
     const [isPluginUp, setStatus] = useState(isUp(props.plugin.status));
+    const [isInstalling, setisInstalling] = useState(false);
     useEffect(() => setStatus(isUp(props.plugin.status)), [props.plugin.status]);
 
     // fetch info from plugin to get fresh data on demand
@@ -75,31 +77,23 @@ function PluginBlock(props: PluginProps) {
             console.log(`Plugins failed to be removed , error ${error.message}`);
         }
     }
-    // Uninstall plugin
+    // Download plugin
     async function downloadPlugins() {
         try {
-            if(props.plugin.url === undefined) return console.error("Plugin url is undefined");
-            await axiosServices.installPlugin(props.plugin.url);
+            if (props.plugin.url === undefined) return console.error("Plugin url is undefined");
+            setisInstalling(true);
+            (await axiosServices.installPlugin(props.plugin.url)).status === (200 || 500) &&
+                setisInstalling(false);
             props.getPluginsInfo();
         } catch (error: any) {
+            setisInstalling(false);
             console.log(`Plugins failed to be downloaded , error ${error.message}`);
-        }
-    }
-    //Truncate the string so that it fits in the given lenght if needed.
-    function minimize(str: string, length: number) {
-        if (!str) {
-            return "";
-        }
-        if (str.length > length) {
-            return str.substring(0, length) + "...";
-        } else {
-            return str;
         }
     }
 
     return (
         <div
-            className="flex flex-col justify-center items-start p-6 gap-4 w-80 h-56 
+            className="flex flex-col justify-center items-start p-6 gap-4 w-72 h-56 
                     border-[1px] border-solid border-border rounded-2xl bg-bgCard "
         >
             {/* First block Display plugin name and description */}
@@ -109,23 +103,27 @@ function PluginBlock(props: PluginProps) {
                     <TogglePlugin handleChange={launchOrStop} checked={isPluginUp} />
                 )}
             </div>
-            <div className="w-full">
-                <h1 className="label2 text-font">{minimize(props.plugin.name, 90)}</h1>
-                <p className="text3 text-font max-sm:text-sm">
-                    {minimize(props.plugin.description, 100)}
+            <div className="w-full h-16">
+                <h1 className={`label2 text-font h-8 minimize`}>{props.plugin.name}</h1>
+                <p className="text3 text-font h-8 minimize max-sm:text-sm">
+                    {props.plugin.description}
                 </p>
             </div>
+            <p className="hidden text3 text-font">V: {props.plugin.version ?? "0.0.0"}</p>
             {/* Second Block with Icons  */}
-            <div className="flex">
+            <div className="flex w-full">
                 {/* Delete hidden when version will be send through the API */}
-                <p className="hidden text3 text-font">V: {props.plugin.version ?? "0.0.0"}</p>
-                <div className="flex w-64 content-between justify-between mx-auto gap-4">
+                <div className="flex w-full content-between justify-between mx-auto gap-4">
                     {props.plugin.isNotInstalled ? (
-                        <SecondaryButton
-                            label={"Download"}
-                            onClick={downloadPlugins}
-                            width={"w-64"}
-                        />
+                        !isInstalling ? (
+                            <SecondaryButton
+                                label={"Download"}
+                                onClick={downloadPlugins}
+                                style={" w-full"}
+                            />
+                        ) : (
+                            <BarLoader width={"100%"} color="hsl(var(--twc-brand))" />
+                        )
                     ) : (
                         <>
                             <PrimaryButton
@@ -133,6 +131,7 @@ function PluginBlock(props: PluginProps) {
                                 onClick={openHomepagePlugins}
                                 iconPathDark={Arrow6}
                                 iconPathLight={ArrowWhite6}
+                                isDisabled={isPluginUp ? false : true}
                             />
 
                             <SecondaryButton

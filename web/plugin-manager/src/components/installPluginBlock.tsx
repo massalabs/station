@@ -12,7 +12,6 @@ export interface InstallProps {
     getPluginsInfo: () => void;
 }
 
-
 function InstallPlugin(p: InstallZipProps) {
     const [errorPluginInstall, setErrorPluginInstall] = useState("");
 
@@ -24,16 +23,16 @@ function InstallPlugin(p: InstallZipProps) {
     const installPluginHandler = async (url: string) => {
         if (!isValidUrl(url)) {
             setErrorPluginInstall("Invalid URL");
-            return
+            return;
         }
         try {
             await axiosServices.installPlugin(url);
             p.getPluginsInfo();
         } catch (err: any) {
-            console.error(err.response?.data?.message)
+            console.error(err.response?.data?.message);
             setErrorPluginInstall("Error fetching plugin URL");
         }
-    }
+    };
 
     return (
         <>

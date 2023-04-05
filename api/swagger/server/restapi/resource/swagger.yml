@@ -1227,23 +1227,17 @@ definitions:
         type: string
       url:
         type: string
-      assets:
+      file:
         type: object
-        properties:
-          windows:
-            $ref: '#/definitions/File'
-          linux:
-            $ref: '#/definitions/File'
-          macos-arm64:
-            $ref: '#/definitions/File'
-          macos-amd64:
-            $ref: '#/definitions/File'
+        $ref: '#/definitions/File'
+      os:
+        type: string
     required:
       - name
       - description
       - version
       - url
-      - assets
+      - file
   File:
     type: object
     properties:

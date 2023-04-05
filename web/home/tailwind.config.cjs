@@ -49,7 +49,7 @@ module.exports = {
     plugin(function ({ addComponents, theme }) {
       addComponents({
         '.display': {
-          fontSize: '72px',
+          fontSize: '44px',
           fontWeight: '500',
           fontFamily: theme('fontFamily.MaisonNeue'),
           lineHeight: '87px',

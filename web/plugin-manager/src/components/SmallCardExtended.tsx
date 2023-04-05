@@ -17,18 +17,18 @@ type Props = {
 };
 
 const SmallCardExtended = (props: Props) => {
-    const isThemeLight = UIStore.useState((s) => (s.theme === "light"));
+    const isThemeLight = UIStore.useState((s) => s.theme === "light");
     const [isExtended, setIsExtended] = useState(false);
     const HandleOnClickExtend = () => {
         setIsExtended(!isExtended);
         //Change the className of the container to grow the height of the section
-        return " h-56 w-80 max-w-lg p-6 gap-3 border-[1px] border-solid border-border rounded-2xl bg-bgCard";
+        return " h-56 w-72 max-w-lg p-6 gap-3 border-[1px] border-solid border-border rounded-2xl bg-bgCard";
     };
     const sectionClassName = () => {
         if (isExtended) {
-            return "h-56 w-80 max-w-lg p-6 gap-3 border-[1px] border-solid border-border rounded-2xl bg-bgCard hover:bg-hoverbgCard";
+            return "h-56 w-72 max-w-lg p-6 gap-3 border-[1px] border-solid border-border rounded-2xl bg-bgCard hover:bg-hoverbgCard";
         } else {
-            return "h-28 w-80 max-w-lg p-6 gap-3 border-[1px] border-solid border-border rounded-2xl bg-bgCard hover:bg-hoverbgCard";
+            return "h-28 w-72 max-w-lg p-6 gap-3 border-[1px] border-solid border-border rounded-2xl bg-bgCard hover:bg-hoverbgCard";
         }
     };
     const imgClassName = () => {
