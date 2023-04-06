@@ -2,6 +2,10 @@ name: API
 
 on:
   push:
+
+env:
+  NODE_SERVER: INNONET
+
 jobs:
   test-api:
     runs-on: ubuntu-latest
@@ -19,7 +23,7 @@ jobs:
       - name: Prepare thyra to be runned
         run: mkdir /home/runner/.config/thyra && sudo setcap CAP_NET_BIND_SERVICE=+eip ./main && sudo apt install xvfb
       - name: Running thyra
-        run: xvfb-run ./main &
+        run: xvfb-run ./main --node-server $NODE_SERVER &
       - name: Define my.massa
         run: sudo echo "127.0.0.1 my.massa" | sudo tee -a /etc/hosts
       - name: Test plugin manager API
@@ -49,7 +53,7 @@ jobs:
       - name: Prepare thyra to be runned
         run: mkdir /home/runner/.config/thyra && sudo setcap CAP_NET_BIND_SERVICE=+eip ./main
       - name: Running thyra
-        run: xvfb-run ./main &
+        run: xvfb-run ./main --node-server $NODE_SERVER &
       - name: Define my.massa
         run: sudo echo "127.0.0.1 my.massa" | sudo tee -a /etc/hosts
       - name: Wait for server to be up
