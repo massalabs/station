@@ -22,21 +22,6 @@ var content embed.FS
 //go:embed dist
 var contentReact embed.FS
 
-//nolint:nolintlint,ireturn
-func ThyraWalletHandler(params operations.ThyraWalletParams) middleware.Responder {
-	file := params.Resource
-	if params.Resource == indexHTML {
-		file = "wallet.html"
-	}
-
-	resource, err := content.ReadFile(basePath + file)
-	if err != nil {
-		return operations.NewThyraWalletNotFound()
-	}
-
-	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)
-}
-
 type WebSiteCreatorData struct {
 	UploadMaxSize int
 }

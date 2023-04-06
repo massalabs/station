@@ -3,23 +3,10 @@ package wallet
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/massalabs/thyra/pkg/node/sendoperation"
-)
-
-var (
-	ErrUnprotectedSerialization = errors.New("private key must be protected before serialization")
-	ErrWalletAlreadyImported    = errors.New("wallet already imported")
-)
-
-const (
-	SecretKeyLength           = 32
-	PBKDF2NbRound             = 10000
-	FileModeUserReadWriteOnly = 0o600
-	MinAddressLength          = 49
 )
 
 // WalletKeyPair wallet's key pair.
