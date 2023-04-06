@@ -13,6 +13,8 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+
+	"github.com/gosimple/slug"
 )
 
 //go:generate stringer -type=Status
@@ -69,6 +71,17 @@ func (p *Plugin) SetInformation(info *Information) {
 
 func (p *Plugin) Status() Status {
 	return p.status
+}
+
+func Alias(pluginAuthor string, pluginName string) string {
+	pluginAuthor = FormatTextForURL(pluginAuthor)
+	pluginName = FormatTextForURL(pluginName)
+
+	return fmt.Sprintf("%s/%s", pluginAuthor, pluginName)
+}
+
+func FormatTextForURL(text string) string {
+	return slug.Make(text)
 }
 
 func (p *Plugin) Kill() error {
