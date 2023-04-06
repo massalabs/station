@@ -1,6 +1,7 @@
 *** Settings ***
 Library     String
 Library     RequestsLibrary
+Library     ./libs/ArgLibrary.py
 Resource    variables.resource
 
 
@@ -45,3 +46,11 @@ Get Plugin ID From Author and Name
         END
     END
     RETURN    ${pluginId}
+
+String To Arg
+    [Documentation]    Converts a string into an Arg object
+    ...    It returns an U8 array composed of the length of the string
+    ...    followed by the string itself
+    [Arguments]    ${string}
+    ${byteArray}=    ArgLibrary.String To Arg    ${string}
+    RETURN    ${byteArray}
