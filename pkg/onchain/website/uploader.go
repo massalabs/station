@@ -152,7 +152,13 @@ func upload(
 	return operations, nil
 }
 
-func UploadMissedChunks(atAddress string, content []byte, nickname string, missedChunks string) ([]string, error) {
+func UploadMissedChunks(
+	atAddress string,
+	content []byte,
+	nickname string,
+	missedChunks string,
+	operationBatch sendOperation.OperationBatch,
+) ([]string, error) {
 	client := node.NewDefaultClient()
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[2:])
@@ -168,7 +174,7 @@ func UploadMissedChunks(atAddress string, content []byte, nickname string, misse
 		blocks,
 		missedChunks,
 		nickname,
-		sendOperation.OperationBatch{NewBatch: false, CorrelationID: ""},
+		operationBatch,
 	)
 	if err != nil {
 		return nil, err
@@ -217,6 +223,8 @@ func uploadMissedChunks(
 		}
 
 		operations[index] = operationResponse.OperationID
+		operationBatch.NewBatch = false
+		operationBatch.CorrelationID = operationResponse.CorrelationID
 	}
 
 	return operations, nil
