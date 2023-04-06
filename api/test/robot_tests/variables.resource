@@ -1,6 +1,7 @@
 *** Variables ***
 ${API_URL}=                 http://my.massa
 
+${WALLET_NICKNAME}=     innonet
 
 ${STATUS_OK}=                       200
 ${STATUS_CREATED}=                  201
