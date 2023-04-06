@@ -4,7 +4,7 @@ on:
   push:
 
 env:
-  NODE_SERVER: TESTNET
+  NODE_SERVER: INNONET
 
 jobs:
   test-api:
