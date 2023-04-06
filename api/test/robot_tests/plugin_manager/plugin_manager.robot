@@ -39,7 +39,7 @@ GET /plugin-manager/{id}
     Should Be Equal As Strings    ${response.json()['status']}    Up
 
 POST /plugin-manager/{id}/execute with stop command
-    ${id}=    Get Plugin ID From Author and Name    massalabs    hello world
+    ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
     ${data}=    Create Dictionary    command=stop
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/${id}/execute
@@ -47,7 +47,7 @@ POST /plugin-manager/{id}/execute with stop command
     ...    json=${data}
 
 POST /plugin-manager/{id}/execute with start command
-    ${id}=    Get Plugin ID From Author and Name    massalabs    hello world
+    ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
     ${data}=    Create Dictionary    command=start
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/${id}/execute
@@ -56,7 +56,7 @@ POST /plugin-manager/{id}/execute with start command
     Sleep    1 seconds    # Wait for the plugin to be started
 
 POST /plugin-manager/{id}/execute with restart command
-    ${id}=    Get Plugin ID From Author and Name    massalabs    hello world
+    ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
     ${data}=    Create Dictionary    command=restart
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/${id}/execute
@@ -66,7 +66,7 @@ POST /plugin-manager/{id}/execute with restart command
 
 GET /thyra/plugin/{author}/{name}/
     ${response}=    GET
-    ...    ${API_URL}/thyra/plugin/massalabs/hello%20world/
+    ...    ${API_URL}/thyra/plugin/massalabs/hello-world/
     ...    expected_status=${STATUS_OK}
     Should Contain    ${response.text}    Hello, world!
 
@@ -74,7 +74,7 @@ GET /thyra/plugin/{author}/{name}/
 # This causes the previous plugin alias to be considered as still valid.
 # TODO: Uncomment this test and make sure it passes once https://github.com/massalabs/thyra/issues/574 is fixed.
 # POST /plugin-manager/register
-#    ${id}=    Get Plugin ID From Author and Name    massalabs    hello world
+#    ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
 #    ${data}=    Create Dictionary
 #    ...    id=${id}
 #    ...    name=aliqua
@@ -94,7 +94,7 @@ GET /thyra/plugin/{author}/{name}/
 # Error cases
 
 POST /plugins-manager/{id}/execute already started
-    ${id}=    Get Plugin ID From Author and Name    massalabs    hello world
+    ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
     ${data}=    Create Dictionary    command=start
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/${id}/execute
@@ -176,7 +176,7 @@ POST /plugin-manager/register with invalid body
     Should Be Equal As Strings    ${response.json()['message']}    body.url in body is required
 
 POST /plugin-manager/{id}/execute with NotImplemented update command
-    ${id}=    Get Plugin ID From Author and Name    massalabs    hello world
+    ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
     ${data}=    Create Dictionary    command=update
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/${id}/execute
