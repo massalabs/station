@@ -10,7 +10,7 @@ import (
 	"github.com/massalabs/thyra/api/interceptor"
 )
 
-func NewAPIPHandler(manager *Manager) *APIHandler {
+func NewAPIHandler(manager *Manager) *APIHandler {
 	return &APIHandler{manager: manager}
 }
 

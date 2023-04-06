@@ -22,7 +22,7 @@ func InitializePluginAPI(api *operations.ThyraServerAPI) {
 	api.PluginManagerUninstallHandler = newUninstall(manager)
 
 	// This endpoint is not defined by the go-swagger API.
-	plugin.Handler = *plugin.NewAPIPHandler(manager)
+	plugin.Handler = *plugin.NewAPIHandler(manager)
 }
 
 const (

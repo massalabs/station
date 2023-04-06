@@ -37,7 +37,8 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 
 	// Set plugin information.
 	info := plugin.Information{
-		Name: param.Body.Name, Author: param.Body.Author,
+		Name:        param.Body.Name,
+		Author:      param.Body.Author,
 		Description: param.Body.Description,
 		Logo:        param.Body.Logo,
 		URL:         urlPlugin,

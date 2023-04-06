@@ -89,7 +89,7 @@ func ThyraHomeHandler(params operations.ThyraHomeParams) middleware.Responder {
 func ThyraPluginManagerHandler(params operations.ThyraPluginManagerParams) middleware.Responder {
 	content, err := contentReact.ReadFile(basePathReact + "plugin-manager/" + params.Resource)
 	if err != nil {
-		return operations.NewThyraHomeNotFound()
+		return operations.NewThyraPluginManagerNotFound()
 	}
 
 	return NewCustomResponder(content, contentType(params.Resource), http.StatusOK)
