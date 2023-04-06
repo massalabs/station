@@ -72,7 +72,7 @@ jobs:
       - name: Wait for server to be up
         uses: juliangruber/sleep-action@v1
         with:
-          time: 25s
+          time: 5s
       - name: Run RobotFramework tests
         working-directory: api/test
         run: |
