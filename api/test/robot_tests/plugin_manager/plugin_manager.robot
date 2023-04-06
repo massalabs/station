@@ -109,7 +109,7 @@ POST /plugins-manager/{id}/execute already started
 GET /plugin-manager/{id} with invalid id
     ${response}=    GET    ${API_URL}/plugin-manager/invalid    expected_status=${STATUS_NOT_FOUND}
     Should Be Equal As Strings    ${response.json()['code']}    Plugin-0001
-    Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching id invalid
+    Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching correlationID invalid
 
 GET /thyra/plugin/${author}/${name} with invalid author and name
     ${response}=    GET    ${API_URL}/thyra/plugin/invalid/invalid    expected_status=${STATUS_NOT_FOUND}
@@ -122,13 +122,13 @@ POST /plugin-manager/{id}/execute with invalid id
     ...    expected_status=${STATUS_NOT_FOUND}
     ...    json=${data}
     Should Be Equal As Strings    ${response.json()['code']}    Plugin-0001
-    Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching id invalid
+    Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching correlationID invalid
 
 DELETE /plugin-manager/{id} with invalid id
     ${response}=    DELETE    ${API_URL}/plugin-manager/3829029    expected_status=${STATUS_INTERNAL_SERVER_ERROR}
     Should Be Equal As Strings
     ...    ${response.json()['message']}
-    ...    deleting plugin 3829029: no plugin matching id 3829029
+    ...    deleting plugin 3829029: no plugin matching correlationID 3829029
 
 POST /plugin-manager/{id}/execute with invalid body
     ${data}=    Create Dictionary    command=test
@@ -157,7 +157,7 @@ POST /plugin-manager/register with invalid id
     ...    json=${data}
 
     Should Be Equal As Strings    ${response.json()['code']}    Plugin-0001
-    Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching id 1
+    Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching correlationID 1
 
 POST /plugin-manager/register with invalid body
     ${data}=    Create Dictionary
