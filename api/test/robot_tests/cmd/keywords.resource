@@ -17,7 +17,7 @@ Suite Setup
 
 Delete Wallet Plugin
     Log To Console    Deleting Massa Wallet Plugin
-    ${pluginId}=    Get Plugin ID From Author and Name    Massalabs    Massa${SPACE}Wallet
+    ${pluginId}=    Get Plugin ID From Author and Name    massalabs    wallet
     IF    "${pluginId}" != "${EMPTY}"
         Log To Console    Deleting plugin with ID ${pluginId}
         ${response}=    DELETE    ${API_URL}/plugin-manager/${pluginId}
@@ -27,7 +27,7 @@ Delete Wallet Plugin
 Install Wallet Plugin
     Log To Console    Installing Massa Wallet Plugin
     ${source}=    Set Variable
-    ...    https://github.com/massalabs/thyra-plugin-wallet/releases/download/v0.0.4/thyra-plugin-wallet_${OS}-${ARCH}.zip
+    ...    https://github.com/massalabs/thyra-plugin-wallet/releases/download/v0.0.6/thyra-plugin-wallet_${OS}-${ARCH}.zip
     ${response}=    POST
     ...    ${API_URL}/plugin-manager
     ...    params=source=${source}
