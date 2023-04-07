@@ -1063,16 +1063,6 @@ definitions:
         description: byte array as string including created_at and updated_at values
         type: string
         format: byte
-  Plugin:
-    type: object
-    description: Plugin object (V0).
-    properties:
-      name:
-        description: Plugin's name.
-        type: string
-      port:
-        description: Plugin's port.
-        type: integer
   PluginStoreItem:
     type: object
     description: Plugin item from store.
