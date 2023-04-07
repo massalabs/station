@@ -18,7 +18,7 @@ func newList() operations.GetPluginStoreHandler {
 type list struct{}
 
 //nolint:varnamelen
-func getDLChecksumAndOs(plugin store.Plugin) (string, string, string, error) {
+func GetDLChecksumAndOs(plugin store.Plugin) (string, string, string, error) {
 	pluginURL := ""
 	os := runtime.GOOS
 	checksum := ""
@@ -53,17 +53,21 @@ func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 
 	plugins, err := store.FetchPluginList()
 	if err != nil {
-		return operations.NewPluginManagerListInternalServerError().WithPayload(
+		return operations.NewGetPluginStoreInternalServerError().WithPayload(
 			&models.Error{Code: errorCodeFetchStore, Message: fmt.Sprintf("fetch store plugin list: %s", err.Error())})
 	}
 
 	payload := make([]*models.PluginStoreItem, len(plugins))
 
-	for i, plugin := range plugins {
-		//nolint:varnamelen
-		pluginURL, os, checksum, _ := getDLChecksumAndOs(plugin)
+	for index, plugin := range plugins {
+		pluginURL, operatingSystem, checksum, err := GetDLChecksumAndOs(plugin)
+		if err != nil {
+			return operations.NewGetPluginStoreInternalServerError().WithPayload(
+				&models.Error{Code: errorCodeFetchStore, Message: fmt.Sprintf("getting plugin URL: %s", err.Error())})
+		}
+
 		plugin := plugin
-		payload[i] = &models.PluginStoreItem{
+		payload[index] = &models.PluginStoreItem{
 			Name:        &plugin.Name,
 			Description: &plugin.Description,
 			Version:     &plugin.Version,
@@ -72,7 +76,7 @@ func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 				URL:      &pluginURL,
 				Checksum: &checksum,
 			},
-			Os: os,
+			Os: operatingSystem,
 		}
 	}
 

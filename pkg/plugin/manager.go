@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/big"
@@ -12,7 +13,9 @@ import (
 	"sync"
 
 	"github.com/cavaliergopher/grab/v3"
+	"github.com/massalabs/thyra/int/api/pluginstore"
 	"github.com/massalabs/thyra/pkg/config"
+	"github.com/massalabs/thyra/pkg/store"
 	"github.com/xyproto/unzip"
 )
 
@@ -50,6 +53,12 @@ func NewManager() (*Manager, error) {
 	err := manager.RunAll()
 	if err != nil {
 		return manager, fmt.Errorf("while running all plugin: %w", err)
+	}
+
+	// Install plugin wallet
+	err = manager.InstallWallet()
+	if err != nil {
+		return manager, fmt.Errorf("while installing wallet plugin: %w", err)
 	}
 
 	return manager, nil
@@ -243,6 +252,57 @@ func (m *Manager) Install(url string) error {
 	if err != nil {
 		return fmt.Errorf("running plugin %s after installation: %w", pluginName, err)
 	}
+
+	return nil
+}
+
+func (m *Manager) InstallWallet() error {
+	walletPluginStoreItemJSON := `{
+		"name": "Wallet",
+		"description": "",
+		"assets": {
+			"windows": {
+				"url":
+			"https://github.com/massalabs/thyra-plugin-wallet/releases/download/v0.0.6/thyra-plugin-wallet_windows-amd64.zip",
+				"checksum": ""
+			},
+			"linux": {
+				"url":
+			"https://github.com/massalabs/thyra-plugin-wallet/releases/download/v0.0.6/thyra-plugin-wallet_linux-amd64.zip",
+				"checksum": ""
+			},
+			"macos-arm64": {
+				"url":
+			"https://github.com/massalabs/thyra-plugin-wallet/releases/download/v0.0.6/thyra-plugin-wallet_darwin-arm64.zip",
+				"checksum": ""
+			},
+			"macos-amd64": {
+				"url":
+			"https://github.com/massalabs/thyra-plugin-wallet/releases/download/v0.0.6/thyra-plugin-wallet_darwin-amd64.zip",
+				"checksum": ""
+			}
+		},
+		"version": "0.0.6",
+		"url": "https://github.com/massalabs/thyra-plugin-wallet"
+	}`
+
+	//nolint: exhaustruct
+	walletPlugin := store.Plugin{}
+
+	err := json.Unmarshal([]byte(walletPluginStoreItemJSON), &walletPlugin)
+	if err != nil {
+		return fmt.Errorf("parsing wallet plugin JSON: %w", err)
+	}
+
+	pluginURL, _, _, err := pluginstore.GetDLChecksumAndOs(walletPlugin)
+	if err != nil {
+		return fmt.Errorf("getting os and arch: %w", err)
+	}
+
+	go func() {
+		err := m.Install(pluginURL)
+		fmt.Println("Error while installing wallet: %w", err)
+	}()
 
 	return nil
 }
