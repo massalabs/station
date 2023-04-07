@@ -54,26 +54,6 @@ GET /thyra/registry/index.html
     Page Should Contain    Address
     Page Should Contain    URL
 
-GET /thyra/wallet/
-    Open Thyra Page    ${API_URL}/thyra/wallet/
-    Page Should Contain Button    Create
-    Page Should Contain Button    Load a wallet
-    Page Should Contain Textfield    nicknameCreate
-    Page Should Contain Textfield    password
-    Page Should Contain    Address
-    Page Should Contain    Wallet name
-    Page Should Contain    Balance
-
-GET /thyra/wallet/index.html
-    Open Thyra Page    ${API_URL}/thyra/wallet/index.html
-    Page Should Contain Button    Create
-    Page Should Contain Button    Load a wallet
-    Page Should Contain Textfield    nicknameCreate
-    Page Should Contain Textfield    password
-    Page Should Contain    Address
-    Page Should Contain    Wallet name
-    Page Should Contain    Balance
-
 GET /thyra/websiteCreator/
     Open Thyra Page    ${API_URL}/thyra/websiteCreator/
     Page Should Contain    Decentralized website storage
@@ -106,9 +86,6 @@ GET /thyra/plugin-manager/{resource} with invalid resource
 
 GET /thyra/registry/{resource} with invalid resource
     ${response}=    GET    ${API_URL}/thyra/registry/invalid    expected_status=${STATUS_NOT_FOUND}
-
-GET /thyra/wallet/{resource} with invalid resource
-    ${response}=    GET    ${API_URL}/thyra/wallet/invalid    expected_status=${STATUS_NOT_FOUND}
 
 GET /thyra/websiteCreator/{resource} with invalid resource
     ${response}=    GET    ${API_URL}/thyra/websiteCreator/invalid    expected_status=${STATUS_NOT_FOUND}
