@@ -3,7 +3,6 @@ Documentation       Keywords specific to cmd test suite
 
 Library             RequestsLibrary
 Library             OperatingSystem
-Library             Collections
 Resource            ../keywords.resource
 Resource            ../variables.resource
 
@@ -40,10 +39,3 @@ Init SC build environment
     Run    cd testSC; npm install
     Log To Console    Building SC
     Run    cd testSC; npm run build
-
-Get SC address
-    [Documentation]    Get the address of the SC from a string containing the address after ':' (colon)
-    [Arguments]    ${string}
-    ${words}=    Split String    ${string}    :
-    ${sc_address}=    Get From List    ${words}    1
-    RETURN    ${sc_address}
