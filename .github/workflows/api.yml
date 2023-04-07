@@ -26,6 +26,10 @@ jobs:
         run: xvfb-run ./main --node-server $NODE_SERVER &
       - name: Define my.massa
         run: sudo echo "127.0.0.1 my.massa" | sudo tee -a /etc/hosts
+      - name: Wait for server to be up
+        uses: juliangruber/sleep-action@v1
+        with:
+          time: 5s
       - name: Test plugin manager API
         uses: matt-ball/newman-action@master
         with:
@@ -50,16 +54,25 @@ jobs:
         uses: ./.github/actions/install
       - name: Build thyra binary
         run: go build cmd/thyra-server/main.go
+      - name: Create wallet from secret
+        run: |
+          mkdir -p $HOME/.config/thyra
+          echo "$WALLET_TEST_WALLET" > $HOME/.config/thyra/wallet_innonet.yml
+        env:
+          WALLET_TEST_WALLET: ${{ secrets.WALLET_TEST_WALLET }}
       - name: Prepare thyra to be runned
-        run: mkdir /home/runner/.config/thyra && sudo setcap CAP_NET_BIND_SERVICE=+eip ./main
+        run: sudo setcap CAP_NET_BIND_SERVICE=+eip ./main
       - name: Running thyra
         run: xvfb-run ./main --node-server $NODE_SERVER &
+        env:
+          WALLET_TEST_MODE: 1
+          WALLET_innonet_PASSWORD: ${{ secrets.WALLET_TEST_PASSWORD }}
       - name: Define my.massa
         run: sudo echo "127.0.0.1 my.massa" | sudo tee -a /etc/hosts
       - name: Wait for server to be up
         uses: juliangruber/sleep-action@v1
         with:
-          time: 25s
+          time: 5s
       - name: Run RobotFramework tests
         working-directory: api/test
         run: |

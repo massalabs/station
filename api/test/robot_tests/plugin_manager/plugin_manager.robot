@@ -4,6 +4,7 @@ Documentation       This is a test suite for Thyra Plugin Manager endpoints.
 Library             RequestsLibrary
 Library             String
 Resource            keywords.resource
+Resource            variables.resource
 Resource            ../variables.resource
 
 Suite Setup         Suite Setup
@@ -14,7 +15,7 @@ GET /plugin-manager with no plugins
     ${response}=    GET    ${API_URL}/plugin-manager
     Status Should Be    ${STATUS_OK}
     ${listLength}=    Get Length    ${response.json()}
-    Should Be Equal As Integers    ${listLength}    0
+    Set Global Variable    ${PLUGINS_COUNT}   ${listLength}
 
 POST /plugin-manager?source={{pluginSource}}
     ${source}=    Set Variable
@@ -29,7 +30,7 @@ GET /plugin-manager with one plugin
     ${response}=    GET    ${API_URL}/plugin-manager
     Status Should Be    ${STATUS_OK}
     ${listLength}=    Get Length    ${response.json()}
-    Should Be Equal As Integers    ${listLength}    1
+    Should Be Equal As Integers    ${listLength}    ${PLUGINS_COUNT+1}
 
 GET /plugin-manager/{id}
     ${response}=    GET    ${API_URL}/plugin-manager

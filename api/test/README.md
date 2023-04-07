@@ -46,3 +46,10 @@ You can add new variables in a `variables.resource` file.
 If the variable is specific to a given scope, you can add it in the `variables.resource` file of the corresponding scope directory.
 
 > To learn more about the Request Library, you can read the [documentation](https://marketsquare.github.io/robotframework-requests/doc/RequestsLibrary.html).
+
+## Architecture
+
+This directory contains multiple components that are used to run the tests:
+- `robot_tests`: This directory contains the tests and the resources used by the tests.
+- `robot_tests/lib`: This directory contains the custom libraries used by the tests.
+- `testSC`: This directory contains a custom Smart Contract used by the tests. It is used for the tests related to the Smart Contracts such as `deploySC`, `executeFunction`...

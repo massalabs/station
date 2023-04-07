@@ -1,2 +1,2 @@
 *** Variables ***
-${WALLET_NICKNAME}=     testnet
+${DEPLOYED_SC_ADDR}     ${EMPTY}

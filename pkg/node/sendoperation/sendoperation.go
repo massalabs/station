@@ -16,7 +16,7 @@ import (
 	"github.com/massalabs/thyra/pkg/node/base58"
 )
 
-const DefaultGazLimit = 700000000
+const DefaultGazLimit = 700_000_000
 
 const DefaultSlotsDuration = 2
 
@@ -24,9 +24,9 @@ const NoFee = 0
 
 const NoCoin = 0
 
-const HundredMassa = 100000000000
+const HundredMassa = 100_000_000_000
 
-const OneMassa = 1000000000
+const OneMassa = 1_000_000_000
 
 const WalletPluginURL = "http://my.massa/thyra/plugin/massalabs/wallet/rest/wallet/"
 
