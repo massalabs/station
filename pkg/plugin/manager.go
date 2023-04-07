@@ -130,7 +130,7 @@ func (m *Manager) Delete(correlationID string) error {
 	//nolint:errcheck
 	plgn.Stop()
 
-	alias := fmt.Sprintf("%s/%s", plgn.info.Author, plgn.info.Name)
+	alias := Alias(plgn.info.Author, plgn.info.Name)
 
 	delete(m.authorNameToID, alias)
 

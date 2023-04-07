@@ -17,11 +17,13 @@ func newList() operations.GetPluginStoreHandler {
 
 type list struct{}
 
+//nolint:varnamelen
 func getDLChecksumAndOs(plugin store.Plugin) (string, string, string, error) {
 	pluginURL := ""
 	os := runtime.GOOS
 	checksum := ""
-	switch os { //nolint:varnamelen
+
+	switch os {
 	case "linux":
 		pluginURL = plugin.Assets.Linux.URL
 		checksum = plugin.Assets.Linux.Checksum
@@ -58,6 +60,7 @@ func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 	payload := make([]*models.PluginStoreItem, len(plugins))
 
 	for i, plugin := range plugins {
+		//nolint:varnamelen
 		pluginURL, os, checksum, _ := getDLChecksumAndOs(plugin)
 		plugin := plugin
 		payload[i] = &models.PluginStoreItem{

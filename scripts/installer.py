@@ -225,5 +225,5 @@ class Installer:
 
             self.startThyraApp()
         except Exception as e:
-             logging.error(traceback.format_exc())
+            logging.error(traceback.format_exc())
         logging.info("You can now close this window.")
