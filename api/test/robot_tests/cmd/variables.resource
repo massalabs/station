@@ -1,2 +1,2 @@
 *** Variables ***
-${DEPLOYED_SC_ADDR}    ${EMPTY}
+${DEPLOYED_SC_ADDR}     ${EMPTY}
