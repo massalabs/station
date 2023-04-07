@@ -27,8 +27,8 @@ By following these instructions, you will:
 #### MacOS
 
 1. Check out your Mac CPU to know which link above you should use.
-* If you have an Apple Silicon CPU (M1, M2, ...), download ARM installer [here](https://github.com/massalabs/thyra/releases/download/v0.1.12/thyra-installer_darwin_arm64.tar.gz)
-* If you have an Intel CPU (i5, i7, ...), download ADM installer [here](https://github.com/massalabs/thyra/releases/download/v0.1.12/thyra-installer_darwin_amd64.tar.gz)
+* If you have an Apple Silicon CPU (M1, M2, ...), download ARM installer [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer_darwin_arm64.tar.gz)
+* If you have an Intel CPU (i5, i7, ...), download ADM installer [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer_darwin_amd64.tar.gz)
 2. Once downloaded, double clik on the file
 > **_NOTE:_** You may need to authorise the download of this file as your Mac won't recognise it. You can authorise the installer to run by right clicking on the installer and click on `Open` from Finder. A dialog box will open asking you if you are sure, press the `Open` button and the installer should start.
 3. A terminal should open automatically where you can follow the steps of the installation. Just watch it working, and at some point you'll need to add your password.
@@ -51,7 +51,7 @@ If you want to get down to business, you can start your [Massalian journey](http
 
 > **_NOTE:_** Only Linux Ubuntu is currently supported.
 
-1. Download Linux installer [here](https://github.com/massalabs/thyra/releases/download/v0.1.12/thyra-installer_linux_amd64.tar.gz)
+1. Download Linux installer [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer_linux_amd64.tar.gz)
 2. Once downloaded, double clik on the file
 3. A terminal should open automatically where you can follow the steps of the installation. Just watch it working, and at some point you'll need to add your password.
 4. Once the installation is finished, you will see a new icon on the top nav bar (see screenshot below). You can now close your terminal if not done already and start browsing the blockchain and all our applications available.
