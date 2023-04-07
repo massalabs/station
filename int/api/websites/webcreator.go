@@ -134,7 +134,16 @@ func CreateUploadMissingChunksHandler() func(params operations.WebsiteUploadMiss
 func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChunksParams) middleware.Responder {
 	archive, _ := readAndCheckArchive(params.Zipfile)
 
-	_, err := website.UploadMissedChunks(params.Address, archive, params.Nickname, params.MissedChunks)
+	_, err := website.UploadMissedChunks(
+		params.Address,
+		archive,
+		params.Nickname,
+		params.MissedChunks,
+		sendOperation.OperationBatch{
+			NewBatch:      true,
+			CorrelationID: "",
+		},
+	)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
