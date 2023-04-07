@@ -13,6 +13,8 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+
+	"github.com/gosimple/slug"
 )
 
 //go:generate stringer -type=Status
@@ -45,6 +47,7 @@ type Plugin struct {
 	reverseProxy *httputil.ReverseProxy
 	BinPath      string
 	ID           string
+	quitChan     chan bool
 }
 
 func (p *Plugin) Information() *Information {
@@ -70,6 +73,17 @@ func (p *Plugin) Status() Status {
 	return p.status
 }
 
+func Alias(pluginAuthor string, pluginName string) string {
+	pluginAuthor = FormatTextForURL(pluginAuthor)
+	pluginName = FormatTextForURL(pluginName)
+
+	return fmt.Sprintf("%s/%s", pluginAuthor, pluginName)
+}
+
+func FormatTextForURL(text string) string {
+	return slug.Make(text)
+}
+
 func (p *Plugin) Kill() error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
@@ -77,6 +91,8 @@ func (p *Plugin) Kill() error {
 	p.status = ShuttingDown
 
 	err := p.command.Process.Kill()
+	<-p.quitChan
+
 	if err != nil {
 		p.status = Crashed
 
@@ -119,6 +135,7 @@ func (p *Plugin) Start() error {
 	log.Printf("Starting plugin '%s' with id %s\n", pluginName, p.ID)
 
 	p.mutex.Lock()
+	defer p.mutex.Unlock()
 
 	status := p.Status()
 
@@ -141,6 +158,10 @@ func (p *Plugin) Start() error {
 
 	// start a goroutine to wait on the command
 	go func() {
+		defer func() {
+			p.quitChan <- true
+		}()
+
 		err := p.command.Wait()
 		if err != nil && !(err.Error() == "signal: killed" || strings.Contains(err.Error(), "exit status")) {
 			log.Printf("plugin '%s' exiting with error: %s\n", pluginName, err)
@@ -154,8 +175,6 @@ func (p *Plugin) Start() error {
 	}()
 
 	p.status = Up
-
-	p.mutex.Unlock()
 
 	return nil
 }
@@ -179,7 +198,7 @@ func New(binPath string, pluginID string) (*Plugin, error) {
 	}
 
 	//nolint:exhaustruct
-	plgn := &Plugin{status: Starting, BinPath: binPath + exe, ID: pluginID}
+	plgn := &Plugin{status: Starting, BinPath: binPath + exe, ID: pluginID, quitChan: make(chan bool)}
 
 	err := plgn.Start()
 	if err != nil {

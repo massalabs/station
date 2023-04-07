@@ -16,8 +16,7 @@ To install Thyra, please follow the instructions available in the [Installation 
 
 ## Install a plugin
 
-Soon
-
+Copy/paste the latest release .zip file to Thyra [plugin manager page](https://my.massa/thyra/plugin-manager/)
 
 ## Going further 
 
@@ -25,6 +24,7 @@ Soon
 
 Thyra accepts different options that you can specify when you start the program. Like this you will be able to use your own node, for instance.
 In this section you will find a non-exhaustive list of options and examples of how you can use them.
+
 
 --node-server : Specify which Massa network Thyra will communicate with while running.
 Accepts a URL, an IP address or one of the following values :

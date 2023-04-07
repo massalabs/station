@@ -49,33 +49,6 @@ function successMessage(message) {
     }, 5000);
 }
 
-function displayPlugins() {
-    window
-        .fetch(window.location.origin + "/mgmt/plugins", {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            data.forEach((plugin) => {
-                var navBar = document.getElementsByClassName("navbar-nav");
-                var entry = document.createElement("li");
-                entry.setAttribute("class", "nav-item");
-
-                var href = document.createElement("a");
-                href.setAttribute("href", `http://${window.location.hostname}:${plugin.port}`);
-                href.setAttribute("class", "nav-link");
-
-                href.appendChild(document.createTextNode(plugin.name));
-                entry.appendChild(href);
-                navBar[0].appendChild(entry);
-            });
-        });
-}
-
-displayPlugins();
-
 // isExcludedOSAndFirefox returns true if user uses Windows or Mac and Firefox
 function isExcludedOSAndFirefox() {
     // userAgent gets the os and navigator infos.

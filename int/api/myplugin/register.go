@@ -37,7 +37,8 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 
 	// Set plugin information.
 	info := plugin.Information{
-		Name: param.Body.Name, Author: param.Body.Author,
+		Name:        param.Body.Name,
+		Author:      param.Body.Author,
 		Description: param.Body.Description,
 		Logo:        param.Body.Logo,
 		URL:         urlPlugin,
@@ -49,7 +50,7 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 
 	// Add alias for http requests.
 
-	alias := fmt.Sprintf("%s/%s", param.Body.Author, param.Body.Name)
+	alias := plugin.Alias(param.Body.Author, param.Body.Name)
 
 	err = r.manager.SetAlias(alias, param.Body.ID)
 

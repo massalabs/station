@@ -7,7 +7,6 @@ import (
 	"os"
 	"path"
 
-	"fyne.io/fyne/v2/app"
 	"github.com/massalabs/thyra/int/api"
 	"github.com/massalabs/thyra/pkg/config"
 )
@@ -64,9 +63,5 @@ func main() {
 		os.Exit(0)
 	}
 
-	myApp := app.New()
-
-	go api.StartServer(&myApp, flags)
-
-	myApp.Run()
+	api.StartServer(flags)
 }

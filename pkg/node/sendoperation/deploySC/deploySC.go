@@ -8,6 +8,7 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/node"
+	"github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain"
 )
 
@@ -41,14 +42,16 @@ func Handler(params operations.CmdDeploySCParams) middleware.Responder {
 		decodedDatastore = nil
 	}
 
-	address, err := onchain.DeploySCV2(client,
+	operationWithEventResponse, err := onchain.DeploySC(client,
 		params.WalletNickname,
 		*params.GazLimit,
 		*params.Coins,
 		*params.Fee,
 		*params.Expiry,
 		file,
-		decodedDatastore)
+		decodedDatastore,
+		sendoperation.OperationBatch{NewBatch: false, CorrelationID: ""},
+	)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().
 			WithPayload(
@@ -59,5 +62,5 @@ func Handler(params operations.CmdDeploySCParams) middleware.Responder {
 	}
 
 	return operations.NewCmdDeploySCOK().
-		WithPayload(address)
+		WithPayload(operationWithEventResponse.Event)
 }

@@ -516,253 +516,6 @@ func init() {
         }
       }
     },
-    "/mgmt/plugins": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtPluginsList",
-        "responses": {
-          "200": {
-            "description": "Plugins list",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Plugin"
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/mgmt/wallet": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtWalletGet",
-        "responses": {
-          "200": {
-            "description": "Wallets retrieved",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Wallet"
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "put": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtWalletImport",
-        "responses": {
-          "200": {
-            "description": "New wallet created.",
-            "schema": {
-              "$ref": "#/definitions/Wallet"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "post": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtWalletCreate",
-        "parameters": [
-          {
-            "x-nullable": false,
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "nickname",
-                "password"
-              ],
-              "properties": {
-                "nickname": {
-                  "description": "Wallet's short name.",
-                  "type": "string"
-                },
-                "password": {
-                  "description": "Private key password.",
-                  "type": "string"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "New wallet created.",
-            "schema": {
-              "$ref": "#/definitions/Wallet"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/mgmt/wallet/{nickname}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtWalletGetter",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Wallet's short name.",
-            "name": "nickname",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Wallet retrieved.",
-            "schema": {
-              "$ref": "#/definitions/Wallet"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "delete": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtWalletDelete",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Wallet's short name.",
-            "name": "nickname",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Wallet removed.",
-            "schema": {
-              "$ref": "#/definitions/Wallet"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
     "/my/domains/{nickname}": {
       "get": {
         "produces": [
@@ -1744,30 +1497,20 @@ func init() {
         "description",
         "version",
         "url",
-        "assets"
+        "file"
       ],
       "properties": {
-        "assets": {
-          "type": "object",
-          "properties": {
-            "linux": {
-              "$ref": "#/definitions/File"
-            },
-            "macos-amd64": {
-              "$ref": "#/definitions/File"
-            },
-            "macos-arm64": {
-              "$ref": "#/definitions/File"
-            },
-            "windows": {
-              "$ref": "#/definitions/File"
-            }
-          }
-        },
         "description": {
           "type": "string"
         },
+        "file": {
+          "type": "object",
+          "$ref": "#/definitions/File"
+        },
         "name": {
+          "type": "string"
+        },
+        "os": {
           "type": "string"
         },
         "url": {
@@ -2308,253 +2051,6 @@ func init() {
           },
           "400": {
             "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/mgmt/plugins": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtPluginsList",
-        "responses": {
-          "200": {
-            "description": "Plugins list",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Plugin"
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/mgmt/wallet": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtWalletGet",
-        "responses": {
-          "200": {
-            "description": "Wallets retrieved",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Wallet"
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "put": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtWalletImport",
-        "responses": {
-          "200": {
-            "description": "New wallet created.",
-            "schema": {
-              "$ref": "#/definitions/Wallet"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "post": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtWalletCreate",
-        "parameters": [
-          {
-            "x-nullable": false,
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "nickname",
-                "password"
-              ],
-              "properties": {
-                "nickname": {
-                  "description": "Wallet's short name.",
-                  "type": "string"
-                },
-                "password": {
-                  "description": "Private key password.",
-                  "type": "string"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "New wallet created.",
-            "schema": {
-              "$ref": "#/definitions/Wallet"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/mgmt/wallet/{nickname}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtWalletGetter",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Wallet's short name.",
-            "name": "nickname",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Wallet retrieved.",
-            "schema": {
-              "$ref": "#/definitions/Wallet"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "delete": {
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "mgmtWalletDelete",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Wallet's short name.",
-            "name": "nickname",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Wallet removed.",
-            "schema": {
-              "$ref": "#/definitions/Wallet"
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "Bad request.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -3625,30 +3121,20 @@ func init() {
         "description",
         "version",
         "url",
-        "assets"
+        "file"
       ],
       "properties": {
-        "assets": {
-          "type": "object",
-          "properties": {
-            "linux": {
-              "$ref": "#/definitions/File"
-            },
-            "macos-amd64": {
-              "$ref": "#/definitions/File"
-            },
-            "macos-arm64": {
-              "$ref": "#/definitions/File"
-            },
-            "windows": {
-              "$ref": "#/definitions/File"
-            }
-          }
-        },
         "description": {
           "type": "string"
         },
+        "file": {
+          "type": "object",
+          "$ref": "#/definitions/File"
+        },
         "name": {
+          "type": "string"
+        },
+        "os": {
           "type": "string"
         },
         "url": {
@@ -3656,23 +3142,6 @@ func init() {
         },
         "version": {
           "type": "string"
-        }
-      }
-    },
-    "PluginStoreItemAssets": {
-      "type": "object",
-      "properties": {
-        "linux": {
-          "$ref": "#/definitions/File"
-        },
-        "macos-amd64": {
-          "$ref": "#/definitions/File"
-        },
-        "macos-arm64": {
-          "$ref": "#/definitions/File"
-        },
-        "windows": {
-          "$ref": "#/definitions/File"
         }
       }
     },

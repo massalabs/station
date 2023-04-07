@@ -3,7 +3,6 @@ package sendoperation
 import (
 	"bytes"
 	"context"
-	"crypto/ed25519"
 	b64 "encoding/base64"
 	"encoding/binary"
 	"encoding/json"
@@ -15,33 +14,29 @@ import (
 
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
-	"lukechampine.com/blake3"
 )
 
-const DefaultGazLimit = 700000000
+const DefaultGazLimit = 700_000_000
 
 const DefaultSlotsDuration = 2
-
-const SlotDurationBatch = 15
-
-const NoGazFee = 0
 
 const NoFee = 0
 
 const NoCoin = 0
 
-const HundredMassa = 100000000000
+const HundredMassa = 100_000_000_000
 
-const OneMassa = 1000000000
+const OneMassa = 1_000_000_000
 
-const WalletPluginURL = "http://127.0.0.1:8080/rest/wallet/"
+const WalletPluginURL = "http://my.massa/thyra/plugin/massalabs/wallet/rest/wallet/"
 
 const HTTPRequestTimeout = 60 * time.Second
 
 //nolint:tagliatelle
 type signOperationResponse struct {
-	PublicKey string `json:"publicKey"`
-	Signature string `json:"signature"`
+	PublicKey     string `json:"publicKey"`
+	Signature     string `json:"signature"`
+	CorrelationID string `json:"correlationId,omitempty"`
 }
 
 //nolint:tagliatelle
@@ -56,7 +51,22 @@ type Operation interface {
 	Message() []byte
 }
 
+type OperationResponse struct {
+	OperationID   string
+	CorrelationID string
+}
+
+type OperationBatch struct {
+	NewBatch      bool
+	CorrelationID string
+}
+
 type JSONableSlice []uint8
+
+type RespError struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
 
 func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 	var result string
@@ -68,6 +78,119 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 	}
 
 	return []byte(result), nil
+}
+
+// Call uses the plugin wallet to sign an operation, then send the call to blockchain.
+func Call(client *node.Client,
+	expiry uint64,
+	fee uint64,
+	operation Operation,
+	nickname string,
+	operationBatch OperationBatch,
+) (*OperationResponse, error) {
+	msg, msgB64, err := makeOperation(client, expiry, fee, operation)
+	if err != nil {
+		return nil, err
+	}
+
+	var content string
+
+	switch {
+	case operationBatch.NewBatch:
+		content = `{
+			"operation": "` + msgB64 + `",
+			"batch": true
+		}`
+	case operationBatch.CorrelationID != "":
+		content = `{
+			"operation": "` + msgB64 + `",
+			"correlationId": "` + operationBatch.CorrelationID + `"
+		}`
+	default:
+		content = `{
+			"operation": "` + msgB64 + `"
+		}`
+	}
+
+	httpRawResponse, err := ExecuteHTTPRequest(
+		http.MethodPost,
+		WalletPluginURL+nickname+"/signOperation",
+		bytes.NewBuffer([]byte(content)),
+	)
+	if err != nil {
+		res := RespError{"", ""}
+		_ = json.Unmarshal(httpRawResponse, &res)
+
+		return nil, fmt.Errorf("calling executeHTTPRequest for call: %w, message: %s", err, res.Message)
+	}
+
+	res := signOperationResponse{"", "", ""}
+	err = json.Unmarshal(httpRawResponse, &res)
+
+	if err != nil {
+		return nil, fmt.Errorf("unmarshalling '%s' JSON: %w", res, err)
+	}
+
+	signature, err := b64.StdEncoding.DecodeString(res.Signature)
+	if err != nil {
+		return nil, fmt.Errorf("decoding '%s' B64: %w", res.Signature, err)
+	}
+
+	resp, err := makeRPCCall(msg, signature, res, client)
+	if err != nil {
+		return nil, err
+	}
+
+	return &OperationResponse{CorrelationID: res.CorrelationID, OperationID: resp[0]}, nil
+}
+
+func makeRPCCall(msg []byte, signature []byte, res signOperationResponse, client *node.Client) ([]string, error) {
+	sendOpParams := [][]sendOperationsReq{
+		{
+			sendOperationsReq{
+				SerializedContent: msg,
+				Signature:         base58.CheckEncode(signature),
+				PublicKey:         res.PublicKey,
+			},
+		},
+	}
+
+	rawResponse, err := client.RPCClient.Call(
+		context.Background(),
+		"send_operations",
+		sendOpParams,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("calling send_operations jsonrpc with '%+v': %w", sendOpParams, err)
+	}
+
+	if rawResponse.Error != nil {
+		return nil, fmt.Errorf("receiving  send_operation response: %w", rawResponse.Error)
+	}
+
+	var resp []string
+
+	err = rawResponse.GetObject(&resp)
+	if err != nil {
+		return nil, fmt.Errorf("parsing send_operations jsonrpc response '%+v': %w", rawResponse, err)
+	}
+
+	return resp, nil
+}
+
+func makeOperation(client *node.Client, expiry uint64, fee uint64, operation Operation) ([]byte, string, error) {
+	exp, err := node.NextSlot(client)
+	if err != nil {
+		return nil, "", fmt.Errorf("calling NextSlot: %w", err)
+	}
+
+	expiry += exp
+
+	msg := message(expiry, fee, operation)
+
+	msgB64 := b64.StdEncoding.EncodeToString(msg)
+
+	return msg, msgB64, nil
 }
 
 func message(expiry uint64, fee uint64, operation Operation) []byte {
@@ -87,139 +210,7 @@ func message(expiry uint64, fee uint64, operation Operation) []byte {
 	return msg
 }
 
-func Call(client *node.Client,
-	expiry uint64, fee uint64,
-	operation Operation,
-	pubKey []byte, privKey []byte,
-) (string, error) {
-	exp, err := node.NextSlot(client)
-	if err != nil {
-		return "", fmt.Errorf("calling NextSlot: %w", err)
-	}
-
-	expiry += exp
-
-	msg := message(expiry, fee, operation)
-
-	digest := blake3.Sum256(append(pubKey, msg...))
-
-	signature := ed25519.Sign(privKey, digest[:])
-
-	rawResponse, err := client.RPCClient.Call(
-		context.Background(),
-		"send_operations",
-		[][]sendOperationsReq{
-			{
-				sendOperationsReq{
-					SerializedContent: msg,
-					Signature:         base58.CheckEncode(signature),
-					PublicKey:         "P" + base58.VersionedCheckEncode(pubKey, 0),
-				},
-			},
-		},
-	)
-	if err != nil {
-		return "", fmt.Errorf("calling send_operations jsonrpc with '%+v': %w",
-			[][]sendOperationsReq{
-				{
-					sendOperationsReq{
-						SerializedContent: msg,
-						Signature:         base58.CheckEncode(signature),
-						PublicKey:         "P" + base58.VersionedCheckEncode(pubKey, 0),
-					},
-				},
-			},
-			err)
-	}
-
-	if rawResponse.Error != nil {
-		return "", rawResponse.Error
-	}
-
-	var resp []string
-
-	err = rawResponse.GetObject(&resp)
-	if err != nil {
-		return "", fmt.Errorf("parsing send_operations jsonrpc response '%+v': %w", rawResponse, err)
-	}
-
-	return resp[0], nil
-}
-
-// CallV2 uses the plugin wallet instead of Thyra integrated wallet.
-//
-//nolint:funlen
-func CallV2(client *node.Client,
-	expiry uint64, fee uint64,
-	operation Operation,
-	nickname string,
-) (string, error) {
-	exp, err := node.NextSlot(client)
-	if err != nil {
-		return "", fmt.Errorf("calling NextSlot: %w", err)
-	}
-
-	expiry += exp
-
-	msg := message(expiry, fee, operation)
-
-	msgB64 := b64.StdEncoding.EncodeToString(msg)
-
-	httpRawResponse, err := executeHTTPRequest(http.MethodPost, WalletPluginURL+nickname+"/signOperation",
-		bytes.NewBuffer([]byte(`{
-		"operation": "`+msgB64+`"
-		}`)))
-	if err != nil {
-		return "", fmt.Errorf("calling executeHTTPRequest: %w", err)
-	}
-
-	//nolint:exhaustruct
-	res := signOperationResponse{}
-	err = json.Unmarshal(httpRawResponse, &res)
-
-	if err != nil {
-		return "", fmt.Errorf("unmarshalling '%s' JSON: %w", res, err)
-	}
-
-	signature, err := b64.StdEncoding.DecodeString(res.Signature)
-	if err != nil {
-		return "", fmt.Errorf("decoding '%s' B64: %w", res.Signature, err)
-	}
-
-	sendOpParams := [][]sendOperationsReq{
-		{
-			sendOperationsReq{
-				SerializedContent: msg,
-				Signature:         base58.CheckEncode(signature),
-				PublicKey:         res.PublicKey,
-			},
-		},
-	}
-
-	rawResponse, err := client.RPCClient.Call(
-		context.Background(),
-		"send_operations",
-		sendOpParams,
-	)
-	if err != nil {
-		return "", fmt.Errorf("calling send_operations jsonrpc with '%+v': %w", sendOpParams, err)
-	}
-
-	if rawResponse.Error != nil {
-		return "", fmt.Errorf("receiving  send_operation response: %w", rawResponse.Error)
-	}
-
-	var resp []string
-
-	err = rawResponse.GetObject(&resp)
-	if err != nil {
-		return "", fmt.Errorf("parsing send_operations jsonrpc response '%+v': %w", rawResponse, err)
-	}
-
-	return resp[0], nil
-}
-
-func executeHTTPRequest(methodType string, url string, reader io.Reader) ([]byte, error) {
+func ExecuteHTTPRequest(methodType string, url string, reader io.Reader) ([]byte, error) {
 	request, err := http.NewRequestWithContext(
 		context.Background(),
 		methodType,
@@ -233,21 +224,21 @@ func executeHTTPRequest(methodType string, url string, reader io.Reader) ([]byte
 
 	HTTPClient := &http.Client{Timeout: HTTPRequestTimeout, Transport: nil, Jar: nil, CheckRedirect: nil}
 
-	walletResp, err := HTTPClient.Do(request)
+	resp, err := HTTPClient.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf("aborting during HTTP request: %w", err)
 	}
 
-	if walletResp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("request failed with status: %s", walletResp.Status)
-	}
-
-	body, err := io.ReadAll(walletResp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("reading request body: %w", err)
 	}
 
-	defer walletResp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return body, fmt.Errorf("request failed with status: %s", resp.Status)
+	}
+
+	defer resp.Body.Close()
 
 	return body, nil
 }

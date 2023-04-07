@@ -1,5 +1,7 @@
 #!/bin/bash +x
 
+### legacy: to be deleted
+
 BINARY_URL="https://github.com/massalabs/thyra/releases/latest/download/thyra-server_linux"
 SCRIPT="Linux"
 

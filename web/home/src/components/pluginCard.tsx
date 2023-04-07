@@ -15,20 +15,21 @@ export const PluginCard = (props: Props) => {
   const Arrow = UIStore.useState((s) =>
     s.theme == 'light' ? Arrow6 : ArrowWhite6,
   );
+
   return (
     <div
       onClick={handleCardClick}
-      className="flex flex-col justify-center items-start p-5 gap-4 w-64 h-72 
-                    border-[1px] border-solid border-border rounded-2xl bg-bgCard cursor-pointer hover:bg-hoverbgCard"
+      className="flex flex-col justify-center items-start p-6 gap-4 w-72 h-56 
+      border-[1px] border-solid border-border rounded-2xl cursor-pointer bg-bgCard hover:bg-hoverbgCard"
     >
       <img
         src={props.plugin.logo}
         alt="Album"
         className="rounded-3xl w-10 h-10"
       />
-      <div className="flex flex-col gap-2">
-        <h2 className="label2 text-font">{props.plugin.name}</h2>
-        <p className="text2 text-font overflow-hidden whitespace-pre-wrap max-w-full">
+      <div className="flex flex-col gap-2 w-full">
+        <h2 className={`label2 text-font h-8 minimize`}>{props.plugin.name}</h2>
+        <p className={`text2 text-font max-w-full h-[68px] minimize`}>
           {props.plugin.description}
         </p>
       </div>

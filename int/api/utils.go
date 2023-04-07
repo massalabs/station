@@ -33,7 +33,7 @@ type CustomResponder struct {
 	StatusCode int
 }
 
-func (c *CustomResponder) WriteResponse(writer http.ResponseWriter, producer runtime.Producer) {
+func (c *CustomResponder) WriteResponse(writer http.ResponseWriter, _ runtime.Producer) {
 	for k, v := range c.Header {
 		writer.Header().Set(k, v)
 	}
@@ -56,7 +56,7 @@ type TemplateResponder struct {
 	data     any
 }
 
-func (t *TemplateResponder) WriteResponse(writer http.ResponseWriter, producer runtime.Producer) {
+func (t *TemplateResponder) WriteResponse(writer http.ResponseWriter, _ runtime.Producer) {
 	tmpl := template.Must(template.New("templateName").Parse(t.template))
 
 	err := tmpl.ExecuteTemplate(writer, "templateName", t.data)

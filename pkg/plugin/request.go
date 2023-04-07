@@ -10,7 +10,7 @@ import (
 	"github.com/massalabs/thyra/api/interceptor"
 )
 
-func NewAPIPHandler(manager *Manager) *APIHandler {
+func NewAPIHandler(manager *Manager) *APIHandler {
 	return &APIHandler{manager: manager}
 }
 
@@ -19,7 +19,7 @@ type APIHandler struct {
 }
 
 func (h *APIHandler) Handle(writer http.ResponseWriter, reader *http.Request, pluginAuthor string, pluginName string) {
-	alias := fmt.Sprintf("%s/%s", pluginAuthor, pluginName)
+	alias := Alias(pluginAuthor, pluginName)
 
 	plugin, err := h.manager.PluginByAlias(alias)
 	if err != nil {
@@ -48,8 +48,8 @@ func splitEndpoint(uri string) *endpointContent {
 	exploded := strings.Split(uri, "/")
 
 	return &endpointContent{
-		pluginAuthor: exploded[3],
-		pluginName:   exploded[4],
+		pluginAuthor: FormatTextForURL(exploded[3]),
+		pluginName:   FormatTextForURL(exploded[4]),
 		subURI:       "/" + strings.Join(exploded[5:], "/"),
 	}
 }
@@ -99,8 +99,8 @@ func modifyRequest(req *http.Request) {
 	urlExternal := req.URL.String()
 
 	// the url has the following format:
-	// 		http://127.0.0.1:1234/thyra/plugin/massalabs/hello%20world/web/index.html?name=Massalabs
-	// The idea is to rewrite url to remove: /thyra/plugin/massalabs/hello%20world
+	// 		http://127.0.0.1:1234/thyra/plugin/massalabs/hello-world/web/index.html?name=Massalabs
+	// The idea is to rewrite url to remove: /thyra/plugin/massalabs/hello-world
 
 	index := strings.Index(urlExternal, EndpointPattern)
 

@@ -3,18 +3,18 @@ import { useEffect, useState } from 'react';
 import massaLogomark from '../../assets/massa_logomark_detailed.png';
 
 import axios from 'axios';
-import { PluginHomePage , PluginStatus } from '../../../../shared/interfaces/IPlugin';
+import {
+  PluginHomePage,
+  PluginStatus,
+} from '../../../../shared/interfaces/IPlugin';
 import { PluginCard } from '../../components/pluginCard';
 
 import Header from '../../components/Header';
 
-import ManagePluginCard from '../../components/managePluginCard';
 import grid1 from '../../assets/element/grid1.svg';
-import wallet from '../../assets/logo/plugins/Wallet.svg';
 import registry from '../../assets/logo/plugins/Registry.svg';
-import webOnChain from '../../assets/logo/plugins/WebOnChain.svg';
+import webOnChain from '../../assets/logo/plugins/webOnChain.svg';
 import MainTitle from '../../components/MainTitle';
-
 
 /**
  * Homepage of Thyra with a list of plugins installed
@@ -26,22 +26,13 @@ function Home() {
 
   const fakePluginsList: PluginHomePage[] = [
     {
-      name: "Massa's Wallet",
-      description:
-        'Create and manage your smart wallets to buy, sell, transfer and exchange tokens',
-      id: '420',
-      logo: wallet,
-      status: 'Up',
-      home: '/thyra/wallet'
-    },
-    {
       name: 'Web On Chain',
       description:
         'Buy your .massa domain and upload websites on the blockchain',
       id: '421',
       logo: webOnChain,
       status: 'Up',
-      home: '/thyra/websiteCreator'
+      home: '/thyra/websiteCreator',
     },
     {
       name: 'Registry',
@@ -49,10 +40,9 @@ function Home() {
       id: '423',
       logo: registry,
       status: 'Up',
-      home: '/thyra/registry'
+      home: '/thyra/registry',
     },
   ];
-  const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
 
   const handleOpenPlugin = (pluginName: string) => {
     window.open(findPluginHome(pluginName));
@@ -66,7 +56,7 @@ function Home() {
       return 'error';
     }
   };
-  
+
   // List of plugins
   const getPlugins = async () => {
     const init = {
@@ -78,74 +68,87 @@ function Home() {
     const res = await axios.get(`/plugin-manager`, init);
     return res.data;
   };
-  
-  // Add the fake plugins
-  useEffect(() => {
-    // Fetch the plugins on first render
-    let previousFetch: PluginHomePage[] = [];
-    getPlugins().then((res: PluginHomePage[]) => {
-      previousFetch = res;
-      res.forEach((element: PluginHomePage) => {
-        setPlugins((prev) => [...prev, element]);
+
+  // Contains the list of plugins populated by fakeplugins
+  const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
+  // Keep track of the previous fetch
+  const [previousFetch, setPreviousFetch] = useState<PluginHomePage[]>([]);
+  const displayPlugins = async () => {
+    await getPlugins()
+      .then((res: PluginHomePage[]) => {
+        let combinedPlugins: PluginHomePage[] = [...fakePluginsList, ...res];
+        // If the list of plugins has changed, update the state
+        if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
+          setPlugins(combinedPlugins);
+          setPreviousFetch(res);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        // If there is an error, use the previous list
+        setPlugins((previousFetch) =>
+          previousFetch.length > 0 ? previousFetch : fakePluginsList,
+        );
       });
-    });
-    
-    setInterval(() => {
-    getPlugins().then((res : PluginHomePage[]) => {
-      let combinedPlugins = [ ...fakePluginsList, ...res];
-      // If the list of plugins has changed, update the state
-      if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
-        setPlugins(combinedPlugins);
-        previousFetch = res;
-      }
-    });
-      
+  };
+  // fetch plugins every 10 seconds
+  useEffect(() => {
+    // fetch plugins
+    const fetchData = async () => {
+      await displayPlugins();
+    };
+    fetchData();
+    const interval = setInterval(() => {
+      displayPlugins();
     }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const mapPluginList = () => {
-    return plugins.map((plugin) => {
-      if (plugin.status == PluginStatus.Starting || plugin.status == PluginStatus.Up){
-        return (
-          <PluginCard
-            {...{
-              plugin: {
-                id: plugin.id,
-                logo: plugin.logo ? plugin.logo : massaLogomark,
-                name: plugin ? plugin.name : 'Plugin Problem',
-                description: plugin.description
-                  ? plugin.description
-                  : 'Plugin Problem',
-                status: plugin.status ? plugin.status : 'Plugin Problem',
-              },
-              handleOpenPlugin: handleOpenPlugin,
-              key: plugin.id,
-            }}
-          />
-        );
-      }
-      else{
-        return (<></>)
-      }
-    })
-      
-  }
+    return plugins
+      .filter((p) => !!p.name)
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((plugin) => {
+        if (
+          plugin.status == PluginStatus.Starting ||
+          plugin.status == PluginStatus.Up
+        ) {
+          return (
+            <PluginCard
+              {...{
+                plugin: {
+                  id: plugin.id,
+                  logo: plugin.logo ? plugin.logo : massaLogomark,
+                  name: plugin ? plugin.name : '',
+                  description: plugin.description ? plugin.description : '',
+                  status: plugin.status ? plugin.status : '',
+                },
+                handleOpenPlugin: handleOpenPlugin,
+                key: plugin.id,
+              }}
+            />
+          );
+        } else {
+          return <></>;
+        }
+      });
+  };
+  const GridStyle = `grid grid-flow-row mx-auto mt-3 gap-4 max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`;
 
   return (
-    <div
-      className=" min-h-screen bg-img"
-      style={{ backgroundImage: `url(${grid1})` }}
-    >
-      <Header />
+    <div>
+      <div
+        className=" min-h-screen bg-img"
+        style={{ backgroundImage: `url(${grid1})` }}
+      >
+        <Header />
 
-      <MainTitle title="Which Plugins" />
-
-      {/* Display the plugins in a grid */}
-      <div className="mt-24 gap-8 grid mx-auto w-fit rounded-lg grid-cols-4 place-items-center max-lg:grid-cols-3">
-        {mapPluginList()}
-        <>
-          <ManagePluginCard />
-        </>
+        {/* Display the plugins in a grid */}
+        <div className="mx-auto max-sm:w-[300px] sm:w-[640px] md:w-[768px] lg:w-[980px] max-xl:w-[1024px] xl:w-[1280px]">
+          <MainTitle title="Which Plugins" />
+          <div className={GridStyle}>{mapPluginList()}</div>
+        </div>
       </div>
     </div>
   );

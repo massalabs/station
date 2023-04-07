@@ -169,148 +169,6 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /mgmt/wallet:
-    get:
-      operationId: mgmtWalletGet
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Wallets retrieved
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Wallet"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-    post:
-      operationId: mgmtWalletCreate
-      parameters:
-        - in: body
-          name: body
-          required: true
-          x-nullable: false
-          schema:
-            type: object
-            required:
-              - nickname
-              - password
-            properties:
-              nickname:
-                description: Wallet's short name.
-                type: string
-              password:
-                description: Private key password.
-                type: string
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: New wallet created.
-          schema:
-            $ref: "#/definitions/Wallet"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-    put:
-      operationId: mgmtWalletImport
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: New wallet created.
-          schema:
-            $ref: "#/definitions/Wallet"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-  /mgmt/wallet/{nickname}:
-    delete:
-      operationId: mgmtWalletDelete
-      parameters:
-        - in: path
-          name: nickname
-          required : true
-          type: string
-          description: Wallet's short name.
-      produces:
-        - application/json
-      responses:
-        "204":
-          description: Wallet removed.
-          schema:
-            $ref: "#/definitions/Wallet"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "404":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-    get:
-      operationId: mgmtWalletGetter
-      parameters:
-        - in: path
-          name: nickname
-          required : true
-          type: string
-          description: Wallet's short name.
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Wallet retrieved.
-          schema:
-            $ref: "#/definitions/Wallet"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "404":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
   /massa/addresses:
     get:
       operationId: massaGetAddresses
@@ -795,26 +653,6 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /mgmt/plugins:
-    get:
-      operationId: mgmtPluginsList
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Plugins list
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Plugin"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
   /all/domains:
     get:
       operationId: allDomainsGetter
@@ -1225,16 +1063,6 @@ definitions:
         description: byte array as string including created_at and updated_at values
         type: string
         format: byte
-  Plugin:
-    type: object
-    description: Plugin object (V0).
-    properties:
-      name:
-        description: Plugin's name.
-        type: string
-      port:
-        description: Plugin's port.
-        type: integer
   PluginStoreItem:
     type: object
     description: Plugin item from store.
@@ -1247,23 +1075,17 @@ definitions:
         type: string
       url:
         type: string
-      assets:
+      file:
         type: object
-        properties:
-          windows:
-            $ref: '#/definitions/File'
-          linux:
-            $ref: '#/definitions/File'
-          macos-arm64:
-            $ref: '#/definitions/File'
-          macos-amd64:
-            $ref: '#/definitions/File'
+        $ref: '#/definitions/File'
+      os:
+        type: string
     required:
       - name
       - description
       - version
       - url
-      - assets
+      - file
   File:
     type: object
     properties:

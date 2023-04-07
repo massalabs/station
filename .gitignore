@@ -23,3 +23,7 @@ main
 # Go swagger generated files
 api/swagger/server/models/
 api/swagger/server/restapi/operations/
+
+# Robot framework result
+api/test/results
+__pycache__

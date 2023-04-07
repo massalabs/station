@@ -3,9 +3,7 @@ package api
 import (
 	"log"
 	"os"
-	"sync"
 
-	"fyne.io/fyne/v2"
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
 	"github.com/massalabs/thyra/api/swagger/server/restapi"
@@ -13,14 +11,11 @@ import (
 	"github.com/massalabs/thyra/int/api/cmd"
 	"github.com/massalabs/thyra/int/api/massa"
 	"github.com/massalabs/thyra/int/api/myplugin"
-	"github.com/massalabs/thyra/int/api/plugin"
 	"github.com/massalabs/thyra/int/api/pluginstore"
-	"github.com/massalabs/thyra/int/api/wallet"
 	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/node"
 	deploysc "github.com/massalabs/thyra/pkg/node/sendoperation/deploySC"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
-	pluginmanager "github.com/massalabs/thyra/pkg/plugins"
 )
 
 type StartServerFlags struct {
@@ -58,8 +53,8 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 	switch *massaNodeServerPtr {
 	case "TESTNET":
 		*massaNodeServerPtr = "https://test.massa.net/api/v2"
-		// testnet20.1
-		dnsAddress = "AS1e4w2rAtZr9NxzAqpSqRC3oS3Ze8huDdLq3vRd14CKAvExDZTX"
+		// testnet20.2
+		dnsAddress = "AS12YMz7NjyP3aeEWcSsiC58Hba8UxHapfGv7i4PmNMS2eKfmaqqC"
 
 	case "LABNET":
 		*massaNodeServerPtr = "https://labnet.massa.net/api/v2"
@@ -77,38 +72,26 @@ func parseNetworkFlag(massaNodeServerPtr *string) {
 	os.Setenv("MASSA_NODE_URL", *massaNodeServerPtr)
 }
 
-func stopServer(app *fyne.App, server *restapi.Server, manager *pluginmanager.PluginManager) {
-	manager.StopPlugins()
-
+func stopServer(server *restapi.Server) {
 	if err := server.Shutdown(); err != nil {
 		log.Fatalln(err)
 	}
-
-	(*app).Quit()
 }
 
-func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *pluginmanager.PluginManager) {
-	var walletStorage sync.Map
-
+func initLocalAPI(localAPI *operations.ThyraServerAPI) {
 	localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(
-		cmd.CreateExecuteFunctionHandler(app))
+		cmd.CreateExecuteFunctionHandler())
 
-	localAPI.MgmtPluginsListHandler = plugin.NewGet(manager)
-
-	localAPI.MgmtWalletGetHandler = wallet.NewGet(&walletStorage)
-	localAPI.MgmtWalletCreateHandler = wallet.NewCreate(&walletStorage)
-	localAPI.MgmtWalletImportHandler = wallet.NewImport(&walletStorage, app)
-	localAPI.MgmtWalletDeleteHandler = wallet.NewDelete(&walletStorage, app)
 	localAPI.MassaGetAddressesHandler = operations.MassaGetAddressesHandlerFunc(massa.AddressesHandler)
 	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(
-		websites.CreatePrepareForWebsiteHandler(app),
+		websites.CreatePrepareForWebsiteHandler(),
 	)
 	localAPI.CmdDeploySCHandler = operations.CmdDeploySCHandlerFunc(deploysc.Handler)
 	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(
-		websites.CreateUploadWebsiteHandler(app),
+		websites.CreateUploadWebsiteHandler(),
 	)
 	localAPI.WebsiteUploadMissingChunksHandler = operations.WebsiteUploadMissingChunksHandlerFunc(
-		websites.CreateUploadMissingChunksHandler(app),
+		websites.CreateUploadMissingChunksHandler(),
 	)
 	localAPI.MyDomainsGetterHandler = operations.MyDomainsGetterHandlerFunc(websites.DomainsHandler)
 	localAPI.AllDomainsGetterHandler = operations.AllDomainsGetterHandlerFunc(websites.RegistryHandler)
@@ -126,7 +109,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, app *fyne.App, manager *p
 	pluginstore.InitializePluginStoreAPI(localAPI)
 }
 
-func StartServer(app *fyne.App, startFlags StartServerFlags) {
+func StartServer(startFlags StartServerFlags) {
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
@@ -151,17 +134,9 @@ func StartServer(app *fyne.App, startFlags StartServerFlags) {
 
 	log.Printf("Connected to node server %s (version %s)\n", os.Getenv("MASSA_NODE_URL"), nodeVersion)
 
-	// Load plugins
-	manager, err := pluginmanager.New(server.Port, server.TLSPort)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	defer stopServer(server)
 
-	// Start plugins
-	manager.StartPlugins()
-	defer stopServer(app, server, manager)
-
-	initLocalAPI(localAPI, app, manager)
+	initLocalAPI(localAPI)
 	server.ConfigureAPI()
 
 	if err := server.Serve(); err != nil {

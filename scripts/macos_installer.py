@@ -55,7 +55,7 @@ class MacOSInstaller(Installer):
         self.executeCommand("sudo brew services restart dnsmasq", True)
 
     def setupDNS(self):
-        stdout, _stderr = self.executeCommand("sudo lsof -i :53", True, allow_failure=True)        
+        stdout, _ = self.executeCommand("sudo lsof -i :53", True, allow_failure=True)        
         runningDNS = ""
         if stdout:
             runningDNS = stdout.splitlines()[1].split()
@@ -73,7 +73,7 @@ class MacOSInstaller(Installer):
         self.configureNetworkInterface()
 
     def generateCACertificate(self):
-        stdout, _stderr = self.executeCommand("find /Applications/ -type d -iname '*Firefox*.app'", True, allow_failure=True)
+        stdout, _ = self.executeCommand("find /Applications/ -type d -iname '*Firefox*.app'", True, allow_failure=True)
         if stdout and "Firefox" in stdout:
             self.executeCommand("brew install nss", True)
 
