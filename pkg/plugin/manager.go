@@ -20,7 +20,7 @@ import (
 // Note: the plugin directory is the /plugins inside the home directory.
 func Directory() string {
 	homeDir, _ := config.GetConfigDir()
-	pluginsDir := path.Join(homeDir, "my_plugins")
+	pluginsDir := path.Join(homeDir, "thyra-plugins")
 	_, err := os.Stat(pluginsDir)
 
 	if os.IsNotExist(err) {
