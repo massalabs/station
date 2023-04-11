@@ -49,5 +49,5 @@ POST /websiteCreator/upload
 
 Check content of the uploaded website
     Open Thyra Page    ${API_URL}/browse/${WEBSITE_ADDRESS}/index.html
-    Page Should Contain    My test website !
+    Page Should Contain    My test website!
     Page Should Contain    Decentralization is non-negotiable
