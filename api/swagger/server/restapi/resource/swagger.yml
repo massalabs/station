@@ -29,29 +29,6 @@ paths:
       responses:
         "200":
           description: Dumb response. All content and HTTP code are possible for this endpoint.
-  /thyra/wallet/{resource}:
-    get:
-      operationId: thyraWallet
-      produces:
-        - application/json
-        - text/javascript
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
-      parameters:
-        - in: path
-          name: resource
-          required : true
-          type: string
-          description: Website resource.
-      responses:
-        "200":
-          description: Page found
-        "404":
-          description: Resource not found.
-          schema:
-            $ref: "#/definitions/Error"
   /thyra/websiteCreator/{resource}:
     get:
       operationId: thyraWebsiteCreator
@@ -980,50 +957,6 @@ definitions:
         description: error message.
         type: string
         x-nullable: false
-  Wallet:
-    type: object
-    description: Wallet object (V0).
-    required:
-      - nickname
-      - address
-      - keyPairs
-    properties:
-      nickname:
-        description: wallet's nickname.
-        type: string
-      address:
-        description: wallet's address.
-        type: string
-      balance:
-        description: wallet's balance.
-        type: number
-      keyPairs:
-        description: wallet's key pairs.
-        type: array
-        items:
-          type: object
-          required:
-            - privateKey
-            - publicKey
-            - salt
-            - nonce
-          properties:
-            privateKey:
-              description: Key pair's private key.
-              type: string
-              format: base58check
-            publicKey:
-              description: Key pair's public key.
-              type: string
-              format: base58check
-            salt:
-              description: Salt used by the PBKDF that generates the secret key used to protect the key pair's private key.
-              type: string
-              format: base58check
-            nonce:
-              description: Nonce used by the AES-GCM algorithm used to protect the key pair's private key.
-              type: string
-              format: base58check
   Websites:
     type: object
     description: Websites object (V0).
@@ -1076,7 +1009,6 @@ definitions:
       url:
         type: string
       file:
-        type: object
         $ref: '#/definitions/File'
       os:
         type: string

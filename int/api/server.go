@@ -102,7 +102,6 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI) {
 	localAPI.BrowseHandler = operations.BrowseHandlerFunc(BrowseHandler)
 	localAPI.ThyraPluginManagerHandler = operations.ThyraPluginManagerHandlerFunc(ThyraPluginManagerHandler)
 
-	localAPI.ThyraWalletHandler = operations.ThyraWalletHandlerFunc(ThyraWalletHandler)
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
 
 	myplugin.InitializePluginAPI(localAPI)
