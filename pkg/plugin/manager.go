@@ -257,33 +257,41 @@ func (m *Manager) Install(url string) error {
 }
 
 func (m *Manager) InstallWallet() error {
+	var name = "Wallet"
+	var version = "v0.0.6"
+	var baseName = "thyra-plugin-wallet"
+	var baseUrl = "https://github.com/massalabs/"
+	var url = baseUrl + baseName + "/releases/download/" + version + "/" + baseName + "_"
+
+	var windows 	= url + "windows-amd64.zip"
+	var linux 	= url + "linux-amd64.zip"
+	var macosArm64 	= url + "darwin-arm64.zip"
+	var macosAmd64 	= url + "darwin-amd64.zip"
+
 	walletPluginStoreItemJSON := `{
-		"name": "Wallet",
+		"name": "` + name + `,
 		"description": "",
 		"assets": {
 			"windows": {
-				"url":
-			"https://github.com/massalabs/thyra-plugin-wallet/releases/download/v0.0.6/thyra-plugin-wallet_windows-amd64.zip",
+				"url":  "` + windows + `,
 				"checksum": ""
 			},
 			"linux": {
-				"url":
-			"https://github.com/massalabs/thyra-plugin-wallet/releases/download/v0.0.6/thyra-plugin-wallet_linux-amd64.zip",
+				"url":  "` + linux + `,
 				"checksum": ""
 			},
 			"macos-arm64": {
-				"url":
-			"https://github.com/massalabs/thyra-plugin-wallet/releases/download/v0.0.6/thyra-plugin-wallet_darwin-arm64.zip",
+				"url":  "` + macosArm64 + `,
+				"url": "` + url + `",
 				"checksum": ""
 			},
 			"macos-amd64": {
-				"url":
-			"https://github.com/massalabs/thyra-plugin-wallet/releases/download/v0.0.6/thyra-plugin-wallet_darwin-amd64.zip",
+				"url":  "` + macosAmd64 + `,
 				"checksum": ""
 			}
 		},
-		"version": "0.0.6",
-		"url": "https://github.com/massalabs/thyra-plugin-wallet"
+		"version":  "` + version + `,
+		"url": "` + baseUrl + baseName + `"
 	}`
 
 	//nolint: exhaustruct
