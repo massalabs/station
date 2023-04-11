@@ -12,13 +12,14 @@ from urllib.error import URLError
 from zipfile import ZipFile
 
 logging.basicConfig(
-    level=os.environ.get("LOGLEVEL", "INFO"),
+    level=os.environ.get("LOGLEVEL", "DEBUG"),
     format='%(name)-12s: %(levelname)-8s %(message)s',
     handlers=[
         logging.FileHandler("thyra_installer.log", mode='w'),
         logging.StreamHandler()
     ]
 )
+logging.getLogger().handlers[1].setLevel(logging.INFO)
 
 class Installer:
     THYRA_INSTALL_FOLDER_PATH = os.path.expanduser("~")
