@@ -1475,20 +1475,6 @@ func init() {
         }
       }
     },
-    "Plugin": {
-      "description": "Plugin object (V0).",
-      "type": "object",
-      "properties": {
-        "name": {
-          "description": "Plugin's name.",
-          "type": "string"
-        },
-        "port": {
-          "description": "Plugin's port.",
-          "type": "integer"
-        }
-      }
-    },
     "PluginStoreItem": {
       "description": "Plugin item from store.",
       "type": "object",
@@ -3055,20 +3041,6 @@ func init() {
           "items": {
             "type": "number"
           }
-        }
-      }
-    },
-    "Plugin": {
-      "description": "Plugin object (V0).",
-      "type": "object",
-      "properties": {
-        "name": {
-          "description": "Plugin's name.",
-          "type": "string"
-        },
-        "port": {
-          "description": "Plugin's port.",
-          "type": "integer"
         }
       }
     },
