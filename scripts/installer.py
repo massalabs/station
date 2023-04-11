@@ -22,7 +22,7 @@ logging.basicConfig(
 class Installer:
     THYRA_INSTALL_FOLDER_PATH = os.path.expanduser("~")
     THYRA_CONFIG_FOLDER_PATH = os.path.join(os.path.expanduser("~"), ".config", "thyra")
-    THYRA_PLUGINS_PATH = os.path.join(THYRA_CONFIG_FOLDER_PATH, "thyra-plugins" )
+    THYRA_PLUGINS_PATH = os.path.join(THYRA_CONFIG_FOLDER_PATH, "plugins" )
 
     THYRA_SERVER_URL = ""
     THYRA_SERVER_FILENAME = ""
