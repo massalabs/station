@@ -45,10 +45,9 @@ POST /websiteCreator/upload
     ...    files=${file}
     ...    expected_status=${STATUS_OK}
 
-    Log To Console    ${response.json()}
     Should Be Equal As Strings    ${response.json()['address']}    ${WEBSITE_ADDRESS}
 
 Check content of the uploaded website
-    Open Thyra Page    http://${WEBSITE_NAME}.massa
+    Open Thyra Page    ${API_URL}/browse/${WEBSITE_ADDRESS}/index.html
     Page Should Contain    My test website !
     Page Should Contain    Decentralization is non-negotiable
