@@ -1,0 +1,34 @@
+name: Frontend Tests
+
+on:
+  push:
+    paths:
+      - 'web/**'
+  pull_request:
+    paths:
+      - 'web/**'
+
+jobs:
+  frontend-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+            node-version: 18
+            cache: 'npm'
+            cache-dependency-path: |
+                web/home/package-lock.json
+                web/plugin-manager/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: web
+
+      - name: Run tests
+        run: npm test
+        working-directory: web
