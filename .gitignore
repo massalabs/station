@@ -23,6 +23,10 @@ main
 api/swagger/server/models/
 api/swagger/server/restapi/operations/
 
-# Robot framework result
+# Robot framework
 api/test/results
 __pycache__
+api/**/*.zip
+
+# MacOS
+.DS_Store
