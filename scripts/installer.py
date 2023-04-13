@@ -9,26 +9,31 @@ import subprocess
 import traceback
 import urllib.request
 from urllib.error import URLError
+from zipfile import ZipFile
 
 logging.basicConfig(
-    level=os.environ.get("LOGLEVEL", "INFO"),
+    level=os.environ.get("LOGLEVEL", "DEBUG"),
     format='%(name)-12s: %(levelname)-8s %(message)s',
     handlers=[
         logging.FileHandler("thyra_installer.log", mode='w'),
         logging.StreamHandler()
     ]
 )
+logging.getLogger().handlers[1].setLevel(logging.INFO)
 
 class Installer:
     THYRA_INSTALL_FOLDER_PATH = os.path.expanduser("~")
     THYRA_CONFIG_FOLDER_PATH = os.path.join(os.path.expanduser("~"), ".config", "thyra")
-    THYRA_PLUGINS_PATH = os.path.join(THYRA_CONFIG_FOLDER_PATH, "plugins" )
+    THYRA_PLUGINS_PATH = os.path.join(THYRA_CONFIG_FOLDER_PATH, "my_plugins" )
 
     THYRA_SERVER_URL = ""
     THYRA_SERVER_FILENAME = ""
+    THYRA_WALLET_PLUGIN_URL = ""
 
     THYRA_APP_URL = ""
     THYRA_APP_FILENAME = ""
+    THYRA_WALLET_ZIP_FILENAME = ""
+    THYRA_WALLET_BINARY_FILENAME = ""
 
     MKCERT_URL = ""
     MKCERT_FILENAME = ""
@@ -192,9 +197,24 @@ class Installer:
         if not os.path.exists(self.THYRA_CONFIG_FOLDER_PATH):
             try:
                 os.makedirs(self.THYRA_CONFIG_FOLDER_PATH)
+            except OSError as err:
+                self.printErrorAndExit(f"Error while creating config folder: {err}")
+        if not os.path.exists(self.THYRA_PLUGINS_PATH):
+            try:
                 os.makedirs(self.THYRA_PLUGINS_PATH)
             except OSError as err:
                 self.printErrorAndExit(f"Error while creating config folder: {err}")
+
+    def installWalletPlugin(self):
+        path_to_plugin_folder = os.path.join(self.THYRA_PLUGINS_PATH, self.THYRA_WALLET_BINARY_FILENAME)
+        path_to_binary = os.path.join(path_to_plugin_folder, self.THYRA_WALLET_BINARY_FILENAME)
+
+        if not os.path.exists(path_to_binary):
+            path_to_zip = os.path.join(self.THYRA_PLUGINS_PATH, self.THYRA_WALLET_ZIP_FILENAME)
+            self.downloadFile(self.THYRA_WALLET_PLUGIN_URL, path_to_zip)
+            ZipFile(path_to_zip).extractall(path_to_plugin_folder)
+            os.chmod(path_to_binary, 0o755)
+            self._deleteFile(path_to_zip)
 
     def startThyraApp(self):
         thyra_app_path = os.path.join(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_APP_FILENAME)
@@ -220,9 +240,10 @@ class Installer:
             else:
                 logging.info("CA certificate already installed.")
 
-            logging.info("Thyra installed successfully !")
+            logging.info("Thyra installed successfully!")
             logging.info(f"{self.THYRA_SERVER_FILENAME} and {self.THYRA_APP_FILENAME} has been installed in {self.THYRA_INSTALL_FOLDER_PATH}")
 
+            self.installWalletPlugin()
             self.startThyraApp()
         except Exception as e:
             logging.error(traceback.format_exc())

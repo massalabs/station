@@ -43,7 +43,7 @@ By following these instructions, you will:
 
 🎉 Congratulations!! Your gate to Massa blockchain is now installed and you can start your massalian journey.
 You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](https://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/wallet) right away!
+If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/plugin/massalabs/wallet) right away!
 
 
 #### Linux
@@ -84,4 +84,4 @@ Click [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-i
 Congratulation, your version of Thyra is now installed on your system and you can "Start" your journey using the icon tray.
 
 You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](https://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/wallet) right away!
+If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/plugin/massalabs/wallet) right away!

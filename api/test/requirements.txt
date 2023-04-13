@@ -2,3 +2,4 @@ robotframework>=6.0.2
 robotframework-requests>=0.9.4
 robotframework-seleniumlibrary>=6.0.0
 robotframework-archivelibrary>=0.4.2
+robotframework-async-keyword==1.1.6

@@ -12,7 +12,7 @@ To contribute to this project, please read our [Contributor's Guide](./CONTRIBUT
 
 
 ## Install thyra 
-To install Thyra, please follow the instructions available in the [Installation Guide](./INSTALL.md).
+To install Thyra, please follow the instructions available in the [Installation Guide](./INSTALLATION.md).
 
 ## Install a plugin
 

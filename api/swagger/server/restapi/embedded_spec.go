@@ -1160,39 +1160,6 @@ func init() {
         }
       }
     },
-    "/thyra/wallet/{resource}": {
-      "get": {
-        "produces": [
-          "application/json",
-          "text/javascript",
-          "text/html",
-          "text/css",
-          "text/webp",
-          "image/png"
-        ],
-        "operationId": "thyraWallet",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Website resource.",
-            "name": "resource",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Page found"
-          },
-          "404": {
-            "description": "Resource not found.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
     "/thyra/websiteCreator/{resource}": {
       "get": {
         "produces": [
@@ -1490,7 +1457,6 @@ func init() {
           "type": "string"
         },
         "file": {
-          "type": "object",
           "$ref": "#/definitions/File"
         },
         "name": {
@@ -1522,64 +1488,6 @@ func init() {
         },
         "name": {
           "description": "Website's name.",
-          "type": "string"
-        }
-      }
-    },
-    "Wallet": {
-      "description": "Wallet object (V0).",
-      "type": "object",
-      "required": [
-        "nickname",
-        "address",
-        "keyPairs"
-      ],
-      "properties": {
-        "address": {
-          "description": "wallet's address.",
-          "type": "string"
-        },
-        "balance": {
-          "description": "wallet's balance.",
-          "type": "number"
-        },
-        "keyPairs": {
-          "description": "wallet's key pairs.",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": [
-              "privateKey",
-              "publicKey",
-              "salt",
-              "nonce"
-            ],
-            "properties": {
-              "nonce": {
-                "description": "Nonce used by the AES-GCM algorithm used to protect the key pair's private key.",
-                "type": "string",
-                "format": "base58check"
-              },
-              "privateKey": {
-                "description": "Key pair's private key.",
-                "type": "string",
-                "format": "base58check"
-              },
-              "publicKey": {
-                "description": "Key pair's public key.",
-                "type": "string",
-                "format": "base58check"
-              },
-              "salt": {
-                "description": "Salt used by the PBKDF that generates the secret key used to protect the key pair's private key.",
-                "type": "string",
-                "format": "base58check"
-              }
-            }
-          }
-        },
-        "nickname": {
-          "description": "wallet's nickname.",
           "type": "string"
         }
       }
@@ -2656,39 +2564,6 @@ func init() {
         }
       }
     },
-    "/thyra/wallet/{resource}": {
-      "get": {
-        "produces": [
-          "application/json",
-          "image/png",
-          "text/css",
-          "text/html",
-          "text/javascript",
-          "text/webp"
-        ],
-        "operationId": "thyraWallet",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Website resource.",
-            "name": "resource",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Page found"
-          },
-          "404": {
-            "description": "Resource not found.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
     "/thyra/websiteCreator/{resource}": {
       "get": {
         "produces": [
@@ -3100,7 +2975,6 @@ func init() {
           "type": "string"
         },
         "file": {
-          "type": "object",
           "$ref": "#/definitions/File"
         },
         "name": {
@@ -3153,36 +3027,6 @@ func init() {
         }
       }
     },
-    "Wallet": {
-      "description": "Wallet object (V0).",
-      "type": "object",
-      "required": [
-        "nickname",
-        "address",
-        "keyPairs"
-      ],
-      "properties": {
-        "address": {
-          "description": "wallet's address.",
-          "type": "string"
-        },
-        "balance": {
-          "description": "wallet's balance.",
-          "type": "number"
-        },
-        "keyPairs": {
-          "description": "wallet's key pairs.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/WalletKeyPairsItems0"
-          }
-        },
-        "nickname": {
-          "description": "wallet's nickname.",
-          "type": "string"
-        }
-      }
-    },
     "WalletItems0": {
       "type": "object",
       "properties": {
@@ -3191,37 +3035,6 @@ func init() {
         },
         "coin": {
           "type": "string"
-        }
-      }
-    },
-    "WalletKeyPairsItems0": {
-      "type": "object",
-      "required": [
-        "privateKey",
-        "publicKey",
-        "salt",
-        "nonce"
-      ],
-      "properties": {
-        "nonce": {
-          "description": "Nonce used by the AES-GCM algorithm used to protect the key pair's private key.",
-          "type": "string",
-          "format": "base58check"
-        },
-        "privateKey": {
-          "description": "Key pair's private key.",
-          "type": "string",
-          "format": "base58check"
-        },
-        "publicKey": {
-          "description": "Key pair's public key.",
-          "type": "string",
-          "format": "base58check"
-        },
-        "salt": {
-          "description": "Salt used by the PBKDF that generates the secret key used to protect the key pair's private key.",
-          "type": "string",
-          "format": "base58check"
         }
       }
     },
