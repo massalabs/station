@@ -2,6 +2,7 @@
 Library     String
 Library     RequestsLibrary
 Library     ./libs/ArgLibrary.py
+Library     Collections
 Resource    variables.resource
 
 
@@ -54,3 +55,10 @@ String To Arg
     [Arguments]    ${string}
     ${byteArray}=    ArgLibrary.String To Arg    ${string}
     RETURN    ${byteArray}
+
+Get SC address
+    [Documentation]    Get the address of the SC from a string containing the address after ':' (colon)
+    [Arguments]    ${string}
+    ${words}=    Split String    ${string}    :
+    ${sc_address}=    Get From List    ${words}    1
+    RETURN    ${sc_address}
