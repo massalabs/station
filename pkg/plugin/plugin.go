@@ -59,10 +59,9 @@ func (p *Plugin) Information() *Information {
 func (p *Plugin) getInformation() (*Information, error) {
 	manifestPath := filepath.Join(filepath.Dir(p.BinPath), "manifest.json")
 	jsonObj, err := os.ReadFile(manifestPath)
-	if jsonObj == nil {
-		fmt.Errorf("reading plugins directory  '%s': %w", manifestPath, err)
 
-		return nil, err
+	if jsonObj == nil {
+		return nil, fmt.Errorf("reading manifest file '%s': %w", manifestPath, err)
 	}
 
 	var manifest struct {
@@ -77,10 +76,14 @@ func (p *Plugin) getInformation() (*Information, error) {
 	}
 
 	err = json.Unmarshal(jsonObj, &manifest)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "WARN: while running plugin : %s.\n", err)
 
-		return nil, err
+	if err != nil {
+		return nil, fmt.Errorf("parsing manifest file '%s': %w", manifestPath, err)
+	}
+
+	parsedURL, err := url.Parse(manifest.URL)
+	if err != nil {
+		return nil, fmt.Errorf("parsing URL '%s': %w", manifest.URL, err)
 	}
 
 	return &Information{
@@ -88,14 +91,14 @@ func (p *Plugin) getInformation() (*Information, error) {
 		Author:      manifest.Author,
 		Description: manifest.Description,
 		Logo:        manifest.Logo,
-		URL:         &url.URL{Path: manifest.URL},
+		URL:         parsedURL,
 		APISpec:     manifest.APISpec,
 		Home:        manifest.Home,
 		Version:     manifest.Version,
 	}, nil
 }
 
-func (p *Plugin) SetInformation(info *Information) {
+func (p *Plugin) SetInformation() {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 	p.info, _ = p.getInformation()
