@@ -60,38 +60,40 @@ func (p *Plugin) getInformation() *Information {
 	manifestPath := filepath.Join(filepath.Dir(p.BinPath), "manifest.json")
 	jsonObj, err := os.ReadFile(manifestPath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "WARN: while running plugin %s.\n", err)
+		fmt.Fprintf("WARN: while running plugin %s.\n", err)
+
 		return nil
 	}
 
-	var info2 struct {
+	var manifest struct {
 		Name        string `json:"name"`
 		Author      string `json:"author"`
 		Description string `json:"description"`
 		Logo        string `json:"logo"`
 		URL         string `json:"url"`
-		APISpec     string `json:"apiSpec"`
+		APISpec     string `json:"api_spec"`
 		Home        string `json:"home"`
 		Version     string `json:"version"`
 	}
 
-	err = json.Unmarshal(jsonObj, &info2)
+	err = json.Unmarshal(jsonObj, &manifest)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "WARN: while running plugin : %s.\n", err)
+		
 		return nil
 	}
 
-	info := &Information{
-		Name:        info2.Name,
-		Author:      info2.Author,
-		Description: info2.Description,
-		Logo:        info2.Logo,
-		URL:         &url.URL{Path: info2.URL},
-		APISpec:     info2.APISpec,
-		Home:        info2.Home,
-		// Version:     info2.Version,
+	return &Information{
+		Name:        manifest.Name,
+		Author:      manifest.Author,
+		Description: manifest.Description,
+		Logo:        manifest.Logo,
+		URL:         &url.URL{Path: manifest.URL},
+		APISpec:     manifest.APISpec,
+		Home:        manifest.Home,
+		Version:     manifest.Version,
 	}
-	return info
+
 }
 
 func (p *Plugin) SetInformation(info *Information) {
@@ -238,10 +240,17 @@ func New(binPath string, pluginID string) (*Plugin, error) {
 	}
 
 	//nolint:exhaustruct
-	plgn := &Plugin{status: Starting, BinPath: binPath + exe, ID: pluginID, quitChan: make(chan bool)}
+	plgn := &Plugin{
+		status:   Starting,
+		BinPath:  binPath + exe,
+		ID:       pluginID,
+		quitChan: make(chan bool),
+	}
 	plgn.info = plgn.getInformation()
+	
 	err := plgn.Start()
 	if err != nil {
+	
 		return nil, fmt.Errorf("creating plugin: %w", err)
 	}
 
