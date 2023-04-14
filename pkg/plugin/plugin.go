@@ -56,13 +56,13 @@ func (p *Plugin) Information() *Information {
 	return p.info
 }
 
-func (p *Plugin) getInformation() *Information {
+func (p *Plugin) getInformation() (*Information, error) {
 	manifestPath := filepath.Join(filepath.Dir(p.BinPath), "manifest.json")
 	jsonObj, err := os.ReadFile(manifestPath)
-	if err != nil {
-		fmt.Fprintf("WARN: while running plugin %s.\n", err)
+	if jsonObj == nil {
+		fmt.Errorf("reading plugins directory  '%s': %w", manifestPath, err)
 
-		return nil
+		return nil, err
 	}
 
 	var manifest struct {
@@ -79,8 +79,8 @@ func (p *Plugin) getInformation() *Information {
 	err = json.Unmarshal(jsonObj, &manifest)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "WARN: while running plugin : %s.\n", err)
-		
-		return nil
+
+		return nil, err
 	}
 
 	return &Information{
@@ -92,14 +92,13 @@ func (p *Plugin) getInformation() *Information {
 		APISpec:     manifest.APISpec,
 		Home:        manifest.Home,
 		Version:     manifest.Version,
-	}
-
+	}, nil
 }
 
 func (p *Plugin) SetInformation(info *Information) {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
-	p.info = p.getInformation()
+	p.info, _ = p.getInformation()
 	p.status = Up
 
 	p.reverseProxy = httputil.NewSingleHostReverseProxy(p.info.URL)
@@ -246,11 +245,10 @@ func New(binPath string, pluginID string) (*Plugin, error) {
 		ID:       pluginID,
 		quitChan: make(chan bool),
 	}
-	plgn.info = plgn.getInformation()
-	
+	plgn.info, _ = plgn.getInformation()
+
 	err := plgn.Start()
 	if err != nil {
-	
 		return nil, fmt.Errorf("creating plugin: %w", err)
 	}
 
