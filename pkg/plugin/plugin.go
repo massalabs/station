@@ -13,6 +13,7 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"encoding/json"
 
 	"github.com/gosimple/slug"
 )
@@ -37,6 +38,7 @@ type Information struct {
 	URL         *url.URL
 	APISpec     string
 	Home        string
+	Version     string
 }
 
 type Plugin struct {
@@ -54,10 +56,49 @@ func (p *Plugin) Information() *Information {
 	return p.info
 }
 
+func (p *Plugin) getInformation() *Information {
+	manifestPath := filepath.Join(filepath.Dir(p.BinPath), "manifest.json")
+	jsonObj, err := os.ReadFile(manifestPath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "WARN: while running plugin %s.\n",  err)
+		return nil
+	}
+
+	var info2 struct {
+		Name        string `json:"name"`
+		Author      string `json:"author"`
+		Description string `json:"description"`
+		Logo        string `json:"logo"`
+		URL         string `json:"url"`
+		APISpec     string `json:"apiSpec"`
+		Home        string `json:"home"`
+		Version     string `json:"version"`
+	}
+
+	err = json.Unmarshal(jsonObj, &info2)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "WARN: while running plugin : %s.\n", err)
+		return nil
+	}
+
+	info := &Information{
+		Name:        info2.Name,
+		Author:      info2.Author,
+		Description: info2.Description,
+		Logo:        info2.Logo,
+		URL:         &url.URL{Path: info2.URL},
+		APISpec:     info2.APISpec,
+		Home:        info2.Home,
+		// Version:     info2.Version,
+	}
+	return info
+}
+
+
 func (p *Plugin) SetInformation(info *Information) {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
-	p.info = info
+	p.info = p.getInformation()
 	p.status = Up
 
 	p.reverseProxy = httputil.NewSingleHostReverseProxy(p.info.URL)
@@ -199,7 +240,7 @@ func New(binPath string, pluginID string) (*Plugin, error) {
 
 	//nolint:exhaustruct
 	plgn := &Plugin{status: Starting, BinPath: binPath + exe, ID: pluginID, quitChan: make(chan bool)}
-
+	plgn.info = plgn.getInformation()
 	err := plgn.Start()
 	if err != nil {
 		return nil, fmt.Errorf("creating plugin: %w", err)
