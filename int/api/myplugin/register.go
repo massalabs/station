@@ -3,9 +3,9 @@ package myplugin
 import (
 	"fmt"
 	"log"
-	"net/url"
 
 	"github.com/go-openapi/runtime/middleware"
+
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/plugin"
