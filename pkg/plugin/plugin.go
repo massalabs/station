@@ -229,7 +229,13 @@ func New(binPath string, pluginID string) (*Plugin, error) {
 	}
 
 	//nolint:exhaustruct
-	plgn := &Plugin{status: Starting, BinPath: binPath + exe, ID: pluginID, quitChan: make(chan bool)}
+	plgn := &Plugin{
+		status:   Starting,
+		BinPath:  binPath + exe,
+		ID:       pluginID,
+		quitChan: make(chan bool),
+	}
+	plgn.info, _ = plgn.getInformation()
 
 	err := plgn.Start()
 	if err != nil {

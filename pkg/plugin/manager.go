@@ -8,12 +8,15 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 
 	"github.com/cavaliergopher/grab/v3"
-	"github.com/massalabs/thyra/pkg/config"
 	"github.com/xyproto/unzip"
+
+	"github.com/massalabs/thyra/pkg/config"
+	"github.com/massalabs/thyra/pkg/store"
 )
 
 // Directory returns the plugin directory.
@@ -164,14 +167,18 @@ func (m *Manager) generateCorrelationID() string {
 }
 
 // InitPlugin starts new plugin and adds it to manager.
-func (m *Manager) InitPlugin(binPath string) error {
+func (m *Manager) InitPlugin(binPath string, store []store.Plugin) error {
 	correlationID := m.generateCorrelationID()
+	log.Printf("Starting plugin %s with correlationID %s", binPath, correlationID)
 
 	plugin, err := New(binPath, correlationID)
 	if err != nil {
 		return err
 	}
-
+	update := m.findUpdates(plugin, store)
+	if update {
+		// TO DO: update plugin
+	}
 	m.mutex.Lock()
 	m.plugins[correlationID] = plugin
 	m.mutex.Unlock()
@@ -179,11 +186,47 @@ func (m *Manager) InitPlugin(binPath string) error {
 	return nil
 }
 
+func compareVersions(v1, v2 string) bool {
+	v1Components := strings.Split(v1, ".")
+	v2Components := strings.Split(v2, ".")
+	for i := 0; i < len(v1Components); i++ {
+		v1Int, _ := strconv.Atoi(v1Components[i])
+		v2Int, _ := strconv.Atoi(v2Components[i])
+		if v1Int > v2Int {
+			return true
+		}
+	}
+	return false
+}
+
+func findPluginByName(name string, plugins []store.Plugin) *store.Plugin {
+	// for each plugin in the plugins list, check if the name matches the name of the plugin
+	for _, plugin := range plugins {
+		if plugin.Name == name {
+			return &plugin
+		}
+	}
+	return nil
+}
+
+func (m *Manager) findUpdates(p *Plugin, store []store.Plugin) bool {
+	// finf if there is an element elem in storeitems that has the same name as rootItem.Name()
+	fmt.Println("store items  \n\n\n", store)
+	p.SetInformation()
+	fmt.Println("plugin info \n\n\n", p.info)
+	elemInStore := findPluginByName(p.info.Name, store)
+	if elemInStore != nil {
+		return compareVersions(elemInStore.Version, p.info.Version)
+	}
+	return false
+}
+
 // RunALL runs all the installed plugins.
 func (m *Manager) RunAll() error {
 	pluginDir := Directory()
 
 	rootItems, err := os.ReadDir(pluginDir)
+	storeItems, err := store.FetchPluginList()
 	if err != nil {
 		return fmt.Errorf("reading plugins directory '%s': %w", pluginDir, err)
 	}
@@ -192,7 +235,7 @@ func (m *Manager) RunAll() error {
 		if rootItem.IsDir() {
 			binPath := filepath.Join(pluginDir, rootItem.Name(), rootItem.Name())
 
-			err = m.InitPlugin(binPath)
+			err = m.InitPlugin(binPath, storeItems)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "WARN: while running plugin %s: %s.\n", rootItem.Name(), err)
 				fmt.Fprintln(os.Stderr, "This plugin will not be executed.")
