@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -13,7 +14,6 @@ import (
 	"runtime"
 	"strings"
 	"sync"
-	"encoding/json"
 
 	"github.com/gosimple/slug"
 )
@@ -60,7 +60,7 @@ func (p *Plugin) getInformation() *Information {
 	manifestPath := filepath.Join(filepath.Dir(p.BinPath), "manifest.json")
 	jsonObj, err := os.ReadFile(manifestPath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "WARN: while running plugin %s.\n",  err)
+		fmt.Fprintf(os.Stderr, "WARN: while running plugin %s.\n", err)
 		return nil
 	}
 
@@ -93,7 +93,6 @@ func (p *Plugin) getInformation() *Information {
 	}
 	return info
 }
-
 
 func (p *Plugin) SetInformation(info *Information) {
 	p.mutex.Lock()
