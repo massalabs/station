@@ -32,6 +32,7 @@ class Installer:
 
     THYRA_APP_URL = ""
     THYRA_APP_FILENAME = ""
+    THYRA_WALLET_PLUGIN_NAME = "wallet-plugin"
     THYRA_WALLET_ZIP_FILENAME = ""
     THYRA_WALLET_BINARY_FILENAME = ""
 
@@ -206,15 +207,17 @@ class Installer:
                 self.printErrorAndExit(f"Error while creating config folder: {err}")
 
     def installWalletPlugin(self):
-        path_to_plugin_folder = os.path.join(self.THYRA_PLUGINS_PATH, self.THYRA_WALLET_BINARY_FILENAME)
-        path_to_binary = os.path.join(path_to_plugin_folder, self.THYRA_WALLET_BINARY_FILENAME)
+        path_to_plugin_folder = os.path.join(self.THYRA_PLUGINS_PATH, self.THYRA_WALLET_PLUGIN_NAME)
+        path_to_binary = os.path.join(path_to_plugin_folder, self.THYRA_WALLET_PLUGIN_NAME)
 
         if not os.path.exists(path_to_binary):
             path_to_zip = os.path.join(self.THYRA_PLUGINS_PATH, self.THYRA_WALLET_ZIP_FILENAME)
             self.downloadFile(self.THYRA_WALLET_PLUGIN_URL, path_to_zip)
             ZipFile(path_to_zip).extractall(path_to_plugin_folder)
-            os.chmod(path_to_binary, 0o755)
             self._deleteFile(path_to_zip)
+            path_to_binary_filename = os.path.join(path_to_plugin_folder, self.THYRA_WALLET_BINARY_FILENAME)
+            os.rename(path_to_binary_filename, path_to_binary)
+            os.chmod(path_to_binary, 0o755)
 
     def startThyraApp(self):
         thyra_app_path = os.path.join(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_APP_FILENAME)
