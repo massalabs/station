@@ -11,16 +11,18 @@ assignees: ''
   </summary>
   Tasks can’t be started if the following info doesn’t exist.
 
-* Time evaluation: every issue must be evaluated in days
-* Investigation / exploration must be time boxed, and time boxed defined
-* Think and write down what you'll do to achieve this ticket. Add an action plan in comment.
+* Add an estimation to the ticket using dedicated field
+* If needed, add a time-box validated by PM for all Investigation / exploration tickets
+* Think and write down what you'll do to achieve this ticket. Add an action plan in comment
   * An action plan is:
   * An ordered list of tasks
         * with an owner on each task
         * and an estimation
         * if blockers or dependencies are identified, they must be clearly listed and a solution should be found before starting the issue.
 * For front-end tasks, designs must be linked, accessible by all and MR must contain [context], [before/after image][reproduction instructions]
+
 If one of this point or info is missing, please raise the point ASAP to the PM.
+
 </details>
 
 
