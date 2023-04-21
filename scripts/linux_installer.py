@@ -12,7 +12,7 @@ class LinuxInstaller(Installer):
         self.THYRA_APP_FILENAME = "thyra-app"
         self.MKCERT_FILENAME = "mkcert"
 
-        self.THYRA_WALLET_PLUGIN_URL = "https://github.com/massalabs/thyra-plugin-wallet/releases/download/v0.0.10/wallet-plugin_linux-amd64.zip"
+        self.THYRA_WALLET_PLUGIN_URL = "https://github.com/massalabs/thyra-plugin-wallet/releases/latest/download/wallet-plugin_linux-amd64.zip"
         self.THYRA_WALLET_BINARY_FILENAME = "wallet-plugin_linux-amd64"
         self.THYRA_WALLET_ZIP_FILENAME = "wallet-plugin_linux-amd64.zip"
 
