@@ -56,8 +56,8 @@ jobs:
         run: go build cmd/thyra-server/main.go
       - name: Create wallet from secret
         run: |
-          mkdir -p $HOME/.config/thyra
-          echo "$WALLET_TEST_WALLET" > $HOME/.config/thyra/wallet_innonet.yml
+          mkdir -p $HOME/.config/thyra/plugins/wallet-plugin
+          echo "$WALLET_TEST_WALLET" > $HOME/.config/thyra/plugins/wallet-plugin/wallet_innonet.yml
         env:
           WALLET_TEST_WALLET: ${{ secrets.WALLET_TEST_WALLET }}
       - name: Prepare thyra to be runned
