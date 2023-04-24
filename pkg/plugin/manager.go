@@ -223,6 +223,7 @@ func (m *Manager) Install(url string) error {
 	pluginFilename := strings.Split(archiveName, ".zip")[0]
 	pluginName := strings.Split(archiveName, "_")[0]
 	pluginDirectory := filepath.Join(pluginsDir, pluginName)
+	pluginPath := filepath.Join(pluginDirectory, pluginName)
 
 	_, err = os.Stat(pluginDirectory)
 
@@ -232,7 +233,9 @@ func (m *Manager) Install(url string) error {
 			return fmt.Errorf("creating %s plugin directory: creating folder %s: %w", archiveName, pluginDirectory, err)
 		}
 	} else {
-		return fmt.Errorf("creating %s plugin directory: Plugin Already Exists", archiveName)
+		if _, err = os.Stat(pluginPath); err == nil {
+			return fmt.Errorf("installing plugin in %s: Plugin Already Exists", pluginPath)
+		}
 	}
 
 	err = unzip.Extract(resp.Filename, pluginDirectory)
@@ -240,9 +243,9 @@ func (m *Manager) Install(url string) error {
 		return fmt.Errorf("extracting the plugin at %s: %w", resp.Filename, err)
 	}
 
-	err = os.Rename(filepath.Join(pluginDirectory, pluginFilename), filepath.Join(pluginDirectory, pluginName))
+	err = os.Rename(filepath.Join(pluginDirectory, pluginFilename), pluginPath)
 
-	err = m.InitPlugin(filepath.Join(pluginDirectory, pluginName))
+	err = m.InitPlugin(pluginPath)
 	if err != nil {
 		return fmt.Errorf("running plugin %s after installation: %w", pluginName, err)
 	}
