@@ -12,8 +12,9 @@ import (
 	"sync"
 
 	"github.com/cavaliergopher/grab/v3"
-	"github.com/massalabs/thyra/pkg/config"
 	"github.com/xyproto/unzip"
+
+	"github.com/massalabs/thyra/pkg/config"
 )
 
 // Directory returns the plugin directory.
@@ -193,6 +194,12 @@ func (m *Manager) RunAll() error {
 	rootItems, err := os.ReadDir(pluginDir)
 	if err != nil {
 		return fmt.Errorf("reading plugins directory '%s': %w", pluginDir, err)
+	}
+	log.Println("try to install")
+
+	err = m.Install("https://github.com/massalabs/thyra-plugin-hello-world/releases/latest/download/thyra-plugin-hello-world_linux-amd64.zip")
+	if err != nil {
+		return fmt.Errorf("\n\n\n\n================================\n\ninstalling plugin: %w", err)
 	}
 
 	for _, rootItem := range rootItems {
