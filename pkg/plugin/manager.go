@@ -172,6 +172,13 @@ func (m *Manager) InitPlugin(binPath string) error {
 		return err
 	}
 
+	err = plugin.SetInformation()
+
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Plugin %s (%s) started with correlationID %s", plugin.info.Name, plugin.info.Author, correlationID)
 	m.mutex.Lock()
 	m.plugins[correlationID] = plugin
 	m.mutex.Unlock()

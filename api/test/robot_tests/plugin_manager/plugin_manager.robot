@@ -19,7 +19,7 @@ GET /plugin-manager with no plugins
 
 POST /plugin-manager?source={{pluginSource}}
     ${source}=    Set Variable
-    ...    https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.3/thyra-plugin-hello-world_${OS}-${ARCH}.zip
+    ...    https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.6/thyra-plugin-hello-world_${OS}-${ARCH}.zip
     ${response}=    POST
     ...    ${API_URL}/plugin-manager
     ...    params=source=${source}

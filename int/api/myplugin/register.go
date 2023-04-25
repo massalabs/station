@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/go-openapi/runtime/middleware"
-
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/plugin"
@@ -30,7 +29,10 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 
 	// Set plugin information.
 
-	wantedPlugin.SetInformation()
+	err = wantedPlugin.SetInformation()
+	if err != nil {
+		log.Printf("setting plugin information: %s", err)
+	}
 
 	// Add alias for http requests.
 

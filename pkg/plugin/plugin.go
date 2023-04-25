@@ -40,6 +40,16 @@ type Information struct {
 	Home        string
 	Version     string
 }
+type Manifest struct {
+	Name        string `json:"name"`
+	Author      string `json:"author"`
+	Description string `json:"description"`
+	Logo        string `json:"logo"`
+	URL         string `json:"url"`
+	APISpec     string `json:"api_spec"`
+	Home        string `json:"home"`
+	Version     string `json:"version"`
+}
 
 type Plugin struct {
 	command      *exec.Cmd
@@ -64,16 +74,7 @@ func (p *Plugin) getInformation() (*Information, error) {
 		return nil, fmt.Errorf("reading manifest file '%s': %w", manifestPath, err)
 	}
 
-	var manifest struct {
-		Name        string `json:"name"`
-		Author      string `json:"author"`
-		Description string `json:"description"`
-		Logo        string `json:"logo"`
-		URL         string `json:"url"`
-		APISpec     string `json:"api_spec"`
-		Home        string `json:"home"`
-		Version     string `json:"version"`
-	}
+	var manifest Manifest
 
 	err = json.Unmarshal(jsonObj, &manifest)
 
@@ -98,10 +99,15 @@ func (p *Plugin) getInformation() (*Information, error) {
 	}, nil
 }
 
-func (p *Plugin) SetInformation() {
+func (p *Plugin) SetInformation() error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
-	p.info, _ = p.getInformation()
+	info, err := p.getInformation()
+	if err != nil {
+		return fmt.Errorf("error getting plugin information: %w", err)
+	}
+
+	p.info = info
 	p.status = Up
 
 	p.reverseProxy = httputil.NewSingleHostReverseProxy(p.info.URL)
@@ -111,6 +117,8 @@ func (p *Plugin) SetInformation() {
 		originalDirector(req)
 		modifyRequest(req)
 	}
+
+	return nil
 }
 
 func (p *Plugin) Status() Status {
