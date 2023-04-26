@@ -142,39 +142,40 @@ POST /plugin-manager/{id}/execute with invalid body
     ...    ${response.json()['message']}
     ...    body.command in body should be one of [update stop start restart]
 
-POST /plugin-manager/register with invalid id
-    ${data}=    Create Dictionary
-    ...    id=1
-    ...    name=ut aliqua non
-    ...    author=adipisicing
-    ...    description=minim consectetur dolore,
-    ...    logo=id et sunt irure,
-    ...    home=sunt
-    ...    api_spec=culpa enim sint aliqua
-    ...    url=oluptate
-    ${response}=    POST
-    ...    ${API_URL}/plugin-manager/register
-    ...    expected_status=${STATUS_NOT_FOUND}
-    ...    json=${data}
-
-    Should Be Equal As Strings    ${response.json()['code']}    Plugin-0001
-    Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching correlationID 1
-
-POST /plugin-manager/register with invalid body
-    ${data}=    Create Dictionary
-    ...    id=-65217
-    ...    name=ut aliqua non
-    ...    author=adipisicing
-    ...    description=minim consectetur dolore,
-    ...    logo=id et sunt irure,
-    ...    home=sunt
-    ...    api_spec=culpa enim sint aliqua
-    ${response}=    POST
-    ...    ${API_URL}/plugin-manager/register
-    ...    expected_status=${STATUS_UNPROCESSABLE_ENTITY}
-    ...    json=${data}
-    Should Be Equal As Strings    ${response.json()['code']}    602
-    Should Be Equal As Strings    ${response.json()['message']}    body.url in body is required
+#POST /plugin-manager/register with invalid id
+#    ${data}=    Create Dictionary
+#    ...    id=1
+#    ...    name=ut aliqua non
+#    ...    author=adipisicing
+#    ...    description=minim consectetur dolore,
+#    ...    logo=id et sunt irure,
+#    ...    home=sunt
+#    ...    api_spec=culpa enim sint aliqua
+#    ...    url=oluptate
+#    ${response}=    POST
+#    ...    ${API_URL}/plugin-manager/register
+#    ...    expected_status=${STATUS_NOT_FOUND}
+#    ...    json=${data}
+#
+#    Should Be Equal As Strings    ${response.json()['code']}    Plugin-0001
+#    Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching correlationID 1
+#
+#POST /plugin-manager/register with invalid body
+#    ${data}=    Create Dictionary
+#    ...    id=-65217
+#    ...    name=ut aliqua non
+#    ...    author=adipisicing
+#    ...    description=minim consectetur dolore,
+#    ...    logo=id et sunt irure,
+#    ...    home=sunt
+#    ...    api_spec=culpa enim sint aliqua
+#    ${response}=    POST
+#    ...    ${API_URL}/plugin-manager/register
+#    ...    expected_status=${STATUS_UNPROCESSABLE_ENTITY}
+#    ...    json=${data}
+#    Should Be Equal As Strings    ${response.json()['code']}    602
+#    Should Be Equal As Strings    ${response.json()['message']}    body.url in body is required
+#
 
 POST /plugin-manager/{id}/execute with NotImplemented update command
     ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world

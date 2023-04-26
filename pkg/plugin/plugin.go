@@ -66,8 +66,7 @@ func (p *Plugin) Information() *Information {
 	return p.info
 }
 
-func (p *Plugin) getInformation() (*Information, error) {
-	manifestPath := filepath.Join(filepath.Dir(p.BinPath), "manifest.json")
+func getInformationFromManifest(manifestPath string) (*Information, error) {
 	jsonObj, err := os.ReadFile(manifestPath)
 
 	if jsonObj == nil {
@@ -97,6 +96,12 @@ func (p *Plugin) getInformation() (*Information, error) {
 		Home:        manifest.Home,
 		Version:     manifest.Version,
 	}, nil
+}
+
+func (p *Plugin) getInformation() (*Information, error) {
+	manifestPath := filepath.Join(filepath.Dir(p.BinPath), "manifest.json")
+
+	return getInformationFromManifest(manifestPath)
 }
 
 func (p *Plugin) SetInformation() error {
