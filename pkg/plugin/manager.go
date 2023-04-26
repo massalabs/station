@@ -195,12 +195,6 @@ func (m *Manager) RunAll() error {
 	if err != nil {
 		return fmt.Errorf("reading plugins directory '%s': %w", pluginDir, err)
 	}
-	log.Println("try to install")
-
-	err = m.Install("https://github.com/massalabs/thyra-plugin-hello-world/releases/latest/download/thyra-plugin-hello-world_linux-amd64.zip")
-	if err != nil {
-		return fmt.Errorf("\n\n\n\n================================\n\ninstalling plugin: %w", err)
-	}
 
 	for _, rootItem := range rootItems {
 		if rootItem.IsDir() {
