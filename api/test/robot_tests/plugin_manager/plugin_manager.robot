@@ -71,26 +71,6 @@ GET /thyra/plugin/{author}/{name}/
     ...    expected_status=${STATUS_OK}
     Should Contain    ${response.text}    Hello, world!
 
-# We can register multiple times the same plugin, but the aliases list isn't updated correctly.
-# This causes the previous plugin alias to be considered as still valid.
-# TODO: Uncomment this test and make sure it passes once https://github.com/massalabs/thyra/issues/574 is fixed.
-# POST /plugin-manager/register
-#    ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
-#    ${data}=    Create Dictionary
-#    ...    id=${id}
-#    ...    name=aliqua
-#    ...    author=adipisicing
-#    ...    description=minim consectetur dolore,
-#    ...    logo=id et sunt irure,
-#    ...    home=sunt
-#    ...    api_spec=culpa enim sint aliqua
-#    ...    url=oluptate
-#    ${response}=    POST
-#    ...    ${API_URL}/plugin-manager/register
-#    ...    expected_status=${STATUS_NO_CONTENT}
-#    ...    json=${data}
-#    ${newid}=    Get Plugin ID From Author and Name    adipisicing    aliqua
-#    Should Be Equal As Strings    ${newid}    ${id}
 
 # Error cases
 
@@ -142,40 +122,6 @@ POST /plugin-manager/{id}/execute with invalid body
     ...    ${response.json()['message']}
     ...    body.command in body should be one of [update stop start restart]
 
-#POST /plugin-manager/register with invalid id
-#    ${data}=    Create Dictionary
-#    ...    id=1
-#    ...    name=ut aliqua non
-#    ...    author=adipisicing
-#    ...    description=minim consectetur dolore,
-#    ...    logo=id et sunt irure,
-#    ...    home=sunt
-#    ...    api_spec=culpa enim sint aliqua
-#    ...    url=oluptate
-#    ${response}=    POST
-#    ...    ${API_URL}/plugin-manager/register
-#    ...    expected_status=${STATUS_NOT_FOUND}
-#    ...    json=${data}
-#
-#    Should Be Equal As Strings    ${response.json()['code']}    Plugin-0001
-#    Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching correlationID 1
-#
-#POST /plugin-manager/register with invalid body
-#    ${data}=    Create Dictionary
-#    ...    id=-65217
-#    ...    name=ut aliqua non
-#    ...    author=adipisicing
-#    ...    description=minim consectetur dolore,
-#    ...    logo=id et sunt irure,
-#    ...    home=sunt
-#    ...    api_spec=culpa enim sint aliqua
-#    ${response}=    POST
-#    ...    ${API_URL}/plugin-manager/register
-#    ...    expected_status=${STATUS_UNPROCESSABLE_ENTITY}
-#    ...    json=${data}
-#    Should Be Equal As Strings    ${response.json()['code']}    602
-#    Should Be Equal As Strings    ${response.json()['message']}    body.url in body is required
-#
 
 POST /plugin-manager/{id}/execute with NotImplemented update command
     ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
