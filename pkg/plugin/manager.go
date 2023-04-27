@@ -12,8 +12,9 @@ import (
 	"sync"
 
 	"github.com/cavaliergopher/grab/v3"
-	"github.com/massalabs/thyra/pkg/config"
 	"github.com/xyproto/unzip"
+
+	"github.com/massalabs/thyra/pkg/config"
 )
 
 // Directory returns the plugin directory.
@@ -178,15 +179,10 @@ func (m *Manager) InitPlugin(binPath string) error {
 		return err
 	}
 
-	log.Printf(plugin.info.Author, plugin.info.Name)
 
 	log.Printf("Plugin %s (%s) started with correlationID %s", plugin.info.Name, plugin.info.Author, correlationID)
 	m.mutex.Lock()
 	m.plugins[correlationID] = plugin
-
-	if err != nil {
-		return err
-	}
 	m.mutex.Unlock()
 
 	return nil
