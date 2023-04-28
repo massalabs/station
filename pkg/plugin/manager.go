@@ -173,14 +173,6 @@ func (m *Manager) InitPlugin(binPath string) error {
 		return err
 	}
 
-	err = plugin.SetInformation()
-
-	if err != nil {
-		return err
-	}
-
-
-	log.Printf("Plugin %s (%s) started with correlationID %s", plugin.info.Name, plugin.info.Author, correlationID)
 	m.mutex.Lock()
 	m.plugins[correlationID] = plugin
 	m.mutex.Unlock()
@@ -258,13 +250,6 @@ func (m *Manager) Install(url string) error {
 	if err != nil {
 		return fmt.Errorf("running plugin %s after installation: %w", pluginName, err)
 	}
-
-	correlationID := m.generateCorrelationID()
-
-	manifest := filepath.Join(pluginDirectory, "manifest.json")
-	info, err := getInformationFromManifest(manifest)
-	alias := Alias(info.Author, pluginName)
-	err = m.SetAlias(alias, correlationID)
 
 	return nil
 }

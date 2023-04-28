@@ -30,23 +30,14 @@ const (
 	Crashed
 )
 
+
 type Information struct {
-	Name        string
-	Author      string
-	Description string
-	Logo        string
-	URL         *url.URL
-	APISpec     string
-	Home        string
-	Version     string
-}
-type Manifest struct {
 	Name        string `json:"name"`
 	Author      string `json:"author"`
 	Description string `json:"description"`
 	Logo        string `json:"logo"`
-	URL         string `json:"url"`
-	APISpec     string `json:"api_spec"`
+	URL         *url.URL
+	APISpec     string `json:"apispec"`
 	Home        string `json:"home"`
 	Version     string `json:"version"`
 }
@@ -66,48 +57,32 @@ func (p *Plugin) Information() *Information {
 	return p.info
 }
 
-func getInformationFromManifest(manifestPath string) (*Information, error) {
+func (p *Plugin) getInformation() (*Information, error) {
+	manifestPath := filepath.Join(filepath.Dir(p.BinPath), "manifest.json")
+
 	jsonObj, err := os.ReadFile(manifestPath)
 
 	if jsonObj == nil {
 		return nil, fmt.Errorf("reading manifest file '%s': %w", manifestPath, err)
 	}
 
-	var manifest Manifest
+	var manifest *Information
 
 	err = json.Unmarshal(jsonObj, &manifest)
 
 	if err != nil {
 		return nil, fmt.Errorf("parsing manifest file '%s': %w", manifestPath, err)
 	}
-
-	parsedURL, err := url.Parse(manifest.URL)
-	if err != nil {
-		return nil, fmt.Errorf("parsing URL '%s': %w", manifest.URL, err)
-	}
-
-	return &Information{
-		Name:        manifest.Name,
-		Author:      manifest.Author,
-		Description: manifest.Description,
-		Logo:        manifest.Logo,
-		URL:         parsedURL,
-		APISpec:     manifest.APISpec,
-		Home:        manifest.Home,
-		Version:     manifest.Version,
-	}, nil
+	return manifest, nil
 }
 
-func (p *Plugin) getInformation() (*Information, error) {
-	manifestPath := filepath.Join(filepath.Dir(p.BinPath), "manifest.json")
 
-	return getInformationFromManifest(manifestPath)
-}
-
-func (p *Plugin) SetInformation() error {
+func (p *Plugin) SetInformation(parsedURL *url.URL) error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 	info, err := p.getInformation()
+	info.URL = parsedURL
+
 	if err != nil {
 		return fmt.Errorf("error getting plugin information: %w", err)
 	}
@@ -255,13 +230,7 @@ func New(binPath string, pluginID string) (*Plugin, error) {
 	}
 
 	//nolint:exhaustruct
-	plgn := &Plugin{
-		status:   Starting,
-		BinPath:  binPath + exe,
-		ID:       pluginID,
-		quitChan: make(chan bool),
-	}
-	plgn.info, _ = plgn.getInformation()
+	plgn := &Plugin{status: Starting, BinPath: binPath + exe, ID: pluginID, quitChan: make(chan bool)}
 
 	err := plgn.Start()
 	if err != nil {

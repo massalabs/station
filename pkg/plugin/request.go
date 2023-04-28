@@ -30,6 +30,7 @@ func (h *APIHandler) Handle(writer http.ResponseWriter, reader *http.Request, pl
 	}
 
 	plugin.ReverseProxy().ServeHTTP(writer, reader)
+	log.Println("Plugin request after reverse proxy ")
 }
 
 //nolint:gochecknoglobals
@@ -67,7 +68,7 @@ func Interceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
 
 	if isMyMassa && indexPluginEndpoint > -1 {
 		endpoint := splitEndpoint(req.Request.RequestURI)
-
+		log.Printf("Plugin request: %s/%s%s", endpoint.pluginAuthor, endpoint.pluginName, endpoint.subURI)
 		authorName, err := url.QueryUnescape(endpoint.pluginAuthor)
 		if err != nil {
 			log.Fatal(err)
