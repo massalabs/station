@@ -53,7 +53,7 @@ If one of this point or info is missing, please raise the point ASAP to the PM.
 <details>
   <summary>$\textcolor{Red}{\textsf{DoD}}$ </summary>
 Before putting this ticket in code review, tick all the boxes bellow.
-  More details [here] (https://www.notion.so/massa-innoteam/Plan-for-the-mainnet-c574da44a4854eb3841a5f2e93a2977c?pvs=4#e7db6fa53fa84264954075011432ce70) & [here] (https://www.notion.so/massa-innoteam/Industrialization-of-Frontend-0f7425f14cd3490a949f31978916ee41?pvs=4) if needed
+  More details here: https://www.notion.so/massa-innoteam/Plan-for-the-mainnet-c574da44a4854eb3841a5f2e93a2977c?pvs=4#e7db6fa53fa84264954075011432ce70 & here: https://www.notion.so/massa-innoteam/Industrialization-of-Frontend-0f7425f14cd3490a949f31978916ee41?pvs=4 if needed
   
 - [ ] Pull request is small (break it down as much as you can) and approved by 2 reviewers
 - [ ] You are proud of what will / has been merged
