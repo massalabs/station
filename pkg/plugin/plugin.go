@@ -30,15 +30,16 @@ const (
 	Crashed
 )
 
+//nolint:tagliatelle
 type Information struct {
-	Name        string `json:"name"`
-	Author      string `json:"author"`
-	Description string `json:"description"`
-	Logo        string `json:"logo"`
-	URL         *url.URL
-	APISpec     string `json:"apispec"`
-	Home        string `json:"home"`
-	Version     string `json:"version"`
+	Name        string   `json:"name"`
+	Author      string   `json:"author"`
+	Description string   `json:"description"`
+	Logo        string   `json:"logo"`
+	URL         *url.URL `json:"url"`
+	APISpec     string   `json:"apispec"`
+	Home        string   `json:"home"`
+	Version     string   `json:"version"`
 }
 
 type Plugin struct {
@@ -72,6 +73,7 @@ func (p *Plugin) getInformation() (*Information, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parsing manifest file '%s': %w", manifestPath, err)
 	}
+
 	return manifest, nil
 }
 
