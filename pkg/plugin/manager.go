@@ -12,9 +12,8 @@ import (
 	"sync"
 
 	"github.com/cavaliergopher/grab/v3"
-	"github.com/xyproto/unzip"
-
 	"github.com/massalabs/thyra/pkg/config"
+	"github.com/xyproto/unzip"
 )
 
 // Directory returns the plugin directory.

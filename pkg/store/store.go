@@ -29,7 +29,7 @@ type File struct {
 	Checksum string `json:"checksum"`
 }
 
-const pluginListURL = "https://raw.githubusercontent.com/massalabs/thyra-plugin-store/6-fill-the-updated-pluginsjson-with-the-new-standard/plugins.json"
+const pluginListURL = "https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/plugins.json"
 
 const cacheExpirationMinutes = 30
 

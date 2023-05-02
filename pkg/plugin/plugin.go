@@ -30,7 +30,6 @@ const (
 	Crashed
 )
 
-
 type Information struct {
 	Name        string `json:"name"`
 	Author      string `json:"author"`
@@ -75,7 +74,6 @@ func (p *Plugin) getInformation() (*Information, error) {
 	}
 	return manifest, nil
 }
-
 
 func (p *Plugin) SetInformation(parsedURL *url.URL) error {
 	p.mutex.Lock()
