@@ -17,7 +17,7 @@ jobs:
         with:
           os: ubuntu-latest
       - name: Update version
-        run: echo -e "${GITHUB_REF_NAME}" > cmd/thyra-server/version.txt
+        run:  git describe --tags --abbrev=0 > cmd/thyra-server/version.txt
       - name: Build thyra binary
         run: GOOS=linux GOARCH=amd64 CGO_ENABLED=1 CC=gcc CXX=g++ go build cmd/thyra-server/main.go
       - name: Prepare thyra to be runned
