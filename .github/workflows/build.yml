@@ -46,7 +46,7 @@ jobs:
         with:
           os: ${{ matrix.os }}
       - name: Update version
-        run: echo -e "${GITHUB_REF_NAME}" > cmd/thyra-server/version.txt
+        run: echo -e "${{ inputs.tag_name }}" > cmd/thyra-server/version.txt
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
         run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
       - name: Create release and upload binaries
