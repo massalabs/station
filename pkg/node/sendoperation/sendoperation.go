@@ -33,7 +33,7 @@ const WalletPluginURL = "http://station.massa/thyra/plugin/massalabs/wallet/api/
 const HTTPRequestTimeout = 60 * time.Second
 
 //nolint:tagliatelle
-type SignOperationResponse struct {
+type signResponse struct {
 	PublicKey     string `json:"publicKey"`
 	Signature     string `json:"signature"`
 	CorrelationID string `json:"correlationId,omitempty"`
@@ -114,7 +114,7 @@ func Call(client *node.Client,
 
 	httpRawResponse, err := ExecuteHTTPRequest(
 		http.MethodPost,
-		WalletPluginURL+nickname+"/signOperation",
+		WalletPluginURL+nickname+"/sign",
 		bytes.NewBuffer([]byte(content)),
 	)
 	if err != nil {
@@ -124,7 +124,7 @@ func Call(client *node.Client,
 		return nil, fmt.Errorf("calling executeHTTPRequest for call: %w, message: %s", err, res.Message)
 	}
 
-	res := SignOperationResponse{"", "", ""}
+	res := signResponse{"", "", ""}
 	err = json.Unmarshal(httpRawResponse, &res)
 
 	if err != nil {
