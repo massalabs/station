@@ -17,6 +17,7 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/hashicorp/go-version"
+
 	"github.com/massalabs/thyra/pkg/store"
 )
 
@@ -89,7 +90,7 @@ func (p *Plugin) SetInformation(parsedURL *url.URL) error {
 		return fmt.Errorf("error getting plugin information: %w", err)
 	}
 
-	isUpdatable, err := p.findUpdates()
+	isUpdatable, err := p.checkForPluginUpdates()
 	if err != nil {
 		return fmt.Errorf("error finding updates: %w", err)
 	}
@@ -120,7 +121,7 @@ func findPluginByName(name string, plugins []store.Plugin) *store.Plugin {
 	return nil
 }
 
-func (p *Plugin) findUpdates() (bool, error) {
+func (p *Plugin) checkForPluginUpdates() (bool, error) {
 	// finf if there is an element elem in storeitems that has the same name as rootItem.Name()
 	storeItems, err := store.FetchPluginList()
 	if err != nil {
