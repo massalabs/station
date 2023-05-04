@@ -128,12 +128,12 @@ func (p *Plugin) checkForPluginUpdates() (bool, error) {
 		return false, fmt.Errorf("while fetching store list: %w", err)
 	}
 
-	pluginVersion, err := version.NewVersion(p.Information().Version)
+	pluginVersion, err := version.NewVersion(p.info.Version)
 	if err != nil {
 		return false, fmt.Errorf("while parsing plugin version: %w", err)
 	}
 
-	elemInStore := findPluginByName(p.Information().Name, storeItems)
+	elemInStore := findPluginByName(p.info.Name, storeItems)
 	if elemInStore != nil {
 		elemVersion, err := version.NewVersion(elemInStore.Version)
 		if err != nil {
