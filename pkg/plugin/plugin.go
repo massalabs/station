@@ -17,6 +17,7 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/hashicorp/go-version"
+
 	"github.com/massalabs/thyra/pkg/store"
 )
 
