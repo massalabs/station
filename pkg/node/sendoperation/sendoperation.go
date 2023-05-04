@@ -88,7 +88,7 @@ func Call(client *node.Client,
 	nickname string,
 	operationBatch OperationBatch,
 ) (*OperationResponse, error) {
-	msg, msgB64, err := makeOperation(client, expiry, fee, operation)
+	msg, msgB64, err := MakeOperation(client, expiry, fee, operation)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +136,7 @@ func Call(client *node.Client,
 		return nil, fmt.Errorf("decoding '%s' B64: %w", res.Signature, err)
 	}
 
-	resp, err := makeRPCCall(msg, signature, res, client)
+	resp, err := MakeRPCCall(msg, signature, res, client)
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +144,7 @@ func Call(client *node.Client,
 	return &OperationResponse{CorrelationID: res.CorrelationID, OperationID: resp[0]}, nil
 }
 
-func makeRPCCall(msg []byte, signature []byte, res signOperationResponse, client *node.Client) ([]string, error) {
+func MakeRPCCall(msg []byte, signature []byte, res signResponse, client *node.Client) ([]string, error) {
 	sendOpParams := [][]sendOperationsReq{
 		{
 			sendOperationsReq{
@@ -178,7 +178,7 @@ func makeRPCCall(msg []byte, signature []byte, res signOperationResponse, client
 	return resp, nil
 }
 
-func makeOperation(client *node.Client, expiry uint64, fee uint64, operation Operation) ([]byte, string, error) {
+func MakeOperation(client *node.Client, expiry uint64, fee uint64, operation Operation) ([]byte, string, error) {
 	exp, err := node.NextSlot(client)
 	if err != nil {
 		return nil, "", fmt.Errorf("calling NextSlot: %w", err)
