@@ -48,12 +48,6 @@ jobs:
       - name: Update version for a release
         if: ${{ inputs.tag_name != '' }}
         run: echo -e "${{ inputs.tag_name }}" > cmd/thyra-server/version.txt
-      - name: Update version for a build
-        if: ${{ inputs.tag_name == '' }}
-        run: |
-          git fetch --tags
-          latest_tag=$(git describe --tags --abbrev=0 --always)
-          echo "${latest_tag}-build" > cmd/thyra-server/version.txt
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
         run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
       - name: Create release and upload binaries
@@ -99,6 +93,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
+      - name: Update version for a build
+        run: |
+          git fetch --tags
+          latest_tag=$(git describe --tags --abbrev=0 --always)
+          echo "${latest_tag}-build" > cmd/thyra-server/version.txt
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
