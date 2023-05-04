@@ -45,8 +45,15 @@ jobs:
         uses: ./.github/actions/install
         with:
           os: ${{ matrix.os }}
-      - name: Update version
+      - name: Update version for a release
+        if: ${{ inputs.tag_name != '' }}
         run: echo -e "${{ inputs.tag_name }}" > cmd/thyra-server/version.txt
+      - name: Update version for a build
+        if: ${{ inputs.tag_name == '' }}
+        run: |
+          git fetch --tags
+          latest_tag=$(git describe --tags --abbrev=0 --always)
+          echo "${latest_tag}-build" > cmd/thyra-server/version.txt
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
         run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
       - name: Create release and upload binaries
@@ -60,7 +67,7 @@ jobs:
           files: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
 
   build-installer:
-    if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
+    # if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
     name: build and upload installers binaries
     strategy:
       matrix:
