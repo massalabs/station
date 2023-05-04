@@ -61,8 +61,7 @@ func (p *Plugin) getInformation() (*Information, error) {
 	manifestPath := filepath.Join(filepath.Dir(p.BinPath), "manifest.json")
 
 	jsonObj, err := os.ReadFile(manifestPath)
-
-	if jsonObj == nil {
+	if err != nil {
 		return nil, fmt.Errorf("reading manifest file '%s': %w", manifestPath, err)
 	}
 
