@@ -23,7 +23,7 @@ Deploy testSC
 
 Get Wallet Address
     ${response}=    GET
-    ...    ${API_URL}/thyra/plugin/massalabs/wallet/rest/wallet/${WALLET_NICKNAME}
+    ...    ${API_URL}/thyra/plugin/massalabs/wallet/api/accounts/${WALLET_NICKNAME}
     ...    expected_status=${STATUS_OK}
     ${wallet_addr}=    Get From Dictionary    ${response.json()}    address
     Set Global Variable    ${WALLET_ADDR}    ${wallet_addr}
