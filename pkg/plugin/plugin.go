@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -29,14 +30,16 @@ const (
 	Crashed
 )
 
+//nolint:tagliatelle
 type Information struct {
-	Name        string
-	Author      string
-	Description string
-	Logo        string
-	URL         *url.URL
-	APISpec     string
-	Home        string
+	Name        string   `json:"name"`
+	Author      string   `json:"author"`
+	Description string   `json:"description"`
+	Logo        string   `json:"logo"`
+	URL         *url.URL `json:"url"`
+	APISpec     string   `json:"apispec"`
+	Home        string   `json:"home"`
+	Version     string   `json:"version"`
 }
 
 type Plugin struct {
@@ -54,9 +57,35 @@ func (p *Plugin) Information() *Information {
 	return p.info
 }
 
-func (p *Plugin) SetInformation(info *Information) {
+func (p *Plugin) getInformation() (*Information, error) {
+	manifestPath := filepath.Join(filepath.Dir(p.BinPath), "manifest.json")
+
+	jsonObj, err := os.ReadFile(manifestPath)
+	if err != nil {
+		return nil, fmt.Errorf("reading manifest file '%s': %w", manifestPath, err)
+	}
+
+	var manifest *Information
+
+	err = json.Unmarshal(jsonObj, &manifest)
+
+	if err != nil {
+		return nil, fmt.Errorf("parsing manifest file '%s': %w", manifestPath, err)
+	}
+
+	return manifest, nil
+}
+
+func (p *Plugin) SetInformation(parsedURL *url.URL) error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
+	info, err := p.getInformation()
+	info.URL = parsedURL
+
+	if err != nil {
+		return fmt.Errorf("error getting plugin information: %w", err)
+	}
+
 	p.info = info
 	p.status = Up
 
@@ -67,6 +96,8 @@ func (p *Plugin) SetInformation(info *Information) {
 		originalDirector(req)
 		modifyRequest(req)
 	}
+
+	return nil
 }
 
 func (p *Plugin) Status() Status {

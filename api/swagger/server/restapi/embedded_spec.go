@@ -602,6 +602,11 @@ func init() {
                       "Crashed"
                     ],
                     "x-nullable": false
+                  },
+                  "version": {
+                    "description": "Plugin version.",
+                    "type": "string",
+                    "x-nullable": false
                   }
                 }
               }
@@ -2956,6 +2961,11 @@ func init() {
             "ShuttingDown",
             "Crashed"
           ],
+          "x-nullable": false
+        },
+        "version": {
+          "description": "Plugin version.",
+          "type": "string",
           "x-nullable": false
         }
       }

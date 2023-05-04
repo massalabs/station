@@ -746,6 +746,11 @@ paths:
                   description: Plugin logo Url.
                   type: string
                   x-nullable: false
+                version:
+                  description: Plugin version.
+                  type: string
+                  x-nullable: false
+
         "400":
           description: Bad request.
           schema:

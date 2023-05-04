@@ -35,18 +35,13 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 		)
 	}
 
-	// Set plugin information.
-	info := plugin.Information{
-		Name:        param.Body.Name,
-		Author:      param.Body.Author,
-		Description: param.Body.Description,
-		Logo:        param.Body.Logo,
-		URL:         urlPlugin,
-		APISpec:     param.Body.APISpec,
-		Home:        param.Body.Home,
-	}
+	err = wantedPlugin.SetInformation(urlPlugin)
 
-	wantedPlugin.SetInformation(&info)
+	if err != nil {
+		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
+			&models.Error{Code: errorCodePluginRegisterInvalidData, Message: fmt.Sprintf("parsing Plugin URL: %s", err.Error())},
+		)
+	}
 
 	// Add alias for http requests.
 
