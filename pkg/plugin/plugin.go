@@ -122,7 +122,7 @@ func findPluginByName(name string, plugins []store.Plugin) *store.Plugin {
 
 func (p *Plugin) checkForPluginUpdates() (bool, error) {
 	// find if there is an element elem in storeitems that has the same name as rootItem.Name()
-	storeItems, err := store.FetchPluginList()
+	pluginList, err := store.FetchPluginList()
 	if err != nil {
 		return false, fmt.Errorf("while fetching store list: %w", err)
 	}
@@ -132,14 +132,14 @@ func (p *Plugin) checkForPluginUpdates() (bool, error) {
 		return false, fmt.Errorf("while parsing plugin version: %w", err)
 	}
 
-	elemInStore := findPluginByName(p.info.Name, storeItems)
-	if elemInStore != nil {
-		elemVersion, err := version.NewVersion(elemInStore.Version)
+	pluginInStore := findPluginByName(p.info.Name, pluginList)
+	if pluginInStore != nil {
+		pluginInStoreVersion, err := version.NewVersion(pluginInStore.Version)
 		if err != nil {
 			return false, fmt.Errorf("while parsing plugin version: %w", err)
 		}
 
-		return elemVersion.GreaterThan(pluginVersion), nil
+		return pluginInStoreVersion.GreaterThan(pluginVersion), nil
 	}
 
 	return false, nil
