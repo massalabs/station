@@ -48,10 +48,12 @@ jobs:
       - name: Update version for a release
         if: ${{ inputs.tag_name != '' }}
         run: echo -e "${{ inputs.tag_name }}" > cmd/thyra-server/version.txt
+      - name: fetch tags
+        if: ${{ inputs.tag_name == '' }}
+        run: git fetch --tags 
       - name: Update version for a build
         if: ${{ inputs.tag_name == '' }}
         run: |
-          git fetch --tags
           latest_tag=$(git describe --tags --abbrev=0 --always)
           echo "${latest_tag}-build" > cmd/thyra-server/version.txt
           cat cmd/thyra-server/version.txt
