@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
@@ -27,8 +28,8 @@ func maxExpiryPeriod(index int) uint64 {
 	return baseOffset + uint64(index)*2
 }
 
-func PrepareForUpload(url string, nickname string) (string, string, error) {
-	client := node.NewDefaultClient()
+func PrepareForUpload(config config.AppConfig, url string, nickname string) (string, string, error) {
+	client := node.NewClient(config.NodeURL)
 
 	basePath := "sc/"
 
@@ -57,6 +58,7 @@ func PrepareForUpload(url string, nickname string) (string, string, error) {
 
 	// Set DNS.
 	_, err = dns.SetRecord(
+		config,
 		client,
 		nickname,
 		url,
@@ -74,12 +76,13 @@ func PrepareForUpload(url string, nickname string) (string, string, error) {
 }
 
 func Upload(
+	config config.AppConfig,
 	atAddress string,
 	content []byte,
 	nickname string,
 	operationBatch sendOperation.OperationBatch,
 ) ([]string, error) {
-	client := node.NewDefaultClient()
+	client := node.NewClient(config.NodeURL)
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[2:])
 	if err != nil {
@@ -153,13 +156,14 @@ func upload(
 }
 
 func UploadMissedChunks(
+	config config.AppConfig,
 	atAddress string,
 	content []byte,
 	nickname string,
 	missedChunks string,
 	operationBatch sendOperation.OperationBatch,
 ) ([]string, error) {
-	client := node.NewDefaultClient()
+	client := node.NewClient(config.NodeURL)
 
 	addr, _, err := base58.VersionedCheckDecode(atAddress[2:])
 	if err != nil {

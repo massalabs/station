@@ -13,9 +13,8 @@ import (
 	"github.com/massalabs/thyra/int/api/myplugin"
 	"github.com/massalabs/thyra/int/api/pluginstore"
 	"github.com/massalabs/thyra/int/api/websites"
+	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node"
-	deploysc "github.com/massalabs/thyra/pkg/node/sendoperation/deploySC"
-	"github.com/massalabs/thyra/pkg/onchain/dns"
 )
 
 type StartServerFlags struct {
@@ -39,37 +38,6 @@ func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 	if _, err := os.Stat(startFlags.TLSCertificateKey); err == nil {
 		server.TLSCertificateKey = flags.Filename(startFlags.TLSCertificateKey)
 	}
-
-	parseNetworkFlag(&startFlags.MassaNodeServer)
-
-	if startFlags.DNSAddress != "" {
-		os.Setenv(dns.EnvKey, startFlags.DNSAddress)
-	}
-}
-
-func parseNetworkFlag(massaNodeServerPtr *string) {
-	var dnsAddress string
-
-	switch *massaNodeServerPtr {
-	case "TESTNET":
-		*massaNodeServerPtr = "https://test.massa.net/api/v2"
-		// testnet20.2
-		dnsAddress = "AS12YMz7NjyP3aeEWcSsiC58Hba8UxHapfGv7i4PmNMS2eKfmaqqC"
-
-	case "LABNET":
-		*massaNodeServerPtr = "https://labnet.massa.net/api/v2"
-		dnsAddress = "AS1PV17jWkbUs7mfXsn8Xfs9AK6tHiJoxuGu7RySFMV8GYdMeUSh"
-
-	case "INNONET":
-		*massaNodeServerPtr = "https://inno.massa.net/test20"
-		dnsAddress = "AS1qqCv7g5z1ES3DygbduDF8wVmJ7CdTwpq3K3gfgfhnzoAciMcd"
-
-	case "LOCALHOST":
-		*massaNodeServerPtr = "http://127.0.0.1:33035"
-	}
-
-	os.Setenv(dns.EnvKey, dnsAddress)
-	os.Setenv("MASSA_NODE_URL", *massaNodeServerPtr)
 }
 
 func stopServer(server *restapi.Server) {
@@ -78,28 +46,24 @@ func stopServer(server *restapi.Server) {
 	}
 }
 
-func initLocalAPI(localAPI *operations.ThyraServerAPI) {
-	localAPI.CmdExecuteFunctionHandler = operations.CmdExecuteFunctionHandlerFunc(
-		cmd.CreateExecuteFunctionHandler())
+func initLocalAPI(localAPI *operations.ThyraServerAPI, config config.AppConfig) {
+	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunction(&config)
 
-	localAPI.MassaGetAddressesHandler = operations.MassaGetAddressesHandlerFunc(massa.AddressesHandler)
-	localAPI.WebsiteCreatorPrepareHandler = operations.WebsiteCreatorPrepareHandlerFunc(
-		websites.CreatePrepareForWebsiteHandler(),
-	)
-	localAPI.CmdDeploySCHandler = operations.CmdDeploySCHandlerFunc(deploysc.Handler)
-	localAPI.WebsiteCreatorUploadHandler = operations.WebsiteCreatorUploadHandlerFunc(
-		websites.CreateUploadWebsiteHandler(),
-	)
-	localAPI.WebsiteUploadMissingChunksHandler = operations.WebsiteUploadMissingChunksHandlerFunc(
-		websites.CreateUploadMissingChunksHandler(),
-	)
-	localAPI.MyDomainsGetterHandler = operations.MyDomainsGetterHandlerFunc(websites.DomainsHandler)
-	localAPI.AllDomainsGetterHandler = operations.AllDomainsGetterHandlerFunc(websites.RegistryHandler)
+	localAPI.MassaGetAddressesHandler = massa.NewGetAddress(&config)
+
+	localAPI.CmdDeploySCHandler = cmd.NewDeploySC(&config)
+
+	localAPI.WebsiteCreatorPrepareHandler = websites.NewWebsitePrepareHandler(&config)
+	localAPI.WebsiteCreatorUploadHandler = websites.NewWebsiteUploadHandler(&config)
+	localAPI.WebsiteUploadMissingChunksHandler = websites.NewWebsiteUploadMissedChunkHandler(&config)
+
+	localAPI.MyDomainsGetterHandler = websites.NewDomainsHandler(&config)
+	localAPI.AllDomainsGetterHandler = websites.NewRegistryHandler(&config)
 
 	localAPI.ThyraRegistryHandler = operations.ThyraRegistryHandlerFunc(ThyraRegistryHandler)
 	localAPI.ThyraHomeHandler = operations.ThyraHomeHandlerFunc(ThyraHomeHandler)
-	localAPI.ThyraEventsGetterHandler = operations.ThyraEventsGetterHandlerFunc(EventListenerHandler)
-	localAPI.BrowseHandler = operations.BrowseHandlerFunc(BrowseHandler)
+	localAPI.ThyraEventsGetterHandler = NewEventListenerHandler(&config)
+	localAPI.BrowseHandler = NewBrowseHandler(&config)
 	localAPI.ThyraPluginManagerHandler = operations.ThyraPluginManagerHandlerFunc(ThyraPluginManagerHandler)
 
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
@@ -108,7 +72,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI) {
 	pluginstore.InitializePluginStoreAPI(localAPI)
 }
 
-func StartServer(startFlags StartServerFlags) {
+func StartServer(flags StartServerFlags) {
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
@@ -118,10 +82,16 @@ func StartServer(startFlags StartServerFlags) {
 	localAPI := operations.NewThyraServerAPI(swaggerSpec)
 	server := restapi.NewServer(localAPI)
 
-	setAPIFlags(server, startFlags)
+	setAPIFlags(server, flags)
+
+	config := config.AppConfig{
+		NodeURL:    config.GetNodeURL(flags.MassaNodeServer),
+		DNSAddress: config.GetDNSAddress(flags.MassaNodeServer, flags.DNSAddress),
+		Network:    config.GetNetwork(flags.MassaNodeServer),
+	}
 
 	// Display info about node server
-	client := node.NewDefaultClient()
+	client := node.NewClient(config.NodeURL)
 	status, err := node.Status(client)
 
 	nodeVersion := "unknown"
@@ -131,12 +101,13 @@ func StartServer(startFlags StartServerFlags) {
 		log.Println("Could not get node version:", err)
 	}
 
-	log.Printf("Connected to node server %s (version %s)\n", os.Getenv("MASSA_NODE_URL"), nodeVersion)
+	log.Printf("Connected to node server %s (version %s)\n", config.NodeURL, nodeVersion)
 
 	defer stopServer(server)
 
-	initLocalAPI(localAPI)
-	server.ConfigureAPI()
+	initLocalAPI(localAPI, config)
+
+	server.ConfigureMassaStationAPI(config)
 
 	if err := server.Serve(); err != nil {
 		//nolint:gocritic

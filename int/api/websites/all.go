@@ -9,9 +9,9 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/onchain/dns"
 )
 
 const (
@@ -23,10 +23,16 @@ const (
 	secondsToMilliCoeff = 1000
 )
 
-func RegistryHandler(params operations.AllDomainsGetterParams) middleware.Responder {
-	client := node.NewDefaultClient()
+func NewRegistryHandler(config *config.AppConfig) operations.AllDomainsGetterHandler {
+	return &registryHandler{config: config}
+}
 
-	results, err := Registry(client)
+type registryHandler struct {
+	config *config.AppConfig
+}
+
+func (h *registryHandler) Handle(params operations.AllDomainsGetterParams) middleware.Responder {
+	results, err := Registry(*h.config)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().
 			WithPayload(
@@ -45,15 +51,17 @@ smart contract Thyra is connected to. Once this data has been fetched from the D
 the various website storer contracts, the function builds an array of Registry objects
 and returns it to the frontend for display on the Registry page.
 */
-func Registry(client *node.Client) ([]*models.Registry, error) {
-	websiteNames, err := filterEntriesToDisplay(client)
+func Registry(config config.AppConfig) ([]*models.Registry, error) {
+	client := node.NewClient(config.NodeURL)
+
+	websiteNames, err := filterEntriesToDisplay(config, client)
 	if err != nil {
-		return nil, fmt.Errorf("filtering keys to be displayed at '%s': %w", dns.Address(), err)
+		return nil, fmt.Errorf("filtering keys to be displayed at '%s': %w", config.DNSAddress, err)
 	}
 
-	dnsValues, err := node.ContractDatastoreEntries(client, dns.Address(), websiteNames)
+	dnsValues, err := node.ContractDatastoreEntries(client, config.DNSAddress, websiteNames)
 	if err != nil {
-		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, dns.Address(), err)
+		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, config.DNSAddress, err)
 	}
 
 	// in website name key, value are stored in this order -> website Address, website Owner Address
@@ -92,17 +100,17 @@ The dns SC has 4 differents kinds of key :
 -a owner key
 we only want to keep the website names keys.
 */
-func filterEntriesToDisplay(client *node.Client) ([][]byte, error) {
+func filterEntriesToDisplay(config config.AppConfig, client *node.Client) ([][]byte, error) {
 	// we first remove the owned type keys
-	keyList, err := node.FilterSCKeysByPrefix(client, dns.Address(), ownedPrefix, false)
+	keyList, err := node.FilterSCKeysByPrefix(client, config.DNSAddress, ownedPrefix, false)
 	if err != nil {
-		return nil, fmt.Errorf("fetching all keys without '%s' prefix at '%s': %w", ownedPrefix, dns.Address(), err)
+		return nil, fmt.Errorf("fetching all keys without '%s' prefix at '%s': %w", ownedPrefix, config.DNSAddress, err)
 	}
 
 	// we then read the blacklisted websites
-	blackListedWebsites, err := node.DatastoreEntry(client, dns.Address(), convert.StringToBytes(blackListKey))
+	blackListedWebsites, err := node.DatastoreEntry(client, config.DNSAddress, convert.StringToBytes(blackListKey))
 	if err != nil {
-		return nil, fmt.Errorf("reading entry '%s' prefix at '%s': %w", blackListKey, dns.Address(), err)
+		return nil, fmt.Errorf("reading entry '%s' prefix at '%s': %w", blackListKey, config.DNSAddress, err)
 	}
 
 	var keyListToRemove []string

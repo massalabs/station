@@ -17,7 +17,7 @@ func newList() operations.GetPluginStoreHandler {
 
 type list struct{}
 
-//nolint:varnamelen
+//nolint:varnamelen,unparam
 func getDLChecksumAndOs(plugin store.Plugin) (string, string, string, error) {
 	pluginURL := ""
 	os := runtime.GOOS

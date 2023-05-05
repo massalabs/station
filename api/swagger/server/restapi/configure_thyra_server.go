@@ -13,6 +13,7 @@ import (
 	"github.com/massalabs/thyra/api"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/certificate"
+	"github.com/massalabs/thyra/pkg/config"
 	"github.com/rs/cors"
 )
 
@@ -21,6 +22,17 @@ func configureFlags(api *operations.ThyraServerAPI) {
 }
 
 func configureAPI(api *operations.ThyraServerAPI) http.Handler {
+	// unused
+	return nil
+}
+
+func (s *Server) ConfigureMassaStationAPI(config config.AppConfig) {
+	if s.api != nil {
+		s.handler = configureMassaStationAPI(s.api, config)
+	}
+}
+
+func configureMassaStationAPI(api *operations.ThyraServerAPI, config config.AppConfig) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 
@@ -55,7 +67,7 @@ func configureAPI(api *operations.ThyraServerAPI) http.Handler {
 
 	api.ServerShutdown = func() {}
 
-	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
+	return setupGlobalMiddleware(api.Serve(setupMiddlewares), config)
 }
 
 //go:embed resource
@@ -82,8 +94,8 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json
 // document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics.
-func setupGlobalMiddleware(handler http.Handler) http.Handler {
+func setupGlobalMiddleware(handler http.Handler, config config.AppConfig) http.Handler {
 	handleCORS := cors.Default().Handler
 
-	return api.TopMiddleware(handleCORS(handler))
+	return api.TopMiddleware(handleCORS(handler), config)
 }

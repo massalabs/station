@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/massalabs/thyra/api/swagger/server/models"
+	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/onchain/dns"
 	"github.com/massalabs/thyra/pkg/wallet"
 )
 
@@ -23,7 +23,7 @@ type Domain struct {
 This function fetch the list of domain names owned by a user from the DNS smart contract
 and returns it as an array of strings.
 */
-func Domains(client *node.Client, nickname string) ([]string, error) {
+func Domains(config config.AppConfig, client *node.Client, nickname string) ([]string, error) {
 	const ownedPrefix = "owned"
 
 	wallet, err := wallet.Fetch(nickname)
@@ -35,9 +35,9 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 
 	ownerKey := convert.StringToBytes(ownedPrefix + wallet.Address)
 
-	rawNames, err := node.DatastoreEntry(client, dns.Address(), ownerKey)
+	rawNames, err := node.DatastoreEntry(client, config.DNSAddress, ownerKey)
 	if err != nil {
-		return nil, fmt.Errorf("reading entry '%s' at '%s': %w", dns.Address(), ownedPrefix+wallet.Address, err)
+		return nil, fmt.Errorf("reading entry '%s' at '%s': %w", config.DNSAddress, ownedPrefix+wallet.Address, err)
 	}
 
 	if len(rawNames.CandidateValue) == 0 {
@@ -53,12 +53,12 @@ func Domains(client *node.Client, nickname string) ([]string, error) {
 	return names, nil
 }
 
-func Websites(client *node.Client, domainNames []string) ([]*models.Websites, error) {
+func Websites(config config.AppConfig, client *node.Client, domainNames []string) ([]*models.Websites, error) {
 	params := []node.DatastoreEntriesKeys{}
 
 	for i := 0; i < len(domainNames); i++ {
 		param := node.DatastoreEntriesKeys{
-			Address: dns.Address(),
+			Address: config.DNSAddress,
 			Key:     convert.StringToBytes(domainNames[i]),
 		}
 		params = append(params, param)

@@ -5,16 +5,17 @@ import (
 	"strings"
 
 	"github.com/massalabs/thyra/api/interceptor"
+	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
 )
 
-func handleMassaDomainRequest(writer http.ResponseWriter, reader *http.Request, index int) {
+func handleMassaDomainRequest(writer http.ResponseWriter, reader *http.Request, index int, config config.AppConfig) {
 	name := reader.Host[:index]
 
-	rpcClient := node.NewDefaultClient()
+	rpcClient := node.NewClient(config.NodeURL)
 
-	addr, err := dns.Resolve(rpcClient, name)
+	addr, err := dns.Resolve(config, rpcClient, name)
 	if err != nil {
 		panic(err)
 	}
@@ -30,7 +31,7 @@ func handleMassaDomainRequest(writer http.ResponseWriter, reader *http.Request, 
 }
 
 // MassaTLDInterceptor intercepts request for web on-chain.
-func MassaTLDInterceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
+func MassaTLDInterceptor(req *interceptor.Interceptor, config config.AppConfig) *interceptor.Interceptor {
 	if req == nil {
 		return nil
 	}
@@ -38,7 +39,7 @@ func MassaTLDInterceptor(req *interceptor.Interceptor) *interceptor.Interceptor 
 	massaIndex := strings.Index(req.Request.Host, ".massa")
 
 	if massaIndex > 0 && !strings.HasPrefix(req.Request.Host, "my.massa") {
-		handleMassaDomainRequest(req.Writer, req.Request, massaIndex)
+		handleMassaDomainRequest(req.Writer, req.Request, massaIndex, config)
 
 		return nil
 	}

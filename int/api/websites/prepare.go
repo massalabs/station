@@ -11,6 +11,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/config"
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain/website"
 	"golang.org/x/exp/slices"
@@ -20,10 +21,12 @@ const UploadMaxSize = "UPLOAD_MAX_SIZE"
 
 const defaultMaxArchiveSize = 1500000
 
-func CreatePrepareForWebsiteHandler() func(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
-	return func(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
-		return prepareForWebsiteHandler(params)
-	}
+func NewWebsitePrepareHandler(config *config.AppConfig) operations.WebsiteCreatorPrepareHandler {
+	return &websitePrepare{config: config}
+}
+
+type websitePrepare struct {
+	config *config.AppConfig
 }
 
 func listFileName(zipReader *zip.Reader) []string {
@@ -35,15 +38,19 @@ func listFileName(zipReader *zip.Reader) []string {
 	return FilesInArchive
 }
 
-func prepareForWebsiteHandler(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
-	archive, _ := readAndCheckArchive(params.Zipfile)
+func (h *websitePrepare) Handle(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
+	archive, errorResponse := readAndCheckArchive(params.Zipfile)
+	if errorResponse != nil {
+		return errorResponse
+	}
 
-	address, correlationID, err := website.PrepareForUpload(params.URL, params.Nickname)
+	address, correlationID, err := website.PrepareForUpload(*h.config, params.URL, params.Nickname)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorPrepare, err.Error())
 	}
 
 	_, err = website.Upload(
+		*h.config,
 		address,
 		archive,
 		params.Nickname,
@@ -89,71 +96,10 @@ func createInternalServerError(errorCode string, errorMessage string) middleware
 			})
 }
 
-func CreateUploadWebsiteHandler() func(params operations.WebsiteCreatorUploadParams) middleware.Responder {
-	return func(params operations.WebsiteCreatorUploadParams) middleware.Responder {
-		return uploadWebsiteHandler(params)
-	}
-}
-
-func uploadWebsiteHandler(params operations.WebsiteCreatorUploadParams) middleware.Responder {
-	archive, _ := readAndCheckArchive(params.Zipfile)
-
-	_, err := website.Upload(
-		params.Address,
-		archive,
-		params.Nickname,
-		sendOperation.OperationBatch{
-			NewBatch:      true,
-			CorrelationID: "",
-		},
-	)
-	if err != nil {
-		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
-	}
-
-	return operations.NewWebsiteCreatorUploadOK().
-		WithPayload(&models.Websites{
-			Name:         "",
-			Address:      params.Address,
-			BrokenChunks: nil,
-		})
-}
-
 func checkContentType(archive []byte, fileType string) bool {
 	contentType := http.DetectContentType(archive)
 
 	return contentType == fileType
-}
-
-func CreateUploadMissingChunksHandler() func(params operations.WebsiteUploadMissingChunksParams) middleware.Responder {
-	return func(params operations.WebsiteUploadMissingChunksParams) middleware.Responder {
-		return websiteUploadMissingChunksHandler(params)
-	}
-}
-
-func websiteUploadMissingChunksHandler(params operations.WebsiteUploadMissingChunksParams) middleware.Responder {
-	archive, _ := readAndCheckArchive(params.Zipfile)
-
-	_, err := website.UploadMissedChunks(
-		params.Address,
-		archive,
-		params.Nickname,
-		params.MissedChunks,
-		sendOperation.OperationBatch{
-			NewBatch:      true,
-			CorrelationID: "",
-		},
-	)
-	if err != nil {
-		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
-	}
-
-	return operations.NewWebsiteUploadMissingChunksOK().
-		WithPayload(&models.Websites{
-			Name:         "",
-			Address:      params.Address,
-			BrokenChunks: nil,
-		})
 }
 
 func readAndCheckArchive(zipFile io.ReadCloser) ([]byte, middleware.Responder) {
