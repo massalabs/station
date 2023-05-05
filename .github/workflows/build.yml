@@ -102,6 +102,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
+      - name: Update version for a release
+        if: ${{ inputs.tag_name != '' }}
+        run: echo -e "${{ inputs.tag_name }}" > cmd/thyra-server/version.txt
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
