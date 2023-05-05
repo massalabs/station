@@ -136,7 +136,7 @@ func Call(client *node.Client,
 		return nil, fmt.Errorf("decoding '%s' B64: %w", res.Signature, err)
 	}
 
-	resp, err := MakeRPCCall(msg, signature, res, client)
+	resp, err := MakeRPCCall(msg, signature, res.PublicKey, client)
 	if err != nil {
 		return nil, err
 	}
@@ -144,13 +144,13 @@ func Call(client *node.Client,
 	return &OperationResponse{CorrelationID: res.CorrelationID, OperationID: resp[0]}, nil
 }
 
-func MakeRPCCall(msg []byte, signature []byte, res SignOperationResponse, client *node.Client) ([]string, error) {
+func MakeRPCCall(msg []byte, signature []byte, publicKey string, client *node.Client) ([]string, error) {
 	sendOpParams := [][]sendOperationsReq{
 		{
 			sendOperationsReq{
 				SerializedContent: msg,
 				Signature:         base58.CheckEncode(signature),
-				PublicKey:         res.PublicKey,
+				PublicKey:         publicKey,
 			},
 		},
 	}
