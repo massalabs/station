@@ -4,14 +4,23 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/my"
 	"github.com/massalabs/thyra/pkg/node"
 )
 
-func DomainsHandler(params operations.MyDomainsGetterParams) middleware.Responder {
-	client := node.NewDefaultClient()
+func NewDomainsHandler(config *config.AppConfig) operations.MyDomainsGetterHandler {
+	return &domainsHandler{config: config}
+}
 
-	myDomainNames, err := my.Domains(client, params.Nickname)
+type domainsHandler struct {
+	config *config.AppConfig
+}
+
+func (h *domainsHandler) Handle(params operations.MyDomainsGetterParams) middleware.Responder {
+	client := node.NewClient(h.config.NodeURL)
+
+	myDomainNames, err := my.Domains(*h.config, client, params.Nickname)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().
 			WithPayload(
@@ -21,7 +30,7 @@ func DomainsHandler(params operations.MyDomainsGetterParams) middleware.Responde
 				})
 	}
 
-	myDomains, err := my.Websites(client, myDomainNames)
+	myDomains, err := my.Websites(*h.config, client, myDomainNames)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().
 			WithPayload(

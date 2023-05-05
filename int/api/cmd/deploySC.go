@@ -1,4 +1,4 @@
-package deploysc
+package cmd
 
 import (
 	"encoding/base64"
@@ -7,13 +7,22 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain"
 )
 
-func Handler(params operations.CmdDeploySCParams) middleware.Responder {
-	client := node.NewDefaultClient()
+func NewDeploySC(config *config.AppConfig) operations.CmdDeploySCHandler {
+	return &deploySC{config: config}
+}
+
+type deploySC struct {
+	config *config.AppConfig
+}
+
+func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Responder {
+	client := node.NewClient(d.config.NodeURL)
 
 	file, err := io.ReadAll(params.SmartContract)
 	if err != nil {

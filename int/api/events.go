@@ -7,6 +7,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node"
 )
 
@@ -15,9 +16,17 @@ const (
 	tickerDuration  = time.Second
 )
 
+func NewEventListenerHandler(config *config.AppConfig) operations.ThyraEventsGetterHandler {
+	return &eventListener{config: config}
+}
+
+type eventListener struct {
+	config *config.AppConfig
+}
+
 //nolint:funlen
-func EventListenerHandler(params operations.ThyraEventsGetterParams) middleware.Responder {
-	client := node.NewDefaultClient()
+func (h *eventListener) Handle(params operations.ThyraEventsGetterParams) middleware.Responder {
+	client := node.NewClient(h.config.NodeURL)
 
 	status, err := node.Status(client)
 	if err != nil {

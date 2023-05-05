@@ -6,19 +6,22 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain"
 )
 
-func CreateExecuteFunctionHandler() func(params operations.CmdExecuteFunctionParams) middleware.Responder {
-	return func(params operations.CmdExecuteFunctionParams) middleware.Responder {
-		return ExecuteFunctionHandler(params)
-	}
+func NewExecuteFunction(config *config.AppConfig) operations.CmdExecuteFunctionHandler {
+	return &executeFunction{config: config}
 }
 
-func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams) middleware.Responder {
+type executeFunction struct {
+	config *config.AppConfig
+}
+
+func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) middleware.Responder {
 	addr, err := base58.CheckDecode(params.Body.At[2:])
 	if err != nil {
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
@@ -37,7 +40,7 @@ func ExecuteFunctionHandler(params operations.CmdExecuteFunctionParams) middlewa
 				})
 	}
 
-	c := node.NewDefaultClient()
+	c := node.NewClient(e.config.NodeURL)
 
 	operationWithEventResponse, err := onchain.CallFunction(
 		c,

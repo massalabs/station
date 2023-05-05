@@ -6,11 +6,20 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node"
 )
 
-func AddressesHandler(params operations.MassaGetAddressesParams) middleware.Responder {
-	client := node.NewDefaultClient()
+func NewGetAddress(config *config.AppConfig) operations.MassaGetAddressesHandler {
+	return &getAddress{config: config}
+}
+
+type getAddress struct {
+	config *config.AppConfig
+}
+
+func (g *getAddress) Handle(params operations.MassaGetAddressesParams) middleware.Responder {
+	client := node.NewClient(g.config.NodeURL)
 
 	addressesDetails, err := node.Addresses(client, params.Addresses)
 	if err != nil {

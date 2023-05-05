@@ -45,12 +45,6 @@ type Client struct {
 	RPCClient jsonrpc.RPCClient
 }
 
-func NewDefaultClient() *Client {
-	defaultServer := os.Getenv("MASSA_NODE_URL")
-
-	return NewClient(defaultServer)
-}
-
 //nolint:exhaustruct
 func NewClient(url string) *Client {
 	return &Client{
