@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "9eac6d65-61c9-468a-b448-82f0b869fe91",
+		"_postman_id": "802a5dae-9e21-4d74-b269-54dc6e8eb1a6",
 		"name": "Massa endpoints",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "23452245"
+		"_exporter_id": "25577112"
 	},
 	"item": [
 		{
@@ -245,6 +245,120 @@
 					],
 					"cookie": [],
 					"body": "{\n    \"addressesAttributes\": {\n        \"AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5\": {\n            \"balance\": {\n                \"final\": \"0\",\n                \"pending\": \"0\"\n            }\n        },\n        \"AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS\": {\n            \"balance\": {\n                \"final\": \"0\",\n                \"pending\": \"0\"\n            }\n        }\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "get Node",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Network is defined\", function () {",
+							"    var network = (pm.response.json()).network;",
+							"    pm.expect(network).to.be.a(\"string\");",
+							"    pm.expect(network).to.be.oneOf([\"TESTNET\", \"LABNET\", \"INNONET\", \"BUILDNET\"]);",
+							"});",
+							"",
+							"pm.test(\"dns is defined\", function () {",
+							"    var dns = (pm.response.json()).dns;",
+							"    pm.expect(dns).to.be.a(\"string\");",
+							"})",
+							"",
+							"pm.test(\"url is defined\", function () {",
+							"    var url = (pm.response.json()).url;",
+							"    pm.expect(url).to.be.a(\"string\");",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://my.massa/massa/node",
+					"protocol": "http",
+					"host": [
+						"my",
+						"massa"
+					],
+					"path": [
+						"massa",
+						"node"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "get Node",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://my.massa/massa/node",
+							"protocol": "http",
+							"host": [
+								"my",
+								"massa"
+							],
+							"path": [
+								"massa",
+								"node"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 05 May 2023 09:12:08 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "122"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"dns\": \"AS12YMz7NjyP3aeEWcSsiC58Hba8UxHapfGv7i4PmNMS2eKfmaqqC\",\n    \"network\": \"TESTNET\",\n    \"url\": \"https://test.massa.net/api/v2\"\n}"
 				}
 			]
 		},
