@@ -13,7 +13,7 @@ import (
 	"github.com/massalabs/thyra/pkg/onchain"
 )
 
-func NewDeploySC(config *config.AppConfig) operations.CmdDeploySCHandler {
+func NewDeploySCHandler(config *config.AppConfig) operations.CmdDeploySCHandler {
 	return &deploySC{config: config}
 }
 

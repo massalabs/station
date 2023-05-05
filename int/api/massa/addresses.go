@@ -10,7 +10,7 @@ import (
 	"github.com/massalabs/thyra/pkg/node"
 )
 
-func NewGetAddress(config *config.AppConfig) operations.MassaGetAddressesHandler {
+func NewGetAddressHandler(config *config.AppConfig) operations.MassaGetAddressesHandler {
 	return &getAddress{config: config}
 }
 

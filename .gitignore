@@ -22,6 +22,9 @@ main
 # Go swagger generated files
 api/swagger/server/models/
 api/swagger/server/restapi/operations/
+api/swagger/server/restapi/embedded_spec.go
+api/swagger/server/restapi/server.go
+api/swagger/server/restapi/doc.go
 
 # Robot framework
 api/test/results

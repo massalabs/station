@@ -203,6 +203,26 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /massa/node:
+    get:
+      summary: Get Massa network infos
+      description: Returns the currently used massa node infos
+      operationId: getNode
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Massa node
+          schema:
+            $ref: '#/definitions/MassaNodeItem'
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
   /my/domains/{nickname}:
     get:
       operationId: myDomainsGetter
@@ -1033,3 +1053,16 @@ definitions:
     required:
       - url
       - checksum
+  MassaNodeItem:
+    type: object
+    description: Massa node infos.
+    properties:
+      network:
+        enum: ["testnet", "labnet", "innonet", "localhost", "buildnet"]
+      url:
+        type: string
+      dns:
+        type: string
+    required:
+      - network
+      - url

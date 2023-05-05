@@ -13,7 +13,7 @@ import (
 	"github.com/massalabs/thyra/pkg/onchain"
 )
 
-func NewExecuteFunction(config *config.AppConfig) operations.CmdExecuteFunctionHandler {
+func NewExecuteFunctionHandler(config *config.AppConfig) operations.CmdExecuteFunctionHandler {
 	return &executeFunction{config: config}
 }
 

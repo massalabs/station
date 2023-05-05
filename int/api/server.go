@@ -47,11 +47,12 @@ func stopServer(server *restapi.Server) {
 }
 
 func initLocalAPI(localAPI *operations.ThyraServerAPI, config config.AppConfig) {
-	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunction(&config)
+	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunctionHandler(&config)
 
-	localAPI.MassaGetAddressesHandler = massa.NewGetAddress(&config)
+	localAPI.MassaGetAddressesHandler = massa.NewGetAddressHandler(&config)
+	localAPI.GetNodeHandler = massa.NewGetNodeHandler(&config)
 
-	localAPI.CmdDeploySCHandler = cmd.NewDeploySC(&config)
+	localAPI.CmdDeploySCHandler = cmd.NewDeploySCHandler(&config)
 
 	localAPI.WebsiteCreatorPrepareHandler = websites.NewWebsitePrepareHandler(&config)
 	localAPI.WebsiteCreatorUploadHandler = websites.NewWebsiteUploadHandler(&config)
