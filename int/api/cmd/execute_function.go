@@ -8,7 +8,6 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/node/base58"
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain"
 )
@@ -22,14 +21,6 @@ type executeFunction struct {
 }
 
 func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) middleware.Responder {
-	addr, err := base58.CheckDecode(params.Body.At[2:])
-	if err != nil {
-		return operations.NewCmdExecuteFunctionUnprocessableEntity().WithPayload(
-			&models.Error{Code: errorCodeUnknownKeyID, Message: "Error : cannot decode Smart contract address : " + err.Error()})
-	}
-
-	addr = addr[1:]
-
 	args, err := base64.StdEncoding.DecodeString(params.Body.Args)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().
@@ -45,7 +36,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 	operationWithEventResponse, err := onchain.CallFunction(
 		c,
 		params.Body.Nickname,
-		addr,
+		params.Body.At,
 		params.Body.Name,
 		args,
 		uint64(params.Body.Coins),

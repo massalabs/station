@@ -7,7 +7,6 @@ import (
 	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/node/base58"
 	"github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain"
 )
@@ -37,10 +36,7 @@ func SetRecord(
 	smartContract string,
 	operationBatch sendoperation.OperationBatch,
 ) (string, error) {
-	addr, _, err := base58.VersionedCheckDecode(config.DNSAddress[2:])
-	if err != nil {
-		return "", fmt.Errorf("checking address '%s': %w", config.DNSAddress[2:], err)
-	}
+	addr := config.DNSAddress
 
 	// Set Resolver prepare data
 	rec := convert.U32ToBytes(len(url))
