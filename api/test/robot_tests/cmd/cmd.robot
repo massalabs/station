@@ -59,8 +59,8 @@ POST /cmd/executeFunction with invalid address
     ...    ${API_URL}/cmd/executeFunction
     ...    json=${data}
     ...    expected_status=${STATUS_UNPROCESSABLE_ENTITY}
-    Should Be Equal    ${response.json()["code"]}    Execute-0002
-    Should Be Equal    ${response.json()["message"]}    Error : cannot decode Smart contract address : ErrInvalidFormat
+    Should Be Equal    ${response.json()["code"]}    Execute-0001
+    Should Be Equal    ${response.json()["message"]}    Error: callSC failed: creating callSC with event at invalid: failed to prepare address: decoding address: checksum error
 
 POST /cmd/executeFunction with invalid arguments
     ${data}=    Create Dictionary
@@ -87,7 +87,7 @@ POST /cmd/executeFunction with invalid function name
     # Should Contain must be divided into multiple lines because the error message contains unknown values (e.g. operation id)
     Should Contain
     ...    ${response.json()["message"]}
-    ...    Error : callSC failed
+    ...    Error: callSC failed
     Should Contain
     ...    ${response.json()["message"]}
     ...    "massa_execution_error":"Runtime error: runtime error when executing operation

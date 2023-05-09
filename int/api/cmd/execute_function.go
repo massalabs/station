@@ -44,7 +44,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 	)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
-			&models.Error{Code: errorCodeSendOperation, Message: "Error : callSC failed " + err.Error()})
+			&models.Error{Code: errorCodeSendOperation, Message: "Error: callSC failed: " + err.Error()})
 	}
 
 	return operations.NewCmdExecuteFunctionOK().WithPayload(operationWithEventResponse.Event)
