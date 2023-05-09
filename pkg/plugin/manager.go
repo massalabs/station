@@ -8,11 +8,13 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 
 	"github.com/cavaliergopher/grab/v3"
 	"github.com/massalabs/thyra/pkg/config"
+	"github.com/massalabs/thyra/pkg/store"
 	"github.com/xyproto/unzip"
 )
 
@@ -203,13 +205,12 @@ func (m *Manager) RunAll() error {
 	return nil
 }
 
-// Install grabs a remote plugin from the given url and install it locally.
-func (m *Manager) Install(url string) error {
+func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
 	pluginsDir := Directory()
 
 	resp, err := grab.Get(pluginsDir, url)
 	if err != nil {
-		return fmt.Errorf("grabbing a plugin at %s: %w", url, err)
+		return "", fmt.Errorf("grabbing a plugin at %s: %w", url, err)
 	}
 
 	defer func() {
@@ -225,30 +226,116 @@ func (m *Manager) Install(url string) error {
 	pluginDirectory := filepath.Join(pluginsDir, pluginName)
 	pluginPath := filepath.Join(pluginDirectory, pluginName)
 
-	_, err = os.Stat(pluginDirectory)
+	if isNew {
+		_, err = os.Stat(pluginDirectory)
 
-	if os.IsNotExist(err) {
-		err := os.MkdirAll(pluginDirectory, os.ModePerm)
-		if err != nil {
-			return fmt.Errorf("creating %s plugin directory: creating folder %s: %w", archiveName, pluginDirectory, err)
-		}
-	} else {
-		if _, err = os.Stat(pluginPath); err == nil {
-			return fmt.Errorf("installing plugin in %s: Plugin Already Exists", pluginPath)
+		if os.IsNotExist(err) {
+			err := os.MkdirAll(pluginDirectory, os.ModePerm)
+			if err != nil {
+				return "", fmt.Errorf("creating plugin directory %s: %w", pluginDirectory, err)
+			}
+		} else if _, err = os.Stat(pluginPath); err == nil {
+			return "", fmt.Errorf("plugin %s already exists", pluginName)
 		}
 	}
 
 	err = unzip.Extract(resp.Filename, pluginDirectory)
 	if err != nil {
-		return fmt.Errorf("extracting the plugin at %s: %w", resp.Filename, err)
+		return "", fmt.Errorf("extracting plugin %s: %w", pluginName, err)
 	}
 
 	err = os.Rename(filepath.Join(pluginDirectory, pluginFilename), pluginPath)
+	if err != nil {
+		return "", fmt.Errorf("renaming plugin %s: %w", pluginName, err)
+	}
+
+	return pluginPath, nil
+}
+
+// Install grabs a remote plugin from the given url and install it locally.
+func (m *Manager) Install(url string) error {
+	pluginPath, err := m.DownloadPlugin(url, true)
+	if err != nil {
+		return fmt.Errorf("installing plugin at %s: %w", url, err)
+	}
 
 	err = m.InitPlugin(pluginPath)
 	if err != nil {
-		return fmt.Errorf("running plugin %s after installation: %w", pluginName, err)
+		return fmt.Errorf("running plugin %s after installation: %w", pluginPath, err)
 	}
 
 	return nil
+}
+
+func (m *Manager) Update(correlationID string) error {
+	pluginsDir := Directory()
+
+	plgn, err := m.Plugin(correlationID)
+	if err != nil {
+		return fmt.Errorf("deleting plugin %s: %w", correlationID, err)
+	}
+
+	if !plgn.info.Updatable {
+		return fmt.Errorf("plugin %s is not updatable", correlationID)
+	}
+
+	pluginList, err := store.FetchPluginList()
+	if err != nil {
+		return fmt.Errorf("while fetching store list: %w", err)
+	}
+
+	pluginInStore := findPluginByName(plgn.info.Name, pluginList)
+
+	url, _, _, err := getDLChecksumAndOs(*pluginInStore)
+	if err != nil {
+		return fmt.Errorf("while fetching plugin %s: %w", plgn.info.Name, err)
+	}
+
+	err = os.RemoveAll(filepath.Join(pluginsDir, plgn.info.Name))
+	if err != nil {
+		return fmt.Errorf("updating plugin %s: %w", plgn.info.Name, err)
+	}
+
+	_, err = m.DownloadPlugin(url, false)
+	if err != nil {
+		return fmt.Errorf("updating plugin %s: %w", plgn.info.Name, err)
+	}
+
+	err = plgn.SetInformation(plgn.info.URL)
+	if err != nil {
+		return fmt.Errorf("setting plugin %s information: %w", plgn.info.Name, err)
+	}
+
+	return nil
+}
+
+//nolint:varnamelen,unparam
+func getDLChecksumAndOs(plugin store.Plugin) (string, string, string, error) {
+	pluginURL := ""
+	os := runtime.GOOS
+	checksum := ""
+
+	switch os {
+	case "linux":
+		pluginURL = plugin.Assets.Linux.URL
+		checksum = plugin.Assets.Linux.Checksum
+	case "darwin":
+		switch arch := runtime.GOARCH; arch {
+		case "amd64":
+			pluginURL = plugin.Assets.MacosAmd64.URL
+			checksum = plugin.Assets.MacosAmd64.Checksum
+		case "arm64":
+			pluginURL = plugin.Assets.MacosArm64.URL
+			checksum = plugin.Assets.MacosArm64.Checksum
+		default:
+			return pluginURL, os, checksum, fmt.Errorf("unsupported OS '%s' and arch '%s'", os, arch)
+		}
+	case "windows":
+		pluginURL = plugin.Assets.Windows.URL
+		checksum = plugin.Assets.Windows.Checksum
+	default:
+		return pluginURL, os, checksum, fmt.Errorf("unsupported OS '%s'", os)
+	}
+
+	return pluginURL, os, checksum, nil
 }
