@@ -82,7 +82,12 @@ func (p *Plugin) getInformation() (*Information, error) {
 func (p *Plugin) SetInformation(parsedURL *url.URL) error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
+
 	info, err := p.getInformation()
+	if err != nil {
+		return fmt.Errorf("error getting plugin information: %w", err)
+	}
+
 	info.URL = parsedURL
 
 	if err != nil {
@@ -268,21 +273,27 @@ func (p *Plugin) Stop() error {
 }
 
 func New(binPath string, pluginID string) (*Plugin, error) {
-	exe := ""
+	ext := ""
 	if runtime.GOOS == "windows" {
-		exe = ".exe"
+		ext = ".exe"
 	}
 
 	//nolint:exhaustruct
 	plgn := &Plugin{
 		status:   Starting,
-		BinPath:  binPath + exe,
+		BinPath:  binPath + ext,
 		ID:       pluginID,
 		quitChan: make(chan bool),
 	}
-	plgn.info, _ = plgn.getInformation()
 
-	err := plgn.Start()
+	info, err := plgn.getInformation()
+	if err != nil {
+		return nil, fmt.Errorf("getting plugin information: %w", err)
+	}
+
+	plgn.info = info
+
+	err = plgn.Start()
 	if err != nil {
 		return nil, fmt.Errorf("creating plugin: %w", err)
 	}
