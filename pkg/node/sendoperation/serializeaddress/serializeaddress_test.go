@@ -1,10 +1,10 @@
-package prepareaddress
+package serializeaddress
 
 import (
 	"testing"
 )
 
-func TestPrepareAddress(t *testing.T) {
+func TestSerializeAddress(t *testing.T) {
 	testCases := []struct {
 		addr          string
 		expectedBytes []byte
@@ -34,7 +34,7 @@ func TestPrepareAddress(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
-		bytes, err := PrepareAddress(testCase.addr)
+		bytes, err := SerializeAddress(testCase.addr)
 		if testCase.expectError {
 			if err == nil {
 				t.Errorf("Expected an error but did not receive one for address %s", testCase.addr)

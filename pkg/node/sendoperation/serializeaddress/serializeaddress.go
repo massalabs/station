@@ -1,4 +1,4 @@
-package prepareaddress
+package serializeaddress
 
 import (
 	"fmt"
@@ -6,10 +6,10 @@ import (
 	"github.com/massalabs/thyra/pkg/node/base58"
 )
 
-// PrepareAddress return the address in byte, ready to be used by the API
+// SerializeAddress return the address in byte, ready to be used by the API
 // It will add the prefix 1 or 0 depending on if it's a account address or a smart contract address
 // It will also base58Check decode the address with version 0.
-func PrepareAddress(addr string) ([]byte, error) {
+func SerializeAddress(addr string) ([]byte, error) {
 	addressPrefix := addr[:2]
 	addressWithoutPrefix := addr[2:]
 

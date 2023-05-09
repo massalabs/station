@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/massalabs/thyra/pkg/node/base58"
-	prepareAddress "github.com/massalabs/thyra/pkg/node/sendoperation/prepareaddress"
+	serializeAddress "github.com/massalabs/thyra/pkg/node/sendoperation/serializeaddress"
 )
 
 const TransactionOpID = 0
@@ -28,7 +28,7 @@ type Transaction struct {
 }
 
 func New(recipientAddress string, amount uint64) (*Transaction, error) {
-	versionedAddress, err := prepareAddress.PrepareAddress(recipientAddress)
+	versionedAddress, err := serializeAddress.SerializeAddress(recipientAddress)
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare address: %w", err)
 	}

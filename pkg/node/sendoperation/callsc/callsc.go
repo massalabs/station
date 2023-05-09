@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/massalabs/thyra/pkg/node/base58"
-	prepareAddress "github.com/massalabs/thyra/pkg/node/sendoperation/prepareaddress"
+	serializeAddress "github.com/massalabs/thyra/pkg/node/sendoperation/serializeaddress"
 )
 
 const CallSCOpID = uint64(4)
@@ -36,7 +36,7 @@ type CallSC struct {
 
 func New(address string, function string, parameters []byte, gazLimit uint64, coins uint64,
 ) (*CallSC, error) {
-	versionedAddress, err := prepareAddress.PrepareAddress(address)
+	versionedAddress, err := serializeAddress.SerializeAddress(address)
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare address: %w", err)
 	}
