@@ -5,9 +5,12 @@ import (
 	"fmt"
 
 	"github.com/massalabs/thyra/pkg/node/base58"
+	serializeAddress "github.com/massalabs/thyra/pkg/node/sendoperation/serializeaddress"
 )
 
 const TransactionOpID = 0
+
+const versionByte = byte(0)
 
 type OperationDetails struct {
 	Amount           string `json:"amount"`
@@ -24,17 +27,22 @@ type Transaction struct {
 	amount           uint64
 }
 
-func New(recipientAddress []byte, amount uint64) *Transaction {
-	return &Transaction{
-		recipientAddress: recipientAddress,
-		amount:           amount,
+func New(recipientAddress string, amount uint64) (*Transaction, error) {
+	versionedAddress, err := serializeAddress.SerializeAddress(recipientAddress)
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare address: %w", err)
 	}
+
+	return &Transaction{
+		recipientAddress: versionedAddress,
+		amount:           amount,
+	}, nil
 }
 
 func (t *Transaction) Content() interface{} {
 	return &Operation{
 		Transaction: OperationDetails{
-			RecipientAddress: "AU" + base58.VersionedCheckEncode(t.recipientAddress, 0),
+			RecipientAddress: "AU" + base58.VersionedCheckEncode(t.recipientAddress, versionByte),
 			Amount:           fmt.Sprint(t.amount),
 		},
 	}

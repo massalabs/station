@@ -9,7 +9,6 @@ import (
 	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/node/base58"
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
 	"github.com/massalabs/thyra/pkg/onchain"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
@@ -84,14 +83,9 @@ func Upload(
 ) ([]string, error) {
 	client := node.NewClient(config.NodeURL)
 
-	addr, _, err := base58.VersionedCheckDecode(atAddress[2:])
-	if err != nil {
-		return nil, fmt.Errorf("decoding address '%s': %w", atAddress[2:], err)
-	}
-
 	blocks := chunk(content, blockLength)
 
-	operations, err := upload(client, addr, blocks, nickname, operationBatch)
+	operations, err := upload(client, atAddress, blocks, nickname, operationBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +95,7 @@ func Upload(
 
 func upload(
 	client *node.Client,
-	addr []byte,
+	addr string,
 	chunks [][]byte,
 	nickname string,
 	operationBatch sendOperation.OperationBatch,
@@ -165,16 +159,11 @@ func UploadMissedChunks(
 ) ([]string, error) {
 	client := node.NewClient(config.NodeURL)
 
-	addr, _, err := base58.VersionedCheckDecode(atAddress[2:])
-	if err != nil {
-		return nil, fmt.Errorf("decoding address '%s': %w", atAddress[2:], err)
-	}
-
 	blocks := chunk(content, blockLength)
 
 	operations, err := uploadMissedChunks(
 		client,
-		addr,
+		atAddress,
 		blocks,
 		missedChunks,
 		nickname,
@@ -189,7 +178,7 @@ func UploadMissedChunks(
 
 func uploadMissedChunks(
 	client *node.Client,
-	addr []byte,
+	addr string,
 	chunks [][]byte,
 	missedChunks string,
 	nickname string,

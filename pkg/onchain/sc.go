@@ -31,15 +31,18 @@ Hence this function also listen for the first event emitted in an OP and returns
 */
 func CallFunction(client *node.Client,
 	nickname string,
-	addr []byte,
+	addr string,
 	function string,
 	parameter []byte,
 	coins uint64,
 	operationBatch sendOperation.OperationBatch,
 ) (*OperationWithEventResponse, error) {
-	callSC := callsc.New(addr, function, parameter,
+	callSC, err := callsc.New(addr, function, parameter,
 		sendOperation.DefaultGazLimit,
 		coins)
+	if err != nil {
+		return nil, fmt.Errorf("creating callSC with '%s' at '%s': %w", function, addr, err)
+	}
 
 	operationResponse, err := sendOperation.Call(
 		client,
@@ -67,14 +70,17 @@ func CallFunction(client *node.Client,
 func CallFunctionUnwaited(client *node.Client,
 	nickname string,
 	expiryDelta uint64,
-	addr []byte,
+	addr string,
 	function string,
 	parameter []byte,
 	operationBatch sendOperation.OperationBatch,
 ) (*sendOperation.OperationResponse, error) {
-	callSC := callsc.New(addr, function, parameter,
+	callSC, err := callsc.New(addr, function, parameter,
 		sendOperation.DefaultGazLimit,
 		sendOperation.HundredMassa)
+	if err != nil {
+		return nil, fmt.Errorf("creating callSC with '%s' at '%s': %w", function, addr, err)
+	}
 
 	operationResponse, err := sendOperation.Call(
 		client,

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/massalabs/thyra/pkg/node/base58"
+	serializeAddress "github.com/massalabs/thyra/pkg/node/sendoperation/serializeaddress"
 )
 
 const CallSCOpID = uint64(4)
@@ -33,15 +34,17 @@ type CallSC struct {
 	coins      uint64
 }
 
-func New(address []byte, function string, parameters []byte, gazLimit uint64, coins uint64,
-) *CallSC {
-	// New testnet20 addresses needs a byte 0 for AU addresses and byte 1 for AS addresses
-	versionedAddress := append([]byte{versionByte}, address...)
+func New(address string, function string, parameters []byte, gazLimit uint64, coins uint64,
+) (*CallSC, error) {
+	versionedAddress, err := serializeAddress.SerializeAddress(address)
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare address: %w", err)
+	}
 
 	return &CallSC{
 		address: versionedAddress, function: function, parameters: parameters,
 		gazLimit: gazLimit, coins: coins,
-	}
+	}, nil
 }
 
 func (c *CallSC) Content() interface{} {

@@ -50,17 +50,19 @@ POST /cmd/deploySC with invalid datastore
     Should Be Equal    ${response.json()["message"]}    illegal base64 data at input byte 4
 
 POST /cmd/executeFunction with invalid address
+    ${randomID}=    Generate Random String    10
+    ${argument}=    keywords.String To Arg    ${randomID}
     ${data}=    Create Dictionary
     ...    nickname=${WALLET_NICKNAME}
     ...    name=event
     ...    at=invalid
-    ...    args=invalid
+    ...    args=${argument}
     ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction
     ...    json=${data}
-    ...    expected_status=${STATUS_UNPROCESSABLE_ENTITY}
-    Should Be Equal    ${response.json()["code"]}    Execute-0002
-    Should Be Equal    ${response.json()["message"]}    Error : cannot decode Smart contract address : ErrInvalidFormat
+    ...    expected_status=${STATUS_INTERNAL_SERVER_ERROR}
+    Should Be Equal    ${response.json()["code"]}    Execute-0001
+    Should Be Equal    ${response.json()["message"]}    Error: callSC failed: creating callSC with 'event' at 'invalid': failed to prepare address: decoding address: invalid format: version and/or checksum bytes missing
 
 POST /cmd/executeFunction with invalid arguments
     ${data}=    Create Dictionary
@@ -87,7 +89,7 @@ POST /cmd/executeFunction with invalid function name
     # Should Contain must be divided into multiple lines because the error message contains unknown values (e.g. operation id)
     Should Contain
     ...    ${response.json()["message"]}
-    ...    Error : callSC failed
+    ...    Error: callSC failed
     Should Contain
     ...    ${response.json()["message"]}
     ...    "massa_execution_error":"Runtime error: runtime error when executing operation
