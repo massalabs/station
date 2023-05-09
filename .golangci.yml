@@ -2,6 +2,8 @@ linters:
   disable:
     # unwanted
     - nonamedreturns
+    - paralleltest
+    - testpackage
     # deprecated
     - deadcode
     - exhaustivestruct
