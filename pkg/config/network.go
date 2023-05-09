@@ -18,7 +18,7 @@ const (
 	innonetDNSAddress = "AS1qqCv7g5z1ES3DygbduDF8wVmJ7CdTwpq3K3gfgfhnzoAciMcd"
 
 	buildnetNodeURL    = "https://buildernet.massa.net/api/v2"
-	buildnetDNSAddress = ""
+	buildnetDNSAddress = "AS1d8VEJWCjm2hjpWKAdft4SZZETJJ6f3zuf3Vp5ChiSvhXPTq9c"
 )
 
 func GetNetwork(network string) string {
