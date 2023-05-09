@@ -920,6 +920,34 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+    put:
+      operationId: pluginManagerUpdate
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+          description: Plugin identifier.
+      responses:
+        "204":
+          description: Plugin successfully updated
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+
   /plugin-manager/{id}/execute:
     post:
       operationId: pluginManagerExecuteCommand

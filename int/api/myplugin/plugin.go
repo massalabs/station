@@ -20,6 +20,7 @@ func InitializePluginAPI(api *operations.ThyraServerAPI) {
 	api.PluginManagerListHandler = newList(manager)
 	api.PluginManagerRegisterHandler = newRegister(manager)
 	api.PluginManagerUninstallHandler = newUninstall(manager)
+	api.PluginManagerUpdateHandler = newUpdate(manager)
 
 	// This endpoint is not defined by the go-swagger API.
 	plugin.Handler = *plugin.NewAPIHandler(manager)
