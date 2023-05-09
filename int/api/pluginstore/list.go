@@ -3,7 +3,6 @@ package pluginstore
 import (
 	"fmt"
 	"log"
-	"runtime"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -17,37 +16,6 @@ func newList() operations.GetPluginStoreHandler {
 
 type list struct{}
 
-//nolint:varnamelen,unparam
-func getDLChecksumAndOs(plugin store.Plugin) (string, string, string, error) {
-	pluginURL := ""
-	os := runtime.GOOS
-	checksum := ""
-
-	switch os {
-	case "linux":
-		pluginURL = plugin.Assets.Linux.URL
-		checksum = plugin.Assets.Linux.Checksum
-	case "darwin":
-		switch arch := runtime.GOARCH; arch {
-		case "amd64":
-			pluginURL = plugin.Assets.MacosAmd64.URL
-			checksum = plugin.Assets.MacosAmd64.Checksum
-		case "arm64":
-			pluginURL = plugin.Assets.MacosArm64.URL
-			checksum = plugin.Assets.MacosArm64.Checksum
-		default:
-			return pluginURL, os, checksum, fmt.Errorf("unsupported OS '%s' and arch '%s'", os, arch)
-		}
-	case "windows":
-		pluginURL = plugin.Assets.Windows.URL
-		checksum = plugin.Assets.Windows.Checksum
-	default:
-		return pluginURL, os, checksum, fmt.Errorf("unsupported OS '%s'", os)
-	}
-
-	return pluginURL, os, checksum, nil
-}
-
 func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 	log.Println("[GET /plugin-store]")
 
@@ -59,11 +27,16 @@ func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 
 	payload := make([]*models.PluginStoreItem, len(plugins))
 
-	for i, plugin := range plugins {
+	for index, plugin := range plugins {
 		//nolint:varnamelen
-		pluginURL, os, checksum, _ := getDLChecksumAndOs(plugin)
+		pluginURL, os, checksum, err := plugin.GetDLChecksumAndOs()
+		if err != nil {
+			return operations.NewPluginManagerListInternalServerError().WithPayload(
+				&models.Error{Code: errorCodeFetchStore, Message: fmt.Sprintf("fetch store plugin list: %s", err.Error())})
+		}
+
 		plugin := plugin
-		payload[i] = &models.PluginStoreItem{
+		payload[index] = &models.PluginStoreItem{
 			Name:        &plugin.Name,
 			Description: &plugin.Description,
 			Version:     &plugin.Version,

@@ -8,7 +8,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"sync"
 
@@ -241,7 +240,7 @@ func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
 
 	err = unzip.Extract(resp.Filename, pluginDirectory)
 	if err != nil {
-		return "", fmt.Errorf("extracting plugin %s: %w", pluginName, err)
+		return "", fmt.Errorf("extracting the plugin at %s: %w", resp.Filename, err)
 	}
 
 	err = os.Rename(filepath.Join(pluginDirectory, pluginFilename), pluginPath)
@@ -286,7 +285,7 @@ func (m *Manager) Update(correlationID string) error {
 
 	pluginInStore := findPluginByName(plgn.info.Name, pluginList)
 
-	url, _, _, err := getDLChecksumAndOs(*pluginInStore)
+	url, _, _, err := pluginInStore.GetDLChecksumAndOs()
 	if err != nil {
 		return fmt.Errorf("while fetching plugin %s: %w", plgn.info.Name, err)
 	}
@@ -307,35 +306,4 @@ func (m *Manager) Update(correlationID string) error {
 	}
 
 	return nil
-}
-
-//nolint:varnamelen,unparam
-func getDLChecksumAndOs(plugin store.Plugin) (string, string, string, error) {
-	pluginURL := ""
-	os := runtime.GOOS
-	checksum := ""
-
-	switch os {
-	case "linux":
-		pluginURL = plugin.Assets.Linux.URL
-		checksum = plugin.Assets.Linux.Checksum
-	case "darwin":
-		switch arch := runtime.GOARCH; arch {
-		case "amd64":
-			pluginURL = plugin.Assets.MacosAmd64.URL
-			checksum = plugin.Assets.MacosAmd64.Checksum
-		case "arm64":
-			pluginURL = plugin.Assets.MacosArm64.URL
-			checksum = plugin.Assets.MacosArm64.Checksum
-		default:
-			return pluginURL, os, checksum, fmt.Errorf("unsupported OS '%s' and arch '%s'", os, arch)
-		}
-	case "windows":
-		pluginURL = plugin.Assets.Windows.URL
-		checksum = plugin.Assets.Windows.Checksum
-	default:
-		return pluginURL, os, checksum, fmt.Errorf("unsupported OS '%s'", os)
-	}
-
-	return pluginURL, os, checksum, nil
 }
