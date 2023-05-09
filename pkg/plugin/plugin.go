@@ -16,6 +16,8 @@ import (
 	"sync"
 
 	"github.com/gosimple/slug"
+	"github.com/hashicorp/go-version"
+	"github.com/massalabs/thyra/pkg/store"
 )
 
 //go:generate stringer -type=Status
@@ -36,10 +38,11 @@ type Information struct {
 	Author      string   `json:"author"`
 	Description string   `json:"description"`
 	Logo        string   `json:"logo"`
-	URL         *url.URL `json:"url"`
+	URL         *url.URL `json:"-"`
 	APISpec     string   `json:"apispec"`
 	Home        string   `json:"home"`
 	Version     string   `json:"version"`
+	Updatable   bool     `json:"-"`
 }
 
 type Plugin struct {
@@ -79,13 +82,20 @@ func (p *Plugin) getInformation() (*Information, error) {
 func (p *Plugin) SetInformation(parsedURL *url.URL) error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
-	info, err := p.getInformation()
-	info.URL = parsedURL
 
+	info, err := p.getInformation()
 	if err != nil {
 		return fmt.Errorf("error getting plugin information: %w", err)
 	}
 
+	info.URL = parsedURL
+
+	isUpdatable, err := p.checkForPluginUpdates()
+	if err != nil {
+		return fmt.Errorf("error finding updates: %w", err)
+	}
+
+	info.Updatable = isUpdatable
 	p.info = info
 	p.status = Up
 
@@ -98,6 +108,44 @@ func (p *Plugin) SetInformation(parsedURL *url.URL) error {
 	}
 
 	return nil
+}
+
+func findPluginByName(name string, plugins []store.Plugin) *store.Plugin {
+	// for each plugin in the plugins list, check if the name matches the name of the plugin
+	for _, plugin := range plugins {
+		if plugin.Name == name {
+			return &plugin
+		}
+	}
+
+	return nil
+}
+
+func (p *Plugin) checkForPluginUpdates() (bool, error) {
+	// check if there is an element pluginInStore in storeitems that has the same name as rootItem.Name()
+	pluginList, err := store.FetchPluginList()
+	if err != nil {
+		return false, fmt.Errorf("while fetching store list: %w", err)
+	}
+
+	pluginVersion, err := version.NewVersion(p.info.Version)
+	if err != nil {
+		return false, fmt.Errorf("while parsing plugin version: %w", err)
+	}
+
+	pluginInStore := findPluginByName(p.info.Name, pluginList)
+	if pluginInStore != nil {
+		// If there is a plugin with the same name,
+		// check if the version is greater than the current one.
+		pluginInStoreVersion, err := version.NewVersion(pluginInStore.Version)
+		if err != nil {
+			return false, fmt.Errorf("while parsing plugin version: %w", err)
+		}
+
+		return pluginInStoreVersion.GreaterThan(pluginVersion), nil
+	}
+
+	return false, nil
 }
 
 func (p *Plugin) Status() Status {
@@ -223,15 +271,27 @@ func (p *Plugin) Stop() error {
 }
 
 func New(binPath string, pluginID string) (*Plugin, error) {
-	exe := ""
+	ext := ""
 	if runtime.GOOS == "windows" {
-		exe = ".exe"
+		ext = ".exe"
 	}
 
 	//nolint:exhaustruct
-	plgn := &Plugin{status: Starting, BinPath: binPath + exe, ID: pluginID, quitChan: make(chan bool)}
+	plgn := &Plugin{
+		status:   Starting,
+		BinPath:  binPath + ext,
+		ID:       pluginID,
+		quitChan: make(chan bool),
+	}
 
-	err := plgn.Start()
+	info, err := plgn.getInformation()
+	if err != nil {
+		return nil, fmt.Errorf("getting plugin information: %w", err)
+	}
+
+	plgn.info = info
+
+	err = plgn.Start()
 	if err != nil {
 		return nil, fmt.Errorf("creating plugin: %w", err)
 	}
