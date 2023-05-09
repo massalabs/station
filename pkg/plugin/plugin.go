@@ -90,10 +90,6 @@ func (p *Plugin) SetInformation(parsedURL *url.URL) error {
 
 	info.URL = parsedURL
 
-	if err != nil {
-		return fmt.Errorf("error getting plugin information: %w", err)
-	}
-
 	isUpdatable, err := p.checkForPluginUpdates()
 	if err != nil {
 		return fmt.Errorf("error finding updates: %w", err)
@@ -139,7 +135,8 @@ func (p *Plugin) checkForPluginUpdates() (bool, error) {
 
 	pluginInStore := findPluginByName(p.info.Name, pluginList)
 	if pluginInStore != nil {
-		// if there is a plugin with the same name, check if the version is greater than the current one
+		// If there is a plugin with the same name,
+		// check if the version is greater than the current one.
 		pluginInStoreVersion, err := version.NewVersion(pluginInStore.Version)
 		if err != nil {
 			return false, fmt.Errorf("while parsing plugin version: %w", err)
