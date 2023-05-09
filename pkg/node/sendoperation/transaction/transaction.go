@@ -30,7 +30,7 @@ type Transaction struct {
 func New(recipientAddress string, amount uint64) (*Transaction, error) {
 	versionedAddress, err := prepareAddress.PrepareAddress(recipientAddress)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to prepare address: %w", err)
 	}
 
 	return &Transaction{
