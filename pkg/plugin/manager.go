@@ -255,7 +255,7 @@ func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
 func (m *Manager) Install(url string) error {
 	pluginPath, err := m.DownloadPlugin(url, true)
 	if err != nil {
-		return fmt.Errorf("installing plugin at %s: %w", url, err)
+		return fmt.Errorf("downloading plugin at %s: %w", url, err)
 	}
 
 	err = m.InitPlugin(pluginPath)
