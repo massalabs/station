@@ -13,6 +13,7 @@ import (
 
 	"github.com/cavaliergopher/grab/v3"
 	"github.com/massalabs/thyra/pkg/config"
+	"github.com/massalabs/thyra/pkg/store"
 	"github.com/xyproto/unzip"
 )
 
@@ -203,13 +204,12 @@ func (m *Manager) RunAll() error {
 	return nil
 }
 
-// Install grabs a remote plugin from the given url and install it locally.
-func (m *Manager) Install(url string) error {
+func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
 	pluginsDir := Directory()
 
 	resp, err := grab.Get(pluginsDir, url)
 	if err != nil {
-		return fmt.Errorf("grabbing a plugin at %s: %w", url, err)
+		return "", fmt.Errorf("grabbing a plugin at %s: %w", url, err)
 	}
 
 	defer func() {
@@ -225,29 +225,87 @@ func (m *Manager) Install(url string) error {
 	pluginDirectory := filepath.Join(pluginsDir, pluginName)
 	pluginPath := filepath.Join(pluginDirectory, pluginName)
 
-	_, err = os.Stat(pluginDirectory)
+	if isNew {
+		_, err = os.Stat(pluginDirectory)
 
-	if os.IsNotExist(err) {
-		err := os.MkdirAll(pluginDirectory, os.ModePerm)
-		if err != nil {
-			return fmt.Errorf("creating %s plugin directory: creating folder %s: %w", archiveName, pluginDirectory, err)
-		}
-	} else {
-		if _, err = os.Stat(pluginPath); err == nil {
-			return fmt.Errorf("installing plugin in %s: Plugin Already Exists", pluginPath)
+		if os.IsNotExist(err) {
+			err := os.MkdirAll(pluginDirectory, os.ModePerm)
+			if err != nil {
+				return "", fmt.Errorf("creating plugin directory %s: %w", pluginDirectory, err)
+			}
+		} else if _, err = os.Stat(pluginPath); err == nil {
+			return "", fmt.Errorf("plugin %s already exists", pluginName)
 		}
 	}
 
 	err = unzip.Extract(resp.Filename, pluginDirectory)
 	if err != nil {
-		return fmt.Errorf("extracting the plugin at %s: %w", resp.Filename, err)
+		return "", fmt.Errorf("extracting the plugin at %s: %w", resp.Filename, err)
 	}
 
 	err = os.Rename(filepath.Join(pluginDirectory, pluginFilename), pluginPath)
+	if err != nil {
+		return "", fmt.Errorf("renaming plugin %s: %w", pluginName, err)
+	}
+
+	return pluginPath, nil
+}
+
+// Install grabs a remote plugin from the given url and install it locally.
+func (m *Manager) Install(url string) error {
+	pluginPath, err := m.DownloadPlugin(url, true)
+	if err != nil {
+		return fmt.Errorf("downloading plugin at %s: %w", url, err)
+	}
 
 	err = m.InitPlugin(pluginPath)
 	if err != nil {
-		return fmt.Errorf("running plugin %s after installation: %w", pluginName, err)
+		return fmt.Errorf("running plugin %s after installation: %w", pluginPath, err)
+	}
+
+	return nil
+}
+
+func (m *Manager) Update(correlationID string) error {
+	plgn, err := m.Plugin(correlationID)
+	if err != nil {
+		return fmt.Errorf("getting plugin %s: %w", plgn.info.Name, err)
+	}
+
+	if !plgn.info.Updatable {
+		return fmt.Errorf("plugin %s is not updatable", plgn.info.Name)
+	}
+
+	pluginList, err := store.FetchPluginList()
+	if err != nil {
+		return fmt.Errorf("while fetching store list: %w", err)
+	}
+
+	pluginInStore := findPluginByName(plgn.info.Name, pluginList)
+
+	url, _, _, err := pluginInStore.GetDLChecksumAndOs()
+	if err != nil {
+		return fmt.Errorf("while getting plugin URL of %s: %w", plgn.info.Name, err)
+	}
+
+	err = plgn.Stop()
+	if err != nil {
+		return fmt.Errorf("stopping plugin %s: %w", plgn.info.Name, err)
+	}
+
+	_, err = m.DownloadPlugin(url, false)
+	if err != nil {
+		return fmt.Errorf("downloading plugin %s: %w", plgn.info.Name, err)
+	}
+
+	err = plgn.Start()
+	if err != nil {
+		return fmt.Errorf("starting plugin %s: %w", plgn.info.Name, err)
+	}
+
+	err = plgn.SetInformation(plgn.info.URL)
+	if err != nil {
+		return fmt.Errorf("setting plugin %s information: %w", plgn.info.Name, err)
 	}
 
 	return nil

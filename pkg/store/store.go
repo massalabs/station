@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"runtime"
 	"time"
 
 	"github.com/patrickmn/go-cache"
@@ -89,4 +90,35 @@ func FetchPluginList() ([]Plugin, error) {
 	}
 
 	return plugins, nil
+}
+
+//nolint:varnamelen
+func (plugin *Plugin) GetDLChecksumAndOs() (string, string, string, error) {
+	pluginURL := ""
+	os := runtime.GOOS
+	checksum := ""
+
+	switch os {
+	case "linux":
+		pluginURL = plugin.Assets.Linux.URL
+		checksum = plugin.Assets.Linux.Checksum
+	case "darwin":
+		switch arch := runtime.GOARCH; arch {
+		case "amd64":
+			pluginURL = plugin.Assets.MacosAmd64.URL
+			checksum = plugin.Assets.MacosAmd64.Checksum
+		case "arm64":
+			pluginURL = plugin.Assets.MacosArm64.URL
+			checksum = plugin.Assets.MacosArm64.Checksum
+		default:
+			return pluginURL, os, checksum, fmt.Errorf("unsupported OS '%s' and arch '%s'", os, arch)
+		}
+	case "windows":
+		pluginURL = plugin.Assets.Windows.URL
+		checksum = plugin.Assets.Windows.Checksum
+	default:
+		return pluginURL, os, checksum, fmt.Errorf("unsupported OS '%s'", os)
+	}
+
+	return pluginURL, os, checksum, nil
 }
