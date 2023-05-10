@@ -267,8 +267,6 @@ func (m *Manager) Install(url string) error {
 }
 
 func (m *Manager) Update(correlationID string) error {
-	pluginsDir := Directory()
-
 	plgn, err := m.Plugin(correlationID)
 	if err != nil {
 		return fmt.Errorf("deleting plugin %s: %w", correlationID, err)
@@ -290,16 +288,13 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("while getting plugin URL of %s: %w", plgn.info.Name, err)
 	}
 
-	err = os.RemoveAll(filepath.Join(pluginsDir, plgn.info.Name))
-	if err != nil {
-		return fmt.Errorf("updating plugin %s: %w", plgn.info.Name, err)
-	}
+	plgn.Stop()
 
 	_, err = m.DownloadPlugin(url, false)
 	if err != nil {
 		return fmt.Errorf("updating plugin %s: %w", plgn.info.Name, err)
 	}
-
+	plgn.Start()
 	err = plgn.SetInformation(plgn.info.URL)
 	if err != nil {
 		return fmt.Errorf("setting plugin %s information: %w", plgn.info.Name, err)
