@@ -269,11 +269,11 @@ func (m *Manager) Install(url string) error {
 func (m *Manager) Update(correlationID string) error {
 	plgn, err := m.Plugin(correlationID)
 	if err != nil {
-		return fmt.Errorf("getting plugin %s: %w", correlationID, err)
+		return fmt.Errorf("getting plugin %s: %w", plgn.info.Name, err)
 	}
 
 	if !plgn.info.Updatable {
-		return fmt.Errorf("plugin %s is not updatable", correlationID)
+		return fmt.Errorf("plugin %s is not updatable", plgn.info.Name)
 	}
 
 	pluginList, err := store.FetchPluginList()
