@@ -287,7 +287,7 @@ func (m *Manager) Update(correlationID string) error {
 
 	url, _, _, err := pluginInStore.GetDLChecksumAndOs()
 	if err != nil {
-		return fmt.Errorf("while fetching plugin %s: %w", plgn.info.Name, err)
+		return fmt.Errorf("while getting plugin URL of %s: %w", plgn.info.Name, err)
 	}
 
 	err = os.RemoveAll(filepath.Join(pluginsDir, plgn.info.Name))
