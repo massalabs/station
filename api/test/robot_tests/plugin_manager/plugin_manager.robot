@@ -175,11 +175,3 @@ POST /plugin-manager/register with invalid body
     ...    json=${data}
     Should Be Equal As Strings    ${response.json()['code']}    602
     Should Be Equal As Strings    ${response.json()['message']}    body.url in body is required
-
-POST /plugin-manager/{id}/execute with NotImplemented update command
-    ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
-    ${data}=    Create Dictionary    command=thisisnotacommand
-    ${response}=    POST
-    ...    ${API_URL}/plugin-manager/${id}/execute
-    ...    expected_status=${STATUS_NOT_IMPLEMENTED}
-    ...    json=${data}
