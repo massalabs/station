@@ -269,7 +269,7 @@ func (m *Manager) Install(url string) error {
 func (m *Manager) Update(correlationID string) error {
 	plgn, err := m.Plugin(correlationID)
 	if err != nil {
-		return fmt.Errorf("deleting plugin %s: %w", correlationID, err)
+		return fmt.Errorf("getting plugin %s: %w", correlationID, err)
 	}
 
 	if !plgn.info.Updatable {
@@ -288,13 +288,21 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("while getting plugin URL of %s: %w", plgn.info.Name, err)
 	}
 
-	plgn.Stop()
+	err = plgn.Stop()
+	if err != nil {
+		return fmt.Errorf("stopping plugin %s: %w", plgn.info.Name, err)
+	}
 
 	_, err = m.DownloadPlugin(url, false)
 	if err != nil {
-		return fmt.Errorf("updating plugin %s: %w", plgn.info.Name, err)
+		return fmt.Errorf("downloading plugin %s: %w", plgn.info.Name, err)
 	}
-	plgn.Start()
+
+	err = plgn.Start()
+	if err != nil {
+		return fmt.Errorf("starting plugin %s: %w", plgn.info.Name, err)
+	}
+
 	err = plgn.SetInformation(plgn.info.URL)
 	if err != nil {
 		return fmt.Errorf("setting plugin %s information: %w", plgn.info.Name, err)
