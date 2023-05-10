@@ -310,9 +310,3 @@ func (m *Manager) Update(correlationID string) error {
 
 	return nil
 }
-
-func (m *Manager) Update(correlationID string) error {
-	log.Println("Updating plugin", correlationID)
-
-	return nil
-}
