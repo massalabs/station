@@ -32,7 +32,7 @@ func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 		pluginURL, os, checksum, err := plugin.GetDLChecksumAndOs()
 		if err != nil {
 			return operations.NewPluginManagerListInternalServerError().WithPayload(
-				&models.Error{Code: errorCodeFetchStore, Message: fmt.Sprintf("fetch store plugin list: %s", err.Error())})
+				&models.Error{Code: errorCodeFetchStore, Message: fmt.Sprintf("Error getting OS info: %s", err.Error())})
 		}
 
 		plugin := plugin
