@@ -9,6 +9,9 @@ import (
 	"runtime"
 	"sync"
 	"time"
+>>>>>>> 36c0406 (simplified check for update
+>>>>>>> 36c0406 (simplified check for update
+>>>>>>> 36c0406 (simplified check for update
 
 	"github.com/hashicorp/go-version"
 	"github.com/patrickmn/go-cache"
