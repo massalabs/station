@@ -23,8 +23,9 @@ type Plugin struct {
 		MacosArm64 File `json:"macos-arm64"`
 		MacosAmd64 File `json:"macos-amd64"`
 	} `json:"assets"`
-	Version string `json:"version"`
-	URL     string `json:"url"`
+	Version             string `json:"version"`
+	URL                 string `json:"url"`
+	MassaStationVersion string `json:"massaStationVersion"`
 }
 
 type File struct {
