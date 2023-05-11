@@ -39,17 +39,19 @@ jobs:
             arch: arm64
             target: darwin
     runs-on: ${{ matrix.os }}
+    env:
+      VERSION: dev
     steps:
       - uses: actions/checkout@v3
       - name: installing dependencies
         uses: ./.github/actions/install
         with:
           os: ${{ matrix.os }}
-      - name: Update version for a release
+      - name: set env variable VERSION as the tagname given
         if: ${{ inputs.tag_name != '' }}
-        run: echo -e "${{ inputs.tag_name }}" > cmd/thyra-server/version.txt
+        run: export VERSION=${{ inputs.tag_name }}
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
-        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
+        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 go build -ldflags "-X github.com/massalabs/thyra/pkg/config.Version=${{env.VERSION}}" -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
       - name: Create release and upload binaries
         if: ${{ inputs.tag_name != '' }}
         uses: softprops/action-gh-release@v1
