@@ -7,7 +7,7 @@ import (
 )
 
 //nolint:gochecknoglobals
-var Version string
+var Version = "dev"
 
 func GetConfigDir() (string, error) {
 	homeDir, err := os.UserHomeDir()
