@@ -1,4 +1,5 @@
 *.exe
+thyra-server
 
 *.log
 *.spec
