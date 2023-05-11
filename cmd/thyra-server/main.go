@@ -11,9 +11,6 @@ import (
 	"github.com/massalabs/thyra/pkg/config"
 )
 
-//go:embed version.txt
-var version string
-
 func createDirectoryIfNotExists(dir string) {
 	const dirPerm = 0o755
 
@@ -59,7 +56,7 @@ func ParseFlags() api.StartServerFlags {
 func main() {
 	flags := ParseFlags()
 	if flags.Version {
-		log.Println("Version:", version)
+		log.Println("Version:", config.Version)
 		os.Exit(0)
 	}
 
