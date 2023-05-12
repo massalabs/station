@@ -23,7 +23,14 @@ jobs:
       - name: Build thyra binary
         run: GOOS=linux GOARCH=amd64 CGO_ENABLED=1 CC=gcc CXX=g++ go build cmd/thyra-server/main.go
       - name: Prepare thyra to be runned
-        run: mkdir /home/runner/.config/thyra && sudo setcap CAP_NET_BIND_SERVICE=+eip ./main && sudo apt install xvfb
+        run: |
+          sudo mkdir -p /usr/local/share/massastation/
+          sudo chmod 777 /usr/local/share/massastation/
+          mkdir -p /usr/local/share/massastation/plugins/wallet-plugin
+          sudo mkdir -p /etc/massastation/certs
+          sudo chmod 777 /etc/massastation/
+          sudo setcap CAP_NET_BIND_SERVICE=+eip ./main
+          sudo apt install xvfb
       - name: Running thyra
         run: xvfb-run ./main --node-server $NODE_SERVER &
       - name: Define my.massa
@@ -58,8 +65,12 @@ jobs:
         run: go build cmd/thyra-server/main.go
       - name: Create wallet from secret
         run: |
-          mkdir -p $HOME/.config/thyra/plugins/wallet-plugin
-          echo "$WALLET_TEST_WALLET" > $HOME/.config/thyra/plugins/wallet-plugin/wallet_rftest.yml
+          sudo mkdir -p /usr/local/share/massastation/
+          sudo chmod 777 /usr/local/share/massastation/
+          mkdir -p /usr/local/share/massastation/plugins/wallet-plugin
+          sudo mkdir -p /etc/massastation/certs
+          sudo chmod 777 /etc/massastation/
+          echo "$WALLET_TEST_WALLET" > /usr/local/share/massastation/plugins/wallet-plugin/wallet_rftest.yml
         env:
           WALLET_TEST_WALLET: ${{ secrets.WALLET_TEST_WALLET }}
       - name: Prepare thyra to be runned
