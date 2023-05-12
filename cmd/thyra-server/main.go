@@ -28,7 +28,7 @@ func ParseFlags() api.StartServerFlags {
 
 	certDir, err := config.GetCertDir()
 	if err != nil {
-		log.Fatalln("Unable to read cert dir:", certDir, ":", err,
+		log.Fatalln("Unable to read cert dir:", err,
 			`MassaStation can't run without a certificate directory.
 			Please reinstall MassaStation using the installer at https://github.com/massalabs/thyra and try again.`,
 		)

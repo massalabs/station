@@ -25,7 +25,7 @@ func getConfigDir() (string, error) {
 func getCertDir() (string, error) {
 	confDir, err := getConfigDir()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("getting config directory: %w", err)
 	}
 
 	certDir := path.Join(confDir, "certs")

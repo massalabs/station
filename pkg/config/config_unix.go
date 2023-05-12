@@ -19,7 +19,6 @@ func getConfigDir() (string, error) {
 
 	_, err := os.Stat(path)
 	if err != nil {
-		// Try to create the directory
 		err = os.MkdirAll(path, directoryPermissions)
 		if err != nil {
 			return "", fmt.Errorf("creating config directory: %w", err)
