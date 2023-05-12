@@ -11,18 +11,6 @@ import (
 	"github.com/massalabs/thyra/pkg/config"
 )
 
-func createDirectoryIfNotExists(dir string) {
-	const dirPerm = 0o755
-
-	_, err := os.Stat(dir)
-	if err != nil {
-		err = os.MkdirAll(dir, dirPerm)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-}
-
 func ParseFlags() api.StartServerFlags {
 	const httpPort = 80
 
@@ -30,11 +18,19 @@ func ParseFlags() api.StartServerFlags {
 
 	var flags api.StartServerFlags
 
-	configDir, _ := config.GetConfigDir()
-	createDirectoryIfNotExists(configDir)
+	_, err := config.GetConfigDir()
+	if err != nil {
+		log.Fatalln("Unable to read config dir:", err)
+		log.Fatalln("MassaStation can't run without a config directory.")
+		log.Fatalln("Please reinstall MassaStation using the installer at https://github.com/massalabs/thyra and try again.")
+	}
 
-	certDir := path.Join(configDir, "certs")
-	createDirectoryIfNotExists(certDir)
+	certDir, err := config.GetCertDir()
+	if err != nil {
+		log.Fatalln("Unable to read cert dir:", certDir, ":", err)
+		log.Fatalln("MassaStation can't run without a certificate directory.")
+		log.Fatalln("Please reinstall MassaStation using the installer at https://github.com/massalabs/thyra and try again.")
+	}
 
 	defaultCertFile := path.Join(certDir, "cert.pem")
 	defaultCertKeyFile := path.Join(certDir, "cert-key.pem")

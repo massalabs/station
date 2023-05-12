@@ -3,19 +3,16 @@ package config
 import (
 	"errors"
 	"os"
-	"path"
 )
 
 //nolint:gochecknoglobals
 var Version = "dev"
 
 func GetConfigDir() (string, error) {
-	homeDir, err := os.UserHomeDir()
+	confDir, err := getConfigDir()
 	if err != nil {
-		return "", errors.New("Unable to get user home dir: " + err.Error())
+		return "", err
 	}
-
-	confDir := path.Join(homeDir, ".config", "thyra")
 
 	_, err = os.Stat(confDir)
 	if err != nil {
@@ -23,4 +20,18 @@ func GetConfigDir() (string, error) {
 	}
 
 	return confDir, nil
+}
+
+func GetCertDir() (string, error) {
+	certDir, err := getCertDir()
+	if err != nil {
+		return "", err
+	}
+
+	_, err = os.Stat(certDir)
+	if err != nil {
+		return "", errors.New("Unable to read cert dir: " + certDir + ": " + err.Error())
+	}
+
+	return certDir, nil
 }
