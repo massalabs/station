@@ -8,6 +8,7 @@ import (
 //nolint:gochecknoglobals
 var Version = "dev"
 
+// GetConfigDir returns the config directory for the current OS.
 func GetConfigDir() (string, error) {
 	confDir, err := getConfigDir()
 	if err != nil {
@@ -22,6 +23,7 @@ func GetConfigDir() (string, error) {
 	return confDir, nil
 }
 
+// GetCertDir returns the cert directory for the current OS.
 func GetCertDir() (string, error) {
 	certDir, err := getCertDir()
 	if err != nil {
