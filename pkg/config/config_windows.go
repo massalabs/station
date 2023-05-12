@@ -1,8 +1,10 @@
 package config
 
 import (
-	"errors"
+	"fmt"
 	"os"
+	"path"
+	"path/filepath"
 )
 
 // getConfigDir returns the config directory for the current OS.

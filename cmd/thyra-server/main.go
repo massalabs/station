@@ -20,16 +20,18 @@ func ParseFlags() api.StartServerFlags {
 
 	_, err := config.GetConfigDir()
 	if err != nil {
-		log.Fatalln("Unable to read config dir:", err)
-		log.Fatalln("MassaStation can't run without a config directory.")
-		log.Fatalln("Please reinstall MassaStation using the installer at https://github.com/massalabs/thyra and try again.")
+		log.Fatalln("Unable to read config dir:", err,
+			`MassaStation can't run without a config directory.
+			Please reinstall MassaStation using the installer at https://github.com/massalabs/thyra and try again.`,
+		)
 	}
 
 	certDir, err := config.GetCertDir()
 	if err != nil {
-		log.Fatalln("Unable to read cert dir:", certDir, ":", err)
-		log.Fatalln("MassaStation can't run without a certificate directory.")
-		log.Fatalln("Please reinstall MassaStation using the installer at https://github.com/massalabs/thyra and try again.")
+		log.Fatalln("Unable to read cert dir:", certDir, ":", err,
+			`MassaStation can't run without a certificate directory.
+			Please reinstall MassaStation using the installer at https://github.com/massalabs/thyra and try again.`,
+		)
 	}
 
 	defaultCertFile := path.Join(certDir, "cert.pem")

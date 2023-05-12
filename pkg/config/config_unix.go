@@ -1,9 +1,15 @@
+//go:build unix
+
 package config
 
 import (
 	"fmt"
 	"os"
 	"path"
+)
+
+const (
+	directoryPermissions = 0o755
 )
 
 // getConfigDir returns the config directory for the current OS.
@@ -14,7 +20,7 @@ func getConfigDir() (string, error) {
 	_, err := os.Stat(path)
 	if err != nil {
 		// Try to create the directory
-		err = os.MkdirAll(path, 0755)
+		err = os.MkdirAll(path, directoryPermissions)
 		if err != nil {
 			return "", fmt.Errorf("creating config directory: %w", err)
 		}
