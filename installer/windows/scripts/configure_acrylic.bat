@@ -30,6 +30,10 @@ ECHO ::1 *.massa >> "%acrylic_config%"
 :: Restart the Acrylic DNS Proxy Service
 NET STOP "AcrylicDNSProxySvc"
 NET START "AcrylicDNSProxySvc"
+if %errorlevel% NEQ 0 (
+    ECHO "Failed to restart Acrylic DNS Proxy Service"
+    EXIT 1
+)
 
 ENDLOCAL
 
