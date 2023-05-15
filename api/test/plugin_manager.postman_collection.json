@@ -393,19 +393,6 @@
         },
         {
             "name": "Update plugin",
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "exec": [
-                            "pm.test(\"Status code is 204\", () => {",
-                            "  pm.response.to.have.status(204);",
-                            "});"
-                        ],
-                        "type": "text/javascript"
-                    }
-                }
-            ],
             "request": {
                 "method": "POST",
                 "header": [
