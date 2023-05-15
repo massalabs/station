@@ -1,0 +1,4 @@
+[FORMAT]
+
+# Regexp to allow https links in docstrings, comments, etc.
+ignore-long-lines=^\s*(# )?<?https?://\S+>?$|^\s*(\w*\s*=\s*)?(\"|\').*(\"|\'),?\s*$
