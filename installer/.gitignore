@@ -5,6 +5,7 @@ wixtoolset/
 # Temporary files
 *.zip
 *.log
+*.wixpdb
 
 # MacOS
 .DS_Store
