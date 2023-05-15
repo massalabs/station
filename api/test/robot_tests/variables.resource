@@ -1,7 +1,7 @@
 *** Variables ***
 ${API_URL}=                         http://my.massa
 
-${WALLET_NICKNAME}=                 rf-test
+${WALLET_NICKNAME}=                 rftest
 
 ${STATUS_OK}=                       200
 ${STATUS_CREATED}=                  201
