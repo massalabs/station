@@ -15,8 +15,7 @@ import zipfile
 BUILD_DIR = "buildmsi"
 FORCE_BUILD = False
 
-VERSION = "dev"
-PKG_NAME = f"massastation_{VERSION}_amd64.msi"
+VERSION = "0.0.0"
 
 # Binaries to be included in the installer
 SERVER_BINARIES = "massastation-server.exe"
@@ -75,7 +74,7 @@ def create_wxs_file():
     the UI configuration, and the custom actions to be executed.
     """
     wxs_content = f"""<?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
     <Product
         Id="*"
         UpgradeCode="966ecd3d-a30f-4909-a0b4-0df045930e7d"
@@ -88,6 +87,11 @@ def create_wxs_file():
             InstallerVersion="200"
             Compressed="yes"
             InstallScope="perMachine"
+        />
+        <MajorUpgrade
+            Schedule="afterInstallInitialize"
+            DowngradeErrorMessage="A later version of [ProductName] is already installed"
+            AllowSameVersionUpgrades="yes"
         />
 
         <MediaTemplate EmbedCab="yes"/>
@@ -115,6 +119,18 @@ def create_wxs_file():
                         <File Id="NICConfigScript" Name="{NIC_CONFIG_SCRIPT}" Source="{BUILD_DIR}\\{NIC_CONFIG_SCRIPT}" />
                         <File Id="GenCertScript" Name="{GEN_CERT_SCRIPT}" Source="{BUILD_DIR}\\{GEN_CERT_SCRIPT}" />
                     </Component>
+                    <Directory Id="MassaStationCerts" Name="certs">
+                        <Component Id="CreateCertsDir" Guid="e96619b3-48a7-4629-8a19-e1c8270b331c">
+                            <CreateFolder />
+                        </Component>
+                    </Directory>
+                    <Directory Id="MassaStationPlugins" Name="plugins">
+                        <Component Id="CreatePluginsDir" Guid="130fb4bb-cb51-4e28-a5e4-b7c58c846e02">
+                            <CreateFolder>
+                                <util:PermissionEx User="Users" GenericAll="yes"/>
+                            </CreateFolder>
+                        </Component>
+                    </Directory>
                 </Directory>
                 <Directory Id="AcrylicDNSProxy" Name="Acrylic DNS Proxy">
                     <Component Id="Acrylic" Guid="563952aa-5f05-4c00-b3e0-6c004c36dc77">
@@ -128,6 +144,8 @@ def create_wxs_file():
 
         <Feature Id="MainApplication" Title="Main Application" Level="1">
             <ComponentRef Id="MassaStationServer" />
+            <ComponentRef Id="CreateCertsDir" />
+            <ComponentRef Id="CreatePluginsDir" />
         </Feature>
 
         <Feature Id="Acrylic" Title="Acrylic DNS Proxy" Level="1">
@@ -191,8 +209,8 @@ def create_wxs_file():
         />
 
         <InstallExecuteSequence>
-            <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed</Custom>
-            <Custom Action="InstallAcrylic" Before="ConfigureAcrylic">NOT Installed</Custom>
+            <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed AND NOT UpgradeCode</Custom>
+            <Custom Action="InstallAcrylic" Before="ConfigureAcrylic">NOT Installed AND NOT UpgradeCode</Custom>
             <Custom Action="ConfigureAcrylic" Before="ConfigureNetworkInterface">NOT Installed</Custom>
             <Custom Action="ConfigureNetworkInterface" Before="GenerateCertificate">NOT Installed</Custom>
             <Custom Action="GenerateCertificate" Before="DeleteAcrylicZip">NOT Installed</Custom>
@@ -233,6 +251,8 @@ def build_installer():
                 os.path.join(WIX_DIR, "candle.exe"),
                 "-ext",
                 "WixUIExtension",
+                "-ext",
+                "WixUtilExtension",
                 "-out",
                 os.path.join(BUILD_DIR, "config.wixobj"),
                 os.path.join(BUILD_DIR, "config.wxs"),
@@ -244,14 +264,19 @@ def build_installer():
                 os.path.join(WIX_DIR, "light.exe"),
                 "-ext",
                 "WixUIExtension",
+                "-ext",
+                "WixUtilExtension",
                 "-sval",
                 "-out",
-                PKG_NAME,
+                f"massastation_{VERSION}_amd64.msi",
                 os.path.join(BUILD_DIR, "config.wixobj"),
             ],
             check=True,
         )
     except subprocess.CalledProcessError as err:
+        print("Error building installer: ", err)
+        sys.exit(1)
+    except err:
         print(err)
         sys.exit(1)
 
