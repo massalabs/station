@@ -1,0 +1,14 @@
+# Temporary directories
+buildmsi/
+wixtoolset/
+
+# Temporary files
+*.zip
+*.log
+
+# MacOS
+.DS_Store
+
+# Binaries
+*.exe
+*.msi
