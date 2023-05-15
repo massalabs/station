@@ -186,7 +186,7 @@ def create_wxs_file():
             Directory="TempDir"
             ExeCommand="cmd /c &quot;[INSTALLDIR]{GEN_CERT_SCRIPT}&quot;"
             Execute="deferred"
-            Impersonate="yes"
+            Impersonate="no"
             Return="check"
         />
 

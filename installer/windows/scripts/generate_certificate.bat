@@ -10,8 +10,11 @@ curl -L "https://dl.filippo.io/mkcert/latest?for=windows/amd64" --output mkcert.
 :: Install the local CA
 mkcert.exe --install
 
+:: Get the install directory from the script path
+SET INSTALL_DIR=%~dp0..
+
 :: Make sure the config directory exists
-SET CONFIG_DIR=%homedrive%%homepath%\.config\thyra\certs
+SET CONFIG_DIR=%INSTALL_DIR%\certs
 IF NOT EXIST "%CONFIG_DIR%" (
     MKDIR "%CONFIG_DIR%"
 )
