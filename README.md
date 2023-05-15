@@ -31,7 +31,7 @@ Accepts a URL, an IP address or one of the following values :
 
 - TESTNET : Uses Massa's testnet
 - LABNET : Uses Massa's labnet
-- INNONET : Uses Massa's innonet
+- BUILDNET : Uses Massa's buildnet
 - LOCALHOST : Expect Massa's network to be hosted at 127.0.0.1
 
 To use this option with a constant, you have to execute :
