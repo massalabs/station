@@ -3,7 +3,7 @@
 # This script generates a .deb file for the installation of MassaStation on a Debian-based Linux distribution.
 
 BUILD_DIR=builddeb
-PKGVERSION=0.1.0 # TODO: Get it from git tag?
+PKGVERSION=dev
 
 DEB_NAME=massastation_$PKGVERSION\_amd64.deb
 SERVER_BINARY_NAME=massastation-server
@@ -65,7 +65,12 @@ EOF
 
     cp deb/scripts/postinst $BUILD_DIR/DEBIAN
 
-    dpkg-deb --build $BUILD_DIR $DEB_NAME
+    dpkg-deb --build $BUILD_DIR massastation_$PKGVERSION\_amd64.deb
 }
+
+# Check if $VERSION is set and set $PKGVERSION to $VERSION.
+if [ ! -z "$VERSION" ]; then
+    PKGVERSION=$VERSION
+fi
 
 main
