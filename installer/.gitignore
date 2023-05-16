@@ -1,0 +1,14 @@
+# Temporary directories
+buildpkg/
+
+# Temporary files
+*.zip
+*.log
+massastation-app
+massastation-server
+
+# MacOS
+.DS_Store
+
+# Binaries
+*.pkg
