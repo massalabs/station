@@ -3,7 +3,7 @@
 # This script generates a .pkg file for the installation of MassaStation on Mac OS.
 
 BUILD_DIR=buildpkg
-PKGVERSION=0.1.0 # TODO: Get it from git tag?
+PKGVERSION=dev
 ARCH=$1
 
 PKG_NAME=massastation_$PKGVERSION\_$ARCH
@@ -69,10 +69,8 @@ if [ "$ARCH" != "amd64" ] && [ "$ARCH" != "arm64" ]; then
     display_usage
 fi
 
-# Check if $VERSION is set and set $PKGVERSION to $VERSION. If not, set $PKGVERSION to "dev". 
-if [ -z "$VERSION" ]; then
-    PKGVERSION="dev"
-else
+# Check if $VERSION is set and set $PKGVERSION to $VERSION.
+if [ ! -z "$VERSION" ]; then
     PKGVERSION=$VERSION
 fi
 
