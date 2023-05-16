@@ -76,6 +76,6 @@ mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/plugins || fatal "plugins directory cre
 
 ping -c 1 -t 1 test.massa >/dev/null 2>&1 || set_local_dns || fatal "DNS configuration failed."
 
-if [[ ! -f $MASSASTATION_CONFIG_DIR/certs/cert.pem || ! -f $MASSASTATION_CONFIG_DIR/certs/cert-key.pem ]]; then
+if [[ ! -f $MASSASTATION_CERT_DIR/cert.pem || ! -f $MASSASTATION_CERT_DIR/cert-key.pem ]]; then
     generate_certificate || fatal "certificate generation failed."
 fi
