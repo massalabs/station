@@ -1,26 +1,39 @@
 package config
 
 import (
-	"errors"
+	"fmt"
 	"os"
-	"path"
 )
 
 //nolint:gochecknoglobals
 var Version = "dev"
 
+// GetConfigDir returns the config directory for the current OS.
 func GetConfigDir() (string, error) {
-	homeDir, err := os.UserHomeDir()
+	confDir, err := getConfigDir()
 	if err != nil {
-		return "", errors.New("Unable to get user home dir: " + err.Error())
+		return "", err
 	}
-
-	confDir := path.Join(homeDir, ".config", "thyra")
 
 	_, err = os.Stat(confDir)
 	if err != nil {
-		return "", errors.New("Unable to read config dir: " + confDir + ": " + err.Error())
+		return "", fmt.Errorf("unable to read config directory: %s: %w", confDir, err)
 	}
 
 	return confDir, nil
+}
+
+// GetCertDir returns the cert directory for the current OS.
+func GetCertDir() (string, error) {
+	certDir, err := getCertDir()
+	if err != nil {
+		return "", err
+	}
+
+	_, err = os.Stat(certDir)
+	if err != nil {
+		return "", fmt.Errorf("unable to read cert directory: %s: %w", certDir, err)
+	}
+
+	return certDir, nil
 }

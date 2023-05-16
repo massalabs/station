@@ -1,4 +1,5 @@
 import logging
+import os
 import platform
 
 from installer import Installer
@@ -8,7 +9,13 @@ class MacOSInstaller(Installer):
         super().__init__()
         self.THYRA_SERVER_FILENAME = "thyra-server"
         self.THYRA_APP_FILENAME = "thyra-app"
+
+        self.THYRA_CONFIG_FOLDER_PATH = "/usr/local/share/massastation"
+        self.THYRA_PLUGINS_PATH = "/usr/local/share/massastation/plugins"
+        self.CERTIFICATIONS_FOLDER_PATH = "/etc/massastation/certs"
         self.MKCERT_FILENAME = "mkcert"
+
+        self.SUDO_INSTALLATION = True
 
         if platform.machine() == "arm64":
             self.THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_arm64"
@@ -82,6 +89,9 @@ class MacOSInstaller(Installer):
         stdout, _ = self.executeCommand("find /Applications/ -type d -iname '*Firefox*.app'", True, allow_failure=True)
         if stdout and "Firefox" in stdout:
             self.executeCommand("brew install nss", True)
+
+        if not os.path.exists(self.CERTIFICATIONS_FOLDER_PATH):
+            self.executeCommand(f"sudo mkdir -p {self.CERTIFICATIONS_FOLDER_PATH}", True)
 
         super().generateCACertificate()
 

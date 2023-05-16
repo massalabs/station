@@ -43,6 +43,8 @@ class Installer:
     CERTIFICATION_FILENAME = "cert.pem"
     CERTIFICATION_KEY_FILENAME = "cert-key.pem"
 
+    SUDO_INSTALLATION = False
+
     def __init__(self):
         pass
 
@@ -57,8 +59,13 @@ class Installer:
     """
     Executes the command given in parameter and returns the output of the command
     """
-    def executeCommand(self, command, shell=False, allow_failure=False) -> tuple[str, str]:
+    def executeCommand(self, command, shell=False, allow_failure=False, sudo=False) -> tuple[str, str]:
         logging.debug(f'Executing command: {command}')
+        if sudo:
+            logging.debug(f'Command will be executed with sudo:')
+            command.insert(0, "sudo")
+            logging.debug(f'Command with sudo: {command}')
+
         try:
             process = subprocess.Popen(command, shell=shell,
                 stdout=subprocess.PIPE,
@@ -82,15 +89,20 @@ class Installer:
     """
     Downloads the file at the given url and saves it to the given filename
     """
-    def downloadFile(self, url, filename):
+    def downloadFile(self, url, filename, sudo=False):
         logging.debug(f'Downloading {filename} from {url}')
         try:
-            sslContext = None
-            if platform.system() != "Windows":
-                import certifi
-                sslContext = ssl.create_default_context(cafile=certifi.where()) 
-            with urllib.request.urlopen(url, context=sslContext) as response, open(filename, 'wb') as out_file:
-                shutil.copyfileobj(response, out_file)
+            if sudo:
+                self.executeCommand(["sudo", "rm", "-f", filename])
+                self.executeCommand(["sudo", "curl", "-sL", url, "-o", filename])
+                self.executeCommand(["sudo", "chmod", "644", filename])
+            else:
+                sslContext = None
+                if platform.system() != "Windows":
+                    import certifi
+                    sslContext = ssl.create_default_context(cafile=certifi.where()) 
+                with urllib.request.urlopen(url, context=sslContext) as response, open(filename, 'wb') as out_file:
+                    shutil.copyfileobj(response, out_file)
         except URLError as err:
             logging.info("Failed to download " + filename + " :")
             self.printErrorAndExit(err)
@@ -127,7 +139,10 @@ class Installer:
 
         if not os.path.exists(self.CERTIFICATIONS_FOLDER_PATH):
             try:
-                os.makedirs(self.CERTIFICATIONS_FOLDER_PATH)
+                if self.SUDO_INSTALLATION:
+                    self.executeCommand(["sudo", "mkdir", "-p", self.CERTIFICATIONS_FOLDER_PATH])
+                else:
+                    os.makedirs(self.CERTIFICATIONS_FOLDER_PATH)
             except OSError as err:
                 self.printErrorAndExit(f"Error while creating certs folder: {err}")
 
@@ -136,7 +151,7 @@ class Installer:
 
         stdout, stderr = self.executeCommand([
             os.path.join(os.getcwd(), self.MKCERT_FILENAME), 
-            "--install"])
+            "--install"], sudo=self.SUDO_INSTALLATION)
         if stderr is not None and len(stderr) > 0:
             logging.info(stderr)
 
@@ -144,9 +159,13 @@ class Installer:
             os.path.join(os.getcwd() , self.MKCERT_FILENAME),
             "--cert-file", os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_FILENAME),
             "--key-file", os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_KEY_FILENAME),
-            "my.massa"])
+            "my.massa"], sudo=self.SUDO_INSTALLATION)
         if stderr is not None and len(stderr) > 0:
             logging.info(stderr)
+
+        if self.SUDO_INSTALLATION:
+            self.executeCommand(["sudo", "chmod", "644", os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_FILENAME)])
+            self.executeCommand(["sudo", "chmod", "644", os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_KEY_FILENAME)])
 
         try:
             os.remove(self.MKCERT_FILENAME)
@@ -197,12 +216,20 @@ class Installer:
         logging.info("Creating config folder")
         if not os.path.exists(self.THYRA_CONFIG_FOLDER_PATH):
             try:
-                os.makedirs(self.THYRA_CONFIG_FOLDER_PATH)
+                if self.SUDO_INSTALLATION:
+                    self.executeCommand(["sudo", "mkdir", "-p", self.THYRA_CONFIG_FOLDER_PATH])
+                    self.executeCommand(["sudo", "chmod", "777", self.THYRA_CONFIG_FOLDER_PATH])
+                else:
+                    os.makedirs(self.THYRA_CONFIG_FOLDER_PATH)
             except OSError as err:
                 self.printErrorAndExit(f"Error while creating config folder: {err}")
         if not os.path.exists(self.THYRA_PLUGINS_PATH):
             try:
-                os.makedirs(self.THYRA_PLUGINS_PATH)
+                if self.SUDO_INSTALLATION:
+                    self.executeCommand(["sudo", "mkdir", "-p", self.THYRA_PLUGINS_PATH])
+                    self.executeCommand(["sudo", "chmod", "777", self.THYRA_PLUGINS_PATH])
+                else:
+                    os.makedirs(self.THYRA_PLUGINS_PATH)
             except OSError as err:
                 self.printErrorAndExit(f"Error while creating config folder: {err}")
 
@@ -212,7 +239,7 @@ class Installer:
 
         if not os.path.exists(path_to_binary):
             path_to_zip = os.path.join(self.THYRA_PLUGINS_PATH, self.THYRA_WALLET_ZIP_FILENAME)
-            self.downloadFile(self.THYRA_WALLET_PLUGIN_URL, path_to_zip)
+            self.downloadFile(self.THYRA_WALLET_PLUGIN_URL, path_to_zip, self.SUDO_INSTALLATION)
             ZipFile(path_to_zip).extractall(path_to_plugin_folder)
             self._deleteFile(path_to_zip)
             path_to_binary_filename = os.path.join(path_to_plugin_folder, self.THYRA_WALLET_BINARY_FILENAME)
