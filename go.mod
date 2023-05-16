@@ -22,7 +22,7 @@ require (
 
 require (
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/stretchr/testify v1.8.0 // indirect
+	github.com/stretchr/testify v1.8.0
 )
 
 require (
