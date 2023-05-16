@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Postinstall script for MassaStation installer on Linux
+# It configures dnsmasq to resolve .massa domains to localhost and generates a certificate for MassaStation.
+
+# Set MassaStation configuration directories.
+export MASSASTATION_CONFIG_DIR=/usr/local/share/massastation
+export MASSASTATION_CERT_DIR=/etc/massastation/certs
+
+
+# Print error message to stderr and exit with code 1.
+fatal() {
+    echo "FATAL: $1"
+    exit 1
+}
+
+# Configure NetworkManager to use dnsmasq.
+# If dns=dnsmasq is already set, do nothing.
+# if dns is set to something else, replace it using sed.
+configure_network_manager() {
+    cp /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf.bak_massa || fatal "Failed to backup NetworkManager.conf."
+
+    local dns="$(grep '^dns=' /etc/NetworkManager/NetworkManager.conf | sed 's/^dns=//')"
+    case "$dns" in
+        dnsmasq) ;;
+        "") sed -i 's/^\[main\]$/\[main\]\ndns=dnsmasq/g' /etc/NetworkManager/NetworkManager.conf || fatal "Failed to configure NetworkManager." ;;
+        *) sed -i 's/^dns=.*/dns=dnsmasq/' /etc/NetworkManager/NetworkManager.conf || fatal "Failed to configure NetworkManager." ;;
+    esac
+}
+
+# Configure dnsmasq to resolve .massa domains to localhost.
+configure_dnsmasq() {
+    mkdir -p /etc/NetworkManager/dnsmasq.d/ || fatal "Failed to create dnsmasq.d directory."
+    echo "address=/.massa/127.0.0.1" > /etc/NetworkManager/dnsmasq.d/massa.conf || fatal "Failed to configure dnsmasq."
+}
+
+# Update /etc/resolv.conf to use dnsmasq.
+update_resolv_conf() {
+    mv /etc/resolv.conf /etc/resolv.conf.bak_massa || fatal "Failed to backup resolv.conf."
+
+    ln -s /var/run/NetworkManager/resolv.conf /etc/resolv.conf || fatal "Failed to update resolv.conf."
+    systemctl restart NetworkManager || fatal "dnsmasq service failed to restart"
+}
+
+# Install dnsmasq and configure it to resolve .massa domains to localhost.
+set_local_dns() {
+    case $(lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//') in
+        "") (configure_network_manager || fatal "Failed to configure NetworkManager.") && (configure_dnsmasq || fatal "Failed to configure dnsmasq.") && (update_resolv_conf || fatal "Failed to update resolv.conf.") ;;
+        dnsmasq) (configure_dnsmasq || fatal "Failed to configure dnsmasq.") && (update_resolv_conf || fatal "Failed to update resolv.conf.") ;;
+        systemd-r) (configure_network_manager || fatal "Failed to configure NetworkManager.") && (configure_dnsmasq || fatal "Failed to configure dnsmasq.") && (update_resolv_conf || fatal "Failed to update resolv.conf.") ;;
+        *) fatal "Unsupported DNS server" ;;
+    esac
+    echo "DNS configuration complete."
+}
+
+# Create MassaStation configuration directories.
+mkdir -m 777 -p $MASSASTATION_CONFIG_DIR || fatal "config directory creation failed."
+mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/plugins || fatal "plugins directory creation failed."
+
+ping -c 1 -t 1 test.massa &> /dev/null || set_local_dns || exit 1
+
+setcap CAP_NET_BIND_SERVICE=+eip /usr/bin/massastation-server || fatal "Failed to setcap massastation-server."
