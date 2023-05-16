@@ -3,7 +3,7 @@
 # This script generates a .deb file for the installation of MassaStation on a Debian-based Linux distribution.
 
 BUILD_DIR=builddeb
-PKGVERSION=dev
+PKGVERSION=0.0.0-dev
 
 DEB_NAME=massastation_$PKGVERSION\_amd64.deb
 SERVER_BINARY_NAME=massastation-server
@@ -57,9 +57,7 @@ Architecture: amd64
 Maintainer: Massa Labs <massa.net>
 Homepage: https://github.com/massalabs/thyra
 Description: An entrance to the Massa blockchain.
-    MassaStation is a secured gateway to the Massa blockchain. 
-    This application provides a user-friendly way to access, use and build on the Massa blockchain while
-    keeping you safe from the dangers of the internet.
+    MassaStation is a secured gateway to the Massa blockchain. This application provides a user-friendly way to access, use and build on the Massa blockchain while keeping you safe from the dangers of the internet.
 Recommends: libnss3-tools
 EOF
 
