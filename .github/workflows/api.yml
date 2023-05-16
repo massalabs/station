@@ -4,7 +4,7 @@ on:
   push:
 
 env:
-  NODE_SERVER: INNONET
+  NODE_SERVER: BUILDNET
 
 jobs:
   test-api:
@@ -59,7 +59,7 @@ jobs:
       - name: Create wallet from secret
         run: |
           mkdir -p $HOME/.config/thyra/plugins/wallet-plugin
-          echo "$WALLET_TEST_WALLET" > $HOME/.config/thyra/plugins/wallet-plugin/wallet_innonet.yml
+          echo "$WALLET_TEST_WALLET" > $HOME/.config/thyra/plugins/wallet-plugin/wallet_rftest.yml
         env:
           WALLET_TEST_WALLET: ${{ secrets.WALLET_TEST_WALLET }}
       - name: Prepare thyra to be runned
@@ -68,7 +68,7 @@ jobs:
         run: xvfb-run ./main --node-server $NODE_SERVER &
         env:
           WALLET_TEST_MODE: 1
-          WALLET_innonet_PASSWORD: ${{ secrets.WALLET_TEST_PASSWORD }}
+          WALLET_rftest_PASSWORD: ${{ secrets.WALLET_TEST_PASSWORD }}
       - name: Define my.massa
         run: sudo echo "127.0.0.1 my.massa" | sudo tee -a /etc/hosts
       - name: Wait for server to be up

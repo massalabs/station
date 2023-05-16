@@ -1058,7 +1058,7 @@ definitions:
     description: Massa node infos.
     properties:
       network:
-        enum: ["testnet", "labnet", "innonet", "localhost", "buildnet"]
+        enum: ["testnet", "labnet", "localhost", "buildnet"]
       url:
         type: string
       dns:
