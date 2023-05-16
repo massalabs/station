@@ -1,0 +1,81 @@
+#!/bin/bash
+
+# Postinstall script for MassaStation installer on MacOS
+# It configures dnsmasq to resolve .massa domains to localhost and generates a certificate for MassaStation.
+
+# `brew` isn't in $PATH by default in the `.pkg` installer environment.
+export PATH=/usr/local/bin:/opt/homebrew/bin:$PATH
+
+# Set MassaStation configuration directory.
+export MASSASTATION_CONFIG_DIR=/usr/local/share/massastation
+export MASSASTATION_CERT_DIR=/etc/massastation/certs
+
+# Set mkcert download URLs.
+export MKCERT_URL_ARM="https://dl.filippo.io/mkcert/latest?for=darwin/arm64"
+export MKCERT_URL_AMD="https://dl.filippo.io/mkcert/latest?for=darwin/amd64"
+
+# Check if brew is installed. If not, install it.
+which -s brew
+if [[ $? != 0 ]]; then
+    echo "Installing Brew..."
+    export NONINTERACTIVE=1
+    su - $USER -c "/bin/bash -c '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'" || exit -1
+else
+    echo "Updating Brew..."
+    su - $USER -c "brew update" || exit -1
+fi
+
+# Print error message to stderr and exit with code 1.
+fatal() {
+    echo "FATAL: $1" >&2
+    exit 1
+}
+
+# Configure dnsmasq to resolve .massa domains to localhost.
+configure_dnsmasq() {
+    echo "address=/.massa/127.0.0.1" >$(brew --prefix)/etc/dnsmasq.d/massa.conf || fatal "dnsmasq configuration failed."
+
+    mkdir -p /etc/resolver || fatal "resolver directory creation failed."
+    bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/massa' || fatal "resolver configuration failed."
+
+    brew services restart dnsmasq || fatal "dnsmasq service failed to start."
+}
+
+# Install dnsmasq if it's not installed, otherwise configure it.
+set_local_dns() {
+    case $(sudo lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//') in
+        "") (su - $USER -c "brew install dnsmasq" || fatal "dnsmasq installation failed.") && configure_dnsmasq || exit -1 ;;
+        dnsmasq) configure_dnsmasq || exit -1 ;;
+        *) fatal "Unsupported DNS server" ;;
+    esac
+}
+
+# Generate a certificate for MassaStation.
+generate_certificate() {
+    # If Firefox is installed, we need to install nss to read the certificate.
+    [[ $(find /Applications/ -type d -iname "*Firefox*.app") ]] && (su - $USER -c "brew install nss" || fatal "nss installation failed. MassaStation won't work on Firefox.")
+
+    ARCH=$(uname -m)
+    if [[ $ARCH == "arm64" ]]; then
+        MKCERT_URL=$MKCERT_URL_ARM
+    else
+        MKCERT_URL=$MKCERT_URL_AMD
+    fi
+
+    curl -sL $MKCERT_URL -o mkcert >&2 || fatal "mkcert download failed."
+    chmod +x mkcert || fatal "mkcert permission change failed."
+    ./mkcert -install || fatal "mkcert installation failed."
+    mkdir -m 777 -p $MASSASTATION_CERT_DIR || fatal "certs directory creation failed."
+    ./mkcert -cert-file $MASSASTATION_CERT_DIR/cert.pem -key-file $MASSASTATION_CERT_DIR/cert-key.pem my.massa || fatal "mkcert certificate generation failed."
+    chmod 644 $MASSASTATION_CERT_DIR/cert.pem $MASSASTATION_CERT_DIR/cert-key.pem || fatal "certs permission change failed."
+    rm mkcert || fatal "mkcert removal failed."
+}
+
+mkdir -m 777 -p $MASSASTATION_CONFIG_DIR || fatal "config directory creation failed."
+mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/plugins || fatal "plugins directory creation failed."
+
+ping -c 1 -t 1 test.massa >/dev/null 2>&1 || set_local_dns || fatal "DNS configuration failed."
+
+if [[ ! -f $MASSASTATION_CONFIG_DIR/certs/cert.pem || ! -f $MASSASTATION_CONFIG_DIR/certs/cert-key.pem ]]; then
+    generate_certificate || fatal "certificate generation failed."
+fi
