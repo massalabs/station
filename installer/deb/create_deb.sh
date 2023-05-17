@@ -21,9 +21,10 @@ download_massastation_app() {
     chmod +x $APP_BINARY_NAME || fatal "failed to chmod $APP_BINARY_NAME"
 }
 
-# Download the latest release of MassaStation server.
-download_massastation_server() {
-    curl -L https://github.com/massalabs/thyra/releases/latest/download/thyra-server_linux_amd64 -o $SERVER_BINARY_NAME || fatal "failed to download $SERVER_BINARY_NAME"
+# Build the MassaStation server binary.
+build_massastation_server() {
+    go generate ../cmd/thyra-server/ || fatal "go generate failed for $SERVER_BINARY_NAME"
+    go build -o $SERVER_BINARY_NAME ../cmd/thyra-server/ || fatal "failed to build $SERVER_BINARY_NAME"
     chmod +x $SERVER_BINARY_NAME || fatal "failed to chmod $SERVER_BINARY_NAME"
 }
 
@@ -42,7 +43,7 @@ main() {
 
     install_dependencies
 
-    test -f $SERVER_BINARY_NAME || download_massastation_server
+    test -f $SERVER_BINARY_NAME || build_massastation_server
     test -f $APP_BINARY_NAME || download_massastation_app
 
     mkdir -p $BUILD_DIR/usr/bin
