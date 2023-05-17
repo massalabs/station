@@ -25,7 +25,7 @@ download_massastation_app() {
 
 # Build the MassaStation server binary.
 build_massastation_server() {
-    go generate ../cmd/thyra-server/ || fatal "go generate failed for $SERVER_BINARY_NAME"
+    go generate ../... || fatal "go generate failed for $SERVER_BINARY_NAME"
     go build -o $SERVER_BINARY_NAME ../cmd/thyra-server/ || fatal "failed to build $SERVER_BINARY_NAME"
     chmod +x $SERVER_BINARY_NAME || fatal "failed to chmod $SERVER_BINARY_NAME"
 }
