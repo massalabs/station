@@ -2,6 +2,8 @@
 
 # This script generates a .deb file for the installation of MassaStation on a Debian-based Linux distribution.
 
+set -e
+
 BUILD_DIR=builddeb
 PKGVERSION=0.0.0-dev
 
@@ -30,12 +32,14 @@ build_massastation_server() {
 
 # Delete the build directory if it exists.
 clean() {
-    test -d $BUILD_DIR && rm -rf $BUILD_DIR
+    if [ -d $BUILD_DIR ]; then
+        rm -rf $BUILD_DIR || fatal "failed to delete $BUILD_DIR"
+    fi
 }
 
 # Install dependencies required to build the .deb file.
 install_dependencies() {
-    sudo apt-get install dpkg-dev
+    sudo apt-get install dpkg-dev || fatal "failed to install dpkg-dev"
 }
 
 main() {
@@ -46,11 +50,11 @@ main() {
     test -f $SERVER_BINARY_NAME || build_massastation_server
     test -f $APP_BINARY_NAME || download_massastation_app
 
-    mkdir -p $BUILD_DIR/usr/bin
-    cp $SERVER_BINARY_NAME $BUILD_DIR/usr/bin
-    cp $APP_BINARY_NAME $BUILD_DIR/usr/bin
+    mkdir -p $BUILD_DIR/usr/bin || fatal "failed to create $BUILD_DIR/usr/bin"
+    cp $SERVER_BINARY_NAME $BUILD_DIR/usr/bin || fatal "failed to copy $SERVER_BINARY_NAME to $BUILD_DIR/usr/bin"
+    cp $APP_BINARY_NAME $BUILD_DIR/usr/bin || fatal "failed to copy $APP_BINARY_NAME to $BUILD_DIR/usr/bin"
 
-    mkdir -p $BUILD_DIR/DEBIAN
+    mkdir -p $BUILD_DIR/DEBIAN || fatal "failed to create $BUILD_DIR/DEBIAN"
     cat <<EOF >$BUILD_DIR/DEBIAN/control
 Package: massastation
 Version: $PKGVERSION
@@ -64,7 +68,7 @@ EOF
 
     cp deb/scripts/postinst $BUILD_DIR/DEBIAN
 
-    dpkg-deb --build $BUILD_DIR massastation_$PKGVERSION\_amd64.deb
+    dpkg-deb --build $BUILD_DIR massastation_$PKGVERSION\_amd64.deb || fatal "failed to build $DEB_NAME"
 }
 
 # Check if $VERSION is set and set $PKGVERSION to $VERSION.
