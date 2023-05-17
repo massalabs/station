@@ -327,7 +327,7 @@ if __name__ == "__main__":
         "--force",
         action="store_true",
         dest="force_build",
-        default=FORCE_BUILD,
+        default=False,
         help="Force the build on non-Windows platforms.",
     )
     args = parser.parse_args()
