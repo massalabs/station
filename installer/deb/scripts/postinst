@@ -14,7 +14,7 @@ export MKCERT_URL="https://dl.filippo.io/mkcert/latest?for=linux/amd64"
 
 # Print error message to stderr and exit with code 1.
 fatal() {
-    echo "FATAL: $1"
+    echo "FATAL: $1" >&2
     exit 1
 }
 
@@ -61,10 +61,19 @@ set_local_dns() {
 generate_certificate() {
     curl -sL $MKCERT_URL -o mkcert || fatal "mkcert download failed."
     chmod +x mkcert || fatal "mkcert permission change failed."
+
+    # We ensure that CAROOT is set. Otherwise, mkcert installation will fail. 
+    # It especially happens on systems that install packages in sandboxed environments.
+    export CAROOT=$(./mkcert -CAROOT)
+    if [[ -z $CAROOT ]]; then
+        CAROOT=/usr/local/share/ca-certificates/
+    fi
+
     ./mkcert -install || fatal "mkcert installation failed."
     mkdir -m 777 -p $MASSASTATION_CERT_DIR || fatal "certs directory creation failed."
     ./mkcert -cert-file $MASSASTATION_CERT_DIR/cert.pem -key-file $MASSASTATION_CERT_DIR/cert-key.pem my.massa || fatal "mkcert certificate generation failed."
     chmod 644 $MASSASTATION_CERT_DIR/cert.pem $MASSASTATION_CERT_DIR/cert-key.pem || fatal "certs permission change failed."
+
     rm mkcert || fatal "mkcert removal failed."
 }
 
