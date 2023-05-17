@@ -6,6 +6,7 @@ This script generates a .msi file for the installation of MassaStation on Window
 
 import argparse
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -319,7 +320,7 @@ if __name__ == "__main__":
         "--version",
         action="store",
         dest="version",
-        default=VERSION,
+        default=None,
         help="Set the version of the installer and MassaStation.",
     )
     parser.add_argument(
@@ -331,6 +332,23 @@ if __name__ == "__main__":
         help="Force the build on non-Windows platforms.",
     )
     args = parser.parse_args()
+
+    if args.version is None:
+        print("Getting version from git tags")
+        try:
+            args.version = subprocess.run(
+                ["git", "describe", "--tags", "--abbrev=0"],
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            args.version = re.sub(r"^v", "", args.version)
+        except subprocess.CalledProcessError as processErr:
+            print("Error getting version: ", processErr)
+            sys.exit(1)
+        except Exception as gitErr:
+            print("Error getting version: ", gitErr)
+            sys.exit(1)
 
     VERSION = args.version
 
