@@ -7,7 +7,6 @@ set -e
 BUILD_DIR=builddeb
 PKGVERSION=0.0.0-dev
 
-DEB_NAME=massastation_$PKGVERSION\_amd64.deb
 SERVER_BINARY_NAME=massastation-server
 APP_BINARY_NAME=massastation-app
 
@@ -67,13 +66,16 @@ Recommends: libnss3-tools
 EOF
 
     cp deb/scripts/postinst $BUILD_DIR/DEBIAN
+    DEB_NAME=massastation_$PKGVERSION\_amd64.deb
 
-    dpkg-deb --build $BUILD_DIR massastation_$PKGVERSION\_amd64.deb || fatal "failed to build $DEB_NAME"
+    dpkg-deb --build $BUILD_DIR $DEB_NAME || fatal "failed to build $DEB_NAME"
 }
 
 # Check if $VERSION is set and set $PKGVERSION to $VERSION.
 if [ ! -z "$VERSION" ]; then
     PKGVERSION=$VERSION
+else # If $VERSION is not set, use the latest git tag followed by `-dev`
+    PKGVERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')-dev
 fi
 
 main
