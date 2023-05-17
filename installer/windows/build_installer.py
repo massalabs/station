@@ -13,7 +13,6 @@ import urllib.request
 import zipfile
 
 BUILD_DIR = "buildmsi"
-FORCE_BUILD = False
 
 VERSION = "0.0.0"
 
@@ -334,10 +333,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     VERSION = args.version
-    FORCE_BUILD = args.force_build
 
     if not sys.platform.startswith("win"):
-        if not FORCE_BUILD:
+        if not args.force_build:
             print(
                 "This script is only meant to be run on Windows. If you wish to run it anyway, use the '-f' flag."
             )
