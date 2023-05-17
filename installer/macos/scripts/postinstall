@@ -3,6 +3,8 @@
 # Postinstall script for MassaStation installer on MacOS
 # It configures dnsmasq to resolve .massa domains to localhost and generates a certificate for MassaStation.
 
+set -e
+
 # `brew` isn't in $PATH by default in the `.pkg` installer environment.
 export PATH=/usr/local/bin:/opt/homebrew/bin:$PATH
 
@@ -14,29 +16,29 @@ export MASSASTATION_CERT_DIR=/etc/massastation/certs
 export MKCERT_URL_ARM="https://dl.filippo.io/mkcert/latest?for=darwin/arm64"
 export MKCERT_URL_AMD="https://dl.filippo.io/mkcert/latest?for=darwin/amd64"
 
-# Check if brew is installed. If not, install it.
-which -s brew
-if [[ $? != 0 ]]; then
-    echo "Installing Brew..."
-    export NONINTERACTIVE=1
-    su - $USER -c "/bin/bash -c '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'" || exit -1
-else
-    echo "Updating Brew..."
-    su - $USER -c "brew update" || exit -1
-fi
-
 # Print error message to stderr and exit with code 1.
 fatal() {
     echo "FATAL: $1" >&2
     exit 1
 }
 
+# Check if brew is installed. If not, install it.
+which -s brew
+if [[ $? != 0 ]]; then
+    echo "Installing Brew..."
+    export NONINTERACTIVE=1
+    su - $USER -c "/bin/bash -c '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'" || fatal "brew installation failed."
+else
+    echo "Updating Brew..."
+    su - $USER -c "brew update" || fatal "brew update failed."
+fi
+
 # Configure dnsmasq to resolve .massa domains to localhost.
 configure_dnsmasq() {
-    echo "address=/.massa/127.0.0.1" >$(brew --prefix)/etc/dnsmasq.d/massa.conf || fatal "dnsmasq configuration failed."
+    echo "address=/.massa/127.0.0.1" >$(brew --prefix)/etc/dnsmasq.d/massa.conf || fatal "failed to set dnsmasq to resolve .massa to localhost."
 
-    mkdir -p /etc/resolver || fatal "resolver directory creation failed."
-    bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/massa' || fatal "resolver configuration failed."
+    mkdir -p /etc/resolver || fatal "/etc/resolver directory creation failed."
+    bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/massa' || fatal "failed to set resolver to resolve .massa to localhost."
 
     brew services restart dnsmasq || fatal "dnsmasq service failed to start."
 }
@@ -44,7 +46,7 @@ configure_dnsmasq() {
 # Install dnsmasq if it's not installed, otherwise configure it.
 set_local_dns() {
     case $(sudo lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//') in
-        "") (su - $USER -c "brew install dnsmasq" || fatal "dnsmasq installation failed.") && configure_dnsmasq || exit -1 ;;
+        "") (su - $USER -c "brew install dnsmasq" || fatal "failed to install dnsmasq using homebrew") && configure_dnsmasq || exit -1 ;;
         dnsmasq) configure_dnsmasq || exit -1 ;;
         *) fatal "Unsupported DNS server" ;;
     esac
@@ -74,8 +76,8 @@ generate_certificate() {
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR || fatal "config directory creation failed."
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/plugins || fatal "plugins directory creation failed."
 
-ping -c 1 -t 1 test.massa >/dev/null 2>&1 || set_local_dns || fatal "DNS configuration failed."
+ping -c 1 -t 1 test.massa >/dev/null 2>&1 || set_local_dns
 
 if [[ ! -f $MASSASTATION_CERT_DIR/cert.pem || ! -f $MASSASTATION_CERT_DIR/cert-key.pem ]]; then
-    generate_certificate || fatal "certificate generation failed."
+    generate_certificate
 fi

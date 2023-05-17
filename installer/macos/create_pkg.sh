@@ -2,11 +2,12 @@
 
 # This script generates a .pkg file for the installation of MassaStation on Mac OS.
 
+set -e
+
 BUILD_DIR=buildpkg
 PKGVERSION=dev
 ARCH=$1
 
-PKG_NAME=massastation_$PKGVERSION\_$ARCH
 SERVER_BINARY_NAME=massastation-server
 APP_BINARY_NAME=massastation-app
 
@@ -30,14 +31,17 @@ download_massastation_app() {
 }
 
 # Download the latest release of MassaStation server.
-download_massastation_server() {
-    curl -L https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_$ARCH -o $SERVER_BINARY_NAME || fatal "failed to download $SERVER_BINARY_NAME"
+build_massastation_server() {
+    go generate ../... || fatal "go generate failed for $SERVER_BINARY_NAME"
+    go build -o $SERVER_BINARY_NAME ../cmd/thyra-server || fatal "failed to build $SERVER_BINARY_NAME"
     chmod +x $SERVER_BINARY_NAME || fatal "failed to chmod $SERVER_BINARY_NAME"
 }
 
 # Delete the build directory if it exists.
 clean() {
-    test -d $BUILD_DIR && rm -rf $BUILD_DIR
+    if [ -d $BUILD_DIR ]; then
+        rm -rf $BUILD_DIR || fatal "failed to delete $BUILD_DIR"
+    fi
 }
 
 # Build the package using pkgbuild.
@@ -49,12 +53,12 @@ package() {
 main() {
     clean
 
-    test -f $SERVER_BINARY_NAME || download_massastation_server
+    test -f $SERVER_BINARY_NAME || build_massastation_server
     test -f $APP_BINARY_NAME || download_massastation_app
 
-    mkdir -p $BUILD_DIR/usr/local/bin
-    cp $SERVER_BINARY_NAME $BUILD_DIR/usr/local/bin
-    cp $APP_BINARY_NAME $BUILD_DIR/usr/local/bin
+    mkdir -p $BUILD_DIR/usr/local/bin || fatal "failed to create $BUILD_DIR/usr/local/bin"
+    cp $SERVER_BINARY_NAME $BUILD_DIR/usr/local/bin || fatal "failed to copy $SERVER_BINARY_NAME to $BUILD_DIR/usr/local/bin"
+    cp $APP_BINARY_NAME $BUILD_DIR/usr/local/bin || fatal "failed to copy $APP_BINARY_NAME to $BUILD_DIR/usr/local/bin"
 
     package
 }
