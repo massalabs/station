@@ -1,3 +1,7 @@
+[PyLint]
+
+disable=broad-exception-caught,
+
 [FORMAT]
 
 # Regexp to allow https links in docstrings, comments, etc.

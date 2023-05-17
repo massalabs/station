@@ -343,12 +343,12 @@ if __name__ == "__main__":
 
     try:
         install_dependencies()
-    except Exception as err:
-        print("Error installing dependencies: ", err)
+    except Exception as depErr:
+        print("Error installing dependencies: ", depErr)
         sys.exit(1)
     try:
         build_installer()
-    except Exception as err:
-        print("Error building installer: ", err)
+    except Exception as buildErr:
+        print("Error building installer: ", buildErr)
         sys.exit(1)
     sys.exit(0)
