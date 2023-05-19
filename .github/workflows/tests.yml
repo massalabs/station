@@ -4,11 +4,22 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/install
-      - run: go test ./... -coverprofile=coverage.coverprofile
-      - uses: codecov/codecov-action@v3
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Download and extract installer
+        run: |
+          wget https://github.com/massalabs/thyra/releases/download/v0.1.14/thyra-installer_linux_amd64.tar.gz
+          tar -xzvf thyra-installer_linux_amd64.tar.gz
+      - name: Execute installer
+        run: ./thyra-installer_linux_amd64
+      - name: Run tests
+        run: go test ./... -coverprofile=coverage.coverprofile
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v3
         with:
           files: coverage.coverprofile
