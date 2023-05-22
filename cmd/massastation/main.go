@@ -116,10 +116,10 @@ func main() {
 	}
 
 	myApp, _ := makeGUI()
+	server := api.NewServer(flags)
 
-	go func() {
-		api.StartServer(flags)
-	}()
+	myApp.Lifecycle().SetOnStopped(server.Stop)
+	myApp.Lifecycle().SetOnStarted(server.Start)
 
 	myApp.Run()
 }

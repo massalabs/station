@@ -3,6 +3,7 @@ package api
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
@@ -14,7 +15,12 @@ import (
 	"github.com/massalabs/thyra/int/api/pluginstore"
 	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/config"
+	"github.com/massalabs/thyra/pkg/constants"
 	"github.com/massalabs/thyra/pkg/node"
+)
+
+const (
+	apiStopTimeout = 10 * time.Millisecond
 )
 
 type StartServerFlags struct {
@@ -37,12 +43,6 @@ func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 
 	if _, err := os.Stat(startFlags.TLSCertificateKey); err == nil {
 		server.TLSCertificateKey = flags.Filename(startFlags.TLSCertificateKey)
-	}
-}
-
-func stopServer(server *restapi.Server) {
-	if err := server.Shutdown(); err != nil {
-		log.Fatalln(err)
 	}
 }
 
@@ -73,6 +73,88 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, config config.AppConfig) 
 	pluginstore.InitializePluginStoreAPI(localAPI)
 }
 
+type Server struct {
+	config   config.AppConfig
+	api      *restapi.Server
+	localAPI *operations.ThyraServerAPI
+	status   constants.Status
+}
+
+// Creates a new server instance and configures it with the given flags.
+func NewServer(flags StartServerFlags) *Server {
+	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	localAPI := operations.NewThyraServerAPI(swaggerSpec)
+	server := restapi.NewServer(localAPI)
+
+	setAPIFlags(server, flags)
+
+	config := config.AppConfig{
+		NodeURL:    config.GetNodeURL(flags.MassaNodeServer),
+		DNSAddress: config.GetDNSAddress(flags.MassaNodeServer, flags.DNSAddress),
+		Network:    config.GetNetwork(flags.MassaNodeServer),
+	}
+
+	return &Server{
+		config:   config,
+		api:      server,
+		localAPI: localAPI,
+		status:   constants.Stopped,
+	}
+}
+
+// Starts the server.
+// This function starts the server in a new goroutine to avoid blocking the main thread.
+func (server *Server) Start() {
+	server.printNodeVersion()
+
+	initLocalAPI(server.localAPI, server.config)
+	server.api.ConfigureMassaStationAPI(server.config, &server.status)
+
+	go func() {
+		if err := server.api.Serve(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
+
+	server.status = constants.Running
+	log.Println("Server started")
+}
+
+// Stops the server and waits for it to finish.
+func (server *Server) Stop() {
+	if err := server.api.Shutdown(); err != nil {
+		log.Fatalln(err)
+	}
+
+	for server.status != constants.Stopped {
+		time.Sleep(apiStopTimeout)
+	}
+	log.Println("Server stopped")
+}
+
+// Displays the node version of the connected node.
+func (server *Server) printNodeVersion() {
+	client := node.NewClient(server.config.NodeURL)
+	status, err := node.Status(client)
+
+	nodeVersion := "unknown"
+	if err == nil {
+		nodeVersion = *status.Version
+	} else {
+		log.Println("Could not get node version:", err)
+	}
+
+	log.Printf("Connected to node server %s (version %s)\n", server.config.NodeURL, nodeVersion)
+}
+
+/*
+ * Deprecated functions
+ * Kept for backwards compatibility with /cmd/thyra-server.
+ */
 func StartServer(flags StartServerFlags) {
 	// Initialize Swagger
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
@@ -108,10 +190,17 @@ func StartServer(flags StartServerFlags) {
 
 	initLocalAPI(localAPI, config)
 
-	server.ConfigureMassaStationAPI(config)
+	serverStatus := constants.Running
+	server.ConfigureMassaStationAPI(config, &serverStatus)
 
 	if err := server.Serve(); err != nil {
 		//nolint:gocritic
+		log.Fatalln(err)
+	}
+}
+
+func stopServer(server *restapi.Server) {
+	if err := server.Shutdown(); err != nil {
 		log.Fatalln(err)
 	}
 }
