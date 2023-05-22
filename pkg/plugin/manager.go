@@ -5,13 +5,18 @@ import (
 	"fmt"
 	"log"
 	"math/big"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/cavaliergopher/grab/v3"
+	"github.com/hashicorp/go-version"
 	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/store"
 	"github.com/xyproto/unzip"
@@ -41,17 +46,38 @@ type Manager struct {
 	mutex          sync.RWMutex
 	plugins        map[string]*Plugin
 	authorNameToID map[string]string
+	pluginList     []store.Plugin
 }
 
 // NewManager instantiates a manager struct.
 func NewManager() (*Manager, error) {
-	//nolint:exhaustruct
-	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string)}
-
-	err := manager.RunAll()
+	pluginList, err := store.FetchPluginList()
 	if err != nil {
-		return manager, fmt.Errorf("while running all plugin: %w", err)
+		log.Printf("while fetching plugin list: %s", err)
 	}
+	//nolint:exhaust,exhaustruct
+	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string), pluginList: pluginList}
+	err = manager.RunAll()
+
+	if err != nil {
+		return manager, fmt.Errorf("while running all plugins: %w", err)
+	}
+
+	const interval = 10
+	// Start a goroutine to fetch the store every ten minutes
+	go func() {
+		ticker := time.NewTicker(interval * time.Minute)
+		defer ticker.Stop()
+
+		for range ticker.C {
+			pluginList, err := store.FetchPluginList()
+			if err != nil {
+				log.Printf("while fetching plugin list: %s", err)
+			} else {
+				manager.pluginList = pluginList
+			}
+		}
+	}()
 
 	return manager, nil
 }
@@ -276,12 +302,11 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("plugin %s is not updatable", plgn.info.Name)
 	}
 
-	pluginList, err := store.FetchPluginList()
 	if err != nil {
 		return fmt.Errorf("while fetching store list: %w", err)
 	}
 
-	pluginInStore := findPluginByName(plgn.info.Name, pluginList)
+	pluginInStore := findPluginByName(plgn.info.Name, m.pluginList)
 
 	url, _, _, err := pluginInStore.GetDLChecksumAndOs()
 	if err != nil {
@@ -303,10 +328,73 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("starting plugin %s: %w", plgn.info.Name, err)
 	}
 
-	err = plgn.SetInformation(plgn.info.URL)
+	err = m.SetInformation(plgn, plgn.info.URL)
 	if err != nil {
 		return fmt.Errorf("setting plugin %s information: %w", plgn.info.Name, err)
 	}
 
 	return nil
+}
+
+func (m *Manager) SetInformation(plgn *Plugin, parsedURL *url.URL) error {
+	plgn.mutex.Lock()
+	defer plgn.mutex.Unlock()
+
+	info, err := plgn.getInformation()
+	if err != nil {
+		return fmt.Errorf("error getting plugin information: %w", err)
+	}
+
+	info.URL = parsedURL
+
+	isUpdatable, err := m.checkForPluginUpdates(plgn)
+	if err != nil {
+		return fmt.Errorf("error finding updates: %w", err)
+	}
+
+	info.Updatable = isUpdatable
+	plgn.info = info
+	plgn.status = Up
+
+	plgn.reverseProxy = httputil.NewSingleHostReverseProxy(plgn.info.URL)
+
+	originalDirector := plgn.reverseProxy.Director
+	plgn.reverseProxy.Director = func(req *http.Request) {
+		originalDirector(req)
+		modifyRequest(req)
+	}
+
+	return nil
+}
+
+func findPluginByName(name string, plugins []store.Plugin) *store.Plugin {
+	// for each plugin in the plugins list, check if the name matches the name of the plugin
+	for _, plugin := range plugins {
+		if plugin.Name == name {
+			return &plugin
+		}
+	}
+
+	return nil
+}
+
+func (m *Manager) checkForPluginUpdates(plgn *Plugin) (bool, error) {
+	pluginVersion, err := version.NewVersion(plgn.info.Version)
+	if err != nil {
+		return false, fmt.Errorf("while parsing plugin version: %w", err)
+	}
+
+	pluginInStore := findPluginByName(plgn.info.Name, m.pluginList)
+	if pluginInStore != nil {
+		// If there is a plugin with the same name,
+		// check if the version is greater than the current one.
+		pluginInStoreVersion, err := version.NewVersion(pluginInStore.Version)
+		if err != nil {
+			return false, fmt.Errorf("while parsing plugin version: %w", err)
+		}
+
+		return pluginInStoreVersion.GreaterThan(pluginVersion), nil
+	}
+
+	return false, nil
 }
