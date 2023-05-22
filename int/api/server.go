@@ -121,6 +121,7 @@ func (server *Server) Start() {
 	}()
 
 	server.status = constants.Running
+
 	log.Println("Server started")
 }
 
@@ -133,6 +134,7 @@ func (server *Server) Stop() {
 	for server.status != constants.Stopped {
 		time.Sleep(apiStopTimeout)
 	}
+
 	log.Println("Server stopped")
 }
 

@@ -10,7 +10,10 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+
+	//nolint:typecheck
 	"fyne.io/fyne/v2/driver/desktop"
+
 	"github.com/massalabs/thyra/int/api"
 	"github.com/massalabs/thyra/pkg/config"
 )
