@@ -43,6 +43,7 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 		)
 	}
 
+	r.manager.InitReverseProxy(wantedPlugin)
 	// Add alias for http requests.
 
 	alias := plugin.Alias(param.Body.Author, param.Body.Name)

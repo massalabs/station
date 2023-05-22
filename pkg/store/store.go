@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"runtime"
+	"sync"
 	"time"
 
 	"github.com/hashicorp/go-version"
@@ -34,6 +35,7 @@ type File struct {
 
 type Store struct {
 	plugins []Plugin
+	mutex   sync.RWMutex
 }
 
 const pluginListURL = "https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/plugins.json"
@@ -47,13 +49,13 @@ func (s *Store) Plugins() []Plugin {
 }
 
 func NewStore() (*Store, error) {
-	plgns, err := FetchPluginList()
-	if err != nil {
-		//nolint:exhaust,exhaustruct
-		return &Store{}, fmt.Errorf("while fetching plugin list: %w", err)
-	}
+	//nolint:exhaustruct
+	storeMassaStation := &Store{}
 
-	storeMassaStation := &Store{plugins: plgns}
+	err := storeMassaStation.fetchPluginList()
+	if err != nil {
+		return storeMassaStation, fmt.Errorf("while fetching plugin list: %w", err)
+	}
 
 	go storeMassaStation.FetchStorePeriodically()
 
@@ -116,6 +118,20 @@ func FetchPluginList() ([]Plugin, error) {
 	return plugins, nil
 }
 
+func (s *Store) fetchPluginList() error {
+	plugins, err := FetchPluginList()
+	if err != nil {
+		return fmt.Errorf("while fetching plugin list: %w", err)
+	}
+
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	s.plugins = plugins
+
+	return nil
+}
+
 //nolint:varnamelen
 func (plugin *Plugin) GetDLChecksumAndOs() (string, string, string, error) {
 	pluginURL := ""
@@ -154,11 +170,9 @@ func (s *Store) FetchStorePeriodically() {
 	defer ticker.Stop()
 
 	for range ticker.C {
-		pluginList, err := FetchPluginList()
+		err := s.fetchPluginList()
 		if err != nil {
 			log.Printf("while fetching plugin list: %s", err)
-		} else {
-			s.plugins = pluginList
 		}
 	}
 }

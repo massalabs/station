@@ -331,13 +331,16 @@ func (m *Manager) SetInformation(plgn *Plugin, parsedURL *url.URL) error {
 
 	isUpdatable, err := m.storeMassaStation.CheckForPluginUpdates(info.Name, info.Version)
 	if err != nil {
-		return fmt.Errorf("error finding updates: %w", err)
+		log.Printf("error finding updates: %s", err)
 	}
 
 	info.Updatable = isUpdatable
 	plgn.info = info
-	plgn.status = Up
 
+	return nil
+}
+
+func (m *Manager) InitReverseProxy(plgn *Plugin) {
 	plgn.reverseProxy = httputil.NewSingleHostReverseProxy(plgn.info.URL)
 
 	originalDirector := plgn.reverseProxy.Director
@@ -345,6 +348,4 @@ func (m *Manager) SetInformation(plgn *Plugin, parsedURL *url.URL) error {
 		originalDirector(req)
 		modifyRequest(req)
 	}
-
-	return nil
 }
