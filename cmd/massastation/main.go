@@ -71,11 +71,11 @@ func ParseFlags() api.StartServerFlags {
 }
 
 func makeGUI() (fyne.App, *fyne.Menu) {
-	myApp := app.New()
+	stationGUI := app.New()
 	menu := fyne.NewMenu("Thyra Desktop")
 	menu.Refresh()
 
-	if desk, ok := myApp.(desktop.App); ok {
+	if desk, ok := stationGUI.(desktop.App); ok {
 		icon := fyne.NewStaticResource("logo", logo)
 		titleMenu := fyne.NewMenuItem("MassaStation", nil)
 		homeShortCutMenu := fyne.NewMenuItem("Open MassaStation", nil)
@@ -86,11 +86,11 @@ func makeGUI() (fyne.App, *fyne.Menu) {
 
 		testMenu.Action = func() {
 			notification := fyne.NewNotification("MassaStation", "MassaStation is running in the background")
-			myApp.SendNotification(notification)
+			stationGUI.SendNotification(notification)
 		}
 
 		homeShortCutMenu.Action = func() {
-			openURL(&myApp, "http://my.massa/thyra/home")
+			openURL(&stationGUI, "http://my.massa/thyra/home")
 		}
 
 		menu.Items = append(menu.Items,
@@ -105,7 +105,7 @@ func makeGUI() (fyne.App, *fyne.Menu) {
 		desk.SetSystemTrayMenu(menu)
 	}
 
-	return myApp, menu
+	return stationGUI, menu
 }
 
 func main() {
@@ -115,11 +115,11 @@ func main() {
 		os.Exit(0)
 	}
 
-	myApp, _ := makeGUI()
+	stationGUI, _ := makeGUI()
 	server := api.NewServer(flags)
 
-	myApp.Lifecycle().SetOnStopped(server.Stop)
-	myApp.Lifecycle().SetOnStarted(server.Start)
+	stationGUI.Lifecycle().SetOnStopped(server.Stop)
+	stationGUI.Lifecycle().SetOnStarted(server.Start)
 
-	myApp.Run()
+	stationGUI.Run()
 }
