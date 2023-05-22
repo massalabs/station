@@ -13,10 +13,8 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/cavaliergopher/grab/v3"
-	"github.com/hashicorp/go-version"
 	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/store"
 	"github.com/xyproto/unzip"
@@ -43,41 +41,25 @@ func Directory() string {
 // plugins key is a plugin map storage using the author name and the plugin name as key.
 // correlationID is an identifier used to recognize the plugin when it register.
 type Manager struct {
-	mutex          sync.RWMutex
-	plugins        map[string]*Plugin
-	authorNameToID map[string]string
-	pluginList     []store.Plugin
+	mutex             sync.RWMutex
+	plugins           map[string]*Plugin
+	authorNameToID    map[string]string
+	storeMassaStation *store.Store
 }
 
 // NewManager instantiates a manager struct.
 func NewManager() (*Manager, error) {
-	pluginList, err := store.FetchPluginList()
+	storeMS, err := store.NewStore()
 	if err != nil {
-		log.Printf("while fetching plugin list: %s", err)
+		return nil, fmt.Errorf("while creating store: %w", err)
 	}
-	//nolint:exhaust,exhaustruct
-	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string), pluginList: pluginList}
+	//nolint:exhaust,exhaustruct,lll
+	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string), storeMassaStation: storeMS}
 	err = manager.RunAll()
 
 	if err != nil {
 		return manager, fmt.Errorf("while running all plugins: %w", err)
 	}
-
-	const interval = 10
-	// Start a goroutine to fetch the store every ten minutes
-	go func() {
-		ticker := time.NewTicker(interval * time.Minute)
-		defer ticker.Stop()
-
-		for range ticker.C {
-			pluginList, err := store.FetchPluginList()
-			if err != nil {
-				log.Printf("while fetching plugin list: %s", err)
-			} else {
-				manager.pluginList = pluginList
-			}
-		}
-	}()
 
 	return manager, nil
 }
@@ -306,7 +288,7 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("while fetching store list: %w", err)
 	}
 
-	pluginInStore := findPluginByName(plgn.info.Name, m.pluginList)
+	pluginInStore := m.storeMassaStation.FindPluginByName(plgn.info.Name)
 
 	url, _, _, err := pluginInStore.GetDLChecksumAndOs()
 	if err != nil {
@@ -347,7 +329,7 @@ func (m *Manager) SetInformation(plgn *Plugin, parsedURL *url.URL) error {
 
 	info.URL = parsedURL
 
-	isUpdatable, err := m.checkForPluginUpdates(plgn)
+	isUpdatable, err := m.storeMassaStation.CheckForPluginUpdates(info.Name, info.Version)
 	if err != nil {
 		return fmt.Errorf("error finding updates: %w", err)
 	}
@@ -365,36 +347,4 @@ func (m *Manager) SetInformation(plgn *Plugin, parsedURL *url.URL) error {
 	}
 
 	return nil
-}
-
-func findPluginByName(name string, plugins []store.Plugin) *store.Plugin {
-	// for each plugin in the plugins list, check if the name matches the name of the plugin
-	for _, plugin := range plugins {
-		if plugin.Name == name {
-			return &plugin
-		}
-	}
-
-	return nil
-}
-
-func (m *Manager) checkForPluginUpdates(plgn *Plugin) (bool, error) {
-	pluginVersion, err := version.NewVersion(plgn.info.Version)
-	if err != nil {
-		return false, fmt.Errorf("while parsing plugin version: %w", err)
-	}
-
-	pluginInStore := findPluginByName(plgn.info.Name, m.pluginList)
-	if pluginInStore != nil {
-		// If there is a plugin with the same name,
-		// check if the version is greater than the current one.
-		pluginInStoreVersion, err := version.NewVersion(pluginInStore.Version)
-		if err != nil {
-			return false, fmt.Errorf("while parsing plugin version: %w", err)
-		}
-
-		return pluginInStoreVersion.GreaterThan(pluginVersion), nil
-	}
-
-	return false, nil
 }

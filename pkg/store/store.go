@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"runtime"
 	"time"
 
+	"github.com/hashicorp/go-version"
 	"github.com/patrickmn/go-cache"
 )
 
@@ -30,11 +32,33 @@ type File struct {
 	Checksum string `json:"checksum"`
 }
 
+type Store struct {
+	plugins []Plugin
+}
+
 const pluginListURL = "https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/plugins.json"
 
 const cacheExpirationMinutes = 30
 
 const cacheDurationMinutes = 15
+
+func (s *Store) Plugins() []Plugin {
+	return s.plugins
+}
+
+func NewStore() (*Store, error) {
+	plgns, err := FetchPluginList()
+	if err != nil {
+		//nolint:exhaust,exhaustruct
+		return &Store{}, fmt.Errorf("while fetching plugin list: %w", err)
+	}
+
+	storeMassaStation := &Store{plugins: plgns}
+
+	go storeMassaStation.FetchStorePeriodically()
+
+	return storeMassaStation, nil
+}
 
 func FetchPluginList() ([]Plugin, error) {
 	cacheDuration := cacheDurationMinutes * time.Minute // Cache the result for 15 minutes
@@ -121,4 +145,52 @@ func (plugin *Plugin) GetDLChecksumAndOs() (string, string, string, error) {
 	}
 
 	return pluginURL, os, checksum, nil
+}
+
+func (s *Store) FetchStorePeriodically() {
+	intervalMinutes := 10
+
+	ticker := time.NewTicker(time.Duration(intervalMinutes) * time.Minute)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		pluginList, err := FetchPluginList()
+		if err != nil {
+			log.Printf("while fetching plugin list: %s", err)
+		} else {
+			s.plugins = pluginList
+		}
+	}
+}
+
+func (s *Store) CheckForPluginUpdates(name string, vers string) (bool, error) {
+	pluginVersion, err := version.NewVersion(vers)
+	if err != nil {
+		return false, fmt.Errorf("while parsing plugin version: %w", err)
+	}
+
+	pluginInStore := s.FindPluginByName(name)
+	if pluginInStore != nil {
+		// If there is a plugin with the same name,
+		// check if the version is greater than the current one.
+		pluginInStoreVersion, err := version.NewVersion(pluginInStore.Version)
+		if err != nil {
+			return false, fmt.Errorf("while parsing plugin version: %w", err)
+		}
+
+		return pluginInStoreVersion.GreaterThan(pluginVersion), nil
+	}
+
+	return false, nil
+}
+
+func (s *Store) FindPluginByName(name string) *Plugin {
+	// for each plugin in the plugins list, check if the name matches the name of the plugin
+	for _, plugin := range s.plugins {
+		if plugin.Name == name {
+			return &plugin
+		}
+	}
+
+	return nil
 }
