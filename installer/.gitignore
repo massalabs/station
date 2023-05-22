@@ -1,5 +1,6 @@
 # Temporary directories
 buildpkg/
+builddeb/
 
 # Temporary files
 *.zip
@@ -12,3 +13,4 @@ massastation-server
 
 # Binaries
 *.pkg
+*.deb
