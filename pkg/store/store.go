@@ -38,8 +38,10 @@ type Store struct {
 	mutex   sync.RWMutex
 }
 
-const pluginListURL = "https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/plugins.json"
-const cacheExpirationMinutes = 30
+const (
+	pluginListURL          = "https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/plugins.json"
+	cacheExpirationMinutes = 30
+)
 
 const cacheDurationMinutes = 15
 
