@@ -1,6 +1,7 @@
 # Temporary directories
 buildmsi/
 wixtoolset/
+buildpkg/
 builddeb/
 
 # Temporary files
@@ -16,4 +17,5 @@ massastation-server
 # Binaries
 *.exe
 *.msi
+*.pkg
 *.deb
