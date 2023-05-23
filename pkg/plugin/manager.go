@@ -51,8 +51,8 @@ type Manager struct {
 func NewManager(storeMS *store.Store) (*Manager, error) {
 	//nolint:exhaust,exhaustruct,lll
 	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string), storeMassaStation: storeMS}
-	err := manager.RunAll()
 
+	err := manager.RunAll()
 	if err != nil {
 		return manager, fmt.Errorf("while running all plugins: %w", err)
 	}
