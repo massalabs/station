@@ -27,7 +27,7 @@ PUT /websiteCreator/prepare
     ...    ${API_URL}/websiteCreator/prepare
     ...    data=${data}
     ...    files=${file}
-    ...    expected_status=500
+    ...    expected_status=${STATUS_OK}
     
     Log To Console    ${response.json()}
 
