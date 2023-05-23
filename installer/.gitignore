@@ -1,10 +1,13 @@
 # Temporary directories
+buildmsi/
+wixtoolset/
 buildpkg/
 builddeb/
 
 # Temporary files
 *.zip
 *.log
+*.wixpdb
 massastation-app
 massastation-server
 
@@ -12,5 +15,7 @@ massastation-server
 .DS_Store
 
 # Binaries
+*.exe
+*.msi
 *.pkg
 *.deb
