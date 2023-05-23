@@ -3,7 +3,6 @@ package api
 import (
 	"log"
 	"os"
-	"time"
 
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
@@ -15,12 +14,7 @@ import (
 	"github.com/massalabs/thyra/int/api/pluginstore"
 	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/config"
-	"github.com/massalabs/thyra/pkg/constants"
 	"github.com/massalabs/thyra/pkg/node"
-)
-
-const (
-	apiStopTimeout = 10 * time.Millisecond
 )
 
 type StartServerFlags struct {
@@ -77,7 +71,7 @@ type Server struct {
 	config   config.AppConfig
 	api      *restapi.Server
 	localAPI *operations.ThyraServerAPI
-	status   constants.Status
+	shutdown chan struct{}
 }
 
 // Creates a new server instance and configures it with the given flags.
@@ -102,7 +96,7 @@ func NewServer(flags StartServerFlags) *Server {
 		config:   config,
 		api:      server,
 		localAPI: localAPI,
-		status:   constants.Stopped,
+		shutdown: make(chan struct{}),
 	}
 }
 
@@ -112,15 +106,13 @@ func (server *Server) Start() {
 	server.printNodeVersion()
 
 	initLocalAPI(server.localAPI, server.config)
-	server.api.ConfigureMassaStationAPI(server.config, &server.status)
+	server.api.ConfigureMassaStationAPI(server.config, server.shutdown)
 
 	go func() {
 		if err := server.api.Serve(); err != nil {
 			log.Fatalln(err)
 		}
 	}()
-
-	server.status = constants.Running
 
 	log.Println("Server started")
 }
@@ -131,9 +123,7 @@ func (server *Server) Stop() {
 		log.Fatalln(err)
 	}
 
-	for server.status != constants.Stopped {
-		time.Sleep(apiStopTimeout)
-	}
+	<-server.shutdown
 
 	log.Println("Server stopped")
 }
@@ -192,8 +182,8 @@ func StartServer(flags StartServerFlags) {
 
 	initLocalAPI(localAPI, config)
 
-	serverStatus := constants.Running
-	server.ConfigureMassaStationAPI(config, &serverStatus)
+	shutdown := make(chan struct{})
+	server.ConfigureMassaStationAPI(config, shutdown)
 
 	if err := server.Serve(); err != nil {
 		//nolint:gocritic

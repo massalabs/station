@@ -14,7 +14,6 @@ import (
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
 	"github.com/massalabs/thyra/pkg/certificate"
 	"github.com/massalabs/thyra/pkg/config"
-	"github.com/massalabs/thyra/pkg/constants"
 	"github.com/rs/cors"
 )
 
@@ -27,13 +26,13 @@ func configureAPI(api *operations.ThyraServerAPI) http.Handler {
 	return nil
 }
 
-func (s *Server) ConfigureMassaStationAPI(config config.AppConfig, status *constants.Status) {
+func (s *Server) ConfigureMassaStationAPI(config config.AppConfig, shutdown chan struct{}) {
 	if s.api != nil {
-		s.handler = configureMassaStationAPI(s.api, config, status)
+		s.handler = configureMassaStationAPI(s.api, config, shutdown)
 	}
 }
 
-func configureMassaStationAPI(api *operations.ThyraServerAPI, config config.AppConfig, status *constants.Status) http.Handler {
+func configureMassaStationAPI(api *operations.ThyraServerAPI, config config.AppConfig, shutdown chan struct{}) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 
@@ -64,12 +63,10 @@ func configureMassaStationAPI(api *operations.ThyraServerAPI, config config.AppC
 		})
 	}
 
-	api.PreServerShutdown = func() {
-		*status = constants.Stopping
-	}
+	api.PreServerShutdown = func() {}
 
 	api.ServerShutdown = func() {
-		*status = constants.Stopped
+		close(shutdown)
 	}
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares), config)
