@@ -6,6 +6,8 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+
+	//nolint:typecheck
 	"fyne.io/fyne/v2/driver/desktop"
 )
 
