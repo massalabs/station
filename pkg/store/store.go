@@ -43,7 +43,7 @@ const (
 	cacheExpirationMinutes = 30
 )
 
-const cacheDurationMinutes = 15
+const cacheDurationMinutes = 5
 
 func (s *Store) Plugins() []Plugin {
 	return s.plugins

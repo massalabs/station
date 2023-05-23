@@ -21,12 +21,6 @@ type list struct {
 func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 	log.Println("[GET /plugin-store]")
 
-	err := l.store.FetchPluginList()
-	if err != nil {
-		return operations.NewPluginManagerListInternalServerError().WithPayload(
-			&models.Error{Code: errorCodeFetchStore, Message: fmt.Sprintf("fetch store plugin list: %s", err.Error())})
-	}
-
 	plugins := l.store.Plugins()
 
 	payload := make([]*models.PluginStoreItem, len(plugins))

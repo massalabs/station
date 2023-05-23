@@ -41,16 +41,16 @@ func Directory() string {
 // plugins key is a plugin map storage using the author name and the plugin name as key.
 // correlationID is an identifier used to recognize the plugin when it register.
 type Manager struct {
-	mutex             sync.RWMutex
-	plugins           map[string]*Plugin
-	authorNameToID    map[string]string
-	storeMassaStation *store.Store
+	mutex          sync.RWMutex
+	plugins        map[string]*Plugin
+	authorNameToID map[string]string
+	store          *store.Store
 }
 
 // NewManager instantiates a manager struct.
 func NewManager(storeMS *store.Store) (*Manager, error) {
 	//nolint:exhaust,exhaustruct,lll
-	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string), storeMassaStation: storeMS}
+	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string), store: storeMS}
 
 	err := manager.RunAll()
 	if err != nil {
@@ -284,7 +284,7 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("while fetching store list: %w", err)
 	}
 
-	pluginInStore := m.storeMassaStation.FindPluginByName(plgn.info.Name)
+	pluginInStore := m.store.FindPluginByName(plgn.info.Name)
 
 	url, _, _, err := pluginInStore.GetDLChecksumAndOs()
 	if err != nil {
@@ -325,7 +325,7 @@ func (m *Manager) SetInformation(plgn *Plugin, parsedURL *url.URL) error {
 
 	info.URL = parsedURL
 
-	isUpdatable, err := m.storeMassaStation.CheckForPluginUpdates(info.Name, info.Version)
+	isUpdatable, err := m.store.CheckForPluginUpdates(info.Name, info.Version)
 	if err != nil {
 		log.Printf("error finding updates: %s", err)
 	}
