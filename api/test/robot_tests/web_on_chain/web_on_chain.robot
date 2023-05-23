@@ -28,6 +28,8 @@ PUT /websiteCreator/prepare
     ...    data=${data}
     ...    files=${file}
     ...    expected_status=500
+    
+    Log To Console    ${response.json()}
 
     Should Be Equal As Strings    ${response.json()['name']}    ${website_url}
     Set Global Variable    ${WEBSITE_NAME}    ${response.json()['name']}
