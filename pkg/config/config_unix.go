@@ -13,7 +13,7 @@ const (
 )
 
 // getConfigDir returns the config directory for the current OS.
-// On Unix, it is placed in /usr/local/share/massa.
+// On Unix, it is placed in /usr/local/share/massastation.
 func getConfigDir() (string, error) {
 	path := path.Join("/", "usr", "local", "share", "massastation")
 
@@ -29,7 +29,7 @@ func getConfigDir() (string, error) {
 }
 
 // getCertDir returns the cert directory for the current OS.
-// On Unix, it is placed in /etc/massa/certs.
+// On Unix, it is placed in /etc/massastation/certs.
 func getCertDir() (string, error) {
 	path := path.Join("/", "etc", "massastation", "certs")
 

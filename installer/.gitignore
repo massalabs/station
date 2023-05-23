@@ -1,4 +1,5 @@
 # Temporary directories
+buildpkg/
 builddeb/
 
 # Temporary files
@@ -11,4 +12,5 @@ massastation-server
 .DS_Store
 
 # Binaries
+*.pkg
 *.deb
