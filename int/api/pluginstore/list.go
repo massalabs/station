@@ -21,7 +21,7 @@ type list struct {
 func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 	log.Println("[GET /plugin-store]")
 
-	plugins := l.store.Plugins()
+	plugins := l.store.Plugins
 
 	payload := make([]*models.PluginStoreItem, len(plugins))
 

@@ -49,7 +49,7 @@ type Manager struct {
 
 // NewManager instantiates a manager struct.
 func NewManager(storeMS *store.Store) (*Manager, error) {
-	//nolint:exhaust,exhaustruct,lll
+	//nolint:exhaust,exhaustruct
 	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string), store: storeMS}
 
 	err := manager.RunAll()

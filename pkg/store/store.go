@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-version"
-	"github.com/patrickmn/go-cache"
 )
 
 //nolint:tagliatelle
@@ -34,7 +33,7 @@ type File struct {
 }
 
 type Store struct {
-	plugins []Plugin
+	Plugins []Plugin
 	mutex   sync.RWMutex
 }
 
@@ -42,12 +41,6 @@ const (
 	pluginListURL          = "https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/plugins.json"
 	cacheExpirationMinutes = 30
 )
-
-const cacheDurationMinutes = 5
-
-func (s *Store) Plugins() []Plugin {
-	return s.plugins
-}
 
 func NewStore() (*Store, error) {
 	//nolint:exhaustruct
@@ -64,31 +57,6 @@ func NewStore() (*Store, error) {
 }
 
 func (s *Store) FetchPluginList() error {
-	cacheDuration := cacheDurationMinutes * time.Minute // Cache the result for 15 minutes
-
-	// Create a new cache instance with a default expiration time of 30 minutes
-	c := cache.New(cacheExpirationMinutes*time.Minute, cacheDuration) //nolint:varnamelen
-
-	// Check if the response is already cached
-	if cachedResp, found := c.Get(pluginListURL); found {
-		// Use the cached response if it exists
-		var plugins []Plugin
-
-		cached, ok := cachedResp.([]byte)
-		if !ok {
-			return fmt.Errorf("casting cached JSON to bytes")
-		}
-
-		err := json.Unmarshal(cached, &plugins)
-		if err != nil {
-			return fmt.Errorf("parsing cached JSON: %w", err)
-		}
-
-		s.plugins = plugins
-
-		return nil
-	}
-
 	//nolint:exhaustruct
 	netClient := &http.Client{
 		//nolint:gomnd
@@ -108,8 +76,6 @@ func (s *Store) FetchPluginList() error {
 		return fmt.Errorf("reading response body: %w", err)
 	}
 
-	c.Set(pluginListURL, body, cacheDuration)
-
 	// Parse the JSON response
 	var plugins []Plugin
 
@@ -118,7 +84,9 @@ func (s *Store) FetchPluginList() error {
 		return fmt.Errorf("parsing plugin list JSON: %w", err)
 	}
 
-	s.plugins = plugins
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	s.Plugins = plugins
 
 	return nil
 }
@@ -161,15 +129,12 @@ func (s *Store) FetchStorePeriodically() {
 	defer ticker.Stop()
 
 	for range ticker.C {
-		s.mutex.Lock()
-
 		err := s.FetchPluginList()
 		if err != nil {
 			log.Printf("while fetching plugin list: %s", err)
 		}
 
-		log.Printf("Fetched plugin list. %d plugins in store.", len(s.plugins))
-		s.mutex.Unlock()
+		log.Printf("Fetched plugin list. %d plugins in store.", len(s.Plugins))
 	}
 }
 
@@ -196,7 +161,7 @@ func (s *Store) CheckForPluginUpdates(name string, vers string) (bool, error) {
 
 func (s *Store) FindPluginByName(name string) *Plugin {
 	// for each plugin in the plugins list, check if the name matches the name of the plugin
-	for _, plugin := range s.plugins {
+	for _, plugin := range s.Plugins {
 		if plugin.Name == name {
 			return &plugin
 		}
