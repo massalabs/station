@@ -4,34 +4,16 @@ import (
 	_ "embed"
 	"flag"
 	"log"
-	"net/url"
 	"os"
 	"path"
 
-	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/app"
-
-	//nolint:typecheck
-	"fyne.io/fyne/v2/driver/desktop"
-
 	"github.com/massalabs/thyra/int/api"
+	"github.com/massalabs/thyra/int/systray"
 	"github.com/massalabs/thyra/pkg/config"
 )
 
 //go:embed logo.png
 var logo []byte
-
-func openURL(app *fyne.App, urlToOpen string) {
-	u, err := url.Parse(urlToOpen)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = (*app).OpenURL(u)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
 
 func ParseFlags() api.StartServerFlags {
 	const httpPort = 80
@@ -73,44 +55,6 @@ func ParseFlags() api.StartServerFlags {
 	return flags
 }
 
-func makeGUI() (fyne.App, *fyne.Menu) {
-	stationGUI := app.New()
-	menu := fyne.NewMenu("Thyra Desktop")
-	menu.Refresh()
-
-	if desk, ok := stationGUI.(desktop.App); ok {
-		icon := fyne.NewStaticResource("logo", logo)
-		titleMenu := fyne.NewMenuItem("MassaStation", nil)
-		homeShortCutMenu := fyne.NewMenuItem("Open MassaStation", nil)
-		testMenu := fyne.NewMenuItem("Test", nil)
-
-		titleMenu.Disabled = true
-		titleMenu.Icon = icon
-
-		testMenu.Action = func() {
-			notification := fyne.NewNotification("MassaStation", "MassaStation is running in the background")
-			stationGUI.SendNotification(notification)
-		}
-
-		homeShortCutMenu.Action = func() {
-			openURL(&stationGUI, "http://my.massa/thyra/home")
-		}
-
-		menu.Items = append(menu.Items,
-			titleMenu,
-			fyne.NewMenuItemSeparator(),
-			homeShortCutMenu,
-			// testMenu,
-			fyne.NewMenuItemSeparator(),
-		)
-
-		desk.SetSystemTrayIcon(icon)
-		desk.SetSystemTrayMenu(menu)
-	}
-
-	return stationGUI, menu
-}
-
 func main() {
 	flags := ParseFlags()
 	if flags.Version {
@@ -118,7 +62,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	stationGUI, _ := makeGUI()
+	stationGUI, _ := systray.MakeGUI(logo)
 	server := api.NewServer(flags)
 
 	stationGUI.Lifecycle().SetOnStopped(server.Stop)
