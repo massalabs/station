@@ -39,7 +39,6 @@ type Store struct {
 }
 
 const pluginListURL = "https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/plugins.json"
-
 const cacheExpirationMinutes = 30
 
 const cacheDurationMinutes = 15
@@ -52,7 +51,7 @@ func NewStore() (*Store, error) {
 	//nolint:exhaustruct
 	storeMassaStation := &Store{}
 
-	err := storeMassaStation.fetchPluginList()
+	err := storeMassaStation.FetchPluginList()
 	if err != nil {
 		return storeMassaStation, fmt.Errorf("while fetching plugin list: %w", err)
 	}
@@ -62,7 +61,7 @@ func NewStore() (*Store, error) {
 	return storeMassaStation, nil
 }
 
-func FetchPluginList() ([]Plugin, error) {
+func (s *Store) FetchPluginList() error {
 	cacheDuration := cacheDurationMinutes * time.Minute // Cache the result for 15 minutes
 
 	// Create a new cache instance with a default expiration time of 30 minutes
@@ -75,15 +74,17 @@ func FetchPluginList() ([]Plugin, error) {
 
 		cached, ok := cachedResp.([]byte)
 		if !ok {
-			return nil, fmt.Errorf("casting cached JSON to bytes")
+			return fmt.Errorf("casting cached JSON to bytes")
 		}
 
 		err := json.Unmarshal(cached, &plugins)
 		if err != nil {
-			return nil, fmt.Errorf("parsing cached JSON: %w", err)
+			return fmt.Errorf("parsing cached JSON: %w", err)
 		}
 
-		return plugins, nil
+		s.plugins = plugins
+
+		return nil
 	}
 
 	//nolint:exhaustruct
@@ -95,14 +96,14 @@ func FetchPluginList() ([]Plugin, error) {
 	// If the response is not cached, make the HTTP request
 	resp, err := netClient.Get(pluginListURL) //nolint:noctx
 	if err != nil {
-		return nil, fmt.Errorf("fetching plugin list: %w", err)
+		return fmt.Errorf("fetching plugin list: %w", err)
 	}
 	defer resp.Body.Close()
 
 	// Read the response body and cache the result
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("reading response body: %w", err)
+		return fmt.Errorf("reading response body: %w", err)
 	}
 
 	c.Set(pluginListURL, body, cacheDuration)
@@ -112,20 +113,8 @@ func FetchPluginList() ([]Plugin, error) {
 
 	err = json.Unmarshal(body, &plugins)
 	if err != nil {
-		return nil, fmt.Errorf("parsing plugin list JSON: %w", err)
+		return fmt.Errorf("parsing plugin list JSON: %w", err)
 	}
-
-	return plugins, nil
-}
-
-func (s *Store) fetchPluginList() error {
-	plugins, err := FetchPluginList()
-	if err != nil {
-		return fmt.Errorf("while fetching plugin list: %w", err)
-	}
-
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
 
 	s.plugins = plugins
 
@@ -170,10 +159,15 @@ func (s *Store) FetchStorePeriodically() {
 	defer ticker.Stop()
 
 	for range ticker.C {
-		err := s.fetchPluginList()
+		s.mutex.Lock()
+
+		err := s.FetchPluginList()
 		if err != nil {
 			log.Printf("while fetching plugin list: %s", err)
 		}
+
+		log.Printf("Fetched plugin list. %d plugins in store.", len(s.plugins))
+		s.mutex.Unlock()
 	}
 }
 
