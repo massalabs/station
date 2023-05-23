@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"log"
 	"math/big"
-	"net/http"
-	"net/http/httputil"
-	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -306,42 +303,10 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("starting plugin %s: %w", plgn.info.Name, err)
 	}
 
-	err = m.SetInformation(plgn, plgn.info.URL)
+	err = plgn.SetInformation(plgn.info.URL, m)
 	if err != nil {
 		return fmt.Errorf("setting plugin %s information: %w", plgn.info.Name, err)
 	}
 
 	return nil
-}
-
-func (m *Manager) SetInformation(plgn *Plugin, parsedURL *url.URL) error {
-	plgn.mutex.Lock()
-	defer plgn.mutex.Unlock()
-
-	info, err := plgn.getInformation()
-	if err != nil {
-		return fmt.Errorf("error getting plugin information: %w", err)
-	}
-
-	info.URL = parsedURL
-
-	isUpdatable, err := m.store.CheckForPluginUpdates(info.Name, info.Version)
-	if err != nil {
-		log.Printf("error finding updates: %s", err)
-	}
-
-	info.Updatable = isUpdatable
-	plgn.info = info
-
-	return nil
-}
-
-func (m *Manager) InitReverseProxy(plgn *Plugin) {
-	plgn.reverseProxy = httputil.NewSingleHostReverseProxy(plgn.info.URL)
-
-	originalDirector := plgn.reverseProxy.Director
-	plgn.reverseProxy.Director = func(req *http.Request) {
-		originalDirector(req)
-		modifyRequest(req)
-	}
 }

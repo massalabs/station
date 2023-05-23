@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
@@ -225,4 +226,36 @@ func New(binPath string, pluginID string) (*Plugin, error) {
 	}
 
 	return plgn, nil
+}
+
+func (p *Plugin) SetInformation(parsedURL *url.URL, mng *Manager) error {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
+	info, err := p.getInformation()
+	if err != nil {
+		return fmt.Errorf("error getting plugin information: %w", err)
+	}
+
+	info.URL = parsedURL
+
+	isUpdatable, err := mng.store.CheckForPluginUpdates(info.Name, info.Version)
+	if err != nil {
+		log.Printf("error finding updates: %s", err)
+	}
+
+	info.Updatable = isUpdatable
+	p.info = info
+
+	return nil
+}
+
+func (p *Plugin) InitReverseProxy() {
+	p.reverseProxy = httputil.NewSingleHostReverseProxy(p.info.URL)
+
+	originalDirector := p.reverseProxy.Director
+	p.reverseProxy.Director = func(req *http.Request) {
+		originalDirector(req)
+		modifyRequest(req)
+	}
 }
