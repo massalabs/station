@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	periodThreshold = 1
+	periodThreshold = 4
 	tickerDuration  = time.Second
 )
 
