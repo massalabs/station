@@ -26,13 +26,13 @@ func configureAPI(api *operations.ThyraServerAPI) http.Handler {
 	return nil
 }
 
-func (s *Server) ConfigureMassaStationAPI(config config.AppConfig) {
+func (s *Server) ConfigureMassaStationAPI(config config.AppConfig, shutdown chan struct{}) {
 	if s.api != nil {
-		s.handler = configureMassaStationAPI(s.api, config)
+		s.handler = configureMassaStationAPI(s.api, config, shutdown)
 	}
 }
 
-func configureMassaStationAPI(api *operations.ThyraServerAPI, config config.AppConfig) http.Handler {
+func configureMassaStationAPI(api *operations.ThyraServerAPI, config config.AppConfig, shutdown chan struct{}) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 
@@ -65,7 +65,9 @@ func configureMassaStationAPI(api *operations.ThyraServerAPI, config config.AppC
 
 	api.PreServerShutdown = func() {}
 
-	api.ServerShutdown = func() {}
+	api.ServerShutdown = func() {
+		close(shutdown)
+	}
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares), config)
 }
