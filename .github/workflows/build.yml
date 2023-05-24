@@ -32,16 +32,13 @@ jobs:
             target: darwin
     runs-on: ${{ matrix.os }}
     env:
-      VERSION: dev
+      VERSION: ${{ inputs.tag_name || 'dev' }}
     steps:
       - uses: actions/checkout@v3
       - name: installing dependencies
         uses: ./.github/actions/install
         with:
           os: ${{ matrix.os }}
-      - name: set env variable VERSION as the tagname given
-        if: ${{ inputs.tag_name != '' }}
-        run: export VERSION=${{ inputs.tag_name }}
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
         shell: bash
         run: |
