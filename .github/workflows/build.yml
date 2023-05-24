@@ -10,15 +10,6 @@ on:
     inputs:
       tag_name:
         type: string
-      draft:
-        type: string
-      prerelease:
-        type: string
-      generate_release_notes:
-        type: string
-
-permissions:
-  contents: write
 
 jobs:
   build:
@@ -26,7 +17,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: windows-latest
             arch: amd64
             target: windows
           - os: ubuntu-20.04
@@ -51,74 +42,14 @@ jobs:
         if: ${{ inputs.tag_name != '' }}
         run: export VERSION=${{ inputs.tag_name }}
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
-        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 go build -ldflags "-X github.com/massalabs/thyra/pkg/config.Version=${{env.VERSION}}" -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
-      - name: Create release and upload binaries
-        if: ${{ inputs.tag_name != '' }}
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ inputs.tag_name }}
-          draft: ${{ inputs.draft }}
-          prerelease: ${{ inputs.prerelease }}
-          generate_release_notes: ${{ inputs.generate_release_notes }}
-          files: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
-
-  build-installer:
-    if: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
-    name: build and upload installers binaries
-    strategy:
-      matrix:
-        include:
-          - os: windows-latest
-            arch: x86_64
-            target: windows
-            script: scripts/windows_installer.py
-            displayed_arch: amd64
-            ext: .exe
-          - os: macos-latest
-            arch: x86_64
-            target: darwin
-            script: scripts/macos_installer.py
-            displayed_arch: amd64
-            ext: .tar.gz
-          - os: macos-latest
-            arch: arm64
-            target: darwin
-            script: scripts/macos_installer.py
-            displayed_arch: arm64
-            ext: .tar.gz
-          - os: ubuntu-latest
-            arch: amd64
-            target: linux
-            script: scripts/linux_installer.py
-            displayed_arch: amd64
-            ext: .tar.gz
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install dependencies
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install pyinstaller
-      - name: Build installer binary
-        run: |
-          pyinstaller --clean --onefile -y --target-arch ${{ matrix.arch }} --dist ./dist/${{ matrix.target }} --workpath /tmp ${{ matrix.script }} --name thyra-installer_${{ matrix.target }}_${{ matrix.displayed_arch }}
-      - name: Archive installer binary
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: |
-          tar -czvf ./dist/${{ matrix.target }}/thyra-installer_${{ matrix.target }}_${{ matrix.displayed_arch }}${{ matrix.ext }} -C ./dist/${{ matrix.target }} thyra-installer_${{ matrix.target }}_${{ matrix.displayed_arch }}
-      - name: Upload installer artifacts
+        shell: bash
+        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 go build -ldflags "-X github.com/massalabs/thyra/pkg/config.Version=${{env.VERSION}}" -o massastation_${{ matrix.target }}_${{ matrix.arch }} ./cmd/massastation/
+      - name: Upload Package
         uses: actions/upload-artifact@v3
         with:
-          name: thyra-installer-${{ matrix.target }}-${{ matrix.arch }}-binary
+          name: massastation_${{ matrix.target }}_${{ matrix.arch }}_binary
           path: |
-            ./dist/${{ matrix.target }}/thyra-installer_${{ matrix.target }}_${{ matrix.displayed_arch }}${{ matrix.ext }}
-      - name: Create release and upload binaries
-        if: ${{ inputs.tag_name != '' }}
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ inputs.tag_name }}
-          draft: ${{ inputs.draft }}
-          prerelease: ${{ inputs.prerelease }}
-          generate_release_notes: ${{ inputs.generate_release_notes }}
-          files: |
-            ./dist/${{ matrix.target }}/thyra-installer_${{ matrix.target }}_${{ matrix.displayed_arch }}${{ matrix.ext }}
+            massastation_${{ matrix.target }}_${{ matrix.arch }}
+            massastation_${{ matrix.target }}_${{ matrix.arch }}.exe
+          if-no-files-found: error
+          retention-days: 7
