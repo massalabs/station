@@ -65,7 +65,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, config config.AppConfig) 
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
 
 	myplugin.InitializePluginAPI(localAPI, &config)
-	pluginstore.InitializePluginStoreAPI(localAPI, &config)
+	pluginstore.InitializePluginStoreAPI(localAPI)
 }
 
 type Server struct {
@@ -164,7 +164,7 @@ func StartServer(flags StartServerFlags) {
 	localAPI := operations.NewThyraServerAPI(swaggerSpec)
 	server := restapi.NewServer(localAPI)
 
-	storeMS, err := store.NewStore()
+	err = store.NewStore()
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -174,7 +174,6 @@ func StartServer(flags StartServerFlags) {
 		NodeURL:    config.GetNodeURL(flags.MassaNodeServer),
 		DNSAddress: config.GetDNSAddress(flags.MassaNodeServer, flags.DNSAddress),
 		Network:    config.GetNetwork(flags.MassaNodeServer),
-		Store:      storeMS,
 	}
 
 	// Display info about node server

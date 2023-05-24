@@ -9,13 +9,8 @@ import (
 	"runtime"
 	"sync"
 	"time"
->>>>>>> 36c0406 (simplified check for update
->>>>>>> 36c0406 (simplified check for update
->>>>>>> 36c0406 (simplified check for update
 
 	"github.com/hashicorp/go-version"
-	"github.com/patrickmn/go-cache"
-
 	"github.com/massalabs/thyra/pkg/config"
 )
 
@@ -39,6 +34,8 @@ type File struct {
 	Checksum string `json:"checksum"`
 }
 
+var StoreInstance *Store
+
 type Store struct {
 	Plugins []Plugin
 	mutex   sync.RWMutex
@@ -49,18 +46,19 @@ const (
 	cacheExpirationMinutes = 30
 )
 
-func NewStore() (*Store, error) {
+func NewStore() error {
 	//nolint:exhaustruct
 	storeMassaStation := &Store{}
 
 	err := storeMassaStation.FetchPluginList()
 	if err != nil {
-		return storeMassaStation, fmt.Errorf("while fetching plugin list: %w", err)
+		return fmt.Errorf("while fetching plugin list: %w", err)
 	}
 
 	go storeMassaStation.FetchStorePeriodically()
 
-	return storeMassaStation, nil
+	StoreInstance = storeMassaStation
+	return nil
 }
 
 func (s *Store) FetchPluginList() error {
@@ -132,7 +130,7 @@ func (plugin *Plugin) GetDLChecksumAndOs() (string, string, string, error) {
 func (s *Store) FetchStorePeriodically() {
 	intervalMinutes := 10
 
-	ticker := time.NewTicker(time.Duration(intervalMinutes) * time.Minute)
+	ticker := time.NewTicker(time.Duration(intervalMinutes) * time.Second)
 	defer ticker.Stop()
 
 	for range ticker.C {
@@ -146,24 +144,28 @@ func (s *Store) FetchStorePeriodically() {
 }
 
 func (s *Store) CheckForPluginUpdates(name string, vers string) (bool, error) {
+	pluginInStore := s.FindPluginByName(name)
+
+	if pluginInStore == nil {
+		return false, nil
+	}
 	pluginVersion, err := version.NewVersion(vers)
 	if err != nil {
 		return false, fmt.Errorf("while parsing plugin version: %w", err)
 	}
-
-	pluginInStore := s.FindPluginByName(name)
-	if pluginInStore != nil {
-		// If there is a plugin with the same name,
-		// check if the version is greater than the current one.
-		pluginInStoreVersion, err := version.NewVersion(pluginInStore.Version)
-		if err != nil {
-			return false, fmt.Errorf("while parsing plugin version: %w", err)
-		}
-
-		return pluginInStoreVersion.GreaterThan(pluginVersion), nil
+	// checks if the plugin is compatible with the current version of massaStation
+	pluginCompatibleWithMassaStation, err := pluginInStore.IsPluginCompatible()
+	if err != nil {
+		return false, fmt.Errorf("while checking if plugin is compatible: %w", err)
 	}
-
-	return false, nil
+	// checks if the version is greater than the current one.
+	pluginInStoreVersion, err := version.NewVersion(pluginInStore.Version)
+	if err != nil {
+		return false, fmt.Errorf("while parsing plugin version: %w", err)
+	}
+	newVersionInStore := pluginInStoreVersion.GreaterThan(pluginVersion)
+	isUpdatable := newVersionInStore && pluginCompatibleWithMassaStation
+	return isUpdatable, nil
 }
 
 func (s *Store) FindPluginByName(name string) *Plugin {
@@ -175,4 +177,22 @@ func (s *Store) FindPluginByName(name string) *Plugin {
 	}
 
 	return nil
+}
+
+func (plugin *Plugin) IsPluginCompatible() (bool, error) {
+	if config.Version == "dev" {
+		return true, nil
+	}
+
+	massaStationVersion, err := version.NewVersion(config.Version)
+	if err != nil {
+		return false, fmt.Errorf("while parsing MassaStation version: %w", err)
+	}
+
+	pluginMassaStationVersionConstraint, err := version.NewConstraint(plugin.MassaStationVersion)
+	if err != nil {
+		return false, fmt.Errorf("while parsing MassaStation version: %w", err)
+	}
+
+	return pluginMassaStationVersionConstraint.Check(massaStationVersion), nil
 }

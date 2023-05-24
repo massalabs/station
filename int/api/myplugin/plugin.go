@@ -10,7 +10,7 @@ import (
 )
 
 func InitializePluginAPI(api *operations.ThyraServerAPI, config *config.AppConfig) {
-	manager, err := plugin.NewManager(config.Store)
+	manager, err := plugin.NewManager()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "WARN: while starting plugin manager %s.\n", err)
 	}

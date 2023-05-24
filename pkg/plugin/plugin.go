@@ -16,9 +16,6 @@ import (
 	"sync"
 
 	"github.com/gosimple/slug"
-	"github.com/hashicorp/go-version"
-
-	"github.com/massalabs/thyra/pkg/store"
 )
 
 //go:generate stringer -type=Status
@@ -78,84 +75,6 @@ func (p *Plugin) getInformation() (*Information, error) {
 	}
 
 	return manifest, nil
-}
-
-func (p *Plugin) SetInformation(parsedURL *url.URL) error {
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
-
-	info, err := p.getInformation()
-	if err != nil {
-		return fmt.Errorf("error getting plugin information: %w", err)
-	}
-
-	info.URL = parsedURL
-
-	isUpdatable, err := p.checkForPluginUpdates()
-	if err != nil {
-		return fmt.Errorf("error finding updates: %w", err)
-	}
-
-	info.Updatable = isUpdatable
-	p.info = info
-	p.status = Up
-
-	p.reverseProxy = httputil.NewSingleHostReverseProxy(p.info.URL)
-
-	originalDirector := p.reverseProxy.Director
-	p.reverseProxy.Director = func(req *http.Request) {
-		originalDirector(req)
-		modifyRequest(req)
-	}
-
-	return nil
-}
-
-func findPluginByName(name string, plugins []store.Plugin) *store.Plugin {
-	// for each plugin in the plugins list, check if the name matches the name of the plugin
-	for _, plugin := range plugins {
-		if plugin.Name == name {
-			return &plugin
-		}
-	}
-
-	return nil
-}
-
-func (p *Plugin) checkForPluginUpdates() (bool, error) {
-	pluginList, err := store.FetchPluginList()
-	if err != nil {
-		return false, fmt.Errorf("while fetching store list: %w", err)
-	}
-
-	// checks if there is an element pluginInStore in storeitems that has the same name as the plugin
-	pluginInStore := findPluginByName(p.info.Name, pluginList)
-
-	if pluginInStore == nil {
-		return false, nil
-	}
-
-	pluginVersion, err := version.NewVersion(p.info.Version)
-	if err != nil {
-		return false, fmt.Errorf("while parsing plugin version: %w", err)
-	}
-
-	// checks if the plugin is compatible with the current version of massaStation
-	pluginCompatibleWithMassaStation, err := pluginInStore.IsPluginCompatible()
-	if err != nil {
-		return false, fmt.Errorf("while checking if plugin is compatible: %w", err)
-	}
-
-	// checks if the version is greater than the current one.
-	pluginInStoreVersion, err := version.NewVersion(pluginInStore.Version)
-	if err != nil {
-		return false, fmt.Errorf("while parsing plugin version: %w", err)
-	}
-
-	newVersionInStore := pluginInStoreVersion.GreaterThan(pluginVersion)
-	isUpdatable := newVersionInStore && pluginCompatibleWithMassaStation
-
-	return isUpdatable, nil
 }
 
 func (p *Plugin) Status() Status {

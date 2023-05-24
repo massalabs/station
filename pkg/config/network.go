@@ -1,14 +1,9 @@
 package config
 
-import (
-	"github.com/massalabs/thyra/pkg/store"
-)
-
 type AppConfig struct {
 	Network    string
 	NodeURL    string
 	DNSAddress string
-	Store      *store.Store
 }
 
 const (
