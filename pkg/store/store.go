@@ -11,6 +11,9 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-version"
+	"github.com/patrickmn/go-cache"
+
+	"github.com/massalabs/thyra/pkg/config"
 )
 
 //nolint:tagliatelle
