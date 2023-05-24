@@ -41,16 +41,17 @@ type Manager struct {
 	mutex          sync.RWMutex
 	plugins        map[string]*Plugin
 	authorNameToID map[string]string
+	store          *store.Store
 }
 
 // NewManager instantiates a manager struct.
-func NewManager() (*Manager, error) {
-	//nolint:exhaustruct
-	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string)}
+func NewManager(storeMS *store.Store) (*Manager, error) {
+	//nolint:exhaust,exhaustruct
+	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string), store: storeMS}
 
 	err := manager.RunAll()
 	if err != nil {
-		return manager, fmt.Errorf("while running all plugin: %w", err)
+		return manager, fmt.Errorf("while running all plugins: %w", err)
 	}
 
 	return manager, nil
@@ -276,12 +277,11 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("plugin %s is not updatable", plgn.info.Name)
 	}
 
-	pluginList, err := store.FetchPluginList()
 	if err != nil {
 		return fmt.Errorf("while fetching store list: %w", err)
 	}
 
-	pluginInStore := findPluginByName(plgn.info.Name, pluginList)
+	pluginInStore := m.store.FindPluginByName(plgn.info.Name)
 
 	url, _, _, err := pluginInStore.GetDLChecksumAndOs()
 	if err != nil {
@@ -303,7 +303,7 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("starting plugin %s: %w", plgn.info.Name, err)
 	}
 
-	err = plgn.SetInformation(plgn.info.URL)
+	err = plgn.SetInformation(plgn.info.URL, m)
 	if err != nil {
 		return fmt.Errorf("setting plugin %s information: %w", plgn.info.Name, err)
 	}

@@ -10,20 +10,18 @@ import (
 	"github.com/massalabs/thyra/pkg/store"
 )
 
-func newList() operations.GetPluginStoreHandler {
-	return &list{}
+func newList(store *store.Store) operations.GetPluginStoreHandler {
+	return &list{store: store}
 }
 
-type list struct{}
+type list struct {
+	store *store.Store
+}
 
 func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 	log.Println("[GET /plugin-store]")
 
-	plugins, err := store.FetchPluginList()
-	if err != nil {
-		return operations.NewPluginManagerListInternalServerError().WithPayload(
-			&models.Error{Code: errorCodeFetchStore, Message: fmt.Sprintf("fetch store plugin list: %s", err.Error())})
-	}
+	plugins := l.store.Plugins
 
 	payload := make([]*models.PluginStoreItem, len(plugins))
 

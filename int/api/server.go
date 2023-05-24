@@ -15,6 +15,7 @@ import (
 	"github.com/massalabs/thyra/int/api/websites"
 	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node"
+	"github.com/massalabs/thyra/pkg/store"
 )
 
 type StartServerFlags struct {
@@ -63,8 +64,8 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, config config.AppConfig) 
 
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
 
-	myplugin.InitializePluginAPI(localAPI)
-	pluginstore.InitializePluginStoreAPI(localAPI)
+	myplugin.InitializePluginAPI(localAPI, &config)
+	pluginstore.InitializePluginStoreAPI(localAPI, &config)
 }
 
 type Server struct {
@@ -157,12 +158,17 @@ func StartServer(flags StartServerFlags) {
 	localAPI := operations.NewThyraServerAPI(swaggerSpec)
 	server := restapi.NewServer(localAPI)
 
-	setAPIFlags(server, flags)
+	storeMS, err := store.NewStore()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
+	setAPIFlags(server, flags)
 	config := config.AppConfig{
 		NodeURL:    config.GetNodeURL(flags.MassaNodeServer),
 		DNSAddress: config.GetDNSAddress(flags.MassaNodeServer, flags.DNSAddress),
 		Network:    config.GetNetwork(flags.MassaNodeServer),
+		Store:      storeMS,
 	}
 
 	// Display info about node server

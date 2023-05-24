@@ -35,7 +35,7 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 		)
 	}
 
-	err = wantedPlugin.SetInformation(urlPlugin)
+	err = wantedPlugin.SetInformation(urlPlugin, r.manager)
 
 	if err != nil {
 		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
@@ -43,6 +43,7 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 		)
 	}
 
+	wantedPlugin.InitReverseProxy()
 	// Add alias for http requests.
 
 	alias := plugin.Alias(param.Body.Author, param.Body.Name)

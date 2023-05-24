@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"runtime"
+	"sync"
 	"time"
 
-	"github.com/patrickmn/go-cache"
+	"github.com/hashicorp/go-version"
 )
 
 //nolint:tagliatelle
@@ -30,36 +32,31 @@ type File struct {
 	Checksum string `json:"checksum"`
 }
 
-const pluginListURL = "https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/plugins.json"
+type Store struct {
+	Plugins []Plugin
+	mutex   sync.RWMutex
+}
 
-const cacheExpirationMinutes = 30
+const (
+	pluginListURL          = "https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/plugins.json"
+	cacheExpirationMinutes = 30
+)
 
-const cacheDurationMinutes = 15
+func NewStore() (*Store, error) {
+	//nolint:exhaustruct
+	storeMassaStation := &Store{}
 
-func FetchPluginList() ([]Plugin, error) {
-	cacheDuration := cacheDurationMinutes * time.Minute // Cache the result for 15 minutes
-
-	// Create a new cache instance with a default expiration time of 30 minutes
-	c := cache.New(cacheExpirationMinutes*time.Minute, cacheDuration) //nolint:varnamelen
-
-	// Check if the response is already cached
-	if cachedResp, found := c.Get(pluginListURL); found {
-		// Use the cached response if it exists
-		var plugins []Plugin
-
-		cached, ok := cachedResp.([]byte)
-		if !ok {
-			return nil, fmt.Errorf("casting cached JSON to bytes")
-		}
-
-		err := json.Unmarshal(cached, &plugins)
-		if err != nil {
-			return nil, fmt.Errorf("parsing cached JSON: %w", err)
-		}
-
-		return plugins, nil
+	err := storeMassaStation.FetchPluginList()
+	if err != nil {
+		return storeMassaStation, fmt.Errorf("while fetching plugin list: %w", err)
 	}
 
+	go storeMassaStation.FetchStorePeriodically()
+
+	return storeMassaStation, nil
+}
+
+func (s *Store) FetchPluginList() error {
 	//nolint:exhaustruct
 	netClient := &http.Client{
 		//nolint:gomnd
@@ -69,27 +66,29 @@ func FetchPluginList() ([]Plugin, error) {
 	// If the response is not cached, make the HTTP request
 	resp, err := netClient.Get(pluginListURL) //nolint:noctx
 	if err != nil {
-		return nil, fmt.Errorf("fetching plugin list: %w", err)
+		return fmt.Errorf("fetching plugin list: %w", err)
 	}
 	defer resp.Body.Close()
 
 	// Read the response body and cache the result
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("reading response body: %w", err)
+		return fmt.Errorf("reading response body: %w", err)
 	}
-
-	c.Set(pluginListURL, body, cacheDuration)
 
 	// Parse the JSON response
 	var plugins []Plugin
 
 	err = json.Unmarshal(body, &plugins)
 	if err != nil {
-		return nil, fmt.Errorf("parsing plugin list JSON: %w", err)
+		return fmt.Errorf("parsing plugin list JSON: %w", err)
 	}
 
-	return plugins, nil
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	s.Plugins = plugins
+
+	return nil
 }
 
 //nolint:varnamelen
@@ -121,4 +120,52 @@ func (plugin *Plugin) GetDLChecksumAndOs() (string, string, string, error) {
 	}
 
 	return pluginURL, os, checksum, nil
+}
+
+func (s *Store) FetchStorePeriodically() {
+	intervalMinutes := 10
+
+	ticker := time.NewTicker(time.Duration(intervalMinutes) * time.Minute)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		err := s.FetchPluginList()
+		if err != nil {
+			log.Printf("while fetching plugin list: %s", err)
+		}
+
+		log.Printf("Fetched plugin list. %d plugins in store.", len(s.Plugins))
+	}
+}
+
+func (s *Store) CheckForPluginUpdates(name string, vers string) (bool, error) {
+	pluginVersion, err := version.NewVersion(vers)
+	if err != nil {
+		return false, fmt.Errorf("while parsing plugin version: %w", err)
+	}
+
+	pluginInStore := s.FindPluginByName(name)
+	if pluginInStore != nil {
+		// If there is a plugin with the same name,
+		// check if the version is greater than the current one.
+		pluginInStoreVersion, err := version.NewVersion(pluginInStore.Version)
+		if err != nil {
+			return false, fmt.Errorf("while parsing plugin version: %w", err)
+		}
+
+		return pluginInStoreVersion.GreaterThan(pluginVersion), nil
+	}
+
+	return false, nil
+}
+
+func (s *Store) FindPluginByName(name string) *Plugin {
+	// for each plugin in the plugins list, check if the name matches the name of the plugin
+	for _, plugin := range s.Plugins {
+		if plugin.Name == name {
+			return &plugin
+		}
+	}
+
+	return nil
 }
