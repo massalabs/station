@@ -87,10 +87,16 @@ func NewServer(flags StartServerFlags) *Server {
 
 	setAPIFlags(server, flags)
 
+	storeMS, err := store.NewStore()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	config := config.AppConfig{
 		NodeURL:    config.GetNodeURL(flags.MassaNodeServer),
 		DNSAddress: config.GetDNSAddress(flags.MassaNodeServer, flags.DNSAddress),
 		Network:    config.GetNetwork(flags.MassaNodeServer),
+		Store:      storeMS,
 	}
 
 	return &Server{
