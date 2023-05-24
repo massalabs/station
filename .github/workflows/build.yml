@@ -1,11 +1,6 @@
 name: build and upload artifacts
 on:
-  push:
-    tags:
-      - v[0-9]+.*
-    branches:
-      - main
-  pull_request:
+  workflow_dispatch:
   workflow_call:
     inputs:
       tag_name:
