@@ -34,6 +34,7 @@ type File struct {
 	Checksum string `json:"checksum"`
 }
 
+//nolint:gochecknoglobals
 var StoreInstance *Store
 
 type Store struct {
@@ -58,6 +59,7 @@ func NewStore() error {
 	go storeMassaStation.FetchStorePeriodically()
 
 	StoreInstance = storeMassaStation
+
 	return nil
 }
 
@@ -130,7 +132,7 @@ func (plugin *Plugin) GetDLChecksumAndOs() (string, string, string, error) {
 func (s *Store) FetchStorePeriodically() {
 	intervalMinutes := 10
 
-	ticker := time.NewTicker(time.Duration(intervalMinutes) * time.Second)
+	ticker := time.NewTicker(time.Duration(intervalMinutes) * time.Minute)
 	defer ticker.Stop()
 
 	for range ticker.C {
@@ -149,6 +151,7 @@ func (s *Store) CheckForPluginUpdates(name string, vers string) (bool, error) {
 	if pluginInStore == nil {
 		return false, nil
 	}
+
 	pluginVersion, err := version.NewVersion(vers)
 	if err != nil {
 		return false, fmt.Errorf("while parsing plugin version: %w", err)
@@ -158,13 +161,16 @@ func (s *Store) CheckForPluginUpdates(name string, vers string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("while checking if plugin is compatible: %w", err)
 	}
+
 	// checks if the version is greater than the current one.
 	pluginInStoreVersion, err := version.NewVersion(pluginInStore.Version)
 	if err != nil {
 		return false, fmt.Errorf("while parsing plugin version: %w", err)
 	}
+
 	newVersionInStore := pluginInStoreVersion.GreaterThan(pluginVersion)
 	isUpdatable := newVersionInStore && pluginCompatibleWithMassaStation
+
 	return isUpdatable, nil
 }
 
