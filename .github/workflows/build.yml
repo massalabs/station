@@ -53,7 +53,7 @@ jobs:
       - name: Upload Package
         uses: actions/upload-artifact@v3
         with:
-          name: massastation_${{ matrix.target }}_${{ matrix.arch }}_binary
+          name: massastation_${{ matrix.target }}_${{ matrix.arch }}_${{env.VERSION}}_bin
           path: |
             massastation_${{ matrix.target }}_${{ matrix.arch }}
             massastation_${{ matrix.target }}_${{ matrix.arch }}.exe

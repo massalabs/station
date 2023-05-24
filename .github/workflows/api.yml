@@ -19,7 +19,7 @@ jobs:
       - name: Download MassaStation binary
         uses: actions/download-artifact@v3
         with:
-          name: massastation_linux_amd64_binary
+          name: massastation_linux_amd64_dev_bin
       - name: Prepare MassaStation binary
         run : |
           mv massastation_linux_amd64 massastation
@@ -65,7 +65,7 @@ jobs:
       - name: Download MassaStation binary
         uses: actions/download-artifact@v3
         with:
-            name: massastation_linux_amd64_binary
+            name: massastation_linux_amd64_dev_bin
       - name: Prepare MassaStation binary
         run : |
           mv massastation_linux_amd64 massastation

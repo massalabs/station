@@ -44,4 +44,4 @@ jobs:
           prerelease: ${{ inputs.release-as-prerelease }}
           generate_release_notes: ${{ inputs.generate-release-notes }}
           files: |
-            massastation_*
+            ./massastation_*_${{ inputs.release-version }}/massastation_*
