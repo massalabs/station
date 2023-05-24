@@ -1,7 +1,6 @@
 name: Release workflow
 
 on:
-  push:
   workflow_dispatch:
     inputs:
       release-version:
@@ -28,7 +27,7 @@ jobs:
   build-release:
     uses: ./.github/workflows/build.yml
     with:
-      tag_name: vX.X.X
+      tag_name: ${{ github.event.inputs.release-version }}
 
   create-release:
     name: Release
@@ -40,9 +39,9 @@ jobs:
       - name: Create release and upload binaries
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: vX.X.X
-          draft: true
-          prerelease: true
-          generate_release_notes: true
+          tag_name: ${{ inputs.release-version }}
+          draft: ${{ inputs.release-as-draft }}
+          prerelease: ${{ inputs.release-as-prerelease }}
+          generate_release_notes: ${{ inputs.generate-release-notes }}
           files: |
             ./massastation_*_bin/massastation_*
