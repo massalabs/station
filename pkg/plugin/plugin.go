@@ -16,6 +16,7 @@ import (
 	"sync"
 
 	"github.com/gosimple/slug"
+	"github.com/massalabs/thyra/pkg/store"
 )
 
 //go:generate stringer -type=Status
@@ -239,7 +240,7 @@ func (p *Plugin) SetInformation(parsedURL *url.URL, mng *Manager) error {
 
 	info.URL = parsedURL
 
-	isUpdatable, err := mng.store.CheckForPluginUpdates(info.Name, info.Version)
+	isUpdatable, err := store.StoreInstance.CheckForPluginUpdates(info.Name, info.Version)
 	if err != nil {
 		log.Printf("error finding updates: %s", err)
 	}

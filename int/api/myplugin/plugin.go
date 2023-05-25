@@ -5,11 +5,10 @@ import (
 	"os"
 
 	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/plugin"
 )
 
-func InitializePluginAPI(api *operations.ThyraServerAPI, config *config.AppConfig) {
+func InitializePluginAPI(api *operations.ThyraServerAPI) {
 	manager, err := plugin.NewManager()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "WARN: while starting plugin manager %s.\n", err)

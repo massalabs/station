@@ -41,13 +41,12 @@ type Manager struct {
 	mutex          sync.RWMutex
 	plugins        map[string]*Plugin
 	authorNameToID map[string]string
-	store          *store.Store
 }
 
 // NewManager instantiates a manager struct.
 func NewManager() (*Manager, error) {
-	//nolint:exhaust,exhaustruct,lll
-	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string), store: store.StoreInstance}
+	//nolint:exhaust,exhaustruct
+	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string)}
 
 	err := manager.RunAll()
 	if err != nil {
@@ -281,7 +280,7 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("while fetching store list: %w", err)
 	}
 
-	pluginInStore := m.store.FindPluginByName(plgn.info.Name)
+	pluginInStore := store.StoreInstance.FindPluginByName(plgn.info.Name)
 
 	url, _, _, err := pluginInStore.GetDLChecksumAndOs()
 	if err != nil {

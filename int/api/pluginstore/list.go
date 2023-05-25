@@ -10,8 +10,8 @@ import (
 	"github.com/massalabs/thyra/pkg/store"
 )
 
-func newList(store *store.Store) operations.GetPluginStoreHandler {
-	return &list{store: store}
+func newList() operations.GetPluginStoreHandler {
+	return &list{store: store.StoreInstance}
 }
 
 type list struct {
@@ -21,7 +21,7 @@ type list struct {
 func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 	log.Println("[GET /plugin-store]")
 
-	plugins := l.store.Plugins
+	plugins := store.StoreInstance.Plugins
 
 	payload := make([]*models.PluginStoreItem, len(plugins))
 

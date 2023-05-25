@@ -63,9 +63,8 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, config config.AppConfig) 
 	localAPI.ThyraPluginManagerHandler = operations.ThyraPluginManagerHandlerFunc(ThyraPluginManagerHandler)
 
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
-
-	myplugin.InitializePluginAPI(localAPI, &config)
 	pluginstore.InitializePluginStoreAPI(localAPI)
+	myplugin.InitializePluginAPI(localAPI)
 }
 
 type Server struct {
@@ -149,18 +148,18 @@ func (server *Server) printNodeVersion() {
  */
 func StartServer(flags StartServerFlags) {
 	// Initialize Swagger
+
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	localAPI := operations.NewThyraServerAPI(swaggerSpec)
-	server := restapi.NewServer(localAPI)
-
 	err = store.NewStore()
 	if err != nil {
 		log.Fatalln(err)
 	}
+	localAPI := operations.NewThyraServerAPI(swaggerSpec)
+	server := restapi.NewServer(localAPI)
 
 	setAPIFlags(server, flags)
 	config := config.AppConfig{

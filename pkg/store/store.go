@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-version"
+
 	"github.com/massalabs/thyra/pkg/config"
 )
 
@@ -43,22 +44,19 @@ type Store struct {
 }
 
 const (
-	pluginListURL          = "https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/plugins.json"
-	cacheExpirationMinutes = 30
+	pluginListURL = "https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/plugins.json"
 )
 
 func NewStore() error {
 	//nolint:exhaustruct
-	storeMassaStation := &Store{}
+	StoreInstance = &Store{}
 
-	err := storeMassaStation.FetchPluginList()
+	err := StoreInstance.FetchPluginList()
 	if err != nil {
 		return fmt.Errorf("while fetching plugin list: %w", err)
 	}
 
-	go storeMassaStation.FetchStorePeriodically()
-
-	StoreInstance = storeMassaStation
+	go StoreInstance.FetchStorePeriodically()
 
 	return nil
 }
@@ -70,14 +68,12 @@ func (s *Store) FetchPluginList() error {
 		Timeout: time.Second * 10,
 	}
 
-	// If the response is not cached, make the HTTP request
 	resp, err := netClient.Get(pluginListURL) //nolint:noctx
 	if err != nil {
 		return fmt.Errorf("fetching plugin list: %w", err)
 	}
 	defer resp.Body.Close()
 
-	// Read the response body and cache the result
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("reading response body: %w", err)
