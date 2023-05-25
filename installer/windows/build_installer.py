@@ -48,10 +48,14 @@ def build_massastation():
     Build the MassaStation binary from source.
     """
     subprocess.run(["go", "generate", "../..."], check=True)
-    subprocess.run(
-        ["go", "build", "-o", MASSASTATION_BINARY, "../cmd/massastation"], check=True
-    )
-
+    os.environ["CGO_ENABLED"] = "1"
+    subprocess.run([
+        "fyne", "package",
+        "-icon", "logo.png",
+        "-name", "MassaStation",
+        "-appID", "com.massalabs.massastation",
+        "-src", "../cmd/massastation"
+    ], check=True)
 
 def move_binaries():
     """
@@ -312,7 +316,12 @@ def install_dependencies():
         check=True,
     )
     subprocess.run(
-        ["go", "install", "golang.org/x/tools/cmd/stringer@latest"], check=True
+        ["go", "install", "golang.org/x/tools/cmd/stringer@latest"],
+        check=True
+    )
+    subprocess.run(
+        ["go", "install", "fyne.io/fyne/v2/cmd/fyne@latest"],
+        check=True
     )
 
 
