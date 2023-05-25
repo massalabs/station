@@ -99,3 +99,33 @@ jobs:
           path: "installer/*.pkg"
           if-no-files-found: error
           retention-days: 7
+
+  build-packages-windows:
+    name: Build .msi package for amd64
+    needs: build
+    defaults:
+      run:
+        working-directory: ./installer
+
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Download MassaStation
+        uses: actions/download-artifact@v3
+        with:
+          name: massastation_windows_amd64_bin
+      - name: Rename MassaStation binary
+        run: mv massastation_windows_amd64 massastation
+      - name: Build Package
+        run: python windows/build_installer.py
+      - name: Upload Package
+        uses: actions/upload-artifact@v3
+        with:
+          name: massastation_installer_windows_amd64
+          path: "*.msi"
+          if-no-files-found: error
+          retention-days: 7
