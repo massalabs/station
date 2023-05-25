@@ -29,6 +29,10 @@ GEN_CERT_SCRIPT = "generate_certificate.bat"
 
 WIX_DIR = "wixtoolset"
 
+# URLs to download Acrylic DNS Proxy and the WiX Toolset
+ACRYLIC_URL = "https://sourceforge.net/projects/acrylic/files/Acrylic/2.1.1/Acrylic-Portable.zip/download"
+WIXTOOLSET_URL = "https://wixdl.blob.core.windows.net/releases/v3.14.0.6526/wix314-binaries.zip"
+
 
 def download_file(url, filename):
     """
@@ -232,11 +236,10 @@ def build_installer():
     """
 
     # URLs for downloading the binaries
-    acrylic_url = "https://sourceforge.net/projects/acrylic/files/Acrylic/2.1.1/Acrylic-Portable.zip/download"
     massastation_server_url = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
     massastation_app_url = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_windows-amd64.exe"
 
-    download_file(acrylic_url, ACRYLIC_ZIP)
+    download_file(ACRYLIC_URL, ACRYLIC_ZIP)
     download_file(massastation_server_url, SERVER_BINARIES)
     download_file(massastation_app_url, APP_BINARIES)
 
@@ -291,11 +294,7 @@ def install_dependencies():
     if os.path.exists(WIX_DIR):
         return
 
-    wixtoolset_url = (
-        "https://wixdl.blob.core.windows.net/releases/v3.14.0.6526/wix314-binaries.zip"
-    )
-
-    download_file(wixtoolset_url, "wixtoolset.zip")
+    download_file(WIXTOOLSET_URL, "wixtoolset.zip")
 
     os.mkdir(WIX_DIR)
     with zipfile.ZipFile("wixtoolset.zip", "r") as zip_ref:
