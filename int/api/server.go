@@ -85,6 +85,12 @@ func NewServer(flags StartServerFlags) *Server {
 	server := restapi.NewServer(localAPI)
 
 	setAPIFlags(server, flags)
+
+	err = store.NewStore()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	config := config.AppConfig{
 		NodeURL:    config.GetNodeURL(flags.MassaNodeServer),
 		DNSAddress: config.GetDNSAddress(flags.MassaNodeServer, flags.DNSAddress),
@@ -150,11 +156,6 @@ func StartServer(flags StartServerFlags) {
 	// Initialize Swagger
 
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	err = store.NewStore()
 	if err != nil {
 		log.Fatalln(err)
 	}

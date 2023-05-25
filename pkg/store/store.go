@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-version"
-
 	"github.com/massalabs/thyra/pkg/config"
 )
 
@@ -35,8 +34,8 @@ type File struct {
 	Checksum string `json:"checksum"`
 }
 
-//nolint:gochecknoglobals
-var StoreInstance *Store
+//nolint:gochecknoglobals,exhaustruct
+var StoreInstance = &Store{}
 
 type Store struct {
 	Plugins []Plugin
@@ -48,9 +47,6 @@ const (
 )
 
 func NewStore() error {
-	//nolint:exhaustruct
-	StoreInstance = &Store{}
-
 	err := StoreInstance.FetchPluginList()
 	if err != nil {
 		return fmt.Errorf("while fetching plugin list: %w", err)

@@ -11,7 +11,7 @@ import (
 )
 
 func newList() operations.GetPluginStoreHandler {
-	return &list{store: store.StoreInstance}
+	return &list{}
 }
 
 type list struct {
