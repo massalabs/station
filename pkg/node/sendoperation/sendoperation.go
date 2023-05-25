@@ -1,20 +1,15 @@
 package sendoperation
 
 import (
-	"bytes"
 	"context"
 	b64 "encoding/base64"
 	"encoding/binary"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"strings"
-	"time"
 
-	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/node/base58"
+	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 )
 
 const DefaultGasLimit = 700_000_000
@@ -28,17 +23,6 @@ const NoCoin = 0
 const HundredMassa = 100_000_000_000
 
 const OneMassa = 1_000_000_000
-
-const WalletPluginURL = "http://" + config.MassaStationURL + "/plugin/massa-labs/massa-wallet/api/"
-
-const HTTPRequestTimeout = 60 * time.Second
-
-//nolint:tagliatelle
-type signResponse struct {
-	PublicKey     string `json:"publicKey"`
-	Signature     string `json:"signature"`
-	CorrelationID string `json:"correlationId,omitempty"`
-}
 
 //nolint:tagliatelle
 type sendOperationsReq struct {
@@ -64,11 +48,6 @@ type OperationBatch struct {
 
 type JSONableSlice []uint8
 
-type RespError struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
-}
-
 func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 	var result string
 
@@ -90,6 +69,7 @@ func Call(client *node.Client,
 	operation Operation,
 	nickname string,
 	operationBatch OperationBatch,
+	signer signer.Signer,
 ) (*OperationResponse, error) {
 	msg, msgB64, err := MakeOperation(client, expiry, fee, operation)
 	if err != nil {
@@ -115,25 +95,9 @@ func Call(client *node.Client,
 		}`
 	}
 
-	url := WalletPluginURL + "accounts/" + nickname + "/sign"
-
-	httpRawResponse, err := ExecuteHTTPRequest(
-		http.MethodPost,
-		url,
-		bytes.NewReader([]byte(content)),
-	)
+	res, err := signer.Sign(nickname, content)
 	if err != nil {
-		res := RespError{"", ""}
-		_ = json.Unmarshal(httpRawResponse, &res)
-
-		return nil, fmt.Errorf("POST on %s: %w, message: %s", url, err, res.Message)
-	}
-
-	res := signResponse{"", "", ""}
-	err = json.Unmarshal(httpRawResponse, &res)
-
-	if err != nil {
-		return nil, fmt.Errorf("unmarshalling '%s' JSON: %w", res, err)
+		return nil, fmt.Errorf("signing operation: %w", err)
 	}
 
 	signature, err := b64.StdEncoding.DecodeString(res.Signature)
@@ -213,37 +177,4 @@ func message(expiry uint64, fee uint64, operation Operation) []byte {
 	msg = append(msg, operation.Message()...)
 
 	return msg
-}
-
-func ExecuteHTTPRequest(methodType string, url string, reader io.Reader) ([]byte, error) {
-	request, err := http.NewRequestWithContext(
-		context.Background(),
-		methodType,
-		url,
-		reader)
-	if err != nil {
-		return nil, fmt.Errorf("creating HTTP request: %w", err)
-	}
-
-	request.Header.Set("Content-Type", "application/json;")
-
-	HTTPClient := &http.Client{Timeout: HTTPRequestTimeout, Transport: nil, Jar: nil, CheckRedirect: nil}
-
-	resp, err := HTTPClient.Do(request)
-	if err != nil {
-		return nil, fmt.Errorf("aborting during HTTP request: %w", err)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("reading request body: %w", err)
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return body, fmt.Errorf("request failed with status: %s", resp.Status)
-	}
-
-	defer resp.Body.Close()
-
-	return body, nil
 }
