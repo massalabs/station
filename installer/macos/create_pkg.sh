@@ -43,7 +43,7 @@ download_dependencies() {
 }
 
 main() {
-    clean
+    download_dependencies
 
     test -d $MASSASTATION_BINARY_NAME || build_massastation
 
