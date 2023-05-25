@@ -37,6 +37,7 @@ func CallFunction(client *node.Client,
 	parameter []byte,
 	coins uint64,
 	operationBatch sendOperation.OperationBatch,
+	signer signer.Signer,
 ) (*OperationWithEventResponse, error) {
 	callSC, err := callsc.New(addr, function, parameter,
 		sendOperation.DefaultGasLimit,
@@ -44,8 +45,6 @@ func CallFunction(client *node.Client,
 	if err != nil {
 		return nil, fmt.Errorf("creating callSC with '%s' at '%s': %w", function, addr, err)
 	}
-
-	signer := &signer.WalletPlugin{}
 
 	operationResponse, err := sendOperation.Call(
 		client,
@@ -78,6 +77,7 @@ func CallFunctionUnwaited(client *node.Client,
 	function string,
 	parameter []byte,
 	operationBatch sendOperation.OperationBatch,
+	signer signer.Signer,
 ) (*sendOperation.OperationResponse, error) {
 	callSC, err := callsc.New(addr, function, parameter,
 		sendOperation.DefaultGasLimit,
@@ -85,8 +85,6 @@ func CallFunctionUnwaited(client *node.Client,
 	if err != nil {
 		return nil, fmt.Errorf("creating callSC with '%s' at '%s': %w", function, addr, err)
 	}
-
-	signer := &signer.WalletPlugin{}
 
 	operationResponse, err := sendOperation.Call(
 		client,
@@ -114,14 +112,13 @@ func DeploySC(client *node.Client,
 	contract []byte,
 	datastore []byte,
 	operationBatch sendOperation.OperationBatch,
+	signer signer.Signer,
 ) (*OperationWithEventResponse, error) {
 	exeSC := executesc.New(
 		contract,
 		gasLimit,
 		coins,
 		datastore)
-
-	signer := &signer.WalletPlugin{}
 
 	operationResponse, err := sendOperation.Call(
 		client,
