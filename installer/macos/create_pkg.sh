@@ -8,8 +8,7 @@ BUILD_DIR=buildpkg
 PKGVERSION=dev
 ARCH=$1
 
-SERVER_BINARY_NAME=massastation-server
-APP_BINARY_NAME=massastation-app
+MASSASTATION_BINARY_NAME=massastation
 
 # Print the usage to stderr and exit with code 1.
 display_usage() {
@@ -24,17 +23,11 @@ fatal() {
     exit 1
 }
 
-# Download the latest release of MassaStation app.
-download_massastation_app() {
-    curl -L https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_darwin-$ARCH -o $APP_BINARY_NAME || fatal "failed to download $APP_BINARY_NAME"
-    chmod +x $APP_BINARY_NAME || fatal "failed to chmod $APP_BINARY_NAME"
-}
-
-# Download the latest release of MassaStation server.
+# Build MassaStation from source.
 build_massastation_server() {
-    go generate ../... || fatal "go generate failed for $SERVER_BINARY_NAME"
-    go build -o $SERVER_BINARY_NAME ../cmd/thyra-server || fatal "failed to build $SERVER_BINARY_NAME"
-    chmod +x $SERVER_BINARY_NAME || fatal "failed to chmod $SERVER_BINARY_NAME"
+    go generate ../... || fatal "go generate failed for $MASSASTATION_BINARY_NAME"
+    go build -o $MASSASTATION_BINARY_NAME ../cmd/thyra-server || fatal "failed to build $MASSASTATION_BINARY_NAME"
+    chmod +x $MASSASTATION_BINARY_NAME || fatal "failed to chmod $MASSASTATION_BINARY_NAME"
 }
 
 # Delete the build directory if it exists.
@@ -53,12 +46,10 @@ package() {
 main() {
     clean
 
-    test -f $SERVER_BINARY_NAME || build_massastation_server
-    test -f $APP_BINARY_NAME || download_massastation_app
+    test -f $MASSASTATION_BINARY_NAME || build_massastation_server
 
     mkdir -p $BUILD_DIR/usr/local/bin || fatal "failed to create $BUILD_DIR/usr/local/bin"
-    cp $SERVER_BINARY_NAME $BUILD_DIR/usr/local/bin || fatal "failed to copy $SERVER_BINARY_NAME to $BUILD_DIR/usr/local/bin"
-    cp $APP_BINARY_NAME $BUILD_DIR/usr/local/bin || fatal "failed to copy $APP_BINARY_NAME to $BUILD_DIR/usr/local/bin"
+    cp $MASSASTATION_BINARY_NAME $BUILD_DIR/usr/local/bin || fatal "failed to copy $MASSASTATION_BINARY_NAME to $BUILD_DIR/usr/local/bin"
 
     package
 }
