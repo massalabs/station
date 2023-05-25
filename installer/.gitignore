@@ -3,9 +3,11 @@ buildmsi/
 wixtoolset/
 buildpkg/
 builddeb/
+tmpdeb/
 
 # Temporary files
 *.zip
+*.tar.xz
 *.log
 *.wixpdb
 massastation-app
