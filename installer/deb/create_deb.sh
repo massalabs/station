@@ -18,7 +18,9 @@ fatal() {
 # Build MassaStation from source.
 build_massastation_server() {
     go generate ../... || fatal "go generate failed for $MASSASTATION_BINARY_NAME"
-    go build -o $MASSASTATION_BINARY_NAME ../cmd/massastation/ || fatal "failed to build $MASSASTATION_BINARY_NAME"
+    export GOARCH=$ARCH
+    export CGO_ENABLED=1
+    fyne package -icon logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_BINARY_NAME"
     chmod +x $MASSASTATION_BINARY_NAME || fatal "failed to chmod $MASSASTATION_BINARY_NAME"
 }
 
