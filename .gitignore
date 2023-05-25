@@ -1,5 +1,6 @@
 *.exe
 thyra-server
+massastation
 
 *.log
 *.spec
