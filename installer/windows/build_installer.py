@@ -20,6 +20,7 @@ VERSION = "0.0.0"
 # Binaries to be included in the installer
 MASSASTATION_BINARY = "massastation.exe"
 ACRYLIC_ZIP = "acrylic.zip"
+WIXTOOLSET_ZIP = "wixtoolset.zip"
 
 # Scripts to be included in the installer
 ACRYLIC_CONFIG_SCRIPT = "configure_acrylic.bat"
@@ -298,12 +299,12 @@ def install_dependencies():
     """
 
     if not os.path.exists(WIX_DIR):
-        download_file(WIXTOOLSET_URL, "wixtoolset.zip")
+        download_file(WIXTOOLSET_URL, WIXTOOLSET_ZIP)
 
         os.mkdir(WIX_DIR)
-        with zipfile.ZipFile("wixtoolset.zip", "r") as zip_ref:
+        with zipfile.ZipFile(WIXTOOLSET_ZIP, "r") as zip_ref:
             zip_ref.extractall(WIX_DIR)
-        os.remove("wixtoolset.zip")
+        os.remove(WIXTOOLSET_ZIP)
 
     # Install Go dependencies
     subprocess.run(
