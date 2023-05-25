@@ -10,6 +10,7 @@ import (
 	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
 	"github.com/massalabs/station/pkg/node/sendoperation/callsc"
 	"github.com/massalabs/station/pkg/node/sendoperation/executesc"
+	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 )
 
 const maxWaitingTimeInSeconds = 45
@@ -44,12 +45,15 @@ func CallFunction(client *node.Client,
 		return nil, fmt.Errorf("creating callSC with '%s' at '%s': %w", function, addr, err)
 	}
 
+	signer := &signer.WalletPlugin{}
+
 	operationResponse, err := sendOperation.Call(
 		client,
 		sendOperation.DefaultSlotsDuration, sendOperation.NoFee,
 		callSC,
 		nickname,
 		operationBatch,
+		signer,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
@@ -82,12 +86,15 @@ func CallFunctionUnwaited(client *node.Client,
 		return nil, fmt.Errorf("creating callSC with '%s' at '%s': %w", function, addr, err)
 	}
 
+	signer := &signer.WalletPlugin{}
+
 	operationResponse, err := sendOperation.Call(
 		client,
 		expiryDelta, sendOperation.NoFee,
 		callSC,
 		nickname,
 		operationBatch,
+		signer,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
@@ -114,6 +121,8 @@ func DeploySC(client *node.Client,
 		coins,
 		datastore)
 
+	signer := &signer.WalletPlugin{}
+
 	operationResponse, err := sendOperation.Call(
 		client,
 		expiry,
@@ -121,6 +130,7 @@ func DeploySC(client *node.Client,
 		exeSC,
 		nickname,
 		operationBatch,
+		signer,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("calling executeSC: %w", err)
