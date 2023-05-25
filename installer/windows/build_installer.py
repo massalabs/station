@@ -18,7 +18,7 @@ BUILD_DIR = "buildmsi"
 VERSION = "0.0.0"
 
 # Binaries to be included in the installer
-MASSASTATION_BINARY = "massastation.exe"
+MASSASTATION_BINARY = "MassaStation.exe"
 ACRYLIC_ZIP = "acrylic.zip"
 WIXTOOLSET_ZIP = "wixtoolset.zip"
 
@@ -68,7 +68,7 @@ def move_binaries():
 
     os.makedirs(BUILD_DIR)
 
-    os.rename(MASSASTATION_BINARY, os.path.join(BUILD_DIR, MASSASTATION_BINARY))
+    os.rename(os.path.join("..", "cmd", "massastation", MASSASTATION_BINARY), os.path.join(BUILD_DIR, MASSASTATION_BINARY))
     os.rename(ACRYLIC_ZIP, os.path.join(BUILD_DIR, ACRYLIC_ZIP))
 
     shutil.copy(
@@ -227,8 +227,8 @@ def create_wxs_file():
         />
 
         <InstallExecuteSequence>
-            <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed AND NOT UpgradeCode</Custom>
-            <Custom Action="InstallAcrylic" Before="ConfigureAcrylic">NOT Installed AND NOT UpgradeCode</Custom>
+            <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed</Custom>
+            <Custom Action="InstallAcrylic" Before="ConfigureAcrylic">NOT Installed</Custom>
             <Custom Action="ConfigureAcrylic" Before="ConfigureNetworkInterface">NOT Installed</Custom>
             <Custom Action="ConfigureNetworkInterface" Before="GenerateCertificate">NOT Installed</Custom>
             <Custom Action="GenerateCertificate" Before="DeleteAcrylicZip">NOT Installed</Custom>
