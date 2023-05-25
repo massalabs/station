@@ -10,6 +10,7 @@ import (
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
+	"github.com/massalabs/thyra/pkg/node/sendoperation/signer"
 	"github.com/massalabs/thyra/pkg/onchain"
 	"github.com/massalabs/thyra/pkg/onchain/dns"
 )
@@ -48,6 +49,7 @@ func PrepareForUpload(config config.AppConfig, url string, nickname string) (str
 		websiteStorer,
 		nil,
 		sendOperation.OperationBatch{NewBatch: true, CorrelationID: ""},
+		&signer.WalletPlugin{},
 	)
 	if err != nil {
 		return "", "", fmt.Errorf("deploying webstorage SC: %w", err)
@@ -110,6 +112,7 @@ func upload(
 		convert.U64ToBytes(len(chunks)),
 		sendOperation.OneMassa,
 		operationBatch,
+		&signer.WalletPlugin{},
 	)
 	if err != nil {
 		return nil, fmt.Errorf("calling initializeWebsite at '%s': %w", addr, err)
@@ -138,6 +141,7 @@ func upload(
 				NewBatch:      false,
 				CorrelationID: operationWithEventResponse.OperationResponse.CorrelationID,
 			},
+			&signer.WalletPlugin{},
 		)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
@@ -210,6 +214,7 @@ func uploadMissedChunks(
 			"appendBytesToWebsite",
 			params,
 			operationBatch,
+			&signer.WalletPlugin{},
 		)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)

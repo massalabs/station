@@ -8,6 +8,7 @@ import (
 	"github.com/massalabs/thyra/pkg/convert"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/sendoperation"
+	"github.com/massalabs/thyra/pkg/node/sendoperation/signer"
 	"github.com/massalabs/thyra/pkg/onchain"
 )
 
@@ -52,6 +53,7 @@ func SetRecord(
 		rec,
 		sendoperation.OneMassa,
 		operationBatch,
+		&signer.WalletPlugin{},
 	)
 	if err != nil {
 		return "", fmt.Errorf("calling setResolver with '%+v' at '%s': %w", rec, addr, err)

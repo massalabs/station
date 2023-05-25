@@ -9,6 +9,7 @@ import (
 	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node"
 	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
+	"github.com/massalabs/thyra/pkg/node/sendoperation/signer"
 	"github.com/massalabs/thyra/pkg/onchain"
 )
 
@@ -41,6 +42,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 		args,
 		uint64(params.Body.Coins),
 		sendOperation.OperationBatch{NewBatch: false, CorrelationID: ""},
+		&signer.WalletPlugin{},
 	)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
