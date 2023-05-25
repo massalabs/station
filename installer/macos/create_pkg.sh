@@ -4,11 +4,10 @@
 
 set -e
 
-BUILD_DIR=buildpkg
 PKGVERSION=dev
 ARCH=$1
 
-MASSASTATION_BINARY_NAME=massastation
+MASSASTATION_BINARY_NAME=MassaStation.app
 
 # Print the usage to stderr and exit with code 1.
 display_usage() {
@@ -24,32 +23,29 @@ fatal() {
 }
 
 # Build MassaStation from source.
-build_massastation_server() {
+build_massastation() {
     go generate ../... || fatal "go generate failed for $MASSASTATION_BINARY_NAME"
-    go build -o $MASSASTATION_BINARY_NAME ../cmd/thyra-server || fatal "failed to build $MASSASTATION_BINARY_NAME"
+    export GOARCH=$ARCH
+    export CGO_ENABLED=1
+    fyne package -icon logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_BINARY_NAME"
     chmod +x $MASSASTATION_BINARY_NAME || fatal "failed to chmod $MASSASTATION_BINARY_NAME"
-}
-
-# Delete the build directory if it exists.
-clean() {
-    if [ -d $BUILD_DIR ]; then
-        rm -rf $BUILD_DIR || fatal "failed to delete $BUILD_DIR"
-    fi
 }
 
 # Build the package using pkgbuild.
 package() {
-    pkgbuild --root $BUILD_DIR --identifier com.massalabs.massastation --version $PKGVERSION \
-        --scripts macos/scripts --install-location / massastation_$PKGVERSION\_$ARCH.pkg || fatal "failed to create package"
+    pkgbuild --component $MASSASTATION_BINARY_NAME --identifier com.massalabs.massastation --version $PKGVERSION \
+        --scripts macos/scripts --install-location /Applications massastation_$PKGVERSION\_$ARCH.pkg || fatal "failed to create package"
+}
+
+download_dependencies() {
+    go get fyne.io/fyne/v2@latest
+    go install fyne.io/fyne/v2/cmd/fyne@latest
 }
 
 main() {
     clean
 
-    test -f $MASSASTATION_BINARY_NAME || build_massastation_server
-
-    mkdir -p $BUILD_DIR/usr/local/bin || fatal "failed to create $BUILD_DIR/usr/local/bin"
-    cp $MASSASTATION_BINARY_NAME $BUILD_DIR/usr/local/bin || fatal "failed to copy $MASSASTATION_BINARY_NAME to $BUILD_DIR/usr/local/bin"
+    test -d $MASSASTATION_BINARY_NAME || build_massastation
 
     package
 }
