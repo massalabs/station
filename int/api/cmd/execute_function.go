@@ -9,6 +9,7 @@ import (
 	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/node"
 	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
+	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 	"github.com/massalabs/station/pkg/onchain"
 )
 
@@ -41,6 +42,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 		args,
 		uint64(params.Body.Coins),
 		sendOperation.OperationBatch{NewBatch: false, CorrelationID: ""},
+		&signer.WalletPlugin{},
 	)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
