@@ -49,13 +49,22 @@ def build_massastation():
     """
     subprocess.run(["go", "generate", "../..."], check=True)
     os.environ["CGO_ENABLED"] = "1"
-    subprocess.run([
-        "fyne", "package",
-        "-icon", "logo.png",
-        "-name", "MassaStation",
-        "-appID", "com.massalabs.massastation",
-        "-src", "../cmd/massastation"
-    ], check=True)
+    subprocess.run(
+        [
+            "fyne",
+            "package",
+            "-icon",
+            "logo.png",
+            "-name",
+            "MassaStation",
+            "-appID",
+            "com.massalabs.massastation",
+            "-src",
+            "../cmd/massastation",
+        ],
+        check=True,
+    )
+
 
 def move_binaries():
     """
@@ -68,7 +77,10 @@ def move_binaries():
 
     os.makedirs(BUILD_DIR)
 
-    os.rename(os.path.join("..", "cmd", "massastation", MASSASTATION_BINARY), os.path.join(BUILD_DIR, MASSASTATION_BINARY))
+    os.rename(
+        os.path.join("..", "cmd", "massastation", MASSASTATION_BINARY),
+        os.path.join(BUILD_DIR, MASSASTATION_BINARY),
+    )
     os.rename(ACRYLIC_ZIP, os.path.join(BUILD_DIR, ACRYLIC_ZIP))
 
     shutil.copy(
@@ -316,13 +328,9 @@ def install_dependencies():
         check=True,
     )
     subprocess.run(
-        ["go", "install", "golang.org/x/tools/cmd/stringer@latest"],
-        check=True
+        ["go", "install", "golang.org/x/tools/cmd/stringer@latest"], check=True
     )
-    subprocess.run(
-        ["go", "install", "fyne.io/fyne/v2/cmd/fyne@latest"],
-        check=True
-    )
+    subprocess.run(["go", "install", "fyne.io/fyne/v2/cmd/fyne@latest"], check=True)
 
 
 if __name__ == "__main__":
