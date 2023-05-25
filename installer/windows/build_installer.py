@@ -43,7 +43,8 @@ def build_massastation():
     """
     Build the MassaStation binary from source.
     """
-    subprocess.run(["go", "build", "-o", MASSASTATION_BINARY, "../cmd/massastation"])
+    subprocess.run(["go", "generate", "../..."], check=True)
+    subprocess.run(["go", "build", "-o", MASSASTATION_BINARY, "../cmd/massastation"], check=True)
 
 def move_binaries():
     """
@@ -287,18 +288,24 @@ def install_dependencies():
     """
     Install dependencies if they are not already installed.
 
-    The main dependency is the WiX Toolset.
+    This function installs WixToolset, Go Swagger, and Stringer.
     """
 
-    if os.path.exists(WIX_DIR):
-        return
+    if not os.path.exists(WIX_DIR):
+        download_file(WIXTOOLSET_URL, "wixtoolset.zip")
 
-    download_file(WIXTOOLSET_URL, "wixtoolset.zip")
+        os.mkdir(WIX_DIR)
+        with zipfile.ZipFile("wixtoolset.zip", "r") as zip_ref:
+            zip_ref.extractall(WIX_DIR)
+        os.remove("wixtoolset.zip")
 
-    os.mkdir(WIX_DIR)
-    with zipfile.ZipFile("wixtoolset.zip", "r") as zip_ref:
-        zip_ref.extractall(WIX_DIR)
-    os.remove("wixtoolset.zip")
+    # Install Go dependencies
+    subprocess.run([
+        "go", "install", "github.com/go-swagger/go-swagger/cmd/swagger@latest"
+    ], check=True)
+    subprocess.run([
+        "go", "install", "golang.org/x/tools/cmd/stringer@latest"
+    ], check=True)
 
 
 if __name__ == "__main__":
