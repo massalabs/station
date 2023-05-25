@@ -30,7 +30,9 @@ WIX_DIR = "wixtoolset"
 
 # URLs to download Acrylic DNS Proxy and the WiX Toolset
 ACRYLIC_URL = "https://sourceforge.net/projects/acrylic/files/Acrylic/2.1.1/Acrylic-Portable.zip/download"
-WIXTOOLSET_URL = "https://wixdl.blob.core.windows.net/releases/v3.14.0.6526/wix314-binaries.zip"
+WIXTOOLSET_URL = (
+    "https://wixdl.blob.core.windows.net/releases/v3.14.0.6526/wix314-binaries.zip"
+)
 
 
 def download_file(url, filename):
@@ -39,12 +41,16 @@ def download_file(url, filename):
     """
     urllib.request.urlretrieve(url, filename)
 
+
 def build_massastation():
     """
     Build the MassaStation binary from source.
     """
     subprocess.run(["go", "generate", "../..."], check=True)
-    subprocess.run(["go", "build", "-o", MASSASTATION_BINARY, "../cmd/massastation"], check=True)
+    subprocess.run(
+        ["go", "build", "-o", MASSASTATION_BINARY, "../cmd/massastation"], check=True
+    )
+
 
 def move_binaries():
     """
@@ -300,12 +306,13 @@ def install_dependencies():
         os.remove("wixtoolset.zip")
 
     # Install Go dependencies
-    subprocess.run([
-        "go", "install", "github.com/go-swagger/go-swagger/cmd/swagger@latest"
-    ], check=True)
-    subprocess.run([
-        "go", "install", "golang.org/x/tools/cmd/stringer@latest"
-    ], check=True)
+    subprocess.run(
+        ["go", "install", "github.com/go-swagger/go-swagger/cmd/swagger@latest"],
+        check=True,
+    )
+    subprocess.run(
+        ["go", "install", "golang.org/x/tools/cmd/stringer@latest"], check=True
+    )
 
 
 if __name__ == "__main__":
