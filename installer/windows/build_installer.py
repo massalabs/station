@@ -18,8 +18,7 @@ BUILD_DIR = "buildmsi"
 VERSION = "0.0.0"
 
 # Binaries to be included in the installer
-SERVER_BINARIES = "massastation-server.exe"
-APP_BINARIES = "massastation-app.exe"
+MASSASTATION_BINARY = "massastation.exe"
 ACRYLIC_ZIP = "acrylic.zip"
 
 # Scripts to be included in the installer
@@ -40,6 +39,11 @@ def download_file(url, filename):
     """
     urllib.request.urlretrieve(url, filename)
 
+def build_massastation():
+    """
+    Build the MassaStation binary from source.
+    """
+    subprocess.run(["go", "build", "-o", MASSASTATION_BINARY, "../cmd/massastation"])
 
 def move_binaries():
     """
@@ -52,8 +56,7 @@ def move_binaries():
 
     os.makedirs(BUILD_DIR)
 
-    os.rename(SERVER_BINARIES, os.path.join(BUILD_DIR, SERVER_BINARIES))
-    os.rename(APP_BINARIES, os.path.join(BUILD_DIR, APP_BINARIES))
+    os.rename(MASSASTATION_BINARY, os.path.join(BUILD_DIR, MASSASTATION_BINARY))
     os.rename(ACRYLIC_ZIP, os.path.join(BUILD_DIR, ACRYLIC_ZIP))
 
     shutil.copy(
@@ -117,8 +120,7 @@ def create_wxs_file():
             <Directory Id="ProgramFilesFolder">
                 <Directory Id="INSTALLDIR" Name="MassaStation">
                     <Component Id="MassaStationServer" Guid="bc60f0be-065b-4738-968f-ce0e9b32bd01">
-                        <File Id="MassaStationServerEXE" Name="{SERVER_BINARIES}" Source="{BUILD_DIR}\\{SERVER_BINARIES}" />
-                        <File Id="MassaStationAppEXE" Name="{APP_BINARIES}" Source="{BUILD_DIR}\\{APP_BINARIES}" />
+                        <File Id="MassaStationAppEXE" Name="{MASSASTATION_BINARY}" Source="{BUILD_DIR}\\{MASSASTATION_BINARY}" />
                         <File Id="AcrylicConfigScript" Name="{ACRYLIC_CONFIG_SCRIPT}" Source="{BUILD_DIR}\\{ACRYLIC_CONFIG_SCRIPT}" />
                         <File Id="NICConfigScript" Name="{NIC_CONFIG_SCRIPT}" Source="{BUILD_DIR}\\{NIC_CONFIG_SCRIPT}" />
                         <File Id="GenCertScript" Name="{GEN_CERT_SCRIPT}" Source="{BUILD_DIR}\\{GEN_CERT_SCRIPT}" />
@@ -235,13 +237,10 @@ def build_installer():
     It downloads the binaries and builds the installer.
     """
 
-    # URLs for downloading the binaries
-    massastation_server_url = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
-    massastation_app_url = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_windows-amd64.exe"
-
     download_file(ACRYLIC_URL, ACRYLIC_ZIP)
-    download_file(massastation_server_url, SERVER_BINARIES)
-    download_file(massastation_app_url, APP_BINARIES)
+
+    if not os.path.exists("massastation.exe"):
+        build_massastation()
 
     move_binaries()
 
