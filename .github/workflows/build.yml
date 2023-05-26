@@ -16,15 +16,15 @@ jobs:
             arch: amd64
             target: windows
             cc: x86_64-w64-mingw32-gcc
-          # - os: ubuntu-20.04
-          #   arch: amd64
-          #   target: linux
-          # - os: macos-latest
-          #   arch: amd64
-          #   target: darwin
-          # - os: macos-latest
-          #   arch: arm64
-          #   target: darwin
+          - os: ubuntu-20.04
+            arch: amd64
+            target: linux
+          - os: macos-latest
+            arch: amd64
+            target: darwin
+          - os: macos-latest
+            arch: arm64
+            target: darwin
     runs-on: ${{ matrix.os }}
     env:
       VERSION: ${{ inputs.tag_name || 'dev' }}
