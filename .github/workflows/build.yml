@@ -44,7 +44,9 @@ jobs:
           export CGO_ENABLED=1
           export CC=${{ matrix.cc }}
           go build -ldflags "-X github.com/massalabs/thyra/pkg/config.Version=${{env.VERSION}}" -o massastation_${{ matrix.target }}_${{ matrix.arch }} ./cmd/massastation/
-          fyne package -name MassaStation -icon ./cmd/massastation/logo.png -appID net.massalabs.massastation -exe massastation_${{ matrix.target }}_${{ matrix.arch }}
+          if [ ${{ matrix.target }} != "windows" ]; then
+            fyne package -name MassaStation -icon ./cmd/massastation/logo.png -appID net.massalabs.massastation -exe massastation_${{ matrix.target }}_${{ matrix.arch }}
+          fi
       - name: Upload MassaStation Binary
         uses: actions/upload-artifact@v3
         with:
@@ -60,7 +62,8 @@ jobs:
           name: massastation_${{ matrix.target }}_${{ matrix.arch }}_package
           path: |
             MassaStation.app
-          if-no-files-found: error
+            MassaStation.tar.xz
+          if-no-files-found: warn
           retention-days: 1
 
   build-macos-installer:
