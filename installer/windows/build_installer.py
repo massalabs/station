@@ -43,10 +43,27 @@ def download_file(url, filename):
     urllib.request.urlretrieve(url, filename)
 
 
+def install_massastation_build_dependencies():
+    """
+    Install the dependencies required to build massastation.
+    """
+    # Install Go dependencies
+    subprocess.run(
+        ["go", "install", "github.com/go-swagger/go-swagger/cmd/swagger@latest"],
+        check=True,
+    )
+    subprocess.run(
+        ["go", "install", "golang.org/x/tools/cmd/stringer@latest"], check=True
+    )
+    subprocess.run(["go", "install", "fyne.io/fyne/v2/cmd/fyne@latest"], check=True)
+
+
 def build_massastation():
     """
     Build the MassaStation binary from source.
     """
+    install_massastation_build_dependencies()
+
     subprocess.run(["go", "generate", "../..."], check=True)
     os.environ["CGO_ENABLED"] = "1"
     subprocess.run(
@@ -68,6 +85,7 @@ def build_massastation():
         os.path.join("..", "cmd", "massastation", "MassaStation.exe"),
         os.path.join(MASSASTATION_BINARY),
     )
+
 
 def move_binaries():
     """
@@ -324,16 +342,6 @@ def install_dependencies():
         with zipfile.ZipFile(WIXTOOLSET_ZIP, "r") as zip_ref:
             zip_ref.extractall(WIX_DIR)
         os.remove(WIXTOOLSET_ZIP)
-
-    # Install Go dependencies
-    subprocess.run(
-        ["go", "install", "github.com/go-swagger/go-swagger/cmd/swagger@latest"],
-        check=True,
-    )
-    subprocess.run(
-        ["go", "install", "golang.org/x/tools/cmd/stringer@latest"], check=True
-    )
-    subprocess.run(["go", "install", "fyne.io/fyne/v2/cmd/fyne@latest"], check=True)
 
 
 if __name__ == "__main__":
