@@ -4,12 +4,10 @@
 
 set -e
 
-BUILD_DIR=buildpkg
 PKGVERSION=dev
 ARCH=$1
 
-SERVER_BINARY_NAME=massastation-server
-APP_BINARY_NAME=massastation-app
+MASSASTATION_BINARY_NAME=MassaStation.app
 
 # Print the usage to stderr and exit with code 1.
 display_usage() {
@@ -24,41 +22,29 @@ fatal() {
     exit 1
 }
 
-# Download the latest release of MassaStation app.
-download_massastation_app() {
-    curl -L https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_darwin-$ARCH -o $APP_BINARY_NAME || fatal "failed to download $APP_BINARY_NAME"
-    chmod +x $APP_BINARY_NAME || fatal "failed to chmod $APP_BINARY_NAME"
-}
-
-# Download the latest release of MassaStation server.
-build_massastation_server() {
-    go generate ../... || fatal "go generate failed for $SERVER_BINARY_NAME"
-    go build -o $SERVER_BINARY_NAME ../cmd/thyra-server || fatal "failed to build $SERVER_BINARY_NAME"
-    chmod +x $SERVER_BINARY_NAME || fatal "failed to chmod $SERVER_BINARY_NAME"
-}
-
-# Delete the build directory if it exists.
-clean() {
-    if [ -d $BUILD_DIR ]; then
-        rm -rf $BUILD_DIR || fatal "failed to delete $BUILD_DIR"
-    fi
+# Build MassaStation from source.
+build_massastation() {
+    go generate ../... || fatal "go generate failed for $MASSASTATION_BINARY_NAME"
+    export GOARCH=$ARCH
+    export CGO_ENABLED=1
+    fyne package -icon logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_BINARY_NAME"
+    chmod +x $MASSASTATION_BINARY_NAME || fatal "failed to chmod $MASSASTATION_BINARY_NAME"
 }
 
 # Build the package using pkgbuild.
 package() {
-    pkgbuild --root $BUILD_DIR --identifier com.massalabs.massastation --version $PKGVERSION \
-        --scripts macos/scripts --install-location / massastation_$PKGVERSION\_$ARCH.pkg || fatal "failed to create package"
+    pkgbuild --component $MASSASTATION_BINARY_NAME --identifier com.massalabs.massastation --version $PKGVERSION \
+        --scripts macos/scripts --install-location /Applications massastation_$PKGVERSION\_$ARCH.pkg || fatal "failed to create package"
+}
+
+download_dependencies() {
+    go install fyne.io/fyne/v2/cmd/fyne@latest
 }
 
 main() {
-    clean
+    download_dependencies
 
-    test -f $SERVER_BINARY_NAME || build_massastation_server
-    test -f $APP_BINARY_NAME || download_massastation_app
-
-    mkdir -p $BUILD_DIR/usr/local/bin || fatal "failed to create $BUILD_DIR/usr/local/bin"
-    cp $SERVER_BINARY_NAME $BUILD_DIR/usr/local/bin || fatal "failed to copy $SERVER_BINARY_NAME to $BUILD_DIR/usr/local/bin"
-    cp $APP_BINARY_NAME $BUILD_DIR/usr/local/bin || fatal "failed to copy $APP_BINARY_NAME to $BUILD_DIR/usr/local/bin"
+    test -d $MASSASTATION_BINARY_NAME || build_massastation
 
     package
 }
