@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-version"
+	"github.com/massalabs/thyra/pkg/config"
 )
 
 //nolint:tagliatelle
@@ -23,8 +24,9 @@ type Plugin struct {
 		MacosArm64 File `json:"macos-arm64"`
 		MacosAmd64 File `json:"macos-amd64"`
 	} `json:"assets"`
-	Version string `json:"version"`
-	URL     string `json:"url"`
+	Version             string `json:"version"`
+	URL                 string `json:"url"`
+	MassaStationVersion string `json:"massaStationVersion"`
 }
 
 type File struct {
@@ -32,28 +34,27 @@ type File struct {
 	Checksum string `json:"checksum"`
 }
 
+//nolint:gochecknoglobals,exhaustruct
+var StoreInstance = &Store{}
+
 type Store struct {
 	Plugins []Plugin
 	mutex   sync.RWMutex
 }
 
 const (
-	pluginListURL          = "https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/plugins.json"
-	cacheExpirationMinutes = 30
+	pluginListURL = "https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/plugins.json"
 )
 
-func NewStore() (*Store, error) {
-	//nolint:exhaustruct
-	storeMassaStation := &Store{}
-
-	err := storeMassaStation.FetchPluginList()
+func NewStore() error {
+	err := StoreInstance.FetchPluginList()
 	if err != nil {
-		return storeMassaStation, fmt.Errorf("while fetching plugin list: %w", err)
+		return fmt.Errorf("while fetching plugin list: %w", err)
 	}
 
-	go storeMassaStation.FetchStorePeriodically()
+	go StoreInstance.FetchStorePeriodically()
 
-	return storeMassaStation, nil
+	return nil
 }
 
 func (s *Store) FetchPluginList() error {
@@ -63,14 +64,12 @@ func (s *Store) FetchPluginList() error {
 		Timeout: time.Second * 10,
 	}
 
-	// If the response is not cached, make the HTTP request
 	resp, err := netClient.Get(pluginListURL) //nolint:noctx
 	if err != nil {
 		return fmt.Errorf("fetching plugin list: %w", err)
 	}
 	defer resp.Body.Close()
 
-	// Read the response body and cache the result
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("reading response body: %w", err)
@@ -139,24 +138,32 @@ func (s *Store) FetchStorePeriodically() {
 }
 
 func (s *Store) CheckForPluginUpdates(name string, vers string) (bool, error) {
+	pluginInStore := s.FindPluginByName(name)
+
+	if pluginInStore == nil {
+		return false, nil
+	}
+
 	pluginVersion, err := version.NewVersion(vers)
 	if err != nil {
 		return false, fmt.Errorf("while parsing plugin version: %w", err)
 	}
-
-	pluginInStore := s.FindPluginByName(name)
-	if pluginInStore != nil {
-		// If there is a plugin with the same name,
-		// check if the version is greater than the current one.
-		pluginInStoreVersion, err := version.NewVersion(pluginInStore.Version)
-		if err != nil {
-			return false, fmt.Errorf("while parsing plugin version: %w", err)
-		}
-
-		return pluginInStoreVersion.GreaterThan(pluginVersion), nil
+	// checks if the plugin is compatible with the current version of massaStation
+	pluginCompatibleWithMassaStation, err := pluginInStore.IsPluginCompatible()
+	if err != nil {
+		return false, fmt.Errorf("while checking if plugin is compatible: %w", err)
 	}
 
-	return false, nil
+	// checks if the version is greater than the current one.
+	pluginInStoreVersion, err := version.NewVersion(pluginInStore.Version)
+	if err != nil {
+		return false, fmt.Errorf("while parsing plugin version: %w", err)
+	}
+
+	newVersionInStore := pluginInStoreVersion.GreaterThan(pluginVersion)
+	isUpdatable := newVersionInStore && pluginCompatibleWithMassaStation
+
+	return isUpdatable, nil
 }
 
 func (s *Store) FindPluginByName(name string) *Plugin {
@@ -168,4 +175,22 @@ func (s *Store) FindPluginByName(name string) *Plugin {
 	}
 
 	return nil
+}
+
+func (plugin *Plugin) IsPluginCompatible() (bool, error) {
+	if config.Version == "dev" {
+		return true, nil
+	}
+
+	massaStationVersion, err := version.NewVersion(config.Version)
+	if err != nil {
+		return false, fmt.Errorf("while parsing MassaStation version: %w", err)
+	}
+
+	pluginMassaStationVersionConstraint, err := version.NewConstraint(plugin.MassaStationVersion)
+	if err != nil {
+		return false, fmt.Errorf("while parsing MassaStation version: %w", err)
+	}
+
+	return pluginMassaStationVersionConstraint.Check(massaStationVersion), nil
 }

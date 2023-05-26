@@ -63,9 +63,8 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, config config.AppConfig) 
 	localAPI.ThyraPluginManagerHandler = operations.ThyraPluginManagerHandlerFunc(ThyraPluginManagerHandler)
 
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
-
-	myplugin.InitializePluginAPI(localAPI, &config)
-	pluginstore.InitializePluginStoreAPI(localAPI, &config)
+	pluginstore.InitializePluginStoreAPI(localAPI)
+	myplugin.InitializePluginAPI(localAPI)
 }
 
 type Server struct {
@@ -87,7 +86,7 @@ func NewServer(flags StartServerFlags) *Server {
 
 	setAPIFlags(server, flags)
 
-	storeMS, err := store.NewStore()
+	err = store.NewStore()
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -96,7 +95,6 @@ func NewServer(flags StartServerFlags) *Server {
 		NodeURL:    config.GetNodeURL(flags.MassaNodeServer),
 		DNSAddress: config.GetDNSAddress(flags.MassaNodeServer, flags.DNSAddress),
 		Network:    config.GetNetwork(flags.MassaNodeServer),
-		Store:      storeMS,
 	}
 
 	return &Server{
@@ -156,25 +154,19 @@ func (server *Server) printNodeVersion() {
  */
 func StartServer(flags StartServerFlags) {
 	// Initialize Swagger
+
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	localAPI := operations.NewThyraServerAPI(swaggerSpec)
 	server := restapi.NewServer(localAPI)
-
-	storeMS, err := store.NewStore()
-	if err != nil {
-		log.Fatalln(err)
-	}
 
 	setAPIFlags(server, flags)
 	config := config.AppConfig{
 		NodeURL:    config.GetNodeURL(flags.MassaNodeServer),
 		DNSAddress: config.GetDNSAddress(flags.MassaNodeServer, flags.DNSAddress),
 		Network:    config.GetNetwork(flags.MassaNodeServer),
-		Store:      storeMS,
 	}
 
 	// Display info about node server
