@@ -18,9 +18,9 @@ BUILD_DIR = "buildmsi"
 VERSION = "0.0.0"
 
 # Binaries to be included in the installer
-SERVER_BINARIES = "massastation-server.exe"
-APP_BINARIES = "massastation-app.exe"
+MASSASTATION_BINARY = "MassaStation.exe"
 ACRYLIC_ZIP = "acrylic.zip"
+WIXTOOLSET_ZIP = "wixtoolset.zip"
 
 # Scripts to be included in the installer
 ACRYLIC_CONFIG_SCRIPT = "configure_acrylic.bat"
@@ -29,12 +29,41 @@ GEN_CERT_SCRIPT = "generate_certificate.bat"
 
 WIX_DIR = "wixtoolset"
 
+# URLs to download Acrylic DNS Proxy and the WiX Toolset
+ACRYLIC_URL = "https://sourceforge.net/projects/acrylic/files/Acrylic/2.1.1/Acrylic-Portable.zip/download"
+WIXTOOLSET_URL = (
+    "https://wixdl.blob.core.windows.net/releases/v3.14.0.6526/wix314-binaries.zip"
+)
+
 
 def download_file(url, filename):
     """
     Download a given file from a given URL.
     """
     urllib.request.urlretrieve(url, filename)
+
+
+def build_massastation():
+    """
+    Build the MassaStation binary from source.
+    """
+    subprocess.run(["go", "generate", "../..."], check=True)
+    os.environ["CGO_ENABLED"] = "1"
+    subprocess.run(
+        [
+            "fyne",
+            "package",
+            "-icon",
+            "logo.png",
+            "-name",
+            "MassaStation",
+            "-appID",
+            "com.massalabs.massastation",
+            "-src",
+            "../cmd/massastation",
+        ],
+        check=True,
+    )
 
 
 def move_binaries():
@@ -48,8 +77,10 @@ def move_binaries():
 
     os.makedirs(BUILD_DIR)
 
-    os.rename(SERVER_BINARIES, os.path.join(BUILD_DIR, SERVER_BINARIES))
-    os.rename(APP_BINARIES, os.path.join(BUILD_DIR, APP_BINARIES))
+    os.rename(
+        os.path.join("..", "cmd", "massastation", MASSASTATION_BINARY),
+        os.path.join(BUILD_DIR, MASSASTATION_BINARY),
+    )
     os.rename(ACRYLIC_ZIP, os.path.join(BUILD_DIR, ACRYLIC_ZIP))
 
     shutil.copy(
@@ -113,8 +144,7 @@ def create_wxs_file():
             <Directory Id="ProgramFilesFolder">
                 <Directory Id="INSTALLDIR" Name="MassaStation">
                     <Component Id="MassaStationServer" Guid="bc60f0be-065b-4738-968f-ce0e9b32bd01">
-                        <File Id="MassaStationServerEXE" Name="{SERVER_BINARIES}" Source="{BUILD_DIR}\\{SERVER_BINARIES}" />
-                        <File Id="MassaStationAppEXE" Name="{APP_BINARIES}" Source="{BUILD_DIR}\\{APP_BINARIES}" />
+                        <File Id="MassaStationAppEXE" Name="{MASSASTATION_BINARY}" Source="{BUILD_DIR}\\{MASSASTATION_BINARY}" />
                         <File Id="AcrylicConfigScript" Name="{ACRYLIC_CONFIG_SCRIPT}" Source="{BUILD_DIR}\\{ACRYLIC_CONFIG_SCRIPT}" />
                         <File Id="NICConfigScript" Name="{NIC_CONFIG_SCRIPT}" Source="{BUILD_DIR}\\{NIC_CONFIG_SCRIPT}" />
                         <File Id="GenCertScript" Name="{GEN_CERT_SCRIPT}" Source="{BUILD_DIR}\\{GEN_CERT_SCRIPT}" />
@@ -209,8 +239,8 @@ def create_wxs_file():
         />
 
         <InstallExecuteSequence>
-            <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed AND NOT UpgradeCode</Custom>
-            <Custom Action="InstallAcrylic" Before="ConfigureAcrylic">NOT Installed AND NOT UpgradeCode</Custom>
+            <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed</Custom>
+            <Custom Action="InstallAcrylic" Before="ConfigureAcrylic">NOT Installed</Custom>
             <Custom Action="ConfigureAcrylic" Before="ConfigureNetworkInterface">NOT Installed</Custom>
             <Custom Action="ConfigureNetworkInterface" Before="GenerateCertificate">NOT Installed</Custom>
             <Custom Action="GenerateCertificate" Before="DeleteAcrylicZip">NOT Installed</Custom>
@@ -231,14 +261,10 @@ def build_installer():
     It downloads the binaries and builds the installer.
     """
 
-    # URLs for downloading the binaries
-    acrylic_url = "https://sourceforge.net/projects/acrylic/files/Acrylic/2.1.1/Acrylic-Portable.zip/download"
-    massastation_server_url = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
-    massastation_app_url = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_windows-amd64.exe"
+    download_file(ACRYLIC_URL, ACRYLIC_ZIP)
 
-    download_file(acrylic_url, ACRYLIC_ZIP)
-    download_file(massastation_server_url, SERVER_BINARIES)
-    download_file(massastation_app_url, APP_BINARIES)
+    if not os.path.exists("massastation.exe"):
+        build_massastation()
 
     move_binaries()
 
@@ -285,22 +311,26 @@ def install_dependencies():
     """
     Install dependencies if they are not already installed.
 
-    The main dependency is the WiX Toolset.
+    This function installs WixToolset, Go Swagger, and Stringer.
     """
 
-    if os.path.exists(WIX_DIR):
-        return
+    if not os.path.exists(WIX_DIR):
+        download_file(WIXTOOLSET_URL, WIXTOOLSET_ZIP)
 
-    wixtoolset_url = (
-        "https://wixdl.blob.core.windows.net/releases/v3.14.0.6526/wix314-binaries.zip"
+        os.mkdir(WIX_DIR)
+        with zipfile.ZipFile(WIXTOOLSET_ZIP, "r") as zip_ref:
+            zip_ref.extractall(WIX_DIR)
+        os.remove(WIXTOOLSET_ZIP)
+
+    # Install Go dependencies
+    subprocess.run(
+        ["go", "install", "github.com/go-swagger/go-swagger/cmd/swagger@latest"],
+        check=True,
     )
-
-    download_file(wixtoolset_url, "wixtoolset.zip")
-
-    os.mkdir(WIX_DIR)
-    with zipfile.ZipFile("wixtoolset.zip", "r") as zip_ref:
-        zip_ref.extractall(WIX_DIR)
-    os.remove("wixtoolset.zip")
+    subprocess.run(
+        ["go", "install", "golang.org/x/tools/cmd/stringer@latest"], check=True
+    )
+    subprocess.run(["go", "install", "fyne.io/fyne/v2/cmd/fyne@latest"], check=True)
 
 
 if __name__ == "__main__":
