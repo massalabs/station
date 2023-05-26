@@ -18,7 +18,7 @@ BUILD_DIR = "buildmsi"
 VERSION = "0.0.0"
 
 # Binaries to be included in the installer
-MASSASTATION_BINARY = "MassaStation.exe"
+MASSASTATION_BINARY = "massastation.exe"
 ACRYLIC_ZIP = "acrylic.zip"
 WIXTOOLSET_ZIP = "wixtoolset.zip"
 
@@ -64,7 +64,10 @@ def build_massastation():
         ],
         check=True,
     )
-
+    os.rename(
+        os.path.join("..", "cmd", "massastation", "MassaStation.exe"),
+        os.path.join(MASSASTATION_BINARY),
+    )
 
 def move_binaries():
     """
@@ -78,7 +81,7 @@ def move_binaries():
     os.makedirs(BUILD_DIR)
 
     os.rename(
-        os.path.join("..", "cmd", "massastation", MASSASTATION_BINARY),
+        os.path.join(MASSASTATION_BINARY),
         os.path.join(BUILD_DIR, MASSASTATION_BINARY),
     )
     os.rename(ACRYLIC_ZIP, os.path.join(BUILD_DIR, ACRYLIC_ZIP))
@@ -263,7 +266,7 @@ def build_installer():
 
     download_file(ACRYLIC_URL, ACRYLIC_ZIP)
 
-    if not os.path.exists("massastation.exe"):
+    if not os.path.exists(MASSASTATION_BINARY):
         build_massastation()
 
     move_binaries()

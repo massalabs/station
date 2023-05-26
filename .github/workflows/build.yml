@@ -16,15 +16,15 @@ jobs:
             arch: amd64
             target: windows
             cc: x86_64-w64-mingw32-gcc
-          - os: ubuntu-20.04
-            arch: amd64
-            target: linux
-          - os: macos-latest
-            arch: amd64
-            target: darwin
-          - os: macos-latest
-            arch: arm64
-            target: darwin
+          # - os: ubuntu-20.04
+          #   arch: amd64
+          #   target: linux
+          # - os: macos-latest
+          #   arch: amd64
+          #   target: darwin
+          # - os: macos-latest
+          #   arch: arm64
+          #   target: darwin
     runs-on: ${{ matrix.os }}
     env:
       VERSION: ${{ inputs.tag_name || 'dev' }}
@@ -51,6 +51,9 @@ jobs:
         shell: bash
         run: |
           fyne package -name MassaStation -icon ./cmd/massastation/logo.png -appID net.massalabs.massastation -exe massastation_${{ matrix.target }}_${{ matrix.arch }}
+      - name: Add missing .exe extension for Windows
+        if: matrix.target == 'windows'
+        run: mv massastation_${{ matrix.target }}_${{ matrix.arch }} massastation_${{ matrix.target }}_${{ matrix.arch }}.exe
       - name: Upload MassaStation Binary
         uses: actions/upload-artifact@v3
         with:
@@ -119,7 +122,7 @@ jobs:
         with:
           name: massastation_windows_amd64_bin
       - name: Rename MassaStation binary
-        run: mv massastation_windows_amd64 massastation
+        run: mv ../massastation_windows_amd64.exe massastation.exe
       - name: Build Package
         run: python windows/build_installer.py
       - name: Upload Package
