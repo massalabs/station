@@ -22,8 +22,17 @@ fatal() {
     exit 1
 }
 
+# Install dependencies required to build the MassaStation binary.
+install_massastation_build_dependencies() {
+    go install fyne.io/fyne/v2/cmd/fyne@latest
+    go install github.com/go-swagger/go-swagger/cmd/swagger@latest
+    go install golang.org/x/tools/cmd/stringer@latest
+}
+
 # Build MassaStation from source.
 build_massastation() {
+    install_massastation_build_dependencies
+
     go generate ../... || fatal "go generate failed for $MASSASTATION_BINARY_NAME"
     export GOARCH=$ARCH
     export CGO_ENABLED=1
@@ -37,13 +46,7 @@ package() {
         --scripts macos/scripts --install-location /Applications massastation_$PKGVERSION\_$ARCH.pkg || fatal "failed to create package"
 }
 
-download_dependencies() {
-    go install fyne.io/fyne/v2/cmd/fyne@latest
-}
-
 main() {
-    download_dependencies
-
     test -d $MASSASTATION_BINARY_NAME || build_massastation
 
     package
