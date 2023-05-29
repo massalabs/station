@@ -98,7 +98,7 @@ jobs:
       - name: Upload Package
         uses: actions/upload-artifact@v3
         with:
-          name: macos-package_${{ matrix.arch }}
+          name: massastation_installer_darwin_${{ matrix.arch }}
           path: "installer/*.pkg"
           if-no-files-found: error
           retention-days: 7
