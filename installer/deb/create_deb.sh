@@ -5,10 +5,11 @@
 set -e
 
 BUILD_DIR=builddeb
+TMP_DIR=tmpdeb
 PKGVERSION=0.0.0-dev
 
-SERVER_BINARY_NAME=massastation-server
-APP_BINARY_NAME=massastation-app
+MASSASTATION_ARCHIVE_NAME=MassaStation.tar.xz
+MASSASTATION_BINARY_NAME=massastation
 
 # Print error message to stderr and exit with code 1.
 fatal() {
@@ -16,17 +17,12 @@ fatal() {
     exit 1
 }
 
-# Download the latest release of MassaStation app.
-download_massastation_app() {
-    curl -L https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_linux-amd64 -o $APP_BINARY_NAME || fatal "failed to download $APP_BINARY_NAME"
-    chmod +x $APP_BINARY_NAME || fatal "failed to chmod $APP_BINARY_NAME"
-}
-
-# Build the MassaStation server binary.
-build_massastation_server() {
-    go generate ../... || fatal "go generate failed for $SERVER_BINARY_NAME"
-    go build -o $SERVER_BINARY_NAME ../cmd/thyra-server/ || fatal "failed to build $SERVER_BINARY_NAME"
-    chmod +x $SERVER_BINARY_NAME || fatal "failed to chmod $SERVER_BINARY_NAME"
+# Build MassaStation from source.
+build_massastation() {
+    go generate ../... || fatal "go generate failed for $MASSASTATION_BINARY_NAME"
+    export GOARCH=$ARCH
+    export CGO_ENABLED=1
+    fyne package -icon logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_BINARY_NAME"
 }
 
 # Delete the build directory if it exists.
@@ -34,11 +30,19 @@ clean() {
     if [ -d $BUILD_DIR ]; then
         rm -rf $BUILD_DIR || fatal "failed to delete $BUILD_DIR"
     fi
+
+    if [ -d $TMP_DIR ]; then
+        rm -rf $TMP_DIR || fatal "failed to delete $TMP_DIR"
+    fi
 }
 
 # Install dependencies required to build the .deb file.
 install_dependencies() {
-    sudo apt-get install dpkg-dev || fatal "failed to install dpkg-dev"
+    sudo apt-get install dpkg-dev -y || fatal "failed to install dpkg-dev"
+    sudo apt-get install libgl1-mesa-dev xorg-dev -y || fatal "failed to install libgl1-mesa-dev xorg-dev"
+    go install fyne.io/fyne/v2/cmd/fyne@latest || fatal "failed to install fyne.io/fyne/v2/cmd/fyne@latest"
+    go install github.com/go-swagger/go-swagger/cmd/swagger@latest || fatal "failed to install github.com/go-swagger/go-swagger/cmd/swagger@latest"
+    go install golang.org/x/tools/cmd/stringer@latest || fatal "failed to install golang.org/x/tools/cmd/stringer@latest"
 }
 
 main() {
@@ -46,12 +50,19 @@ main() {
 
     install_dependencies
 
-    test -f $SERVER_BINARY_NAME || build_massastation_server
-    test -f $APP_BINARY_NAME || download_massastation_app
+    test -f $MASSASTATION_ARCHIVE_NAME || build_massastation
+
+    mkdir -p $TMP_DIR || fatal "failed to create $TMP_DIR"
+    tar -xf $MASSASTATION_ARCHIVE_NAME -C $TMP_DIR || fatal "failed to extract $MASSASTATION_ARCHIVE_NAME to $TMP_DIR"
 
     mkdir -p $BUILD_DIR/usr/bin || fatal "failed to create $BUILD_DIR/usr/bin"
-    cp $SERVER_BINARY_NAME $BUILD_DIR/usr/bin || fatal "failed to copy $SERVER_BINARY_NAME to $BUILD_DIR/usr/bin"
-    cp $APP_BINARY_NAME $BUILD_DIR/usr/bin || fatal "failed to copy $APP_BINARY_NAME to $BUILD_DIR/usr/bin"
+    cp $TMP_DIR/usr/local/bin/$MASSASTATION_BINARY_NAME $BUILD_DIR/usr/bin || fatal "failed to copy $MASSASTATION_BINARY_NAME to $BUILD_DIR/usr/bin"
+
+    mkdir -p $BUILD_DIR/usr/share/applications || fatal "failed to create $BUILD_DIR/usr/share/applications"
+    cp $TMP_DIR/usr/local/share/applications/MassaStation.desktop $BUILD_DIR/usr/share/applications || fatal "failed to copy MassaStation.desktop to $BUILD_DIR/usr/share/applications"
+
+    mkdir -p $BUILD_DIR/usr/share/pixmaps || fatal "failed to create $BUILD_DIR/usr/share/pixmaps"
+    cp $TMP_DIR/usr/local/share/pixmaps/MassaStation.png $BUILD_DIR/usr/share/pixmaps || fatal "failed to copy MassaStation.png to $BUILD_DIR/usr/share/pixmaps"
 
     mkdir -p $BUILD_DIR/DEBIAN || fatal "failed to create $BUILD_DIR/DEBIAN"
     cat <<EOF >$BUILD_DIR/DEBIAN/control

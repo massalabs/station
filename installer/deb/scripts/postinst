@@ -87,5 +87,5 @@ if [[ ! -f $MASSASTATION_CERT_DIR/cert.pem || ! -f $MASSASTATION_CERT_DIR/cert-k
     generate_certificate
 fi
 
-# Setcap massastation-server to allow binding to privileged ports (80, 443).
-setcap CAP_NET_BIND_SERVICE=+eip /usr/bin/massastation-server || fatal "Failed to setcap massastation-server."
+# Setcap massastation to allow binding to privileged ports (80, 443).
+setcap CAP_NET_BIND_SERVICE=+eip /usr/bin/massastation || fatal "Failed to setcap massastation."
