@@ -17,8 +17,18 @@ fatal() {
     exit 1
 }
 
+# Install dependencies required to build the MassaStation binary.
+install_massastation_build_dependencies() {
+    sudo apt-get install libgl1-mesa-dev xorg-dev -y || fatal "failed to install libgl1-mesa-dev xorg-dev"
+    go install fyne.io/fyne/v2/cmd/fyne@latest || fatal "failed to install fyne.io/fyne/v2/cmd/fyne@latest"
+    go install github.com/go-swagger/go-swagger/cmd/swagger@latest || fatal "failed to install github.com/go-swagger/go-swagger/cmd/swagger@latest"
+    go install golang.org/x/tools/cmd/stringer@latest || fatal "failed to install golang.org/x/tools/cmd/stringer@latest"
+}
+
 # Build MassaStation from source.
 build_massastation() {
+    install_massastation_build_dependencies
+
     go generate ../... || fatal "go generate failed for $MASSASTATION_BINARY_NAME"
     export GOARCH=$ARCH
     export CGO_ENABLED=1
@@ -39,10 +49,6 @@ clean() {
 # Install dependencies required to build the .deb file.
 install_dependencies() {
     sudo apt-get install dpkg-dev -y || fatal "failed to install dpkg-dev"
-    sudo apt-get install libgl1-mesa-dev xorg-dev -y || fatal "failed to install libgl1-mesa-dev xorg-dev"
-    go install fyne.io/fyne/v2/cmd/fyne@latest || fatal "failed to install fyne.io/fyne/v2/cmd/fyne@latest"
-    go install github.com/go-swagger/go-swagger/cmd/swagger@latest || fatal "failed to install github.com/go-swagger/go-swagger/cmd/swagger@latest"
-    go install golang.org/x/tools/cmd/stringer@latest || fatal "failed to install golang.org/x/tools/cmd/stringer@latest"
 }
 
 main() {
