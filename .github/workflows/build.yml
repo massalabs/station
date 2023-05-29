@@ -36,17 +36,21 @@ jobs:
           os: ${{ matrix.os }}
       - name: Install Fyne
         run: go install fyne.io/fyne/v2/cmd/fyne@latest
+      - name: Set environment variables
+        run: |
+          echo "GOOS=${{ matrix.target }}" >> $GITHUB_ENV
+          echo "GOARCH=${{ matrix.arch }}" >> $GITHUB_ENV
+          echo "CGO_ENABLED=1" >> $GITHUB_ENV
+          echo "CC=${{ matrix.cc }}" >> $GITHUB_ENV
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
         shell: bash
         run: |
-          export GOOS=${{ matrix.target }}
-          export GOARCH=${{ matrix.arch }}
-          export CGO_ENABLED=1
-          export CC=${{ matrix.cc }}
           go build -ldflags "-X github.com/massalabs/thyra/pkg/config.Version=${{env.VERSION}}" -o massastation_${{ matrix.target }}_${{ matrix.arch }} ./cmd/massastation/
-          if [ ${{ matrix.target }} != "windows" ]; then
-            fyne package -name MassaStation -icon ./cmd/massastation/logo.png -appID net.massalabs.massastation -exe massastation_${{ matrix.target }}_${{ matrix.arch }}
-          fi
+      - name: Package binary for ${{ matrix.target }} on ${{ matrix.arch}}
+        if: matrix.target != 'windows'
+        shell: bash
+        run: |
+          fyne package -name MassaStation -icon ./cmd/massastation/logo.png -appID net.massalabs.massastation -exe massastation_${{ matrix.target }}_${{ matrix.arch }}
       - name: Upload MassaStation Binary
         uses: actions/upload-artifact@v3
         with:
