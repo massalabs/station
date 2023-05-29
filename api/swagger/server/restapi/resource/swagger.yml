@@ -34,6 +34,7 @@ paths:
             $ref: "#/definitions/Error"
   /browse/{address}/{resource}:
     get:
+      description: Downloads the website from the given address and returns the requested resource.
       operationId: browse
       produces:
         - application/json
@@ -69,6 +70,7 @@ paths:
             $ref: "#/definitions/Error"
   /cmd/executeFunction:
     post:
+      description: Calls the given function from the given smart contract.
       operationId: cmdExecuteFunction
       parameters:
         - in: body
@@ -156,6 +158,7 @@ paths:
             $ref: "#/definitions/Error"
   /cmd/deploySC:
     post:
+      description: Deploys the given smart contract to the blockchain network.
       operationId: cmdDeploySC
       consumes:
         - multipart/form-data
@@ -298,6 +301,7 @@ paths:
                       type: number
   /massa/addresses:
     get:
+      description: Retrieves requested information about the given addresses.
       operationId: massaGetAddresses
       parameters:
         - in: query
@@ -375,6 +379,7 @@ paths:
             $ref: "#/definitions/Error"
   /my/domains/{nickname}:
     get:
+      description: Retrieves the list of domains owned by the given wallet.
       operationId: myDomainsGetter
       parameters:
         - in: path
@@ -401,6 +406,7 @@ paths:
             $ref: "#/definitions/Error"
   /plugin-manager:
     post:
+      description: Install a plugin from a given URL.
       operationId: pluginManagerInstall
       parameters:
         - in: query
@@ -432,6 +438,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
     get:
+      description: List all installed plugins.
       operationId: pluginManagerList
       responses:
         "200":
@@ -488,6 +495,7 @@ paths:
             $ref: "#/definitions/Error"
   /plugin-manager/register:
     post:
+      description: Register a plugin. This is used by plugins to register themselves to the plugin manager.
       operationId: pluginManagerRegister
       parameters:
         - in: body
@@ -558,6 +566,7 @@ paths:
             $ref: "#/definitions/Error"
   /plugin-manager/{id}:
     get:
+      description: Returns the given plugin status.
       operationId: pluginManagerGetInformation
       parameters:
         - in: path
@@ -593,6 +602,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
     delete:
+      description: Uninstall the given plugin from the system.
       operationId: pluginManagerUninstall
       parameters:
         - in: path
@@ -621,6 +631,7 @@ paths:
             $ref: "#/definitions/Error"
   /plugin-manager/{id}/execute:
     post:
+      description: Execute a command on the given plugin such as update, stop, start, restart.
       operationId: pluginManagerExecuteCommand
       parameters:
         - in: path
@@ -697,6 +708,7 @@ paths:
             $ref: "#/definitions/Error"        
   /thyra/events/{str}/{caller}:
     get:
+      description: Returns the event matching the given data content and caller.
       operationId: thyraEventsGetter
       produces:
         - application/json
@@ -726,6 +738,7 @@ paths:
             $ref: "#/definitions/Error"
   /thyra/home/{resource}:
     get:
+      description: Frontend router for the Thyra home page.
       operationId: thyraHome
       produces:
         - application/json
@@ -767,6 +780,7 @@ paths:
           description: Dumb response. All content and HTTP code are possible for this endpoint.
   /thyra/plugin-manager/{resource}:
     get:
+      description: Frontend router for the Thyra plugin manager page.
       operationId: thyraPluginManager
       produces:
         - application/json
@@ -790,6 +804,7 @@ paths:
             $ref: "#/definitions/Error"
   /thyra/registry/{resource}:
     get:
+      description: Frontend router for the Thyra registry page.
       operationId: thyraRegistry
       produces:
         - application/json
@@ -809,6 +824,7 @@ paths:
           description: Page found
   /thyra/websiteCreator/{resource}:
     get:
+      description: Frontend router for the Thyra website creator page.
       operationId: thyraWebsiteCreator
       produces:
         - application/json
@@ -832,6 +848,8 @@ paths:
             $ref: "#/definitions/Error"
   /websiteCreator/prepare:
     put:
+      summary: Deploys the given website on the blockchain. 
+      description: The given URL will first be added to the DNS if available and then the website will be deployed.
       operationId: websiteCreatorPrepare
       consumes:
         - multipart/form-data
@@ -877,6 +895,8 @@ paths:
             $ref: "#/definitions/Error"
   /websiteCreator/upload:
     post:
+      summary: Uploads the given website on the blockchain.
+      description: The website must have been deployed before using the prepare endpoint. This endpoint is usually used to edit an existing website.
       operationId: websiteCreatorUpload
       consumes:
         - multipart/form-data
@@ -920,6 +940,7 @@ paths:
             $ref: "#/definitions/Error"
   /websiteCreator/uploadMissingChunks:
     post:
+      description: Re-upload missing chunks of a website on the blockchain. This allows to fix a website that has been partially uploaded as a lower cost than re-uploading the whole website.
       operationId: websiteUploadMissingChunks
       consumes:
         - multipart/form-data
