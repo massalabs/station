@@ -62,6 +62,11 @@ main() {
     tar -xf $MASSASTATION_ARCHIVE_NAME -C $TMP_DIR || fatal "failed to extract $MASSASTATION_ARCHIVE_NAME to $TMP_DIR"
 
     mkdir -p $BUILD_DIR/usr/bin || fatal "failed to create $BUILD_DIR/usr/bin"
+
+    # Check if the binary isn't named massastation. If it isn't, rename it to massastation.
+    if [ ! -f $TMP_DIR/usr/local/bin/$MASSASTATION_BINARY_NAME ]; then
+        mv $TMP_DIR/usr/local/bin/massastation_* $TMP_DIR/usr/local/bin/$MASSASTATION_BINARY_NAME || fatal "failed to rename binary to $MASSASTATION_BINARY_NAME"
+    fi
     cp $TMP_DIR/usr/local/bin/$MASSASTATION_BINARY_NAME $BUILD_DIR/usr/bin || fatal "failed to copy $MASSASTATION_BINARY_NAME to $BUILD_DIR/usr/bin"
 
     mkdir -p $BUILD_DIR/usr/share/applications || fatal "failed to create $BUILD_DIR/usr/share/applications"
