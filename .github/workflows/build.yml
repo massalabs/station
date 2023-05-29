@@ -135,3 +135,30 @@ jobs:
           path: "installer/*.msi"
           if-no-files-found: error
           retention-days: 7
+
+  build-packages-deb:
+    name: Build .deb packages for Linux amd64
+    needs: build
+    defaults:
+      run:
+        working-directory: installer
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Fetch all git tags
+        run: git fetch --prune --unshallow --tags
+      - name: Download MassaStation Package
+        uses: actions/download-artifact@v3
+        with:
+          name: massastation_darwin_amd64_package
+          path: installer
+      - name: Build Package
+        run: sh deb/create_deb.sh
+      - name: Upload Package
+        uses: actions/upload-artifact@v3
+        with:
+          name: massastation_installer_deb_amd64
+          path: "installer/*.deb"
+          if-no-files-found: error
+          retention-days: 7
