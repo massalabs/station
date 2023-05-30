@@ -138,8 +138,8 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  build-packages-deb:
-    name: Build .deb packages for Linux amd64
+  build-deb-installer:
+    name: Build .deb installer for Linux amd64
     needs: build
     defaults:
       run:
