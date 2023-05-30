@@ -51,6 +51,9 @@ jobs:
         shell: bash
         run: |
           fyne package -name MassaStation -icon ./cmd/massastation/logo.png -appID net.massalabs.massastation -exe massastation_${{ matrix.target }}_${{ matrix.arch }}
+      - name: Add missing .exe extension for Windows
+        if: matrix.target == 'windows'
+        run: mv massastation_${{ matrix.target }}_${{ matrix.arch }} massastation_${{ matrix.target }}_${{ matrix.arch }}.exe
       - name: Upload MassaStation Binary
         uses: actions/upload-artifact@v3
         with:
@@ -95,7 +98,40 @@ jobs:
       - name: Upload Package
         uses: actions/upload-artifact@v3
         with:
-          name: macos-package_${{ matrix.arch }}
+          name: massastation_installer_darwin_${{ matrix.arch }}
           path: "installer/*.pkg"
+          if-no-files-found: error
+          retention-days: 7
+
+  build-packages-windows:
+    name: Build .msi installer for amd64
+    needs: build
+    defaults:
+      run:
+        working-directory: ./installer
+
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Fetch all git tags
+        run: git fetch --prune --unshallow --tags
+      - name: Download MassaStation
+        uses: actions/download-artifact@v3
+        with:
+          name: massastation_windows_amd64_bin
+      - name: Rename MassaStation binary
+        run: mv ../massastation_windows_amd64.exe massastation.exe
+      - name: Build Installer
+        run: python windows/build_installer.py
+      - name: Upload Installer
+        uses: actions/upload-artifact@v3
+        with:
+          name: massastation_installer_windows_amd64
+          path: "installer/*.msi"
           if-no-files-found: error
           retention-days: 7
