@@ -16,7 +16,7 @@ import (
 	"github.com/massalabs/thyra/pkg/node/base58"
 )
 
-const DefaultGazLimit = 700_000_000
+const DefaultGasLimit = 700_000_000
 
 const DefaultSlotsDuration = 2
 

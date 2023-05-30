@@ -408,7 +408,7 @@
 							"disabled": true
 						},
 						{
-							"key": "gazLimit",
+							"key": "gasLimit",
 							"value": "100000000",
 							"type": "text",
 							"disabled": true
@@ -475,7 +475,7 @@
 									"type": "text"
 								},
 								{
-									"key": "gazLimit",
+									"key": "gasLimit",
 									"value": "100000000",
 									"type": "text"
 								}
