@@ -52,7 +52,7 @@ main() {
 
     # Check if the binary isn't named massastation. If it isn't, rename it to massastation.
     if [ ! -f $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME ]; then
-        mv $MASSASTATION_INSTALLER_NAME/Contents/MacOS/massastation_* $MASSASTATION_BINARY_NAME || fatal "failed to rename $MASSASTATION_INSTALLER_NAME to $MASSASTATION_BINARY_NAME"
+        mv $MASSASTATION_INSTALLER_NAME/Contents/MacOS/massastation_* $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME || fatal "failed to rename $MASSASTATION_INSTALLER_NAME to $MASSASTATION_BINARY_NAME"
     fi
 
     chmod +x $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME || fatal "failed to chmod $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME"
