@@ -3,16 +3,14 @@ Documentation       A test suite for every endpoints related to the Web on Chain
 
 Library             RequestsLibrary
 Library             SeleniumLibrary
-Resource            keywords.resource
 Resource            variables.resource
-Resource            ../keywords.resource
 Resource            ../variables.resource
+Resource            keywords.resource
 Resource            ../front_ends/variables.resource
 Resource            ../front_ends/keywords.resource
 
-Suite Setup         Set Suite Variables
+Suite Setup         Suite Setup
 Suite Teardown      Close All Browsers
-
 
 *** Test Cases ***
 PUT /websiteCreator/prepare
@@ -62,10 +60,3 @@ GET /my/domains/{nickname}
     ...    ${API_URL}/my/domains/${WALLET_NICKNAME}
     ...    expected_status=${STATUS_OK}
     Should Contain    ${response.text}    ${website_url}
-
-
-*** Keywords ***
-Set Suite Variables
-    ${website_url}=    Generate Random String    8    [LOWER][NUMBERS]
-    ${website_url}=    Set Variable    test${website_url}
-    Set Suite Variable    ${website_url}    ${website_url}
