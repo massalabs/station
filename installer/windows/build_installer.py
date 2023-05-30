@@ -81,6 +81,9 @@ def build_massastation():
         ],
         check=True,
     )
+
+    # The previous `fyne package` command generates MassaStation.exe binary in the src directory.
+    # That's why we need to move it in the current directory and rename it to $MASSASTATION_BINARY.
     os.rename(
         os.path.join("..", "cmd", "massastation", "MassaStation.exe"),
         os.path.join(MASSASTATION_BINARY),
