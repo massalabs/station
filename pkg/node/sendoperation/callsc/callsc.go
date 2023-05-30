@@ -12,7 +12,6 @@ const CallSCOpID = uint64(4)
 
 const versionByte = byte(1)
 
-//nolint:tagliatelle
 type OperationDetails struct {
 	MaxGas     int64       `json:"max_gas"`
 	Coins      string      `json:"coins"`
