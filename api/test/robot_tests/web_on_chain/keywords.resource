@@ -11,6 +11,7 @@ Resource            ../keywords.resource
 Suite Setup
     Basic Suite Setup
     Zip Test Website
+    Set Suite Variables
 
 Zip Test Website
     [Documentation]    Zip the test website in ./test_website and save it to the "${TEST_ZIP_FILE}" file
@@ -19,3 +20,8 @@ Zip Test Website
     Remove File    ${CURDIR}/${TEST_ZIP_FILE}
     Create Zip From Files In Directory    ${CURDIR}/test_website    ${CURDIR}/${TEST_ZIP_FILE}
     Archive Should Contain File    ${CURDIR}/${TEST_ZIP_FILE}    index.html
+
+Set Suite Variables
+    ${website_url}=    Generate Random String    8    [LOWER][NUMBERS]
+    ${website_url}=    Set Variable    test${website_url}
+    Set Suite Variable    ${website_url}    ${website_url}
