@@ -104,7 +104,7 @@ jobs:
           retention-days: 7
 
   build-packages-windows:
-    name: Build .msi package for amd64
+    name: Build .msi installer for amd64
     needs: build
     defaults:
       run:
