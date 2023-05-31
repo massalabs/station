@@ -1,87 +1,65 @@
+# Installation Guide
 
-# Installation
+This guide provides step-by-step instructions for installing **MassaStation** on your computer. Please follow the instructions specific to your operating system.
 
-* [Introduction](#introduction)
-* [Desktop](#desktop)
-  * [MacOS](#macos)
-  * [Linux](#linux)
-  * [Windows](#windows)
+* [Windows Installation](#windows-installation)
+* [MacOS Installation](#macos-installation)
+* [Debian Linux Installation](#debian-linux-installation)
 
-## Introduction
+> **Note:** **MassaStation** is currently available for Windows, MacOS, and Debian Linux. Support for other Linux distributions will be added in the future.
 
-From this point you'll start to custom your Massa's journey thanks to Thyra. If you want to learn more about Thyra's objectives and mindset, go here; if you're curious about the technical aspects and want to contribute go [there](./CONTRIBUTING.md).
+> **Troubleshooting:** If you encounter any issues during the installation process, do not hesitate to [open an issue](https://github.com/massalabs/thyra/issues/new) on GitHub.
 
-This document will guide you through the installation process and the first steps to get started with Thyra.
+## Windows Installation
 
+1. Download the latest version of **MassaStation** installer for Windows from the [official website](https://github.com/massalabs/thyra/releases/latest/download/massastation-installer_windows_amd64.msi).
+2. Locate the downloaded `.msi` installer file and double-click on it to start the installation process.
+3. Follow the on-screen instructions to proceed with the installation.
+4. Once the installation is complete, you will see a confirmation message. Click "Finish" to exit the installer.
 
-> **_TROUBLESHOOTING:_** If you have trouble following this procedure, feel free to [open a question](https://github.com/massalabs/thyra/issues/new) describing your problem.
+Congratulations! You have successfully installed **MassaStation** on your computer. You can start MassaStation by searching for it in the Start menu or by clicking on the icon on your desktop (if you chose to create one during the installation).
 
-## Instructions by Devices
+## MacOS Installation
 
-By following these instructions, you will: 
-* Install Thyra to access and perform actions on the blockchain. 
-* Install Thyra application to interact and use Thyra and its plugins very easily.
+1. Download the latest version of **MassaStation** installer for MacOS depending on your CPU architecture:
 
-### Desktop
+   - For Intel-based Macs (i5, i7, etc.), download the installer for `amd64` architecture from [here](https://github.com/massalabs/thyra/releases/latest/).
+   - For Apple Silicon-based Macs (M1, M2, etc.), download the installer for `arm64` architecture from [here](https://github.com/massalabs/thyra/releases/latest/).
 
+2. Locate the downloaded .pkg installer file and right-click on it.
+3. From the context menu, select "Open" and then click "Open" again in the security pop-up window. This step is necessary because the installer is not signed by the App Store, and MacOS may block the installation by default.
+4. If prompted, enter your administrator password to authorize the installation.
+5. Follow the on-screen instructions to proceed with the installation.
+6. Once the installation is complete, you will see a confirmation message. Click "Close" to exit the installer.
 
-#### MacOS
+Congratulations! You have successfully installed **MassaStation** on your computer. You can start MassaStation by searching for it in the Applications folder or by clicking on the icon in the Launchpad.
 
-1. Check out your Mac CPU to know which link above you should use.
-* If you have an Apple Silicon CPU (M1, M2, ...), download ARM installer [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer_darwin_arm64.tar.gz)
-* If you have an Intel CPU (i5, i7, ...), download ADM installer [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer_darwin_amd64.tar.gz)
-2. Once downloaded, double clik on the file
-> **_NOTE:_** You may need to authorise the download of this file as your Mac won't recognise it. You can authorise the installer to run by right clicking on the installer and click on `Open` from Finder. A dialog box will open asking you if you are sure, press the `Open` button and the installer should start.
-3. A terminal should open automatically where you can follow the steps of the installation. Just watch it working, and at some point you'll need to add your password.
-* Why do you need to enter your password? Simply because Thyra is an application and to add this application to your Mac you need to validate that you wish to install this app; like you do for app from the app store. 
-4. Once the installation is finished, you will see a new icon on the top nav bar (see screenshot below). You can now close your terminal (if not done already) and start browsing the blockchain and all our applications available.
-<img width="177" alt="image" src="https://user-images.githubusercontent.com/109611779/223798813-92a16141-19f6-415b-b9d8-2554eb814edc.png">
+## Debian Linux Installation
 
-> **_NOTE:_** If you quit Thyra, the icon tray will disappear. Normal! If you want to add it back, open your finder and look for "thyra" in all your mac. You should see the following file "XXXX"; click on it and the app will be back on your top nav bar. 
+### GUI Installation
 
-> **_TROUBLESHOOTING:_** Do not hesitate to report any problem or request help by [opening an issue](https://github.com/massalabs/thyra/issues/new).
+1. Download the latest version of **MassaStation** installer for Debian Linux from [here](https://github.com/massalabs/thyra/releases/latest/).
+2. Open your file manager and navigate to the location where the `.deb` package is saved.
+3. Right-click on the `.deb` package and choose "Open with Software Install" or a similar option.
+4. The package manager will launch and display **MassaStation** installation page.
+5. Review the package information and dependencies, if any, and click on the "Install" button.
+6. If prompted, enter your administrator password to authorize the installation.
+7. The installation will commence, and you will see a progress bar indicating the status.
+8. Once the installation is complete, you will receive a notification confirming the successful installation.
 
-🎉 Congratulations!! Your gate to Massa blockchain is now installed and you can start your massalian journey.
-You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](https://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/plugin/massalabs/wallet) right away!
+### Terminal Installation using apt
 
+1. Download the latest version of **MassaStation** installer for Debian Linux from [here](https://github.com/massalabs/thyra/releases/latest/).
+2. Open a terminal on your Debian Linux system.
+3. Navigate to the directory where the downloaded `.deb` package is located.
+4. Run the following command to install the package:
 
-#### Linux
+   ```
+   sudo apt install ./massastation-${{ VERSION }}_amd64.deb
+   ```
 
-> **_NOTE:_** Only Linux Ubuntu is currently supported.
+5. Enter your administrator password when prompted and press Enter to confirm.
+6. The installation will begin, and you will see progress information in the terminal.
+7. Once the installation is complete, you can close the terminal.
 
-1. Download Linux installer [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer_linux_amd64.tar.gz)
-2. Once downloaded, double clik on the file
-3. A terminal should open automatically where you can follow the steps of the installation. Just watch it working, and at some point you'll need to add your password.
-4. Once the installation is finished, you will see a new icon on the top nav bar (see screenshot below). You can now close your terminal if not done already and start browsing the blockchain and all our applications available.
-
-> **_NOTE:_** If you quit Thyra, the icon tray will disappear. Normal! If you want to add it back, open your finder and look for "thyra" in all your mac. You should see the following file "XXXX"; click on it and the app will be back on your top nav bar.
-
-> **_TROUBLESHOOTING:_** Do not hesitate to report any problem or request help by [opening an issue](https://github.com/massalabs/thyra/issues/new).
-
-
-🎉 Congratulations!! Your gate to Massa blockchain is now installed and you can start your massalian journey.
-You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](https://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/wallet) right away!
-
-
-
-#### Windows
-
-
-Click [here](https://github.com/massalabs/thyra/releases/latest/download/thyra-installer_windows_amd64.exe) to download the Thyra installer on your desktop. Then:
-
-1. Open it by double clicking
-2. The installer will:
-
-* Check if you have the latest version of Thyra and install it if not.
-* Check if you have the latest version of ThyraApp and install it if not.
-
-![windows_icontray_V0](https://user-images.githubusercontent.com/109611779/212294116-05e1dd37-ed3f-4e3e-b034-b02d782bc4ee.png)
-
-> **_NOTE:_** To complete the installation, you have to restart your browser.
-
-Congratulation, your version of Thyra is now installed on your system and you can "Start" your journey using the icon tray.
-
-You can now browse the **websites on-chain** seamlessly. If you need to take the pressure off, maybe a little [game](https://flappy.massa) can help.
-If you want to get down to business, you can start your [Massalian journey](https://my.massa/thyra/plugin/massalabs/wallet) right away!
+Congratulations! You have successfully installed **MassaStation** on your computer. You can start MassaStation by searching for it in the Applications folder.
