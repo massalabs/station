@@ -24,7 +24,7 @@
                 "method": "POST",
                 "header": [],
                 "url": {
-                    "raw": "http://my.massa:{{port}}/plugin-manager?source={{pluginSource}}",
+                    "raw": "http://station.massa:{{port}}/plugin-manager?source={{pluginSource}}",
                     "protocol": "http",
                     "host": ["my", "massa"],
                     "port": "{{port}}",
@@ -44,7 +44,7 @@
                         "method": "POST",
                         "header": [],
                         "url": {
-                            "raw": "http://my.massa:{{port}}/plugin-manager?source=https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.1/thyra-plugin-hello-world_linux-amd64.zip",
+                            "raw": "http://station.massa:{{port}}/plugin-manager?source=https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.1/thyra-plugin-hello-world_linux-amd64.zip",
                             "protocol": "http",
                             "host": ["my", "massa"],
                             "port": "{{port}}",
@@ -68,7 +68,7 @@
                         "method": "POST",
                         "header": [],
                         "url": {
-                            "raw": "http://my.massa:{{port}}/plugin-manager?source=https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.1/thyra-plugin-hello-world_darwin-arm64.zip",
+                            "raw": "http://station.massa:{{port}}/plugin-manager?source=https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.1/thyra-plugin-hello-world_darwin-arm64.zip",
                             "protocol": "http",
                             "host": ["my", "massa"],
                             "port": "{{port}}",
@@ -92,7 +92,7 @@
                         "method": "POST",
                         "header": [],
                         "url": {
-                            "raw": "https://my.massa:{{ssl_port}}/plugin-manager?source=https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.1/thyra-plugin-hello-world_linux-amd64.zip",
+                            "raw": "https://station.massa:{{ssl_port}}/plugin-manager?source=https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.1/thyra-plugin-hello-world_linux-amd64.zip",
                             "protocol": "https",
                             "host": ["my", "massa"],
                             "port": "{{ssl_port}}",
@@ -116,7 +116,7 @@
                         "method": "POST",
                         "header": [],
                         "url": {
-                            "raw": "http://my.massa:{{port}}/plugin-manager?source=https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.1/thyra-plugin-hello-world_windows-amd64.zip",
+                            "raw": "http://station.massa:{{port}}/plugin-manager?source=https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.1/thyra-plugin-hello-world_windows-amd64.zip",
                             "protocol": "http",
                             "host": ["my", "massa"],
                             "port": "{{port}}",
@@ -160,7 +160,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                    "raw": "http://my.massa:{{port}}/plugin-manager",
+                    "raw": "http://station.massa:{{port}}/plugin-manager",
                     "protocol": "http",
                     "host": ["my", "massa"],
                     "port": "{{port}}",
@@ -188,7 +188,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                    "raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}",
+                    "raw": "http://station.massa:{{port}}/plugin-manager/{{pluginId}}",
                     "protocol": "http",
                     "host": ["my", "massa"],
                     "port": "{{port}}",
@@ -221,7 +221,7 @@
                     }
                 },
                 "url": {
-                    "raw": "http://my.massa:{{port}}/plugin-manager/register",
+                    "raw": "http://station.massa:{{port}}/plugin-manager/register",
                     "protocol": "http",
                     "host": ["my", "massa"],
                     "port": "{{port}}",
@@ -415,7 +415,7 @@
                     }
                 },
                 "url": {
-                    "raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}/execute",
+                    "raw": "http://station.massa:{{port}}/plugin-manager/{{pluginId}}/execute",
                     "protocol": "http",
                     "host": ["my", "massa"],
                     "port": "{{port}}",
@@ -461,7 +461,7 @@
                     }
                 },
                 "url": {
-                    "raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}/execute",
+                    "raw": "http://station.massa:{{port}}/plugin-manager/{{pluginId}}/execute",
                     "protocol": "http",
                     "host": ["my", "massa"],
                     "port": "{{port}}",
@@ -507,7 +507,7 @@
                     }
                 },
                 "url": {
-                    "raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}/execute",
+                    "raw": "http://station.massa:{{port}}/plugin-manager/{{pluginId}}/execute",
                     "protocol": "http",
                     "host": ["my", "massa"],
                     "port": "{{port}}",
@@ -553,7 +553,7 @@
                     }
                 },
                 "url": {
-                    "raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}/execute",
+                    "raw": "http://station.massa:{{port}}/plugin-manager/{{pluginId}}/execute",
                     "protocol": "http",
                     "host": ["my", "massa"],
                     "port": "{{port}}",
@@ -581,7 +581,7 @@
                 "method": "DELETE",
                 "header": [],
                 "url": {
-                    "raw": "http://my.massa:{{port}}/plugin-manager/{{pluginId}}",
+                    "raw": "http://station.massa:{{port}}/plugin-manager/{{pluginId}}",
                     "protocol": "http",
                     "host": ["my", "massa"],
                     "port": "{{port}}",

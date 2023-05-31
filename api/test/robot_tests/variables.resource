@@ -1,5 +1,5 @@
 *** Variables ***
-${API_URL}=                         http://my.massa
+${API_URL}=                         http://station.massa
 
 ${WALLET_NICKNAME}=                 rftest
 

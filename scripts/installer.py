@@ -109,11 +109,11 @@ class Installer:
         logging.info(filename + " downloaded successfully")
 
     """
-    Checks if my.massa is resolved. If it is, the DNS server is well installed and configured.
+    Checks if station.massa is resolved. If it is, the DNS server is well installed and configured.
     """
     def shouldInstallDNS(self) -> bool:
         try:
-            socket.gethostbyname("my.massa")
+            socket.gethostbyname("station.massa")
             return False
         except:
             return True
@@ -125,14 +125,14 @@ class Installer:
         pass
 
     """
-    Checks if the HTTPS certificate for my.massa are already present in the thyra config folder.
+    Checks if the HTTPS certificate for station.massa are already present in the thyra config folder.
     The filenames of the certificate and the key are defined in the constants CERTIFICATION_FILENAME and CERTIFICATION_KEY_FILENAME.
     """
     def isCACertificateInstalled(self) -> bool:
         return os.path.exists(os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_FILENAME)) and os.path.exists(os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_KEY_FILENAME))
 
     """
-    Installs a local Certificate Authority and generates a HTTPS certificate for my.massa.
+    Installs a local Certificate Authority and generates a HTTPS certificate for station.massa.
     """
     def generateCACertificate(self):
         logging.info("Generating CA certificate and adding it to the browsers' CA list")
@@ -159,7 +159,7 @@ class Installer:
             os.path.join(os.getcwd() , self.MKCERT_FILENAME),
             "--cert-file", os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_FILENAME),
             "--key-file", os.path.join(self.CERTIFICATIONS_FOLDER_PATH, self.CERTIFICATION_KEY_FILENAME),
-            "my.massa"], sudo=self.SUDO_INSTALLATION)
+            "station.massa"], sudo=self.SUDO_INSTALLATION)
         if stderr is not None and len(stderr) > 0:
             logging.info(stderr)
 
