@@ -16,7 +16,7 @@ To install Thyra, please follow the instructions available in the [Installation 
 
 ## Install a plugin
 
-Copy/paste the latest release .zip file to Thyra [plugin manager page](https://my.massa/thyra/plugin-manager/)
+Copy/paste the latest release .zip file to Thyra [plugin manager page](https://station.massa/thyra/plugin-manager/)
 
 ## Going further 
 

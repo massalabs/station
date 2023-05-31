@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/massalabs/thyra/api/interceptor"
+	"github.com/massalabs/thyra/pkg/config"
 )
 
 func NewAPIHandler(manager *Manager) *APIHandler {
@@ -62,7 +63,7 @@ func Interceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
 		return nil
 	}
 
-	isMyMassa := strings.HasPrefix(req.Request.Host, "my.massa")
+	isMyMassa := strings.HasPrefix(req.Request.Host, config.GetMassaStationURL())
 	indexPluginEndpoint := strings.Index(req.Request.RequestURI, EndpointPattern)
 
 	if isMyMassa && indexPluginEndpoint > -1 {

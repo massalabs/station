@@ -21,7 +21,7 @@ if %ERRORLEVEL% NEQ 0 (
 SET "CERTS_DIR=%~dp0certs"
 
 :: Generate a certificate for the TLD
-mkcert.exe --cert-file "%CERTS_DIR%\cert.pem" --key-file "%CERTS_DIR%\cert-key.pem" my.massa
+mkcert.exe --cert-file "%CERTS_DIR%\cert.pem" --key-file "%CERTS_DIR%\cert-key.pem" station.massa
 if %ERRORLEVEL% NEQ 0 (
     ECHO "Failed to generate certificate"
     EXIT 1
