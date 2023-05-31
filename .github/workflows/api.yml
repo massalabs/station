@@ -35,8 +35,8 @@ jobs:
           sudo apt install xvfb
       - name: Running Massastation
         run: xvfb-run ./massastation --node-server $NODE_SERVER &
-      - name: Define my.massa
-        run: sudo echo "127.0.0.1 my.massa" | sudo tee -a /etc/hosts
+      - name: Define station.massa
+        run: sudo echo "127.0.0.1 station.massa" | sudo tee -a /etc/hosts
       - name: Wait for server to be up
         uses: juliangruber/sleep-action@v1
         with:
@@ -86,8 +86,8 @@ jobs:
         env:
           WALLET_TEST_MODE: 1
           WALLET_rftest_PASSWORD: ${{ secrets.WALLET_TEST_PASSWORD }}
-      - name: Define my.massa
-        run: sudo echo "127.0.0.1 my.massa" | sudo tee -a /etc/hosts
+      - name: Define station.massa
+        run: sudo echo "127.0.0.1 station.massa" | sudo tee -a /etc/hosts
       - name: Wait for server to be up
         uses: juliangruber/sleep-action@v1
         with:

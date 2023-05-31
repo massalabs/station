@@ -31,15 +31,15 @@ func handleMassaDomainRequest(writer http.ResponseWriter, reader *http.Request, 
 }
 
 // MassaTLDInterceptor intercepts request for web on-chain.
-func MassaTLDInterceptor(req *interceptor.Interceptor, config config.AppConfig) *interceptor.Interceptor {
+func MassaTLDInterceptor(req *interceptor.Interceptor, appConfig config.AppConfig) *interceptor.Interceptor {
 	if req == nil {
 		return nil
 	}
 
 	massaIndex := strings.Index(req.Request.Host, ".massa")
 
-	if massaIndex > 0 && !strings.HasPrefix(req.Request.Host, "my.massa") {
-		handleMassaDomainRequest(req.Writer, req.Request, massaIndex, config)
+	if massaIndex > 0 && !strings.HasPrefix(req.Request.Host, config.GetMassaStationURL()) {
+		handleMassaDomainRequest(req.Writer, req.Request, massaIndex, appConfig)
 
 		return nil
 	}

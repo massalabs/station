@@ -41,7 +41,7 @@ func MakeGUI(logo []byte) (fyne.App, *fyne.Menu) {
 		}
 
 		homeShortCutMenu.Action = func() {
-			openURL(&stationGUI, "http://my.massa/thyra/home")
+			openURL(&stationGUI, "http://station.massa/thyra/home")
 		}
 
 		menu.Items = append(menu.Items,
