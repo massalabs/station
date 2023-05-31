@@ -5,6 +5,8 @@ This guide provides step-by-step instructions for installing **MassaStation** on
 * [Windows Installation](#windows-installation)
 * [MacOS Installation](#macos-installation)
 * [Debian Linux Installation](#debian-linux-installation)
+* [Uninstallation](#uninstallation)
+   * [MacOS](#macos)
 
 > **Note:** **MassaStation** is currently available for Windows, MacOS, and Debian Linux. Support for other Linux distributions will be added in the future. Likewise, this application isn't working on virtual machines. It might be added in the future.
 
@@ -17,7 +19,7 @@ This guide provides step-by-step instructions for installing **MassaStation** on
 3. Follow the on-screen instructions to proceed with the installation.
 4. Once the installation is complete, you will see a confirmation message. Click "Finish" to exit the installer.
 
-Congratulations! You have successfully installed **MassaStation** on your computer. You can start MassaStation by searching for it in the Start menu or by clicking on the icon on your desktop (if you chose to create one during the installation).
+Congratulations! You have successfully installed **MassaStation** on your computer. You can start **MassaStation** by searching for it in the Start menu or by clicking on the icon on your desktop (if you chose to create one during the installation).
 
 ## MacOS Installation
 
@@ -32,7 +34,7 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 5. Follow the on-screen instructions to proceed with the installation.
 6. Once the installation is complete, you will see a confirmation message. Click "Close" to exit the installer.
 
-Congratulations! You have successfully installed **MassaStation** on your computer. You can start MassaStation by searching for it in the Applications folder or by clicking on the icon in the Launchpad.
+Congratulations! You have successfully installed **MassaStation** on your computer. You can start **MassaStation** by searching for it in the Applications folder or by clicking on the icon in the Launchpad.
 
 ## Debian Linux Installation
 
@@ -62,4 +64,23 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 6. The installation will begin, and you will see progress information in the terminal.
 7. Once the installation is complete, you can close the terminal.
 
-Congratulations! You have successfully installed **MassaStation** on your computer. You can start MassaStation by searching for it in the Applications folder.
+Congratulations! You have successfully installed **MassaStation** on your computer. You can start **MassaStation** by searching for it in the Applications folder.
+
+
+## Uninstallation
+
+### MacOS
+
+To uninstall **MassaStation** from your MacOS system, follow the steps below:
+
+1. Open the Terminal application on your MacOS system.
+2. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
+
+   ```
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/installer/macos/scripts/uninstall.sh)"
+   ```
+   This command will remove Homebrew and its associated files from your system.
+3. Follow any prompts or instructions provided by the uninstaller script. This may involve confirming the removal and providing your password for administrative privileges.
+4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
+
+> **Note:** DNSMasq and Homebrew might have been installed on your system as dependencies for MassaStation. We do not remove these packages automatically as they may be used by other applications on your system.
