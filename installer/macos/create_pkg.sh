@@ -7,7 +7,8 @@ set -e
 PKGVERSION=dev
 ARCH=$1
 
-MASSASTATION_BINARY_NAME=MassaStation.app
+MASSASTATION_INSTALLER_NAME=MassaStation.app
+MASSASTATION_BINARY_NAME=massastation
 
 # Print the usage to stderr and exit with code 1.
 display_usage() {
@@ -33,21 +34,28 @@ install_massastation_build_dependencies() {
 build_massastation() {
     install_massastation_build_dependencies
 
-    go generate ../... || fatal "go generate failed for $MASSASTATION_BINARY_NAME"
+    go generate ../... || fatal "go generate failed for $MASSASTATION_INSTALLER_NAME"
     export GOARCH=$ARCH
     export CGO_ENABLED=1
-    fyne package -icon logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_BINARY_NAME"
-    chmod +x $MASSASTATION_BINARY_NAME || fatal "failed to chmod $MASSASTATION_BINARY_NAME"
+    fyne package -icon logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_INSTALLER_NAME"
+    chmod +x $MASSASTATION_INSTALLER_NAME || fatal "failed to chmod $MASSASTATION_INSTALLER_NAME"
 }
 
 # Build the package using pkgbuild.
 package() {
-    pkgbuild --component $MASSASTATION_BINARY_NAME --identifier com.massalabs.massastation --version $PKGVERSION \
+    pkgbuild --component $MASSASTATION_INSTALLER_NAME --identifier com.massalabs.massastation --version $PKGVERSION \
         --scripts macos/scripts --install-location /Applications massastation_$PKGVERSION\_$ARCH.pkg || fatal "failed to create package"
 }
 
 main() {
-    test -d $MASSASTATION_BINARY_NAME || build_massastation
+    test -d $MASSASTATION_INSTALLER_NAME || build_massastation
+
+    # Check if the binary isn't named massastation. If it isn't, rename it to massastation.
+    if [ ! -f $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME ]; then
+        mv $MASSASTATION_INSTALLER_NAME/Contents/MacOS/massastation_* $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME || fatal "failed to rename $MASSASTATION_INSTALLER_NAME to $MASSASTATION_BINARY_NAME"
+    fi
+
+    chmod +x $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME || fatal "failed to chmod $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME"
 
     package
 }
