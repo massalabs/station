@@ -4,7 +4,7 @@ This guide provides step-by-step instructions for installing the **MassaStation*
 
 * [Windows Installation](#windows-installation)
 * [MacOS Installation](#macos-installation)
-* [Linux Installation](#linux-installation)
+* [Debian Linux Installation](#debian-linux-installation)
 
 > **Note:** The **MassaStation** is currently available for Windows, MacOS, and Debian Linux. Support for other Linux distributions will be added in the future.
 
