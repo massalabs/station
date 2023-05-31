@@ -51,7 +51,7 @@ jobs:
         if: matrix.target != 'windows'
         shell: bash
         run: |
-          mv massastation_${{ matrix.target }}_${{ matrix.arch }} massastation
+          cp massastation_${{ matrix.target }}_${{ matrix.arch }} massastation
           fyne package -name MassaStation -icon ./cmd/massastation/logo.png -appID net.massalabs.massastation -exe massastation
       - name: Add missing .exe extension for Windows
         if: matrix.target == 'windows'
