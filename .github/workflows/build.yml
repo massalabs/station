@@ -16,6 +16,7 @@ jobs:
             arch: amd64
             target: windows
             cc: x86_64-w64-mingw32-gcc
+            ext: .exe
           - os: ubuntu-20.04
             arch: amd64
             target: linux
@@ -46,15 +47,14 @@ jobs:
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
         shell: bash
         run: |
-          go build -ldflags "-X github.com/massalabs/thyra/pkg/config.Version=${{env.VERSION}}" -o massastation_${{ matrix.target }}_${{ matrix.arch }} ./cmd/massastation/
+          go build -ldflags "-X github.com/massalabs/thyra/pkg/config.Version=${{env.VERSION}}" -o massastation_${{ matrix.target }}_${{ matrix.arch }}${{ matrix.ext }} ./cmd/massastation/
       - name: Package binary for ${{ matrix.target }} on ${{ matrix.arch}}
+        # We don't need to package for windows since fyne package generates a similar .exe as go build.
         if: matrix.target != 'windows'
         shell: bash
         run: |
-          fyne package -name MassaStation -icon ./cmd/massastation/logo.png -appID net.massalabs.massastation -exe massastation_${{ matrix.target }}_${{ matrix.arch }}
-      - name: Add missing .exe extension for Windows
-        if: matrix.target == 'windows'
-        run: mv massastation_${{ matrix.target }}_${{ matrix.arch }} massastation_${{ matrix.target }}_${{ matrix.arch }}.exe
+          cp massastation_${{ matrix.target }}_${{ matrix.arch }} massastation
+          fyne package -name MassaStation -icon ./cmd/massastation/logo.png -appID net.massalabs.massastation -exe massastation
       - name: Upload MassaStation Binary
         uses: actions/upload-artifact@v3
         with:
@@ -65,13 +65,15 @@ jobs:
           if-no-files-found: error
           retention-days: 7
       - name: Upload Package
+        # We don't need to upload package for windows since we do not package for windows.
+        if: matrix.target != 'windows'
         uses: actions/upload-artifact@v3
         with:
           name: massastation_${{ matrix.target }}_${{ matrix.arch }}_package
           path: |
             MassaStation.app
             MassaStation.tar.xz
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 1
 
   build-macos-installer:
