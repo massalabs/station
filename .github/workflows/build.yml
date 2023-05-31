@@ -66,13 +66,14 @@ jobs:
           if-no-files-found: error
           retention-days: 7
       - name: Upload Package
+        if: matrix.target != 'windows'
         uses: actions/upload-artifact@v3
         with:
           name: massastation_${{ matrix.target }}_${{ matrix.arch }}_package
           path: |
             MassaStation.app
             MassaStation.tar.xz
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 1
 
   build-macos-installer:
