@@ -49,6 +49,7 @@ jobs:
         run: |
           go build -ldflags "-X github.com/massalabs/thyra/pkg/config.Version=${{env.VERSION}}" -o massastation_${{ matrix.target }}_${{ matrix.arch }}${{ matrix.ext }} ./cmd/massastation/
       - name: Package binary for ${{ matrix.target }} on ${{ matrix.arch}}
+        # We don't need to package for windows since fyne package generates a similar .exe as go build.
         if: matrix.target != 'windows'
         shell: bash
         run: |
@@ -64,6 +65,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
       - name: Upload Package
+        # We don't need to upload package for windows since we do not package for windows.
         if: matrix.target != 'windows'
         uses: actions/upload-artifact@v3
         with:
