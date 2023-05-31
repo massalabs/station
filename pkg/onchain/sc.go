@@ -38,7 +38,7 @@ func CallFunction(client *node.Client,
 	operationBatch sendOperation.OperationBatch,
 ) (*OperationWithEventResponse, error) {
 	callSC, err := callsc.New(addr, function, parameter,
-		sendOperation.DefaultGazLimit,
+		sendOperation.DefaultGasLimit,
 		coins)
 	if err != nil {
 		return nil, fmt.Errorf("creating callSC with '%s' at '%s': %w", function, addr, err)
@@ -76,7 +76,7 @@ func CallFunctionUnwaited(client *node.Client,
 	operationBatch sendOperation.OperationBatch,
 ) (*sendOperation.OperationResponse, error) {
 	callSC, err := callsc.New(addr, function, parameter,
-		sendOperation.DefaultGazLimit,
+		sendOperation.DefaultGasLimit,
 		sendOperation.HundredMassa)
 	if err != nil {
 		return nil, fmt.Errorf("creating callSC with '%s' at '%s': %w", function, addr, err)
@@ -100,7 +100,7 @@ func CallFunctionUnwaited(client *node.Client,
 // The smart contract is deployed with the given account nickname.
 func DeploySC(client *node.Client,
 	nickname string,
-	gazLimit uint64,
+	gasLimit uint64,
 	coins uint64,
 	fee uint64,
 	expiry uint64,
@@ -110,7 +110,7 @@ func DeploySC(client *node.Client,
 ) (*OperationWithEventResponse, error) {
 	exeSC := executesc.New(
 		contract,
-		gazLimit,
+		gasLimit,
 		coins,
 		datastore)
 

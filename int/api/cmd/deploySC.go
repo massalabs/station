@@ -53,7 +53,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 
 	operationWithEventResponse, err := onchain.DeploySC(client,
 		params.WalletNickname,
-		*params.GazLimit,
+		*params.GasLimit,
 		*params.Coins,
 		*params.Fee,
 		*params.Expiry,
