@@ -49,16 +49,17 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 ### Terminal Installation using apt
 
-1. Open a terminal on your Debian Linux system.
-2. Navigate to the directory where the downloaded `.deb` package is located.
-3. Run the following command to install the package:
+1. Download the latest version of **MassaStation** installer for Debian Linux from [here](https://github.com/massalabs/thyra/releases/latest/).
+2. Open a terminal on your Debian Linux system.
+3. Navigate to the directory where the downloaded `.deb` package is located.
+4. Run the following command to install the package:
 
    ```
    sudo apt install ./massastation-${{ VERSION }}_amd64.deb
    ```
 
-4. Enter your administrator password when prompted and press Enter to confirm.
-5. The installation will begin, and you will see progress information in the terminal.
-6. Once the installation is complete, you can close the terminal.
+5. Enter your administrator password when prompted and press Enter to confirm.
+6. The installation will begin, and you will see progress information in the terminal.
+7. Once the installation is complete, you can close the terminal.
 
 Congratulations! You have successfully installed **MassaStation** on your computer. You can start MassaStation by searching for it in the Applications folder.
