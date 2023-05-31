@@ -12,7 +12,7 @@ This guide provides step-by-step instructions for installing **MassaStation** on
 
 ## Windows Installation
 
-1. Download the latest version of **MassaStation** installer for Windows from the [official website](https://github.com/test/projectX/releases/latest/download/project-installer_Windows_amd64.msi).
+1. Download the latest version of **MassaStation** installer for Windows from the [official website](https://github.com/massalabs/thyra/releases/latest/download/massastation-installer_windows_amd64.msi).
 2. Locate the downloaded `.msi` installer file and double-click on it to start the installation process.
 3. Follow the on-screen instructions to proceed with the installation.
 4. Once the installation is complete, you will see a confirmation message. Click "Finish" to exit the installer.
@@ -23,13 +23,14 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 1. Download the latest version of **MassaStation** installer for MacOS depending on your CPU architecture:
 
-   - For Intel-based Macs (i5, i7, etc.), download the installer for `amd64` architecture from [here](https://github.com/test/projectX/releases/latest/download/project-installer_MacOS_amd64.pkg).
-   - For Apple Silicon-based Macs (M1, M2, etc.), download the installer for `arm64` architecture from [here](https://github.com/test/projectX/releases/latest/download/project-installer_MacOS_arm64.pkg).
+   - For Intel-based Macs (i5, i7, etc.), download the installer for `amd64` architecture from [here](https://github.com/massalabs/thyra/releases/latest/).
+   - For Apple Silicon-based Macs (M1, M2, etc.), download the installer for `arm64` architecture from [here](https://github.com/massalabs/thyra/releases/latest/).
 
-2. Locate the downloaded `.pkg` installer file and double-click on it to initiate the installation.
-3. If prompted, enter your administrator password to authorize the installation.
-4. Follow the on-screen instructions to proceed with the installation.
-5. Once the installation is complete, you will see a confirmation message. Click "Close" to exit the installer.
+2. Locate the downloaded .pkg installer file and right-click on it.
+3. From the context menu, select "Open" and then click "Open" again in the security pop-up window. This step is necessary because the installer is not signed by the App Store, and MacOS may block the installation by default.
+4. If prompted, enter your administrator password to authorize the installation.
+5. Follow the on-screen instructions to proceed with the installation.
+6. Once the installation is complete, you will see a confirmation message. Click "Close" to exit the installer.
 
 Congratulations! You have successfully installed **MassaStation** on your computer. You can start MassaStation by searching for it in the Applications folder or by clicking on the icon in the Launchpad.
 
@@ -37,7 +38,7 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 ### GUI Installation
 
-1. Download the latest version of **MassaStation** installer for Debian Linux from [here](https://github.com/test/projectX/releases/latest/download/project-installer_Linux_amd64.deb).
+1. Download the latest version of **MassaStation** installer for Debian Linux from [here](https://github.com/massalabs/thyra/releases/latest/).
 2. Open your file manager and navigate to the location where the `.deb` package is saved.
 3. Right-click on the `.deb` package and choose "Open with Software Install" or a similar option.
 4. The package manager will launch and display **MassaStation** installation page.
@@ -53,7 +54,7 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 3. Run the following command to install the package:
 
    ```
-   sudo apt install ./project-installer_Linux_amd64.deb
+   sudo apt install ./massastation-${{ VERSION }}_amd64.deb
    ```
 
 4. Enter your administrator password when prompted and press Enter to confirm.
