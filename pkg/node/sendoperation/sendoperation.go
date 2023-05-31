@@ -96,7 +96,7 @@ func Call(client *node.Client,
 		}`
 	}
 
-	res, err := signer.Sign(nickname, content)
+	res, err := signer.Sign(nickname, []byte(content))
 	if err != nil {
 		return nil, fmt.Errorf("signing operation: %w", err)
 	}

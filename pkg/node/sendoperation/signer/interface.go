@@ -8,5 +8,5 @@ type SignOperationResponse struct {
 }
 
 type Signer interface {
-	Sign(string, string) (*SignOperationResponse, error)
+	Sign(string, []byte) (*SignOperationResponse, error)
 }

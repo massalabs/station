@@ -23,11 +23,11 @@ const HTTPRequestTimeout = 60 * time.Second
 
 var _ Signer = &WalletPlugin{}
 
-func (s *WalletPlugin) Sign(nickname string, content string) (*SignOperationResponse, error) {
+func (s *WalletPlugin) Sign(nickname string, operation []byte) (*SignOperationResponse, error) {
 	httpRawResponse, err := ExecuteHTTPRequest(
 		http.MethodPost,
 		WalletPluginURL+nickname+"/signOperation",
-		bytes.NewBuffer([]byte(content)),
+		bytes.NewBuffer(operation),
 	)
 	if err != nil {
 		res := RespError{"", ""}
