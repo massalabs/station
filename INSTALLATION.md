@@ -1,12 +1,12 @@
 # Installation Guide
 
-This guide provides step-by-step instructions for installing the **MassaStation** on your computer. Please follow the instructions specific to your operating system.
+This guide provides step-by-step instructions for installing **MassaStation** on your computer. Please follow the instructions specific to your operating system.
 
 * [Windows Installation](#windows-installation)
 * [MacOS Installation](#macos-installation)
 * [Debian Linux Installation](#debian-linux-installation)
 
-> **Note:** The **MassaStation** is currently available for Windows, MacOS, and Debian Linux. Support for other Linux distributions will be added in the future.
+> **Note:** **MassaStation** is currently available for Windows, MacOS, and Debian Linux. Support for other Linux distributions will be added in the future.
 
 > **Troubleshooting:** If you encounter any issues during the installation process, do not hesitate to [open an issue](https://github.com/massalabs/thyra/issues/new) on GitHub.
 
@@ -17,7 +17,7 @@ This guide provides step-by-step instructions for installing the **MassaStation*
 3. Follow the on-screen instructions to proceed with the installation.
 4. Once the installation is complete, you will see a confirmation message. Click "Finish" to exit the installer.
 
-Congratulations! You have successfully installed the **MassaStation** on your computer. You can start MassaStation by searching for it in the Start menu or by clicking on the icon on your desktop (if you chose to create one during the installation).
+Congratulations! You have successfully installed **MassaStation** on your computer. You can start MassaStation by searching for it in the Start menu or by clicking on the icon on your desktop (if you chose to create one during the installation).
 
 ## MacOS Installation
 
@@ -31,7 +31,7 @@ Congratulations! You have successfully installed the **MassaStation** on your co
 4. Follow the on-screen instructions to proceed with the installation.
 5. Once the installation is complete, you will see a confirmation message. Click "Close" to exit the installer.
 
-Congratulations! You have successfully installed the **MassaStation** on your computer. You can start MassaStation by searching for it in the Applications folder or by clicking on the icon in the Launchpad.
+Congratulations! You have successfully installed **MassaStation** on your computer. You can start MassaStation by searching for it in the Applications folder or by clicking on the icon in the Launchpad.
 
 ## Debian Linux Installation
 
@@ -40,7 +40,7 @@ Congratulations! You have successfully installed the **MassaStation** on your co
 1. Download the latest version of **MassaStation** installer for Debian Linux from [here](https://github.com/test/projectX/releases/latest/download/project-installer_Linux_amd64.deb).
 2. Open your file manager and navigate to the location where the `.deb` package is saved.
 3. Right-click on the `.deb` package and choose "Open with Software Install" or a similar option.
-4. The package manager will launch and display the **MassaStation** installation page.
+4. The package manager will launch and display **MassaStation** installation page.
 5. Review the package information and dependencies, if any, and click on the "Install" button.
 6. If prompted, enter your administrator password to authorize the installation.
 7. The installation will commence, and you will see a progress bar indicating the status.
@@ -60,4 +60,4 @@ Congratulations! You have successfully installed the **MassaStation** on your co
 5. The installation will begin, and you will see progress information in the terminal.
 6. Once the installation is complete, you can close the terminal.
 
-Congratulations! You have successfully installed the **MassaStation** on your computer. You can start MassaStation by searching for it in the Applications folder.
+Congratulations! You have successfully installed **MassaStation** on your computer. You can start MassaStation by searching for it in the Applications folder.
