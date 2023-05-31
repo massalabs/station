@@ -405,7 +405,7 @@ paths:
               name: "test"
               at: "A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh"
               args: ""
-              gaz:
+              gas:
                 price: 0
                 limit: 700000000
               coins: 0
@@ -429,17 +429,17 @@ paths:
                 description: Arguments to pass to the function.
                 type: string
                 default: ""
-              gaz:
+              gas:
                 type: object
-                description: Gaz attibutes. Gaz is a virtual resource consumed by node while running smart contract.
+                description: Gas attibutes. Has is a virtual resource consumed by node while running smart contract.
                 properties:
                   price:
                     type: number
-                    description: Price of a gaz unit.
+                    description: Price of a gas unit.
                     default: 0
                   limit:
                     type: integer
-                    description: Maximum number of gaz unit that a node will be able consume.
+                    description: Maximum number of gas unit that a node will be able consume.
                     default: 700000000
               coins:
                 description: Set the fee amount (in massa) that will be given to the block creator.
@@ -492,18 +492,18 @@ paths:
           x-nullable: false
           description: Smart contract file in a Wasm format.
         - in : formData
-          name : gazPrice
+          name : gasPrice
           type: integer 
           format: uint64
           minimum: 0
-          description : Price of a gaz unit.
+          description : Price of a gas unit.
           default : 0
         - in : formData
-          name : gazLimit
+          name : gasLimit
           type : integer
           format: uint64
           minimum: 0
-          description: Maximum number of gaz unit that a node will be able to consume.
+          description: Maximum number of gas unit that a node will be able to consume.
           default: 700000000
         - in: formData
           name : coins

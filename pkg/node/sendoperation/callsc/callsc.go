@@ -12,9 +12,8 @@ const CallSCOpID = uint64(4)
 
 const versionByte = byte(1)
 
-//nolint:tagliatelle
 type OperationDetails struct {
-	MaxGaz     int64       `json:"max_gas"`
+	MaxGas     int64       `json:"max_gas"`
 	Coins      string      `json:"coins"`
 	TargetAddr string      `json:"target_addr"`
 	TargetFunc string      `json:"target_func"`
@@ -30,11 +29,11 @@ type CallSC struct {
 	address    []byte
 	function   string
 	parameters []byte
-	gazLimit   uint64
+	gasLimit   uint64
 	coins      uint64
 }
 
-func New(address string, function string, parameters []byte, gazLimit uint64, coins uint64,
+func New(address string, function string, parameters []byte, gasLimit uint64, coins uint64,
 ) (*CallSC, error) {
 	versionedAddress, err := serializeAddress.SerializeAddress(address)
 	if err != nil {
@@ -43,14 +42,14 @@ func New(address string, function string, parameters []byte, gazLimit uint64, co
 
 	return &CallSC{
 		address: versionedAddress, function: function, parameters: parameters,
-		gazLimit: gazLimit, coins: coins,
+		gasLimit: gasLimit, coins: coins,
 	}, nil
 }
 
 func (c *CallSC) Content() interface{} {
 	return &Operation{
 		CallSC: OperationDetails{
-			MaxGaz:     int64(c.gazLimit),
+			MaxGas:     int64(c.gasLimit),
 			Coins:      fmt.Sprint(c.coins),
 			TargetAddr: "AS" + base58.VersionedCheckEncode(c.address, versionByte),
 			TargetFunc: c.function,
@@ -67,8 +66,8 @@ func (c *CallSC) Message() []byte {
 	nbBytes := binary.PutUvarint(buf, CallSCOpID)
 	msg = append(msg, buf[:nbBytes]...)
 
-	// maxGaz
-	nbBytes = binary.PutUvarint(buf, c.gazLimit)
+	// maxGas
+	nbBytes = binary.PutUvarint(buf, c.gasLimit)
 	msg = append(msg, buf[:nbBytes]...)
 
 	// Coins

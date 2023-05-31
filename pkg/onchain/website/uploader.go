@@ -41,7 +41,7 @@ func PrepareForUpload(config config.AppConfig, url string, nickname string) (str
 	operationWithEventResponse, err := onchain.DeploySC(
 		client,
 		nickname,
-		sendOperation.DefaultGazLimit,
+		sendOperation.DefaultGasLimit,
 		sendOperation.NoCoin,
 		sendOperation.NoFee,
 		sendOperation.DefaultSlotsDuration,
