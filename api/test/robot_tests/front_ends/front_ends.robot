@@ -38,16 +38,16 @@ GET /thyra/plugin-manager/index.html
     Page Should Contain    Install a plugin
     Page Should Contain    Install a plugin using .zip URL
 
-GET /thyra/registry/
-    Open Thyra Page    ${API_URL}/thyra/registry/
+GET /search/
+    Open Thyra Page    ${API_URL}/search/
     Page Should Contain    Registry
     Page Should Contain    Browse decentralized websites
     Page Should Contain    Website name
     Page Should Contain    Address
     Page Should Contain    URL
 
-GET /thyra/registry/index.html
-    Open Thyra Page    ${API_URL}/thyra/registry/index.html
+GET /search/index.html
+    Open Thyra Page    ${API_URL}/search/index.html
     Page Should Contain    Registry
     Page Should Contain    Browse decentralized websites
     Page Should Contain    Website name
@@ -84,8 +84,8 @@ GET /home/{resource} with invalid resource
 GET /thyra/plugin-manager/{resource} with invalid resource
     ${response}=    GET    ${API_URL}/thyra/plugin-manager/invalid    expected_status=${STATUS_NOT_FOUND}
 
-GET /thyra/registry/{resource} with invalid resource
-    ${response}=    GET    ${API_URL}/thyra/registry/invalid    expected_status=${STATUS_NOT_FOUND}
+GET /search/{resource} with invalid resource
+    ${response}=    GET    ${API_URL}/search/invalid    expected_status=${STATUS_NOT_FOUND}
 
 GET /thyra/websiteCreator/{resource} with invalid resource
     ${response}=    GET    ${API_URL}/thyra/websiteCreator/invalid    expected_status=${STATUS_NOT_FOUND}

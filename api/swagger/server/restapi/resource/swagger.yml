@@ -52,7 +52,7 @@ paths:
           description: Resource not found.
           schema:
             $ref: "#/definitions/Error"
-  /thyra/registry/{resource}:
+  /search/{resource}:
     get:
       operationId: thyraRegistry
       produces:

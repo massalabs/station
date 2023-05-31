@@ -40,7 +40,7 @@ function Home() {
       id: '423',
       logo: registry,
       status: 'Up',
-      home: '/thyra/registry',
+      home: '/search',
     },
   ];
 
