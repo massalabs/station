@@ -71,7 +71,7 @@ paths:
       responses:
         "200":
           description: Page found
-  /thyra/home/{resource}:
+  /home/{resource}:
     get:
       operationId: thyraHome
       produces:

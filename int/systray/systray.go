@@ -6,6 +6,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+
 	//nolint:typecheck
 	"fyne.io/fyne/v2/driver/desktop"
 )
@@ -41,7 +42,7 @@ func MakeGUI(logo []byte) (fyne.App, *fyne.Menu) {
 		}
 
 		homeShortCutMenu.Action = func() {
-			openURL(&stationGUI, "http://station.massa/thyra/home")
+			openURL(&stationGUI, "http://station.massa/home")
 		}
 
 		menu.Items = append(menu.Items,

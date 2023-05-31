@@ -12,15 +12,15 @@ Suite Teardown      Close All Browsers
 
 
 *** Test Cases ***
-GET /thyra/home/
-    Open Thyra Page    ${API_URL}/thyra/home/
+GET /home/
+    Open Thyra Page    ${API_URL}/home/
     Page Should Contain    Which Plugins
     Page Should Contain    Registry
     Page Should Contain    Web On Chain
     Page Should Contain    Manage plugin
 
-GET /thyra/home/index.html
-    Open Thyra Page    ${API_URL}/thyra/home/index.html
+GET /home/index.html
+    Open Thyra Page    ${API_URL}/home/index.html
     Page Should Contain    Which Plugins
     Page Should Contain    Registry
     Page Should Contain    Web On Chain
@@ -78,8 +78,8 @@ GET /thyra/websiteCreator/index.html
 
 # Error cases
 
-GET /thyra/home/{resource} with invalid resource
-    ${response}=    GET    ${API_URL}/thyra/home/invalid    expected_status=${STATUS_NOT_FOUND}
+GET /home/{resource} with invalid resource
+    ${response}=    GET    ${API_URL}/home/invalid    expected_status=${STATUS_NOT_FOUND}
 
 GET /thyra/plugin-manager/{resource} with invalid resource
     ${response}=    GET    ${API_URL}/thyra/plugin-manager/invalid    expected_status=${STATUS_NOT_FOUND}
