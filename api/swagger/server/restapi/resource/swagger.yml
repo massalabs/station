@@ -11,236 +11,19 @@ schemes:
   - https
 swagger: "2.0"
 paths:
-  /thyra/plugin/{author-name}/{plugin-name}:
+  /all/domains:
     get:
-      operationId: pluginRouter
-      description: virtual endpoint handling requests for third party plugin. The actual handler is defined as an HTTP handler middleware.
-      parameters:
-        - in: path
-          name: author-name
-          type: string
-          required : true
-          description: Author of the plugin.
-        - in: path
-          name: plugin-name
-          required : true
-          type: string
-          description: Name of the plugin.
-      responses:
-        "200":
-          description: Dumb response. All content and HTTP code are possible for this endpoint.
-  /thyra/websiteCreator/{resource}:
-    get:
-      operationId: thyraWebsiteCreator
-      produces:
-        - application/json
-        - text/javascript
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
-      parameters:
-        - in: path
-          name: resource
-          required : true
-          type: string
-          description: Website resource.
-      responses:
-        "200":
-          description: Page found
-        "404":
-          description: Resource not found.
-          schema:
-            $ref: "#/definitions/Error"
-  /thyra/registry/{resource}:
-    get:
-      operationId: thyraRegistry
-      produces:
-        - application/json
-        - text/javascript
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
-      parameters:
-        - in: path
-          name: resource
-          required : true
-          type: string
-          description: Website resource.
-      responses:
-        "200":
-          description: Page found
-  /thyra/home/{resource}:
-    get:
-      operationId: thyraHome
-      produces:
-        - application/json
-        - text/javascript
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
-      parameters:
-        - in: path
-          name: resource
-          required : true
-          type: string
-          description: Website resource.
-      responses:
-        "200":
-          description: Page found
-        "404":
-          description: Resource not found.
-          schema:
-            $ref: "#/definitions/Error"
-  /thyra/plugin-manager/{resource}:
-    get:
-      operationId: thyraPluginManager
-      produces:
-        - application/json
-        - text/javascript
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
-      parameters:
-        - in: path
-          name: resource
-          required : true
-          type: string
-          description: Website resource.
-      responses:
-        "200":
-          description: Page found
-        "404":
-          description: Resource not found.
-          schema:
-            $ref: "#/definitions/Error"
-  /thyra/events/{str}/{caller}:
-    get:
-      operationId: thyraEventsGetter
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          required : true
-          name: str
-          type: string
-          description: Data content of the event.
-        - in: path
-          name: caller
-          required : true
-          type: string
-          description: Creator of the transaction that triggered the event.
-      responses:
-        "200":
-          description: Event retrieved
-          schema:
-            $ref: "#/definitions/Events"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-  /massa/addresses:
-    get:
-      operationId: massaGetAddresses
-      parameters:
-        - in: query
-          name: attributes
-          type : array
-          collectionFormat: multi
-          description: |
-                     Specifies the attributes to return. If no attributes are provided, they are all returned.
-                     Possible values:
-
-                     | Attribute | Content |
-                     | ----------- | -----------|
-                     | balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |
-          items : 
-            type: string
-            enum: [balance]
-        - in: query  
-          name : addresses
-          required : true
-          x-nullable: false
-          type : array
-          collectionFormat: multi
-          description : list of wanted addresses
-          items:
-            type: string
+      description: Returns all domains registered in the blockchain network MassaServer is connected to.
+      operationId: allDomainsGetter
       produces:
         - application/json
       responses:
         "200":
-          description: Addresses' infos retrieved
-          schema:
-            type : object
-            properties: 
-              addressesAttributes: 
-                type: object 
-                additionalProperties:
-                  description : address key
-                  type: object
-                  properties:
-                    balance:
-                      type: object
-                      properties:
-                        pending:
-                          type: string
-                        final:
-                          type: string
-            
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-  /massa/node:
-    get:
-      summary: Get Massa network infos
-      description: Returns the currently used massa node infos
-      operationId: getNode
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Massa node
-          schema:
-            $ref: '#/definitions/MassaNodeItem'
-        "404":
-          description: Not found.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-  /my/domains/{nickname}:
-    get:
-      operationId: myDomainsGetter
-      parameters:
-        - in: path
-          name: nickname
-          type: string
-          required : true
-          description: Wallet's short name.
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Domains returned. May be empty.
+          description: All domains returned.
           schema:
             type: array
             items:
-              $ref: "#/definitions/Websites"
+              $ref: "#/definitions/Registry"
         "400":
           description: Bad request.
           schema:
@@ -249,137 +32,36 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /websiteCreator/prepare:
-    put:
-      operationId: websiteCreatorPrepare
-      consumes:
-        - multipart/form-data
-      parameters:
-        - in: formData
-          name: url
-          type: string
-          pattern: "^[a-z0-9]+$"
-          required: true
-          x-nullable: false
-          description: URL without dot (.), upper case and special characters
-        - in: formData
-          name: nickname
-          type: string
-          required: true
-          x-nullable: false
-          description: Name of the Wallet in which the website will be deployed.
-        - in: formData
-          name: zipfile
-          type: file
-          required: true
-          x-nullable: false
-          description: Website contents in a ZIP file.
-
+  /browse/{address}/{resource}:
+    get:
+      description: Downloads the website from the given address and returns the requested resource.
+      operationId: browse
       produces:
         - application/json
-      responses:
-        "200":
-          description: New website created.
-          schema:
-            $ref: "#/definitions/Websites"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-  /websiteCreator/upload:
-    post:
-      operationId: websiteCreatorUpload
-      consumes:
-        - multipart/form-data
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
       parameters:
-        - in: formData
+        - in: path
           name: address
           type: string
           required: true
-          x-nullable: false
-          description: Address where to deploy website. The account must have been prepare to receive a website.
-        - in: formData
-          name: nickname
+          description: Address containing the website.
+        - in: path
+          name: resource
           type: string
           required: true
-          x-nullable: false
-          description: Wallet's nickname to be used for receiving the website
-        - in: formData
-          name: zipfile
-          type: file
-          required: true
-          x-nullable: false
-          description: Website contents in a ZIP file.
-      produces:
-        - application/json
+          description: Website resource.
       responses:
         "200":
-          description: Website's chunk deployed.
-          schema:
-            $ref: "#/definitions/Websites"
+          description: Resource retrieved.
         "400":
           description: Bad request.
           schema:
             $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-  /websiteCreator/uploadMissingChunks:
-    post:
-      operationId: websiteUploadMissingChunks
-      consumes:
-        - multipart/form-data
-      parameters:
-        - in: formData
-          name: address
-          type: string
-          required: true
-          x-nullable: false
-          description: Address where to deploy website. The account must have been prepare to receive a website.
-        - in: formData
-          name: nickname
-          type: string
-          required: true
-          x-nullable: false
-          description: Wallet's nickname to be used for receiving the website
-        - in: formData
-          name: zipfile
-          type: file
-          required: true
-          x-nullable: false
-          description: Website contents in a ZIP file.
-        - in: formData
-          name: missedChunks
-          type: string
-          required: true
-          x-nullable: false
-          description: Website missing chunks
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Website's chunk deployed.
-          schema:
-            $ref: "#/definitions/Websites"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+        "404":
+          description: Resource not found.
           schema:
             $ref: "#/definitions/Error"
         "500":
@@ -388,6 +70,7 @@ paths:
             $ref: "#/definitions/Error"
   /cmd/executeFunction:
     post:
+      description: Calls the given function from the given smart contract.
       operationId: cmdExecuteFunction
       parameters:
         - in: body
@@ -475,6 +158,7 @@ paths:
             $ref: "#/definitions/Error"
   /cmd/deploySC:
     post:
+      description: Deploys the given smart contract to the blockchain network.
       operationId: cmdDeploySC
       consumes:
         - multipart/form-data
@@ -615,93 +299,114 @@ paths:
                       type: integer
                     gains:
                       type: number
-  /browse/{address}/{resource}:
+  /massa/addresses:
     get:
-      operationId: browse
-      produces:
-        - application/json
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
+      description: Retrieves requested information about the given addresses.
+      operationId: massaGetAddresses
       parameters:
-        - in: path
-          name: address
-          type: string
-          required: true
-          description: Address containing the website.
-        - in: path
-          name: resource
-          type: string
-          required: true
-          description: Website resource.
+        - in: query
+          name: attributes
+          type : array
+          collectionFormat: multi
+          description: |
+                     Specifies the attributes to return. If no attributes are provided, they are all returned.
+                     Possible values:
+
+                     | Attribute | Content |
+                     | ----------- | -----------|
+                     | balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |
+          items : 
+            type: string
+            enum: [balance]
+        - in: query  
+          name : addresses
+          required : true
+          x-nullable: false
+          type : array
+          collectionFormat: multi
+          description : list of wanted addresses
+          items:
+            type: string
+      produces:
+        - application/json
       responses:
         "200":
-          description: Resource retrieved.
+          description: Addresses' infos retrieved
+          schema:
+            type : object
+            properties: 
+              addressesAttributes: 
+                type: object 
+                additionalProperties:
+                  description : address key
+                  type: object
+                  properties:
+                    balance:
+                      type: object
+                      properties:
+                        pending:
+                          type: string
+                        final:
+                          type: string
+            
         "400":
           description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "404":
-          description: Resource not found.
           schema:
             $ref: "#/definitions/Error"
         "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /all/domains:
+  /massa/node:
     get:
-      operationId: allDomainsGetter
+      summary: Get Massa network infos
+      description: Returns the currently used massa node infos
+      operationId: getNode
       produces:
         - application/json
       responses:
         "200":
-          description: All domains returned.
+          description: Massa node
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/Registry"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-  /plugin-store:
-    get:
-      summary: Get list of available plugins from store
-      description: Returns a list of PluginStoreItem structs
-      operationId: getPluginStore
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: List of plugins
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/PluginStoreItem'
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
+            $ref: '#/definitions/MassaNodeItem'
         "404":
           description: Not found.
           schema:
             $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+  /my/domains/{nickname}:
+    get:
+      description: Retrieves the list of domains owned by the given wallet.
+      operationId: myDomainsGetter
+      parameters:
+        - in: path
+          name: nickname
+          type: string
+          required : true
+          description: Wallet's short name.
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Domains returned. May be empty.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Websites"
+        "400":
+          description: Bad request.
           schema:
             $ref: "#/definitions/Error"
         "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
-            $ref: "#/definitions/Error"        
+            $ref: "#/definitions/Error"
   /plugin-manager:
     post:
+      description: Install a plugin from a given URL.
       operationId: pluginManagerInstall
       parameters:
         - in: query
@@ -733,6 +438,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
     get:
+      description: List all installed plugins.
       operationId: pluginManagerList
       responses:
         "200":
@@ -789,6 +495,7 @@ paths:
             $ref: "#/definitions/Error"
   /plugin-manager/register:
     post:
+      description: Register a plugin. This is used by plugins to register themselves to the plugin manager.
       operationId: pluginManagerRegister
       parameters:
         - in: body
@@ -859,6 +566,7 @@ paths:
             $ref: "#/definitions/Error"
   /plugin-manager/{id}:
     get:
+      description: Returns the given plugin status.
       operationId: pluginManagerGetInformation
       parameters:
         - in: path
@@ -894,6 +602,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
     delete:
+      description: Uninstall the given plugin from the system.
       operationId: pluginManagerUninstall
       parameters:
         - in: path
@@ -922,6 +631,7 @@ paths:
             $ref: "#/definitions/Error"
   /plugin-manager/{id}/execute:
     post:
+      description: Execute a command on the given plugin such as update, stop, start, restart.
       operationId: pluginManagerExecuteCommand
       parameters:
         - in: path
@@ -964,6 +674,318 @@ paths:
             $ref: "#/definitions/Error"
         "501":
           description: Not Implemented - the server does not support the functionality required to fulfill the request.
+          schema:
+            $ref: "#/definitions/Error"
+  /plugin-store:
+    get:
+      summary: Get list of available plugins from store
+      description: Returns a list of PluginStoreItem structs
+      operationId: getPluginStore
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: List of plugins
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PluginStoreItem'
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"        
+  /thyra/events/{str}/{caller}:
+    get:
+      description: Returns the event matching the given data content and caller.
+      operationId: thyraEventsGetter
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          required : true
+          name: str
+          type: string
+          description: Data content of the event.
+        - in: path
+          name: caller
+          required : true
+          type: string
+          description: Creator of the transaction that triggered the event.
+      responses:
+        "200":
+          description: Event retrieved
+          schema:
+            $ref: "#/definitions/Events"
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+  /thyra/home/{resource}:
+    get:
+      description: Frontend router for the Thyra home page.
+      operationId: thyraHome
+      produces:
+        - application/json
+        - text/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          required : true
+          type: string
+          description: Website resource.
+      responses:
+        "200":
+          description: Page found
+        "404":
+          description: Resource not found.
+          schema:
+            $ref: "#/definitions/Error"
+  /thyra/plugin/{author-name}/{plugin-name}:
+    get:
+      operationId: pluginRouter
+      description: virtual endpoint handling requests for third party plugin. The actual handler is defined as an HTTP handler middleware.
+      parameters:
+        - in: path
+          name: author-name
+          type: string
+          required : true
+          description: Author of the plugin.
+        - in: path
+          name: plugin-name
+          required : true
+          type: string
+          description: Name of the plugin.
+      responses:
+        "200":
+          description: Dumb response. All content and HTTP code are possible for this endpoint.
+  /thyra/plugin-manager/{resource}:
+    get:
+      description: Frontend router for the Thyra plugin manager page.
+      operationId: thyraPluginManager
+      produces:
+        - application/json
+        - text/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          required : true
+          type: string
+          description: Website resource.
+      responses:
+        "200":
+          description: Page found
+        "404":
+          description: Resource not found.
+          schema:
+            $ref: "#/definitions/Error"
+  /thyra/registry/{resource}:
+    get:
+      description: Frontend router for the Thyra registry page.
+      operationId: thyraRegistry
+      produces:
+        - application/json
+        - text/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          required : true
+          type: string
+          description: Website resource.
+      responses:
+        "200":
+          description: Page found
+  /thyra/websiteCreator/{resource}:
+    get:
+      description: Frontend router for the Thyra website creator page.
+      operationId: thyraWebsiteCreator
+      produces:
+        - application/json
+        - text/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          required : true
+          type: string
+          description: Website resource.
+      responses:
+        "200":
+          description: Page found
+        "404":
+          description: Resource not found.
+          schema:
+            $ref: "#/definitions/Error"
+  /websiteCreator/prepare:
+    put:
+      summary: Deploys the given website on the blockchain. 
+      description: The given URL will first be added to the DNS if available and then the website will be deployed.
+      operationId: websiteCreatorPrepare
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: url
+          type: string
+          pattern: "^[a-z0-9]+$"
+          required: true
+          x-nullable: false
+          description: URL without dot (.), upper case and special characters
+        - in: formData
+          name: nickname
+          type: string
+          required: true
+          x-nullable: false
+          description: Name of the Wallet in which the website will be deployed.
+        - in: formData
+          name: zipfile
+          type: file
+          required: true
+          x-nullable: false
+          description: Website contents in a ZIP file.
+
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: New website created.
+          schema:
+            $ref: "#/definitions/Websites"
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+  /websiteCreator/upload:
+    post:
+      summary: Uploads the given website on the blockchain.
+      description: The website must have been deployed before using the prepare endpoint. This endpoint is usually used to edit an existing website.
+      operationId: websiteCreatorUpload
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: address
+          type: string
+          required: true
+          x-nullable: false
+          description: Address where to deploy website. The account must have been prepare to receive a website.
+        - in: formData
+          name: nickname
+          type: string
+          required: true
+          x-nullable: false
+          description: Wallet's nickname to be used for receiving the website
+        - in: formData
+          name: zipfile
+          type: file
+          required: true
+          x-nullable: false
+          description: Website contents in a ZIP file.
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Website's chunk deployed.
+          schema:
+            $ref: "#/definitions/Websites"
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+  /websiteCreator/uploadMissingChunks:
+    post:
+      description: Re-upload missing chunks of a website on the blockchain. This allows to fix a website that has been partially uploaded as a lower cost than re-uploading the whole website.
+      operationId: websiteUploadMissingChunks
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: address
+          type: string
+          required: true
+          x-nullable: false
+          description: Address where to deploy website. The account must have been prepare to receive a website.
+        - in: formData
+          name: nickname
+          type: string
+          required: true
+          x-nullable: false
+          description: Wallet's nickname to be used for receiving the website
+        - in: formData
+          name: zipfile
+          type: file
+          required: true
+          x-nullable: false
+          description: Website contents in a ZIP file.
+        - in: formData
+          name: missedChunks
+          type: string
+          required: true
+          x-nullable: false
+          description: Website missing chunks
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Website's chunk deployed.
+          schema:
+            $ref: "#/definitions/Websites"
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
 definitions:
