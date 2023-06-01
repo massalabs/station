@@ -54,8 +54,8 @@ GET /search/index.html
     Page Should Contain    Address
     Page Should Contain    URL
 
-GET /thyra/websiteCreator/
-    Open Thyra Page    ${API_URL}/thyra/websiteCreator/
+GET /websiteUploader/
+    Open Thyra Page    ${API_URL}/websiteUploader/
     Page Should Contain    Decentralized website storage
     Page Should Contain    Upload a website
     Page Should Contain    On wallet
@@ -65,8 +65,8 @@ GET /thyra/websiteCreator/
     Page Should Contain Button    website-upload
     Page Should Contain Button    file-select-button
 
-GET /thyra/websiteCreator/index.html
-    Open Thyra Page    ${API_URL}/thyra/websiteCreator/index.html
+GET /websiteUploader/index.html
+    Open Thyra Page    ${API_URL}/websiteUploader/index.html
     Page Should Contain    Decentralized website storage
     Page Should Contain    Upload a website
     Page Should Contain    On wallet
@@ -87,5 +87,5 @@ GET /thyra/plugin-manager/{resource} with invalid resource
 GET /search/{resource} with invalid resource
     ${response}=    GET    ${API_URL}/search/invalid    expected_status=${STATUS_NOT_FOUND}
 
-GET /thyra/websiteCreator/{resource} with invalid resource
-    ${response}=    GET    ${API_URL}/thyra/websiteCreator/invalid    expected_status=${STATUS_NOT_FOUND}
+GET /websiteUploader/{resource} with invalid resource
+    ${response}=    GET    ${API_URL}/websiteUploader/invalid    expected_status=${STATUS_NOT_FOUND}

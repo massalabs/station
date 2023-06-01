@@ -29,7 +29,7 @@ paths:
       responses:
         "200":
           description: Dumb response. All content and HTTP code are possible for this endpoint.
-  /thyra/websiteCreator/{resource}:
+  /websiteUploader/{resource}:
     get:
       operationId: thyraWebsiteCreator
       produces:

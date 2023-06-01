@@ -19,7 +19,7 @@ function Manager() {
             logo: webOnChain,
             status: PluginStatus.Up,
             version: "1.0.0",
-            home: "/thyra/websiteCreator",
+            home: "/websiteUploader",
             isFake: true,
         },
         {
