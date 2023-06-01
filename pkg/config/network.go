@@ -18,7 +18,6 @@ const (
 	buildnetDNSAddress = "AS1HqqZF5nFiZEzC7A19t7pUBRtvNfAq5c5PsESSPRE9eFYrGxhg"
 
 	massaStationURL = "station.massa"
-
 )
 
 func GetNetwork(network string) string {
