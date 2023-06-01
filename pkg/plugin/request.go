@@ -45,13 +45,13 @@ type endpointContent struct {
 }
 
 func splitEndpoint(uri string) *endpointContent {
-	// ["", "thyra", "plugin", "{author-name}", "{plugin-name}", ...]
+	// ["", "plugin", "{author-name}", "{plugin-name}", ...]
 	exploded := strings.Split(uri, "/")
 
 	return &endpointContent{
-		pluginAuthor: FormatTextForURL(exploded[3]),
-		pluginName:   FormatTextForURL(exploded[4]),
-		subURI:       "/" + strings.Join(exploded[5:], "/"),
+		pluginAuthor: FormatTextForURL(exploded[2]),
+		pluginName:   FormatTextForURL(exploded[3]),
+		subURI:       "/" + strings.Join(exploded[4:], "/"),
 	}
 }
 
