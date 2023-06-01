@@ -36,7 +36,7 @@ func (h *APIHandler) Handle(writer http.ResponseWriter, reader *http.Request, pl
 //nolint:gochecknoglobals
 var Handler APIHandler
 
-const EndpointPattern = "/thyra/plugin/"
+const EndpointPattern = "/plugin/"
 
 type endpointContent struct {
 	pluginAuthor string
@@ -57,7 +57,7 @@ func splitEndpoint(uri string) *endpointContent {
 
 // Interceptor intercepts requests for plugins.
 // The endpoint is expected to have the following structure:
-// /thyra/plugin/{author-name}/{plugin-name}/{plugin-endpoint}...
+// /plugin/{author-name}/{plugin-name}/{plugin-endpoint}...
 func Interceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
 	if req == nil {
 		return nil
@@ -95,13 +95,13 @@ func Interceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
 }
 
 // modifyRequest rewrite the incoming request URL to match what the plugin is expecting to receive.
-// All the `/thyra/plugin/{author-name}/{plugin-name}` template is removed.
+// All the `/plugin/{author-name}/{plugin-name}` template is removed.
 func modifyRequest(req *http.Request) {
 	urlExternal := req.URL.String()
 
 	// the url has the following format:
-	// 		http://127.0.0.1:1234/thyra/plugin/massalabs/hello-world/web/index.html?name=Massalabs
-	// The idea is to rewrite url to remove: /thyra/plugin/massalabs/hello-world
+	// 		http://127.0.0.1:1234/plugin/massalabs/hello-world/web/index.html?name=Massalabs
+	// The idea is to rewrite url to remove: /plugin/massalabs/hello-world
 
 	index := strings.Index(urlExternal, EndpointPattern)
 
