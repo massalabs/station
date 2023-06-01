@@ -846,10 +846,10 @@ paths:
       responses:
         "200":
           description: Page found
-  /thyra/websiteCreator/{resource}:
+  /websiteUploader/{resource}:
     get:
       description: Frontend router for the Thyra website creator page.
-      operationId: thyraWebsiteCreator
+      operationId: websiteUploader
       produces:
         - application/json
         - text/javascript
@@ -870,11 +870,11 @@ paths:
           description: Resource not found.
           schema:
             $ref: "#/definitions/Error"
-  /websiteCreator/prepare:
+  /websiteUploader/prepare:
     put:
       summary: Deploys the given website on the blockchain. 
       description: The given URL will first be added to the DNS if available and then the website will be deployed.
-      operationId: websiteCreatorPrepare
+      operationId: websiteUploaderPrepare
       consumes:
         - multipart/form-data
       parameters:
@@ -917,11 +917,11 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /websiteCreator/upload:
+  /websiteUploader/upload:
     post:
       summary: Uploads the given website on the blockchain.
       description: The website must have been deployed before using the prepare endpoint. This endpoint is usually used to edit an existing website.
-      operationId: websiteCreatorUpload
+      operationId: websiteUploaderUpload
       consumes:
         - multipart/form-data
       parameters:
@@ -962,7 +962,7 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /websiteCreator/uploadMissingChunks:
+  /websiteUploader/uploadMissingChunks:
     post:
       description: Re-upload missing chunks of a website on the blockchain. This allows to fix a website that has been partially uploaded as a lower cost than re-uploading the whole website.
       operationId: websiteUploadMissingChunks

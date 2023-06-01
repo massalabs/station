@@ -49,8 +49,8 @@ func initLocalAPI(localAPI *operations.MassastationAPI, config config.AppConfig)
 
 	localAPI.CmdDeploySCHandler = cmd.NewDeploySCHandler(&config)
 
-	localAPI.WebsiteCreatorPrepareHandler = websites.NewWebsitePrepareHandler(&config)
-	localAPI.WebsiteCreatorUploadHandler = websites.NewWebsiteUploadHandler(&config)
+	localAPI.WebsiteUploaderPrepareHandler = websites.NewWebsitePrepareHandler(&config)
+	localAPI.WebsiteUploaderUploadHandler = websites.NewWebsiteUploadHandler(&config)
 	localAPI.WebsiteUploadMissingChunksHandler = websites.NewWebsiteUploadMissedChunkHandler(&config)
 
 	localAPI.MyDomainsGetterHandler = websites.NewDomainsHandler(&config)
@@ -63,7 +63,7 @@ func initLocalAPI(localAPI *operations.MassastationAPI, config config.AppConfig)
 	localAPI.ThyraPluginManagerHandler = operations.ThyraPluginManagerHandlerFunc(ThyraPluginManagerHandler)
 	localAPI.MassaStationWebAppHandler = operations.MassaStationWebAppHandlerFunc(MassaStationWebAppHandler)
 
-	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
+	localAPI.WebsiteUploaderHandler = operations.WebsiteUploaderHandlerFunc(WebsiteUploaderHandler)
 	pluginstore.InitializePluginStoreAPI(localAPI)
 	myplugin.InitializePluginAPI(localAPI)
 }

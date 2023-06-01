@@ -26,7 +26,7 @@ type WebSiteCreatorData struct {
 	UploadMaxSize int
 }
 
-func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) middleware.Responder {
+func WebsiteUploaderHandler(params operations.WebsiteUploaderParams) middleware.Responder {
 	file := params.Resource
 
 	if params.Resource == indexHTML {
@@ -35,7 +35,7 @@ func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) mid
 
 	resource, err := content.ReadFile(basePath + file)
 	if err != nil {
-		return operations.NewThyraWebsiteCreatorNotFound()
+		return operations.NewWebsiteUploaderNotFound()
 	}
 
 	if params.Resource == indexHTML {
@@ -55,7 +55,7 @@ func WebOnChainSearchHandler(params operations.WebOnChainSearchParams) middlewar
 
 	resource, err := content.ReadFile(basePath + file)
 	if err != nil {
-		return operations.NewThyraWebsiteCreatorNotFound()
+		return operations.NewWebsiteUploaderNotFound()
 	}
 
 	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)

@@ -13,14 +13,14 @@ Suite Setup         Suite Setup
 Suite Teardown      Close All Browsers
 
 *** Test Cases ***
-PUT /websiteCreator/prepare
+PUT /websiteUploader/prepare
     [Documentation]    Prepare a website for creation.
 
     ${zip}=    Get File For Streaming Upload    ${CURDIR}/${TEST_ZIP_FILE}
     ${data}=    Create Dictionary    nickname=${WALLET_NICKNAME}    url=${website_url}
     ${file}=    Create Dictionary    zipfile=${zip}
     ${response}=    PUT
-    ...    ${API_URL}/websiteCreator/prepare
+    ...    ${API_URL}/websiteUploader/prepare
     ...    data=${data}
     ...    files=${file}
     ...    expected_status=${STATUS_OK}
@@ -29,14 +29,14 @@ PUT /websiteCreator/prepare
     Set Global Variable    ${WEBSITE_NAME}    ${response.json()['name']}
     Set Global Variable    ${WEBSITE_ADDRESS}    ${response.json()['address']}
 
-POST /websiteCreator/upload
+POST /websiteUploader/upload
     [Documentation]    Upload the content of the website to the blockchain.
 
     ${zip}=    Get File For Streaming Upload    ${CURDIR}/${TEST_ZIP_FILE}
     ${data}=    Create Dictionary    nickname=${WALLET_NICKNAME}    address=${WEBSITE_ADDRESS}
     ${file}=    Create Dictionary    zipfile=${zip}
     ${response}=    POST
-    ...    ${API_URL}/websiteCreator/upload
+    ...    ${API_URL}/websiteUploader/upload
     ...    data=${data}
     ...    files=${file}
     ...    expected_status=${STATUS_OK}
