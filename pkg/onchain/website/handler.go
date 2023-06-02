@@ -52,7 +52,7 @@ func RedirectToDefaultResourceInterceptor(req *interceptor.Interceptor) *interce
 		return nil
 	}
 
-	prefixes := []string{"/search", "/websiteUploader" , "/thyra/plugin-manager"}
+	prefixes := []string{"/search", "/websiteUploader", "/thyra/plugin-manager"}
 
 	for _, prefix := range prefixes {
 		if !strings.HasPrefix(req.Request.URL.Path, prefix) {
