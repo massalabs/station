@@ -6,13 +6,13 @@ This guide provides step-by-step instructions for installing **MassaStation** on
 * [MacOS Installation](#macos-installation)
 * [Debian Linux Installation](#debian-linux-installation)
 
-> **Note:** **MassaStation** is currently available for Windows, MacOS, and Debian Linux. Support for other Linux distributions will be added in the future.
+> **Note:** **MassaStation** is currently available for Windows, MacOS, and Debian Linux. Support for other Linux distributions will be added in the future. Likewise, this application isn't working on virtual machines. It might be added in the future.
 
 > **Troubleshooting:** If you encounter any issues during the installation process, do not hesitate to [open an issue](https://github.com/massalabs/thyra/issues/new) on GitHub.
 
 ## Windows Installation
 
-1. Download the latest version of **MassaStation** installer for Windows from the [official website](https://github.com/massalabs/thyra/releases/latest/download/massastation-installer_windows_amd64.msi).
+1. Download the latest version of **MassaStation** installer for Windows (`.msi`) from the [official website](https://github.com/massalabs/thyra/releases/latest/download/massastation-installer_windows_amd64.msi).
 2. Locate the downloaded `.msi` installer file and double-click on it to start the installation process.
 3. Follow the on-screen instructions to proceed with the installation.
 4. Once the installation is complete, you will see a confirmation message. Click "Finish" to exit the installer.
@@ -38,7 +38,7 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 ### GUI Installation
 
-1. Download the latest version of **MassaStation** installer for Debian Linux from [here](https://github.com/massalabs/thyra/releases/latest/).
+1. Download the latest version of **MassaStation** installer for Debian Linux (`.deb`)  from [here](https://github.com/massalabs/thyra/releases/latest/).
 2. Open your file manager and navigate to the location where the `.deb` package is saved.
 3. Right-click on the `.deb` package and choose "Open with Software Install" or a similar option.
 4. The package manager will launch and display **MassaStation** installation page.
