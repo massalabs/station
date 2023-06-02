@@ -28,7 +28,7 @@ warn() {
 # Remove DNSMasq configuration files.
 remove_dnsmasq_configuration() {
     sudo rm -f $(brew --prefix)/etc/dnsmasq.d/massa.conf || fatal "failed to remove DNSMasq configuration files."
-    sudo rm -f /etc/resolver/massa || fatal "failed to remove DNSMasq configuration files."
+    sudo rm -f /etc/resolver/massa || fatal "failed to remove resolver configuration file."
 
     sudo brew services restart dnsmasq > /dev/null 2>&1 || fatal "failed to restart DNSMasq service."
 }
