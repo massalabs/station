@@ -77,7 +77,7 @@ To uninstall **MassaStation** from your MacOS system, follow the steps below:
 2. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
 
    ```
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/massalabs/thyra/main/installer/macos/scripts/uninstall.sh)"
+   /usr/local/share/massastation/uninstall.sh
    ```
    This command will remove Homebrew and its associated files from your system.
 3. Follow any prompts or instructions provided by the uninstaller script. This may involve confirming the removal and providing your password for administrative privileges.

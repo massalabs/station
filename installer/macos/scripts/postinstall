@@ -81,3 +81,5 @@ ping -c 1 -t 1 test.massa >/dev/null 2>&1 || set_local_dns
 if [[ ! -f $MASSASTATION_CERT_DIR/cert.pem || ! -f $MASSASTATION_CERT_DIR/cert-key.pem ]]; then
     generate_certificate
 fi
+
+mv ./uninstall.sh $MASSASTATION_CONFIG_DIR || fatal "uninstall script move failed."
