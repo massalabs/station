@@ -15,14 +15,14 @@ Suite Teardown      Close All Browsers
 GET /home/
     Open Thyra Page    ${API_URL}/home/
     Page Should Contain    Which Plugins
-    Page Should Contain    Registry
+    Page Should Contain    Search
     Page Should Contain    Web On Chain
     Page Should Contain    Manage plugin
 
 GET /home/index.html
     Open Thyra Page    ${API_URL}/home/index.html
     Page Should Contain    Which Plugins
-    Page Should Contain    Registry
+    Page Should Contain    Search
     Page Should Contain    Web On Chain
     Page Should Contain    Manage plugin
 
@@ -40,7 +40,7 @@ GET /thyra/plugin-manager/index.html
 
 GET /search/
     Open Thyra Page    ${API_URL}/search/
-    Page Should Contain    Registry
+    Page Should Contain    Search
     Page Should Contain    Browse decentralized websites
     Page Should Contain    Website name
     Page Should Contain    Address
@@ -48,7 +48,7 @@ GET /search/
 
 GET /search/index.html
     Open Thyra Page    ${API_URL}/search/index.html
-    Page Should Contain    Registry
+    Page Should Contain    Search
     Page Should Contain    Browse decentralized websites
     Page Should Contain    Website name
     Page Should Contain    Address

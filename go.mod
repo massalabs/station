@@ -7,11 +7,11 @@ require (
 	github.com/cavaliergopher/grab/v3 v3.0.1
 	github.com/go-openapi/errors v0.20.2
 	github.com/go-openapi/loads v0.21.1
-	github.com/go-openapi/runtime v0.24.1
+	github.com/go-openapi/runtime v0.25.0
 	github.com/go-openapi/spec v0.20.4
-	github.com/go-openapi/strfmt v0.21.2
-	github.com/go-openapi/swag v0.21.1
-	github.com/go-openapi/validate v0.21.0
+	github.com/go-openapi/strfmt v0.21.3
+	github.com/go-openapi/swag v0.22.3
+	github.com/go-openapi/validate v0.22.0
 	github.com/gosimple/slug v1.13.1
 	github.com/hashicorp/go-version v1.6.0
 	github.com/jessevdk/go-flags v1.5.0
@@ -22,7 +22,7 @@ require (
 
 require (
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 )
 
 require (
@@ -42,6 +42,8 @@ require (
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/jsummers/gobmp v0.0.0-20151104160322-e2ba15ffa76e // indirect
 	github.com/kr/pretty v0.3.0 // indirect
+	github.com/massalabs/thyra-plugin-hello-world v0.0.7-0.20230427165652-372f933a9262 // indirect
+	github.com/massalabs/thyra-plugin-wallet v0.0.0-20230120133548-3c3fc117ab74 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/srwiley/oksvg v0.0.0-20220731023508-a61f04f16b76 // indirect
@@ -72,7 +74,7 @@ require (
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/xyproto/unzip v0.0.0-20150601123358-823950573952
 	github.com/ybbus/jsonrpc/v3 v3.1.0
-	go.mongodb.org/mongo-driver v1.8.3 // indirect
+	go.mongodb.org/mongo-driver v1.10.0 // indirect
 	golang.org/x/exp v0.0.0-20221114191408-850992195362
 	golang.org/x/text v0.6.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
