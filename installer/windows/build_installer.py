@@ -294,6 +294,22 @@ def create_wxs_file():
             Impersonate="no"
             Return="check"
         />
+        <CustomAction
+            Id="RemoveInstallDir"
+            Directory="ProgramFilesFolder"
+            ExeCommand="cmd /c rmdir /s /q &quot;[INSTALLDIR]&quot;"
+            Execute="deferred"
+            Impersonate="no"
+            Return="ignore"
+        />
+        <CustomAction
+            Id="RemoveAcrylicDir"
+            Directory="ProgramFilesFolder"
+            ExeCommand="cmd /c rmdir /s /q &quot;[AcrylicDNSProxy]&quot;"
+            Execute="deferred"
+            Impersonate="no"
+            Return="ignore"
+        />
 
         <InstallExecuteSequence>
             <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed</Custom>
@@ -306,6 +322,8 @@ def create_wxs_file():
 
             <Custom Action='UninstallAcrylic' Before='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
             <Custom Action='ResetNetworkInterface' Before='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
+            <Custom Action='RemoveInstallDir' After='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
+            <Custom Action='RemoveAcrylicDir' After='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
         </InstallExecuteSequence>
 
     </Product>
