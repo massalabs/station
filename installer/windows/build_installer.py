@@ -150,8 +150,10 @@ def create_wxs_file():
         />
 
         <MediaTemplate EmbedCab="yes"/>
-        
-        <WixVariable Id="WixUILicenseRtf" Value="windows\\License.rtf" />
+        <!--
+            We don't need a license agreement for now.
+            <WixVariable Id="WixUILicenseRtf" Value="windows\\License.rtf" />
+        -->
         <Property Id="MsiLogging" Value="voicewarmup!" />
 
         <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
@@ -161,6 +163,8 @@ def create_wxs_file():
 
         <UI>
             <UIRef Id="WixUI_InstallDir" />
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg" Order="3">1</Publish>
+            <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="3">1</Publish>
             <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchMassaStation">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1</Publish>
         </UI>
 
