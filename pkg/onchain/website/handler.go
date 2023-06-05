@@ -52,13 +52,21 @@ func RedirectToDefaultResourceInterceptor(req *interceptor.Interceptor) *interce
 		return nil
 	}
 
-	prefixes := []string{"/search", "/websiteUploader", "/thyra/plugin-manager"}
+	prefixes := []string{"/home", "/search", "/websiteUploader", "/thyra/plugin-manager"}
 
 	for _, prefix := range prefixes {
 		if !strings.HasPrefix(req.Request.URL.Path, prefix) {
 			continue
 		}
 
+		// before we had something like /thyra/websiteUploader, which needs to be converted
+		// to an array [websiteUploader] in this specific case the len is 1, and we proceed
+		// adding "/.html" to  "websiteuploader"
+		// Now i want to keep same functionality but we don't have anymore /thyra, but instead
+		// only /websiteUploader, it will be converted to [] only in this case len is 0,
+		// i can start adding  "/.html"
+		// it's working but can be refactored
+		// TODO : specific PR to refector this interceptor
 		splited := removeEmptyStrings(strings.Split(req.Request.URL.Path[len(prefix):], "/"))
 
 		if len(splited) == 0 {
