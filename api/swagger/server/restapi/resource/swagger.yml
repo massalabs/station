@@ -861,6 +861,13 @@ paths:
           required: true
           x-nullable: false
           description: URL without dot (.), upper case and special characters
+
+        - in: formData
+          name: description
+          type: string
+          required: true
+          x-nullable: false
+          description: description of the website
         - in: formData
           name: nickname
           type: string
@@ -1010,6 +1017,9 @@ definitions:
     properties:
       name:
         description: Website's name.
+        type: string
+      description:
+        description: Website's description.
         type: string
       address:
         description: Website's address.

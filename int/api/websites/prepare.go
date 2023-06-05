@@ -49,6 +49,7 @@ func (h *websitePrepare) Handle(params operations.WebsiteCreatorPrepareParams) m
 		return createInternalServerError(errorCodeWebCreatorPrepare, err.Error())
 	}
 
+	
 	_, err = website.Upload(
 		*h.config,
 		address,
@@ -67,6 +68,7 @@ func (h *websitePrepare) Handle(params operations.WebsiteCreatorPrepareParams) m
 		WithPayload(
 			&models.Websites{
 				Name:         params.URL,
+				Description: params.Description,
 				Address:      address,
 				BrokenChunks: nil,
 			})
@@ -124,6 +126,7 @@ func readAndCheckArchive(zipFile io.ReadCloser) ([]byte, middleware.Responder) {
 	if !checkContentType(archive, "application/zip") {
 		return nil, createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
 	}
-
+	
 	return archive, nil
 }
+	

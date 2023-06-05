@@ -70,7 +70,6 @@ func PrepareForUpload(config config.AppConfig, url string, nickname string) (str
 	if err != nil {
 		return "", "", fmt.Errorf("adding DNS record '%s' => '%s': %w", url, scAddress, err)
 	}
-
 	return scAddress, operationWithEventResponse.OperationResponse.CorrelationID, nil
 }
 
