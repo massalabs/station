@@ -366,10 +366,12 @@ function putUpload(bodyFormData) {
 // Full deployment process
 function deployWebsiteAndUpload() {
     const dnsNameInputValue = document.getElementById("websiteName").value;
+    const websiteDescriptionInputValue = document.getElementById("websiteDescription").value;
 
     const file = document.querySelector(".upload input").files[0];
     const bodyFormData = new FormData();
     bodyFormData.append("url", dnsNameInputValue);
+    bodyFormData.append("description", websiteDescriptionInputValue); // Add the website description to the form data
     bodyFormData.append("nickname", getDefaultWallet());
     bodyFormData.append("zipfile", file);
 
@@ -377,6 +379,9 @@ function deployWebsiteAndUpload() {
         putUpload(bodyFormData)
     );
 }
+
+
+
 
 // Full deployment process
 function uploadWebsite(file, count) {
