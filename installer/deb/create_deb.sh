@@ -88,7 +88,7 @@ Description: An entrance to the Massa blockchain.
 Recommends: libnss3-tools
 EOF
 
-    cp deb/scripts/postinst $BUILD_DIR/DEBIAN
+    cp deb/scripts/post* $BUILD_DIR/DEBIAN
     DEB_NAME=massastation_$PKGVERSION\_amd64.deb
 
     dpkg-deb --build $BUILD_DIR $DEB_NAME || fatal "failed to build $DEB_NAME"
