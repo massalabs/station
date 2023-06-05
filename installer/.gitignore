@@ -8,6 +8,7 @@ tmpdeb/
 # Temporary files
 *.zip
 *.tar.xz
+*.app
 *.log
 *.wixpdb
 massastation-app
