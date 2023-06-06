@@ -25,6 +25,7 @@ WIXTOOLSET_ZIP = "wixtoolset.zip"
 # Scripts to be included in the installer
 ACRYLIC_CONFIG_SCRIPT = "configure_acrylic.bat"
 NIC_CONFIG_SCRIPT = "configure_network_interfaces.bat"
+NIC_RESET_SCRIPT = "reset_network_interfaces.bat"
 GEN_CERT_SCRIPT = "generate_certificate.bat"
 
 WIX_DIR = "wixtoolset"
@@ -101,7 +102,7 @@ def move_binaries():
 
     os.makedirs(BUILD_DIR)
 
-    os.rename(
+    shutil.copy(
         os.path.join(MASSASTATION_BINARY),
         os.path.join(BUILD_DIR, MASSASTATION_BINARY),
     )
@@ -114,6 +115,10 @@ def move_binaries():
     shutil.copy(
         os.path.join("windows", "scripts", NIC_CONFIG_SCRIPT),
         os.path.join(BUILD_DIR, NIC_CONFIG_SCRIPT),
+    )
+    shutil.copy(
+        os.path.join("windows", "scripts", NIC_RESET_SCRIPT),
+        os.path.join(BUILD_DIR, NIC_RESET_SCRIPT),
     )
     shutil.copy(
         os.path.join("windows", "scripts", GEN_CERT_SCRIPT),
@@ -150,8 +155,10 @@ def create_wxs_file():
         />
 
         <MediaTemplate EmbedCab="yes"/>
-        
-        <WixVariable Id="WixUILicenseRtf" Value="windows\\License.rtf" />
+        <!--
+            We don't need a license agreement for now.
+            <WixVariable Id="WixUILicenseRtf" Value="windows\\License.rtf" />
+        -->
         <Property Id="MsiLogging" Value="voicewarmup!" />
 
         <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
@@ -161,6 +168,8 @@ def create_wxs_file():
 
         <UI>
             <UIRef Id="WixUI_InstallDir" />
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg" Order="3">1</Publish>
+            <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="3">1</Publish>
             <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchMassaStation">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1</Publish>
         </UI>
 
@@ -171,6 +180,7 @@ def create_wxs_file():
                         <File Id="MassaStationAppEXE" Name="{MASSASTATION_BINARY}" Source="{BUILD_DIR}\\{MASSASTATION_BINARY}" />
                         <File Id="AcrylicConfigScript" Name="{ACRYLIC_CONFIG_SCRIPT}" Source="{BUILD_DIR}\\{ACRYLIC_CONFIG_SCRIPT}" />
                         <File Id="NICConfigScript" Name="{NIC_CONFIG_SCRIPT}" Source="{BUILD_DIR}\\{NIC_CONFIG_SCRIPT}" />
+                        <File Id="NICResetScript" Name="{NIC_RESET_SCRIPT}" Source="{BUILD_DIR}\\{NIC_RESET_SCRIPT}" />
                         <File Id="GenCertScript" Name="{GEN_CERT_SCRIPT}" Source="{BUILD_DIR}\\{GEN_CERT_SCRIPT}" />
                     </Component>
                     <Directory Id="MassaStationCerts" Name="certs">
@@ -193,7 +203,6 @@ def create_wxs_file():
                     </Component>
                 </Directory>
             </Directory>
-            <Directory Id="TempDir" FileSource="[TempFolder]"></Directory>
         </Directory>
 
         <Feature Id="MainApplication" Title="Main Application" Level="1">
@@ -238,6 +247,14 @@ def create_wxs_file():
             Return="check"
         />
         <CustomAction
+            Id="RollbackAcrylicInstall"
+            Directory="AcrylicDNSProxy"
+            ExeCommand="cmd /c &quot;[AcrylicDNSProxy]UninstallAcrylicService.bat&quot;"
+            Execute="rollback"
+            Impersonate="no"
+            Return="ignore"
+        />
+        <CustomAction
             Id="ConfigureAcrylic"
             Directory="INSTALLDIR"
             ExeCommand="cmd /c &quot;[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}&quot;"
@@ -255,20 +272,58 @@ def create_wxs_file():
         />
         <CustomAction
             Id="GenerateCertificate"
-            Directory="TempDir"
+            Directory="INSTALLDIR"
             ExeCommand="cmd /c &quot;[INSTALLDIR]{GEN_CERT_SCRIPT}&quot;"
             Execute="deferred"
             Impersonate="no"
             Return="check"
         />
+        <CustomAction
+            Id="UninstallAcrylic"
+            Directory="AcrylicDNSProxy"
+            ExeCommand="cmd /c &quot;[AcrylicDNSProxy]UninstallAcrylicService.bat&quot;"
+            Execute="deferred"
+            Impersonate="no"
+            Return="ignore"
+        />
+        <CustomAction
+            Id="ResetNetworkInterface"
+            Directory="INSTALLDIR"
+            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_RESET_SCRIPT}&quot; reset"
+            Execute="deferred"
+            Impersonate="no"
+            Return="check"
+        />
+        <CustomAction
+            Id="RemoveInstallDir"
+            Directory="ProgramFilesFolder"
+            ExeCommand="cmd /c rmdir /s /q &quot;[INSTALLDIR]&quot;"
+            Execute="deferred"
+            Impersonate="no"
+            Return="ignore"
+        />
+        <CustomAction
+            Id="RemoveAcrylicDir"
+            Directory="ProgramFilesFolder"
+            ExeCommand="cmd /c rmdir /s /q &quot;[AcrylicDNSProxy]&quot;"
+            Execute="deferred"
+            Impersonate="no"
+            Return="ignore"
+        />
 
         <InstallExecuteSequence>
             <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed</Custom>
+            <Custom Action="RollbackAcrylicInstall" After="InstallAcrylic">NOT Installed</Custom>
             <Custom Action="InstallAcrylic" Before="ConfigureAcrylic">NOT Installed</Custom>
             <Custom Action="ConfigureAcrylic" Before="ConfigureNetworkInterface">NOT Installed</Custom>
             <Custom Action="ConfigureNetworkInterface" Before="GenerateCertificate">NOT Installed</Custom>
             <Custom Action="GenerateCertificate" Before="DeleteAcrylicZip">NOT Installed</Custom>
             <Custom Action="DeleteAcrylicZip" Before="InstallFinalize">NOT Installed</Custom>
+
+            <Custom Action='UninstallAcrylic' Before='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
+            <Custom Action='ResetNetworkInterface' Before='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
+            <Custom Action='RemoveInstallDir' After='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
+            <Custom Action='RemoveAcrylicDir' After='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
         </InstallExecuteSequence>
 
     </Product>
