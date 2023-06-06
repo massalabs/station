@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script is used to uninstall MassaStation from MacOS.
+# This script is used to uninstall MassaStation from a Debian-based system.
 # It will remove the following files:
 # - MassaStation App.
 # - DNSMasq configuration files.
