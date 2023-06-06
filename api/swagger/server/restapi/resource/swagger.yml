@@ -826,10 +826,10 @@ paths:
           description: Resource not found.
           schema:
             $ref: "#/definitions/Error"
-  /thyra/registry/{resource}:
+  /search/{resource}:
     get:
-      description: Frontend router for the Thyra registry page.
-      operationId: thyraRegistry
+      description: Frontend router for the web-on-chain search page.
+      operationId: WebOnChainSearch
       produces:
         - application/json
         - text/javascript

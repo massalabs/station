@@ -29,7 +29,7 @@ function Manager() {
             logo: registry,
             status: PluginStatus.Up,
             version: "1.0.0",
-            home: "/thyra/registry",
+            home: "/search",
             isFake: true,
         },
     ];

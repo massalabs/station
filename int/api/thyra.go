@@ -47,7 +47,7 @@ func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) mid
 	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)
 }
 
-func ThyraRegistryHandler(params operations.ThyraRegistryParams) middleware.Responder {
+func WebOnChainSearchHandler(params operations.WebOnChainSearchParams) middleware.Responder {
 	file := params.Resource
 	if params.Resource == indexHTML {
 		file = "registry.html"
