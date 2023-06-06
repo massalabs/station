@@ -6,6 +6,9 @@ on:
       tag_name:
         type: string
 
+env:
+  VERSION: ${{ inputs.tag_name }}
+
 jobs:
   build:
     name: build and upload artifacts
@@ -27,11 +30,16 @@ jobs:
             arch: arm64
             target: darwin
     runs-on: ${{ matrix.os }}
-    env:
-      VERSION: ${{ inputs.tag_name || 'dev' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      - name: Fetch all git tags
+        run: git fetch --prune --unshallow --tags
+      - name: Set Version
+        if: ${{ env.VERSION == '' }}
+        run: |
+          export VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')-dev
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: installing dependencies
         uses: ./.github/actions/install
         with:
@@ -99,6 +107,8 @@ jobs:
           path: installer
       - name: Build Package
         run: sh macos/create_pkg.sh ${{ matrix.arch }}
+        env:
+          VERSION: ${{ env.VERSION }}
       - name: Upload Package
         uses: actions/upload-artifact@v3
         with:
@@ -132,6 +142,8 @@ jobs:
         run: mv ../massastation_windows_amd64.exe massastation.exe
       - name: Build Installer
         run: python windows/build_installer.py
+        env:
+          VERSION: ${{ env.VERSION }}
       - name: Upload Installer
         uses: actions/upload-artifact@v3
         with:
@@ -160,6 +172,8 @@ jobs:
           path: installer
       - name: Build Package
         run: sh deb/create_deb.sh
+        env:
+          VERSION: ${{ env.VERSION }}
       - name: Upload Package
         uses: actions/upload-artifact@v3
         with:
