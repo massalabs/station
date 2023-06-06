@@ -52,13 +52,26 @@ func RedirectToDefaultResourceInterceptor(req *interceptor.Interceptor) *interce
 		return nil
 	}
 
-	prefixes := []string{"/browse/", "/thyra/"}
+	// redirect /home and / to /home/index.html
+	if req.Request.URL.Path == "/" || req.Request.URL.Path == "/home" || req.Request.URL.Path == "/home/" {
+		http.Redirect(
+			req.Writer,
+			req.Request,
+			"/home/index.html",
+			http.StatusSeeOther,
+		)
 
+		return nil
+	}
+
+	prefixes := []string{"/browse/", "/thyra/"}
 	for _, prefix := range prefixes {
 		if !strings.HasPrefix(req.Request.URL.Path, prefix) {
 			continue
 		}
 
+		// The len(prefix) is used to extract a substring from the req.Request.URL.Path starting from the end of the prefix
+		// string. This is done to remove the prefix from the URL path before splitting it.
 		splited := removeEmptyStrings(strings.Split(req.Request.URL.Path[len(prefix):], "/"))
 
 		if len(splited) == 1 {

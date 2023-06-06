@@ -57,7 +57,7 @@ func initLocalAPI(localAPI *operations.MassastationAPI, config config.AppConfig)
 	localAPI.AllDomainsGetterHandler = websites.NewRegistryHandler(&config)
 
 	localAPI.ThyraRegistryHandler = operations.ThyraRegistryHandlerFunc(ThyraRegistryHandler)
-	localAPI.ThyraHomeHandler = operations.ThyraHomeHandlerFunc(ThyraHomeHandler)
+	localAPI.MassaStationHomeHandler = operations.MassaStationHomeHandlerFunc(MassaStationHomeHandler)
 	localAPI.ThyraEventsGetterHandler = NewEventListenerHandler(&config)
 	localAPI.BrowseHandler = NewBrowseHandler(&config)
 	localAPI.ThyraPluginManagerHandler = operations.ThyraPluginManagerHandlerFunc(ThyraPluginManagerHandler)

@@ -62,10 +62,10 @@ func ThyraRegistryHandler(params operations.ThyraRegistryParams) middleware.Resp
 }
 
 //nolint:nolintlint,ireturn
-func ThyraHomeHandler(params operations.ThyraHomeParams) middleware.Responder {
+func MassaStationHomeHandler(params operations.MassaStationHomeParams) middleware.Responder {
 	content, err := contentReact.ReadFile(basePathReact + "home/" + params.Resource)
 	if err != nil {
-		return operations.NewThyraHomeNotFound()
+		return operations.NewMassaStationHomeNotFound()
 	}
 
 	return NewCustomResponder(content, contentType(params.Resource), http.StatusOK)
