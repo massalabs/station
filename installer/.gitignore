@@ -13,6 +13,7 @@ tmpdeb/
 *.wixpdb
 massastation-app
 massastation-server
+install_homebrew.sh
 
 # MacOS
 .DS_Store

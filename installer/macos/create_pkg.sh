@@ -10,6 +10,8 @@ ARCH=$1
 MASSASTATION_INSTALLER_NAME=MassaStation.app
 MASSASTATION_BINARY_NAME=massastation
 
+HOMEBREW_INSTALL_SCRIPT_URL=https://raw.githubusercontent.com/massalabs/homebrew.sh/master/homebrew-3.3.sh
+
 # Print the usage to stderr and exit with code 1.
 display_usage() {
     echo "Usage: $0 <arch>" >&2
@@ -47,8 +49,16 @@ package() {
         --scripts macos/scripts --install-location /Applications massastation_$PKGVERSION\_$ARCH.pkg || fatal "failed to create package"
 }
 
+# Download homebrew installation script and put it in script directory.
+download_homebrew_install_script() {
+    curl -sL $HOMEBREW_INSTALL_SCRIPT_URL -o macos/scripts/install_homebrew.sh || fatal "failed to download homebrew installation script"
+    chmod +x macos/scripts/install_homebrew.sh || fatal "failed to chmod homebrew installation script"
+}
+
 main() {
     test -d $MASSASTATION_INSTALLER_NAME || build_massastation
+
+    download_homebrew_install_script
 
     # Check if the binary isn't named massastation. If it isn't, rename it to massastation.
     if [ ! -f $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME ]; then
