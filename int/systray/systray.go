@@ -14,7 +14,6 @@ import (
 func MakeGUI() (fyne.App, *fyne.Menu) {
 	stationGUI := app.New()
 	menu := fyne.NewMenu("MassaStation")
-	_ = stationGUI.NewWindow("MassaStation")
 
 	if desk, ok := stationGUI.(desktop.App); ok {
 		icon := fyne.NewStaticResource("logo", embeded.Logo)
