@@ -1,6 +1,7 @@
 package api
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/massalabs/thyra/api/interceptor"
@@ -17,6 +18,7 @@ import (
 func TopMiddleware(handler http.Handler, config config.AppConfig) http.Handler {
 	//nolint:varnamelen
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("[%s %s]", r.Method, r.URL.Path)
 		// Goes through all local interceptors.
 		req := website.RedirectToDefaultResourceInterceptor(
 			plugin.Interceptor(
