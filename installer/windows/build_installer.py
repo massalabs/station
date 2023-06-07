@@ -67,12 +67,14 @@ def build_massastation():
 
     subprocess.run(["go", "generate", "../..."], check=True)
     os.environ["CGO_ENABLED"] = "1"
+
+    # -icon is based on the path of the -src flag.
     subprocess.run(
         [
             "fyne",
             "package",
             "-icon",
-            "logo.png",
+            "../../int/systray/embeded/logo.png",
             "-name",
             "MassaStation",
             "-appID",
