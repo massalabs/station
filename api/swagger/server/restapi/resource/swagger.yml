@@ -706,10 +706,10 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"        
-  /thyra/events/{str}/{caller}:
+  /events/{str}/{caller}:
     get:
       description: Returns the event matching the given data content and caller.
-      operationId: thyraEventsGetter
+      operationId: eventsGetter
       produces:
         - application/json
       parameters:
