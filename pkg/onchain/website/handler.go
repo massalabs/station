@@ -88,6 +88,18 @@ func RedirectToDefaultResourceInterceptor(req *interceptor.Interceptor) *interce
 		return nil
 	}
 
+	// redirect /store to /store/index.html
+	if req.Request.URL.Path == "/store" || req.Request.URL.Path == "/store/" {
+		http.Redirect(
+			req.Writer,
+			req.Request,
+			"/store/index.html",
+			http.StatusSeeOther,
+		)
+
+		return nil
+	}
+
 	prefixes := []string{"/browse/", "/thyra/"}
 	for _, prefix := range prefixes {
 		if !strings.HasPrefix(req.Request.URL.Path, prefix) {

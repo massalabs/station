@@ -6,7 +6,7 @@ const MainTitle = (title: { title: string }) => {
       </div>
       <div
         onClick={() => {
-          window.open('/thyra/plugin-manager');
+          window.open('/store');
         }}
         className="justify-end center cursor-pointer"
       >

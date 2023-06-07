@@ -26,14 +26,14 @@ GET /home/index.html
     Page Should Contain    Web On Chain
     Page Should Contain    Manage plugin
 
-GET /thyra/plugin-manager/
-    Open Thyra Page    ${API_URL}/thyra/plugin-manager/
+GET /store/
+    Open Thyra Page    ${API_URL}/store/
     Page Should Contain    Plugin Manager
     Page Should Contain    Install a plugin
     Page Should Contain    Install a plugin using .zip URL
 
-GET /thyra/plugin-manager/index.html
-    Open Thyra Page    ${API_URL}/thyra/plugin-manager/index.html
+GET /store/index.html
+    Open Thyra Page    ${API_URL}/store/index.html
     Page Should Contain    Plugin Manager
     Page Should Contain    Install a plugin
     Page Should Contain    Install a plugin using .zip URL
@@ -81,8 +81,8 @@ GET /websiteUploader/index.html
 GET /home/{resource} with invalid resource
     ${response}=    GET    ${API_URL}/home/invalid    expected_status=${STATUS_NOT_FOUND}
 
-GET /thyra/plugin-manager/{resource} with invalid resource
-    ${response}=    GET    ${API_URL}/thyra/plugin-manager/invalid    expected_status=${STATUS_NOT_FOUND}
+GET /store/{resource} with invalid resource
+    ${response}=    GET    ${API_URL}/store/invalid    expected_status=${STATUS_NOT_FOUND}
 
 GET /search/{resource} with invalid resource
     ${response}=    GET    ${API_URL}/search/invalid    expected_status=${STATUS_NOT_FOUND}

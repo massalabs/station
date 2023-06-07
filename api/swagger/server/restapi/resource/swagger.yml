@@ -802,7 +802,7 @@ paths:
       responses:
         "200":
           description: Dumb response. All content and HTTP code are possible for this endpoint.
-  /thyra/plugin-manager/{resource}:
+  /store/{resource}:
     get:
       description: Frontend router for the Thyra plugin manager page.
       operationId: thyraPluginManager
