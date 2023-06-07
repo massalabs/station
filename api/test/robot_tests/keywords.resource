@@ -35,7 +35,7 @@ Get Plugin ID From Author and Name
     ${response}=    GET    ${API_URL}/plugin-manager
 
     ${pluginId}=    Set Variable    ${EMPTY}
-    ${expectedURL}=    Set Variable    /thyra/plugin/${author}/${name}/
+    ${expectedURL}=    Set Variable    /plugin/${author}/${name}/
 
     FOR    ${element}    IN    @{response.json()}
         ${pluginURL}=    Get Regexp Matches    ${element['home']}    (\/.*){3}\/

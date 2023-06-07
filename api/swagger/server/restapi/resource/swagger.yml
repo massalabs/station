@@ -784,7 +784,7 @@ paths:
           description: Resource not found.
           schema:
             $ref: "#/definitions/Error"
-  /thyra/plugin/{author-name}/{plugin-name}:
+  /plugin/{author-name}/{plugin-name}:
     get:
       operationId: pluginRouter
       description: virtual endpoint handling requests for third party plugin. The actual handler is defined as an HTTP handler middleware.
