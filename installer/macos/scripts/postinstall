@@ -23,11 +23,10 @@ fatal() {
 }
 
 # Check if brew is installed. If not, install it.
-which -s brew
-if [[ $? != 0 ]]; then
+if ! command -v brew &>/dev/null; then
     echo "Installing Brew..."
-    export NONINTERACTIVE=1
-    su - $USER -c "/bin/bash -c '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'" || fatal "brew installation failed."
+    ./install_homebrew.sh || fatal "failed to install brew"
+    echo "Brew installed."
 else
     echo "Updating Brew..."
     su - $USER -c "brew update" || fatal "brew update failed."
