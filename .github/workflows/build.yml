@@ -63,7 +63,7 @@ jobs:
         shell: bash
         run: |
           cp massastation_${{ matrix.target }}_${{ matrix.arch }} massastation
-          fyne package -name MassaStation -icon ./cmd/massastation/logo.png -appID net.massalabs.massastation -exe massastation
+          fyne package -name MassaStation -icon ./int/systray/embeded/logo.png -appID net.massalabs.massastation -exe massastation
       - name: Upload MassaStation Binary
         uses: actions/upload-artifact@v3
         with:
