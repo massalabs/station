@@ -2,8 +2,6 @@ package systray
 
 import (
 	"fmt"
-	"log"
-	"net/url"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -13,26 +11,15 @@ import (
 	"fyne.io/fyne/v2/driver/desktop"
 )
 
-func openURL(app *fyne.App, urlToOpen string) {
-	u, err := url.Parse(urlToOpen)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = (*app).OpenURL(u)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func MakeGUI(logo []byte) (fyne.App, *fyne.Menu) {
+func MakeGUI() (fyne.App, *fyne.Menu) {
 	stationGUI := app.New()
 	menu := fyne.NewMenu("MassaStation")
+	_ = stationGUI.NewWindow("MassaStation")
 
 	if desk, ok := stationGUI.(desktop.App); ok {
-		icon := fyne.NewStaticResource("logo", logo)
+		icon := fyne.NewStaticResource("logo", embeded.Logo)
 		titleMenu := fyne.NewMenuItem("MassaStation", nil)
-		homeShortCutMenu := fyne.NewMenuItem("Open MassaStation", nil)
+		homeShortCutMenu := fyne.NewMenuItem("MassaStation home", nil)
 		testMenu := fyne.NewMenuItem("Test", nil)
 
 		titleMenu.Disabled = true
