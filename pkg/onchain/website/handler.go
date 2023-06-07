@@ -52,8 +52,8 @@ func RedirectToDefaultResourceInterceptor(req *interceptor.Interceptor) *interce
 		return nil
 	}
 
-	// redirect /home and / to /home/index.html
-	if req.Request.URL.Path == "/" || req.Request.URL.Path == "/home" || req.Request.URL.Path == "/home/" {
+	// redirect / to /home/index.html
+	if req.Request.URL.Path == "/" {
 		http.Redirect(
 			req.Writer,
 			req.Request,
@@ -64,40 +64,19 @@ func RedirectToDefaultResourceInterceptor(req *interceptor.Interceptor) *interce
 		return nil
 	}
 
-	// redirect /search to /search/index.html
-	if req.Request.URL.Path == "/search" || req.Request.URL.Path == "/search/" {
-		http.Redirect(
-			req.Writer,
-			req.Request,
-			"/search/index.html",
-			http.StatusSeeOther,
-		)
+	redirectPaths := []string{"/home", "/search", "/websiteUploader", "/store"}
 
-		return nil
-	}
+	for _, path := range redirectPaths {
+		if req.Request.URL.Path == path || req.Request.URL.Path == path+"/" {
+			http.Redirect(
+				req.Writer,
+				req.Request,
+				path+"/index.html",
+				http.StatusSeeOther,
+			)
 
-	// redirect /websiteUploader to /websiteUploader/index.html
-	if req.Request.URL.Path == "/websiteUploader" || req.Request.URL.Path == "/websiteUploader/" {
-		http.Redirect(
-			req.Writer,
-			req.Request,
-			"/websiteUploader/index.html",
-			http.StatusSeeOther,
-		)
-
-		return nil
-	}
-
-	// redirect /store to /store/index.html
-	if req.Request.URL.Path == "/store" || req.Request.URL.Path == "/store/" {
-		http.Redirect(
-			req.Writer,
-			req.Request,
-			"/store/index.html",
-			http.StatusSeeOther,
-		)
-
-		return nil
+			return nil
+		}
 	}
 
 	prefixes := []string{"/browse/", "/thyra/"}
