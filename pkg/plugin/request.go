@@ -63,7 +63,7 @@ func Interceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
 		return nil
 	}
 
-	isMyMassa := strings.HasPrefix(req.Request.Host, config.GetMassaStationURL())
+	isMyMassa := strings.HasPrefix(req.Request.Host, config.MassaStationURL)
 	indexPluginEndpoint := strings.Index(req.Request.RequestURI, EndpointPattern)
 
 	if isMyMassa && indexPluginEndpoint > -1 {
