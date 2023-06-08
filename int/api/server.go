@@ -61,6 +61,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, config config.AppConfig) 
 	localAPI.ThyraEventsGetterHandler = NewEventListenerHandler(&config)
 	localAPI.BrowseHandler = NewBrowseHandler(&config)
 	localAPI.ThyraPluginManagerHandler = operations.ThyraPluginManagerHandlerFunc(ThyraPluginManagerHandler)
+	localAPI.MassaStationWebAppHandler = operations.MassaStationWebAppHandlerFunc(MassaStationWebAppHandler)
 
 	localAPI.ThyraWebsiteCreatorHandler = operations.ThyraWebsiteCreatorHandlerFunc(ThyraWebsiteCreatorHandler)
 	pluginstore.InitializePluginStoreAPI(localAPI)

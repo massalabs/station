@@ -10,7 +10,7 @@ export default ({ mode }) => {
     plugins: [react()],
     base: process.env.VITE_BASE_APP,
     build: {
-      outDir: '../../int/web/dist/massastation',
+      outDir: '../../int/api/dist/massastation',
       emptyOutDir: true,
       manifest: true,
       sourcemap: true,

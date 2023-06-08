@@ -67,6 +67,17 @@ go build -o thyra-server cmd/thyra-server/main.go
 
 - Run Thyra: you can finaly launch thyra by executing `thyra-server` binary.
 
+## MassaStation frontend development
+
+Navigate to <http://my.massa/massastation/index.html> to see MassaStation frontend.
+
+You can run the ReactJS application with vite:
+
+```bash
+cd web/massastation
+npm run dev
+```
+
 ## Code Formatting
 
 We take code formatting seriously in Thyra to maintain a consistent code style. Please follow these guidelines to ensure that your code is properly formatted:
@@ -93,6 +104,13 @@ run gofumpt locally on your source code `gofumpt -l -w ./...`
 gci need to be installed locally `go install github.com/daixiang0/gci@latest`
 
 run gci locally on your source code `gci --write ./...`
+
+### Frontend code formatting
+
+```bash
+cd web/massastation
+npm run fmt
+```
 
 ## Code with auto-reload
 
