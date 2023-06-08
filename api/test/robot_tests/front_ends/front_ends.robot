@@ -12,6 +12,13 @@ Suite Teardown      Close All Browsers
 
 
 *** Test Cases ***
+GET /
+    Open Thyra Page    ${API_URL}/home/
+    Page Should Contain    Which Plugins
+    Page Should Contain    Registry
+    Page Should Contain    Web On Chain
+    Page Should Contain    Manage plugin
+
 GET /home/
     Open Thyra Page    ${API_URL}/home/
     Page Should Contain    Which Plugins
