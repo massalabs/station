@@ -11,7 +11,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"github.com/hashicorp/go-version"
-	"github.com/massalabs/thyra/int/systray/embeded"
+	"github.com/massalabs/thyra/int/systray/embedded"
 	"github.com/massalabs/thyra/int/systray/utils"
 	"github.com/massalabs/thyra/pkg/config"
 )
@@ -111,7 +111,7 @@ func updateCheck(app *fyne.App, systrayMenu *fyne.Menu) {
 		log.Println("New version available:", latestVersion)
 		addUpdateButton(app, systrayMenu)
 
-		logoNotification := fyne.NewStaticResource("logo_notification", embeded.NotificationLogo)
+		logoNotification := fyne.NewStaticResource("logo_notification", embedded.NotificationLogo)
 		utils.SetSystemTrayIcon(app, logoNotification)
 	}
 }

@@ -9,6 +9,9 @@ import (
 
 	// nolint:typecheck
 	"fyne.io/fyne/v2/driver/desktop"
+
+	"github.com/massalabs/thyra/int/systray/embedded"
+	"github.com/massalabs/thyra/int/systray/utils"
 )
 
 func MakeGUI() (fyne.App, *fyne.Menu) {
@@ -16,7 +19,7 @@ func MakeGUI() (fyne.App, *fyne.Menu) {
 	menu := fyne.NewMenu("MassaStation")
 
 	if desk, ok := stationGUI.(desktop.App); ok {
-		icon := fyne.NewStaticResource("logo", embeded.Logo)
+		icon := fyne.NewStaticResource("logo", embedded.Logo)
 		titleMenu := fyne.NewMenuItem("MassaStation", nil)
 		homeShortCutMenu := fyne.NewMenuItem("MassaStation home", nil)
 		testMenu := fyne.NewMenuItem("Test", nil)
@@ -30,7 +33,7 @@ func MakeGUI() (fyne.App, *fyne.Menu) {
 		}
 
 		homeShortCutMenu.Action = func() {
-			openURL(&stationGUI, fmt.Sprintf("http://%s", config.MassaStationURL))
+			utils.OpenURL(&stationGUI, fmt.Sprintf("http://%s", config.MassaStationURL))
 		}
 
 		menu.Items = append(menu.Items,

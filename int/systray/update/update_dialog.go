@@ -18,11 +18,12 @@ const (
 
 // Finds the update dialog window by its title.
 func findUpdateWindow(app *fyne.App) fyne.Window {
-	var window fyne.Window = nil
+	var window fyne.Window
 
 	for _, w := range (*app).Driver().AllWindows() {
 		if w.Title() == updateWindowTitle {
 			window = w
+
 			break
 		}
 	}
@@ -46,6 +47,7 @@ func createUpdateDialog(window fyne.Window, app *fyne.App) dialog.Dialog {
 		},
 		window,
 	)
+
 	return dialog
 }
 
@@ -59,6 +61,7 @@ func OpenUpdateDialog(app *fyne.App) {
 	if window != nil {
 		window.Show()
 		window.RequestFocus()
+
 		return
 	}
 
