@@ -142,9 +142,7 @@ jobs:
       - name: Rename MassaStation binary
         run: mv ../massastation_windows_amd64.exe massastation.exe
       - name: Build Installer
-        run: python windows/build_installer.py
-        env:
-          VERSION: ${{ env.VERSION }}
+        run: python windows/build_installer.py --version ${{ env.VERSION }}
       - name: Upload Installer
         uses: actions/upload-artifact@v3
         with:
