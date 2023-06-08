@@ -1,0 +1,4 @@
+{
+  "*.{js,ts,jsx,tsx,json,cjs,css,html}": ["npm run prettier:fix"],
+  "*.{js,ts,jsx,tsx,json,cjs,html}": ["npm run lint:fix"]
+}
