@@ -154,11 +154,11 @@ func (server *Server) printNodeVersion() {
  */
 func StartServer(flags StartServerFlags) {
 	// Initialize Swagger
-
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 	localAPI := operations.NewThyraServerAPI(swaggerSpec)
 	server := restapi.NewServer(localAPI)
 
