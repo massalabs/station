@@ -9,7 +9,6 @@ import (
 
 	// nolint:typecheck
 	"fyne.io/fyne/v2/driver/desktop"
-
 	"github.com/massalabs/thyra/int/systray/embedded"
 	"github.com/massalabs/thyra/int/systray/utils"
 )

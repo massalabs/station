@@ -126,8 +126,8 @@ func StartUpdateCheck(app *fyne.App, systrayMenu *fyne.Menu) {
 	// We check for updates on startup.
 	updateCheck(app, systrayMenu)
 
-	ticker := time.NewTicker(updateCheckInterval)
 	go func() {
+		ticker := time.NewTicker(updateCheckInterval)
 		for range ticker.C {
 			updateCheck(app, systrayMenu)
 		}
