@@ -302,7 +302,7 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("starting plugin %s: %w", plgn.info.Name, err)
 	}
 
-	err = plgn.SetInformation(plgn.info.URL, m)
+	err = plgn.SetInformation(plgn.info.URL)
 	if err != nil {
 		return fmt.Errorf("setting plugin %s information: %w", plgn.info.Name, err)
 	}

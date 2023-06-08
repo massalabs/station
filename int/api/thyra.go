@@ -79,3 +79,19 @@ func ThyraPluginManagerHandler(params operations.ThyraPluginManagerParams) middl
 
 	return NewCustomResponder(content, contentType(params.Resource), http.StatusOK)
 }
+
+func MassaStationWebAppHandler(params operations.MassaStationWebAppParams) middleware.Responder {
+	resourceName := params.Resource
+
+	resourceContent, err := contentReact.ReadFile(basePathReact + "massastation/" + resourceName)
+	if err != nil {
+		resourceName = "index.html"
+		resourceContent, err = contentReact.ReadFile(basePathReact + "massastation/" + resourceName)
+
+		if err != nil {
+			return operations.NewMassaStationWebAppNotFound()
+		}
+	}
+
+	return NewCustomResponder(resourceContent, contentType(params.Resource), http.StatusOK)
+}

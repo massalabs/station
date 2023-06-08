@@ -35,7 +35,7 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 		)
 	}
 
-	err = wantedPlugin.SetInformation(urlPlugin, r.manager)
+	err = wantedPlugin.SetInformation(urlPlugin)
 
 	if err != nil {
 		return operations.NewPluginManagerRegisterBadRequest().WithPayload(

@@ -1,0 +1,9 @@
+node_modules
+.DS_Store
+dist
+public
+*.local
+.eslintcache
+*.md
+*.mdx
+package-lock.json

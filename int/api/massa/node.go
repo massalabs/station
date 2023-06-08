@@ -15,7 +15,7 @@ type getNodeHandler struct {
 	config *config.AppConfig
 }
 
-func (h *getNodeHandler) Handle(params operations.GetNodeParams) middleware.Responder {
+func (h *getNodeHandler) Handle(_ operations.GetNodeParams) middleware.Responder {
 	return operations.NewGetNodeOK().
 		WithPayload(&models.MassaNodeItem{
 			Network: h.config.Network,
