@@ -74,7 +74,7 @@ def build_massastation():
             "fyne",
             "package",
             "-icon",
-            "../../int/systray/embeded/logo.png",
+            "../../int/systray/embedded/logo.png",
             "-name",
             "MassaStation",
             "-appID",
