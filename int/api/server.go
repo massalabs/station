@@ -41,7 +41,7 @@ func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 	}
 }
 
-func initLocalAPI(localAPI *operations.ThyraServerAPI, config config.AppConfig) {
+func initLocalAPI(localAPI *operations.MassastationAPI, config config.AppConfig) {
 	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunctionHandler(&config)
 
 	localAPI.MassaGetAddressesHandler = massa.NewGetAddressHandler(&config)
@@ -71,7 +71,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, config config.AppConfig) 
 type Server struct {
 	config   config.AppConfig
 	api      *restapi.Server
-	localAPI *operations.ThyraServerAPI
+	localAPI *operations.MassastationAPI
 	shutdown chan struct{}
 }
 
@@ -82,7 +82,7 @@ func NewServer(flags StartServerFlags) *Server {
 		log.Fatalln(err)
 	}
 
-	localAPI := operations.NewThyraServerAPI(swaggerSpec)
+	localAPI := operations.NewMassastationAPI(swaggerSpec)
 	server := restapi.NewServer(localAPI)
 
 	setAPIFlags(server, flags)

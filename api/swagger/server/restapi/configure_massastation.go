@@ -17,11 +17,11 @@ import (
 	"github.com/rs/cors"
 )
 
-func configureFlags(api *operations.ThyraServerAPI) {
+func configureFlags(api *operations.MassastationAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
 
-func configureAPI(api *operations.ThyraServerAPI) http.Handler {
+func configureAPI(api *operations.MassastationAPI) http.Handler {
 	// unused
 	return nil
 }
@@ -32,7 +32,7 @@ func (s *Server) ConfigureMassaStationAPI(config config.AppConfig, shutdown chan
 	}
 }
 
-func configureMassaStationAPI(api *operations.ThyraServerAPI, config config.AppConfig, shutdown chan struct{}) http.Handler {
+func configureMassaStationAPI(api *operations.MassastationAPI, config config.AppConfig, shutdown chan struct{}) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 
