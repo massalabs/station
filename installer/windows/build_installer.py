@@ -415,14 +415,6 @@ if __name__ == "__main__":
         description="Build the MassaStation installer for Windows."
     )
     parser.add_argument(
-        "-v",
-        "--version",
-        action="store",
-        dest="version",
-        default=None,
-        help="Set the version of the installer and MassaStation.",
-    )
-    parser.add_argument(
         "-f",
         "--force",
         action="store_true",
@@ -432,24 +424,27 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    if args.version is None:
+    # Get $VERSION from environment variable
+    VERSION = os.environ.get("VERSION")
+    if VERSION is None or VERSION == "":
         print("Getting version from git tags")
         try:
-            args.version = subprocess.run(
+            VERSION = subprocess.run(
                 ["git", "describe", "--tags", "--abbrev=0"],
                 check=True,
                 capture_output=True,
                 text=True,
             ).stdout.strip()
-            args.version = re.sub(r"^v", "", args.version)
+            VERSION = re.sub(r"^v", "", VERSION)
         except subprocess.CalledProcessError as processErr:
             print("Error getting version: ", processErr)
             sys.exit(1)
         except Exception as gitErr:
             print("Error getting version: ", gitErr)
             sys.exit(1)
-
-    VERSION = args.version
+    else:
+        # Remove the "v" from the version if it exists
+        VERSION = re.sub(r"^v", "", VERSION)
 
     if not sys.platform.startswith("win"):
         if not args.force_build:
