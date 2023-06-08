@@ -60,12 +60,12 @@ go generate ./...
 - Build from source: Once you've completed the above steps, you can build Thyra from source by running the following commands:
 
 ```bash
-go build -o thyra-server cmd/thyra-server/main.go
+go build -o massastation cmd/massastation/main.go
 ```
 
-> **_NOTE:_** On Linux, you can add the possibility to bind to a port lower than 1024 without the program being executed as root by doing `sudo setcap CAP_NET_BIND_SERVICE=+eip thyra-server`
+> **_NOTE:_** On Linux, you can add the possibility to bind to a port lower than 1024 without the program being executed as root by doing `sudo setcap CAP_NET_BIND_SERVICE=+eip massastation`
 
-- Run Thyra: you can finaly launch thyra by executing `thyra-server` binary.
+- Run Thyra: you can finaly launch thyra by executing `massastation` binary.
 
 ## MassaStation frontend development
 

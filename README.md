@@ -35,9 +35,9 @@ Accepts a URL, an IP address or one of the following values :
 - LOCALHOST : Expect Massa's network to be hosted at 127.0.0.1
 
 To use this option with a constant, you have to execute :
-`thyra-server --node-server=LABNET`
+`massastation --node-server=LABNET`
 To use this option with a custom IP address, you have to execute :
-`thyra-server --node-server=192.168.X.X`
+`massastation --node-server=192.168.X.X`
 
 
 ## Additional information
