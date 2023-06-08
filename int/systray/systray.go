@@ -40,7 +40,6 @@ func MakeGUI() (fyne.App, *fyne.Menu) {
 			fyne.NewMenuItemSeparator(),
 			homeShortCutMenu,
 			// testMenu,
-			fyne.NewMenuItemSeparator(),
 		)
 
 		desk.SetSystemTrayIcon(icon)
