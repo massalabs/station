@@ -79,12 +79,8 @@ func RedirectToDefaultResourceInterceptor(req *interceptor.Interceptor) *interce
 		}
 	}
 
-	prefixes := []string{"/browse/", "/thyra/"}
-	for _, prefix := range prefixes {
-		if !strings.HasPrefix(req.Request.URL.Path, prefix) {
-			continue
-		}
-
+	prefix := "/browse/"
+	if strings.HasPrefix(req.Request.URL.Path, prefix) {
 		// The len(prefix) is used to extract a substring from the req.Request.URL.Path starting from the end of the prefix
 		// string. This is done to remove the prefix from the URL path before splitting it.
 		splited := removeEmptyStrings(strings.Split(req.Request.URL.Path[len(prefix):], "/"))
