@@ -79,28 +79,5 @@ func RedirectToDefaultResourceInterceptor(req *interceptor.Interceptor) *interce
 		}
 	}
 
-	prefix := "/browse/"
-	if strings.HasPrefix(req.Request.URL.Path, prefix) {
-		// The len(prefix) is used to extract a substring from the req.Request.URL.Path starting from the end of the prefix
-		// string. This is done to remove the prefix from the URL path before splitting it.
-		splited := removeEmptyStrings(strings.Split(req.Request.URL.Path[len(prefix):], "/"))
-
-		if len(splited) == 1 {
-			protocol := "https"
-			if req.Request.TLS == nil {
-				protocol = "http"
-			}
-
-			http.Redirect(
-				req.Writer,
-				req.Request,
-				protocol+"://"+req.Request.Host+prefix+splited[0]+"/index.html",
-				http.StatusSeeOther,
-			)
-
-			return nil
-		}
-	}
-
 	return req
 }

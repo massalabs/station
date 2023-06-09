@@ -32,42 +32,6 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /browse/{address}/{resource}:
-    get:
-      description: Downloads the website from the given address and returns the requested resource.
-      operationId: browse
-      produces:
-        - application/json
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
-      parameters:
-        - in: path
-          name: address
-          type: string
-          required: true
-          description: Address containing the website.
-        - in: path
-          name: resource
-          type: string
-          required: true
-          description: Website resource.
-      responses:
-        "200":
-          description: Resource retrieved.
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "404":
-          description: Resource not found.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
   /cmd/executeFunction:
     post:
       description: Calls the given function from the given smart contract.
