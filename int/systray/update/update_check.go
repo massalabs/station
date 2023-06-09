@@ -95,7 +95,7 @@ func updateCheck(app *fyne.App, systrayMenu *fyne.Menu) {
 
 	latestVersion, err := getLatestVersion()
 	if err != nil {
-		log.Println("Error checking for updates:", err)
+		log.Println("Error getting last version:", err)
 
 		return
 	}

@@ -35,7 +35,7 @@ func createUpdateDialog(window fyne.Window, app *fyne.App) dialog.Dialog {
 	dialog := dialog.NewCustomConfirm(
 		"An update is available for MassaStation. Do you want to update now?",
 		"Update",
-		"Cancel",
+		"Ignore",
 		widget.NewLabel("If you choose to update, MassaStation will be closed and every running task will be stopped."),
 		func(b bool) {
 			window.Close()
