@@ -41,7 +41,7 @@ func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 	}
 }
 
-func initLocalAPI(localAPI *operations.ThyraServerAPI, config config.AppConfig) {
+func initLocalAPI(localAPI *operations.MassastationAPI, config config.AppConfig) {
 	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunctionHandler(&config)
 
 	localAPI.MassaGetAddressesHandler = massa.NewGetAddressHandler(&config)
@@ -71,7 +71,7 @@ func initLocalAPI(localAPI *operations.ThyraServerAPI, config config.AppConfig) 
 type Server struct {
 	config   config.AppConfig
 	api      *restapi.Server
-	localAPI *operations.ThyraServerAPI
+	localAPI *operations.MassastationAPI
 	shutdown chan struct{}
 }
 
@@ -82,7 +82,7 @@ func NewServer(flags StartServerFlags) *Server {
 		log.Fatalln(err)
 	}
 
-	localAPI := operations.NewThyraServerAPI(swaggerSpec)
+	localAPI := operations.NewMassastationAPI(swaggerSpec)
 	server := restapi.NewServer(localAPI)
 
 	setAPIFlags(server, flags)
@@ -147,57 +147,4 @@ func (server *Server) printNodeVersion() {
 	}
 
 	log.Printf("Connected to node server %s (version %s)\n", server.config.NodeURL, nodeVersion)
-}
-
-/*
- * Deprecated functions
- * Kept for backwards compatibility with /cmd/thyra-server.
- */
-func StartServer(flags StartServerFlags) {
-	// Initialize Swagger
-	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	localAPI := operations.NewThyraServerAPI(swaggerSpec)
-	server := restapi.NewServer(localAPI)
-
-	setAPIFlags(server, flags)
-	config := config.AppConfig{
-		NodeURL:    config.GetNodeURL(flags.MassaNodeServer),
-		DNSAddress: config.GetDNSAddress(flags.MassaNodeServer, flags.DNSAddress),
-		Network:    config.GetNetwork(flags.MassaNodeServer),
-	}
-
-	// Display info about node server
-	client := node.NewClient(config.NodeURL)
-	status, err := node.Status(client)
-
-	nodeVersion := "unknown"
-	if err == nil {
-		nodeVersion = *status.Version
-	} else {
-		log.Println("Could not get node version:", err)
-	}
-
-	log.Printf("Connected to node server %s (version %s)\n", config.NodeURL, nodeVersion)
-
-	defer stopServer(server)
-
-	initLocalAPI(localAPI, config)
-
-	shutdown := make(chan struct{})
-	server.ConfigureMassaStationAPI(config, shutdown)
-
-	if err := server.Serve(); err != nil {
-		//nolint:gocritic
-		log.Fatalln(err)
-	}
-}
-
-func stopServer(server *restapi.Server) {
-	if err := server.Shutdown(); err != nil {
-		log.Fatalln(err)
-	}
 }

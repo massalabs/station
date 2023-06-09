@@ -8,7 +8,7 @@ import (
 	"github.com/massalabs/thyra/pkg/plugin"
 )
 
-func InitializePluginAPI(api *operations.ThyraServerAPI) {
+func InitializePluginAPI(api *operations.MassastationAPI) {
 	manager, err := plugin.NewManager()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "WARN: while starting plugin manager %s.\n", err)

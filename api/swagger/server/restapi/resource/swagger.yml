@@ -2,8 +2,8 @@ consumes:
   - application/json
 info:
   description: Thyra HTTP server API.
-  title: thyra-server
-  version: 0.0.0
+  title: massastation
+  version: 0.2.0
 produces:
   - application/json
 schemes:
