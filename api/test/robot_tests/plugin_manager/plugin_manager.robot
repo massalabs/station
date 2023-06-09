@@ -9,6 +9,8 @@ Resource            ../variables.resource
 
 Suite Setup         Suite Setup
 
+*** Variables ***
+${HELLO_WORLD_PLUGIN_VERSION}       0.0.7
 
 *** Test Cases ***
 GET /plugin-manager with no plugins
@@ -19,7 +21,7 @@ GET /plugin-manager with no plugins
 
 POST /plugin-manager?source={{pluginSource}}
     ${source}=    Set Variable
-    ...    https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.7/thyra-plugin-hello-world_${OS}-${ARCH}.zip
+    ...    https://github.com/massalabs/thyra-plugin-hello-world/releases/download/${HELLO_WORLD_PLUGIN_VERSION}/thyra-plugin-hello-world_${OS}-${ARCH}.zip
     ${response}=    POST
     ...    ${API_URL}/plugin-manager
     ...    params=source=${source}
