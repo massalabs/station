@@ -760,7 +760,7 @@ paths:
           description: Resource not found.
           schema:
             $ref: "#/definitions/Error"
-  /massastation/{resource}:
+  /web/{resource}:
     get:
       description: Frontend router for the MassaStation.
       operationId: MassaStationWebApp
