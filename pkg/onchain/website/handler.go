@@ -46,38 +46,3 @@ func MassaTLDInterceptor(req *interceptor.Interceptor, appConfig config.AppConfi
 
 	return req
 }
-
-func RedirectToDefaultResourceInterceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
-	if req == nil {
-		return nil
-	}
-
-	// redirect / to /home/index.html
-	if req.Request.URL.Path == "/" {
-		http.Redirect(
-			req.Writer,
-			req.Request,
-			"/home/index.html",
-			http.StatusSeeOther,
-		)
-
-		return nil
-	}
-
-	redirectPaths := []string{"/home", "/search", "/websiteUploader", "/store"}
-
-	for _, path := range redirectPaths {
-		if req.Request.URL.Path == path || req.Request.URL.Path == path+"/" {
-			http.Redirect(
-				req.Writer,
-				req.Request,
-				path+"/index.html",
-				http.StatusSeeOther,
-			)
-
-			return nil
-		}
-	}
-
-	return req
-}
