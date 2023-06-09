@@ -44,7 +44,7 @@ POST /websiteUploader/upload
     Should Be Equal As Strings    ${response.json()['address']}    ${WEBSITE_ADDRESS}
 
 Check content of the uploaded website
-    Open Thyra Page    ${API_URL}/browse/${WEBSITE_ADDRESS}/index.html
+    Open Thyra Page    http://${website_url}.massa
     Page Should Contain    My test website!
     Page Should Contain    Decentralization is non-negotiable
 
