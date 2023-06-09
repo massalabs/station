@@ -32,7 +32,7 @@ function Home() {
       id: '421',
       logo: webOnChain,
       status: 'Up',
-      home: '/thyra/websiteCreator',
+      home: '/websiteUploader',
     },
     {
       name: 'Registry',
@@ -40,7 +40,7 @@ function Home() {
       id: '423',
       logo: registry,
       status: 'Up',
-      home: '/thyra/registry',
+      home: '/search',
     },
   ];
 

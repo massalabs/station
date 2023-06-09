@@ -46,37 +46,3 @@ func MassaTLDInterceptor(req *interceptor.Interceptor, appConfig config.AppConfi
 
 	return req
 }
-
-func RedirectToDefaultResourceInterceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
-	if req == nil {
-		return nil
-	}
-
-	prefixes := []string{"/browse/", "/thyra/"}
-
-	for _, prefix := range prefixes {
-		if !strings.HasPrefix(req.Request.URL.Path, prefix) {
-			continue
-		}
-
-		splited := removeEmptyStrings(strings.Split(req.Request.URL.Path[len(prefix):], "/"))
-
-		if len(splited) == 1 {
-			protocol := "https"
-			if req.Request.TLS == nil {
-				protocol = "http"
-			}
-
-			http.Redirect(
-				req.Writer,
-				req.Request,
-				protocol+"://"+req.Request.Host+prefix+splited[0]+"/index.html",
-				http.StatusSeeOther,
-			)
-
-			return nil
-		}
-	}
-
-	return req
-}

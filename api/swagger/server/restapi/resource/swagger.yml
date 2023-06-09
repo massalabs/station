@@ -32,42 +32,6 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /browse/{address}/{resource}:
-    get:
-      description: Downloads the website from the given address and returns the requested resource.
-      operationId: browse
-      produces:
-        - application/json
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
-      parameters:
-        - in: path
-          name: address
-          type: string
-          required: true
-          description: Address containing the website.
-        - in: path
-          name: resource
-          type: string
-          required: true
-          description: Website resource.
-      responses:
-        "200":
-          description: Resource retrieved.
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "404":
-          description: Resource not found.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
   /cmd/executeFunction:
     post:
       description: Calls the given function from the given smart contract.
@@ -706,10 +670,10 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"        
-  /thyra/events/{str}/{caller}:
+  /events/{str}/{caller}:
     get:
       description: Returns the event matching the given data content and caller.
-      operationId: thyraEventsGetter
+      operationId: eventsGetter
       produces:
         - application/json
       parameters:
@@ -736,10 +700,10 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /thyra/home/{resource}:
+  /home/{resource}:
     get:
-      description: Frontend router for the Thyra home page.
-      operationId: thyraHome
+      description: Frontend router for the MassaStation home page.
+      operationId: MassaStationHome
       produces:
         - application/json
         - text/javascript
@@ -784,7 +748,7 @@ paths:
           description: Resource not found.
           schema:
             $ref: "#/definitions/Error"
-  /thyra/plugin/{author-name}/{plugin-name}:
+  /plugin/{author-name}/{plugin-name}:
     get:
       operationId: pluginRouter
       description: virtual endpoint handling requests for third party plugin. The actual handler is defined as an HTTP handler middleware.
@@ -802,7 +766,7 @@ paths:
       responses:
         "200":
           description: Dumb response. All content and HTTP code are possible for this endpoint.
-  /thyra/plugin-manager/{resource}:
+  /store/{resource}:
     get:
       description: Frontend router for the Thyra plugin manager page.
       operationId: thyraPluginManager
@@ -826,10 +790,10 @@ paths:
           description: Resource not found.
           schema:
             $ref: "#/definitions/Error"
-  /thyra/registry/{resource}:
+  /search/{resource}:
     get:
-      description: Frontend router for the Thyra registry page.
-      operationId: thyraRegistry
+      description: Frontend router for the web-on-chain search page.
+      operationId: WebOnChainSearch
       produces:
         - application/json
         - text/javascript
@@ -846,10 +810,10 @@ paths:
       responses:
         "200":
           description: Page found
-  /thyra/websiteCreator/{resource}:
+  /websiteUploader/{resource}:
     get:
       description: Frontend router for the Thyra website creator page.
-      operationId: thyraWebsiteCreator
+      operationId: websiteUploader
       produces:
         - application/json
         - text/javascript
@@ -870,11 +834,11 @@ paths:
           description: Resource not found.
           schema:
             $ref: "#/definitions/Error"
-  /websiteCreator/prepare:
+  /websiteUploader/prepare:
     put:
       summary: Deploys the given website on the blockchain. 
       description: The given URL will first be added to the DNS if available and then the website will be deployed.
-      operationId: websiteCreatorPrepare
+      operationId: websiteUploaderPrepare
       consumes:
         - multipart/form-data
       parameters:
@@ -917,11 +881,11 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /websiteCreator/upload:
+  /websiteUploader/upload:
     post:
       summary: Uploads the given website on the blockchain.
       description: The website must have been deployed before using the prepare endpoint. This endpoint is usually used to edit an existing website.
-      operationId: websiteCreatorUpload
+      operationId: websiteUploaderUpload
       consumes:
         - multipart/form-data
       parameters:
@@ -962,7 +926,7 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /websiteCreator/uploadMissingChunks:
+  /websiteUploader/uploadMissingChunks:
     post:
       description: Re-upload missing chunks of a website on the blockchain. This allows to fix a website that has been partially uploaded as a lower cost than re-uploading the whole website.
       operationId: websiteUploadMissingChunks

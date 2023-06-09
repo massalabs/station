@@ -8,7 +8,7 @@ const Header = () => {
     return (
         <div className="flex p-12 items-center content-center justify-between cursor-pointer ">
             <img
-                onClick={() => window.open("/thyra/home")}
+                onClick={() => window.open("/home")}
                 className="max-h-6"
                 src={isThemeLight ? logoLight : logoDark}
                 alt="Thyra Logo"

@@ -7,32 +7,41 @@ Thank you for considering contributing to Thyra! We welcome contributions from t
 To contribute to Thyra, you should have a basic understanding of the Go programming language and Git version control system. If you're new to Go, we recommend checking out [A Tour of Go](https://tour.golang.org/welcome/1) to get started.
 
 Before you can start contributing, you'll need to complete the following steps:
+
 - Install the dependencies:
   - Ubuntu like:
+
 ```bash
   sudo apt update
   sudo apt install -y build-essential libgl1-mesa-dev xorg-dev p7zip
 ```
+
 - Install Node.js and NPM:
 
-    - Windows:
-        - Download the Node.js installer from https://nodejs.org/en/download/.
-        - Run the installer and follow the prompts to install Node.js and NPM.
+  - Windows:
+    - Download the Node.js installer from <https://nodejs.org/en/download/>.
+    - Run the installer and follow the prompts to install Node.js and NPM.
 
-    - macOS:
+  - macOS:
 
-        - Install Homebrew by following the instructions at https://brew.sh/.
+    - Install Homebrew by following the instructions at <https://brew.sh/>.
 
-        - Run the following command to install Node.js and NPM:
+    - Run the following command to install Node.js and NPM:
+
         ```bash
         brew install node
         ```
-    - Ubuntu:
-        - Run the following command to update the package lists:
+
+  - Ubuntu:
+    - Run the following command to update the package lists:
+
         ```bash
         sudo apt update
+
         ```
-        - Run the following command to install Node.js and NPM:
+
+    - Run the following command to install Node.js and NPM:
+
         ```bash
         sudo apt install nodejs npm
         ```
@@ -44,8 +53,10 @@ Before you can start contributing, you'll need to complete the following steps:
 ```bash
 go install github.com/go-swagger/go-swagger/cmd/swagger@latest
 ```
+
 - Install Stringer: it genreates declarations for enum types. You can install Stringer by running the following command:
-```bash 
+
+```bash
 go install golang.org/x/tools/cmd/stringer@latest
 ```
 
@@ -53,7 +64,7 @@ You can find more information about Swagger at [https://github.com/go-swagger/go
 
 - Build generated files: Thyra generates code using Stringer and Go Swagger. You can build all generated files by running the following command:
 
-```bash 
+```bash
 go generate ./...
 ```
 
@@ -82,15 +93,16 @@ npm run dev
 
 We take code formatting seriously in Thyra to maintain a consistent code style. Please follow these guidelines to ensure that your code is properly formatted:
 
-
 ### golangci-lint
 
 We use `golangci-lint` to run linters in parallel. We recommend installing it locally and running it on your source code before pushing any modifications, otherwise some potential lint errors will be caught by the CI pipeline.
 
 To run `golangci-lint` locally:
-```bash 
+
+```bash
 golangci-lint run ./...
 ```
+
 #### How to resolve golangci-lint recurring errors ?
 
 - File is not `gofumpt`
