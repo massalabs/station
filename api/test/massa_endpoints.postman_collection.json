@@ -42,7 +42,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://my.massa/massa/addresses?addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
+					"raw": "http://station.massa/massa/addresses?addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
 					"protocol": "http",
 					"host": [
 						"my",
@@ -71,7 +71,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://my.massa/massa/addresses?addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
+							"raw": "http://station.massa/massa/addresses?addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
 							"protocol": "http",
 							"host": [
 								"my",
@@ -159,7 +159,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://my.massa/massa/addresses?attributes=balance&addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
+					"raw": "http://station.massa/massa/addresses?attributes=balance&addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
 					"protocol": "http",
 					"host": [
 						"my",
@@ -192,7 +192,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://my.massa/massa/addresses?attributes=balance&addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
+							"raw": "http://station.massa/massa/addresses?attributes=balance&addresses=AU12ajG8wNxcdv7V7wEssGfQSaU5YX6oQQ9Sj686vukvfp2LuUGz5&addresses=AU12tkFEY2WTfHA4H8F5wPWp4JNKCBNyq5AhLdZj7udfBYoRtp1qS",
 							"protocol": "http",
 							"host": [
 								"my",
@@ -284,7 +284,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://my.massa/massa/node",
+					"raw": "http://station.massa/massa/node",
 					"protocol": "http",
 					"host": [
 						"my",
@@ -303,7 +303,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://my.massa/massa/node",
+							"raw": "http://station.massa/massa/node",
 							"protocol": "http",
 							"host": [
 								"my",
@@ -421,7 +421,7 @@
 					]
 				},
 				"url": {
-					"raw": "http://my.massa:80/cmd/deploySC",
+					"raw": "http://station.massa:80/cmd/deploySC",
 					"protocol": "http",
 					"host": [
 						"my",
@@ -482,7 +482,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://my.massa:80/cmd/deploySC",
+							"raw": "http://station.massa:80/cmd/deploySC",
 							"protocol": "http",
 							"host": [
 								"my",

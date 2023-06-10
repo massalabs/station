@@ -2,7 +2,6 @@ package pluginstore
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -19,8 +18,6 @@ type list struct {
 }
 
 func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
-	log.Println("[GET /plugin-store]")
-
 	plugins := store.StoreInstance.Plugins
 
 	payload := make([]*models.PluginStoreItem, len(plugins))

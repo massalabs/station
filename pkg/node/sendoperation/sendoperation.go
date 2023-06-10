@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/massalabs/thyra/pkg/config"
 	"github.com/massalabs/thyra/pkg/node"
 	"github.com/massalabs/thyra/pkg/node/base58"
 )
@@ -28,7 +29,7 @@ const HundredMassa = 100_000_000_000
 
 const OneMassa = 1_000_000_000
 
-const WalletPluginURL = "http://my.massa/thyra/plugin/massalabs/wallet/rest/wallet/"
+const WalletPluginURL = "http://" + config.MassaStationURL + "/plugin/massalabs/wallet/rest/wallet/"
 
 const HTTPRequestTimeout = 60 * time.Second
 

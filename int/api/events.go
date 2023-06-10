@@ -16,7 +16,7 @@ const (
 	tickerDuration  = time.Second
 )
 
-func NewEventListenerHandler(config *config.AppConfig) operations.ThyraEventsGetterHandler {
+func NewEventListenerHandler(config *config.AppConfig) operations.EventsGetterHandler {
 	return &eventListener{config: config}
 }
 
@@ -25,12 +25,12 @@ type eventListener struct {
 }
 
 //nolint:funlen
-func (h *eventListener) Handle(params operations.ThyraEventsGetterParams) middleware.Responder {
+func (h *eventListener) Handle(params operations.EventsGetterParams) middleware.Responder {
 	client := node.NewClient(h.config.NodeURL)
 
 	status, err := node.Status(client)
 	if err != nil {
-		return operations.NewThyraEventsGetterInternalServerError().WithPayload(
+		return operations.NewEventsGetterInternalServerError().WithPayload(
 			&models.Error{
 				Code:    errorCodeEventListener,
 				Message: err.Error(),
@@ -55,7 +55,7 @@ func (h *eventListener) Handle(params operations.ThyraEventsGetterParams) middle
 
 		events, err := node.Events(client, &slotStart, nil, &params.Caller, nil, nil)
 		if err != nil {
-			return operations.NewThyraEventsGetterInternalServerError().
+			return operations.NewEventsGetterInternalServerError().
 				WithPayload(
 					&models.Error{
 						Code:    errorCodeEventListener,
@@ -76,7 +76,7 @@ func (h *eventListener) Handle(params operations.ThyraEventsGetterParams) middle
 
 		status, err := node.Status(client)
 		if err != nil {
-			return operations.NewThyraEventsGetterInternalServerError().WithPayload(
+			return operations.NewEventsGetterInternalServerError().WithPayload(
 				&models.Error{
 					Code:    errorCodeEventListener,
 					Message: err.Error(),
@@ -86,7 +86,7 @@ func (h *eventListener) Handle(params operations.ThyraEventsGetterParams) middle
 		slotStart.Period = status.LastSlot.Period
 	}
 
-	return operations.NewThyraEventsGetterOK().WithPayload(&models.Events{
+	return operations.NewEventsGetterOK().WithPayload(&models.Events{
 		Address: params.Caller,
 		Data:    event.Data,
 	})

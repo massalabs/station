@@ -6,7 +6,7 @@ This guide provides step-by-step instructions for installing **MassaStation** on
 * [MacOS Installation](#macos-installation)
 * [Debian Linux Installation](#debian-linux-installation)
 * [Uninstallation](#uninstallation)
-   * [MacOS](#macos)
+  * [MacOS](#macos)
 
 > **Note:** **MassaStation** is currently available for Windows, MacOS, and Debian Linux. Support for other Linux distributions will be added in the future. Likewise, this application isn't working on virtual machines. It might be added in the future.
 
@@ -25,8 +25,8 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 1. Download the latest version of **MassaStation** installer for MacOS depending on your CPU architecture:
 
-   - For Intel-based Macs (i5, i7, etc.), download the installer for `amd64` architecture from [here](https://github.com/massalabs/thyra/releases/latest/).
-   - For Apple Silicon-based Macs (M1, M2, etc.), download the installer for `arm64` architecture from [here](https://github.com/massalabs/thyra/releases/latest/).
+   * For Intel-based Macs (i5, i7, etc.), download the installer for `amd64` architecture from [here](https://github.com/massalabs/thyra/releases/latest/).
+   * For Apple Silicon-based Macs (M1, M2, etc.), download the installer for `arm64` architecture from [here](https://github.com/massalabs/thyra/releases/latest/).
 
 2. Locate the downloaded .pkg installer file and right-click on it.
 3. From the context menu, select "Open" and then click "Open" again in the security pop-up window. This step is necessary because the installer is not signed by the App Store, and MacOS may block the installation by default.
@@ -56,7 +56,7 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 3. Navigate to the directory where the downloaded `.deb` package is located.
 4. Run the following command to install the package:
 
-   ```
+   ```bash
    sudo apt install ./massastation-${{ VERSION }}_amd64.deb
    ```
 
@@ -65,7 +65,6 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 7. Once the installation is complete, you can close the terminal.
 
 Congratulations! You have successfully installed **MassaStation** on your computer. You can start **MassaStation** by searching for it in the Applications folder.
-
 
 ## Uninstallation
 
@@ -76,9 +75,10 @@ To uninstall **MassaStation** from your MacOS system, follow the steps below:
 1. Open the Terminal application on your MacOS system.
 2. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
 
-   ```
+   ```bash
    /usr/local/share/massastation/uninstall.sh
    ```
+
    This command will remove MassaStation and its associated files from your system.
 3. Follow any prompts or instructions provided by the uninstaller script. This may involve confirming the removal and providing your password for administrative privileges.
 4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.

@@ -6,19 +6,19 @@
 
 An entrance to the Massa blockchain.
 
-
 ## Contribute
+
 To contribute to this project, please read our [Contributor's Guide](./CONTRIBUTING.md).
 
+## Install thyra
 
-## Install thyra 
 To install Thyra, please follow the instructions available in the [Installation Guide](./INSTALLATION.md).
 
 ## Install a plugin
 
-Copy/paste the latest release .zip file to Thyra [plugin manager page](https://my.massa/thyra/plugin-manager/)
+Copy/paste the latest release .zip file to Thyra [plugin manager page](https://station.massa/store)
 
-## Going further 
+## Going further
 
 ### Use your own node with Thyra
 

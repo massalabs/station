@@ -1,11 +1,13 @@
 package systray
 
 import (
+	"fmt"
 	"log"
 	"net/url"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+	"github.com/massalabs/thyra/pkg/config"
 
 	// nolint:typecheck
 	"fyne.io/fyne/v2/driver/desktop"
@@ -42,7 +44,7 @@ func MakeGUI(logo []byte) (fyne.App, *fyne.Menu) {
 		}
 
 		homeShortCutMenu.Action = func() {
-			openURL(&stationGUI, "http://my.massa/thyra/home")
+			openURL(&stationGUI, fmt.Sprintf("http://%s", config.MassaStationURL))
 		}
 
 		menu.Items = append(menu.Items,

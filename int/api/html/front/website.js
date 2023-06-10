@@ -92,8 +92,8 @@ async function callTx() {
     if (actualTxType === "deployWebsiteAndUpload") {
         deployWebsiteAndUpload();
     }
-    if (actualTxType.includes("uploadWebsiteCreator")) {
-        const websiteIndex = actualTxType.split("uploadWebsiteCreator")[1];
+    if (actualTxType.includes("uploadWebsiteUploader")) {
+        const websiteIndex = actualTxType.split("uploadWebsiteUploader")[1];
         uploadWebsite(nextFileToUpload, websiteIndex);
     }
     if (actualTxType.includes("uploadMissingChunks")) {
@@ -147,7 +147,7 @@ function changeDefaultWallet(event) {
 
 async function getWallets() {
     axios
-        .get("/thyra/plugin/massalabs/wallet/rest/wallet")
+        .get("/plugin/massalabs/wallet/rest/wallet")
         .then((resp) => {
             if (resp) {
                 gWallets = resp.data;
@@ -223,7 +223,7 @@ async function tableInsert(resp, count) {
         let files = evt.target.files; // get files
         nextFileToUpload = files[0];
 
-        onSubmitDeploy("uploadWebsiteCreator" + count);
+        onSubmitDeploy("uploadWebsiteUploader" + count);
     });
 }
 
@@ -323,7 +323,7 @@ function uploadProcess(file, dnsName, isFullProcess, bodyFormData, callback) {
 
 function postUpload(bodyFormData) {
     axios({
-        url: `/websiteCreator/upload`,
+        url: `/websiteUploader/upload`,
         method: "POST",
         data: bodyFormData,
         headers: {
@@ -337,7 +337,7 @@ function postUpload(bodyFormData) {
 
 function postUploadMissedChunks(bodyFormData) {
     axios({
-        url: `/websiteCreator/uploadMissingChunks`,
+        url: `/websiteUploader/uploadMissingChunks`,
         method: "POST",
         data: bodyFormData,
         headers: {
@@ -351,7 +351,7 @@ function postUploadMissedChunks(bodyFormData) {
 
 function putUpload(bodyFormData) {
     axios({
-        url: `/websiteCreator/prepare`,
+        url: `/websiteUploader/prepare`,
         method: "put",
         data: bodyFormData,
         headers: {

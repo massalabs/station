@@ -3,7 +3,7 @@
 class EventManager {
     async subscribe(str, address, callback) {
         axios({
-            url: `/thyra/events/${str}/${address}`,
+            url: `/events/${str}/${address}`,
             method: "GET",
         })
             .then((resp) => {

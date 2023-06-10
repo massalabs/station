@@ -12,20 +12,20 @@ Suite Setup         Suite Setup
 
 
 *** Test Cases ***
-GET /thyra/events/{str}/{caller} from contract
+GET /events/{str}/{caller} from contract
     ${response}=    GET
-    ...    ${API_URL}/thyra/events/TestSC is deployed at/${WALLET_ADDR}
+    ...    ${API_URL}/events/TestSC is deployed at/${WALLET_ADDR}
     ...    expected_status=${STATUS_OK}
     Should Contain    ${response.json()['address']}    ${WALLET_ADDR}
     Should Contain    ${response.json()['data']}    TestSC is deployed at
 
-GET /thyra/events/{str}/{caller} from called function
+GET /events/{str}/{caller} from called function
     ${randomID}=    Generate Random String    10
     ${expected_event}=    Set Variable    I'm an event! My id is ${randomID}
     # Since the event manager starts checking for events only after the current Slot and Period,
     # we need to make this request before the event is generated.
     ${handle}=    Async Run    GET
-    ...    ${API_URL}/thyra/events/${expected_event}/${WALLET_ADDR}
+    ...    ${API_URL}/events/${expected_event}/${WALLET_ADDR}
     ...    expected_status=${STATUS_OK}
 
     Generate Event    ${randomID}
