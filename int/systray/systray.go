@@ -20,7 +20,7 @@ func MakeGUI() (fyne.App, *fyne.Menu) {
 	if desk, ok := stationGUI.(desktop.App); ok {
 		icon := fyne.NewStaticResource("logo", embedded.Logo)
 		titleMenu := fyne.NewMenuItem("MassaStation", nil)
-		homeShortCutMenu := fyne.NewMenuItem("MassaStation home", nil)
+		homeShortCutMenu := fyne.NewMenuItem("Open MassaStation", nil)
 		testMenu := fyne.NewMenuItem("Test", nil)
 
 		titleMenu.Disabled = true
