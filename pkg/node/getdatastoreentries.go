@@ -7,9 +7,8 @@ import (
 )
 
 type getDatastoreEntries struct {
-	Address     string        `json:"address"`
-	Description string        `json:"description"`
-	Key         JSONableSlice `json:"key"`
+	Address string        `json:"address"`
+	Key     JSONableSlice `json:"key"`
 }
 
 type DatastoreEntryResponse struct {
@@ -78,9 +77,8 @@ func DatastoreEntries(client *Client, params []DatastoreEntriesKeys) ([]Datastor
 
 	for i := 0; i < len(params); i++ {
 		entry := getDatastoreEntries{
-			Address:     params[i].Address,
-			Key:         params[i].Key,
-			Description: "",
+			Address: params[i].Address,
+			Key:     params[i].Key,
 		}
 
 		entries[0] = append(entries[0], entry)

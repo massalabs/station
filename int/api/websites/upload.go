@@ -22,6 +22,7 @@ func (h *websiteUploadHandler) Handle(params operations.WebsiteCreatorUploadPara
 	if errorResponse != nil {
 		return errorResponse
 	}
+
 	_, err := website.Upload(
 		*h.config,
 		params.Address,
