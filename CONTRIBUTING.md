@@ -1,4 +1,85 @@
-# Contributing to MassaStation
+# MassaStation Contributing Guide
+
+Thank you for your interest in contributing to MassaStation! We welcome contributions from the community and value the time and effort you put into helping us make MassaStation better.
+
+## Table of Contents
+- [Reporting Issues](#reporting-issues)
+- [Reviewing Pull Requests](#reviewing-pull-requests)
+- [Contributing fixes / features](#contributing-fixes--features)
+- [Development](#development)
+  - [Getting Started](#getting-started)
+  - [Setting Up Development Environment](#setting-up-development-environment)
+
+
+## Reporting Issues
+
+Before submitting an issue, please do a quick search to check if a similar issue has already been reported. This helps avoid duplicates and allows us to focus on resolving existing problems more efficiently.
+
+If you couldn't find a similar issue, you can submit a new one by following these steps:
+1. Click on the "Issues" tab in the project's GitHub repository and then click on the "New Issue" button. Or simply click [here](https://github.com/massalabs/thyra/issues/new/choose) to go directly to the issue creation page.
+3. Select the type of issue you are reporting (bug, feature request, etc.).
+4. A template will be automatically populated with the required information. Please fill out the template as completely as possible.
+
+We really appreciate your contributions in reporting issues and helping us improve MassaStation!
+
+
+## Reviewing Pull Requests
+
+Reviewing pull requests is an excellent way to contribute to the project. It helps us ensure that the codebase is well-maintained and that new features and bug fixes are properly tested and documented. If you have the time and skills to review pull requests, please consider doing so.
+
+
+## Contributing fixes / features
+
+To ensure a smooth collaboration and avoid duplication of efforts, please follow these guidelines:
+
+1. Before starting work on a new feature or bug fix, check the project's GitHub repository for existing issues.
+2. If you find an issue you'd like to work on, comment on the issue to express your interest. This helps us track who is working on what and avoid multiple contributors tackling the same problem simultaneously. Additionally, the project maintainers can provide guidance and clarification on the issue, ensuring that everyone has a clear understanding of what needs to be done.
+3. Once you have received approval from the project maintainers to work on an issue, you can start working on it. Make sure to fork the repository, create a new branch for your changes, and commit your work in logical and well-documented commits. This makes it easier for the project maintainers to review your code and understand the changes you've made.
+4. When you are ready to submit your changes, open a pull request. Provide a clear and concise description of the changes you've made and reference the relevant issue number in your pull request. This helps us track the progress of the issue and ensures that your changes are properly reviewed.
+5. The project maintainers and community members may provide feedback or ask questions on your pull request. Engage in the discussion and address any requested changes or concerns promptly. Collaboration and open communication are key to the success of the project.
+
+
+## Development
+
+### Getting Started
+
+MassaStation is divided in two parts: the backend and the frontend. The backend is written in Go. It is responsible for handling the plugins, the communication with the blockchain, and serves an API and the frontend. It also provides a GUI as an icon in the system tray to interact with the application.
+The frontend allows users to access and manage plugins, to upload and browse websites stored on the blockchain, and more thanks to the plugins. It is written in TypeScript and uses React.
+
+To contribute to MassaStation backend, you should have a basic understanding of the Go programming language and Git version control system. If you're new to Go, we recommend checking out [A Tour of Go](https://tour.golang.org/welcome/1) to get started.
+
+To contribute to MassaStation frontend, you should have a basic understanding of the TypeScript programming language and Git version control system. If you're new to TypeScript, we recommend checking out [TypeScript in 5 minutes](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html) to get started.
+
+
+### Setting Up Development Environment
+
+To contribute to MassaStation, you'll need to set up your development environment. Follow the steps below to get started:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+___________
+
+# Contributing to Thyra
 
 Thank you for considering contributing to MassaStation! We welcome contributions from the community and value the time and effort you put into making this project better.
 
