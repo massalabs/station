@@ -6,11 +6,11 @@ import (
 	"net/url"
 
 	"fyne.io/fyne/v2"
+	//nolint:goimports,nolintlint
 	"fyne.io/fyne/v2/app"
-	"github.com/massalabs/thyra/pkg/config"
-
-	// nolint:typecheck
+	//nolint:typecheck,nolintlint
 	"fyne.io/fyne/v2/driver/desktop"
+	"github.com/massalabs/thyra/pkg/config"
 )
 
 func openURL(app *fyne.App, urlToOpen string) {
