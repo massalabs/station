@@ -3,6 +3,7 @@ package websites
 import (
 	"archive/zip"
 	"bytes"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -44,11 +45,12 @@ func (h *websitePrepare) Handle(params operations.WebsiteCreatorPrepareParams) m
 		return errorResponse
 	}
 
-	address, correlationID, err := website.PrepareForUpload(*h.config, params.URL, params.Nickname)
+	address, correlationID, err := website.PrepareForUpload(*h.config, params.URL, params.Description, params.Nickname)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorPrepare, err.Error())
 	}
 
+	fmt.Println("Done prepareforupload, lets start upload")
 	
 	_, err = website.Upload(
 		*h.config,
@@ -64,6 +66,7 @@ func (h *websitePrepare) Handle(params operations.WebsiteCreatorPrepareParams) m
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
 
+	fmt.Println("Done upload, lets WebsiteCreatorPrepareOK")
 	return operations.NewWebsiteCreatorPrepareOK().
 		WithPayload(
 			&models.Websites{

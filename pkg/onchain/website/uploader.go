@@ -27,7 +27,7 @@ func maxExpiryPeriod(index int) uint64 {
 	return baseOffset + uint64(index)*2
 }
 
-func PrepareForUpload(config config.AppConfig, url string, nickname string) (string, string, error) {
+func PrepareForUpload(config config.AppConfig, url string, description string, nickname string) (string, string, error) {
 	client := node.NewClient(config.NodeURL)
 
 	basePath := "sc/"
@@ -63,6 +63,7 @@ func PrepareForUpload(config config.AppConfig, url string, nickname string) (str
 		client,
 		nickname,
 		url,
+		description,
 		scAddress,
 		sendOperation.OperationBatch{
 			NewBatch:      false,
@@ -70,9 +71,10 @@ func PrepareForUpload(config config.AppConfig, url string, nickname string) (str
 		},
 	)
 	if err != nil {
-		fmt.Println("🚀 ~ file: uploader.go:54 ~ deploying dns error")
+		fmt.Printf("🚀 ~ file: uploader.go:54 ~ deploying dns error : %s\n", err)
 		return "", "", fmt.Errorf("adding DNS record '%s' => '%s': %w", url, scAddress, err)
 	}
+	fmt.Printf("🚀 ~ file: uploader.go:54 ~ deploying dns succcess : %s\n", err)
 	return scAddress, operationWithEventResponse.OperationResponse.CorrelationID, nil
 }
 
