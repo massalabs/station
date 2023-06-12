@@ -68,6 +68,14 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 ## Uninstallation
 
+### Windows
+To uninstall **MassaStation** from your Windows system, follow the steps below: 
+1. Open your "Start" panel
+2. Look for MassaStation application in your list
+3. Click right on the application and click on uninstall
+
+The application and all modules installed will be deleted from your desktop.
+
 ### MacOS
 
 To uninstall **MassaStation** from your MacOS system, follow the steps below:
@@ -84,3 +92,16 @@ To uninstall **MassaStation** from your MacOS system, follow the steps below:
 4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
 
 > **Note:** DNSMasq and Homebrew might have been installed on your system as dependencies for MassaStation. We do not remove these packages automatically as they may be used by other applications on your system.
+
+### Linux
+
+To uninstall **MassaStation** from your MacOS system, follow the steps below:
+
+1. Open the Terminal application on your Linux system.
+2. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
+
+   ```sudo dpkg -r massastation
+   ```
+
+   This command will remove MassaStation and its associated files from your system.
+4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
