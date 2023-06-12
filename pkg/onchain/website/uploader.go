@@ -27,7 +27,12 @@ func maxExpiryPeriod(index int) uint64 {
 	return baseOffset + uint64(index)*2
 }
 
-func PrepareForUpload(config config.AppConfig, url string, description string, nickname string) (string, string, error) {
+func PrepareForUpload(
+	config config.AppConfig,
+	url string,
+	description string,
+	nickname string,
+) (string, string, error) {
 	client := node.NewClient(config.NodeURL)
 
 	basePath := "sc/"
@@ -51,6 +56,7 @@ func PrepareForUpload(config config.AppConfig, url string, description string, n
 	if err != nil {
 		return "", "", fmt.Errorf("deploying webstorage SC: %w", err)
 	}
+
 	scAddress := strings.Split(operationWithEventResponse.Event, ":")[1]
 
 	// Set DNS.
@@ -69,6 +75,7 @@ func PrepareForUpload(config config.AppConfig, url string, description string, n
 	if err != nil {
 		return "", "", fmt.Errorf("adding DNS record '%s' => '%s': %w", url, scAddress, err)
 	}
+
 	return scAddress, operationWithEventResponse.OperationResponse.CorrelationID, nil
 }
 
