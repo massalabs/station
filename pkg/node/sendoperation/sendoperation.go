@@ -29,7 +29,7 @@ const HundredMassa = 100_000_000_000
 
 const OneMassa = 1_000_000_000
 
-const WalletPluginURL = "http://" + config.MassaStationURL + "/plugin/massalabs/wallet/rest/wallet/"
+const WalletPluginURL = "http://" + config.MassaStationURL + "/plugin/massalabs/wallet/api/"
 
 const HTTPRequestTimeout = 60 * time.Second
 
@@ -82,6 +82,8 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 }
 
 // Call uses the plugin wallet to sign an operation, then send the call to blockchain.
+//
+//nolint:funlen
 func Call(client *node.Client,
 	expiry uint64,
 	fee uint64,
@@ -113,16 +115,18 @@ func Call(client *node.Client,
 		}`
 	}
 
+	url := WalletPluginURL + "accounts/" + nickname + "/sign"
+
 	httpRawResponse, err := ExecuteHTTPRequest(
 		http.MethodPost,
-		WalletPluginURL+nickname+"/sign",
+		url,
 		bytes.NewBuffer([]byte(content)),
 	)
 	if err != nil {
 		res := RespError{"", ""}
 		_ = json.Unmarshal(httpRawResponse, &res)
 
-		return nil, fmt.Errorf("calling executeHTTPRequest for call: %w, message: %s", err, res.Message)
+		return nil, fmt.Errorf("POST on %s: %w, message: %s", url, err, res.Message)
 	}
 
 	res := signResponse{"", "", ""}

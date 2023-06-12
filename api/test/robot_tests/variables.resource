@@ -1,7 +1,7 @@
 *** Variables ***
 ${API_URL}=                         http://station.massa
 
-${WALLET_NICKNAME}=                 rftest
+${WALLET_NICKNAME}=                 fullpower
 
 ${STATUS_OK}=                       200
 ${STATUS_CREATED}=                  201

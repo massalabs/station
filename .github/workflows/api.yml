@@ -37,7 +37,7 @@ jobs:
           mkdir -p /usr/local/share/massastation/plugins/wallet-plugin
           sudo mkdir -p /etc/massastation/certs
           sudo chmod 777 /etc/massastation/
-          echo "$WALLET_TEST_WALLET" > /usr/local/share/massastation/plugins/wallet-plugin/wallet_rftest.yml
+          echo "$WALLET_TEST_WALLET" > /usr/local/share/massastation/plugins/wallet-plugin/wallet_fullpower.yaml
         env:
           WALLET_TEST_WALLET: ${{ secrets.WALLET_TEST_WALLET }}
       - name: Running Massastation
