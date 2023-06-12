@@ -4,23 +4,39 @@ Thank you for your interest in contributing to MassaStation! We welcome contribu
 
 ## Table of Contents
 - [Reporting Issues](#reporting-issues)
+- [Suggesting Features](#suggesting-features)
 - [Reviewing Pull Requests](#reviewing-pull-requests)
-- [Contributing fixes / features](#contributing-fixes--features)
+- [Contributing fixes & features](#contributing-fixes--features)
 - [Development](#development)
   - [Getting Started](#getting-started)
   - [Setting Up Development Environment](#setting-up-development-environment)
-
+  - [Building MassaStation](#building-massastation)
+  - [Linting and Formatting](#linting-and-formatting)
 
 ## Reporting Issues
 
-Before submitting an issue, please do a quick search to check if a similar issue has already been reported. This helps avoid duplicates and allows us to focus on resolving existing problems more efficiently.
+Before submitting an issue, please do a quick search to check if a similar issue has already been reported. This helps to avoid duplicates and allows us to focus on resolving existing problems more efficiently.
 
 If you couldn't find a similar issue, you can submit a new one by following these steps:
-1. Click on the "Issues" tab in the project's GitHub repository and then click on the "New Issue" button. Or simply click [here](https://github.com/massalabs/thyra/issues/new/choose) to go directly to the issue creation page.
-3. Select the type of issue you are reporting (bug, feature request, etc.).
+1. Click [here](https://github.com/massalabs/thyra/issues/new/choose) to go directly to the issue creation page.
+3. Select the "Bug Report" issue type.
 4. A template will be automatically populated with the required information. Please fill out the template as completely as possible.
 
 We really appreciate your contributions in reporting issues and helping us improve MassaStation!
+
+
+## Suggesting Features
+
+If you have an idea for a new feature or enhancement, we'd love to hear about it! To suggest a new feature, follow these steps:
+1. First, check if a similar feature request has already been submitted by searching the [issues](https://github.com/massalabs/thyra/issues) page. If you find a similar feature request, you can upvote it using the 👍 reaction.
+
+If you couldn't find a similar feature request, you can submit a new one by following these steps:
+
+2. Click [here](https://github.com/massalabs/thyra/issues/new/choose) to go directly to the issue creation page.
+3. Select the "Task" issue type.
+4. A template will be automatically populated with the required information. Please fill out the template as completely as possible.
+
+We really appreciate your contributions in suggesting new features and making MassaStation better!
 
 
 ## Reviewing Pull Requests
@@ -28,7 +44,7 @@ We really appreciate your contributions in reporting issues and helping us impro
 Reviewing pull requests is an excellent way to contribute to the project. It helps us ensure that the codebase is well-maintained and that new features and bug fixes are properly tested and documented. If you have the time and skills to review pull requests, please consider doing so.
 
 
-## Contributing fixes / features
+## Contributing fixes & features
 
 To ensure a smooth collaboration and avoid duplication of efforts, please follow these guidelines:
 
@@ -38,13 +54,14 @@ To ensure a smooth collaboration and avoid duplication of efforts, please follow
 4. When you are ready to submit your changes, open a pull request. Provide a clear and concise description of the changes you've made and reference the relevant issue number in your pull request. This helps us track the progress of the issue and ensures that your changes are properly reviewed.
 5. The project maintainers and community members may provide feedback or ask questions on your pull request. Engage in the discussion and address any requested changes or concerns promptly. Collaboration and open communication are key to the success of the project.
 
+We really appreciate your contributions in fixing bugs and adding new features to MassaStation !
 
 ## Development
 
 ### Getting Started
 
-MassaStation is divided in two parts: the backend and the frontend. The backend is written in Go. It is responsible for handling the plugins, the communication with the blockchain, and serves an API and the frontend. It also provides a GUI as an icon in the system tray to interact with the application.
-The frontend allows users to access and manage plugins, to upload and browse websites stored on the blockchain, and more thanks to the plugins. It is written in TypeScript and uses React.
+MassaStation is divided in two parts: the backend and the frontend. The backend is written in Go. It is responsible for handling modules (aka "plugins"), the communication with the blockchain, and serves an API and the frontend. It also provides a GUI as an icon in the system tray to interact with the application.
+The frontend allows users to access and manage modules, to upload and browse websites stored on the blockchain, and more thanks to the modules. It is written in TypeScript and uses React.
 
 To contribute to MassaStation backend, you should have a basic understanding of the Go programming language and Git version control system. If you're new to Go, we recommend checking out [A Tour of Go](https://tour.golang.org/welcome/1) to get started.
 
@@ -55,10 +72,10 @@ To contribute to MassaStation frontend, you should have a basic understanding of
 
 To contribute to MassaStation, you'll need to set up your development environment. Follow the steps below to get started:
 
-1. **Install Go:** Go is required to build and run MassaStation. You can install Go by following the instructions at [https://golang.org/](https://golang.org/).
+1. **Install Go:** Go is required to build and run MassaStation. You can install Go by following the instructions from [Go installation instructions](https://go.dev/doc/install).
 
 2. **Install Node.js and NPM:**
-   - **Windows:** Download the Node.js installer from [https://nodejs.org/en/download/](https://nodejs.org/en/download/) and run the installer to install Node.js and NPM.
+   - **Windows:** Download the Node.js installer from [nodejs.org/](https://nodejs.org/en/download/) and run the installer to install Node.js and NPM.
    - **macOS:**
      - Install Homebrew by following the instructions at [https://brew.sh/](https://brew.sh/).
      - Run the following command to install Node.js and NPM:
@@ -81,7 +98,7 @@ To contribute to MassaStation, you'll need to set up your development environmen
      sudo apt install -y build-essential libgl1-mesa-dev xorg-dev p7zip
      ```
    - **Windows:**
-     - Install `mingw` by following the instructions at [https://www.mingw-w64.org/downloads](https://www.mingw-w64.org/downloads) to provide the necessary `gcc` compiler for building MassaStation.
+     - Install `mingw` by following the instructions from [mingw-w64.org](https://www.mingw-w64.org/downloads) to provide the necessary `gcc` compiler for building MassaStation.
 
 4. **Install Go Swagger:** MassaStation uses Go Swagger to generate code from the API documentation. Install Go Swagger by running the following command:
    ```bash
