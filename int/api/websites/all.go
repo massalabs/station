@@ -78,9 +78,10 @@ func Registry(config config.AppConfig) ([]*models.Registry, error) {
 		}
 
 		registry[index] = &models.Registry{
-			Name:     convert.BytesToString(websiteNames[index]), // name of website : flappy.
-			Address:  websiteStorerAddress,                       // website Address
-			Metadata: websiteMetadata.CandidateValue,             // website metadata.
+			Name:        convert.BytesToString(websiteNames[index]), // name of website : flappy.
+			Address:     websiteStorerAddress,                       // website Address
+			Description: websiteStorerAddress,                       // website Description
+			Metadata:    websiteMetadata.CandidateValue,             // website metadata.
 		}
 	}
 

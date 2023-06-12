@@ -1049,6 +1049,9 @@ definitions:
       address:
         description: Website's address.
         type: string
+      description:
+        description: Website's description.
+        type: string
       metadata:
         description: byte array as string including created_at and updated_at values
         type: string

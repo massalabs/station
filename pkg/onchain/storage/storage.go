@@ -49,6 +49,7 @@ func Fetch(client *node.Client, websiteStorerAddress string) ([]byte, error) {
 		}
 		entries = append(entries, entry)
 	}
+	fmt.Println("🚀 ~ file: storage.go:54 ~ funcFetch ~ entries:", entries)
 
 	response, err := node.DatastoreEntries(client, entries)
 	if err != nil {

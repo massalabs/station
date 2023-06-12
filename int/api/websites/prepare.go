@@ -50,8 +50,6 @@ func (h *websitePrepare) Handle(params operations.WebsiteCreatorPrepareParams) m
 		return createInternalServerError(errorCodeWebCreatorPrepare, err.Error())
 	}
 
-	fmt.Println("Done prepareforupload, lets start upload")
-	
 	_, err = website.Upload(
 		*h.config,
 		address,
@@ -66,12 +64,12 @@ func (h *websitePrepare) Handle(params operations.WebsiteCreatorPrepareParams) m
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
 
-	fmt.Println("Done upload, lets WebsiteCreatorPrepareOK")
+	fmt.Printf("🚀 ~ file: uploader.go:54 ~ deploying dns succcess : %s\n", err)
 	return operations.NewWebsiteCreatorPrepareOK().
 		WithPayload(
 			&models.Websites{
 				Name:         params.URL,
-				Description: params.Description,
+				Description:  params.Description,
 				Address:      address,
 				BrokenChunks: nil,
 			})
@@ -129,7 +127,6 @@ func readAndCheckArchive(zipFile io.ReadCloser) ([]byte, middleware.Responder) {
 	if !checkContentType(archive, "application/zip") {
 		return nil, createInternalServerError(errorCodeWebCreatorFileType, errorCodeWebCreatorFileType)
 	}
-	
+
 	return archive, nil
 }
-	

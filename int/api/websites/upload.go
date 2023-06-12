@@ -13,8 +13,6 @@ func NewWebsiteUploadHandler(config *config.AppConfig) operations.WebsiteCreator
 	return &websiteUploadHandler{config: config}
 }
 
-
-
 type websiteUploadHandler struct {
 	config *config.AppConfig
 }
@@ -41,6 +39,7 @@ func (h *websiteUploadHandler) Handle(params operations.WebsiteCreatorUploadPara
 	return operations.NewWebsiteCreatorUploadOK().
 		WithPayload(&models.Websites{
 			Name:         "",
+			Description:  "",
 			Address:      params.Address,
 			BrokenChunks: nil,
 		})
