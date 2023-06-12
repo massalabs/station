@@ -36,7 +36,7 @@ func PrepareForUpload(config config.AppConfig, url string, nickname string) (str
 	if err != nil {
 		return "", "", fmt.Errorf("SC file not retrieved: %w", err)
 	}
-
+	fmt.Println("🚀 ~ file: uploader.go:52 ~ funcPrepareForUpload ~ Done Reading websiteStorer.wasm")
 	// Prepare address to webstorage.
 	operationWithEventResponse, err := onchain.DeploySC(
 		client,
@@ -49,10 +49,12 @@ func PrepareForUpload(config config.AppConfig, url string, nickname string) (str
 		nil,
 		sendOperation.OperationBatch{NewBatch: true, CorrelationID: ""},
 	)
+	
 	if err != nil {
+		fmt.Println("🚀 ~ file: uploader.go:54 ~ deploying webstorage SC errorn %w", err)
 		return "", "", fmt.Errorf("deploying webstorage SC: %w", err)
 	}
-
+	fmt.Println("🚀 ~ file: uploader.go:54 ~ deploying webstorage SC success")
 	scAddress := strings.Split(operationWithEventResponse.Event, ":")[1]
 
 	// Set DNS.
@@ -68,6 +70,7 @@ func PrepareForUpload(config config.AppConfig, url string, nickname string) (str
 		},
 	)
 	if err != nil {
+		fmt.Println("🚀 ~ file: uploader.go:54 ~ deploying dns error")
 		return "", "", fmt.Errorf("adding DNS record '%s' => '%s': %w", url, scAddress, err)
 	}
 	return scAddress, operationWithEventResponse.OperationResponse.CorrelationID, nil
