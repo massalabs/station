@@ -17,7 +17,7 @@ We welcome contributions of all kinds, from bug reports to feature requests and 
 If you're interested in contributing to MassaStation, please make sure to read our [Contribution Guidelines](./CONTRIBUTING.md) for detailed instructions on how to get started. 
 
 
-## Going further 
+## Going further
 
 ### Install plugins
 
