@@ -21,9 +21,7 @@ func findUpdateWindow(app *fyne.App) fyne.Window {
 
 	for _, w := range (*app).Driver().AllWindows() {
 		if w.Title() == updateWindowTitle {
-			window = w
-
-			break
+			return w
 		}
 	}
 
@@ -33,9 +31,9 @@ func findUpdateWindow(app *fyne.App) fyne.Window {
 // Creates the update dialog.
 func createUpdateDialog(window fyne.Window, app *fyne.App) dialog.Dialog {
 	dialog := dialog.NewCustomConfirm(
-		"An update is available for MassaStation. Do you want to update now?",
+		"An update is available for MassaStation. Do you want to update it now?",
 		"Update",
-		"Ignore",
+		"Later",
 		widget.NewLabel("If you choose to update, MassaStation will be closed and every running task will be stopped."),
 		func(b bool) {
 			window.Close()
