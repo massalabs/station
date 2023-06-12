@@ -3,7 +3,6 @@ package websites
 import (
 	"archive/zip"
 	"bytes"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -64,7 +63,6 @@ func (h *websitePrepare) Handle(params operations.WebsiteCreatorPrepareParams) m
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
 
-	fmt.Printf("🚀 ~ file: uploader.go:54 ~ deploying dns succcess : %s\n", err)
 	return operations.NewWebsiteCreatorPrepareOK().
 		WithPayload(
 			&models.Websites{

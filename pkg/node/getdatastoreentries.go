@@ -46,7 +46,6 @@ func DatastoreEntry(client *Client, address string, key []byte) (*DatastoreEntry
 
 	response, err := DatastoreEntries(client, entries)
 	if err != nil {
-		fmt.Println("Error address here ....")
 		return nil, err
 	}
 
@@ -63,6 +62,7 @@ func ContractDatastoreEntries(client *Client, address string, keys [][]byte) ([]
 		}
 		entries = append(entries, entry)
 	}
+
 	response, err := DatastoreEntries(client, entries)
 	if err != nil {
 		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
@@ -78,12 +78,12 @@ func DatastoreEntries(client *Client, params []DatastoreEntriesKeys) ([]Datastor
 
 	for i := 0; i < len(params); i++ {
 		entry := getDatastoreEntries{
-			Address: params[i].Address,
-			Key:     params[i].Key,
+			Address:     params[i].Address,
+			Key:         params[i].Key,
+			Description: "",
 		}
 
 		entries[0] = append(entries[0], entry)
-
 	}
 
 	response, err := client.RPCClient.Call(
@@ -105,7 +105,6 @@ func DatastoreEntries(client *Client, params []DatastoreEntriesKeys) ([]Datastor
 	if err != nil {
 		return nil, fmt.Errorf("parsing get_datastore_entries jsonrpc response '%+v': %w", response, err)
 	}
-	fmt.Println("🚀 ~ file: getdatastoreentries.go:113 ~ funcDatastoreEntries ~ entry:", entry)
 
 	return entry, nil
 }
