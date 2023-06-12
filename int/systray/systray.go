@@ -32,7 +32,7 @@ func MakeGUI() (fyne.App, *fyne.Menu) {
 		}
 
 		homeShortCutMenu.Action = func() {
-			utils.OpenURL(&stationGUI, fmt.Sprintf("http://%s", config.MassaStationURL))
+			utils.OpenURL(&stationGUI, fmt.Sprintf("httpS://%s", config.MassaStationURL))
 		}
 
 		menu.Items = append(menu.Items,
