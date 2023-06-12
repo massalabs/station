@@ -55,13 +55,68 @@ To contribute to MassaStation frontend, you should have a basic understanding of
 
 To contribute to MassaStation, you'll need to set up your development environment. Follow the steps below to get started:
 
+1. **Install Go:** Go is required to build and run MassaStation. You can install Go by following the instructions at [https://golang.org/](https://golang.org/).
+
+2. **Install Node.js and NPM:**
+   - **Windows:** Download the Node.js installer from [https://nodejs.org/en/download/](https://nodejs.org/en/download/) and run the installer to install Node.js and NPM.
+   - **macOS:**
+     - Install Homebrew by following the instructions at [https://brew.sh/](https://brew.sh/).
+     - Run the following command to install Node.js and NPM:
+       ```bash
+       brew install node
+       ```
+   - **Ubuntu:**
+     - Run the following command to update the package lists:
+       ```bash
+       sudo apt update
+       ```
+     - Run the following command to install Node.js and NPM:
+       ```bash
+       sudo apt install nodejs npm
+       ```
+
+3. **Install Dependencies:**
+   - **Ubuntu:** Install the following system dependencies using `apt`:
+     ```bash
+     sudo apt install -y build-essential libgl1-mesa-dev xorg-dev p7zip
+     ```
+   - **Windows:**
+     - Install `mingw` by following the instructions at [https://www.mingw-w64.org/downloads](https://www.mingw-w64.org/downloads) to provide the necessary `gcc` compiler for building MassaStation.
+
+4. **Install Go Swagger:** MassaStation uses Go Swagger to generate code from the API documentation. Install Go Swagger by running the following command:
+   ```bash
+   go install github.com/go-swagger/go-swagger/cmd/swagger@latest
+   ```
+
+5. **Install Go Stringer:** MassaStation utilizes Go Stringer to generate declarations for enum types. Install Go Stringer by running the following command:
+   ```bash
+   go install golang.org/x/tools/cmd/stringer@latest
+   ```
+
+Once you have completed the above steps, your development environment for MassaStation is set up and ready to go!
 
 
+### Building MassaStation
 
+To build MassaStation, follow these steps:
 
+1. **Generate Code and Build Front End:** Run the following command to generate code using Go Swagger and build the front end to be served by the API:
+     ```bash
+     go generate ./...
+     ```
 
+   > **_NOTE:_** On Linux, you can add the capability to bind to a port lower than 1024 without the program being executed as root by running the following command:
+   >
+   > ```bash
+   > sudo setcap CAP_NET_BIND_SERVICE=+eip massastation
+   > ```
 
+2. **Build the Project:** Once the code generation and front end build are complete, run the following command to build MassaStation:
+     ```bash
+     go build -o massastation cmd/massastation/main.go
+     ```
 
+3. **Running the Project:** Finally, to run MassaStation, execute the `massastation` binary.
 
 
 
