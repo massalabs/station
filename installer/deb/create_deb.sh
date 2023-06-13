@@ -32,7 +32,8 @@ build_massastation() {
     go generate ../... || fatal "go generate failed for $MASSASTATION_BINARY_NAME"
     export GOARCH=$ARCH
     export CGO_ENABLED=1
-    fyne package -icon logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_BINARY_NAME"
+    # -icon is based on the path of the -src flag.
+    fyne package -icon ../../int/systray/embedded/logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_BINARY_NAME"
 }
 
 # Delete the build directory if it exists.

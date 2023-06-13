@@ -1,7 +1,6 @@
 package main
 
 import (
-	_ "embed"
 	"flag"
 	"log"
 	"os"
@@ -9,11 +8,9 @@ import (
 
 	"github.com/massalabs/thyra/int/api"
 	"github.com/massalabs/thyra/int/systray"
+	"github.com/massalabs/thyra/int/systray/update"
 	"github.com/massalabs/thyra/pkg/config"
 )
-
-//go:embed logo.png
-var logo []byte
 
 func ParseFlags() api.StartServerFlags {
 	const httpPort = 80
@@ -62,8 +59,10 @@ func main() {
 		os.Exit(0)
 	}
 
-	stationGUI, _ := systray.MakeGUI(logo)
+	stationGUI, systrayMenu := systray.MakeGUI()
 	server := api.NewServer(flags)
+
+	update.StartUpdateCheck(&stationGUI, systrayMenu)
 
 	stationGUI.Lifecycle().SetOnStopped(server.Stop)
 	stationGUI.Lifecycle().SetOnStarted(server.Start)
