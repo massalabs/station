@@ -18,6 +18,7 @@ const generatePlugin = () => {
  *
  * @param environment
  */
+// eslint-disable-next-line jsdoc/require-jsdoc
 function mockServer(environment = ENV.DEV) {
   const mockedServer = createServer({
     environment,
