@@ -48,7 +48,7 @@ You can find a list of open pull requests [here](https://github.com/massalabs/th
 Thank you for your contributions in reviewing pull requests and helping us maintain a high-quality codebase!
 
 
-## Contributing fixes & features
+## Contributing to fixes & features
 
 To ensure a smooth collaboration and avoid duplication of efforts, please follow these guidelines:
 
