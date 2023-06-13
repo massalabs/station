@@ -102,6 +102,7 @@ To uninstall **MassaStation** from your Linux system, follow the steps below:
 
    ```bash
    sudo dpkg -r massastation
+   ```
 
    This command will remove MassaStation and its associated files from your system.
 3. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
