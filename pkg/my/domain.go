@@ -66,18 +66,14 @@ func Websites(config config.AppConfig, client *node.Client, domainNames []string
 
 	responses := []*models.Websites{}
 
-	contractAddresses, err := node.DatastoreEntries(client, params)
+	dnsValues, err := node.DatastoreEntries(client, params)
 	if err != nil {
 		return nil, fmt.Errorf("reading entries'%s': %w", params, err)
 	}
 
 	for i := 0; i < len(domainNames); i++ { //nolint:varnamelen
 		contractAddressesIndex := 0
-		websiteDescriptionIndex := 2
-
-		contractAddress := convert.ByteToStringArray(contractAddresses[i].CandidateValue)[contractAddressesIndex]
-
-		websiteDescription := convert.ByteToStringArray(contractAddresses[i].CandidateValue)[websiteDescriptionIndex]
+		contractAddress := convert.ByteToStringArray(dnsValues[i].CandidateValue)[contractAddressesIndex]
 
 		missingChunks, err := getMissingChunkIds(client, contractAddress)
 		if err != nil {
@@ -87,7 +83,6 @@ func Websites(config config.AppConfig, client *node.Client, domainNames []string
 		response := models.Websites{
 			Address:      contractAddress,
 			Name:         domainNames[i],
-			Description:  websiteDescription,
 			BrokenChunks: missingChunks,
 		}
 		responses = append(responses, &response)
