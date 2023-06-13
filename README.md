@@ -19,16 +19,25 @@ If you're interested in contributing to MassaStation, please make sure to read o
 
 ## Going further
 
-### Install plugins
+### Modules (plugins)
 
-MassaStation can be extended with plugins. Plugins that were validated by Massa Labs are available in the [Plugin Store](https://station.massa/store/).
+MassaStation is a module manager. It enables everyone to use, create and enjoy different modules to add features to the Massa blockchain.
 
-If you want to install a plugin that is not available in the Plugin Store, you can install it manually:
-1. Get the `.zip` file download URL of the plugin you want to install. Make sure this URL matches the version of MassaStation you are using, your computer OS and architecture.
-2. Paste the URL in the `Install a plugin` field of the [plugin manager page](https://station.massa/store/).
+#### Install a module
+
+You can install modules that were validated by Massa Labs from the [Module Store](https://station.massa/store/).
+
+The module will be installed and activated after a few seconds. You can now use it in MassaStation !
+
+
+#### Create a module
+
+If you are working on a module, you can install it manually in MassaStation:
+1. Get the `.zip` file download URL of the module you want to install. Make sure this URL matches the version of MassaStation you are using, your computer OS and architecture.
+2. Paste the URL in the `Install a plugin` field of the [module manager page](https://station.massa/store/).
 3. Click on the `Install` button.
 
-The plugin will be installed and activated after a few seconds. You can now use it in MassaStation !
+> **Note:** A complete guide on how to create a module will be available soon.
 
 
 ### Select the network to use
