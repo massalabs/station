@@ -380,9 +380,6 @@ function deployWebsiteAndUpload() {
     );
 }
 
-
-
-
 // Full deployment process
 function uploadWebsite(file, count) {
     const bodyFormData = new FormData();
