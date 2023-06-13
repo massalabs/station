@@ -100,8 +100,8 @@ To uninstall **MassaStation** from your MacOS system, follow the steps below:
 1. Open the Terminal application on your Linux system.
 2. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
 
-   ```sudo dpkg -r massastation
-   ```
+   ```bash
+   sudo dpkg -r massastation
 
    This command will remove MassaStation and its associated files from your system.
 4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
