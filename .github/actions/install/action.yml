@@ -7,12 +7,13 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: installing linux dependencies
+    - uses: awalsh128/cache-apt-pkgs-action@latest
       if: startsWith(inputs.os, 'ubuntu-')
-      shell: bash
-      run: |
-        sudo apt update
-        sudo apt install -y libgl1-mesa-dev xorg-dev gcc-mingw-w64-x86-64 p7zip
+      with:
+        packages: libgl1-mesa-dev xorg-dev gcc-mingw-w64-x86-64 p7zip
+        # increase this version if you modify the package list
+        version: build-v1
+        execute_install_scripts: true
 
     - uses: actions/setup-go@v3
       with:
