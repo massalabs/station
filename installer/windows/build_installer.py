@@ -231,8 +231,14 @@ def create_wxs_file():
             <ComponentRef Id="MassaStationServer" />
             <ComponentRef Id="CreateCertsDir" />
             <ComponentRef Id="CreatePluginsDir" />
-            <ComponentRef Id="ApplicationShortcutProgramMenu" />
+        </Feature>
+
+        <Feature Id="DesktopShortcut" Title="Desktop Shortcut" Level="1" Absent="allow">
             <ComponentRef Id="ApplicationShortcutDesktop" />
+        </Feature>
+
+        <Feature Id="ProgramMenuShortcut" Title="Program Menu Shortcut" Level="1" Absent="allow">
+            <ComponentRef Id="ApplicationShortcutProgramMenu" />
         </Feature>
 
         <Feature Id="Acrylic" Title="Acrylic DNS Proxy" Level="1">
