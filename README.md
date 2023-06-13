@@ -21,7 +21,7 @@ If you're interested in contributing to MassaStation, please make sure to read o
 
 ### Modules (plugins)
 
-MassaStation is a module manager. It enables everyone to use, create and enjoy different modules to add features to the Massa blockchain.
+MassaStation is a module manager. It enables everyone to use, create and enjoy different modules to activate features to the Massa blockchain.
 
 #### Install a module
 
