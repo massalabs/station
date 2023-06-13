@@ -4,13 +4,13 @@ import (
 	"fmt"
 
 	"fyne.io/fyne/v2"
+	//nolint:goimports,nolintlint
 	"fyne.io/fyne/v2/app"
-	"github.com/massalabs/thyra/pkg/config"
-
-	// nolint:typecheck
+	//nolint:typecheck,nolintlint
 	"fyne.io/fyne/v2/driver/desktop"
 	"github.com/massalabs/thyra/int/systray/embedded"
 	"github.com/massalabs/thyra/int/systray/utils"
+	"github.com/massalabs/thyra/pkg/config"
 )
 
 func MakeGUI() (fyne.App, *fyne.Menu) {

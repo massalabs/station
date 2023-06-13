@@ -7,7 +7,7 @@ Resource            ../keywords.resource
 Resource            ../variables.resource
 
 *** Variables ***
-${WALLET_PLUGIN_VERSION}       v0.0.13
+${WALLET_PLUGIN_VERSION}       v0.1.0
 
 *** Keywords ***
 Suite Setup

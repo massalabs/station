@@ -14,6 +14,10 @@ jobs:
     needs: build-release
     runs-on: ubuntu-latest
     steps:
+      - name: installing Linux dependencies (workaround for wallet plugin)
+        run: |
+          sudo apt update
+          sudo apt install libwebkit2gtk-4.0-dev
       - name: Checkout project directory
         uses: actions/checkout@v3
       - name: Install RobotFramework tests dependencies
@@ -37,14 +41,13 @@ jobs:
           mkdir -p /usr/local/share/massastation/plugins/wallet-plugin
           sudo mkdir -p /etc/massastation/certs
           sudo chmod 777 /etc/massastation/
-          echo "$WALLET_TEST_WALLET" > /usr/local/share/massastation/plugins/wallet-plugin/wallet_rftest.yml
+          echo "$WALLET_TEST_WALLET" > /usr/local/share/massastation/plugins/wallet-plugin/wallet_fullpower.yaml
         env:
           WALLET_TEST_WALLET: ${{ secrets.WALLET_TEST_WALLET }}
       - name: Running Massastation
-        run: xvfb-run ./massastation --node-server $NODE_SERVER &
+        run: xvfb-run ./massastation --node-server $NODE_SERVER > logs.txt &
         env:
-          WALLET_TEST_MODE: 1
-          WALLET_rftest_PASSWORD: ${{ secrets.WALLET_TEST_PASSWORD }}
+          WALLET_PASSWORD: ${{ secrets.WALLET_TEST_PASSWORD }}
       - name: Define station.massa
         run: sudo echo "127.0.0.1 station.massa" | sudo tee -a /etc/hosts
       - name: Wait for server to be up
@@ -56,3 +59,6 @@ jobs:
         run: |
           mkdir results
           robot --outputdir results robot_tests
+      - name: Print logs
+        if: always()
+        run: cat logs.txt
