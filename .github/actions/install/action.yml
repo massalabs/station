@@ -7,8 +7,17 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: installing linux dependencies
+    - name: Set apt up Cache
       if: startsWith(inputs.os, 'ubuntu-')
+      id: cache
+      uses: actions/cache@v2
+      with:
+        path: /var/cache/apt/archives
+        # increase cache version if new packages are added
+        key: ${{ runner.os }}-apt-build-v1
+
+    - name: installing linux dependencies
+      if: steps.cache.outputs.cache-hit != 'true' && startsWith(inputs.os, 'ubuntu-')
       shell: bash
       run: |
         sudo apt update

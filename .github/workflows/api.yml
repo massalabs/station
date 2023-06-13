@@ -14,12 +14,21 @@ jobs:
     needs: build-release
     runs-on: ubuntu-latest
     steps:
-      - name: installing Linux dependencies (workaround for wallet plugin)
-        run: |
-          sudo apt update
-          sudo apt install libwebkit2gtk-4.0-dev
       - name: Checkout project directory
         uses: actions/checkout@v3
+      - name: Set apt up Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: /var/cache/apt/archives
+          # increase cache version if new packages are added
+          key: ${{ runner.os }}-apt-api-v1
+      - name: Install APT packages
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update
+          sudo apt install libwebkit2gtk-4.0-dev
+
       - name: Install RobotFramework tests dependencies
         working-directory: api/test
         run: |
