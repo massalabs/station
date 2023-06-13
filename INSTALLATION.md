@@ -95,7 +95,7 @@ To uninstall **MassaStation** from your MacOS system, follow the steps below:
 
 ### Linux
 
-To uninstall **MassaStation** from your MacOS system, follow the steps below:
+To uninstall **MassaStation** from your Linux system, follow the steps below:
 
 1. Open the Terminal application on your Linux system.
 2. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
