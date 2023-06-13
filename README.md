@@ -40,7 +40,7 @@ If you are working on a module, you can install it manually in MassaStation:
 > **Note:** A complete guide on how to create a module will be available soon.
 
 
-### Select the network to use
+### Network
 
 MassaStation can be configured to use your own node or one of Massa's networks. To do so, you have to use the `--node-server` option. This option accepts a URL, an IP address or one of the following values :
 
