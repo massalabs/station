@@ -43,12 +43,16 @@ We really appreciate your contributions in suggesting new features and making Ma
 
 Reviewing pull requests is an excellent way to contribute to the project. It helps us ensure that the codebase is well-maintained and that new features and bug fixes are properly tested and documented. If you have the time and skills to review pull requests, please consider doing so.
 
+You can find a list of open pull requests [here](https://github.com/massalabs/thyra/pulls). 
+
+Thank you for your contributions in reviewing pull requests and helping us maintain a high-quality codebase!
+
 
 ## Contributing fixes & features
 
 To ensure a smooth collaboration and avoid duplication of efforts, please follow these guidelines:
 
-1. Before starting work on a new feature or bug fix, check the project's GitHub repository for existing issues.
+1. Before starting work on a new feature or bug fix, check the project's GitHub repository for existing issues. You can start with some [Good First Issues](https://github.com/massalabs/thyra/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22), which are issues that are relatively easy to fix and are a good starting point for new contributors.
 2. If you find an issue you'd like to work on, comment on the issue to express your interest. This helps us track who is working on what and avoid multiple contributors tackling the same problem simultaneously. Additionally, the project maintainers can provide guidance and clarification on the issue, ensuring that everyone has a clear understanding of what needs to be done.
 3. Once you have received approval from the project maintainers to work on an issue, you can start working on it. Make sure to fork the repository, create a new branch for your changes, and commit your work in logical and well-documented commits. This makes it easier for the project maintainers to review your code and understand the changes you've made.
 4. When you are ready to submit your changes, open a pull request. Provide a clear and concise description of the changes you've made and reference the relevant issue number in your pull request. This helps us track the progress of the issue and ensures that your changes are properly reviewed.
