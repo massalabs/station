@@ -848,15 +848,14 @@ paths:
           pattern: "^[a-z0-9]+$"
           required: true
           x-nullable: false
-          description: URL without dot (.), upper case and special characters
+          description: URL using only Lowercase letters (a-z), and numbers (0-9).
 
         - in: formData
           name: description
           type: string
-          pattern: '^[A-Za-z0-9 ]*$'
           required: true
           x-nullable: false
-          description: website description using letters (A-Z, a-z), numbers (0-9), and spaces.
+          description: website description.
         - in: formData
           name: nickname
           type: string
