@@ -15,7 +15,7 @@ const (
 	labnetDNSAddress = "AS1PV17jWkbUs7mfXsn8Xfs9AK6tHiJoxuGu7RySFMV8GYdMeUSh"
 
 	buildnetNodeURL    = "https://buildernet.massa.net/api/v2"
-	buildnetDNSAddress = "AS12j2rnuorLQXq9ysbJSpHPKtDr94A2J7Xby78aEGSH3m12cZkQH"
+	buildnetDNSAddress = "AS12ZcKNsvF9ba9SvESq14rAYaQ1Acgf4EudpK1mJw351FTXJxwF"
 
 	MassaStationURL = "station.massa"
 )
