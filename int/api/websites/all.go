@@ -21,6 +21,10 @@ const (
 	ownerKey            = "owner"
 	blackListKey        = "blackList"
 	secondsToMilliCoeff = 1000
+
+	// Indexes of data in website name key.
+	indexOfWebsiteAddress     = 0 // Index of website Address in the dnsValue array
+	indexOfWebsiteDescription = 2 // Index of website Description in the dnsValue array
 )
 
 func NewRegistryHandler(config *config.AppConfig) operations.AllDomainsGetterHandler {
@@ -54,27 +58,25 @@ and returns it to the frontend for display on the Registry page.
 func Registry(config config.AppConfig) ([]*models.Registry, error) {
 	client := node.NewClient(config.NodeURL)
 
+	// Fetch website names to display
 	websiteNames, err := filterEntriesToDisplay(config, client)
 	if err != nil {
 		return nil, fmt.Errorf("filtering keys to be displayed at '%s': %w", config.DNSAddress, err)
 	}
 
+	// Fetch DNS values of the website names : contractAddress, Description.
 	dnsValues, err := node.ContractDatastoreEntries(client, config.DNSAddress, websiteNames)
 	if err != nil {
 		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, config.DNSAddress, err)
 	}
 
-	// in website name key, value are stored in this order -> website Address, website Owner Address,
-	// website Description
-	indexOfWebsiteAddress := 0
-	indexOfWebsiteDescription := 2
-
 	registry := make([]*models.Registry, len(dnsValues))
 
-	for index := 0; index < len(dnsValues); index++ {
-		websiteStorerAddress := convert.ByteToStringArray(dnsValues[index].CandidateValue)[indexOfWebsiteAddress]
-
-		websiteDescription := convert.ByteToStringArray(dnsValues[index].CandidateValue)[indexOfWebsiteDescription]
+	// Iterate over the DNS values to populate Registry objects with website values
+	for index, dnsValue := range dnsValues {
+		websiteValue := convert.ByteToStringArray(dnsValue.CandidateValue)
+		websiteStorerAddress := websiteValue[indexOfWebsiteAddress]
+		websiteDescription := websiteValue[indexOfWebsiteDescription]
 
 		websiteMetadata, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes(metaKey))
 		if err != nil {
