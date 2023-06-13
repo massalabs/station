@@ -32,7 +32,8 @@ build_massastation() {
     go generate ../... || fatal "go generate failed for $MASSASTATION_BINARY_NAME"
     export GOARCH=$ARCH
     export CGO_ENABLED=1
-    fyne package -icon logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_BINARY_NAME"
+    # -icon is based on the path of the -src flag.
+    fyne package -icon ../../int/systray/embedded/logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_BINARY_NAME"
 }
 
 # Delete the build directory if it exists.
@@ -88,7 +89,7 @@ Description: An entrance to the Massa blockchain.
 Recommends: libnss3-tools
 EOF
 
-    cp deb/scripts/postinst $BUILD_DIR/DEBIAN
+    cp deb/scripts/post* $BUILD_DIR/DEBIAN
     DEB_NAME=massastation_$PKGVERSION\_amd64.deb
 
     dpkg-deb --build $BUILD_DIR $DEB_NAME || fatal "failed to build $DEB_NAME"
@@ -96,7 +97,8 @@ EOF
 
 # Check if $VERSION is set and set $PKGVERSION to $VERSION.
 if [ ! -z "$VERSION" ]; then
-    PKGVERSION=$VERSION
+    # Remove the `v` prefix from the version.
+    PKGVERSION=$(echo $VERSION | sed 's/^v//')
 else # If $VERSION is not set, use the latest git tag followed by `-dev`
     PKGVERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')-dev
 fi

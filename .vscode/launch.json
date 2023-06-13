@@ -6,7 +6,7 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "./cmd/thyra-server/",
+            "program": "./cmd/massastation/",
             "showLog": true
         }
     ]

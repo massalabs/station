@@ -1,14 +1,8 @@
-import plusSmall from '../assets/pictos/plusSmall.svg';
-import PlusSmallWhite from '../assets/pictos/plusSmallWhite.svg';
-import { UIStore } from '../store/UIStore';
 const ManagePluginCard = () => {
-  const plus = UIStore.useState((s) =>
-    s.theme == 'light' ? plusSmall : PlusSmallWhite,
-  );
   return (
     <div
       onClick={() => {
-        window.open('/thyra/plugin-manager');
+        window.open('/store');
       }}
       className="justify-end center cursor-pointer"
     >

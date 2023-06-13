@@ -16,6 +16,8 @@ const (
 
 	buildnetNodeURL    = "https://buildernet.massa.net/api/v2"
 	buildnetDNSAddress = "AS12j2rnuorLQXq9ysbJSpHPKtDr94A2J7Xby78aEGSH3m12cZkQH"
+
+	MassaStationURL = "station.massa"
 )
 
 func GetNetwork(network string) string {

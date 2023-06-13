@@ -19,18 +19,6 @@ func Fetch(c *node.Client, addr string, filename string) ([]byte, error) {
 	return m[filename], nil
 }
 
-func removeEmptyStrings(s []string) []string {
-	var result []string
-
-	for _, str := range s {
-		if str != "" {
-			result = append(result, str)
-		}
-	}
-
-	return result
-}
-
 func setContentType(file string, writer http.ResponseWriter) {
 	ctype := mime.TypeByExtension(filepath.Ext(file))
 

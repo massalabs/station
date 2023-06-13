@@ -26,7 +26,7 @@ type WebSiteCreatorData struct {
 	UploadMaxSize int
 }
 
-func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) middleware.Responder {
+func WebsiteUploaderHandler(params operations.WebsiteUploaderParams) middleware.Responder {
 	file := params.Resource
 
 	if params.Resource == indexHTML {
@@ -35,7 +35,7 @@ func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) mid
 
 	resource, err := content.ReadFile(basePath + file)
 	if err != nil {
-		return operations.NewThyraWebsiteCreatorNotFound()
+		return operations.NewWebsiteUploaderNotFound()
 	}
 
 	if params.Resource == indexHTML {
@@ -47,7 +47,7 @@ func ThyraWebsiteCreatorHandler(params operations.ThyraWebsiteCreatorParams) mid
 	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)
 }
 
-func ThyraRegistryHandler(params operations.ThyraRegistryParams) middleware.Responder {
+func WebOnChainSearchHandler(params operations.WebOnChainSearchParams) middleware.Responder {
 	file := params.Resource
 	if params.Resource == indexHTML {
 		file = "registry.html"
@@ -55,17 +55,17 @@ func ThyraRegistryHandler(params operations.ThyraRegistryParams) middleware.Resp
 
 	resource, err := content.ReadFile(basePath + file)
 	if err != nil {
-		return operations.NewThyraWebsiteCreatorNotFound()
+		return operations.NewWebsiteUploaderNotFound()
 	}
 
 	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)
 }
 
 //nolint:nolintlint,ireturn
-func ThyraHomeHandler(params operations.ThyraHomeParams) middleware.Responder {
+func MassaStationHomeHandler(params operations.MassaStationHomeParams) middleware.Responder {
 	content, err := contentReact.ReadFile(basePathReact + "home/" + params.Resource)
 	if err != nil {
-		return operations.NewThyraHomeNotFound()
+		return operations.NewMassaStationHomeNotFound()
 	}
 
 	return NewCustomResponder(content, contentType(params.Resource), http.StatusOK)
@@ -78,4 +78,20 @@ func ThyraPluginManagerHandler(params operations.ThyraPluginManagerParams) middl
 	}
 
 	return NewCustomResponder(content, contentType(params.Resource), http.StatusOK)
+}
+
+func MassaStationWebAppHandler(params operations.MassaStationWebAppParams) middleware.Responder {
+	resourceName := params.Resource
+
+	resourceContent, err := contentReact.ReadFile(basePathReact + "massastation/" + resourceName)
+	if err != nil {
+		resourceName = "index.html"
+		resourceContent, err = contentReact.ReadFile(basePathReact + "massastation/" + resourceName)
+
+		if err != nil {
+			return operations.NewMassaStationWebAppNotFound()
+		}
+	}
+
+	return NewCustomResponder(resourceContent, contentType(params.Resource), http.StatusOK)
 }

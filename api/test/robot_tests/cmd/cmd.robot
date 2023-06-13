@@ -15,7 +15,10 @@ POST a Smart Contract
     ${sc}=    Get File For Streaming Upload    ${CURDIR}/../../testSC/build/main-testSC.wasm
     ${data}=    Create Dictionary    walletNickname=${WALLET_NICKNAME}
     ${file}=    Create Dictionary    smartContract=${sc}
-    ${response}=    POST    ${API_URL}/cmd/deploySC    data=${data}    files=${file}    expected_status=${STATUS_OK}
+    ${response}=    POST    ${API_URL}/cmd/deploySC    data=${data}    files=${file}    expected_status=any
+    Log To Console    json response: ${response.json()}    # Print the response content to the test log for debugging
+
+    Should Be Equal As Integers    ${response.status_code}    ${STATUS_OK}    # Assert the status code is 200 OK
     Should Contain    ${response.json()}    TestSC is deployed at :
 
     ${sc_address}=    Get SC address    ${response.json()}

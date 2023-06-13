@@ -4,7 +4,7 @@ package certificate
 //
 // The following approaches are not possible:
 // - using a *.massa certificate
-// - adding several SANs to the same certificate (e.g. *.my.massa, *.thyra.massa, *.web.massa...) due to
+// - adding several SANs to the same certificate (e.g. *.station.massa, *.thyra.massa, *.web.massa...) due to
 //    * the technical limit to the number of SANs that can be included in a certificate as well as
 //    * the delay between adding a website to the blockchain and adding it to the certificate.
 //

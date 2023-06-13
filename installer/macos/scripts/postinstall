@@ -23,11 +23,10 @@ fatal() {
 }
 
 # Check if brew is installed. If not, install it.
-which -s brew
-if [[ $? != 0 ]]; then
+if ! command -v brew &>/dev/null; then
     echo "Installing Brew..."
-    export NONINTERACTIVE=1
-    su - $USER -c "/bin/bash -c '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'" || fatal "brew installation failed."
+    ./install_homebrew.sh || fatal "failed to install brew"
+    echo "Brew installed."
 else
     echo "Updating Brew..."
     su - $USER -c "brew update" || fatal "brew update failed."
@@ -68,7 +67,7 @@ generate_certificate() {
     chmod +x mkcert || fatal "mkcert permission change failed."
     ./mkcert -install || fatal "mkcert installation failed."
     mkdir -m 777 -p $MASSASTATION_CERT_DIR || fatal "certs directory creation failed."
-    ./mkcert -cert-file $MASSASTATION_CERT_DIR/cert.pem -key-file $MASSASTATION_CERT_DIR/cert-key.pem my.massa || fatal "mkcert certificate generation failed."
+    ./mkcert -cert-file $MASSASTATION_CERT_DIR/cert.pem -key-file $MASSASTATION_CERT_DIR/cert-key.pem station.massa || fatal "mkcert certificate generation failed."
     chmod 644 $MASSASTATION_CERT_DIR/cert.pem $MASSASTATION_CERT_DIR/cert-key.pem || fatal "certs permission change failed."
     rm mkcert || fatal "mkcert removal failed."
 }
@@ -81,3 +80,5 @@ ping -c 1 -t 1 test.massa >/dev/null 2>&1 || set_local_dns
 if [[ ! -f $MASSASTATION_CERT_DIR/cert.pem || ! -f $MASSASTATION_CERT_DIR/cert-key.pem ]]; then
     generate_certificate
 fi
+
+mv ./uninstall.sh $MASSASTATION_CONFIG_DIR || fatal "uninstall script move failed."

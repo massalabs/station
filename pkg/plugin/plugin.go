@@ -229,7 +229,7 @@ func New(binPath string, pluginID string) (*Plugin, error) {
 	return plgn, nil
 }
 
-func (p *Plugin) SetInformation(parsedURL *url.URL, mng *Manager) error {
+func (p *Plugin) SetInformation(parsedURL *url.URL) error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 

@@ -31,7 +31,7 @@ type registryHandler struct {
 	config *config.AppConfig
 }
 
-func (h *registryHandler) Handle(params operations.AllDomainsGetterParams) middleware.Responder {
+func (h *registryHandler) Handle(_ operations.AllDomainsGetterParams) middleware.Responder {
 	results, err := Registry(*h.config)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().

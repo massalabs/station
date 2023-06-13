@@ -21,7 +21,7 @@ const UploadMaxSize = "UPLOAD_MAX_SIZE"
 
 const defaultMaxArchiveSize = 1500000
 
-func NewWebsitePrepareHandler(config *config.AppConfig) operations.WebsiteCreatorPrepareHandler {
+func NewWebsitePrepareHandler(config *config.AppConfig) operations.WebsiteUploaderPrepareHandler {
 	return &websitePrepare{config: config}
 }
 
@@ -38,7 +38,7 @@ func listFileName(zipReader *zip.Reader) []string {
 	return FilesInArchive
 }
 
-func (h *websitePrepare) Handle(params operations.WebsiteCreatorPrepareParams) middleware.Responder {
+func (h *websitePrepare) Handle(params operations.WebsiteUploaderPrepareParams) middleware.Responder {
 	archive, errorResponse := readAndCheckArchive(params.Zipfile)
 	if errorResponse != nil {
 		return errorResponse
@@ -63,7 +63,7 @@ func (h *websitePrepare) Handle(params operations.WebsiteCreatorPrepareParams) m
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
 
-	return operations.NewWebsiteCreatorPrepareOK().
+	return operations.NewWebsiteUploaderPrepareOK().
 		WithPayload(
 			&models.Websites{
 				Name:         params.URL,
@@ -89,7 +89,7 @@ func GetMaxArchiveSize() int {
 }
 
 func createInternalServerError(errorCode string, errorMessage string) middleware.Responder {
-	return operations.NewWebsiteCreatorPrepareInternalServerError().
+	return operations.NewWebsiteUploaderPrepareInternalServerError().
 		WithPayload(
 			&models.Error{
 				Code:    errorCode,

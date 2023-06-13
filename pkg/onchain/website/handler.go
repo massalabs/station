@@ -31,51 +31,17 @@ func handleMassaDomainRequest(writer http.ResponseWriter, reader *http.Request, 
 }
 
 // MassaTLDInterceptor intercepts request for web on-chain.
-func MassaTLDInterceptor(req *interceptor.Interceptor, config config.AppConfig) *interceptor.Interceptor {
+func MassaTLDInterceptor(req *interceptor.Interceptor, appConfig config.AppConfig) *interceptor.Interceptor {
 	if req == nil {
 		return nil
 	}
 
 	massaIndex := strings.Index(req.Request.Host, ".massa")
 
-	if massaIndex > 0 && !strings.HasPrefix(req.Request.Host, "my.massa") {
-		handleMassaDomainRequest(req.Writer, req.Request, massaIndex, config)
+	if massaIndex > 0 && !strings.HasPrefix(req.Request.Host, config.MassaStationURL) {
+		handleMassaDomainRequest(req.Writer, req.Request, massaIndex, appConfig)
 
 		return nil
-	}
-
-	return req
-}
-
-func RedirectToDefaultResourceInterceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
-	if req == nil {
-		return nil
-	}
-
-	prefixes := []string{"/browse/", "/thyra/"}
-
-	for _, prefix := range prefixes {
-		if !strings.HasPrefix(req.Request.URL.Path, prefix) {
-			continue
-		}
-
-		splited := removeEmptyStrings(strings.Split(req.Request.URL.Path[len(prefix):], "/"))
-
-		if len(splited) == 1 {
-			protocol := "https"
-			if req.Request.TLS == nil {
-				protocol = "http"
-			}
-
-			http.Redirect(
-				req.Writer,
-				req.Request,
-				protocol+"://"+req.Request.Host+prefix+splited[0]+"/index.html",
-				http.StatusSeeOther,
-			)
-
-			return nil
-		}
 	}
 
 	return req

@@ -8,10 +8,12 @@ tmpdeb/
 # Temporary files
 *.zip
 *.tar.xz
+*.app
 *.log
 *.wixpdb
 massastation-app
 massastation-server
+install_homebrew.sh
 
 # MacOS
 .DS_Store

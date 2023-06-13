@@ -9,6 +9,8 @@ Resource            ../variables.resource
 
 Suite Setup         Suite Setup
 
+*** Variables ***
+${HELLO_WORLD_PLUGIN_VERSION}       0.0.7
 
 *** Test Cases ***
 GET /plugin-manager with no plugins
@@ -19,7 +21,7 @@ GET /plugin-manager with no plugins
 
 POST /plugin-manager?source={{pluginSource}}
     ${source}=    Set Variable
-    ...    https://github.com/massalabs/thyra-plugin-hello-world/releases/download/0.0.6/thyra-plugin-hello-world_${OS}-${ARCH}.zip
+    ...    https://github.com/massalabs/thyra-plugin-hello-world/releases/download/${HELLO_WORLD_PLUGIN_VERSION}/thyra-plugin-hello-world_${OS}-${ARCH}.zip
     ${response}=    POST
     ...    ${API_URL}/plugin-manager
     ...    params=source=${source}
@@ -65,9 +67,9 @@ POST /plugin-manager/{id}/execute with restart command
     ...    json=${data}
     Sleep    1 seconds    # Wait for the plugin to be restarted
 
-GET /thyra/plugin/{author}/{name}/
+GET /plugin/{author}/{name}/
     ${response}=    GET
-    ...    ${API_URL}/thyra/plugin/massalabs/hello-world/
+    ...    ${API_URL}/plugin/massalabs/hello-world/
     ...    expected_status=${STATUS_OK}
     Should Contain    ${response.text}    Hello, world!
 
@@ -112,8 +114,8 @@ GET /plugin-manager/{id} with invalid id
     Should Be Equal As Strings    ${response.json()['code']}    Plugin-0001
     Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching correlationID invalid
 
-GET /thyra/plugin/${author}/${name} with invalid author and name
-    ${response}=    GET    ${API_URL}/thyra/plugin/invalid/invalid    expected_status=${STATUS_NOT_FOUND}
+GET /plugin/${author}/${name} with invalid author and name
+    ${response}=    GET    ${API_URL}/plugin/invalid/invalid    expected_status=${STATUS_NOT_FOUND}
     Should Be Equal As Strings    ${response.text}    plugin not found for alias invalid/invalid
 
 POST /plugin-manager/{id}/execute with invalid id

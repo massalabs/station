@@ -10,6 +10,8 @@ ARCH=$1
 MASSASTATION_INSTALLER_NAME=MassaStation.app
 MASSASTATION_BINARY_NAME=massastation
 
+HOMEBREW_INSTALL_SCRIPT_URL=https://raw.githubusercontent.com/massalabs/homebrew.sh/master/homebrew-3.3.sh
+
 # Print the usage to stderr and exit with code 1.
 display_usage() {
     echo "Usage: $0 <arch>" >&2
@@ -37,7 +39,8 @@ build_massastation() {
     go generate ../... || fatal "go generate failed for $MASSASTATION_INSTALLER_NAME"
     export GOARCH=$ARCH
     export CGO_ENABLED=1
-    fyne package -icon logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_INSTALLER_NAME"
+    # -icon is based on the path of the -src flag.
+    fyne package -icon ../../int/systray/embedded/logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_INSTALLER_NAME"
     chmod +x $MASSASTATION_INSTALLER_NAME || fatal "failed to chmod $MASSASTATION_INSTALLER_NAME"
 }
 
@@ -47,8 +50,16 @@ package() {
         --scripts macos/scripts --install-location /Applications massastation_$PKGVERSION\_$ARCH.pkg || fatal "failed to create package"
 }
 
+# Download homebrew installation script and put it in script directory.
+download_homebrew_install_script() {
+    curl -sL $HOMEBREW_INSTALL_SCRIPT_URL -o macos/scripts/install_homebrew.sh || fatal "failed to download homebrew installation script"
+    chmod +x macos/scripts/install_homebrew.sh || fatal "failed to chmod homebrew installation script"
+}
+
 main() {
     test -d $MASSASTATION_INSTALLER_NAME || build_massastation
+
+    download_homebrew_install_script
 
     # Check if the binary isn't named massastation. If it isn't, rename it to massastation.
     if [ ! -f $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME ]; then
@@ -72,7 +83,8 @@ fi
 
 # Check if $VERSION is set and set $PKGVERSION to $VERSION.
 if [ ! -z "$VERSION" ]; then
-    PKGVERSION=$VERSION
+    # Remove the `v` prefix from the version.
+    PKGVERSION=$(echo $VERSION | sed 's/^v//')
 else # If $VERSION is not set, use the latest git tag followed by `-dev`
     PKGVERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')-dev
 fi

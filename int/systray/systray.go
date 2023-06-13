@@ -1,33 +1,24 @@
 package systray
 
 import (
-	"log"
-	"net/url"
+	"fmt"
 
 	"fyne.io/fyne/v2"
+	//nolint:goimports,nolintlint
 	"fyne.io/fyne/v2/app"
-	//nolint:typecheck
+	//nolint:typecheck,nolintlint
 	"fyne.io/fyne/v2/driver/desktop"
+	"github.com/massalabs/thyra/int/systray/embedded"
+	"github.com/massalabs/thyra/int/systray/utils"
+	"github.com/massalabs/thyra/pkg/config"
 )
 
-func openURL(app *fyne.App, urlToOpen string) {
-	u, err := url.Parse(urlToOpen)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = (*app).OpenURL(u)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func MakeGUI(logo []byte) (fyne.App, *fyne.Menu) {
+func MakeGUI() (fyne.App, *fyne.Menu) {
 	stationGUI := app.New()
 	menu := fyne.NewMenu("MassaStation")
 
 	if desk, ok := stationGUI.(desktop.App); ok {
-		icon := fyne.NewStaticResource("logo", logo)
+		icon := fyne.NewStaticResource("logo", embedded.Logo)
 		titleMenu := fyne.NewMenuItem("MassaStation", nil)
 		homeShortCutMenu := fyne.NewMenuItem("Open MassaStation", nil)
 		testMenu := fyne.NewMenuItem("Test", nil)
@@ -41,7 +32,7 @@ func MakeGUI(logo []byte) (fyne.App, *fyne.Menu) {
 		}
 
 		homeShortCutMenu.Action = func() {
-			openURL(&stationGUI, "http://my.massa/thyra/home")
+			utils.OpenURL(&stationGUI, fmt.Sprintf("httpS://%s", config.MassaStationURL))
 		}
 
 		menu.Items = append(menu.Items,
@@ -49,7 +40,6 @@ func MakeGUI(logo []byte) (fyne.App, *fyne.Menu) {
 			fyne.NewMenuItemSeparator(),
 			homeShortCutMenu,
 			// testMenu,
-			fyne.NewMenuItemSeparator(),
 		)
 
 		desk.SetSystemTrayIcon(icon)

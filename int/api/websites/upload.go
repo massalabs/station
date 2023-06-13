@@ -9,7 +9,7 @@ import (
 	"github.com/massalabs/thyra/pkg/onchain/website"
 )
 
-func NewWebsiteUploadHandler(config *config.AppConfig) operations.WebsiteCreatorUploadHandler {
+func NewWebsiteUploadHandler(config *config.AppConfig) operations.WebsiteUploaderUploadHandler {
 	return &websiteUploadHandler{config: config}
 }
 
@@ -17,7 +17,7 @@ type websiteUploadHandler struct {
 	config *config.AppConfig
 }
 
-func (h *websiteUploadHandler) Handle(params operations.WebsiteCreatorUploadParams) middleware.Responder {
+func (h *websiteUploadHandler) Handle(params operations.WebsiteUploaderUploadParams) middleware.Responder {
 	archive, errorResponse := readAndCheckArchive(params.Zipfile)
 	if errorResponse != nil {
 		return errorResponse
@@ -37,7 +37,7 @@ func (h *websiteUploadHandler) Handle(params operations.WebsiteCreatorUploadPara
 		return createInternalServerError(errorCodeWebCreatorUpload, err.Error())
 	}
 
-	return operations.NewWebsiteCreatorUploadOK().
+	return operations.NewWebsiteUploaderUploadOK().
 		WithPayload(&models.Websites{
 			Name:         "",
 			Description:  "",

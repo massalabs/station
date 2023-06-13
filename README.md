@@ -6,19 +6,19 @@
 
 An entrance to the Massa blockchain.
 
-
 ## Contribute
+
 To contribute to this project, please read our [Contributor's Guide](./CONTRIBUTING.md).
 
+## Install thyra
 
-## Install thyra 
 To install Thyra, please follow the instructions available in the [Installation Guide](./INSTALLATION.md).
 
 ## Install a plugin
 
-Copy/paste the latest release .zip file to Thyra [plugin manager page](https://my.massa/thyra/plugin-manager/)
+Copy/paste the latest release .zip file to Thyra [plugin manager page](https://station.massa/store)
 
-## Going further 
+## Going further
 
 ### Use your own node with Thyra
 
@@ -35,9 +35,9 @@ Accepts a URL, an IP address or one of the following values :
 - LOCALHOST : Expect Massa's network to be hosted at 127.0.0.1
 
 To use this option with a constant, you have to execute :
-`thyra-server --node-server=LABNET`
+`massastation --node-server=LABNET`
 To use this option with a custom IP address, you have to execute :
-`thyra-server --node-server=192.168.X.X`
+`massastation --node-server=192.168.X.X`
 
 
 ## Additional information
