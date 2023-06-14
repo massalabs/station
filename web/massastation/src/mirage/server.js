@@ -1,6 +1,55 @@
 import { createServer, Model, Factory } from 'miragejs';
 import { faker } from '@faker-js/faker';
 import { ENV } from '../const/env/env';
+const badRequest = new Response(400, {}, { error: 'Bad Request' });
+const notFound = new Response(404, {}, { error: 'Not Found' });
+const unprocessableEntity = new Response(
+  422,
+  {},
+  { error: 'Unprocessable Entity' },
+);
+
+/**
+ * Updates the plugin
+ *
+ * @param plugin the plugin to update
+ * @returns the updated plugin
+ */
+function update(plugin) {
+  // increment the version number
+  if (plugin === undefined) return unprocessableEntity;
+  const pluginVersion = plugin.version.split('.');
+  // split the version number into an array
+  // increment the patch number
+  pluginVersion[2] = parseInt(pluginVersion[2]) + 1;
+  plugin.update({
+    version: pluginVersion.join('.'),
+    updatable: false,
+  });
+  return plugin;
+}
+/**
+ * Starts the plugin
+ *
+ * @param plugin the plugin to start
+ * @returns the started plugin
+ */
+function start(plugin) {
+  if (plugin === undefined) return unprocessableEntity;
+  plugin.update({ status: 'Up' });
+  return plugin;
+}
+/**
+ * Stops the plugin
+ *
+ * @param plugin the plugin to stop
+ * @returns the stopped plugin
+ */
+function stop(plugin) {
+  if (plugin === undefined) return unprocessableEntity;
+  plugin.update({ status: 'Down' });
+  return plugin;
+}
 
 /**
  * Creates a mocked server
