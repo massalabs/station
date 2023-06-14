@@ -7,12 +7,11 @@ import { ENV } from '../const/env/env';
  * @param environment
  */
 function mockServer(environment = ENV.DEV) {
-  const commonVariable = 'Common Value';
-
   const mockedServer = createServer({
     environment,
     models: {
       plugin: Model,
+      domain: Model,
     },
     factories: {
       plugin: Factory.extend({
@@ -42,17 +41,37 @@ function mockServer(environment = ENV.DEV) {
           return Math.random() < 0.5;
         },
       }),
+      domain: Factory.extend({
+        name() {
+          return faker.internet.domainName();
+        },
+        address() {
+          return 'AU' + faker.string.alpha({ length: { min: 128, max: 256 } });
+        },
+        description() {
+          return faker.lorem.sentence();
+        },
+        metadata() {
+          return 'test';
+        },
+      }),
     },
+
     seeds(server) {
       server.createList('plugin', 2);
+      server.createList('domain', 50);
     },
+
     routes() {
       this.get('/plugin-manager', (schema) => {
         let { models: plugins } = schema.plugins.all();
+
         return plugins;
       });
+
       this.get('/plugin-manager/:id', (schema, request) => {
         const { id } = request.params;
+
         let plugin = schema.plugins.find(id);
 
         if (!plugin)
@@ -77,6 +96,7 @@ function mockServer(environment = ENV.DEV) {
           status,
           updatable,
         });
+
         return new Response(200, {});
       });
 
@@ -87,6 +107,12 @@ function mockServer(environment = ENV.DEV) {
           return new Response(404, {}, { code: '404', error: 'Not Found' });
 
         return plugin.destroy();
+      });
+
+      this.get('/all/domains', (schema) => {
+        let { models: domains } = schema.domains.all();
+
+        return domains;
       });
     },
   });

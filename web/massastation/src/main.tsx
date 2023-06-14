@@ -13,7 +13,7 @@ import '@massalabs/react-ui-kit/src/global.css';
 import './index.css';
 
 import { ENV } from './const/env/env';
-import { Error, NotFound, Index, Base, Store } from './pages/index';
+import { Error, NotFound, Index, Base, Store, Search } from './pages/index';
 import mockServer from './mirage/server.js';
 
 const baseURL = import.meta.env.VITE_BASE_APP;
@@ -36,6 +36,7 @@ const router = createBrowserRouter(
 
       {/* routes for pages */}
       <Route path="store" element={<Store />} />
+      <Route path="search" element={<Search />} />
 
       {/* routes for errors */}
       <Route path="error" element={<Error />} />
