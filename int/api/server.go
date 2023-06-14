@@ -59,7 +59,7 @@ func initLocalAPI(localAPI *operations.MassastationAPI, config config.AppConfig)
 	localAPI.WebOnChainSearchHandler = operations.WebOnChainSearchHandlerFunc(WebOnChainSearchHandler)
 	localAPI.MassaStationHomeHandler = operations.MassaStationHomeHandlerFunc(MassaStationHomeHandler)
 	localAPI.EventsGetterHandler = NewEventListenerHandler(&config)
-	localAPI.ThyraPluginManagerHandler = operations.ThyraPluginManagerHandlerFunc(ThyraPluginManagerHandler)
+	localAPI.MassaStationPluginManagerHandler = operations.MassaStationPluginManagerHandlerFunc(MassaStationPluginManagerHandler)
 	localAPI.MassaStationWebAppHandler = operations.MassaStationWebAppHandlerFunc(MassaStationWebAppHandler)
 
 	localAPI.WebsiteUploaderHandler = operations.WebsiteUploaderHandlerFunc(WebsiteUploaderHandler)
