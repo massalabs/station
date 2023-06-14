@@ -1,8 +1,8 @@
 consumes:
   - application/json
 info:
-  description: Thyra HTTP server API.
-  title: massastation
+  description: MassaStation HTTP server API.
+  title: MassaStation
   version: 0.2.0
 produces:
   - application/json
@@ -768,8 +768,8 @@ paths:
           description: Dumb response. All content and HTTP code are possible for this endpoint.
   /store/{resource}:
     get:
-      description: Frontend router for the Thyra plugin manager page.
-      operationId: thyraPluginManager
+      description: Frontend router for the MassaStation plugin manager page.
+      operationId: MassaStationPluginManager
       produces:
         - application/json
         - text/javascript
@@ -812,7 +812,7 @@ paths:
           description: Page found
   /websiteUploader/{resource}:
     get:
-      description: Frontend router for the Thyra website creator page.
+      description: Frontend router for the MassaStation website creator page.
       operationId: websiteUploader
       produces:
         - application/json
