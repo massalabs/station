@@ -3,8 +3,10 @@ import { faker } from '@faker-js/faker';
 import { ENV } from '../const/env/env';
 
 /**
+ * Creates a mocked server
  *
- * @param environment
+ * @param environment the environment to mock
+ * @returns the mocked server
  */
 function mockServer(environment = ENV.DEV) {
   const commonVariable = 'Common Value';
@@ -53,6 +55,35 @@ function mockServer(environment = ENV.DEV) {
       this.get('/plugin-manager', (schema) => {
         let { models: plugins } = schema.plugins.all();
         return plugins;
+      });
+      this.post('/plugin-manager/:id/execute', (schema, request) => {
+        const { method } = JSON.parse(request.requestBody);
+        const { id } = request.params;
+
+        const plugin = schema.plugins.find(id);
+
+        if (!plugin)
+          return new Response(404, {}, { code: '404', error: 'Not Found' });
+
+        const status = ['update', 'start'].includes(method) ? 'Up' : 'Down';
+        const updatable = method === 'update' ? false : plugin.updatable;
+
+        plugin.update({
+          version: faker.system.semver(),
+          status,
+          updatable,
+        });
+
+        return new Response(200, {});
+      });
+
+      this.delete('/plugin-manager/:id', (schema, request) => {
+        const plugin = schema.plugins.find(request.params.id);
+
+        if (!plugin)
+          return new Response(404, {}, { code: '404', error: 'Not Found' });
+
+        return plugin.destroy();
       });
     },
   });
