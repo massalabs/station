@@ -1,14 +1,22 @@
-import { Button, Certificate, Plugin } from '@massalabs/react-ui-kit';
-import { IMassaPlugin } from './MyStation';
-import { FiArrowUpRight, FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
 import { useState } from 'react';
+
+import {
+  Button,
+  Certificate,
+  MassaWallet,
+  Plugin,
+} from '@massalabs/react-ui-kit';
+import { FiArrowUpRight, FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
+import { IMassaPlugin } from './MyStation';
+
 enum PluginStatus {
   Up = 'Up',
   Down = 'Down',
 }
+
 function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
   const [myPlugin, setMyPlugin] = useState<IMassaPlugin>(plugin);
-  function handlePluginStateChange(method: string) {
+  function handlePluginState(method: string) {
     // TODO :
     // const {mutate } = usePost<any>("plugin-manager");
     // const ok = mutate({method:"${method}"})
@@ -17,9 +25,14 @@ function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
     setMyPlugin(updatedPlugin);
   }
   const argsOn = {
-    preIcon: <img src={myPlugin.logo} />,
+    preIcon:
+      myPlugin.author === 'MassaLabs' ? (
+        <MassaWallet variant="rounded" />
+      ) : (
+        <img src={myPlugin.logo} />
+      ),
     topAction: (
-      <Button onClick={() => handlePluginStateChange('stop')} variant="toggle">
+      <Button onClick={() => handlePluginState('stop')} variant="toggle">
         on
       </Button>
     ),
@@ -27,6 +40,7 @@ function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
     subtitle: `${myPlugin.author}`,
     subtitleIcon: myPlugin.author === 'MassaLabs' ? <Certificate /> : <></>,
     content: [
+      // conditionally render the update icon based on the updatable property
       myPlugin.updatable && (
         <Button variant="icon" onClick={() => console.log('reload')}>
           <FiRefreshCcw className="text-s-warning" />
@@ -42,10 +56,16 @@ function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
   };
 
   const argsOff = {
-    preIcon: <img src={myPlugin.logo} />,
+    preIcon:
+      myPlugin.author === 'MassaLabs' ? (
+        <MassaWallet variant="rounded" />
+      ) : (
+        <img src={myPlugin.logo} />
+      ),
     topAction: (
+      // we use customClass because "disabled" doesn't let us click on the button to turn it back on
       <Button
-        onClick={() => handlePluginStateChange('start')}
+        onClick={() => handlePluginState('start')}
         customClass="bg-primary text-tertiary"
         variant="toggle"
       >
@@ -54,7 +74,7 @@ function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
     ),
     title: `${myPlugin.name}`,
     subtitle: `${myPlugin.author}`,
-    subtitleIcon: myPlugin.author === 'MassaLabs' ? <Certificate /> : <></>,
+    subtitleIcon: myPlugin.author === 'MassaLabs' ? <Certificate /> : null,
     content: [
       <Button variant="icon" disabled>
         <FiArrowUpRight />

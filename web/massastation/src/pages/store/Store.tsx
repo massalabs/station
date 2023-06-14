@@ -24,16 +24,10 @@ export function Store() {
     />
   );
   return (
-    <LayoutStation
-      navigator={navigator}
-      onSetTheme={(theme: string) => {
-        console.log('selected theme', theme);
-      }}
-    >
-      <div className="mt-24 mas-banner text-neutral">Modules</div>
-      <div className="mb-6 mt-10">
-        <MyStation />
-      </div>
+    <LayoutStation navigator={navigator}>
+      <div className="mas-banner text-neutral mb-10 mt-24">Modules</div>
+      <div className="mas-menu-active mb-4 text-neutral">My Station</div>
+      <MyStation />
     </LayoutStation>
   );
 }

@@ -32,18 +32,17 @@ function MyStation() {
 
   return (
     <>
-      <div className="mas-menu-active mb-4 text-neutral">My Station</div>
       {isLoadingData ? (
-        <p className="mas-menu-active mb-4 text-neutral">Loading</p>
+        <div className="mas-menu-active mb-4 text-neutral">Loading</div>
       ) : plugins && plugins.length > 0 ? (
-        <div className="min-w-full flex gap-2 flex-wrap">
+        <div className="flex gap-2 flex-wrap">
           {plugins.map((plugin) => (
             <MyPlugin key={plugin.name} plugin={plugin} />
           ))}
         </div>
       ) : (
-        <div className="mas-menu-active mb-4 text-neutral">
-          Browse the store below and manage the plugins you've installed in this
+        <div className="mas-body mb-4 text-neutral">
+          Browse the store below and manage plugin you've installed in this
           section
         </div>
       )}

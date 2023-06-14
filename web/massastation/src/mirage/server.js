@@ -47,7 +47,7 @@ function mockServer(environment = ENV.DEV) {
       }),
     },
     seeds(server) {
-      server.createList('plugin', 5);
+      server.createList('plugin', Math.floor(Math.random() * 8));
     },
     routes() {
       this.get('/plugin-manager', (schema) => {
