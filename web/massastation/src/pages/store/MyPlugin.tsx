@@ -9,13 +9,14 @@ import {
 } from '@massalabs/react-ui-kit';
 import { FiArrowUpRight, FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
 import { IMassaPlugin } from './MyStation';
+
+import { usePost, useResource, useDelete } from '../../custom/api';
 import {
   massalabsNomination,
   PLUGIN_START,
   PLUGIN_STOP,
   PLUGIN_UPDATE,
 } from '../../utils/massaConstants';
-import { usePost, useResource, useDelete } from '../../custom/api';
 
 enum PluginStatus {
   Up = 'Up',
@@ -42,7 +43,7 @@ export function MyPlugin({
     isRefetching,
   } = useResource<IMassaPlugin>(`plugin-manager/${id}`);
 
-  const { mutate, isSuccess, isLoading } = usePost<PluginPostMethod>(
+  const { mutate, isSuccess } = usePost<PluginPostMethod>(
     `plugin-manager/${id}/execute`,
   );
 
@@ -51,17 +52,16 @@ export function MyPlugin({
   );
 
   useEffect(() => {
-    if (isSuccess && !isLoading) {
+    if (isSuccess) {
       refetch();
     }
-  }, [isSuccess, isLoading, refetch]);
+  }, [isSuccess]);
 
   useEffect(() => {
     if (!isRefetching && newPlugin) {
-      console.log('newPlugin', newPlugin);
       setMyPlugin(newPlugin);
     }
-  }, [isRefetching, newPlugin]);
+  }, [isRefetching]);
 
   useEffect(() => {
     if (deleteSuccess) {
@@ -69,12 +69,8 @@ export function MyPlugin({
     }
   }, [deleteSuccess]);
 
-  function changePluginState(command: string) {
+  function updatePluginState(command: string) {
     mutate({ command } as PluginPostMethod);
-  }
-
-  function handleDelete() {
-    deletePlugin({});
   }
 
   const argsOn = {
@@ -84,7 +80,7 @@ export function MyPlugin({
       <img src={logo} alt="Plugin Logo" />
     ),
     topAction: (
-      <Button onClick={() => changePluginState(PLUGIN_STOP)} variant="toggle">
+      <Button onClick={() => updatePluginState(PLUGIN_STOP)} variant="toggle">
         on
       </Button>
     ),
@@ -96,14 +92,14 @@ export function MyPlugin({
         <Button variant="icon">
           <FiRefreshCcw
             className="text-s-warning"
-            onClick={() => changePluginState(PLUGIN_UPDATE)}
+            onClick={() => updatePluginState(PLUGIN_UPDATE)}
           />
         </Button>
       ),
       <Button variant="icon">
         <FiArrowUpRight onClick={() => navigate(home)} />
       </Button>,
-      <Button variant="icon" onClick={handleDelete}>
+      <Button variant="icon" onClick={() => deletePlugin({})}>
         <FiTrash2 />
       </Button>,
     ],
@@ -118,7 +114,7 @@ export function MyPlugin({
     topAction: (
       // we use customClass because "disabled" doesn't let us click on the button to turn it back on
       <Button
-        onClick={() => changePluginState(PLUGIN_START)}
+        onClick={() => updatePluginState(PLUGIN_START)}
         customClass="bg-primary text-tertiary"
         variant="toggle"
       >
@@ -132,7 +128,7 @@ export function MyPlugin({
       <Button variant="icon" disabled>
         <FiArrowUpRight />
       </Button>,
-      <Button variant="icon" onClick={handleDelete}>
+      <Button variant="icon" onClick={() => deletePlugin({})}>
         <FiTrash2 />
       </Button>,
     ],

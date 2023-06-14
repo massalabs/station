@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { useResource } from '../../custom/api';
 import { useNavigate } from 'react-router-dom';
 import { routeFor } from '../../utils';
 import Intl from '../../i18n/i18n';
 
 import { MyPlugin } from './MyPlugin';
+import { UseQueryResult } from '@tanstack/react-query';
 
 export interface IMassaPlugin {
   name: string;
@@ -18,7 +18,11 @@ export interface IMassaPlugin {
   updatable: boolean;
 }
 
-export function MyStation() {
+export function MyStation({
+  getPlugins,
+}: {
+  getPlugins: UseQueryResult<IMassaPlugin[]>;
+}) {
   const navigate = useNavigate();
 
   const {
@@ -27,25 +31,13 @@ export function MyStation() {
     isLoading,
     refetch: refetchPlugins,
     isRefetching,
-    isSuccess,
-  } = useResource<IMassaPlugin[]>('plugin-manager');
+  } = getPlugins;
 
   useEffect(() => {
     if (error) {
       navigate(routeFor('error'));
     }
   }, [error, navigate]);
-
-  function refreshList() {
-    refetchPlugins();
-  }
-  console.log(
-    'isRefetching',
-    isRefetching,
-    'isFetched',
-    'isSuccess',
-    isSuccess,
-  );
 
   return (
     <>
@@ -55,14 +47,13 @@ export function MyStation() {
         </div>
       ) : (
         <>
-          {myPlugins && myPlugins.length > 0 ? (
+          {myPlugins && myPlugins.length ? (
             <div className="flex gap-4 flex-wrap">
-              {isLoading} {isLoading} {isLoading}
               {myPlugins.map((plugin) => (
                 <MyPlugin
                   key={plugin.id}
                   plugin={plugin}
-                  fetchPlugins={refreshList}
+                  fetchPlugins={() => refetchPlugins()}
                 />
               ))}
             </div>

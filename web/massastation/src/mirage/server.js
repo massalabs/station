@@ -54,8 +54,10 @@ function mockServer(environment = ENV.DEV) {
       this.get('/plugin-manager/:id', (schema, request) => {
         const { id } = request.params;
         let plugin = schema.plugins.find(id);
+
         if (!plugin)
           return new Response(404, {}, { code: '404', error: 'Not Found' });
+
         return plugin.attrs;
       });
 
@@ -63,7 +65,6 @@ function mockServer(environment = ENV.DEV) {
         const { command } = JSON.parse(request.requestBody);
         const { id } = request.params;
         const plugin = schema.plugins.find(id);
-        console.log('plugin found', plugin);
 
         if (!plugin)
           return new Response(404, {}, { code: '404', error: 'Not Found' });
@@ -76,7 +77,6 @@ function mockServer(environment = ENV.DEV) {
           status,
           updatable,
         });
-        console.log('result', plugin, 'for id ', id);
         return new Response(200, {});
       });
 
