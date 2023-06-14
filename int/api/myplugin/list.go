@@ -44,6 +44,7 @@ func (l *list) Handle(_ operations.PluginManagerListParams) middleware.Responder
 			payload[index].Description = info.Description
 			payload[index].Logo = pluginURL + info.Logo
 			payload[index].Home = pluginURL + info.Home
+			payload[index].Updatable = fmt.Sprintf("%t", info.Updatable)
 			payload[index].Version = info.Version
 			payload[index].Status = plgn.Status().String()
 		}
