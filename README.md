@@ -1,6 +1,6 @@
 # MassaStation: An entrance to the Massa blockchain
 
-[![CI](https://github.com/massalabs/thyra/actions/workflows/api.yml/badge.svg)](https://github.com/massalabs/thyra/actions/workflows/api.yml)
+[![CI](https://github.com/massalabs/thyra/actions/workflows/api.yml/badge.svg?branch=main)](https://github.com/massalabs/thyra/actions/workflows/api.yml?query=branch%3Amain)
 [![codecov](https://codecov.io/gh/massalabs/thyra/branch/main/graph/badge.svg?token=592LPZLC4M)](https://codecov.io/gh/massalabs/thyra)
 [![Go Report Card](https://goreportcard.com/badge/github.com/massalabs/thyra)](https://goreportcard.com/report/github.com/massalabs/thyra)
 
