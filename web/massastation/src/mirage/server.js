@@ -19,6 +19,10 @@ function mockServer(environment = ENV.DEV) {
         name() {
           return faker.lorem.word();
         },
+        author() {
+          // there is a 30% chance that the author will be MassaLabs
+          return Math.random() < 0.3 ? 'MassaLabs' : faker.person.firstName();
+        },
         description() {
           return faker.lorem.sentence();
         },
@@ -36,6 +40,9 @@ function mockServer(environment = ENV.DEV) {
         status: 'Up',
         version() {
           return faker.system.semver();
+        },
+        updatable() {
+          return Math.random() < 0.5;
         },
       }),
     },

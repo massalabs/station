@@ -1,5 +1,6 @@
 import { FiCodepen, FiGlobe, FiHome } from 'react-icons/fi';
 import { Navigator, LayoutStation } from '@massalabs/react-ui-kit';
+import MyStation from './MyStation';
 
 export function Store() {
   let navigator = (
@@ -29,7 +30,10 @@ export function Store() {
         console.log('selected theme', theme);
       }}
     >
-      <div className="text-f-primary">This is the store page</div>
+      <div className="mt-24 mas-banner text-neutral">Modules</div>
+      <div className="mb-6 mt-10">
+        <MyStation />
+      </div>
     </LayoutStation>
   );
 }
