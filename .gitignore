@@ -16,7 +16,7 @@ tmp/
 
 /plugins/
 
-# Thyra builded react files
+# MassaStation builded react files
 int/api/dist/
 main
 
