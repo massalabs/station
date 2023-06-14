@@ -40,6 +40,7 @@ func (h *websiteUploadHandler) Handle(params operations.WebsiteUploaderUploadPar
 	return operations.NewWebsiteUploaderUploadOK().
 		WithPayload(&models.Websites{
 			Name:         "",
+			Description:  "",
 			Address:      params.Address,
 			BrokenChunks: nil,
 		})

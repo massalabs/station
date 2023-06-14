@@ -30,7 +30,7 @@ func (h *domainsHandler) Handle(params operations.MyDomainsGetterParams) middlew
 				})
 	}
 
-	myDomains, err := my.Websites(*h.config, client, myDomainNames)
+	myDomains, err := my.GetWebsites(*h.config, client, myDomainNames)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().
 			WithPayload(

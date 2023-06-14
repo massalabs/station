@@ -41,6 +41,7 @@ func (h *uploadMissedChunkHandler) Handle(params operations.WebsiteUploadMissing
 	return operations.NewWebsiteUploadMissingChunksOK().
 		WithPayload(&models.Websites{
 			Name:         "",
+			Description:  "",
 			Address:      params.Address,
 			BrokenChunks: nil,
 		})

@@ -44,7 +44,7 @@ func (h *websitePrepare) Handle(params operations.WebsiteUploaderPrepareParams) 
 		return errorResponse
 	}
 
-	address, correlationID, err := website.PrepareForUpload(*h.config, params.URL, params.Nickname)
+	address, correlationID, err := website.PrepareForUpload(*h.config, params.URL, params.Description, params.Nickname)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorPrepare, err.Error())
 	}
@@ -67,6 +67,7 @@ func (h *websitePrepare) Handle(params operations.WebsiteUploaderPrepareParams) 
 		WithPayload(
 			&models.Websites{
 				Name:         params.URL,
+				Description:  params.Description,
 				Address:      address,
 				BrokenChunks: nil,
 			})

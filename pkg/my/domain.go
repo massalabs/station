@@ -53,39 +53,51 @@ func Domains(config config.AppConfig, client *node.Client, nickname string) ([]s
 	return names, nil
 }
 
-func Websites(config config.AppConfig, client *node.Client, domainNames []string) ([]*models.Websites, error) {
-	params := []node.DatastoreEntriesKeys{}
+// GetWebsites retrieves information about websites given a DNSAddress, and domain names.
+// It queries the DNS entries for the specified domain names, retrieves relevant data, checks chunk integrity,
+// and returns a list of website information including contract address, name, description, and broken chunks.
+func GetWebsites(config config.AppConfig, client *node.Client, domainNames []string) ([]*models.Websites, error) {
+	// Prepare parameters for querying DNS entries
+	params := make([]node.DatastoreEntriesKeys, len(domainNames))
 
-	for i := 0; i < len(domainNames); i++ {
+	for i, domain := range domainNames {
 		param := node.DatastoreEntriesKeys{
 			Address: config.DNSAddress,
-			Key:     convert.StringToBytes(domainNames[i]),
+			Key:     convert.StringToBytes(domain),
 		}
-		params = append(params, param)
+		params[i] = param
 	}
 
-	responses := []*models.Websites{}
+	// Store website information for each domain
+	responses := make([]*models.Websites, len(domainNames))
 
-	contractAddresses, err := node.DatastoreEntries(client, params)
+	// Retrieve DNS entries for the specified domain names
+	dnsValues, err := node.DatastoreEntries(client, params)
 	if err != nil {
-		return nil, fmt.Errorf("reading entries'%s': %w", params, err)
+		return nil, fmt.Errorf("failed to read entries '%v': %w", params, err)
 	}
 
-	for i := 0; i < len(domainNames); i++ { //nolint:varnamelen
-		contractAddressesIndex := 0
-		contractAddress := convert.ByteToStringArray(contractAddresses[i].CandidateValue)[contractAddressesIndex]
+	// Process each domain's DNS entry
+	for index, domainName := range domainNames {
+		// Extract contract address and website description from DNS entry
+		dnsValues := convert.ByteToStringArray(dnsValues[index].CandidateValue)
+		contractAddress := dnsValues[0]
+		websiteDescription := dnsValues[2]
 
+		// Check chunk integrity for the contract address
 		missingChunks, err := getMissingChunkIds(client, contractAddress)
 		if err != nil {
-			return nil, fmt.Errorf("checking chunk integrity: %w", err)
+			return nil, fmt.Errorf("failed to check chunk integrity: %w", err)
 		}
 
-		response := models.Websites{
+		// Create a response object with website information
+		response := &models.Websites{
 			Address:      contractAddress,
-			Name:         domainNames[i],
+			Name:         domainName,
+			Description:  websiteDescription,
 			BrokenChunks: missingChunks,
 		}
-		responses = append(responses, &response)
+		responses[index] = response
 	}
 
 	return responses, nil

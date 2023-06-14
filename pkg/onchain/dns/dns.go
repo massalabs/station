@@ -33,6 +33,7 @@ func SetRecord(
 	client *node.Client,
 	nickname string,
 	url string,
+	description string,
 	smartContract string,
 	operationBatch sendoperation.OperationBatch,
 ) (string, error) {
@@ -43,6 +44,8 @@ func SetRecord(
 	rec = append(rec, []byte(url)...)
 	rec = append(rec, convert.U32ToBytes(len(smartContract))...)
 	rec = append(rec, []byte(smartContract)...)
+	rec = append(rec, convert.U32ToBytes(len(description))...)
+	rec = append(rec, []byte(description)...)
 
 	operationWithEventResponse, err := onchain.CallFunction(
 		client,

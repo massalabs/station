@@ -22,6 +22,8 @@ Zip Test Website
     Archive Should Contain File    ${CURDIR}/${TEST_ZIP_FILE}    index.html
 
 Set Suite Variables
-    ${website_url}=    Generate Random String    8    [LOWER][NUMBERS]
-    ${website_url}=    Set Variable    test${website_url}
+    ${random_string}=    Generate Random String    8    [LOWER][NUMBERS]
+    ${website_url}=    Set Variable    test${random_string}
+    ${website_description}=    Set Variable    description${random_string}
     Set Suite Variable    ${website_url}    ${website_url}
+    Set Suite Variable    ${website_description}    ${website_description}

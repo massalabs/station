@@ -17,7 +17,7 @@ PUT /websiteUploader/prepare
     [Documentation]    Prepare a website for creation.
 
     ${zip}=    Get File For Streaming Upload    ${CURDIR}/${TEST_ZIP_FILE}
-    ${data}=    Create Dictionary    nickname=${WALLET_NICKNAME}    url=${website_url}
+    ${data}=    Create Dictionary    url=${website_url}    description=${website_description}    nickname=${WALLET_NICKNAME}
     ${file}=    Create Dictionary    zipfile=${zip}
     ${response}=    PUT
     ...    ${API_URL}/websiteUploader/prepare
