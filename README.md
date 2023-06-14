@@ -1,51 +1,53 @@
-# thyra
+# MassaStation: An entrance to the Massa blockchain
 
-[![CI](https://github.com/massalabs/thyra/actions/workflows/CI.yml/badge.svg)](https://github.com/massalabs/thyra/actions/workflows/CI.yml)
+[![CI](https://github.com/massalabs/thyra/actions/workflows/api.yml/badge.svg)](https://github.com/massalabs/thyra/actions/workflows/api.yml)
 [![codecov](https://codecov.io/gh/massalabs/thyra/branch/main/graph/badge.svg?token=592LPZLC4M)](https://codecov.io/gh/massalabs/thyra)
 [![Go Report Card](https://goreportcard.com/badge/github.com/massalabs/thyra)](https://goreportcard.com/report/github.com/massalabs/thyra)
 
-An entrance to the Massa blockchain.
 
-## Contribute
+## Install MassaStation
 
-To contribute to this project, please read our [Contributor's Guide](./CONTRIBUTING.md).
+To install MassaStation, please follow the instructions available in the [Installation Guide](./INSTALLATION.md).
 
-## Install thyra
 
-To install Thyra, please follow the instructions available in the [Installation Guide](./INSTALLATION.md).
+## Contributing
 
-## Install a plugin
+We welcome contributions of all kinds, from bug reports to feature requests and code contributions.
 
-Copy/paste the latest release .zip file to Thyra [plugin manager page](https://station.massa/store)
+If you're interested in contributing to MassaStation, please make sure to read our [Contribution Guidelines](./CONTRIBUTING.md) for detailed instructions on how to get started. 
+
 
 ## Going further
 
-### Use your own node with Thyra
+### Modules (plugins)
 
-Thyra accepts different options that you can specify when you start the program. Like this you will be able to use your own node, for instance.
-In this section you will find a non-exhaustive list of options and examples of how you can use them.
+MassaStation is a module manager. It enables everyone to use, create and enjoy different modules to activate features to the Massa blockchain.
 
+#### Install a module
 
---node-server : Specify which Massa network Thyra will communicate with while running.
-Accepts a URL, an IP address or one of the following values :
+You can install modules that were validated by Massa Labs from the [Module Store](https://station.massa/store/).
 
-- TESTNET : Uses Massa's testnet
-- LABNET : Uses Massa's labnet
-- BUILDNET : Uses Massa's buildnet
-- LOCALHOST : Expect Massa's network to be hosted at 127.0.0.1
-
-To use this option with a constant, you have to execute :
-`massastation --node-server=LABNET`
-To use this option with a custom IP address, you have to execute :
-`massastation --node-server=192.168.X.X`
+The module will be automatically installed and activated after a few seconds directly in your Station. Browse MassaStation store to find the module you need.
 
 
-## Additional information
+#### Create a module
 
-### Why this name?
+If you are working on a module, you can install it manually to test it using MassaStation:
+1. Get the `.zip` file download URL of the module you want to install. Make sure this URL matches the version of MassaStation you are using, your computer OS and architecture.
+2. Paste the URL in the `Install a plugin` field of the [module manager page](https://station.massa/store/).
+3. Click on the `Install` button.
 
-θύρα (thýra) in ancient Greek means door, entrance. This is exactly what this project is: an entrance to the Massa blockchain.
+> **Note:** A complete guide on how to create a module will be available soon.
 
-### How to pronounce it?
 
-See <https://www.youtube.com/watch?v=_0BQ7sSJMTw>.
+### Network
+
+MassaStation can be configured to use your own node or one of Massa's networks. To do so, you have to use the `--node-server` option. This option accepts a URL, an IP address or one of the following values :
+
+- `TESTNET` : Connects MassaStation to a node running on Massa's testnet. This is the default value.
+- `LABNET` : Connects MassaStation to a node running on Massa's labnet.
+- `BUILDNET` : Connects MassaStation to a node running on Massa's buildnet.
+- `LOCALHOST` : Connects MassaStation to the node running on the same machine as MassaStation, and so, available at `127.0.0.1`.
+
+It is also possible to use a custom IP address or URL:
+`massastation --node-server={IP_ADDRESS}`
