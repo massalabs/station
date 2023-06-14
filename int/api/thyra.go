@@ -71,10 +71,10 @@ func MassaStationHomeHandler(params operations.MassaStationHomeParams) middlewar
 	return NewCustomResponder(content, contentType(params.Resource), http.StatusOK)
 }
 
-func ThyraPluginManagerHandler(params operations.ThyraPluginManagerParams) middleware.Responder {
+func MassaStationPluginManagerHandler(params operations.MassaStationPluginManagerParams) middleware.Responder {
 	content, err := contentReact.ReadFile(basePathReact + "plugin-manager/" + params.Resource)
 	if err != nil {
-		return operations.NewThyraPluginManagerNotFound()
+		return operations.NewMassaStationPluginManagerNotFound()
 	}
 
 	return NewCustomResponder(content, contentType(params.Resource), http.StatusOK)
