@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { useResource } from '../../custom/api';
+import { useResource } from '../../../custom/api';
 import { useNavigate } from 'react-router-dom';
-import { routeFor } from '../../utils';
-import Intl from '../../i18n/i18n';
+import { routeFor } from '../../../utils';
+import Intl from '../../../i18n/i18n';
 
 import StorePlugin from './StorePlugin';
 
@@ -16,7 +16,7 @@ export interface IMassaPlugin {
   updatable: boolean;
 }
 
-function MyStore() {
+function StoreSection() {
   const navigate = useNavigate();
   const {
     error,
@@ -49,4 +49,4 @@ function MyStore() {
   );
 }
 
-export default MyStore;
+export default StoreSection;

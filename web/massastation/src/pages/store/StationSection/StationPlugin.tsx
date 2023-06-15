@@ -8,15 +8,12 @@ import {
   Plugin,
 } from '@massalabs/react-ui-kit';
 import { FiArrowUpRight, FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
-import { IMassaPlugin } from './MyStation';
-
-import { usePost, useResource, useDelete } from '../../custom/api';
+import { IMassaPlugin } from './StationSection';
 import {
   massalabsNomination,
   PLUGIN_START,
   PLUGIN_STOP,
-  PLUGIN_UPDATE,
-} from '../../utils/massaConstants';
+} from '../../../utils/massaConstants';
 
 enum PluginStatus {
   Up = 'Up',
@@ -135,3 +132,5 @@ export function MyPlugin({
   };
   return <Plugin {...(status === PluginStatus.Up ? argsOn : argsOff)} />;
 }
+
+export default StationPlugin;
