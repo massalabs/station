@@ -2,6 +2,7 @@ import { FiCodepen, FiGlobe, FiHome } from 'react-icons/fi';
 import { Navigator, LayoutStation } from '@massalabs/react-ui-kit';
 import Intl from '../../i18n/i18n';
 import MyStation from './MyStation';
+import MyStore from './MyStore';
 
 export function Store() {
   let navigator = (
@@ -35,6 +36,10 @@ export function Store() {
         {Intl.t('store.mystation-banner')}
       </div>
       <MyStation />
+      <div className="mas-menu-active mb-4 text-neutral">
+        {Intl.t('store.store-banner')}
+      </div>
+      <MyStore />
     </LayoutStation>
   );
 }
