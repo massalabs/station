@@ -7,12 +7,12 @@ import {
   Plugin,
 } from '@massalabs/react-ui-kit';
 import { FiArrowUpRight, FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
-import { IMassaPlugin } from './MyStation';
+import { IMassaPlugin } from './StationSection';
 import {
   massalabsNomination,
   PLUGIN_START,
   PLUGIN_STOP,
-} from '../../utils/massaConstants';
+} from '../../../utils/massaConstants';
 
 enum PluginStatus {
   // Up And Down are sent by the BE, we use the On/Off standard to stick to design
@@ -20,7 +20,7 @@ enum PluginStatus {
   Off = 'Down',
 }
 
-function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
+function StationPlugin({ plugin }: { plugin: IMassaPlugin }) {
   const [myPlugin, setMyPlugin] = useState<IMassaPlugin>(plugin);
   let { author, name, logo, status, updatable } = myPlugin;
 
@@ -97,4 +97,4 @@ function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
   return <Plugin {...(status === PluginStatus.On ? argsOn : argsOff)} />;
 }
 
-export default MyPlugin;
+export default StationPlugin;

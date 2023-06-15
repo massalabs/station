@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Certificate, MassaWallet, Plugin } from '@massalabs/react-ui-kit';
-import { IMassaPlugin } from './MyStore';
-import { massalabsNomination } from '../../utils/massaConstants';
+import { IMassaPlugin } from './StoreSection';
+import { massalabsNomination } from '../../../utils/massaConstants';
 import { FiDownload } from 'react-icons/fi';
 
 enum PluginStatus {
@@ -10,7 +10,7 @@ enum PluginStatus {
   Off = 'Down',
 }
 
-export default function StorePlugin({ plugin }: { plugin: IMassaPlugin }) {
+function StorePlugin({ plugin }: { plugin: IMassaPlugin }) {
   const [myPlugin, setMyPlugin] = useState<IMassaPlugin>(plugin);
 
   let { author, name, logo, status, description } = myPlugin;
@@ -49,3 +49,5 @@ export default function StorePlugin({ plugin }: { plugin: IMassaPlugin }) {
     </>
   );
 }
+
+export default StorePlugin;
