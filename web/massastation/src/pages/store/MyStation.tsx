@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useResource } from '../../custom/api';
 import { useNavigate } from 'react-router-dom';
 import { routeFor } from '../../utils';
+import Intl from '../../i18n/i18n';
 
 import MyPlugin from './MyPlugin';
 
@@ -20,9 +21,8 @@ function MyStation() {
   const {
     error,
     data: plugins,
-    status,
+    isLoading,
   } = useResource<IMassaPlugin[]>('plugin-manager');
-  const isLoadingData = status === 'loading';
 
   useEffect(() => {
     if (error) {
@@ -32,18 +32,19 @@ function MyStation() {
 
   return (
     <>
-      {isLoadingData ? (
-        <div className="mas-menu-active mb-4 text-neutral">Loading</div>
+      {isLoading ? (
+        <div className="mas-body mb-4 text-neutral">
+          {Intl.t('store.mystation.loading')}
+        </div>
       ) : plugins && plugins.length > 0 ? (
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-4 flex-wrap">
           {plugins.map((plugin) => (
             <MyPlugin key={plugin.name} plugin={plugin} />
           ))}
         </div>
       ) : (
         <div className="mas-body mb-4 text-neutral">
-          Browse the store below and manage plugin you've installed in this
-          section
+          {Intl.t('store.mystation.browse')}
         </div>
       )}
     </>

@@ -8,73 +8,83 @@ import {
 } from '@massalabs/react-ui-kit';
 import { FiArrowUpRight, FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
 import { IMassaPlugin } from './MyStation';
+import {
+  massalabsNomination,
+  PLUGIN_START,
+  PLUGIN_STOP,
+} from '../../utils/massaConstants';
 
 enum PluginStatus {
-  Up = 'Up',
-  Down = 'Down',
+  // Up And Down are sent by the BE, we use the On/Off standard to stick to design
+  On = 'Up',
+  Off = 'Down',
 }
 
 function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
   const [myPlugin, setMyPlugin] = useState<IMassaPlugin>(plugin);
+  let { author, name, logo, status, updatable } = myPlugin;
+
   function handlePluginState(method: string) {
     // TODO :
     // const {mutate } = usePost<any>("plugin-manager");
     // const ok = mutate({method:"${method}"})
-    const newStatus = method === 'start' ? PluginStatus.Up : PluginStatus.Down;
+    const newStatus =
+      method === PLUGIN_START ? PluginStatus.On : PluginStatus.Off;
     const updatedPlugin = { ...myPlugin, status: newStatus };
     setMyPlugin(updatedPlugin);
   }
   const argsOn = {
-    preIcon:
-      myPlugin.author === 'MassaLabs' ? (
-        <MassaWallet variant="rounded" />
-      ) : (
-        <img src={myPlugin.logo} />
-      ),
+    preIcon: massalabsNomination.includes(author) ? (
+      <MassaWallet variant="rounded" />
+    ) : (
+      <img src={logo} />
+    ),
     topAction: (
-      <Button onClick={() => handlePluginState('stop')} variant="toggle">
+      <Button onClick={() => handlePluginState(PLUGIN_STOP)} variant="toggle">
         on
       </Button>
     ),
-    title: `${myPlugin.name} `,
-    subtitle: `${myPlugin.author}`,
-    subtitleIcon: myPlugin.author === 'MassaLabs' ? <Certificate /> : <></>,
+    title: name,
+    subtitle: author,
+    subtitleIcon: massalabsNomination.includes(author) ? (
+      <Certificate />
+    ) : (
+      <></>
+    ),
     content: [
-      // conditionally render the update icon based on the updatable property
-      myPlugin.updatable && (
-        <Button variant="icon" onClick={() => console.log('reload')}>
+      updatable && (
+        <Button variant="icon">
           <FiRefreshCcw className="text-s-warning" />
         </Button>
       ),
-      <Button variant="icon" onClick={() => console.log('arrow')}>
+      <Button variant="icon">
         <FiArrowUpRight />
       </Button>,
-      <Button variant="icon" onClick={() => console.log('trash')}>
+      <Button variant="icon">
         <FiTrash2 />
       </Button>,
     ],
   };
 
   const argsOff = {
-    preIcon:
-      myPlugin.author === 'MassaLabs' ? (
-        <MassaWallet variant="rounded" />
-      ) : (
-        <img src={myPlugin.logo} />
-      ),
+    preIcon: massalabsNomination.includes(author) ? (
+      <MassaWallet variant="rounded" />
+    ) : (
+      <img src={logo} />
+    ),
     topAction: (
       // we use customClass because "disabled" doesn't let us click on the button to turn it back on
       <Button
-        onClick={() => handlePluginState('start')}
+        onClick={() => handlePluginState(PLUGIN_START)}
         customClass="bg-primary text-tertiary"
         variant="toggle"
       >
         off
       </Button>
     ),
-    title: `${myPlugin.name}`,
-    subtitle: `${myPlugin.author}`,
-    subtitleIcon: myPlugin.author === 'MassaLabs' ? <Certificate /> : null,
+    title: name,
+    subtitle: author,
+    subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
     content: [
       <Button variant="icon" disabled>
         <FiArrowUpRight />
@@ -84,7 +94,7 @@ function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
       </Button>,
     ],
   };
-  return <Plugin {...(myPlugin.status === 'Up' ? argsOn : argsOff)} />;
+  return <Plugin {...(status === PluginStatus.On ? argsOn : argsOff)} />;
 }
 
 export default MyPlugin;

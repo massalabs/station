@@ -1,5 +1,6 @@
 import { FiCodepen, FiGlobe, FiHome } from 'react-icons/fi';
 import { Navigator, LayoutStation } from '@massalabs/react-ui-kit';
+import Intl from '../../i18n/i18n';
 import MyStation from './MyStation';
 
 export function Store() {
@@ -19,14 +20,20 @@ export function Store() {
           isActive: false,
         },
       ]}
+      // these are mandatory and cannot be remove
+      // correct redirect will be implemented later
       onClickNext={() => console.log('Next clicked')}
       onClickBack={() => console.log('Back clicked')}
     />
   );
   return (
     <LayoutStation navigator={navigator}>
-      <div className="mas-banner text-neutral mb-10 mt-24">Modules</div>
-      <div className="mas-menu-active mb-4 text-neutral">My Station</div>
+      <div className="mas-banner text-neutral mb-10 mt-24">
+        {Intl.t('store.modules-banner')}
+      </div>
+      <div className="mas-menu-active mb-4 text-neutral">
+        {Intl.t('store.mystation-banner')}
+      </div>
       <MyStation />
     </LayoutStation>
   );
