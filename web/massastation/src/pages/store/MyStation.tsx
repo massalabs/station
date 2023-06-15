@@ -8,6 +8,7 @@ import { MyPlugin } from './MyPlugin';
 
 export interface IMassaPlugin {
   name: string;
+  id: string;
   author: string;
   description: string;
   logo: string;
@@ -39,7 +40,7 @@ export function MyStation() {
       ) : plugins && plugins.length > 0 ? (
         <div className="flex gap-4 flex-wrap">
           {plugins.map((plugin) => (
-            <MyPlugin key={plugin.name} plugin={plugin} />
+            <MyPlugin key={plugin.id} plugin={plugin} />
           ))}
         </div>
       ) : (
