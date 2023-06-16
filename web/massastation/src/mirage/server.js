@@ -1,61 +1,10 @@
 import { createServer, Model, Factory } from 'miragejs';
 import { faker } from '@faker-js/faker';
 import { ENV } from '../const/env/env';
-const badRequest = new Response(400, {}, { error: 'Bad Request' });
-const notFound = new Response(404, {}, { error: 'Not Found' });
-const unprocessableEntity = new Response(
-  422,
-  {},
-  { error: 'Unprocessable Entity' },
-);
 
 /**
- * Updates the plugin
  *
- * @param plugin the plugin to update
- * @returns the updated plugin
- */
-function update(plugin) {
-  // increment the version number
-  if (plugin === undefined) return unprocessableEntity;
-  const pluginVersion = plugin.version.split('.');
-  // split the version number into an array
-  // increment the patch number
-  pluginVersion[2] = parseInt(pluginVersion[2]) + 1;
-  plugin.update({
-    version: pluginVersion.join('.'),
-    updatable: false,
-  });
-  return plugin;
-}
-/**
- * Starts the plugin
- *
- * @param plugin the plugin to start
- * @returns the started plugin
- */
-function start(plugin) {
-  if (plugin === undefined) return unprocessableEntity;
-  plugin.update({ status: 'Up' });
-  return plugin;
-}
-/**
- * Stops the plugin
- *
- * @param plugin the plugin to stop
- * @returns the stopped plugin
- */
-function stop(plugin) {
-  if (plugin === undefined) return unprocessableEntity;
-  plugin.update({ status: 'Down' });
-  return plugin;
-}
-
-/**
- * Creates a mocked server
- *
- * @param environment the environment to mock
- * @returns the mocked server
+ * @param environment
  */
 function mockServer(environment = ENV.DEV) {
   const commonVariable = 'Common Value';
@@ -81,9 +30,6 @@ function mockServer(environment = ENV.DEV) {
           const name = this.name.toLowerCase();
           return `/plugin/massalabs/${name}/`;
         },
-        id() {
-          return faker.number.int();
-        },
         logo() {
           const name = this.name.toLowerCase();
           return `/plugin/massalabs/${name}/logo.svg`;
@@ -98,32 +44,39 @@ function mockServer(environment = ENV.DEV) {
       }),
     },
     seeds(server) {
-      server.createList('plugin', Math.floor(Math.random() * 8));
+      server.createList('plugin', 2);
     },
     routes() {
       this.get('/plugin-manager', (schema) => {
         let { models: plugins } = schema.plugins.all();
         return plugins;
       });
+      this.get('/plugin-manager/:id', (schema, request) => {
+        const { id } = request.params;
+        let plugin = schema.plugins.find(id);
+        if (!plugin)
+          return new Response(404, {}, { code: '404', error: 'Not Found' });
+        return plugin.attrs;
+      });
 
       this.post('/plugin-manager/:id/execute', (schema, request) => {
-        const { method } = JSON.parse(request.requestBody);
+        const { command } = JSON.parse(request.requestBody);
         const { id } = request.params;
-
         const plugin = schema.plugins.find(id);
+        console.log('plugin found', plugin);
 
         if (!plugin)
           return new Response(404, {}, { code: '404', error: 'Not Found' });
 
-        const status = ['update', 'start'].includes(method) ? 'Up' : 'Down';
-        const updatable = method === 'update' ? false : plugin.updatable;
+        const status = ['update', 'start'].includes(command) ? 'Up' : 'Down';
+        const updatable = command === 'update' ? false : plugin.updatable;
 
         plugin.update({
           version: faker.system.semver(),
           status,
           updatable,
         });
-
+        console.log('result', plugin, 'for id ', id);
         return new Response(200, {});
       });
 

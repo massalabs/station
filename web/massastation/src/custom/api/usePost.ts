@@ -8,13 +8,13 @@ import { UseMutationResult, useMutation } from '@tanstack/react-query';
 
 export function usePost<T, P = unknown>(
   resource: string,
-): UseMutationResult<P, unknown, T, unknown> {
+): UseMutationResult<T, unknown, T, unknown> {
   var url = `${import.meta.env.VITE_BASE_API}/${resource}`;
 
-  return useMutation<P, unknown, T, unknown>({
+  return useMutation<T, unknown, T, unknown>({
     mutationKey: [resource],
     mutationFn: async (payload) => {
-      const { data } = await axios.post<P>(url, payload);
+      const { data } = await axios.post<T>(url, payload);
 
       return data;
     },
