@@ -442,7 +442,7 @@ paths:
                   x-nullable: false
                 updatable:
                   description: Whether the plugin can be updated.
-                  type: string
+                  type: boolean
 
 
         "400":
