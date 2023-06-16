@@ -23,6 +23,9 @@ enum PluginStatus {
 interface PluginPostMethod {
   method: string;
 }
+interface IDataReturn {
+  plugin: IMassaPlugin;
+}
 
 export function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
   const [myPlugin, setMyPlugin] = useState<IMassaPlugin>(plugin);
@@ -30,13 +33,14 @@ export function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
 
   const { mutate, data, isSuccess, isLoading } = usePost<
     PluginPostMethod,
-    IMassaPlugin
+    IDataReturn
   >(`plugin-manager/${id}`);
 
   useEffect(() => {
     if (!isLoading) {
-      if (isSuccess) {
-        setMyPlugin(data);
+      if (isSuccess && data) {
+        console.log(data);
+        setMyPlugin(data.plugin);
       }
     }
   }),
@@ -45,16 +49,6 @@ export function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
   function changePluginStatus(method: string) {
     mutate({ method: method });
   }
-
-  // function handlePluginState(method: string) {
-  // TODO :
-  // const {mutate } = usePost<any>("plugin-manager");
-  // const ok = mutate({method:"${method}"})
-  // const newStatus = method === PLUGIN_START ? PluginStatus.On : PluginStatus.Off;
-
-  // const updatedPlugin = changePluginStatus(method);
-  // setMyPlugin(updatedPlugin);
-  // }
 
   const argsOn = {
     preIcon: massalabsNomination.includes(author) ? (
