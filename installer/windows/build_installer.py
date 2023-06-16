@@ -16,7 +16,7 @@ import zipfile
 BUILD_DIR = "buildmsi"
 
 # Metadata
-MANUFACTURER = "Massa Labs"
+MANUFACTURER = "MassaLabs"
 PRODUCT_NAME = "MassaStation"
 VERSION = "0.0.0"
 
