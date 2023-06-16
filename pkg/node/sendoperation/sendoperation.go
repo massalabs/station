@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/massalabs/thyra/pkg/config"
-	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/node/base58"
+	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/node"
+	"github.com/massalabs/station/pkg/node/base58"
 )
 
 const DefaultGasLimit = 700_000_000

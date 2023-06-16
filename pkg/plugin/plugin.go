@@ -16,7 +16,7 @@ import (
 	"sync"
 
 	"github.com/gosimple/slug"
-	"github.com/massalabs/thyra/pkg/store"
+	"github.com/massalabs/station/pkg/store"
 )
 
 //go:generate stringer -type=Status

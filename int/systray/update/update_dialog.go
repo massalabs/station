@@ -4,7 +4,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
-	"github.com/massalabs/thyra/int/systray/utils"
+	"github.com/massalabs/station/int/systray/utils"
 )
 
 const (
@@ -12,7 +12,7 @@ const (
 	updateWindowTitle = "MassaStation update available"
 
 	// downloadURL is the URL to the latest release on GitHub.
-	downloadURL = "https://github.com/massalabs/thyra/releases/latest"
+	downloadURL = "https://github.com/massalabs/station/releases/latest"
 )
 
 // Finds the update dialog window by its title.

@@ -6,12 +6,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/massalabs/thyra/pkg/config"
-	"github.com/massalabs/thyra/pkg/convert"
-	"github.com/massalabs/thyra/pkg/node"
-	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
-	"github.com/massalabs/thyra/pkg/onchain"
-	"github.com/massalabs/thyra/pkg/onchain/dns"
+	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/convert"
+	"github.com/massalabs/station/pkg/node"
+	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
+	"github.com/massalabs/station/pkg/onchain"
+	"github.com/massalabs/station/pkg/onchain/dns"
 )
 
 //go:embed sc

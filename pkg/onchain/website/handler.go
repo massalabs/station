@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/massalabs/thyra/api/interceptor"
-	"github.com/massalabs/thyra/pkg/config"
-	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/onchain/dns"
+	"github.com/massalabs/station/api/interceptor"
+	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/node"
+	"github.com/massalabs/station/pkg/onchain/dns"
 )
 
 func handleMassaDomainRequest(writer http.ResponseWriter, reader *http.Request, index int, config config.AppConfig) {

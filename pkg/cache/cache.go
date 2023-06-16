@@ -8,7 +8,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/massalabs/thyra/pkg/config"
+	"github.com/massalabs/station/pkg/config"
 )
 
 func fullPath(fileName string) (string, error) {

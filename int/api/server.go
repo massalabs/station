@@ -6,16 +6,16 @@ import (
 
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
-	"github.com/massalabs/thyra/api/swagger/server/restapi"
-	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/int/api/cmd"
-	"github.com/massalabs/thyra/int/api/massa"
-	"github.com/massalabs/thyra/int/api/myplugin"
-	"github.com/massalabs/thyra/int/api/pluginstore"
-	"github.com/massalabs/thyra/int/api/websites"
-	"github.com/massalabs/thyra/pkg/config"
-	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/store"
+	"github.com/massalabs/station/api/swagger/server/restapi"
+	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/int/api/cmd"
+	"github.com/massalabs/station/int/api/massa"
+	"github.com/massalabs/station/int/api/myplugin"
+	"github.com/massalabs/station/int/api/pluginstore"
+	"github.com/massalabs/station/int/api/websites"
+	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/node"
+	"github.com/massalabs/station/pkg/store"
 )
 
 type StartServerFlags struct {

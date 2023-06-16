@@ -2,9 +2,9 @@ package massa
 
 import (
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/massalabs/thyra/api/swagger/server/models"
-	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/pkg/config"
+	"github.com/massalabs/station/api/swagger/server/models"
+	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/pkg/config"
 )
 
 func NewGetNodeHandler(config *config.AppConfig) operations.GetNodeHandler {

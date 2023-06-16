@@ -4,8 +4,8 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/massalabs/thyra/pkg/node/base58"
-	serializeAddress "github.com/massalabs/thyra/pkg/node/sendoperation/serializeaddress"
+	"github.com/massalabs/station/pkg/node/base58"
+	serializeAddress "github.com/massalabs/station/pkg/node/sendoperation/serializeaddress"
 )
 
 const CallSCOpID = uint64(4)

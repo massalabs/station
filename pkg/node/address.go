@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/massalabs/thyra/pkg/convert"
+	"github.com/massalabs/station/pkg/convert"
 )
 
 type Address struct {
