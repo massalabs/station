@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { routeFor } from '../../utils';
 import Intl from '../../i18n/i18n';
 
-import MyPlugin from './MyPlugin';
+import { MyPlugin } from './MyPlugin';
 
 export interface IMassaPlugin {
   name: string;
@@ -16,7 +16,7 @@ export interface IMassaPlugin {
   updatable: boolean;
 }
 
-function MyStation() {
+export function MyStation() {
   const navigate = useNavigate();
   const {
     error,
@@ -50,5 +50,3 @@ function MyStation() {
     </>
   );
 }
-
-export default MyStation;

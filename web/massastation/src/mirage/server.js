@@ -56,6 +56,7 @@ function mockServer(environment = ENV.DEV) {
         let { models: plugins } = schema.plugins.all();
         return plugins;
       });
+
       this.post('/plugin-manager/:id/execute', (schema, request) => {
         const { method } = JSON.parse(request.requestBody);
         const { id } = request.params;

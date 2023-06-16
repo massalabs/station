@@ -1,6 +1,8 @@
 import { Outlet } from 'react-router-dom';
 import { useLocalStorage } from '../../custom/useLocalStorage';
 import { FiSun, FiMoon } from 'react-icons/fi';
+import { Navigator, LayoutStation } from '@massalabs/react-ui-kit';
+import { FiCodepen, FiGlobe, FiHome } from 'react-icons/fi';
 
 type ThemeSettings = {
   [key: string]: {
@@ -27,6 +29,29 @@ export const themeSettings: ThemeSettings = {
   },
 };
 
+const navigator = (
+  <Navigator
+    items={[
+      {
+        icon: <FiHome />,
+        isActive: false,
+      },
+      {
+        icon: <FiCodepen />,
+        isActive: true,
+      },
+      {
+        icon: <FiGlobe />,
+        isActive: false,
+      },
+    ]}
+    // these are mandatory and cannot be remove
+    // correct redirect will be implemented later
+    onClickNext={() => console.log('Next clicked')}
+    onClickBack={() => console.log('Back clicked')}
+  />
+);
+
 function Base() {
   const [theme, setTheme] = useLocalStorage<string>(
     'massa-station-theme',
@@ -43,7 +68,9 @@ function Base() {
     // remove theme-dark
     // this needs to be removed as soon we fix the steps to create an account
     <div className={`${theme}`}>
-      <Outlet context={context} />
+      <LayoutStation navigator={navigator}>
+        <Outlet context={context} />
+      </LayoutStation>
     </div>
   );
 }
