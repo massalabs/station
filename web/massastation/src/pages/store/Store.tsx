@@ -1,10 +1,13 @@
 import { FiCodepen, FiGlobe, FiHome } from 'react-icons/fi';
 import { Navigator, LayoutStation } from '@massalabs/react-ui-kit';
-import Intl from '../../i18n/i18n';
+
+import SidePanel from './Sidepanel';
 import StationSection from './StationSection/StationSection';
 import StoreSection from './StoreSection/StoreSection';
+import Intl from '../../i18n/i18n';
 
 export function Store() {
+  const url = 'https://massa.massa.net';
   let navigator = (
     <Navigator
       items={[
@@ -43,6 +46,7 @@ export function Store() {
           {Intl.t('store.store-banner')}
         </div>
         <StoreSection />
+        <SidePanel url={url} />
       </div>
     </LayoutStation>
   );
