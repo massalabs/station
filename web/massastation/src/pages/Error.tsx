@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import Intl from '../i18n/i18n';
 
-export default function Error() {
+export function Error() {
   return (
     <div id="error-page">
       <h1 className="mas-banner">{Intl.t('unexpected-error.title')}</h1>
