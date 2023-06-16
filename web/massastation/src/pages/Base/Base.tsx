@@ -52,7 +52,7 @@ const navigator = (
   />
 );
 
-function Base() {
+export function Base() {
   const [theme, setTheme] = useLocalStorage<string>(
     'massa-station-theme',
     'theme-dark',
@@ -74,5 +74,3 @@ function Base() {
     </div>
   );
 }
-
-export default Base;

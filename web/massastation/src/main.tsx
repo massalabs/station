@@ -10,18 +10,14 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import '@massalabs/react-ui-kit/src/global.css';
+import './index.css';
 
 import { ENV } from './const/env/env';
-import './index.css';
+import { Error, NotFound, Index, Base, Store } from './pages/index';
 import mockServer from './mirage/server.js';
-import Error from './pages/Error.tsx';
-import NotFound from './pages/NotFound.tsx';
-import Base from './pages/Base/Base.tsx';
-import { Store } from './pages/store/Store.tsx';
 
 const baseURL = import.meta.env.VITE_BASE_APP;
 
-// Add ENV.STANDALONE to the array to enable MirageJS
 if ([ENV.DEV, ENV.TEST].includes(baseURL)) {
   mockServer(baseURL);
 }
@@ -32,7 +28,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path={baseURL} element={<Base />}>
       {/* routes for pages */}
-      <Route path="index" element={null} />
+      <Route path="index" element={<Index />} />
       <Route path="store" element={<Store />} />
 
       {/* routes for errors */}
