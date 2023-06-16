@@ -440,6 +440,10 @@ paths:
                   description: Plugin version.
                   type: string
                   x-nullable: false
+                updatable:
+                  description: Whether the plugin can be updated.
+                  type: boolean
+
 
         "400":
           description: Bad request.
@@ -1050,11 +1054,17 @@ definitions:
     properties:
       name:
         type: string
+      author:
+        type: string
       description:
         type: string
       version:
         type: string
       url:
+        type: string
+      logo:
+        type: string
+      massastationMinVersion:
         type: string
       file:
         $ref: '#/definitions/File'
