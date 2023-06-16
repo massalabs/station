@@ -4,6 +4,8 @@ import Intl from '../../i18n/i18n';
 import { useResource } from '../../custom/api';
 import StationSection from './StationSection/StationSection';
 import StoreSection from './StoreSection/StoreSection';
+import { useOutletContext } from 'react-router-dom';
+import { IOutletContextType } from '../Base/Base';
 
 export function Store() {
   const getPlugins = useResource<IMassaPlugin[]>('plugin-manager');
