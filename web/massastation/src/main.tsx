@@ -6,7 +6,6 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
-  Navigate,
 } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -16,6 +15,7 @@ import { ENV } from './const/env/env';
 import './index.css';
 import mockServer from './mirage/server.js';
 import Error from './pages/Error.tsx';
+import NotFound from './pages/NotFound.tsx';
 import Base from './pages/Base/Base.tsx';
 import { Store } from './pages/store/Store.tsx';
 
@@ -32,16 +32,12 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path={baseURL} element={<Base />}>
       {/* routes for pages */}
-      <Route path="index" element={<></>} />
+      <Route path="index" element={null} />
       <Route path="store" element={<Store />} />
 
       {/* routes for errors */}
       <Route path="error" element={<Error />} />
-      <Route path="*" element={<Error />} />
-      <Route
-        path={`${baseURL}/`}
-        element={<Navigate to={`${baseURL}/index`} />}
-      />
+      <Route path="*" element={<NotFound />} />
     </Route>,
   ),
 );
