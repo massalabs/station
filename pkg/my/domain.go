@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"text/template"
 
 	"github.com/massalabs/thyra/api/swagger/server/models"
 	"github.com/massalabs/thyra/pkg/config"
@@ -84,6 +85,9 @@ func GetWebsites(config config.AppConfig, client *node.Client, domainNames []str
 		contractAddress := dnsValues[0]
 		websiteDescription := dnsValues[2]
 
+		// Prevent XSS by escaping special characters in websiteDescription
+		escapedDescription := template.HTMLEscapeString(websiteDescription)
+
 		// Check chunk integrity for the contract address
 		missingChunks, err := getMissingChunkIds(client, contractAddress)
 		if err != nil {
@@ -94,7 +98,7 @@ func GetWebsites(config config.AppConfig, client *node.Client, domainNames []str
 		response := &models.Websites{
 			Address:      contractAddress,
 			Name:         domainName,
-			Description:  websiteDescription,
+			Description:  escapedDescription,
 			BrokenChunks: missingChunks,
 		}
 		responses[index] = response

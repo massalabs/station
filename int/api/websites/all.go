@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"text/template"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/thyra/api/swagger/server/models"
@@ -78,6 +79,9 @@ func Registry(config config.AppConfig) ([]*models.Registry, error) {
 		websiteStorerAddress := websiteValue[indexOfWebsiteAddress]
 		websiteDescription := websiteValue[indexOfWebsiteDescription]
 
+		// Prevent XSS by escaping special characters in websiteDescription
+		escapedDescription := template.HTMLEscapeString(websiteDescription)
+
 		websiteMetadata, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes(metaKey))
 		if err != nil {
 			return nil, fmt.Errorf("reading key '%s' at '%s': %w", metaKey, websiteStorerAddress, err)
@@ -86,7 +90,7 @@ func Registry(config config.AppConfig) ([]*models.Registry, error) {
 		registry[index] = &models.Registry{
 			Name:        convert.BytesToString(websiteNames[index]), // name of website : flappy.
 			Address:     websiteStorerAddress,                       // website Address
-			Description: websiteDescription,                         // website Description
+			Description: escapedDescription,                         // website Description
 			Metadata:    websiteMetadata.CandidateValue,             // website metadata.
 		}
 	}
