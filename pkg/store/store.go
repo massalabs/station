@@ -17,7 +17,9 @@ import (
 //nolint:tagliatelle
 type Plugin struct {
 	Name        string `json:"name"`
+	Author      string `json:"author"`
 	Description string `json:"description"`
+	Logo        string `json:"logo"`
 	Assets      struct {
 		Windows    File `json:"windows"`
 		Linux      File `json:"linux"`
