@@ -849,17 +849,18 @@ paths:
         - in: formData
           name: url
           type: string
-          pattern: "^[a-z0-9]+$"
+          pattern: "^[a-z0-9_-]+$"
           required: true
           x-nullable: false
-          description: URL using only Lowercase letters (a-z), and numbers (0-9).
-
+          description: URL using lowercase letters (a-z), numbers (0-9), hyphen (-), and underscore (_).
         - in: formData
           name: description
           type: string
+          pattern: "^[\p{L}\p{N}\p{P}\p{S} ]+$"
+          maxLength: 280
           required: true
           x-nullable: false
-          description: website description.
+          description: Website description. Must be a UTF-8 string with a maximum length of 280 characters.
         - in: formData
           name: nickname
           type: string
