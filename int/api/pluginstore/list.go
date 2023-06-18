@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime/middleware"
+  "github.com/gosimple/slug"
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/pkg/store"
@@ -29,13 +30,17 @@ func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 			return operations.NewPluginManagerListInternalServerError().WithPayload(
 				&models.Error{Code: errorCodeFetchStore, Message: fmt.Sprintf("Error getting OS info: %s", err.Error())})
 		}
-
+		folderLogo := slug.Make(plugin.Name)
+		plugin.Logo = fmt.Sprintf("https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/assets/%s/%s", folderLogo, plugin.Logo)
 		plugin := plugin
 		payload[index] = &models.PluginStoreItem{
-			Name:        &plugin.Name,
-			Description: &plugin.Description,
-			Version:     &plugin.Version,
-			URL:         &plugin.URL,
+			Name:                   &plugin.Name,
+			Author:                 plugin.Author,
+			Description:            &plugin.Description,
+			Version:                &plugin.Version,
+			Logo:                   plugin.Logo,
+			MassastationMinVersion: plugin.MassaStationVersion,
+			URL:                    &plugin.URL,
 			File: &models.File{
 				URL:      &pluginURL,
 				Checksum: &checksum,

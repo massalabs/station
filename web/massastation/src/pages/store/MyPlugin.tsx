@@ -20,7 +20,7 @@ enum PluginStatus {
   Off = 'Down',
 }
 
-function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
+export function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
   const [myPlugin, setMyPlugin] = useState<IMassaPlugin>(plugin);
   let { author, name, logo, status, updatable } = myPlugin;
 
@@ -96,5 +96,3 @@ function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
   };
   return <Plugin {...(status === PluginStatus.On ? argsOn : argsOff)} />;
 }
-
-export default MyPlugin;
