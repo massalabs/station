@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Button,
@@ -8,59 +9,97 @@ import {
 } from '@massalabs/react-ui-kit';
 import { FiArrowUpRight, FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
 import { IMassaPlugin } from './MyStation';
+
+import { usePost, useResource, useDelete } from '../../custom/api';
 import {
   massalabsNomination,
   PLUGIN_START,
   PLUGIN_STOP,
+  PLUGIN_UPDATE,
 } from '../../utils/massaConstants';
 
 enum PluginStatus {
-  // Up And Down are sent by the BE, we use the On/Off standard to stick to design
-  On = 'Up',
-  Off = 'Down',
+  Up = 'Up',
+  Down = 'Down',
 }
 
-export function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
-  const [myPlugin, setMyPlugin] = useState<IMassaPlugin>(plugin);
-  let { author, name, logo, status, updatable } = myPlugin;
+interface PluginPostMethod {
+  command: string;
+}
 
-  function handlePluginState(method: string) {
-    // TODO :
-    // const {mutate } = usePost<any>("plugin-manager");
-    // const ok = mutate({method:"${method}"})
-    const newStatus =
-      method === PLUGIN_START ? PluginStatus.On : PluginStatus.Off;
-    const updatedPlugin = { ...myPlugin, status: newStatus };
-    setMyPlugin(updatedPlugin);
+export function MyPlugin({
+  plugin,
+  fetchPlugins,
+}: {
+  plugin: IMassaPlugin;
+  fetchPlugins: () => void;
+}) {
+  const navigate = useNavigate();
+  const [myPlugin, setMyPlugin] = useState<IMassaPlugin>(plugin);
+  const { author, name, home, logo, status, updatable, id } = myPlugin;
+  const {
+    data: newPlugin,
+    refetch,
+    isRefetching,
+  } = useResource<IMassaPlugin>(`plugin-manager/${id}`);
+
+  const { mutate, isSuccess } = usePost<PluginPostMethod>(
+    `plugin-manager/${id}/execute`,
+  );
+
+  const { mutate: deletePlugin, isSuccess: deleteSuccess } = useDelete(
+    `plugin-manager/${id}`,
+  );
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (!isRefetching && newPlugin) {
+      setMyPlugin(newPlugin);
+    }
+  }, [isRefetching]);
+
+  useEffect(() => {
+    if (deleteSuccess) {
+      fetchPlugins();
+    }
+  }, [deleteSuccess]);
+
+  function updatePluginState(command: string) {
+    mutate({ command } as PluginPostMethod);
   }
+
   const argsOn = {
     preIcon: massalabsNomination.includes(author) ? (
       <MassaWallet variant="rounded" />
     ) : (
-      <img src={logo} />
+      <img src={logo} alt="Plugin Logo" />
     ),
     topAction: (
-      <Button onClick={() => handlePluginState(PLUGIN_STOP)} variant="toggle">
+      <Button onClick={() => updatePluginState(PLUGIN_STOP)} variant="toggle">
         on
       </Button>
     ),
     title: name,
     subtitle: author,
-    subtitleIcon: massalabsNomination.includes(author) ? (
-      <Certificate />
-    ) : (
-      <></>
-    ),
+    subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
     content: [
       updatable && (
         <Button variant="icon">
-          <FiRefreshCcw className="text-s-warning" />
+          <FiRefreshCcw
+            className="text-s-warning"
+            onClick={() => updatePluginState(PLUGIN_UPDATE)}
+          />
         </Button>
       ),
       <Button variant="icon">
-        <FiArrowUpRight />
+        <FiArrowUpRight onClick={() => navigate(home)} />
       </Button>,
-      <Button variant="icon">
+      <Button variant="icon" onClick={() => deletePlugin({})}>
         <FiTrash2 />
       </Button>,
     ],
@@ -75,7 +114,7 @@ export function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
     topAction: (
       // we use customClass because "disabled" doesn't let us click on the button to turn it back on
       <Button
-        onClick={() => handlePluginState(PLUGIN_START)}
+        onClick={() => updatePluginState(PLUGIN_START)}
         customClass="bg-primary text-tertiary"
         variant="toggle"
       >
@@ -89,10 +128,10 @@ export function MyPlugin({ plugin }: { plugin: IMassaPlugin }) {
       <Button variant="icon" disabled>
         <FiArrowUpRight />
       </Button>,
-      <Button variant="icon">
+      <Button variant="icon" onClick={() => deletePlugin({})}>
         <FiTrash2 />
       </Button>,
     ],
   };
-  return <Plugin {...(status === PluginStatus.On ? argsOn : argsOff)} />;
+  return <Plugin {...(status === PluginStatus.Up ? argsOn : argsOff)} />;
 }
