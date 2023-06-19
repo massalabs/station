@@ -1,6 +1,7 @@
 [PyLint]
 
 disable=broad-exception-caught,
+        anomalous-backslash-in-string,
 
 [FORMAT]
 

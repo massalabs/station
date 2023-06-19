@@ -15,6 +15,9 @@ import zipfile
 
 BUILD_DIR = "buildmsi"
 
+# Metadata
+MANUFACTURER = "MassaLabs"
+PRODUCT_NAME = "MassaStation"
 VERSION = "0.0.0"
 
 # Binaries to be included in the installer
@@ -140,10 +143,10 @@ def create_wxs_file():
     <Product
         Id="*"
         UpgradeCode="966ecd3d-a30f-4909-a0b4-0df045930e7d"
-        Name="MassaStation"
+        Name="{PRODUCT_NAME}"
         Language="1033"
         Version="{VERSION}"
-        Manufacturer="MassaLabs"
+        Manufacturer="{MANUFACTURER}"
     >
         <Package
             InstallerVersion="200"
@@ -205,12 +208,37 @@ def create_wxs_file():
                     </Component>
                 </Directory>
             </Directory>
+
+            <Directory Id="ProgramMenuFolder" Name="Programs">
+                <Directory Id="ApplicationProgramsFolder" Name="{MANUFACTURER}">
+                    <Component Id="ApplicationShortcutProgramMenu" Guid="e2f5b2a0-0b0a-4b1e-9b0e-9b0e9b0e9b0e">
+                        <Shortcut Id="ApplicationStartMenuShortcut" Name="{PRODUCT_NAME}" Target="[#MassaStationAppEXE]" WorkingDirectory="INSTALLDIR" />
+                        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
+                        <RegistryValue Root="HKCU" Key="Software\{MANUFACTURER}\{PRODUCT_NAME}" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+                    </Component>
+                </Directory>
+            </Directory>
+
+
+            <Directory Id="DesktopFolder" Name="Desktop">
+                <Component Id="ApplicationShortcutDesktop" Guid="3e6f0b0e-1e0b-5a3c-7b0c-9c007a32f0e9">
+                    <Shortcut Id="ApplicationDesktopShortcut" Name="{PRODUCT_NAME}" Target="[#MassaStationAppEXE]" WorkingDirectory="INSTALLDIR" />
+                </Component>
+            </Directory>
         </Directory>
 
         <Feature Id="MainApplication" Title="Main Application" Level="1">
             <ComponentRef Id="MassaStationServer" />
             <ComponentRef Id="CreateCertsDir" />
             <ComponentRef Id="CreatePluginsDir" />
+        </Feature>
+
+        <Feature Id="DesktopShortcut" Title="Desktop Shortcut" Level="1" Absent="allow">
+            <ComponentRef Id="ApplicationShortcutDesktop" />
+        </Feature>
+
+        <Feature Id="ProgramMenuShortcut" Title="Program Menu Shortcut" Level="1" Absent="allow">
+            <ComponentRef Id="ApplicationShortcutProgramMenu" />
         </Feature>
 
         <Feature Id="Acrylic" Title="Acrylic DNS Proxy" Level="1">
