@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a bug report to report a bug and help us to improve Thyra
+about: Create a bug report to report a bug and help us to improve MassaStation
 title: ''
 labels: 'issue:bug'
 assignees: ''
@@ -16,8 +16,8 @@ assignees: ''
 
 **Screenshots**
 
-**Thyra version**
-The version of Thyra the bug is present in.
+**MassaStation version**
+The version of MassaStation the bug is present in.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. MacOS, Windows...]
