@@ -116,7 +116,7 @@ paths:
                 description: Operation id.
                 type: string
               firstEvent:
-                description: first event emitted by the called smart contract. We keep this property for backward compatibility.
+                description: first event emitted by the called smart contract. Kept for backward compatibility.
                 $ref: "#/definitions/Events"
         "422":
           description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
