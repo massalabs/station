@@ -17,9 +17,10 @@ import { Error, NotFound, Index, Base, Store } from './pages/index';
 import mockServer from './mirage/server.js';
 
 const baseURL = import.meta.env.VITE_BASE_APP;
+const baseENV = import.meta.env.VITE_ENV;
 
-if ([ENV.DEV, ENV.TEST].includes(baseURL)) {
-  mockServer(baseURL);
+if ([ENV.DEV, ENV.TEST].includes(baseENV)) {
+  mockServer(baseENV);
 }
 
 const queryClient = new QueryClient();
