@@ -1,7 +1,7 @@
-import { IMassaPlugin, MyStation } from './MyStation';
-
-import Intl from '../../i18n/i18n';
 import { useResource } from '../../custom/api';
+import StationSection, { IMassaPlugin } from './StationSection/StationSection';
+import StoreSection from './StoreSection/StoreSection';
+import Intl from '../../i18n/i18n';
 
 export function Store() {
   const getPlugins = useResource<IMassaPlugin[]>('plugin-manager');
@@ -13,7 +13,11 @@ export function Store() {
       <div className="mas-menu-active mb-4 text-neutral">
         {Intl.t('store.mystation-banner')}
       </div>
-      <MyStation getPlugins={getPlugins} />
+      <StationSection getPlugins={getPlugins} />
+      <div className="mas-menu-active mb-4 text-neutral">
+        {Intl.t('store.store-banner')}
+      </div>
+      <StoreSection />
     </>
   );
 }

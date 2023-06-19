@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { routeFor } from '../../utils';
-import Intl from '../../i18n/i18n';
-
-import { MyPlugin } from './MyPlugin';
+import { routeFor } from '../../../utils';
+import Intl from '../../../i18n/i18n';
 import { UseQueryResult } from '@tanstack/react-query';
+
+import StationPlugin from './StationPlugin';
 
 export interface IMassaPlugin {
   name: string;
@@ -18,7 +18,7 @@ export interface IMassaPlugin {
   updatable: boolean;
 }
 
-export function MyStation({
+function StationSection({
   getPlugins,
 }: {
   getPlugins: UseQueryResult<IMassaPlugin[]>;
@@ -27,9 +27,9 @@ export function MyStation({
 
   const {
     error,
-    data: myPlugins,
-    isLoading,
+    data: plugins,
     refetch: refetchPlugins,
+    isLoading,
     isRefetching,
   } = getPlugins;
 
@@ -47,10 +47,10 @@ export function MyStation({
         </div>
       ) : (
         <>
-          {myPlugins && myPlugins.length ? (
+          {plugins && plugins.length ? (
             <div className="flex gap-4 flex-wrap">
-              {myPlugins.map((plugin) => (
-                <MyPlugin
+              {plugins.map((plugin) => (
+                <StationPlugin
                   key={plugin.id}
                   plugin={plugin}
                   fetchPlugins={() => refetchPlugins()}
@@ -64,6 +64,8 @@ export function MyStation({
           )}
         </>
       )}
+      ;
     </>
   );
 }
+export default StationSection;
