@@ -19,7 +19,7 @@ class WindowsInstaller(Installer):
         self.MKCERT_FILENAME = "mkcert.exe"
 
         if platform.machine() == "AMD64":
-            self.MASSASTATION_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
+            self.MASSASTATION_SERVER_URL = "https://github.com/massalabs/station/releases/latest/download/thyra-server_windows_amd64"
             self.MASSASTATION_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_windows-amd64.exe"
             self.MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=windows/amd64"
             self.MASSASTATION_WALLET_PLUGIN_URL = "https://github.com/massalabs/thyra-plugin-wallet/releases/latest/download/wallet-plugin_windows-amd64.zip"

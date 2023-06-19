@@ -18,14 +18,14 @@ class MacOSInstaller(Installer):
         self.SUDO_INSTALLATION = True
 
         if platform.machine() == "arm64":
-            self.MASSASTATION_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_arm64"
+            self.MASSASTATION_SERVER_URL = "https://github.com/massalabs/station/releases/latest/download/thyra-server_darwin_arm64"
             self.MASSASTATION_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_darwin-arm64"
             self.MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=darwin/arm64"
             self.MASSASTATION_WALLET_PLUGIN_URL = "https://github.com/massalabs/thyra-plugin-wallet/releases/latest/download/wallet-plugin_darwin-arm64.zip"
             self.MASSASTATION_WALLET_BINARY_FILENAME = "wallet-plugin_darwin-arm64"
             self.MASSASTATION_WALLET_ZIP_FILENAME = "wallet-plugin_darwin-arm64.zip"
         elif platform.machine() == "x86_64":
-            self.MASSASTATION_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_darwin_amd64"
+            self.MASSASTATION_SERVER_URL = "https://github.com/massalabs/station/releases/latest/download/thyra-server_darwin_amd64"
             self.MASSASTATION_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_darwin-amd64"
             self.MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=darwin/amd64"
             self.MASSASTATION_WALLET_PLUGIN_URL = "https://github.com/massalabs/thyra-plugin-wallet/releases/latest/download/wallet-plugin_darwin-amd64.zip"

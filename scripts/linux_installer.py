@@ -20,7 +20,7 @@ class LinuxInstaller(Installer):
         self.MASSASTATION_WALLET_BINARY_FILENAME = "wallet-plugin_linux-amd64"
         self.MASSASTATION_WALLET_ZIP_FILENAME = "wallet-plugin_linux-amd64.zip"
 
-        self.MASSASTATION_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_linux_amd64"
+        self.MASSASTATION_SERVER_URL = "https://github.com/massalabs/station/releases/latest/download/thyra-server_linux_amd64"
         self.MASSASTATION_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_linux-amd64"
         self.MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
 
