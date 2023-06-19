@@ -410,41 +410,7 @@ paths:
           schema:
             type: array
             items:
-              type: object
-              properties:
-                id:
-                  description: Plugin identifier.
-                  type: string
-                  x-nullable: false
-                name:
-                  description: Plugin name.
-                  type: string
-                  x-nullable: false
-                description:
-                  description: Plugin description.
-                  type: string
-                  x-nullable: false
-                home:
-                  description: Plugin home Url.
-                  type: string
-                  x-nullable: false
-                status:
-                  description: Plugin status.
-                  enum: ["Starting", "Up", "Down", "ShuttingDown", "Crashed"]
-                  x-nullable: false
-                logo:
-                  description: Plugin logo Url.
-                  type: string
-                  x-nullable: false
-                version:
-                  description: Plugin version.
-                  type: string
-                  x-nullable: false
-                updatable:
-                  description: Whether the plugin can be updated.
-                  type: boolean
-
-
+              $ref: "#/definitions/Plugin"
         "400":
           description: Bad request.
           schema:
@@ -546,13 +512,7 @@ paths:
         "200":
           description: Get execution information from the plugin.
           schema:
-            type: object
-            properties:
-              status:
-                description: Plugin status.
-                type: string
-                enum: ["Starting", "Up", "Down", "ShuttingDown", "Crashed"]
-                x-nullable: false
+            $ref: "#/definitions/Plugin"
         "400":
           description: Bad request.
           schema:
@@ -1099,3 +1059,37 @@ definitions:
     required:
       - network
       - url
+  Plugin:
+    type: object
+    properties:
+      id:
+        description: Plugin identifier.
+        type: string
+        x-nullable: false
+      name:
+        description: Plugin name.
+        type: string
+        x-nullable: false
+      description:
+        description: Plugin description.
+        type: string
+        x-nullable: false
+      home:
+        description: Plugin home URL.
+        type: string
+        x-nullable: false
+      status:
+        description: Plugin status.
+        enum: ["Starting", "Up", "Down", "ShuttingDown", "Crashed"]
+        x-nullable: false
+      logo:
+        description: Plugin logo URL.
+        type: string
+        x-nullable: false
+      version:
+        description: Plugin version.
+        type: string
+        x-nullable: false
+      updatable:
+        description: Whether the plugin can be updated.
+        type: boolean

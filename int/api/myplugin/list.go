@@ -20,14 +20,9 @@ type list struct {
 func (l *list) Handle(_ operations.PluginManagerListParams) middleware.Responder {
 	ids := l.manager.ID()
 
-	payload := make([]*operations.PluginManagerListOKBodyItems0, len(ids))
+	payload := make([]*models.Plugin, len(ids))
 
-	//nolint:varnamelen
 	for index, id := range ids {
-		//nolint:exhaustruct
-		payload[index] = &operations.PluginManagerListOKBodyItems0{
-			ID: ids[index],
-		}
 
 		plgn, err := l.manager.Plugin(id)
 		if err != nil {
@@ -40,15 +35,17 @@ func (l *list) Handle(_ operations.PluginManagerListParams) middleware.Responder
 		if info != nil {
 			pluginURL := fmt.Sprintf("%s%s/", plugin.EndpointPattern, plugin.Alias(info.Author, info.Name))
 
-			payload[index].Name = info.Name
-			payload[index].Description = info.Description
-			payload[index].Logo = pluginURL + info.Logo
-			payload[index].Home = pluginURL + info.Home
-			payload[index].Updatable = info.Updatable
-			payload[index].Version = info.Version
-			payload[index].Status = plgn.Status().String()
+			payload[index] = &models.Plugin{
+				ID:          id,
+				Name:        info.Name,
+				Description: info.Description,
+				Logo:        info.Logo + "logo",
+				Home:        pluginURL + info.Home,
+				Updatable:   info.Updatable,
+				Version:     info.Version,
+				Status:      plgn.Status().String(),
+			}
 		}
 	}
-
 	return operations.NewPluginManagerListOK().WithPayload(payload)
 }
