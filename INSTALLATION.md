@@ -14,7 +14,7 @@ This guide provides step-by-step instructions for installing **MassaStation** on
 
 ## Windows Installation
 
-1. Download the latest version of **MassaStation** installer for Windows (`.msi`) from [here](https://github.com/massalabs/thyra/releases/latest/).
+1. Download the latest version of **MassaStation** installer for Windows (`.msi`) from [here](https://github.com/massalabs/station/releases/latest/).
 2. Locate the downloaded `.msi` installer file and double-click on it to start the installation process.
 3. Follow the on-screen instructions to proceed with the installation.
 4. Once the installation is complete, you will see a confirmation message. Click "Finish" to exit the installer.
@@ -40,7 +40,7 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 ### GUI Installation
 
-1. Download the latest version of **MassaStation** installer for Debian Linux (`.deb`) from [here](https://github.com/massalabs/thyra/releases/latest/).
+1. Download the latest version of **MassaStation** installer for Debian Linux (`.deb`) from [here](https://github.com/massalabs/station/releases/latest/).
 2. Open your file manager and navigate to the location where the `.deb` package is saved.
 3. Right-click on the `.deb` package and choose "Open with Software Install" or a similar option.
 4. The package manager will launch and display **MassaStation** installation page.
