@@ -21,13 +21,27 @@ type info struct {
 func (i *info) Handle(param operations.PluginManagerGetInformationParams) middleware.Responder {
 	log.Printf("[GET /plugin-manager/%s]", param.ID)
 
-	plugin, err := i.manager.Plugin(param.ID)
+	plgn, err := i.manager.Plugin(param.ID)
 	if err != nil {
 		return operations.NewPluginManagerGetInformationNotFound().WithPayload(
 			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
 	}
+	info := plgn.Information()
+	var payload *models.Plugin
+	if info != nil {
+		pluginURL := fmt.Sprintf("%s%s/", plugin.EndpointPattern, plugin.Alias(info.Author, info.Name))
 
-	return operations.NewPluginManagerGetInformationOK().WithPayload(
-		&operations.PluginManagerGetInformationOKBody{Status: plugin.Status().String()},
-	)
+		payload = &models.Plugin{
+			ID:          param.ID,
+			Name:        info.Name,
+			Description: info.Description,
+			Logo:        info.Logo,
+			Home:        pluginURL + info.Home,
+			Updatable:   info.Updatable,
+			Version:     info.Version,
+			Status:      plgn.Status().String(),
+		}
+	}
+	return operations.NewPluginManagerGetInformationOK().WithPayload(payload)
+
 }
