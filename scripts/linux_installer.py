@@ -7,21 +7,21 @@ class LinuxInstaller(Installer):
     def __init__(self):
         super().__init__()
 
-        self.THYRA_INSTALL_FOLDER_PATH = "/usr/local/bin"
-        self.THYRA_SERVER_FILENAME = "thyra-server"
-        self.THYRA_APP_FILENAME = "thyra-app"
+        self.MASSASTATION_INSTALL_FOLDER_PATH = "/usr/local/bin"
+        self.MASSASTATION_SERVER_FILENAME = "thyra-server"
+        self.MASSASTATION_APP_FILENAME = "thyra-app"
 
-        self.THYRA_CONFIG_FOLDER_PATH = "/usr/local/share/massastation"
-        self.THYRA_PLUGINS_PATH = "/usr/local/share/massastation/plugins"
+        self.MASSASTATION_CONFIG_FOLDER_PATH = "/usr/local/share/massastation"
+        self.MASSASTATION_PLUGINS_PATH = "/usr/local/share/massastation/plugins"
         self.CERTIFICATIONS_FOLDER_PATH = "/etc/massastation/certs"
         self.MKCERT_FILENAME = "mkcert"
 
-        self.THYRA_WALLET_PLUGIN_URL = "https://github.com/massalabs/thyra-plugin-wallet/releases/latest/download/wallet-plugin_linux-amd64.zip"
-        self.THYRA_WALLET_BINARY_FILENAME = "wallet-plugin_linux-amd64"
-        self.THYRA_WALLET_ZIP_FILENAME = "wallet-plugin_linux-amd64.zip"
+        self.MASSASTATION_WALLET_PLUGIN_URL = "https://github.com/massalabs/thyra-plugin-wallet/releases/latest/download/wallet-plugin_linux-amd64.zip"
+        self.MASSASTATION_WALLET_BINARY_FILENAME = "wallet-plugin_linux-amd64"
+        self.MASSASTATION_WALLET_ZIP_FILENAME = "wallet-plugin_linux-amd64.zip"
 
-        self.THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_linux_amd64"
-        self.THYRA_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_linux-amd64"
+        self.MASSASTATION_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_linux_amd64"
+        self.MASSASTATION_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_linux-amd64"
         self.MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
 
         self.SUDO_INSTALLATION = True
@@ -94,7 +94,7 @@ class LinuxInstaller(Installer):
     """
     def installThyraServer(self):
         super().installThyraServer()
-        self.executeCommand(f"sudo setcap CAP_NET_BIND_SERVICE=+eip {self.THYRA_INSTALL_FOLDER_PATH}/{self.THYRA_SERVER_FILENAME}", True)
+        self.executeCommand(f"sudo setcap CAP_NET_BIND_SERVICE=+eip {self.MASSASTATION_INSTALL_FOLDER_PATH}/{self.MASSASTATION_SERVER_FILENAME}", True)
 
 if __name__ == "__main__":
     if platform.system() != "Linux":

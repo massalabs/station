@@ -14,17 +14,17 @@ class WindowsInstaller(Installer):
 
     def __init__(self):
         super().__init__()
-        self.THYRA_SERVER_FILENAME = "thyra-server.exe"
-        self.THYRA_APP_FILENAME = "thyra-app.exe"
+        self.MASSASTATION_SERVER_FILENAME = "thyra-server.exe"
+        self.MASSASTATION_APP_FILENAME = "thyra-app.exe"
         self.MKCERT_FILENAME = "mkcert.exe"
 
         if platform.machine() == "AMD64":
-            self.THYRA_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
-            self.THYRA_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_windows-amd64.exe"
+            self.MASSASTATION_SERVER_URL = "https://github.com/massalabs/thyra/releases/latest/download/thyra-server_windows_amd64"
+            self.MASSASTATION_APP_URL = "https://github.com/massalabs/Thyra-Menu-Bar-App/releases/latest/download/ThyraApp_windows-amd64.exe"
             self.MKCERT_URL = "https://dl.filippo.io/mkcert/latest?for=windows/amd64"
-            self.THYRA_WALLET_PLUGIN_URL = "https://github.com/massalabs/thyra-plugin-wallet/releases/latest/download/wallet-plugin_windows-amd64.zip"
-            self.THYRA_WALLET_BINARY_FILENAME = "wallet-plugin_windows-amd64.exe"
-            self.THYRA_WALLET_ZIP_FILENAME = "wallet-plugin_windows-amd64.zip"
+            self.MASSASTATION_WALLET_PLUGIN_URL = "https://github.com/massalabs/thyra-plugin-wallet/releases/latest/download/wallet-plugin_windows-amd64.zip"
+            self.MASSASTATION_WALLET_BINARY_FILENAME = "wallet-plugin_windows-amd64.exe"
+            self.MASSASTATION_WALLET_ZIP_FILENAME = "wallet-plugin_windows-amd64.zip"
         else:
             self.printErrorAndExit(f"Unsupported architecture {platform.machine()}")
 

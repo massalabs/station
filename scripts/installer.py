@@ -22,24 +22,24 @@ logging.basicConfig(
 logging.getLogger().handlers[1].setLevel(logging.INFO)
 
 class Installer:
-    THYRA_INSTALL_FOLDER_PATH = os.path.expanduser("~")
-    THYRA_CONFIG_FOLDER_PATH = os.path.join(os.path.expanduser("~"), ".config", "thyra")
-    THYRA_PLUGINS_PATH = os.path.join(THYRA_CONFIG_FOLDER_PATH, "plugins" )
+    MASSASTATION_INSTALL_FOLDER_PATH = os.path.expanduser("~")
+    MASSASTATION_CONFIG_FOLDER_PATH = os.path.join(os.path.expanduser("~"), ".config", "massastation")
+    MASSASTATION_PLUGINS_PATH = os.path.join(MASSASTATION_CONFIG_FOLDER_PATH, "plugins" )
 
-    THYRA_SERVER_URL = ""
-    THYRA_SERVER_FILENAME = ""
-    THYRA_WALLET_PLUGIN_URL = ""
+    MASSASTATION_SERVER_URL = ""
+    MASSASTATION_SERVER_FILENAME = ""
+    MASSASTATION_WALLET_PLUGIN_URL = ""
 
-    THYRA_APP_URL = ""
-    THYRA_APP_FILENAME = ""
-    THYRA_WALLET_PLUGIN_NAME = "wallet-plugin"
-    THYRA_WALLET_ZIP_FILENAME = ""
-    THYRA_WALLET_BINARY_FILENAME = ""
+    MASSASTATION_APP_URL = ""
+    MASSASTATION_APP_FILENAME = ""
+    MASSASTATION_WALLET_PLUGIN_NAME = "wallet-plugin"
+    MASSASTATION_WALLET_ZIP_FILENAME = ""
+    MASSASTATION_WALLET_BINARY_FILENAME = ""
 
     MKCERT_URL = ""
     MKCERT_FILENAME = ""
 
-    CERTIFICATIONS_FOLDER_PATH = os.path.join(THYRA_CONFIG_FOLDER_PATH, "certs")
+    CERTIFICATIONS_FOLDER_PATH = os.path.join(MASSASTATION_CONFIG_FOLDER_PATH, "certs")
     CERTIFICATION_FILENAME = "cert.pem"
     CERTIFICATION_KEY_FILENAME = "cert-key.pem"
 
@@ -201,7 +201,7 @@ class Installer:
     Can be overriden by the installer of a specific platform if needed.
     """
     def installThyraServer(self):
-        self.installBinary(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_SERVER_URL, self.THYRA_SERVER_FILENAME)
+        self.installBinary(self.MASSASTATION_INSTALL_FOLDER_PATH, self.MASSASTATION_SERVER_URL, self.MASSASTATION_SERVER_FILENAME)
         logging.info("Thyra server installed successfully")
 
     """
@@ -209,45 +209,45 @@ class Installer:
     Can be overriden by the installer of a specific platform if needed.
     """
     def installThyraApp(self):
-        self.installBinary(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_APP_URL, self.THYRA_APP_FILENAME)
+        self.installBinary(self.MASSASTATION_INSTALL_FOLDER_PATH, self.MASSASTATION_APP_URL, self.MASSASTATION_APP_FILENAME)
         logging.info("Thyra app installed successfully")
 
     def createConfigFolder(self):
         logging.info("Creating config folder")
-        if not os.path.exists(self.THYRA_CONFIG_FOLDER_PATH):
+        if not os.path.exists(self.MASSASTATION_CONFIG_FOLDER_PATH):
             try:
                 if self.SUDO_INSTALLATION:
-                    self.executeCommand(["sudo", "mkdir", "-p", self.THYRA_CONFIG_FOLDER_PATH])
-                    self.executeCommand(["sudo", "chmod", "777", self.THYRA_CONFIG_FOLDER_PATH])
+                    self.executeCommand(["sudo", "mkdir", "-p", self.MASSASTATION_CONFIG_FOLDER_PATH])
+                    self.executeCommand(["sudo", "chmod", "777", self.MASSASTATION_CONFIG_FOLDER_PATH])
                 else:
-                    os.makedirs(self.THYRA_CONFIG_FOLDER_PATH)
+                    os.makedirs(self.MASSASTATION_CONFIG_FOLDER_PATH)
             except OSError as err:
                 self.printErrorAndExit(f"Error while creating config folder: {err}")
-        if not os.path.exists(self.THYRA_PLUGINS_PATH):
+        if not os.path.exists(self.MASSASTATION_PLUGINS_PATH):
             try:
                 if self.SUDO_INSTALLATION:
-                    self.executeCommand(["sudo", "mkdir", "-p", self.THYRA_PLUGINS_PATH])
-                    self.executeCommand(["sudo", "chmod", "777", self.THYRA_PLUGINS_PATH])
+                    self.executeCommand(["sudo", "mkdir", "-p", self.MASSASTATION_PLUGINS_PATH])
+                    self.executeCommand(["sudo", "chmod", "777", self.MASSASTATION_PLUGINS_PATH])
                 else:
-                    os.makedirs(self.THYRA_PLUGINS_PATH)
+                    os.makedirs(self.MASSASTATION_PLUGINS_PATH)
             except OSError as err:
                 self.printErrorAndExit(f"Error while creating config folder: {err}")
 
     def installWalletPlugin(self):
-        path_to_plugin_folder = os.path.join(self.THYRA_PLUGINS_PATH, self.THYRA_WALLET_PLUGIN_NAME)
-        path_to_binary = os.path.join(path_to_plugin_folder, self.THYRA_WALLET_PLUGIN_NAME)
+        path_to_plugin_folder = os.path.join(self.MASSASTATION_PLUGINS_PATH, self.MASSASTATION_WALLET_PLUGIN_NAME)
+        path_to_binary = os.path.join(path_to_plugin_folder, self.MASSASTATION_WALLET_PLUGIN_NAME)
 
         if not os.path.exists(path_to_binary):
-            path_to_zip = os.path.join(self.THYRA_PLUGINS_PATH, self.THYRA_WALLET_ZIP_FILENAME)
-            self.downloadFile(self.THYRA_WALLET_PLUGIN_URL, path_to_zip, self.SUDO_INSTALLATION)
+            path_to_zip = os.path.join(self.MASSASTATION_PLUGINS_PATH, self.MASSASTATION_WALLET_ZIP_FILENAME)
+            self.downloadFile(self.MASSASTATION_WALLET_PLUGIN_URL, path_to_zip, self.SUDO_INSTALLATION)
             ZipFile(path_to_zip).extractall(path_to_plugin_folder)
             self._deleteFile(path_to_zip)
-            path_to_binary_filename = os.path.join(path_to_plugin_folder, self.THYRA_WALLET_BINARY_FILENAME)
+            path_to_binary_filename = os.path.join(path_to_plugin_folder, self.MASSASTATION_WALLET_BINARY_FILENAME)
             os.rename(path_to_binary_filename, path_to_binary)
             os.chmod(path_to_binary, 0o755)
 
     def startThyraApp(self):
-        thyra_app_path = os.path.join(self.THYRA_INSTALL_FOLDER_PATH, self.THYRA_APP_FILENAME)
+        thyra_app_path = os.path.join(self.MASSASTATION_INSTALL_FOLDER_PATH, self.MASSASTATION_APP_FILENAME)
         if os.path.exists(thyra_app_path):
             subprocess.Popen([thyra_app_path], start_new_session=True)
             logging.info("Thyra App will now start. You can right click on the tray icon to start Thyra.")
@@ -271,7 +271,7 @@ class Installer:
                 logging.info("CA certificate already installed.")
 
             logging.info("Thyra installed successfully!")
-            logging.info(f"{self.THYRA_SERVER_FILENAME} and {self.THYRA_APP_FILENAME} has been installed in {self.THYRA_INSTALL_FOLDER_PATH}")
+            logging.info(f"{self.MASSASTATION_SERVER_FILENAME} and {self.MASSASTATION_APP_FILENAME} has been installed in {self.MASSASTATION_INSTALL_FOLDER_PATH}")
 
             self.installWalletPlugin()
             self.startThyraApp()
