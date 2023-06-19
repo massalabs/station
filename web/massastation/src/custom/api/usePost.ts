@@ -6,7 +6,7 @@ import { UseMutationResult, useMutation } from '@tanstack/react-query';
 
 // LOCALS
 
-export function usePost<T, P>(
+export function usePost<T, P = unknown>(
   resource: string,
 ): UseMutationResult<P, unknown, T, unknown> {
   var url = `${import.meta.env.VITE_BASE_API}/${resource}`;
