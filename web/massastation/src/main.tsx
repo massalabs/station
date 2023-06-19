@@ -18,8 +18,8 @@ import mockServer from './mirage/server.js';
 
 const baseURL = import.meta.env.VITE_BASE_APP;
 
-if ([ENV.DEV, ENV.TEST].includes(baseURL)) {
-  mockServer(baseURL);
+if ([ENV.DEV, ENV.TEST].includes(import.meta.env.VITE_ENV)) {
+  mockServer(import.meta.env.VITE_ENV);
 }
 
 const queryClient = new QueryClient();
