@@ -36,7 +36,7 @@ function StoreSection() {
         <div className="mas-body mb-4 text-neutral">
           {Intl.t('store.mystation.loading')}
         </div>
-      ) : plugins && plugins.length > 0 ? (
+      ) : plugins && plugins.length ? (
         <div className="flex gap-4 flex-wrap">
           {plugins.map((plugin) => (
             <StorePlugin key={plugin.name} plugin={plugin} />

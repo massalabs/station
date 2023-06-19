@@ -13,7 +13,10 @@ import {
   massalabsNomination,
   PLUGIN_START,
   PLUGIN_STOP,
+  PLUGIN_UPDATE,
 } from '../../../utils/massaConstants';
+
+import { useDelete, usePost, useResource } from '../../../custom/api';
 
 enum PluginStatus {
   Up = 'Up',
@@ -24,7 +27,7 @@ interface PluginPostMethod {
   command: string;
 }
 
-export function MyPlugin({
+export function StationPlugin({
   plugin,
   fetchPlugins,
 }: {

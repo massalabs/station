@@ -1,11 +1,7 @@
-import { IMassaPlugin, MyStation } from './MyStation';
-
-import Intl from '../../i18n/i18n';
 import { useResource } from '../../custom/api';
-import StationSection from './StationSection/StationSection';
+import StationSection, { IMassaPlugin } from './StationSection/StationSection';
 import StoreSection from './StoreSection/StoreSection';
-import { useOutletContext } from 'react-router-dom';
-import { IOutletContextType } from '../Base/Base';
+import Intl from '../../i18n/i18n';
 
 export function Store() {
   const getPlugins = useResource<IMassaPlugin[]>('plugin-manager');
