@@ -6,15 +6,17 @@ This guide provides step-by-step instructions for installing **MassaStation** on
 * [MacOS Installation](#macos-installation)
 * [Debian Linux Installation](#debian-linux-installation)
 * [Uninstallation](#uninstallation)
+  * [Windows](#windows)
   * [MacOS](#macos)
+  * [Linux](#linux)
 
 > **Note:** **MassaStation** is currently available for Windows, MacOS, and Debian Linux. Support for other Linux distributions will be added in the future. Likewise, this application isn't working on virtual machines. It might be added in the future.
 
-> **Troubleshooting:** If you encounter any issues during the installation process, do not hesitate to [open an issue](https://github.com/massalabs/thyra/issues/new) on GitHub.
+> **Troubleshooting:** If you encounter any issues during the installation process, do not hesitate to [open an issue](https://github.com/massalabs/station/issues/new) on GitHub.
 
 ## Windows Installation
 
-1. Download the latest version of **MassaStation** installer for Windows (`.msi`) from the [official website](https://github.com/massalabs/thyra/releases/latest/download/massastation-installer_windows_amd64.msi).
+1. Download the latest version of **MassaStation** installer for Windows (`.msi`) from [here](https://github.com/massalabs/station/releases/latest/).
 2. Locate the downloaded `.msi` installer file and double-click on it to start the installation process.
 3. Follow the on-screen instructions to proceed with the installation.
 4. Once the installation is complete, you will see a confirmation message. Click "Finish" to exit the installer.
@@ -25,8 +27,8 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 1. Download the latest version of **MassaStation** installer for MacOS depending on your CPU architecture:
 
-   * For Intel-based Macs (i5, i7, etc.), download the installer for `amd64` architecture from [here](https://github.com/massalabs/thyra/releases/latest/).
-   * For Apple Silicon-based Macs (M1, M2, etc.), download the installer for `arm64` architecture from [here](https://github.com/massalabs/thyra/releases/latest/).
+   * For Intel-based Macs (i5, i7, etc.), download the installer for `amd64` architecture from [here](https://github.com/massalabs/station/releases/latest/).
+   * For Apple Silicon-based Macs (M1, M2, etc.), download the installer for `arm64` architecture from [here](https://github.com/massalabs/station/releases/latest/).
 
 2. Locate the downloaded .pkg installer file and right-click on it.
 3. From the context menu, select "Open" and then click "Open" again in the security pop-up window. This step is necessary because the installer is not signed by the App Store, and MacOS may block the installation by default.
@@ -40,7 +42,7 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 ### GUI Installation
 
-1. Download the latest version of **MassaStation** installer for Debian Linux (`.deb`)  from [here](https://github.com/massalabs/thyra/releases/latest/).
+1. Download the latest version of **MassaStation** installer for Debian Linux (`.deb`) from [here](https://github.com/massalabs/station/releases/latest/).
 2. Open your file manager and navigate to the location where the `.deb` package is saved.
 3. Right-click on the `.deb` package and choose "Open with Software Install" or a similar option.
 4. The package manager will launch and display **MassaStation** installation page.
@@ -51,7 +53,7 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 ### Terminal Installation using apt
 
-1. Download the latest version of **MassaStation** installer for Debian Linux from [here](https://github.com/massalabs/thyra/releases/latest/).
+1. Download the latest version of **MassaStation** installer for Debian Linux from [here](https://github.com/massalabs/station/releases/latest/).
 2. Open a terminal on your Debian Linux system.
 3. Navigate to the directory where the downloaded `.deb` package is located.
 4. Run the following command to install the package:
