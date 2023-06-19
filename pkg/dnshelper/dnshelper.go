@@ -25,12 +25,14 @@ func GetWebsiteValues(dnsValue []byte) (string, string, error) {
 
 	websiteStorerAddress := websiteValue[indexOfWebsiteAddress]
 
-	websiteDescription := ""
+	escapedDescription := ""
 	if len(websiteValue) > indexOfWebsiteDescription {
-		websiteDescription = websiteValue[indexOfWebsiteDescription]
+		websiteDescription := websiteValue[indexOfWebsiteDescription]
+
+		// Prevent XSS by escaping special characters in websiteDescription
+		escapedDescription = template.HTMLEscapeString(websiteDescription)
 	}
-	// Prevent XSS by escaping special characters in websiteDescription
-	escapedDescription := template.HTMLEscapeString(websiteDescription)
+
 
 	return websiteStorerAddress, escapedDescription, nil
 }
