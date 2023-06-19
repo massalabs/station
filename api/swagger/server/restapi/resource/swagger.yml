@@ -856,11 +856,10 @@ paths:
         - in: formData
           name: description
           type: string
-          pattern: "^[\p{L}\p{N}\p{P}\p{S} ]+$"
           maxLength: 280
           required: true
           x-nullable: false
-          description: Website description. Must be a UTF-8 string with a maximum length of 280 characters.
+          description: Website description with a maximum length of 280 characters.
         - in: formData
           name: nickname
           type: string
