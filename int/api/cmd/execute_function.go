@@ -47,5 +47,10 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 			&models.Error{Code: errorCodeSendOperation, Message: "Error: callSC failed: " + err.Error()})
 	}
 
-	return operations.NewCmdExecuteFunctionOK().WithPayload(operationWithEventResponse.Event)
+	return operations.NewCmdExecuteFunctionOK().WithPayload(
+		&operations.CmdExecuteFunctionOKBody{
+			FirstEvent:  &models.Events{Data: operationWithEventResponse.Event, Address: params.Body.At},
+			OperationID: operationWithEventResponse.OperationResponse.OperationID,
+		},
+	)
 }
