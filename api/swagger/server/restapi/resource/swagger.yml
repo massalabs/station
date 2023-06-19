@@ -61,7 +61,7 @@ paths:
               keyId: default
             properties:
               nickname:
-                description: Wallet's short name.
+                description: Account nickname used to sign the operation.
                 type: string
                 x-nullable: false
               name:
@@ -78,7 +78,7 @@ paths:
                 default: ""
               gas:
                 type: object
-                description: Gas attibutes. Has is a virtual resource consumed by node while running smart contract.
+                description: Gas attributes. Has is a virtual resource consumed by node while running smart contract.
                 properties:
                   price:
                     type: number

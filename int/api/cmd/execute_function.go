@@ -26,7 +26,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().
 			WithPayload(
 				&models.Error{
-					Code:    err.Error(),
+					Code:    errorCodeInvalidArgs,
 					Message: err.Error(),
 				})
 	}
