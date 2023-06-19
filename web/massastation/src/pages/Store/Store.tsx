@@ -18,8 +18,7 @@ export function Store() {
       <div className="mas-menu-active mb-4 text-neutral">
         {Intl.t('store.store-banner')}
       </div>
-      <StoreSection />
-      <Install />
+      <StoreSection getPlugins={getPlugins} />
     </>
   );
 }
