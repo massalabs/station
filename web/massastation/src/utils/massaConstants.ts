@@ -1,5 +1,5 @@
 // We store each possible variation of the massas's name in the array
-export const massalabsNomination = ['MassaLabs'];
+export const massalabsNomination = ['Massa Labs'];
 // Constants to mimic server status
 export const PLUGIN_START = 'start';
 export const PLUGIN_STOP = 'stop';
