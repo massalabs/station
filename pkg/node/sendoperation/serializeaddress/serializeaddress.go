@@ -3,7 +3,7 @@ package serializeaddress
 import (
 	"fmt"
 
-	"github.com/massalabs/thyra/pkg/node/base58"
+	"github.com/massalabs/station/pkg/node/base58"
 )
 
 // SerializeAddress return the address in byte, ready to be used by the API

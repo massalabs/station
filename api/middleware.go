@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/massalabs/thyra/api/interceptor"
-	"github.com/massalabs/thyra/pkg/config"
-	"github.com/massalabs/thyra/pkg/onchain/website"
-	"github.com/massalabs/thyra/pkg/plugin"
+	"github.com/massalabs/station/api/interceptor"
+	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/onchain/website"
+	"github.com/massalabs/station/pkg/plugin"
 )
 
 // TopMiddleware is called by go-swagger framework before its endpoints.

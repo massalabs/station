@@ -4,7 +4,7 @@ package certificate
 //
 // The following approaches are not possible:
 // - using a *.massa certificate
-// - adding several SANs to the same certificate (e.g. *.station.massa, *.thyra.massa, *.web.massa...) due to
+// - adding several SANs to the same certificate (e.g. *.station.massa, *.web.massa...) due to
 //    * the technical limit to the number of SANs that can be included in a certificate as well as
 //    * the delay between adding a website to the blockchain and adding it to the certificate.
 //
@@ -104,7 +104,7 @@ func GenerateSignedCertificate(
 		SerialNumber: new(big.Int).SetBytes(uniqueSiteNameID), // in order to have an unique ID for each website Name, we hash the website name
 		Subject: pkix.Name{ // not necessary, but cool to have if the user ask for certificate details.
 			CommonName:   serverName,
-			Organization: []string{"thyra dynamically generated"},
+			Organization: []string{"station dynamically generated"},
 		},
 		NotBefore: time.Now(),
 		// one day of validity is enough since the certificate is generated dynamically each time

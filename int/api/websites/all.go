@@ -7,11 +7,11 @@ import (
 	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/massalabs/thyra/api/swagger/server/models"
-	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/pkg/config"
-	"github.com/massalabs/thyra/pkg/convert"
-	"github.com/massalabs/thyra/pkg/node"
+	"github.com/massalabs/station/api/swagger/server/models"
+	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/convert"
+	"github.com/massalabs/station/pkg/node"
 )
 
 const (
@@ -51,7 +51,7 @@ func (h *registryHandler) Handle(_ operations.AllDomainsGetterParams) middleware
 
 /*
 This function fetch all websites data that are associated with the DNS
-smart contract Thyra is connected to. Once this data has been fetched from the DNS and
+smart contract MassaStation is connected to. Once this data has been fetched from the DNS and
 the various website storer contracts, the function builds an array of Registry objects
 and returns it to the frontend for display on the Registry page.
 */

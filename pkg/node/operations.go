@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/massalabs/thyra/pkg/node/sendoperation/buyrolls"
-	"github.com/massalabs/thyra/pkg/node/sendoperation/callsc"
-	"github.com/massalabs/thyra/pkg/node/sendoperation/executesc"
-	"github.com/massalabs/thyra/pkg/node/sendoperation/sellrolls"
-	"github.com/massalabs/thyra/pkg/node/sendoperation/transaction"
+	"github.com/massalabs/station/pkg/node/sendoperation/buyrolls"
+	"github.com/massalabs/station/pkg/node/sendoperation/callsc"
+	"github.com/massalabs/station/pkg/node/sendoperation/executesc"
+	"github.com/massalabs/station/pkg/node/sendoperation/sellrolls"
+	"github.com/massalabs/station/pkg/node/sendoperation/transaction"
 )
 
 //nolint:tagliatelle

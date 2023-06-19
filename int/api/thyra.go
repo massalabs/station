@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/int/api/websites"
+	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/int/api/websites"
 )
 
 const indexHTML = "index.html"

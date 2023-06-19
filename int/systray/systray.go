@@ -8,9 +8,9 @@ import (
 	"fyne.io/fyne/v2/app"
 	//nolint:typecheck,nolintlint
 	"fyne.io/fyne/v2/driver/desktop"
-	"github.com/massalabs/thyra/int/systray/embedded"
-	"github.com/massalabs/thyra/int/systray/utils"
-	"github.com/massalabs/thyra/pkg/config"
+	"github.com/massalabs/station/int/systray/embedded"
+	"github.com/massalabs/station/int/systray/utils"
+	"github.com/massalabs/station/pkg/config"
 )
 
 func MakeGUI() (fyne.App, *fyne.Menu) {

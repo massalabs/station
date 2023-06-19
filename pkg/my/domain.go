@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/massalabs/thyra/api/swagger/server/models"
-	"github.com/massalabs/thyra/pkg/config"
-	"github.com/massalabs/thyra/pkg/convert"
-	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/wallet"
+	"github.com/massalabs/station/api/swagger/server/models"
+	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/convert"
+	"github.com/massalabs/station/pkg/node"
+	"github.com/massalabs/station/pkg/wallet"
 )
 
 //nolint:tagliatelle

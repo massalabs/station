@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/gosimple/slug"
-	"github.com/massalabs/thyra/api/swagger/server/models"
-	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/pkg/store"
+  "github.com/gosimple/slug"
+	"github.com/massalabs/station/api/swagger/server/models"
+	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/pkg/store"
 )
 
 func newList() operations.GetPluginStoreHandler {

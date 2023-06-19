@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/massalabs/thyra/pkg/node"
-	sendOperation "github.com/massalabs/thyra/pkg/node/sendoperation"
-	"github.com/massalabs/thyra/pkg/node/sendoperation/callsc"
-	"github.com/massalabs/thyra/pkg/node/sendoperation/executesc"
+	"github.com/massalabs/station/pkg/node"
+	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
+	"github.com/massalabs/station/pkg/node/sendoperation/callsc"
+	"github.com/massalabs/station/pkg/node/sendoperation/executesc"
 )
 
 const maxWaitingTimeInSeconds = 45
@@ -26,7 +26,7 @@ This function send a callSC request to the node.
 After a successful execution, listening to the events emitted by the operation
 should be done on front end side by the consumer.
 However in the current state of things the easiest way to unblock us is to
-listen to these events in Thyra and return them as a response.
+listen to these events in MassaStation and return them as a response.
 Hence this function also listen for the first event emitted in an OP and returns it.
 */
 func CallFunction(client *node.Client,

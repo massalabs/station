@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/massalabs/thyra/pkg/config"
-	"github.com/massalabs/thyra/pkg/convert"
-	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/node/sendoperation"
-	"github.com/massalabs/thyra/pkg/onchain"
+	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/convert"
+	"github.com/massalabs/station/pkg/node"
+	"github.com/massalabs/station/pkg/node/sendoperation"
+	"github.com/massalabs/station/pkg/onchain"
 )
 
 /*

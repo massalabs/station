@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/massalabs/thyra/pkg/node/sendoperation"
+	"github.com/massalabs/station/pkg/node/sendoperation"
 )
 
 // WalletKeyPair wallet's key pair.

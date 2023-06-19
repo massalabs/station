@@ -11,14 +11,14 @@ import (
 
 	"fyne.io/fyne/v2"
 	"github.com/hashicorp/go-version"
-	"github.com/massalabs/thyra/int/systray/embedded"
-	"github.com/massalabs/thyra/int/systray/utils"
-	"github.com/massalabs/thyra/pkg/config"
+	"github.com/massalabs/station/int/systray/embedded"
+	"github.com/massalabs/station/int/systray/utils"
+	"github.com/massalabs/station/pkg/config"
 )
 
 const (
 	// updateCheckURL is the URL to the GitHub API to check for the latest release.
-	updateCheckURL = "https://api.github.com/repos/massalabs/thyra/releases/latest"
+	updateCheckURL = "https://api.github.com/repos/massalabs/station/releases/latest"
 
 	// updateCheckInterval is the interval in seconds to check for updates.
 	updateCheckInterval = 1 * time.Hour

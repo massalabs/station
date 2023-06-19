@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/onchain/storage"
+	"github.com/massalabs/station/pkg/node"
+	"github.com/massalabs/station/pkg/onchain/storage"
 )
 
 func Fetch(c *node.Client, addr string, filename string) ([]byte, error) {

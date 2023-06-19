@@ -12,8 +12,8 @@ import (
 	"sync"
 
 	"github.com/cavaliergopher/grab/v3"
-	"github.com/massalabs/thyra/pkg/config"
-	"github.com/massalabs/thyra/pkg/store"
+	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/store"
 	"github.com/xyproto/unzip"
 )
 

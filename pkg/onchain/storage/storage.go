@@ -8,10 +8,10 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/massalabs/thyra/pkg/cache"
-	"github.com/massalabs/thyra/pkg/convert"
-	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/onchain/dns"
+	"github.com/massalabs/station/pkg/cache"
+	"github.com/massalabs/station/pkg/convert"
+	"github.com/massalabs/station/pkg/node"
+	"github.com/massalabs/station/pkg/onchain/dns"
 )
 
 func readZipFile(z *zip.File) ([]byte, error) {

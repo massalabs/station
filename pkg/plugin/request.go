@@ -7,8 +7,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/massalabs/thyra/api/interceptor"
-	"github.com/massalabs/thyra/pkg/config"
+	"github.com/massalabs/station/api/interceptor"
+	"github.com/massalabs/station/pkg/config"
 )
 
 func NewAPIHandler(manager *Manager) *APIHandler {

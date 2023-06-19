@@ -10,10 +10,10 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/massalabs/thyra/api"
-	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/pkg/certificate"
-	"github.com/massalabs/thyra/pkg/config"
+	"github.com/massalabs/station/api"
+	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/pkg/certificate"
+	"github.com/massalabs/station/pkg/config"
 	"github.com/rs/cors"
 )
 

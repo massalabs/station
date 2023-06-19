@@ -5,12 +5,12 @@ import (
 	"io"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/massalabs/thyra/api/swagger/server/models"
-	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/pkg/config"
-	"github.com/massalabs/thyra/pkg/node"
-	"github.com/massalabs/thyra/pkg/node/sendoperation"
-	"github.com/massalabs/thyra/pkg/onchain"
+	"github.com/massalabs/station/api/swagger/server/models"
+	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/node"
+	"github.com/massalabs/station/pkg/node/sendoperation"
+	"github.com/massalabs/station/pkg/onchain"
 )
 
 func NewDeploySCHandler(config *config.AppConfig) operations.CmdDeploySCHandler {

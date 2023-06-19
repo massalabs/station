@@ -1,7 +1,7 @@
 package pluginstore
 
 import (
-	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 )
 
 func InitializePluginStoreAPI(api *operations.MassastationAPI) {

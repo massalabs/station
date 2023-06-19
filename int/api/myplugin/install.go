@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/massalabs/thyra/api/swagger/server/models"
-	"github.com/massalabs/thyra/api/swagger/server/restapi/operations"
-	"github.com/massalabs/thyra/pkg/plugin"
+	"github.com/massalabs/station/api/swagger/server/models"
+	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/pkg/plugin"
 )
 
 func newInstall(manager *plugin.Manager) operations.PluginManagerInstallHandler {
