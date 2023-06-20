@@ -42,7 +42,7 @@ function StationSection({
   return (
     <>
       {isLoading || isRefetching ? (
-        <div className="mas-body mb-4 text-neutral">
+        <div className="mas-body2 mb-4 text-neutral">
           {Intl.t('store.mystation.loading')}
         </div>
       ) : (
@@ -58,13 +58,12 @@ function StationSection({
               ))}
             </div>
           ) : (
-            <div className="mas-body mb-4 text-neutral">
+            <div className="mas-body2 mb-4 text-neutral">
               {Intl.t('store.mystation.browse')}
             </div>
           )}
         </>
       )}
-      ;
     </>
   );
 }
