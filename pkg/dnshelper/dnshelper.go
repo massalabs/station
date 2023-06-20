@@ -37,7 +37,7 @@ func AddressAndDescription(dnsValue []byte) (string, string, error) {
 		// see
 		// https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_
 		// Prevention_Cheat_Sheet.html#output-encoding-for-html-contexts
-		description = template.HTMLEscapeString(websiteDescription)
+		description = template.HTMLEscapeString(unsafeDescription)
 	}
 
 	return address, description, nil
