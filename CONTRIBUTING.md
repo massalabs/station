@@ -7,7 +7,7 @@ Thank you for your interest in contributing to MassaStation! We welcome contribu
 - [Reporting Issues](#reporting-issues)
 - [Suggesting Features](#suggesting-features)
 - [Reviewing Pull Requests](#reviewing-pull-requests)
-- [Contributing fixes & features](#contributing-to-fixes-&-features)
+- [Contributing fixes & features](#contributing-to-fixes--features)
 - [Development](#development)
   - [Getting Started](#getting-started)
   - [Setting Up Development Environment](#setting-up-development-environment)
