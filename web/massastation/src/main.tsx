@@ -15,6 +15,7 @@ import './index.css';
 import { ENV } from './const/env/env';
 import { Error, NotFound, Index, Base, Store, Search } from './pages/index';
 import mockServer from './mirage/server.js';
+import { PAGES } from './const/pages/pages';
 
 const baseURL = import.meta.env.VITE_BASE_APP;
 const baseENV = import.meta.env.VITE_ENV;
@@ -28,15 +29,16 @@ const queryClient = new QueryClient();
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path={baseURL} element={<Base />}>
-      <Route path="" element={<Index />} />
+      <Route path="" element={<Navigate to={PAGES.INDEX} />} />
+      <Route path={PAGES.INDEX} element={<Index />} />
 
       {/* go swagger will redirect to index.html to serve index.html file */}
       {/* here we match "index.html" to navigate to "" which is Index */}
-      <Route path={'index.html'} element={<Navigate to={baseURL} />} />
+      <Route path={`${PAGES.INDEX}.html`} element={<Navigate to={baseURL} />} />
 
       {/* routes for pages */}
-      <Route path="store" element={<Store />} />
-      <Route path="search" element={<Search />} />
+      <Route path={PAGES.STORE} element={<Store />} />
+      <Route path={PAGES.SEARCH} element={<Search />} />
 
       {/* routes for errors */}
       <Route path="error" element={<Error />} />
