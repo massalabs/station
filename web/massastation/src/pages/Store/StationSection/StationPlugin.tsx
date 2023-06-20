@@ -78,7 +78,7 @@ export function StationPlugin({
     preIcon: massalabsNomination.includes(author) ? (
       <MassaWallet variant="rounded" />
     ) : (
-      <img src={logo} alt="Plugin Logo" />
+      <img src={logo} />
     ),
     topAction: (
       <Button onClick={() => updatePluginState(PLUGIN_STOP)} variant="toggle">
