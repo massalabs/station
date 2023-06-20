@@ -42,14 +42,14 @@ func RedirectToDefaultResourceInterceptor(req *interceptor.Interceptor) *interce
 		http.Redirect(
 			req.Writer,
 			req.Request,
-			"/home/index.html",
+			"/web/index.html",
 			http.StatusSeeOther,
 		)
 
 		return nil
 	}
 
-	redirectPaths := []string{"/home", "/search", "/websiteUploader", "/store"}
+	redirectPaths := []string{"/web", "/home", "/search", "/websiteUploader", "/store"}
 
 	for _, path := range redirectPaths {
 		if req.Request.URL.Path == path || req.Request.URL.Path == path+"/" {

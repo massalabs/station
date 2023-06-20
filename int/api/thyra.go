@@ -93,5 +93,5 @@ func MassaStationWebAppHandler(params operations.MassaStationWebAppParams) middl
 		}
 	}
 
-	return NewCustomResponder(resourceContent, contentType(params.Resource), http.StatusOK)
+	return NewCustomResponder(resourceContent, contentType(resourceName), http.StatusOK)
 }
