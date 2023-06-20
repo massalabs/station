@@ -39,17 +39,19 @@ export function Search() {
     <>
       <div className="bg-primary text-f-primary pt-24">
         <h1 className="mas-banner mb-10">{Intl.t('search.title-banner')}</h1>
-        <div className="overflow-auto h-[700px]">
+        <div className="overflow-auto h-[65vh]">
           {fav.length > 0 && (
-            <p className="mas-body mb-3">{Intl.t('search.fav-websites')}</p>
-          )}
-          <div className="flex flex-col gap-5 mb-14">
-            {fav.map((fav: DomainModel, index: number) => (
-              <div key={index}>
-                <DomainModelItem website={fav} />
+            <>
+              <p className="mas-body mb-3">{Intl.t('search.fav-websites')}</p>
+              <div className="flex flex-col gap-5 mb-14">
+                {fav.map((fav: DomainModel, index: number) => (
+                  <div key={index}>
+                    <DomainModelItem website={fav} />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
           <p className="mas-body pb-3">{Intl.t('search.all-websites')}</p>
           <div className="flex flex-col gap-5">
             {websites.map((website: DomainModel, index: number) => (
