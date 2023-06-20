@@ -7,5 +7,23 @@
       "loading": "Loading...",
       "browse": "Browse the store below and manage plugins you've installed in this section"
     }
+  },
+  "search": {
+    "title-banner": "Massa ecosystem",
+    "fav-websites": "Massa's favorites",
+    "all-websites": "All websites",
+    "sidebar": {
+      "title": "I want upload my own website",
+      "how-to": "How to do it:",
+      "your-website": "Your website",
+      "your-website-desc": "Define your website name and description."
+    },
+    "buttons": {
+      "upload": "Upload"
+    },
+    "inputs": {
+      "website-name": "Name",
+      "website-desc": "Description"
+    }
   }
 }
