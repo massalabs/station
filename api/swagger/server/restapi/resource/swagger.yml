@@ -199,6 +199,24 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /config/node-url:
+    put:
+      summary: Update node URL
+      operationId: updateNodeURL
+      parameters:
+        - name: url
+          in: query
+          description: New node URL
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Node URL updated successfully
+        404:
+          description: Node URL Not found
+          schema:
+            $ref: "#/definitions/Error"
   /kpi:
     get:
       operationId: kpi
