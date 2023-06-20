@@ -34,6 +34,7 @@ func (i *info) Handle(param operations.PluginManagerGetInformationParams) middle
 		payload = &models.Plugin{
 			ID:          param.ID,
 			Name:        info.Name,
+			Author:      info.Author,
 			Description: info.Description,
 			Logo:        info.Logo,
 			Home:        pluginURL + info.Home,
