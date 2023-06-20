@@ -201,22 +201,23 @@ paths:
             $ref: "#/definitions/Error"
   /config/node-url:
     put:
-      summary: Update node URL
+      description: Update node URL
       operationId: updateNodeURL
       parameters:
-        - name: url
-          in: query
-          description: New node URL
+        - in: query
+          name: url
+          type: string
           required: true
-          schema:
-            type: string
+          description: New node URL
       responses:
-        200:
+        "200":
           description: Node URL updated successfully
-        404:
-          description: Node URL Not found
+        "400":
+          description: Bad request
           schema:
             $ref: "#/definitions/Error"
+
+
   /kpi:
     get:
       operationId: kpi
