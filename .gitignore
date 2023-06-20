@@ -1,5 +1,4 @@
-*.exe
-/massastation
+/build/massastation/*
 
 *.log
 *.spec

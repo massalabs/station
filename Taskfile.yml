@@ -1,0 +1,72 @@
+version: '3'
+
+tasks:
+  install:
+    cmds:
+      - echo "Installing dependencies"
+      - cmd: go install github.com/go-swagger/go-swagger/cmd/swagger@latest
+      - cmd: go install golang.org/x/tools/cmd/stringer@latest
+      - cmd: go install mvdan.cc/gofumpt@latest
+      - cmd: go install github.com/daixiang0/gci@latest
+
+  generate: go generate ./...
+
+  test: 
+    cmds:
+      - cmd: go test -v -timeout 60s ./...
+
+  fmt:
+    cmds:
+      - cmd: go mod tidy
+      - cmd: gofumpt -l -w .
+      - cmd: gci write .
+      - task: fmt-web
+      - cmd: golangci-lint run
+
+  fmt-web:
+    dir: web/massastation
+    cmds:
+      - cmd: npm run fmt
+
+  build:
+    cmds:
+      - task: build-linux
+      - task: build-macos
+      - task: build-windows
+
+  build-linux:
+    platforms: [linux]
+    cmds:
+      - cmd: mkdir -p build/massastation
+      - cmd: go build -o build/massastation/massastation cmd/massastation/main.go
+      - cmd: sudo setcap CAP_NET_BIND_SERVICE=+eip build/massastation/massastation
+
+  build-macos:
+    platforms: [darwin]
+    cmds:
+      - cmd: mkdir -p build/massastation
+      - cmd: go build -o build/massastation/massastation cmd/massastation/main.go
+
+  build-windows:
+    platforms: [windows]
+    cmds:
+      - cmd: mkdir build\massastation
+      - cmd: go build -o build\massastation\massastation.exe cmd/massastation/main.go
+
+  run:
+    cmds:
+      - cmd: ./build/massastation/massastation
+        platforms: [linux, darwin]
+      - cmd: ./build/massastation/massastation.exe
+        platforms: [windows]
+
+  build-run:
+    cmds:
+      - task: build
+      - task: run
+
+  all:
+    cmds:
+      - task: install
+      - task: generate
+      - task: build

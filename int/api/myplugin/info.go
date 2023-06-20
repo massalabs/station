@@ -43,5 +43,4 @@ func (i *info) Handle(param operations.PluginManagerGetInformationParams) middle
 		}
 	}
 	return operations.NewPluginManagerGetInformationOK().WithPayload(payload)
-
 }
