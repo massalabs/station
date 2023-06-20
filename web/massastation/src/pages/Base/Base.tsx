@@ -64,11 +64,8 @@ export function Base() {
   }
 
   return (
-    // TODO
-    // remove theme-dark
-    // this needs to be removed as soon we fix the steps to create an account
     <div className={`${theme}`}>
-      <LayoutStation navigator={navigator}>
+      <LayoutStation navigator={navigator} onSetTheme={handleSetTheme}>
         <Outlet context={context} />
       </LayoutStation>
     </div>
