@@ -2,6 +2,7 @@ import { useResource } from '../../custom/api';
 import StationSection, { IMassaPlugin } from './StationSection/StationSection';
 import StoreSection from './StoreSection/StoreSection';
 import Intl from '../../i18n/i18n';
+import Install from './Install';
 
 export function Store() {
   const getPlugins = useResource<IMassaPlugin[]>('plugin-manager');
@@ -18,6 +19,7 @@ export function Store() {
         {Intl.t('store.store-banner')}
       </div>
       <StoreSection />
+      <Install />
     </>
   );
 }
