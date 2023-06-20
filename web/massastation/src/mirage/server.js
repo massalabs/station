@@ -46,7 +46,7 @@ function mockServer(environment = ENV.DEV) {
       }),
       domain: Factory.extend({
         name() {
-          return faker.internet.domainName();
+          return faker.lorem.word();
         },
         address() {
           return 'AU' + faker.string.alpha({ length: { min: 128, max: 256 } });

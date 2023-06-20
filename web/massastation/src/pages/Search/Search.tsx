@@ -1,13 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useResource } from '../../custom/api';
-import { DomainsModel } from '../../models/DomainsModel';
+import { DomainModel } from '../../models/DomainModel';
 import Intl from '../../i18n/i18n';
 
 import Upload from '../../components/SidePanels/Upload/Upload';
 
-import { Description } from '@massalabs/react-ui-kit';
-import { FiArrowUpRight } from 'react-icons/fi';
+import DomainModelItem from './DomainModelItem/DomainModelItem';
 
 const FAVORITES = ['flappy', 'psychedelic', 'flappynathana1'];
 
@@ -18,9 +17,9 @@ export function Search() {
     data: websites = [],
     error,
     isSuccess,
-  } = useResource<DomainsModel[]>('all/domains');
+  } = useResource<DomainModel[]>('all/domains');
 
-  const fav: DomainsModel[] = [];
+  const fav: DomainModel[] = [];
 
   if (isSuccess) {
     websites.forEach((website) => {
@@ -45,28 +44,18 @@ export function Search() {
             <p className="mas-body mb-3">{Intl.t('search.fav-websites')}</p>
           )}
           <div className="flex flex-col gap-5 mb-14">
-            {fav.map((fav: DomainsModel, index: number) => (
-              <Description
-                key={index}
-                variant="secondary"
-                preIcon={<FiArrowUpRight />}
-                title={fav.name}
-                website={fav.name + '.massa'}
-                description={fav.description}
-              />
+            {fav.map((fav: DomainModel, index: number) => (
+              <div key={index}>
+                <DomainModelItem website={fav} />
+              </div>
             ))}
           </div>
           <p className="mas-body pb-3">{Intl.t('search.all-websites')}</p>
           <div className="flex flex-col gap-5">
-            {websites.map((website: DomainsModel, index: number) => (
-              <Description
-                key={index}
-                variant="secondary"
-                preIcon={<FiArrowUpRight />}
-                title={website.name}
-                website={website.name + '.massa'}
-                description={website.description}
-              />
+            {websites.map((website: DomainModel, index: number) => (
+              <div key={index}>
+                <DomainModelItem website={website} />
+              </div>
             ))}
           </div>
         </div>
