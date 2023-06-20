@@ -3,14 +3,17 @@ import { faker } from '@faker-js/faker';
 import { ENV } from '../const/env/env';
 
 /**
+ * Creates a mocked server
  *
- * @param environment
+ * @param environment the environment to mock
+ * @returns the mocked server
  */
 function mockServer(environment = ENV.DEV) {
   const mockedServer = createServer({
     environment,
     models: {
       plugin: Model,
+      store: Model,
       domain: Model,
     },
     factories: {
@@ -54,6 +57,34 @@ function mockServer(environment = ENV.DEV) {
         metadata() {
           return 'test';
         },
+      }),
+      store: Factory.extend({
+        name() {
+          return faker.lorem.word();
+        },
+        author() {
+          return Math.random() < 0.3 ? 'MassaLabs' : faker.person.firstName();
+        },
+        description() {
+          return faker.lorem.sentence();
+        },
+        version() {
+          return faker.system.semver();
+        },
+        url() {
+          return faker.internet.url();
+        },
+        logo: 'logo.png',
+        massastationMinVersion() {
+          return faker.system.semver();
+        },
+        file() {
+          return {
+            url: faker.internet.url(),
+            checksum: faker.lorem.word(),
+          };
+        },
+        os: 'linux',
       }),
     },
 
@@ -100,6 +131,27 @@ function mockServer(environment = ENV.DEV) {
         return new Response(200, {});
       });
 
+      this.post('plugin-manager', (schema, request) => {
+        const sourceURL = request.queryParams.source;
+
+        const storePlugin = schema.stores.findBy(
+          (store) => store.file.url === sourceURL,
+        );
+        const newPlugin = {
+          id: faker.number.int(),
+          status: 'Up',
+          updatable: false,
+          name: storePlugin?.name || faker.lorem.word(),
+          author: storePlugin?.author || faker.person.firstName(),
+          description: storePlugin?.description || faker.lorem.sentence(),
+          version: storePlugin?.version || faker.system.semver(),
+          home: storePlugin?.url || `/plugin/massalabs/${faker.lorem.word()}/`,
+        };
+        schema.plugins.create(newPlugin);
+
+        return new Response(204);
+      });
+
       this.delete('/plugin-manager/:id', (schema, request) => {
         const plugin = schema.plugins.find(request.params.id);
 
@@ -113,6 +165,12 @@ function mockServer(environment = ENV.DEV) {
         let { models: domains } = schema.domains.all();
 
         return domains;
+      });
+
+      this.get('plugin-store', (schema) => {
+        let { models: stores } = schema.stores.all();
+
+        return stores;
       });
     },
   });
