@@ -81,7 +81,7 @@ func GetWebsites(config config.AppConfig, client *node.Client, domainNames []str
 	// Process each domain's DNS entry
 	for index, domainName := range domainNames {
 		// Extract contract address and website description from DNS entry
-		websiteStorerAddress, websiteDescription, err := dnshelper.GetWebsiteValues(dnsValues[index].CandidateValue)
+		websiteStorerAddress, websiteDescription, err := dnshelper.AddressAndDescription(dnsValues[index].CandidateValue)
 		if err != nil {
 			return nil, fmt.Errorf("failed to retrieve website values: %w", err)
 		}

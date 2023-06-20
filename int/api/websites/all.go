@@ -70,7 +70,7 @@ func Registry(config config.AppConfig) ([]*models.Registry, error) {
 
 	// Iterate over the DNS values to populate Registry objects with website values
 	for index, dnsValue := range dnsValues {
-		websiteStorerAddress, websiteDescription, err := dnshelper.GetWebsiteValues(dnsValue.CandidateValue)
+		websiteStorerAddress, websiteDescription, err := dnshelper.AddressAndDescription(dnsValue.CandidateValue)
 		if err != nil {
 			return nil, fmt.Errorf("failed to retrieve website values: %w", err)
 		}
