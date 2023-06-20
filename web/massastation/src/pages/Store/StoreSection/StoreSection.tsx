@@ -56,13 +56,9 @@ function StoreSection({
       ) : plugins && plugins.length ? (
         <div className="flex gap-4 flex-wrap">
           {plugins.map(
-            (plugin) =>
+            (plugin, index: number) =>
               !isDownloaded(plugin) && (
-                <StorePlugin
-                  key={plugin.name}
-                  plugin={plugin}
-                  refetch={refetch}
-                />
+                <StorePlugin key={index} plugin={plugin} refetch={refetch} />
               ),
           )}
         </div>
