@@ -2,11 +2,9 @@ import { useResource } from '../../custom/api';
 import StationSection, { IMassaPlugin } from './StationSection/StationSection';
 import StoreSection from './StoreSection/StoreSection';
 import Intl from '../../i18n/i18n';
-import Sidepanel from './Sidepanel';
+import Install from './Install';
 
 export function Store() {
-  // placeholder URL for the BE to implement
-  const url = 'https://massa.massa.net';
   const getPlugins = useResource<IMassaPlugin[]>('plugin-manager');
   return (
     <>
@@ -21,7 +19,7 @@ export function Store() {
         {Intl.t('store.store-banner')}
       </div>
       <StoreSection />
-      <Sidepanel url={url} />
+      <Install />
     </>
   );
 }

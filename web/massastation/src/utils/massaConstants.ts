@@ -5,3 +5,5 @@ export const massalabsNomination = ['Massa Labs'];
 export const PLUGIN_START = 'start';
 export const PLUGIN_STOP = 'stop';
 export const PLUGIN_UPDATE = 'update';
+
+export const isZipFile = /^(http)[^\s]*\.zip$/i;
