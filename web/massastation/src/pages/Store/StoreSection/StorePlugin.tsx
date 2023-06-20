@@ -5,13 +5,12 @@ import { usePost } from '../../../custom/api';
 import { useEffect } from 'react';
 import { IMassaStore } from './StoreSection';
 
-function StorePlugin({
-  plugin,
-  refetch,
-}: {
+interface StorePluginProps {
   plugin: IMassaStore;
   refetch: () => void;
-}) {
+}
+function StorePlugin(props: StorePluginProps) {
+  const { plugin, refetch } = props;
   let {
     author,
     name,
@@ -20,6 +19,13 @@ function StorePlugin({
     file: { url },
   } = plugin;
   const { mutate, isSuccess } = usePost(`plugin-manager?source=${url}`);
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+    }
+  }, [isSuccess]);
+
   const argsStore = {
     preIcon: massalabsNomination.includes(author) ? (
       <MassaWallet variant="rounded" />
@@ -32,11 +38,6 @@ function StorePlugin({
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
     content: description,
   };
-  useEffect(() => {
-    if (isSuccess) {
-      refetch();
-    }
-  }, [isSuccess]);
 
   return (
     <>

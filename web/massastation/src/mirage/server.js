@@ -4,10 +4,7 @@ import { ENV } from '../const/env/env';
 
 /**
  * Creates a mocked server
- * Creates a mocked server
  *
- * @param environment the environment to mock
- * @returns the mocked server
  * @param environment the environment to mock
  * @returns the mocked server
  */
@@ -18,7 +15,6 @@ function mockServer(environment = ENV.DEV) {
       plugin: Model,
       store: Model,
       domain: Model,
-      store: Model,
     },
     factories: {
       plugin: Factory.extend({
@@ -50,7 +46,7 @@ function mockServer(environment = ENV.DEV) {
       }),
       domain: Factory.extend({
         name() {
-          return faker.lorem.word();
+          return faker.internet.domainName();
         },
         address() {
           return 'AU' + faker.string.alpha({ length: { min: 128, max: 256 } });
@@ -67,7 +63,7 @@ function mockServer(environment = ENV.DEV) {
           return faker.lorem.word();
         },
         author() {
-          return Math.random() < 0.3 ? 'MassaLabs' : faker.person.firstName();
+          return Math.random() < 0.3 ? 'Massa Labs' : faker.person.firstName();
         },
         description() {
           return faker.lorem.sentence();
@@ -93,8 +89,9 @@ function mockServer(environment = ENV.DEV) {
     },
 
     seeds(server) {
-      server.createList('plugin', Math.floor(Math.random() * 8));
-      server.createList('store', Math.floor(Math.random() * 8));
+      server.createList('plugin', 2);
+      server.createList('domain', 50);
+      server.createList('store', 7);
     },
 
     routes() {
@@ -156,24 +153,6 @@ function mockServer(environment = ENV.DEV) {
         return new Response(204);
       });
 
-      this.post('plugin-manager', (schema, request) => {
-        const sourceURL = request.queryParams.source;
-        const storePlugin = schema.stores.findBy({ url: sourceURL });
-        // use the parameters of the store plugin if it exists
-        // otherwise generate random values
-        const newPlugin = {
-          id: faker.number.int(),
-          status: 'Up',
-          updatable: false,
-          name: storePlugin?.name || faker.lorem.word(),
-          author: storePlugin?.author || faker.person.firstName(),
-          description: storePlugin?.description || faker.lorem.sentence(),
-          version: storePlugin?.version || faker.system.semver(),
-          home: storePlugin?.url || `/plugin/massalabs/${faker.lorem.word()}/`,
-        };
-        schema.plugins.create(newPlugin);
-        return new Response(204);
-      });
       this.delete('/plugin-manager/:id', (schema, request) => {
         const plugin = schema.plugins.find(request.params.id);
 
@@ -182,8 +161,16 @@ function mockServer(environment = ENV.DEV) {
 
         return plugin.destroy();
       });
+
+      this.get('/all/domains', (schema) => {
+        let { models: domains } = schema.domains.all();
+
+        return domains;
+      });
+
       this.get('plugin-store', (schema) => {
         let { models: stores } = schema.stores.all();
+
         return stores;
       });
     },

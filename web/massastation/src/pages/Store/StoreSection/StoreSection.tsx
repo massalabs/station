@@ -29,6 +29,7 @@ function StoreSection({
     data: plugins,
     isLoading,
   } = useResource<IMassaStore[]>('plugin-store');
+
   const { refetch, data: myPlugins } = getPlugins;
 
   useEffect(() => {
@@ -36,13 +37,13 @@ function StoreSection({
       navigate(routeFor('error'));
     }
   });
-  // const isDownloaded is true is there is a plugin with the same name & author in myPlugins and plugins
+
   const isDownloaded = (plugin: IMassaStore) => {
     return (
-      myPlugins?.some(
-        (myPlugin) =>
-          myPlugin.name === plugin.name && myPlugin.author === plugin.author,
-      ) || false
+      myPlugins?.some((myPlugin) => {
+        const { name, author } = myPlugin;
+        return name === plugin.name && author === plugin.author;
+      }) || false
     );
   };
 

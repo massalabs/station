@@ -19,6 +19,7 @@ export function Store() {
         {Intl.t('store.store-banner')}
       </div>
       <StoreSection getPlugins={getPlugins} />
+      <Install />
     </>
   );
 }
