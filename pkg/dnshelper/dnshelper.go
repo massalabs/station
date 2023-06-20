@@ -31,7 +31,7 @@ func AddressAndDescription(dnsValue []byte) (string, string, error) {
 	description := ""
 
 	if len(dnsRecords) > indexOfWebsiteDescription {
-		websiteDescription := dnsRecords[indexOfWebsiteDescription]
+		unsafeDescription := dnsRecords[indexOfWebsiteDescription]
 
 		// Prevent XSS by escaping special characters in websiteDescription
 		// see
