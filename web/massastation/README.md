@@ -1,4 +1,4 @@
-# Massa plugin wallet web front end
+# MassaStation web app frontend
 
 ## Dev guide
 
@@ -10,13 +10,9 @@ Run dev server:
 
     npm run dev
 
-then navigate to <http://localhost:5173/index>.
+then navigate to <http://localhost:5173>.
 
-Build for standalone wallet plugin:
-
-    npm run build:standalone
-
-Build for wallet plugin launched by MassaStation plugin manager:
+Build MassaStation web app:
 
     npm run build
 

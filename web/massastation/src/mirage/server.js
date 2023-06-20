@@ -21,7 +21,7 @@ function mockServer(environment = ENV.DEV) {
         },
         author() {
           // there is a 30% chance that the author will be MassaLabs
-          return Math.random() < 0.3 ? 'MassaLabs' : faker.person.firstName();
+          return Math.random() < 0.3 ? 'Massa Labs' : faker.person.firstName();
         },
         description() {
           return faker.lorem.sentence();
