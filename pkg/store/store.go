@@ -45,7 +45,7 @@ type Store struct {
 }
 
 const (
-	pluginListURL = "https://raw.githubusercontent.com/massalabs/station-plugin-store/main/plugins.json"
+	pluginListURL = "https://raw.githubusercontent.com/massalabs/station-store/main/plugins.json"
 )
 
 func NewStore() error {
