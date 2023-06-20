@@ -26,14 +26,23 @@
       "title": "I want upload my own website",
       "how-to": "How to do it:",
       "your-website": "Your website",
-      "your-website-desc": "Define your website name and description."
+      "your-website-description": "Define your website name and description."
     },
     "buttons": {
       "upload": "Upload"
     },
     "inputs": {
       "website-name": "Name",
-      "website-desc": "Description"
+      "website-description": "Description"
+    },
+    "errors": {
+      "no-website-name": "Website's name is missing.",
+      "invalid-website-name": "Website's name is invalid, it must match regex ^[a-z0-9_.\\-~]{3,50}$.",
+      "description-too-long": "Description max length is 280 characters.",
+      "invalid-description": "Description must contains UTF-8 characters only.",
+      "no-file": "File is missing.",
+      "invalid-file-extension": "File format must be a \".zip\".",
+      "invalid-file-content": "Website file must contain index.html at the source."
     }
   },
   "index": {
