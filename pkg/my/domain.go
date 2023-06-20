@@ -9,6 +9,7 @@ import (
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/convert"
+	"github.com/massalabs/station/pkg/dnshelper"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/wallet"
 )
@@ -80,19 +81,20 @@ func GetWebsites(config config.AppConfig, client *node.Client, domainNames []str
 	// Process each domain's DNS entry
 	for index, domainName := range domainNames {
 		// Extract contract address and website description from DNS entry
-		dnsValues := convert.ByteToStringArray(dnsValues[index].CandidateValue)
-		contractAddress := dnsValues[0]
-		websiteDescription := dnsValues[2]
+		websiteStorerAddress, websiteDescription, err := dnshelper.AddressAndDescription(dnsValues[index].CandidateValue)
+		if err != nil {
+			return nil, fmt.Errorf("failed to retrieve website values: %w", err)
+		}
 
 		// Check chunk integrity for the contract address
-		missingChunks, err := getMissingChunkIds(client, contractAddress)
+		missingChunks, err := getMissingChunkIds(client, websiteStorerAddress)
 		if err != nil {
 			return nil, fmt.Errorf("failed to check chunk integrity: %w", err)
 		}
 
 		// Create a response object with website information
 		response := &models.Websites{
-			Address:      contractAddress,
+			Address:      websiteStorerAddress,
 			Name:         domainName,
 			Description:  websiteDescription,
 			BrokenChunks: missingChunks,

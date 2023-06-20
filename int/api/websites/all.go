@@ -11,20 +11,16 @@ import (
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/convert"
+	"github.com/massalabs/station/pkg/dnshelper"
 	"github.com/massalabs/station/pkg/node"
 )
 
 const (
 	dateFormat          = "2006-01-02"
-	metaKey             = "META"
 	ownedPrefix         = "owned"
 	ownerKey            = "owner"
 	blackListKey        = "blackList"
 	secondsToMilliCoeff = 1000
-
-	// Indexes of data in website name key.
-	indexOfWebsiteAddress     = 0 // Index of website Address in the dnsValue array
-	indexOfWebsiteDescription = 2 // Index of website Description in the dnsValue array
 )
 
 func NewRegistryHandler(config *config.AppConfig) operations.AllDomainsGetterHandler {
@@ -64,7 +60,7 @@ func Registry(config config.AppConfig) ([]*models.Registry, error) {
 		return nil, fmt.Errorf("filtering keys to be displayed at '%s': %w", config.DNSAddress, err)
 	}
 
-	// Fetch DNS values of the website names : contractAddress, Description.
+	// Fetch DNS values of the website names: contractAddress, Description.
 	dnsValues, err := node.ContractDatastoreEntries(client, config.DNSAddress, websiteNames)
 	if err != nil {
 		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, config.DNSAddress, err)
@@ -74,24 +70,25 @@ func Registry(config config.AppConfig) ([]*models.Registry, error) {
 
 	// Iterate over the DNS values to populate Registry objects with website values
 	for index, dnsValue := range dnsValues {
-		websiteValue := convert.ByteToStringArray(dnsValue.CandidateValue)
-		websiteStorerAddress := websiteValue[indexOfWebsiteAddress]
-		websiteDescription := websiteValue[indexOfWebsiteDescription]
-
-		websiteMetadata, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes(metaKey))
+		websiteStorerAddress, websiteDescription, err := dnshelper.AddressAndDescription(dnsValue.CandidateValue)
 		if err != nil {
-			return nil, fmt.Errorf("reading key '%s' at '%s': %w", metaKey, websiteStorerAddress, err)
+			return nil, fmt.Errorf("failed to retrieve website values: %w", err)
+		}
+
+		websiteMetadata, err := dnshelper.GetWebsiteMetadata(client, websiteStorerAddress)
+		if err != nil {
+			return nil, fmt.Errorf("reading website metadata at '%s': %w", websiteStorerAddress, err)
 		}
 
 		registry[index] = &models.Registry{
-			Name:        convert.BytesToString(websiteNames[index]), // name of website : flappy.
-			Address:     websiteStorerAddress,                       // website Address
-			Description: websiteDescription,                         // website Description
-			Metadata:    websiteMetadata.CandidateValue,             // website metadata.
+			Name:        convert.BytesToString(websiteNames[index]),
+			Address:     websiteStorerAddress,
+			Description: websiteDescription,
+			Metadata:    websiteMetadata,
 		}
 	}
 
-	// sort website names with alphanumeric order.
+	// Sort website names with alphanumeric order
 	sort.Slice(registry, func(i, j int) bool {
 		return registry[i].Name < registry[j].Name
 	})
