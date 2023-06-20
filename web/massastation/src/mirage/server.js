@@ -162,11 +162,15 @@ function mockServer(environment = ENV.DEV) {
         return plugin.destroy();
       });
 
-      this.get('/all/domains', (schema) => {
-        let { models: domains } = schema.domains.all();
+      this.get(
+        '/all/domains',
+        (schema) => {
+          let { models: domains } = schema.domains.all();
 
-        return domains;
-      });
+          return domains;
+        },
+        { timing: 5000 },
+      );
 
       this.get('plugin-store', (schema) => {
         let { models: stores } = schema.stores.all();

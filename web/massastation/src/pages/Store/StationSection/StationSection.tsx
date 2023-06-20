@@ -49,9 +49,9 @@ function StationSection({
         <>
           {plugins && plugins.length ? (
             <div className="flex gap-4 flex-wrap">
-              {plugins.map((plugin) => (
+              {plugins.map((plugin, index: number) => (
                 <StationPlugin
-                  key={plugin.id}
+                  key={index}
                   plugin={plugin}
                   fetchPlugins={() => refetchPlugins()}
                 />
