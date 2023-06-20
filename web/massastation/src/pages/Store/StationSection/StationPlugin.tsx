@@ -70,7 +70,8 @@ export function StationPlugin({
   }, [deleteSuccess]);
 
   function updatePluginState(command: string) {
-    mutate({ command } as PluginPostMethod);
+    const payload = { command };
+    mutate({ payload });
   }
 
   const argsOn = {
