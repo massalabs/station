@@ -31,7 +31,7 @@ const router = createBrowserRouter(
       <Route path="" element={<Index />} />
 
       {/* go swagger will redirect to index.html to serve index.html file */}
-      {/* here we match index.html en navigate to "" which is Index */}
+      {/* here we match "index.html" to navigate to "" which is Index */}
       <Route path={'index.html'} element={<Navigate to={baseURL} />} />
 
       {/* routes for pages */}
