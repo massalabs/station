@@ -137,7 +137,7 @@ To build MassaStation, follow these steps:
      go build -o massastation cmd/massastation/main.go
      ```
 
-3. **Running the Project:** Finally, to run MassaStation, execute the `massastation` binary.
+3. **Running the Project:** Finally, to run MassaStation, execute the `massastation` binary. Navigate to <http://station.massa> to see MassaStation frontend.
 
 
 ### Linting and Formatting

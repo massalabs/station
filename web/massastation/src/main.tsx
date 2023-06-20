@@ -5,6 +5,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
+  Navigate,
 } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -27,8 +28,13 @@ const queryClient = new QueryClient();
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path={baseURL} element={<Base />}>
+      <Route path="" element={<Index />} />
+
+      {/* go swagger will redirect to index.html to serve index.html file */}
+      {/* here we match "index.html" to navigate to "" which is Index */}
+      <Route path={'index.html'} element={<Navigate to={baseURL} />} />
+
       {/* routes for pages */}
-      <Route path="index" element={<Index />} />
       <Route path="store" element={<Store />} />
 
       {/* routes for errors */}
