@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation       This is a test suite for Thyra Plugin Manager endpoints.
+Documentation       This is a test suite for Massa Station Plugin Manager endpoints.
 
 Library             RequestsLibrary
 Library             String
@@ -21,7 +21,7 @@ GET /plugin-manager with no plugins
 
 POST /plugin-manager?source={{pluginSource}}
     ${source}=    Set Variable
-    ...    https://github.com/massalabs/thyra-plugin-hello-world/releases/download/${HELLO_WORLD_PLUGIN_VERSION}/thyra-plugin-hello-world_${OS}-${ARCH}.zip
+    ...    https://github.com/massalabs/station-massa-hello-world/releases/download/${HELLO_WORLD_PLUGIN_VERSION}/station-massa-hello-world_${OS}-${ARCH}.zip
     ${response}=    POST
     ...    ${API_URL}/plugin-manager
     ...    params=source=${source}
@@ -75,7 +75,7 @@ GET /plugin/{author}/{name}/
 
 # We can register multiple times the same plugin, but the aliases list isn't updated correctly.
 # This causes the previous plugin alias to be considered as still valid.
-# TODO: Uncomment this test and make sure it passes once https://github.com/massalabs/thyra/issues/574 is fixed.
+# TODO: Uncomment this test and make sure it passes once https://github.com/massalabs/store/issues/574 is fixed.
 # POST /plugin-manager/register
 #    ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
 #    ${data}=    Create Dictionary
@@ -105,7 +105,7 @@ POST /plugins-manager/{id}/execute already started
     ...    json=${data}
 
     ${expectedError}=    Set Variable
-    ...    "[start]${SPACE}${SPACE}(Error while starting plugin thyra-plugin-hello-world: plugin is not ready to start.\n). Current plugin status is Up."
+    ...    "[start]${SPACE}${SPACE}(Error while starting plugin station-massa-hello-world: plugin is not ready to start.\n). Current plugin status is Up."
     Should Be Equal As Strings    ${response.json()['code']}    Plugin-0030
     Should Be Equal As Strings    "${response.json()['message']}"    ${expectedError}
 

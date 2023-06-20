@@ -3,7 +3,7 @@ Library     SeleniumLibrary
 Resource    variables.resource
 
 *** Keywords ***
-Open Thyra Page
+Open Massa Station Page
     [Arguments]    ${PATH}
     Open Browser
     ...    ${PATH}

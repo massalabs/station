@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation       This is a test suite for Thyra /cmd endpoints.
+Documentation       This is a test suite for Massa Station /cmd endpoints.
 
 Library             RequestsLibrary
 Library             Collections
