@@ -21,7 +21,8 @@ GET /plugin-manager with no plugins
 
 POST /plugin-manager?source={{pluginSource}}
     ${source}=    Set Variable
-    ...    https://github.com/massalabs/station-massa-hello-world/releases/download/${HELLO_WORLD_PLUGIN_VERSION}/station-massa-hello-world_${OS}-${ARCH}.zip
+    # TOD: thyra-plugin-hello-world to be renamed to station-massa-hello-world when we have new release on hello-world plugin
+    ...    https://github.com/massalabs/station-massa-hello-world/releases/download/${HELLO_WORLD_PLUGIN_VERSION}/thyra-plugin-hello-world_${OS}-${ARCH}.zip
     ${response}=    POST
     ...    ${API_URL}/plugin-manager
     ...    params=source=${source}
