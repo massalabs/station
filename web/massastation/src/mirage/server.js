@@ -46,7 +46,7 @@ function mockServer(environment = ENV.DEV) {
       }),
       domain: Factory.extend({
         name() {
-          return faker.lorem.word();
+          return faker.internet.domainName();
         },
         address() {
           return 'AU' + faker.string.alpha({ length: { min: 128, max: 256 } });
@@ -63,7 +63,7 @@ function mockServer(environment = ENV.DEV) {
           return faker.lorem.word();
         },
         author() {
-          return Math.random() < 0.3 ? 'MassaLabs' : faker.person.firstName();
+          return Math.random() < 0.3 ? 'Massa Labs' : faker.person.firstName();
         },
         description() {
           return faker.lorem.sentence();
@@ -91,6 +91,7 @@ function mockServer(environment = ENV.DEV) {
     seeds(server) {
       server.createList('plugin', 2);
       server.createList('domain', 50);
+      server.createList('store', 7);
     },
 
     routes() {
