@@ -83,7 +83,7 @@ Package: massastation
 Version: $PKGVERSION
 Architecture: amd64
 Maintainer: Massa Labs <massa.net>
-Homepage: https://github.com/massalabs/thyra
+Homepage: https://github.com/massalabs/station
 Description: An entrance to the Massa blockchain.
     MassaStation is a secured gateway to the Massa blockchain. This application provides a user-friendly way to access, use and build on the Massa blockchain while keeping you safe from the dangers of the internet.
 Recommends: libnss3-tools
