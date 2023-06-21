@@ -63,7 +63,7 @@ function mockServer(environment = ENV.DEV) {
           return faker.lorem.word();
         },
         author() {
-          return Math.random() < 0.3 ? 'MassaLabs' : faker.person.firstName();
+          return Math.random() < 0.3 ? 'Massa Labs' : faker.person.firstName();
         },
         description() {
           return faker.lorem.sentence();
@@ -91,6 +91,7 @@ function mockServer(environment = ENV.DEV) {
     seeds(server) {
       server.createList('plugin', 2);
       server.createList('domain', 50);
+      server.createList('store', 7);
     },
 
     routes() {
@@ -161,11 +162,15 @@ function mockServer(environment = ENV.DEV) {
         return plugin.destroy();
       });
 
-      this.get('/all/domains', (schema) => {
-        let { models: domains } = schema.domains.all();
+      this.get(
+        '/all/domains',
+        (schema) => {
+          let { models: domains } = schema.domains.all();
 
-        return domains;
-      });
+          return domains;
+        },
+        { timing: 5000 },
+      );
 
       this.get('plugin-store', (schema) => {
         let { models: stores } = schema.stores.all();

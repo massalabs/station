@@ -8,17 +8,21 @@ export function Store() {
   const getPlugins = useResource<IMassaPlugin[]>('plugin-manager');
   return (
     <>
-      <div className="mas-banner text-neutral mb-10 mt-24">
-        {Intl.t('store.modules-banner')}
+      <div className="bg-primary text-f-primary pt-24">
+        <h1 className="mas-banner mb-10"> {Intl.t('store.modules-banner')}</h1>
+        <div className="overflow-auto h-[65vh]">
+          <div className="mas-body mb-3 text-neutral">
+            {Intl.t('store.mystation-banner')}
+          </div>
+          <div className="mb-10">
+            <StationSection getPlugins={getPlugins} />
+          </div>
+          <div className="mas-body mb-3 text-neutral">
+            {Intl.t('store.store-banner')}
+          </div>
+          <StoreSection getPlugins={getPlugins} />
+        </div>
       </div>
-      <div className="mas-menu-active mb-4 text-neutral">
-        {Intl.t('store.mystation-banner')}
-      </div>
-      <StationSection getPlugins={getPlugins} />
-      <div className="mas-menu-active mb-4 text-neutral">
-        {Intl.t('store.store-banner')}
-      </div>
-      <StoreSection />
       <Install />
     </>
   );

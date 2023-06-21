@@ -70,14 +70,15 @@ export function StationPlugin({
   }, [deleteSuccess]);
 
   function updatePluginState(command: string) {
-    mutate({ command } as PluginPostMethod);
+    const payload = { command };
+    mutate({ payload });
   }
 
   const argsOn = {
     preIcon: massalabsNomination.includes(author) ? (
       <MassaWallet variant="rounded" />
     ) : (
-      <img src={logo} alt="Plugin Logo" />
+      <img src={logo} />
     ),
     topAction: (
       <Button onClick={() => updatePluginState(PLUGIN_STOP)} variant="toggle">

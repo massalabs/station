@@ -35,5 +35,12 @@
       "website-name": "Name",
       "website-desc": "Description"
     }
+  },
+  "index": {
+    "title-banner": "Decentralization made easy",
+    "buttons": {
+      "search": "Search Massa ecosystem",
+      "explore": "Explore module store"
+    }
   }
 }

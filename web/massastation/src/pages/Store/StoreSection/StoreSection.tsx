@@ -5,30 +5,47 @@ import { routeFor } from '../../../utils';
 import Intl from '../../../i18n/i18n';
 
 import StorePlugin from './StorePlugin';
+import { UseQueryResult } from '@tanstack/react-query';
+import { IMassaPlugin } from '../StationSection/StationSection';
 
-export interface IMassaPlugin {
+export interface IMassaStore {
   name: string;
   author: string;
   description: string;
-  logo: string;
   version: string;
-  status: string;
-  updatable: boolean;
+  url: string;
+  logo: string;
+  file: { url: string };
 }
 
-function StoreSection() {
+function StoreSection({
+  getPlugins,
+}: {
+  getPlugins: UseQueryResult<IMassaPlugin[], undefined>;
+}) {
   const navigate = useNavigate();
   const {
     error,
     data: plugins,
     isLoading,
-  } = useResource<IMassaPlugin[]>('plugin-manager');
+  } = useResource<IMassaStore[]>('plugin-store');
+
+  const { refetch, data: myPlugins } = getPlugins;
 
   useEffect(() => {
     if (error) {
       navigate(routeFor('error'));
     }
   });
+
+  const isDownloaded = (plugin: IMassaStore) => {
+    return (
+      myPlugins?.some((myPlugin) => {
+        const { name, author } = myPlugin;
+        return name === plugin.name && author === plugin.author;
+      }) || false
+    );
+  };
 
   return (
     <>
@@ -38,9 +55,12 @@ function StoreSection() {
         </div>
       ) : plugins && plugins.length ? (
         <div className="flex gap-4 flex-wrap">
-          {plugins.map((plugin) => (
-            <StorePlugin key={plugin.name} plugin={plugin} />
-          ))}
+          {plugins.map(
+            (plugin, index: number) =>
+              !isDownloaded(plugin) && (
+                <StorePlugin key={index} plugin={plugin} refetch={refetch} />
+              ),
+          )}
         </div>
       ) : (
         <></>
