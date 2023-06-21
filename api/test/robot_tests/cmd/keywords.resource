@@ -28,7 +28,7 @@ Delete Wallet Plugin
 Install Wallet Plugin
     Log To Console    Installing Massa Wallet Plugin
     ${source}=    Set Variable
-    ...    https://github.com/massalabs/thyra-plugin-wallet/releases/download/${WALLET_PLUGIN_VERSION}/wallet-plugin_${OS}-${ARCH}.zip
+    ...    https://github.com/massalabs/station-massa-wallet/releases/download/${WALLET_PLUGIN_VERSION}/wallet-plugin_${OS}-${ARCH}.zip
     ${response}=    POST
     ...    ${API_URL}/plugin-manager
     ...    params=source=${source}

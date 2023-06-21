@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import {
   Button,
@@ -34,7 +33,6 @@ export function StationPlugin({
   plugin: IMassaPlugin;
   fetchPlugins: () => void;
 }) {
-  const navigate = useNavigate();
   const [myPlugin, setMyPlugin] = useState<IMassaPlugin>(plugin);
   const { author, name, home, logo, status, updatable, id } = myPlugin;
   const {
@@ -70,14 +68,15 @@ export function StationPlugin({
   }, [deleteSuccess]);
 
   function updatePluginState(command: string) {
-    mutate({ command } as PluginPostMethod);
+    const payload = { command };
+    mutate({ payload });
   }
 
   const argsOn = {
     preIcon: massalabsNomination.includes(author) ? (
       <MassaWallet variant="rounded" />
     ) : (
-      <img src={logo} alt="Plugin Logo" />
+      <img src={logo} />
     ),
     topAction: (
       <Button onClick={() => updatePluginState(PLUGIN_STOP)} variant="toggle">
@@ -97,7 +96,7 @@ export function StationPlugin({
         </Button>
       ),
       <Button variant="icon">
-        <FiArrowUpRight onClick={() => navigate(home)} />
+        <FiArrowUpRight onClick={() => window.open(home, '_blank')} />
       </Button>,
       <Button variant="icon" onClick={() => deletePlugin({})}>
         <FiTrash2 />

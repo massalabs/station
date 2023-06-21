@@ -1,10 +1,32 @@
 import { Certificate, MassaWallet, Plugin } from '@massalabs/react-ui-kit';
-import { IMassaPlugin } from './StoreSection';
 import { massalabsNomination } from '../../../utils/massaConstants';
 import { FiDownload } from 'react-icons/fi';
+import { usePost } from '../../../custom/api';
+import { useEffect } from 'react';
+import { IMassaStore } from './StoreSection';
 
-function StorePlugin({ plugin }: { plugin: IMassaPlugin }) {
-  let { author, name, logo, description } = plugin;
+interface StorePluginProps {
+  plugin: IMassaStore;
+  refetch: () => void;
+}
+function StorePlugin(props: StorePluginProps) {
+  const { plugin, refetch } = props;
+  let {
+    author,
+    name,
+    logo,
+    description,
+    file: { url },
+  } = plugin;
+  const { mutate, isSuccess } = usePost(`plugin-manager`);
+
+  const params = { source: url };
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+    }
+  }, [isSuccess]);
 
   const argsStore = {
     preIcon: massalabsNomination.includes(author) ? (
@@ -12,7 +34,7 @@ function StorePlugin({ plugin }: { plugin: IMassaPlugin }) {
     ) : (
       <img src={logo} />
     ),
-    topAction: <FiDownload />,
+    topAction: <FiDownload onClick={() => mutate({ params })} />,
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,

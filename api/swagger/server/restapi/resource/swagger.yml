@@ -1089,6 +1089,10 @@ definitions:
         description: Plugin name.
         type: string
         x-nullable: false
+      author:
+        description: Plugin author.
+        type: string
+        x-nullable: false
       description:
         description: Plugin description.
         type: string

@@ -42,29 +42,28 @@ function StationSection({
   return (
     <>
       {isLoading || isRefetching ? (
-        <div className="mas-body mb-4 text-neutral">
-          {Intl.t('store.mystation.loading')}
+        <div className="mas-body2 mb-4 text-neutral">
+          {Intl.t('store.loading')}
         </div>
       ) : (
         <>
           {plugins && plugins.length ? (
             <div className="flex gap-4 flex-wrap">
-              {plugins.map((plugin) => (
+              {plugins.map((plugin, index: number) => (
                 <StationPlugin
-                  key={plugin.id}
+                  key={index}
                   plugin={plugin}
                   fetchPlugins={() => refetchPlugins()}
                 />
               ))}
             </div>
           ) : (
-            <div className="mas-body mb-4 text-neutral">
+            <div className="mas-body2 mb-4 text-neutral">
               {Intl.t('store.mystation.browse')}
             </div>
           )}
         </>
       )}
-      ;
     </>
   );
 }

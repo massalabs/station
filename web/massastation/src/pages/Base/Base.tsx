@@ -1,8 +1,10 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useLocalStorage } from '../../custom/useLocalStorage';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import { Navigator, LayoutStation } from '@massalabs/react-ui-kit';
 import { FiCodepen, FiGlobe, FiHome } from 'react-icons/fi';
+import { useEffect, useState } from 'react';
+import { PAGES } from '../../const/pages/pages';
 
 type ThemeSettings = {
   [key: string]: {
@@ -29,35 +31,73 @@ export const themeSettings: ThemeSettings = {
   },
 };
 
-const navigator = (
-  <Navigator
-    items={[
-      {
-        icon: <FiHome />,
-        isActive: false,
-      },
-      {
-        icon: <FiCodepen />,
-        isActive: true,
-      },
-      {
-        icon: <FiGlobe />,
-        isActive: false,
-      },
-    ]}
-    // these are mandatory and cannot be remove
-    // correct redirect will be implemented later
-    onClickNext={() => console.log('Next clicked')}
-    onClickBack={() => console.log('Back clicked')}
-  />
-);
+interface INavigatorSteps {
+  [key: string]: object;
+}
+
+const navigatorSteps: INavigatorSteps = {
+  index: {
+    previous: null,
+    next: PAGES.STORE,
+  },
+  store: {
+    previous: PAGES.INDEX,
+    next: PAGES.SEARCH,
+  },
+  search: {
+    previous: PAGES.STORE,
+    next: null,
+  },
+};
 
 export function Base() {
   const [theme, setTheme] = useLocalStorage<string>(
     'massa-station-theme',
     'theme-dark',
   );
-  const context = { handleSetTheme };
+  const { pathname } = useLocation();
+  const currentPage = pathname.split('/').pop() || 'index';
+  const [active, setActive] = useState(currentPage);
+  const navigate = useNavigate();
+  const navigator = (
+    <Navigator
+      items={[
+        {
+          icon: <FiHome />,
+          isActive: PAGES.INDEX === active,
+        },
+        {
+          icon: <FiCodepen />,
+          isActive: PAGES.STORE === active,
+        },
+        {
+          icon: <FiGlobe />,
+          isActive: PAGES.SEARCH === active,
+        },
+      ]}
+      onClickNext={handleNext}
+      onClickBack={handlePrevious}
+    />
+  );
+  const STEP = navigatorSteps[currentPage] as INavigatorSteps;
+
+  useEffect(() => {
+    setActive(currentPage);
+  }, [pathname]);
+
+  function handleNext() {
+    let { next } = STEP;
+
+    setActive(next.toString());
+    navigate(next);
+  }
+
+  function handlePrevious() {
+    let { previous } = STEP;
+
+    setActive(previous.toString());
+    navigate(previous);
+  }
 
   function handleSetTheme() {
     setTheme(theme === 'theme-dark' ? 'theme-light' : 'theme-dark');
@@ -66,7 +106,7 @@ export function Base() {
   return (
     <div className={`${theme}`}>
       <LayoutStation navigator={navigator} onSetTheme={handleSetTheme}>
-        <Outlet context={context} />
+        <Outlet context={[theme, setTheme]} />
       </LayoutStation>
     </div>
   );

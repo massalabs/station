@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation       Test suite for Thyra front ends.
+Documentation       Test suite for Massa Station front ends.
 ...                 This test suite mainly focuses on making sure the front end endpoints are working as expected.
 
 Library             RequestsLibrary
@@ -13,40 +13,40 @@ Suite Teardown      Close All Browsers
 
 *** Test Cases ***
 GET /
-    Open Thyra Page    ${API_URL}/home/
+    Open Massa Station Page    ${API_URL}/home/
     Page Should Contain    Which Plugins
     Page Should Contain    Registry
     Page Should Contain    Web On Chain
     Page Should Contain    Manage plugin
 
 GET /home/
-    Open Thyra Page    ${API_URL}/home/
+    Open Massa Station Page    ${API_URL}/home/
     Page Should Contain    Which Plugins
     Page Should Contain    Registry
     Page Should Contain    Web On Chain
     Page Should Contain    Manage plugin
 
 GET /home/index.html
-    Open Thyra Page    ${API_URL}/home/index.html
+    Open Massa Station Page    ${API_URL}/home/index.html
     Page Should Contain    Which Plugins
     Page Should Contain    Registry
     Page Should Contain    Web On Chain
     Page Should Contain    Manage plugin
 
 GET /store/
-    Open Thyra Page    ${API_URL}/store/
+    Open Massa Station Page    ${API_URL}/store/
     Page Should Contain    Plugin Manager
     Page Should Contain    Install a plugin
     Page Should Contain    Install a plugin using .zip URL
 
 GET /store/index.html
-    Open Thyra Page    ${API_URL}/store/index.html
+    Open Massa Station Page    ${API_URL}/store/index.html
     Page Should Contain    Plugin Manager
     Page Should Contain    Install a plugin
     Page Should Contain    Install a plugin using .zip URL
 
 GET /search/
-    Open Thyra Page    ${API_URL}/search/
+    Open Massa Station Page    ${API_URL}/search/
     Page Should Contain    Registry
     Page Should Contain    Browse decentralized websites
     Page Should Contain    Website name
@@ -54,7 +54,7 @@ GET /search/
     Page Should Contain    URL
 
 GET /search/index.html
-    Open Thyra Page    ${API_URL}/search/index.html
+    Open Massa Station Page    ${API_URL}/search/index.html
     Page Should Contain    Registry
     Page Should Contain    Browse decentralized websites
     Page Should Contain    Website name
@@ -62,7 +62,7 @@ GET /search/index.html
     Page Should Contain    URL
 
 GET /websiteUploader/
-    Open Thyra Page    ${API_URL}/websiteUploader/
+    Open Massa Station Page    ${API_URL}/websiteUploader/
     Page Should Contain    Decentralized website storage
     Page Should Contain    Upload a website
     Page Should Contain    On wallet
@@ -73,7 +73,7 @@ GET /websiteUploader/
     Page Should Contain Button    file-select-button
 
 GET /websiteUploader/index.html
-    Open Thyra Page    ${API_URL}/websiteUploader/index.html
+    Open Massa Station Page    ${API_URL}/websiteUploader/index.html
     Page Should Contain    Decentralized website storage
     Page Should Contain    Upload a website
     Page Should Contain    On wallet

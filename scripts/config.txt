@@ -1,6 +1,0 @@
-;!@Install@!UTF-8!
-Title="Thyra Installer"
-BeginPrompt="Do you want to install Thyra?"
-RunProgram="thyra-installer.exe"
-Directory=".\\thyra-installer\\"
-;!@InstallEnd@!
