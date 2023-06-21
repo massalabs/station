@@ -22,6 +22,7 @@ import axios from 'axios';
 import { parseForm } from '../../../utils/ParseForm';
 import { useResource } from '../../../custom/api';
 import { AccountObject } from '../../../models/AccountModel';
+import { Loading } from './Loading';
 
 interface IFormError {
   websiteName?: string;
@@ -42,21 +43,25 @@ interface IFormObject {
 export default function Upload() {
   const form = useRef(null);
   const [formError, setFormError] = useState<IFormError | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [accountsError, setAccountError] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [nickname, setNickname] = useState<string | null>(null);
   // const { mutate: mutableUpload } = usePut<IUploadRequest, IUploadResponse>('websiteUploader/prepare');
 
   const {
     data: accounts = [],
-    // error,
+    error,
+    isLoading,
   } = useResource<AccountObject[]>('plugin/massalabs/wallet/api/accounts'); // TODO: declare constants
 
-  // useEffect(() => {
-  //   if (error) {
-  //     setErrorMsg(Intl.t('search.errors.no-accounts'));
-  //   }
-  // }, [accounts, error]);
+  useEffect(() => {
+    if (error) {
+      setAccountError(Intl.t('search.errors.no-accounts'));
+    } else {
+      setAccountError(null);
+    }
+  }, [error]);
 
   const accountsItems = accounts.map((account) => ({
     icon: <Identicon username={account.nickname} size={32} />,
@@ -75,8 +80,13 @@ export default function Upload() {
     const { websiteName, description } = formObject;
 
     // reset errors
-    setErrorMsg(null);
+    setFileError(null);
     setFormError(null);
+
+    if (nickname === null) {
+      setAccountError(Intl.t('search.errors.no-nickname'));
+      return false;
+    }
 
     if (websiteName === '') {
       setFormError({ websiteName: Intl.t('search.errors.no-website-name') });
@@ -110,17 +120,17 @@ export default function Upload() {
     }
 
     if (!file) {
-      setErrorMsg(Intl.t('search.errors.no-file'));
+      setFileError(Intl.t('search.errors.no-file'));
       return false;
     }
 
     if (!validateFileExtension(file?.name)) {
-      setErrorMsg(Intl.t('search.errors.invalid-file-extension'));
+      setFileError(Intl.t('search.errors.invalid-file-extension'));
       return false;
     }
 
     if (!(await validateFileContent(file))) {
-      setErrorMsg(Intl.t('search.errors.invalid-file-content'));
+      setFileError(Intl.t('search.errors.invalid-file-content'));
       return false;
     }
 
@@ -178,14 +188,21 @@ export default function Upload() {
             <p className="mas-menu-active mb-3">
               {Intl.t('search.sidebar.your-account')}
             </p>
-          </div>
-          <form ref={form} onSubmit={handleSubmit}>
             <p className="mas-caption mb-3">
               {Intl.t('search.sidebar.your-account-description')}
             </p>
             <div className="w-64">
-              <Dropdown options={accountsItems} select={selectedAccountKey} />
+              {isLoading ? (
+                <Loading />
+              ) : (
+                <Dropdown options={accountsItems} select={selectedAccountKey} />
+              )}
+              {accountsError && (
+                <p className="mas-body pt-4 text-s-error">{accountsError}</p>
+              )}
             </div>
+          </div>
+          <form ref={form} onSubmit={handleSubmit}>
             <div className="bg-secondary rounded-lg p-4 mb-6">
               <p className="mas-menu-active mb-3">
                 {Intl.t('search.sidebar.your-website')}
@@ -218,7 +235,9 @@ export default function Upload() {
             </div>
             <Button type="submit">{Intl.t('search.buttons.upload')}</Button>
           </form>
-          {errorMsg && <p className="mas-body pt-4 text-s-error">{errorMsg}</p>}
+          {fileError && (
+            <p className="mas-body pt-4 text-s-error">{fileError}</p>
+          )}
         </div>
       </div>
     </SidePanel>

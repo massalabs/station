@@ -39,6 +39,7 @@
       "file": "Drag and drop your .zip file"
     },
     "errors": {
+      "no-nickname": "Account is missing.",
       "no-website-name": "Website's name is missing.",
       "invalid-website-name": "Website's name is invalid, it must match regex ^[a-z0-9_.\\-~]{3,50}$.",
       "description-too-long": "Description max length is 280 characters.",
