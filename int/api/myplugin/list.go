@@ -38,8 +38,9 @@ func (l *list) Handle(_ operations.PluginManagerListParams) middleware.Responder
 			payload[index] = &models.Plugin{
 				ID:          id,
 				Name:        info.Name,
+				Author:      info.Author,
 				Description: info.Description,
-				Logo:        info.Logo + "logo",
+				Logo:        info.Logo,
 				Home:        pluginURL + info.Home,
 				Updatable:   info.Updatable,
 				Version:     info.Version,
