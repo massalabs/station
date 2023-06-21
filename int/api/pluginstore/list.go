@@ -31,7 +31,7 @@ func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 				&models.Error{Code: errorCodeFetchStore, Message: fmt.Sprintf("Error getting OS info: %s", err.Error())})
 		}
 		folderLogo := slug.Make(plugin.Name)
-		plugin.Logo = fmt.Sprintf("https://raw.githubusercontent.com/massalabs/thyra-plugin-store/main/assets/%s/%s", folderLogo, plugin.Logo)
+		plugin.Logo = fmt.Sprintf("https://raw.githubusercontent.com/massalabs/station-store/main/assets/%s/%s", folderLogo, plugin.Logo)
 		plugin := plugin
 		payload[index] = &models.PluginStoreItem{
 			Name:                   &plugin.Name,
