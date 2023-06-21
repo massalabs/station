@@ -9,6 +9,7 @@ import { UseMutationResult, useMutation } from '@tanstack/react-query';
  */
 export function usePut<TBody, TResponse = null>(
   resource: string,
+  headers: object = {},
 ): UseMutationResult<TResponse, unknown, TBody, unknown> {
   const url = `${import.meta.env.VITE_BASE_API}/${resource}`;
 
@@ -18,6 +19,7 @@ export function usePut<TBody, TResponse = null>(
       const { data } = await axios.put<TBody, AxiosResponse<TResponse>>(
         url,
         payload,
+        { headers },
       );
 
       return data;

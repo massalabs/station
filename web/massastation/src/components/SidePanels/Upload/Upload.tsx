@@ -10,7 +10,7 @@ import {
   Dropdown,
   Identicon,
 } from '@massalabs/react-ui-kit';
-// import { usePut } from '../../../custom/api';
+import { usePut } from '../../../custom/api';
 import {
   validateDescriptionLength,
   validateFileContent,
@@ -18,7 +18,6 @@ import {
   validateWebsiteDescription,
   validateWebsiteName,
 } from '../../../validation/upload';
-import axios from 'axios';
 import { parseForm } from '../../../utils/ParseForm';
 import { useResource } from '../../../custom/api';
 import { AccountObject } from '../../../models/AccountModel';
@@ -34,11 +33,12 @@ interface IFormObject {
   description: string;
 }
 
-// interface IUploadRequest {
-// }
-
-// interface IUploadResponse {
-// }
+interface IUploadResponse {
+  name: string;
+  description: string;
+  address: string;
+  brokenChunks: string[];
+}
 
 export default function Upload() {
   const form = useRef(null);
@@ -47,7 +47,13 @@ export default function Upload() {
   const [accountsError, setAccountError] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [nickname, setNickname] = useState<string | null>(null);
-  // const { mutate: mutableUpload } = usePut<IUploadRequest, IUploadResponse>('websiteUploader/prepare');
+
+  const { mutate: mutableUpload, isLoading: uploadLoading } = usePut<
+    FormData,
+    IUploadResponse
+  >('websiteUploader/prepare', {
+    'Content-Type': 'multipart/form-data',
+  });
 
   const {
     data: accounts = [],
@@ -82,6 +88,7 @@ export default function Upload() {
     // reset errors
     setFileError(null);
     setFormError(null);
+    setAccountError(null);
 
     if (nickname === null) {
       setAccountError(Intl.t('search.errors.no-nickname'));
@@ -142,21 +149,13 @@ export default function Upload() {
   }
 
   function uploadWebsite(e: SyntheticEvent) {
-    const formObject = parseForm<IFormObject>(e);
-    const { websiteName, description } = formObject;
+    const { websiteName, description } = parseForm<IFormObject>(e);
     const bodyFormData = new FormData();
     bodyFormData.append('url', websiteName);
     bodyFormData.append('description', description); // Add the website description to the form data
     bodyFormData.append('nickname', getDefaultWallet());
     bodyFormData.append('zipfile', file as File); // we force compiler type of `file` because we know it's not null
-    axios({
-      url: `/websiteUploader/prepare`,
-      method: 'put',
-      data: bodyFormData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    mutableUpload(bodyFormData);
   }
 
   function handleSubmit(e: SyntheticEvent) {
@@ -237,6 +236,11 @@ export default function Upload() {
           </form>
           {fileError && (
             <p className="mas-body pt-4 text-s-error">{fileError}</p>
+          )}
+          {uploadLoading && (
+            <p className="mas-body pt-4 text-s-info">
+              {Intl.t('search.loading')}
+            </p>
           )}
         </div>
       </div>

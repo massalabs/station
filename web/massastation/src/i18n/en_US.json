@@ -38,6 +38,7 @@
       "website-description": "Description",
       "file": "Drag and drop your .zip file"
     },
+    "loading": "Uploading you website...",
     "errors": {
       "no-nickname": "Account is missing.",
       "no-website-name": "Website's name is missing.",
