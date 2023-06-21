@@ -13,6 +13,7 @@ import { PAGES } from '../../const/pages/pages';
 import { useResource } from '../../custom/api';
 import { AccountObject } from '../../models/AccountModel';
 import { useAccountStore } from '../../store/store';
+import { URL } from '../../const/url/url';
 
 type ThemeSettings = {
   [key: string]: {
@@ -72,8 +73,8 @@ export function Base() {
   }, [pathname]);
 
   const { data: accounts = [] } = useResource<AccountObject[]>(
-    'plugin/massalabs/wallet/api/accounts',
-  ); // TODO: declare constants
+    `${URL.WALLET_BASE_API}/${URL.WALLET_ACCOUNTS}`,
+  );
 
   // State
   const currentPage = pathname.split('/').pop() || 'index';
@@ -144,7 +145,7 @@ export function Base() {
     <div className={`${theme}`}>
       <LayoutStation navigator={navigator} onSetTheme={handleSetTheme}>
         <Outlet context={[theme, setTheme]} />
-        <div className="absolute top-0 right-0 p-6">
+        <div className="absolute top-5 right-32 p-6">
           <div className="w-64">
             <Dropdown options={accountsItems} select={selectedAccountKey} />
           </div>
