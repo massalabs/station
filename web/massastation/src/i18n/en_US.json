@@ -3,8 +3,8 @@
     "modules-banner": "Modules",
     "mystation-banner": "My Station",
     "store-banner": "Store",
+    "loading": "Loading...",
     "mystation": {
-      "loading": "Loading...",
       "browse": "Browse the store below and manage plugins you've installed in this section"
     },
     "sidepanel": {

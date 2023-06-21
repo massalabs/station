@@ -23,7 +23,7 @@ export function Store() {
           <StoreSection getPlugins={getPlugins} />
         </div>
       </div>
-      <Install />
+      <Install getPlugins={getPlugins} />
     </>
   );
 }

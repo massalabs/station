@@ -136,7 +136,7 @@ function mockServer(environment = ENV.DEV) {
         const sourceURL = request.queryParams.source;
 
         const storePlugin = schema.stores.findBy(
-          (store) => store.file.url === sourceURL,
+          (store) => store.file.url === sourceURL.split('?').pop(),
         );
         const newPlugin = {
           id: faker.number.int(),
