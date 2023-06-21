@@ -58,7 +58,6 @@ export function Base() {
   const { pathname } = useLocation();
   const currentPage = pathname.split('/').pop() || 'index';
   const [active, setActive] = useState(currentPage);
-  const context = { handleSetTheme };
   const navigate = useNavigate();
   const navigator = (
     <Navigator
@@ -107,7 +106,7 @@ export function Base() {
   return (
     <div className={`${theme}`}>
       <LayoutStation navigator={navigator} onSetTheme={handleSetTheme}>
-        <Outlet context={context} />
+        <Outlet context={[theme, setTheme]} />
       </LayoutStation>
     </div>
   );
