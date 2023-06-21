@@ -15,6 +15,7 @@ function mockServer(environment = ENV.DEV) {
       plugin: Model,
       store: Model,
       domain: Model,
+      account: Model,
     },
     factories: {
       plugin: Factory.extend({
@@ -86,12 +87,24 @@ function mockServer(environment = ENV.DEV) {
         },
         os: 'linux',
       }),
+      account: Factory.extend({
+        nickname() {
+          return faker.internet.userName();
+        },
+        candidateBalance() {
+          return faker.number.int().toString();
+        },
+        address() {
+          return 'AU' + faker.string.alpha({ length: { min: 128, max: 256 } });
+        },
+      }),
     },
 
     seeds(server) {
       server.createList('plugin', 2);
       server.createList('domain', 50);
       server.createList('store', 7);
+      server.createList('account', 5);
     },
 
     routes() {
@@ -177,6 +190,16 @@ function mockServer(environment = ENV.DEV) {
 
         return stores;
       });
+
+      this.get(
+        'plugin/massalabs/wallet/api/accounts',
+        (schema) => {
+          let { models: accounts } = schema.accounts.all();
+
+          return accounts;
+        },
+        { timing: 500 },
+      );
     },
   });
 

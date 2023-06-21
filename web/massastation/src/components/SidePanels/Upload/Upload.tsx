@@ -1,4 +1,4 @@
-import { SyntheticEvent, useRef, useState } from 'react';
+import { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import Intl from '../../../i18n/i18n';
 
 import {
@@ -7,6 +7,8 @@ import {
   SidePanel,
   TextArea,
   DragDrop,
+  Dropdown,
+  Identicon,
 } from '@massalabs/react-ui-kit';
 // import { usePut } from '../../../custom/api';
 import {
@@ -18,6 +20,8 @@ import {
 } from '../../../validation/upload';
 import axios from 'axios';
 import { parseForm } from '../../../utils/ParseForm';
+import { useResource } from '../../../custom/api';
+import { AccountObject } from '../../../models/AccountModel';
 
 interface IFormError {
   websiteName?: string;
@@ -40,7 +44,31 @@ export default function Upload() {
   const [formError, setFormError] = useState<IFormError | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [nickname, setNickname] = useState<string | null>(null);
   // const { mutate: mutableUpload } = usePut<IUploadRequest, IUploadResponse>('websiteUploader/prepare');
+
+  const {
+    data: accounts = [],
+    // error,
+  } = useResource<AccountObject[]>('plugin/massalabs/wallet/api/accounts'); // TODO: declare constants
+
+  // useEffect(() => {
+  //   if (error) {
+  //     setErrorMsg(Intl.t('search.errors.no-accounts'));
+  //   }
+  // }, [accounts, error]);
+
+  const accountsItems = accounts.map((account) => ({
+    icon: <Identicon username={account.nickname} size={32} />,
+    item: account.nickname,
+    onClick: () => setNickname(account.nickname),
+  }));
+
+  const selectedAccountKey: number = parseInt(
+    Object.keys(accounts).find(
+      (_, idx) => accounts[idx].nickname === nickname,
+    ) || '0',
+  );
 
   async function validate(e: SyntheticEvent): Promise<boolean> {
     const formObject = parseForm<IFormObject>(e);
@@ -137,13 +165,26 @@ export default function Upload() {
         <div
           className={`text-f-primary border-2 border-dashed border-neutral bg-primary p-8`}
         >
-          <form ref={form} onSubmit={handleSubmit}>
-            <p className="mas-body mb-6">{Intl.t('search.sidebar.title')}</p>
-            <div className="flex gap-3 mb-6">
-              <p className="mas-body2">{Intl.t('search.sidebar.how-to')}</p>
-              <h3 className="mas-h3 underline cursor-pointer">
+          <p className="mas-body mb-6">{Intl.t('search.sidebar.title')}</p>
+          <div className="flex gap-3 mb-6">
+            <p className="mas-body2">{Intl.t('search.sidebar.how-to')}</p>
+            <h3 className="mas-h3 underline cursor-pointer">
+              <a href="https://howtouploadwebsite.com" target="_blank">
                 howtouploadwebsite.com
-              </h3>
+              </a>
+            </h3>
+          </div>
+          <div className="bg-secondary rounded-lg p-4 mb-6">
+            <p className="mas-menu-active mb-3">
+              {Intl.t('search.sidebar.your-account')}
+            </p>
+          </div>
+          <form ref={form} onSubmit={handleSubmit}>
+            <p className="mas-caption mb-3">
+              {Intl.t('search.sidebar.your-account-description')}
+            </p>
+            <div className="w-64">
+              <Dropdown options={accountsItems} select={selectedAccountKey} />
             </div>
             <div className="bg-secondary rounded-lg p-4 mb-6">
               <p className="mas-menu-active mb-3">

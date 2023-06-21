@@ -19,7 +19,7 @@ export function usePost<TBody, TResponse = null>(
   const url = `${baseURL}/${resource}`;
 
   return useMutation<
-  TResponse,
+    TResponse,
     unknown,
     { params?: Record<string, string>; payload?: TBody },
     unknown
@@ -29,7 +29,10 @@ export function usePost<TBody, TResponse = null>(
       const queryParams = new URLSearchParams(params).toString();
       const fullURL = `${url}?${queryParams}`;
       const decodedURL = decodeURIComponent(fullURL);
-      const { data: responseData } = await axios.post<TBody, AxiosResponse<TResponse>>(decodedURL, payload);
+      const { data: responseData } = await axios.post<
+        TBody,
+        AxiosResponse<TResponse>
+      >(decodedURL, payload);
       return responseData;
     },
   });
