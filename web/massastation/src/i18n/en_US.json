@@ -25,6 +25,8 @@
     "sidebar": {
       "title": "I want upload my own website",
       "how-to": "How to do it:",
+      "your-account": "Your account",
+      "your-account-description": "Choose your account to upload your website.",
       "your-website": "Your website",
       "your-website-description": "Define your website name and description."
     },
@@ -33,7 +35,8 @@
     },
     "inputs": {
       "website-name": "Name",
-      "website-description": "Description"
+      "website-description": "Description",
+      "file": "Drag and drop your .zip file"
     },
     "errors": {
       "no-website-name": "Website's name is missing.",
@@ -41,8 +44,10 @@
       "description-too-long": "Description max length is 280 characters.",
       "invalid-description": "Description must contains UTF-8 characters only.",
       "no-file": "File is missing.",
+      "no-description": "Description is missing.",
       "invalid-file-extension": "File format must be a \".zip\".",
-      "invalid-file-content": "Website file must contain index.html at the source."
+      "invalid-file-content": "Website file must contain index.html at the source.",
+      "no-accounts": "Can't load your accounts, try again."
     }
   },
   "index": {

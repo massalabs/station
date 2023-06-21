@@ -22,13 +22,11 @@ import { parseForm } from '../../../utils/ParseForm';
 interface IFormError {
   websiteName?: string;
   description?: string;
-  filename?: string;
 }
 
 interface IFormObject {
   websiteName: string;
   description: string;
-  filename: string;
 }
 
 // interface IUploadRequest {
@@ -39,7 +37,7 @@ interface IFormObject {
 
 export default function Upload() {
   const form = useRef(null);
-  const [error, setError] = useState<IFormError | null>(null);
+  const [formError, setFormError] = useState<IFormError | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   // const { mutate: mutableUpload } = usePut<IUploadRequest, IUploadResponse>('websiteUploader/prepare');
@@ -48,44 +46,55 @@ export default function Upload() {
     const formObject = parseForm<IFormObject>(e);
     const { websiteName, description } = formObject;
 
+    // reset errors
+    setErrorMsg(null);
+    setFormError(null);
+
     if (websiteName === '') {
-      setError({ websiteName: Intl.t('search.errors.no-website-name') });
+      setFormError({ websiteName: Intl.t('search.errors.no-website-name') });
       return false;
     }
 
     if (!validateWebsiteName(websiteName)) {
-      setError({ websiteName: Intl.t('search.errors.invalid-website-name') });
+      setFormError({
+        websiteName: Intl.t('search.errors.invalid-website-name'),
+      });
+      return false;
+    }
+
+    if (description === '') {
+      setFormError({ description: Intl.t('search.errors.no-description') });
       return false;
     }
 
     if (!validateDescriptionLength(description)) {
-      setError({ description: Intl.t('search.errors.description-too-long') });
+      setFormError({
+        description: Intl.t('search.errors.description-too-long'),
+      });
       return false;
     }
 
     if (!validateWebsiteDescription(description)) {
-      setError({ description: Intl.t('search.errors.invalid-description') });
+      setFormError({
+        description: Intl.t('search.errors.invalid-description'),
+      });
       return false;
     }
 
     if (!file) {
-      setError({ filename: Intl.t('search.errors.no-file') });
+      setErrorMsg(Intl.t('search.errors.no-file'));
       return false;
     }
 
     if (!validateFileExtension(file?.name)) {
-      setError({ filename: Intl.t('search.errors.invalid-file-extension') });
+      setErrorMsg(Intl.t('search.errors.invalid-file-extension'));
       return false;
     }
-
-    console.log('validating file content');
-    console.log(await validateFileContent(file));
 
     if (!(await validateFileContent(file))) {
       setErrorMsg(Intl.t('search.errors.invalid-file-content'));
       return false;
     }
-    setErrorMsg(null);
 
     return true;
   }
@@ -115,7 +124,6 @@ export default function Upload() {
   function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
 
-    console.log('submitting');
     validate(e).then((isValid) => {
       if (isValid) {
         uploadWebsite(e);
@@ -150,20 +158,20 @@ export default function Upload() {
                   name="websiteName"
                   placeholder={Intl.t('search.inputs.website-name')}
                   customClass="mb-3 bg-primary"
-                  error={error?.websiteName}
+                  error={formError?.websiteName}
                 />
               </div>
               <TextArea
                 defaultValue=""
                 name="description"
                 placeholder={Intl.t('search.inputs.website-description')}
-                error={error?.description}
+                error={formError?.description}
               />
             </div>
             <div className="mb-6">
               <DragDrop
                 onFileLoaded={(file) => setFile(file)}
-                placeholder="something to inform"
+                placeholder={Intl.t('search.inputs.file')}
                 allowed={['zip']}
               />
             </div>
