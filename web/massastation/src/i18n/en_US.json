@@ -25,8 +25,6 @@
     "sidebar": {
       "title": "I want upload my own website",
       "how-to": "How to do it:",
-      "your-account": "Your account",
-      "your-account-description": "Choose your account to upload your website.",
       "your-website": "Your website",
       "your-website-description": "Define your website name and description."
     },
@@ -48,8 +46,7 @@
       "no-file": "File is missing.",
       "no-description": "Description is missing.",
       "invalid-file-extension": "File format must be a \".zip\".",
-      "invalid-file-content": "Website file must contain index.html at the source.",
-      "no-accounts": "Can't load your accounts, try again."
+      "invalid-file-content": "Website file must contain index.html at the source."
     }
   },
   "index": {

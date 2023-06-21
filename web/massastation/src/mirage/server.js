@@ -16,6 +16,7 @@ function mockServer(environment = ENV.DEV) {
       store: Model,
       domain: Model,
       account: Model,
+      website: Model,
     },
     factories: {
       plugin: Factory.extend({
@@ -98,6 +99,18 @@ function mockServer(environment = ENV.DEV) {
           return 'AU' + faker.string.alpha({ length: { min: 128, max: 256 } });
         },
       }),
+      website: Factory.extend({
+        description() {
+          return faker.lorem.sentence();
+        },
+        name() {
+          return faker.lorem.word();
+        },
+        address() {
+          return 'AU' + faker.string.alpha({ length: { min: 128, max: 256 } });
+        },
+        brokenChunks: [],
+      }),
     },
 
     seeds(server) {
@@ -105,6 +118,7 @@ function mockServer(environment = ENV.DEV) {
       server.createList('domain', 50);
       server.createList('store', 7);
       server.createList('account', 5);
+      server.createList('website', 2);
     },
 
     routes() {
@@ -200,6 +214,10 @@ function mockServer(environment = ENV.DEV) {
         },
         { timing: 500 },
       );
+
+      this.put('websiteUploader/prepare', (schema) => {
+        return schema.create('website');
+      });
     },
   });
 

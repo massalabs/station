@@ -1,10 +1,18 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useLocalStorage } from '../../custom/useLocalStorage';
 import { FiSun, FiMoon } from 'react-icons/fi';
-import { Navigator, LayoutStation } from '@massalabs/react-ui-kit';
+import {
+  Navigator,
+  LayoutStation,
+  Dropdown,
+  Identicon,
+} from '@massalabs/react-ui-kit';
 import { FiCodepen, FiGlobe, FiHome } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import { PAGES } from '../../const/pages/pages';
+import { useResource } from '../../custom/api';
+import { AccountObject } from '../../models/AccountModel';
+import { useAccountStore } from '../../store/store';
 
 type ThemeSettings = {
   [key: string]: {
@@ -51,14 +59,33 @@ const navigatorSteps: INavigatorSteps = {
 };
 
 export function Base() {
+  // Hooks
   const [theme, setTheme] = useLocalStorage<string>(
     'massa-station-theme',
     'theme-dark',
   );
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setActive(currentPage);
+  }, [pathname]);
+
+  const { data: accounts = [] } = useResource<AccountObject[]>(
+    'plugin/massalabs/wallet/api/accounts',
+  ); // TODO: declare constants
+
+  // State
   const currentPage = pathname.split('/').pop() || 'index';
   const [active, setActive] = useState(currentPage);
-  const navigate = useNavigate();
+
+  // Store
+  const nickname = useAccountStore((state) => state.nickname);
+  const setNickname = useAccountStore((state) => state.setNickname);
+
+  // Constants
+  const context = { handleSetTheme };
+
   const navigator = (
     <Navigator
       items={[
@@ -81,10 +108,19 @@ export function Base() {
   );
   const STEP = navigatorSteps[currentPage] as INavigatorSteps;
 
-  useEffect(() => {
-    setActive(currentPage);
-  }, [pathname]);
+  const accountsItems = accounts.map((account) => ({
+    icon: <Identicon username={account.nickname} size={32} />,
+    item: account.nickname,
+    onClick: () => setNickname(account.nickname),
+  }));
 
+  const selectedAccountKey: number = parseInt(
+    Object.keys(accounts).find(
+      (_, idx) => accounts[idx].nickname === nickname,
+    ) || '0',
+  );
+
+  // Functions
   function handleNext() {
     let { next } = STEP;
 
@@ -103,10 +139,17 @@ export function Base() {
     setTheme(theme === 'theme-dark' ? 'theme-light' : 'theme-dark');
   }
 
+  // Template
   return (
     <div className={`${theme}`}>
       <LayoutStation navigator={navigator} onSetTheme={handleSetTheme}>
         <Outlet context={[theme, setTheme]} />
+        <div className="absolute top-0 right-0 p-6">
+          <div className="w-64">
+            <Dropdown options={accountsItems} select={selectedAccountKey} />
+          </div>
+        </div>
+        <Outlet context={context} />
       </LayoutStation>
     </div>
   );

@@ -38,7 +38,6 @@ export function validateFileExtension(fileName: string): boolean {
 export async function validateFileContent(file: File): Promise<boolean> {
   try {
     const zip = await JSZip.loadAsync(file);
-    console.log(zip.file('index.html'));
     return zip.file('index.html') !== null;
   } catch (error) {
     console.error('Error reading or parsing the zip file: ', error);

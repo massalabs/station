@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { SyntheticEvent, useRef, useState } from 'react';
 import Intl from '../../../i18n/i18n';
 
 import {
@@ -7,8 +7,6 @@ import {
   SidePanel,
   TextArea,
   DragDrop,
-  Dropdown,
-  Identicon,
 } from '@massalabs/react-ui-kit';
 import { usePut } from '../../../custom/api';
 import {
@@ -19,9 +17,7 @@ import {
   validateWebsiteName,
 } from '../../../validation/upload';
 import { parseForm } from '../../../utils/ParseForm';
-import { useResource } from '../../../custom/api';
-import { AccountObject } from '../../../models/AccountModel';
-import { Loading } from './Loading';
+import { useAccountStore } from '../../../store/store';
 
 interface IFormError {
   websiteName?: string;
@@ -46,7 +42,7 @@ export default function Upload() {
   const [fileError, setFileError] = useState<string | null>(null);
   const [accountsError, setAccountError] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [nickname, setNickname] = useState<string | null>(null);
+  const nickname = useAccountStore((state) => state.nickname);
 
   const { mutate: mutableUpload, isLoading: uploadLoading } = usePut<
     FormData,
@@ -54,32 +50,6 @@ export default function Upload() {
   >('websiteUploader/prepare', {
     'Content-Type': 'multipart/form-data',
   });
-
-  const {
-    data: accounts = [],
-    error,
-    isLoading,
-  } = useResource<AccountObject[]>('plugin/massalabs/wallet/api/accounts'); // TODO: declare constants
-
-  useEffect(() => {
-    if (error) {
-      setAccountError(Intl.t('search.errors.no-accounts'));
-    } else {
-      setAccountError(null);
-    }
-  }, [error]);
-
-  const accountsItems = accounts.map((account) => ({
-    icon: <Identicon username={account.nickname} size={32} />,
-    item: account.nickname,
-    onClick: () => setNickname(account.nickname),
-  }));
-
-  const selectedAccountKey: number = parseInt(
-    Object.keys(accounts).find(
-      (_, idx) => accounts[idx].nickname === nickname,
-    ) || '0',
-  );
 
   async function validate(e: SyntheticEvent): Promise<boolean> {
     const formObject = parseForm<IFormObject>(e);
@@ -144,16 +114,12 @@ export default function Upload() {
     return true;
   }
 
-  function getDefaultWallet(): string {
-    return 'buildnet';
-  }
-
   function uploadWebsite(e: SyntheticEvent) {
     const { websiteName, description } = parseForm<IFormObject>(e);
     const bodyFormData = new FormData();
     bodyFormData.append('url', websiteName);
     bodyFormData.append('description', description); // Add the website description to the form data
-    bodyFormData.append('nickname', getDefaultWallet());
+    bodyFormData.append('nickname', nickname as string); // we force compiler type because we know it's not null
     bodyFormData.append('zipfile', file as File); // we force compiler type of `file` because we know it's not null
     mutableUpload(bodyFormData);
   }
@@ -182,24 +148,6 @@ export default function Upload() {
                 howtouploadwebsite.com
               </a>
             </h3>
-          </div>
-          <div className="bg-secondary rounded-lg p-4 mb-6">
-            <p className="mas-menu-active mb-3">
-              {Intl.t('search.sidebar.your-account')}
-            </p>
-            <p className="mas-caption mb-3">
-              {Intl.t('search.sidebar.your-account-description')}
-            </p>
-            <div className="w-64">
-              {isLoading ? (
-                <Loading />
-              ) : (
-                <Dropdown options={accountsItems} select={selectedAccountKey} />
-              )}
-              {accountsError && (
-                <p className="mas-body pt-4 text-s-error">{accountsError}</p>
-              )}
-            </div>
           </div>
           <form ref={form} onSubmit={handleSubmit}>
             <div className="bg-secondary rounded-lg p-4 mb-6">
@@ -241,6 +189,9 @@ export default function Upload() {
             <p className="mas-body pt-4 text-s-info">
               {Intl.t('search.loading')}
             </p>
+          )}
+          {accountsError && (
+            <p className="mas-body pt-4 text-s-error">{accountsError}</p>
           )}
         </div>
       </div>
