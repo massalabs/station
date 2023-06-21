@@ -24,6 +24,7 @@ import {
 } from '../../../../shared/interfaces/IPlugin';
 import { usePost, useResource } from '../../custom/api';
 import Intl from '../../i18n/i18n';
+import { routeFor } from '../../utils';
 
 export function Index() {
   const navigate = useNavigate();
@@ -76,58 +77,59 @@ export function Index() {
       <div className="bg-primary text-f-primary pt-24">
         <h1 className="mas-banner mb-10"> {Intl.t('index.title-banner')}</h1>
         <div className="overflow-auto h-[65vh]">
-          <div className="w-[70vw]">
-            <div className="flex space-x-8 pb-10">
-              <Button
-                preIcon={<FiGlobe />}
-                customClass="w-96"
-                onClick={() => navigate('/search')}
-              >
-                <div className="flex items-center mas-buttons">
-                  {Intl.t('index.buttons.search')}
-                </div>
-              </Button>
-              <Button
-                variant="secondary"
-                preIcon={<FiCodepen />}
-                customClass="w-96"
-                onClick={() => navigate('/store')}
-              >
-                <div className="flex items-center mas-buttons">
-                  {Intl.t('index.buttons.explore')}
-                </div>
-              </Button>
-            </div>
-            <DashboardStation
-              imagesDark={[
-                <Image1Dark />,
-                <Image2Dark />,
-                <Image3Dark />,
-                <Image4Dark />,
-                <Image5Dark />,
-              ]}
-              imagesLight={[
-                <Image1Light />,
-                <Image2Light />,
-                <Image3Light />,
-                <Image4Light />,
-                <Image5Light />,
-              ]}
-              components={[
-                <PluginWallet
-                  key="wallet"
-                  isActive={pluginWalletIsInstalled}
-                  title="Massawallet"
-                  iconActive={<WalletActive />}
-                  iconInactive={<WalletInactive />}
-                  onClickActive={() =>
-                    navigate('/plugin/massalabs/wallet/web-app/index')
-                  }
-                  onClickInactive={handleInstallPlugin}
-                />,
-              ]}
-            />
+          <div className="flex space-x-8 pb-10">
+            <Button
+              preIcon={<FiGlobe />}
+              customClass="w-1/3"
+              onClick={() => navigate(routeFor('/search'))}
+            >
+              <div className="flex items-center mas-buttons">
+                {Intl.t('index.buttons.search')}
+              </div>
+            </Button>
+            <Button
+              variant="secondary"
+              preIcon={<FiCodepen />}
+              customClass="w-1/3"
+              onClick={() => navigate(routeFor('/store'))}
+            >
+              <div className="flex items-center mas-buttons">
+                {Intl.t('index.buttons.explore')}
+              </div>
+            </Button>
           </div>
+          <DashboardStation
+            imagesDark={[
+              <Image1Dark />,
+              <Image2Dark />,
+              <Image3Dark />,
+              <Image4Dark />,
+              <Image5Dark />,
+            ]}
+            imagesLight={[
+              <Image1Light />,
+              <Image2Light />,
+              <Image3Light />,
+              <Image4Light />,
+              <Image5Light />,
+            ]}
+            components={[
+              <PluginWallet
+                key="wallet"
+                isActive={pluginWalletIsInstalled}
+                title="Massa Wallet"
+                iconActive={<WalletActive />}
+                iconInactive={<WalletInactive />}
+                onClickActive={() =>
+                  window.open(
+                    '/plugin/massalabs/wallet/web-app/index',
+                    '_blank',
+                  )
+                }
+                onClickInactive={handleInstallPlugin}
+              />,
+            ]}
+          />
         </div>
       </div>
     </>
