@@ -8,7 +8,7 @@
       "browse": "Browse the store below and manage plugins you've installed in this section"
     },
     "sidepanel": {
-      "banner": "I want to create and install my own module !",
+      "banner": "I want to create and install my own module!",
       "description": "How to do it: {url}",
       "title": " Manual installation",
       "subtitle": "Copy the link of the module zip",
