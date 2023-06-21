@@ -11,7 +11,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"sync"
 
@@ -201,15 +200,10 @@ func (p *Plugin) Stop() error {
 }
 
 func New(binPath string, pluginID string) (*Plugin, error) {
-	ext := ""
-	if runtime.GOOS == "windows" {
-		ext = ".exe"
-	}
-
 	//nolint:exhaustruct
 	plgn := &Plugin{
 		status:   Starting,
-		BinPath:  binPath + ext,
+		BinPath:  binPath,
 		ID:       pluginID,
 		quitChan: make(chan bool),
 	}
