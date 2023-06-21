@@ -51,7 +51,7 @@ function StoreSection({
     <>
       {isLoading ? (
         <div className="mas-body mb-4 text-neutral">
-          {Intl.t('store.mystation.loading')}
+          {Intl.t('store.loading')}
         </div>
       ) : plugins && plugins.length ? (
         <div className="flex gap-4 flex-wrap">

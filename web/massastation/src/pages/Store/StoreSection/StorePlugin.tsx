@@ -18,7 +18,9 @@ function StorePlugin(props: StorePluginProps) {
     description,
     file: { url },
   } = plugin;
-  const { mutate, isSuccess } = usePost(`plugin-manager?source=${url}`);
+  const { mutate, isSuccess } = usePost(`plugin-manager`);
+
+  const params = { source: url };
 
   useEffect(() => {
     if (isSuccess) {
@@ -32,7 +34,7 @@ function StorePlugin(props: StorePluginProps) {
     ) : (
       <img src={logo} />
     ),
-    topAction: <FiDownload onClick={() => mutate({})} />,
+    topAction: <FiDownload onClick={() => mutate({ params })} />,
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
