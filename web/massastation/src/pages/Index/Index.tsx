@@ -119,7 +119,7 @@ export function Index() {
                 <PluginWallet
                   key="wallet"
                   isActive={pluginWalletIsInstalled}
-                  title="Massawallet"
+                  title="Massa Wallet"
                   iconActive={<WalletActive />}
                   iconInactive={<WalletInactive />}
                   onClickActive={() =>
