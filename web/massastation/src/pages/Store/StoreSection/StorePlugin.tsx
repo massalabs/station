@@ -1,4 +1,4 @@
-import { Certificate, MassaWallet, Plugin } from '@massalabs/react-ui-kit';
+import { Certificate, Plugin } from '@massalabs/react-ui-kit';
 import { massalabsNomination } from '../../../utils/massaConstants';
 import { FiDownload } from 'react-icons/fi';
 import { usePost } from '../../../custom/api';
@@ -29,11 +29,7 @@ function StorePlugin(props: StorePluginProps) {
   }, [isSuccess]);
 
   const argsStore = {
-    preIcon: massalabsNomination.includes(author) ? (
-      <MassaWallet variant="rounded" />
-    ) : (
-      <img src={logo} />
-    ),
+    preIcon: <img src={logo} alt="plugin-logo" />,
     topAction: <FiDownload onClick={() => mutate({ params })} />,
     title: name,
     subtitle: author,
