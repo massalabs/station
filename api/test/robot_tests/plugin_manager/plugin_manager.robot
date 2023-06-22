@@ -10,7 +10,7 @@ Resource            ../variables.resource
 Suite Setup         Suite Setup
 
 *** Variables ***
-${HELLO_WORLD_PLUGIN_VERSION}       0.0.7
+${HELLO_WORLD_PLUGIN_VERSION}       v0.0.9
 
 *** Test Cases ***
 GET /plugin-manager with no plugins
@@ -42,7 +42,7 @@ GET /plugin-manager/{id}
     Should Be Equal As Strings    ${response.json()['status']}    Up
 
 POST /plugin-manager/{id}/execute with stop command
-    ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
+    ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
     ${data}=    Create Dictionary    command=stop
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/${id}/execute
@@ -50,7 +50,7 @@ POST /plugin-manager/{id}/execute with stop command
     ...    json=${data}
 
 POST /plugin-manager/{id}/execute with start command
-    ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
+    ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
     ${data}=    Create Dictionary    command=start
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/${id}/execute
@@ -59,7 +59,7 @@ POST /plugin-manager/{id}/execute with start command
     Sleep    1 seconds    # Wait for the plugin to be started
 
 POST /plugin-manager/{id}/execute with restart command
-    ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
+    ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
     ${data}=    Create Dictionary    command=restart
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/${id}/execute
@@ -69,7 +69,7 @@ POST /plugin-manager/{id}/execute with restart command
 
 GET /plugin/{author}/{name}/
     ${response}=    GET
-    ...    ${API_URL}/plugin/massalabs/hello-world/
+    ...    ${API_URL}/plugin/massa-labs/hello-world/
     ...    expected_status=${STATUS_OK}
     Should Contain    ${response.text}    Hello, world!
 
@@ -77,7 +77,7 @@ GET /plugin/{author}/{name}/
 # This causes the previous plugin alias to be considered as still valid.
 # TODO: Uncomment this test and make sure it passes once https://github.com/massalabs/store/issues/574 is fixed.
 # POST /plugin-manager/register
-#    ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
+#    ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
 #    ${data}=    Create Dictionary
 #    ...    id=${id}
 #    ...    name=aliqua
@@ -97,7 +97,7 @@ GET /plugin/{author}/{name}/
 # Error cases
 
 POST /plugins-manager/{id}/execute already started
-    ${id}=    Get Plugin ID From Author and Name    massalabs    hello-world
+    ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
     ${data}=    Create Dictionary    command=start
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/${id}/execute
