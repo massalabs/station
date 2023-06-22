@@ -11,7 +11,7 @@
       "banner": "I want to create and install my own module!",
       "description": "How to do it: {url}",
       "title": " Manual installation",
-      "subtitle": "Copy the link of the module zip",
+      "subtitle": "Paste the link of the zip module",
       "placeholder": "URL",
       "fe-error": "Please enter a valid url",
       "be-error": "Failed to upload plugin",
