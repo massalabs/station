@@ -2,13 +2,11 @@ package myplugin
 
 import (
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
@@ -22,14 +20,6 @@ func newLogo(manager *plugin.Manager) operations.PluginManagerGetLogoHandler {
 
 type logo struct {
 	manager *plugin.Manager
-}
-
-type imageResponder struct {
-	payload io.Reader
-}
-
-func (ir *imageResponder) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-	io.Copy(rw, ir.payload)
 }
 
 func (l *logo) Handle(param operations.PluginManagerGetLogoParams) middleware.Responder {
