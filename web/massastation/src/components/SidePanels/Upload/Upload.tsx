@@ -55,12 +55,11 @@ export default function Upload() {
     const formObject = parseForm<IFormObject>(e);
     const { websiteName, description } = formObject;
 
-    // reset errors
     setFileError(null);
     setFormError(null);
     setAccountError(null);
 
-    if (nickname === null) {
+    if (!nickname) {
       setAccountError(Intl.t('search.errors.no-nickname'));
       return false;
     }
@@ -77,7 +76,7 @@ export default function Upload() {
       return false;
     }
 
-    if (description === '') {
+    if (!description) {
       setFormError({ description: Intl.t('search.errors.no-description') });
       return false;
     }
