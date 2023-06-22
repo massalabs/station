@@ -20,8 +20,6 @@ type register struct {
 }
 
 func (r *register) Handle(param operations.PluginManagerRegisterParams) middleware.Responder {
-	log.Printf("[POST /plugin-manager/register] Name: %s ID:%s", param.Body.Name, param.Body.ID)
-
 	wantedPlugin, err := r.manager.Plugin(param.Body.ID)
 	if err != nil {
 		return operations.NewPluginManagerRegisterNotFound().WithPayload(
@@ -46,7 +44,7 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 	wantedPlugin.InitReverseProxy()
 
 	// Add alias for http requests.
-	alias := plugin.Alias(param.Body.Author, param.Body.Name)
+	alias := plugin.Alias(wantedPlugin.Information().Author, wantedPlugin.Information().Name)
 
 	err = r.manager.SetAlias(alias, param.Body.ID)
 

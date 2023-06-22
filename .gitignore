@@ -1,6 +1,5 @@
 /build/massastation/*
 
-*.log
 *.spec
 
 # pysintaller
