@@ -61,7 +61,7 @@ paths:
               keyId: default
             properties:
               nickname:
-                description: Wallet's short name.
+                description: Account nickname used to sign the operation.
                 type: string
                 x-nullable: false
               name:
@@ -78,7 +78,7 @@ paths:
                 default: ""
               gas:
                 type: object
-                description: Gas attibutes. Has is a virtual resource consumed by node while running smart contract.
+                description: Gas attributes. Has is a virtual resource consumed by node while running smart contract.
                 properties:
                   price:
                     type: number
@@ -110,8 +110,14 @@ paths:
         "200":
           description: OK.
           schema:
-            type: string
-            description: Operation id.
+            type: object
+            properties:
+              operationId:
+                description: Operation id.
+                type: string
+              firstEvent:
+                description: first event emitted by the called smart contract. Kept for backward compatibility.
+                $ref: "#/definitions/Events"
         "422":
           description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
           schema:
