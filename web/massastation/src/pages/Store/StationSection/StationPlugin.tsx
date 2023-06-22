@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import {
-  Button,
-  Certificate,
-  MassaWallet,
-  Plugin,
-} from '@massalabs/react-ui-kit';
+import { Button, Certificate, Plugin } from '@massalabs/react-ui-kit';
 import { FiArrowUpRight, FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
 import { IMassaPlugin } from './StationSection';
 import {
@@ -73,11 +68,7 @@ export function StationPlugin({
   }
 
   const argsOn = {
-    preIcon: massalabsNomination.includes(author) ? (
-      <MassaWallet variant="rounded" />
-    ) : (
-      <img src={logo} />
-    ),
+    preIcon: <img src={logo} alt="plugin-logo" />,
     topAction: (
       <Button onClick={() => updatePluginState(PLUGIN_STOP)} variant="toggle">
         on
@@ -105,11 +96,7 @@ export function StationPlugin({
   };
 
   const argsOff = {
-    preIcon: massalabsNomination.includes(author) ? (
-      <MassaWallet variant="rounded" />
-    ) : (
-      <img src={logo} />
-    ),
+    preIcon: <img src={logo} alt="plugin-logo" />,
     topAction: (
       // we use customClass because "disabled" doesn't let us click on the button to turn it back on
       <Button
