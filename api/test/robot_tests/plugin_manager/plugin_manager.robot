@@ -21,8 +21,7 @@ GET /plugin-manager with no plugins
 
 POST /plugin-manager?source={{pluginSource}}
     ${source}=    Set Variable
-    # TODO: thyra-plugin-hello-world to be renamed to station-massa-hello-world when we have new release on hello-world plugin
-    ...    https://github.com/massalabs/station-massa-hello-world/releases/download/${HELLO_WORLD_PLUGIN_VERSION}/thyra-plugin-hello-world_${OS}-${ARCH}.zip
+    ...    https://github.com/massalabs/station-massa-hello-world/releases/download/${HELLO_WORLD_PLUGIN_VERSION}/station-massa-hello-world_${OS}-${ARCH}.zip
     ${response}=    POST
     ...    ${API_URL}/plugin-manager
     ...    params=source=${source}
@@ -106,8 +105,7 @@ POST /plugins-manager/{id}/execute already started
     ...    json=${data}
 
     ${expectedError}=    Set Variable
-        # TODO: thyra-plugin-hello-world to be renamed to station-massa-hello-world when we have new release on hello-world plugin
-    ...    "[start]${SPACE}${SPACE}(Error while starting plugin thyra-plugin-hello-world: plugin is not ready to start.\n). Current plugin status is Up."
+    ...    "[start]${SPACE}${SPACE}(Error while starting plugin station-massa-hello-world: plugin is not ready to start.\n). Current plugin status is Up."
     Should Be Equal As Strings    ${response.json()['code']}    Plugin-0030
     Should Be Equal As Strings    "${response.json()['message']}"    ${expectedError}
 

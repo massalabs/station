@@ -15,4 +15,4 @@ GET /plugin-store
     Should Be Equal As Strings    ${response[0]['name']}    Node Manager
     Should Be Equal As Strings    ${response[0]['description']}    Join Massa network in a single click! Install, configure and manage Massa nodes.
     #TODO : Update link to after upgrading thyra-node-manager-plugin to station-massa-node-manager
-    Should Be Equal As Strings    ${response[0]['url']}    https://github.com/massalabs/thyra-node-manager-plugin
+    Should Be Equal As Strings    ${response[0]['url']}    https://github.com/massalabs/station-massa-node-manager
