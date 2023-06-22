@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { routeFor } from '../../../utils';
+import { sortPlugins } from '../../../utils/sortArray';
+
 import Intl from '../../../i18n/i18n';
 import { UseQueryResult } from '@tanstack/react-query';
 
@@ -49,7 +52,7 @@ function StationSection({
         <>
           {plugins && plugins.length ? (
             <div className="flex gap-4 flex-wrap">
-              {plugins.map((plugin, index: number) => (
+              {sortPlugins(plugins)?.map((plugin, index) => (
                 <StationPlugin
                   key={index}
                   plugin={plugin}
