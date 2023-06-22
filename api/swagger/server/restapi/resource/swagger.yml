@@ -374,6 +374,24 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /network/{network}:
+    post:
+      description: Switch or change the network.
+      operationId: switchNetwork
+      parameters:
+        - in: path
+          name: network
+          type: string
+          required: true
+          description: The network to switch to (e.g., testnet, buildnet, labnet, mynet).
+      responses:
+        "200":
+          description: Network successfully switched.
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+
   /plugin-manager:
     post:
       description: Install a plugin from a given URL.
