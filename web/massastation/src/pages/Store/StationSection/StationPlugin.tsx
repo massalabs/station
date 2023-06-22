@@ -17,7 +17,7 @@ enum PluginStatus {
   Down = 'Down',
 }
 
-interface PluginPostMethod {
+interface PluginExecuteRequest {
   command: string;
 }
 
@@ -36,7 +36,7 @@ export function StationPlugin({
     isRefetching,
   } = useResource<IMassaPlugin>(`plugin-manager/${id}`);
 
-  const { mutate, isSuccess } = usePost<PluginPostMethod>(
+  const { mutate, isSuccess } = usePost<PluginExecuteRequest>(
     `plugin-manager/${id}/execute`,
   );
 
@@ -63,7 +63,7 @@ export function StationPlugin({
   }, [deleteSuccess]);
 
   function updatePluginState(command: string) {
-    const payload = { command };
+    const payload = { command } as PluginExecuteRequest;
     mutate({ payload });
   }
 

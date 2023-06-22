@@ -16,7 +16,7 @@ import {
   PluginWallet,
 } from '@massalabs/react-ui-kit';
 import { FiCodepen, FiGlobe } from 'react-icons/fi';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
   PluginHomePage,
@@ -30,7 +30,6 @@ export function Index() {
   const navigate = useNavigate();
   const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
   const [urlPlugin, setUrlPlugin] = useState('');
-  const [theme]: string = useOutletContext();
   const [refreshPlugins, setRefreshPlugins] = useState(0);
 
   const { data: plugins } = useResource<PluginHomePage[]>('plugin-manager');
@@ -107,7 +106,6 @@ export function Index() {
             </div>
             <DashboardStation
               key={refreshPlugins}
-              theme={theme}
               imagesDark={[
                 <Image1Dark />,
                 <Image2Dark />,

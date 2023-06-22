@@ -15,6 +15,8 @@ function mockServer(environment = ENV.DEV) {
       plugin: Model,
       store: Model,
       domain: Model,
+      account: Model,
+      website: Model,
     },
     factories: {
       plugin: Factory.extend({
@@ -86,12 +88,37 @@ function mockServer(environment = ENV.DEV) {
         },
         os: 'linux',
       }),
+      account: Factory.extend({
+        nickname() {
+          return faker.internet.userName();
+        },
+        candidateBalance() {
+          return faker.number.int().toString();
+        },
+        address() {
+          return 'AU' + faker.string.alpha({ length: { min: 128, max: 256 } });
+        },
+      }),
+      website: Factory.extend({
+        description() {
+          return faker.lorem.sentence();
+        },
+        name() {
+          return faker.lorem.word();
+        },
+        address() {
+          return 'AU' + faker.string.alpha({ length: { min: 128, max: 256 } });
+        },
+        brokenChunks: [],
+      }),
     },
 
     seeds(server) {
       server.createList('plugin', 2);
       server.createList('domain', 50);
       server.createList('store', 7);
+      server.createList('account', 5);
+      server.createList('website', 2);
     },
 
     routes() {
@@ -176,6 +203,21 @@ function mockServer(environment = ENV.DEV) {
         let { models: stores } = schema.stores.all();
 
         return stores;
+      });
+
+      this.get(
+        'plugin/massalabs/wallet/api/accounts',
+        (schema) => {
+          let { models: accounts } = schema.accounts.all();
+
+          return accounts;
+        },
+        { timing: 500 },
+      );
+
+      this.put('websiteUploader/prepare', (schema) => {
+        // TODO: fix this, it doesn't work as expected, it returns only {id: 4}
+        return schema.create('website');
       });
     },
   });

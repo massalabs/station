@@ -1,3 +1,4 @@
+import { SyntheticEvent, useRef, useState } from 'react';
 import Intl from '../../../i18n/i18n';
 
 import {
@@ -7,8 +8,131 @@ import {
   TextArea,
   DragDrop,
 } from '@massalabs/react-ui-kit';
+import { usePut } from '../../../custom/api';
+import {
+  validateDescriptionLength,
+  validateFileContent,
+  validateFileExtension,
+  validateWebsiteDescription,
+  validateWebsiteName,
+} from '../../../validation/upload';
+import { parseForm } from '../../../utils/ParseForm';
+import { useAccountStore } from '../../../store/store';
+
+interface IFormError {
+  websiteName?: string;
+  description?: string;
+}
+
+interface IFormObject {
+  websiteName: string;
+  description: string;
+}
+
+interface IUploadResponse {
+  name: string;
+  description: string;
+  address: string;
+  brokenChunks: string[];
+}
 
 export default function Upload() {
+  const form = useRef(null);
+  const [formError, setFormError] = useState<IFormError | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [accountsError, setAccountError] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const nickname = useAccountStore((state) => state.nickname);
+
+  const { mutate: mutableUpload, isLoading: uploadLoading } = usePut<
+    FormData,
+    IUploadResponse
+  >('websiteUploader/prepare', {
+    'Content-Type': 'multipart/form-data',
+  });
+
+  async function validate(e: SyntheticEvent): Promise<boolean> {
+    const formObject = parseForm<IFormObject>(e);
+    const { websiteName, description } = formObject;
+
+    setFileError(null);
+    setFormError(null);
+    setAccountError(null);
+
+    if (!nickname) {
+      setAccountError(Intl.t('search.errors.no-nickname'));
+      return false;
+    }
+
+    if (!websiteName) {
+      setFormError({ websiteName: Intl.t('search.errors.no-website-name') });
+      return false;
+    }
+
+    if (!validateWebsiteName(websiteName)) {
+      setFormError({
+        websiteName: Intl.t('search.errors.invalid-website-name'),
+      });
+      return false;
+    }
+
+    if (!description) {
+      setFormError({ description: Intl.t('search.errors.no-description') });
+      return false;
+    }
+
+    if (!validateDescriptionLength(description)) {
+      setFormError({
+        description: Intl.t('search.errors.description-too-long'),
+      });
+      return false;
+    }
+
+    if (!validateWebsiteDescription(description)) {
+      setFormError({
+        description: Intl.t('search.errors.invalid-description'),
+      });
+      return false;
+    }
+
+    if (!file) {
+      setFileError(Intl.t('search.errors.no-file'));
+      return false;
+    }
+
+    if (!validateFileExtension(file?.name)) {
+      setFileError(Intl.t('search.errors.invalid-file-extension'));
+      return false;
+    }
+
+    if (!(await validateFileContent(file))) {
+      setFileError(Intl.t('search.errors.invalid-file-content'));
+      return false;
+    }
+
+    return true;
+  }
+
+  function uploadWebsite(e: SyntheticEvent) {
+    const { websiteName, description } = parseForm<IFormObject>(e);
+    const bodyFormData = new FormData();
+    bodyFormData.append('url', websiteName);
+    bodyFormData.append('description', description); // Add the website description to the form data
+    bodyFormData.append('nickname', nickname as string); // we force compiler type because we know it's not null
+    bodyFormData.append('zipfile', file as File); // we force compiler type of `file` because we know it's not null
+    mutableUpload(bodyFormData);
+  }
+
+  function handleSubmit(e: SyntheticEvent) {
+    e.preventDefault();
+
+    validate(e).then((isValid) => {
+      if (isValid) {
+        uploadWebsite(e);
+      }
+    });
+  }
+
   return (
     <SidePanel customClass="border-l border-c-default bg-secondary">
       <div className="pr-4 m-auto">
@@ -19,26 +143,55 @@ export default function Upload() {
           <div className="flex gap-3 mb-6">
             <p className="mas-body2">{Intl.t('search.sidebar.how-to')}</p>
             <h3 className="mas-h3 underline cursor-pointer">
-              howtouploadwebsite.com
+              <a href="https://howtouploadwebsite.com" target="_blank">
+                howtouploadwebsite.com
+              </a>
             </h3>
           </div>
-          <div className="bg-secondary rounded-lg p-4 mb-6">
-            <p className="mas-menu-active mb-3">
-              {Intl.t('search.sidebar.your-website')}
+          <form ref={form} onSubmit={handleSubmit}>
+            <div className="bg-secondary rounded-lg p-4 mb-6">
+              <p className="mas-menu-active mb-3">
+                {Intl.t('search.sidebar.your-website')}
+              </p>
+              <p className="mas-caption mb-3">
+                {Intl.t('search.sidebar.your-website-description')}
+              </p>
+              <div className="pb-3">
+                <Input
+                  defaultValue=""
+                  name="websiteName"
+                  placeholder={Intl.t('search.inputs.website-name')}
+                  customClass="mb-3 bg-primary"
+                  error={formError?.websiteName}
+                />
+              </div>
+              <TextArea
+                defaultValue=""
+                name="description"
+                placeholder={Intl.t('search.inputs.website-description')}
+                error={formError?.description}
+              />
+            </div>
+            <div className="mb-6">
+              <DragDrop
+                onFileLoaded={(file) => setFile(file)}
+                placeholder={Intl.t('search.inputs.file')}
+                allowed={['zip']}
+              />
+            </div>
+            <Button type="submit">{Intl.t('search.buttons.upload')}</Button>
+          </form>
+          {fileError && (
+            <p className="mas-body pt-4 text-s-error">{fileError}</p>
+          )}
+          {uploadLoading && (
+            <p className="mas-body pt-4 text-s-info">
+              {Intl.t('search.loading')}
             </p>
-            <p className="mas-caption mb-3">
-              {Intl.t('search.sidebar.your-website-desc')}
-            </p>
-            <Input
-              placeholder={Intl.t('search.inputs.website-name')}
-              customClass="mb-3 bg-primary"
-            />
-            <TextArea placeholder={Intl.t('search.inputs.website-desc')} />
-          </div>
-          <div className="mb-6">
-            <DragDrop allowed={['zip']} />
-          </div>
-          <Button>{Intl.t('search.buttons.upload')}</Button>
+          )}
+          {accountsError && (
+            <p className="mas-body pt-4 text-s-error">{accountsError}</p>
+          )}
         </div>
       </div>
     </SidePanel>

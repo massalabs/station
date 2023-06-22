@@ -6,6 +6,7 @@ import { Loading } from './Loading';
 import Intl from '../../i18n/i18n';
 import Upload from '../../components/SidePanels/Upload/Upload';
 import DomainModelItem from './DomainModelItem/DomainModelItem';
+import { routeFor } from '../../utils';
 
 const FAVORITES = ['flappy', 'psychedelic', 'flappynathana1'];
 
@@ -31,7 +32,7 @@ export function Search() {
 
   useEffect(() => {
     if (error) {
-      navigate('/error');
+      navigate(routeFor('error'));
     }
   }, [error, navigate]);
 
