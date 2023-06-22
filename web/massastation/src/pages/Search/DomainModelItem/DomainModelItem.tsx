@@ -17,6 +17,7 @@ export default function DomainModelItem(props: DomainModelItemProps) {
       title={website.name}
       website={website.name + '.massa'}
       description={website.description}
+      onClick={() => window.open('http://' + website.name + '.massa', '_blank')}
     />
   );
 }
