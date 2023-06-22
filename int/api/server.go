@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -69,7 +68,6 @@ func initLocalAPI(localAPI *operations.MassastationAPI, config config.AppConfig)
 }
 
 type Server struct {
-	config   config.AppConfig
 	api      *restapi.Server
 	localAPI *operations.MassastationAPI
 	shutdown chan struct{}
@@ -91,21 +89,8 @@ func NewServer(flags StartServerFlags) *Server {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	networkConfig, err := config.LoadConfig("config_network.yaml")
-	fmt.Println("🚀 ~ file: server.go:94 ~ funcNewServer ~ networkConfig:", networkConfig)
-	if err != nil {
-		log.Fatal("Failed to load configuration:", err)
-	}
-	fmt.Println("🚀 ~ fil ",  config.NodeURL("buildnet",networkConfig)[0])
-	config := config.AppConfig{
-		NodeURL:    "buildnet",
-		DNSAddress: config.DNSAddress("buildnet",networkConfig),
-		Network:    config.NodeURL("buildnet",networkConfig)[0],
-
-	}
 
 	return &Server{
-		config:   config,
 		api:      server,
 		localAPI: localAPI,
 		shutdown: make(chan struct{}),
@@ -116,9 +101,8 @@ func NewServer(flags StartServerFlags) *Server {
 // This function starts the server in a new goroutine to avoid blocking the main thread.
 func (server *Server) Start() {
 	server.printNodeVersion()
-
-	initLocalAPI(server.localAPI, server.config)
-	server.api.ConfigureMassaStationAPI(server.config, server.shutdown)
+	initLocalAPI(server.localAPI, config.Config())
+	server.api.ConfigureMassaStationAPI(config.Config(), server.shutdown)
 
 	go func() {
 		if err := server.api.Serve(); err != nil {
@@ -142,7 +126,7 @@ func (server *Server) Stop() {
 
 // Displays the node version of the connected node.
 func (server *Server) printNodeVersion() {
-	client := node.NewClient(server.config.NodeURL)
+	client := node.NewClient(config.Config().NodeURL)
 	status, err := node.Status(client)
 
 	nodeVersion := "unknown"
@@ -152,5 +136,5 @@ func (server *Server) printNodeVersion() {
 		log.Println("Could not get node version:", err)
 	}
 
-	log.Printf("Connected to node server %s (version %s)\n", server.config.NodeURL, nodeVersion)
+	log.Printf("Connected to node server %s (version %s)\n", config.Config().NodeURL, nodeVersion)
 }

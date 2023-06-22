@@ -1,97 +1,137 @@
 package config
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 
 	"gopkg.in/yaml.v2"
 )
-
+const (
+	MassaStationURL = "station.massa"
+)
 type AppConfig struct {
 	Network    string
 	NodeURL    string
 	DNSAddress string
 }
 
-type NetworkConfig struct {
-	DNS  string   `yaml:"dns"`
-	URLs []string `yaml:"urls"`
-}
+var networksData map[string]NetworkConfig
+var appConfig AppConfig
 
-
-const (
-	testnetNodeURL = "https://test.massa.net/api/v2"
-	// testnet20.2.
-	testnetDNSAddress = "AS12YMz7NjyP3aeEWcSsiC58Hba8UxHapfGv7i4PmNMS2eKfmaqqC"
-
-	labnetNodeURL    = "https://labnet.massa.net/api/v2"
-	labnetDNSAddress = "AS1PV17jWkbUs7mfXsn8Xfs9AK6tHiJoxuGu7RySFMV8GYdMeUSh"
-
-	buildnetNodeURL    = "https://buildernet.massa.net/api/v2"
-	buildnetDNSAddress = "AS12aGWkBorEM2EpKeNyigSkoCqwdxm872g5KkzUiox3v4VosFW3F"
-
-	MassaStationURL = "station.massa"
-)
-
-func GetNetwork(network string) string {
-	//nolint:goconst
-	if network == "TESTNET" || network == "LABNET" || network == "BUILDNET" {
-		return network
+func init() {
+	// Load network configuration from "config_network.yaml"
+	var err error
+	networksData, err = LoadConfig("config_network.yaml")
+	if err != nil {
+		log.Fatal("Failed to load configuration:", err)
 	}
 
-	return "UNKNOWN"
+	// Get AppConfig for the selected network (BuildNet)
+	appConfig, err = GetAppConfig(BuildNet)
+	if err != nil {
+		log.Fatal("Failed to get app configuration:", err)
+	}
 }
-type Config struct {
-	Networks map[string]NetworkConfig `yaml:"network"`
+
+
+func Config() AppConfig {
+	return appConfig
+}
+
+func Networks() map[string]NetworkConfig {
+	return networksData
+}
+
+func UpdateConfig(selectedNetwork NetworkOption) {
+	// Get AppConfig for the selected network
+	newConfig, err := GetAppConfig(selectedNetwork)
+	if err != nil {
+		log.Fatal("Failed to get app configuration:", err)
+	}
+
+	// Update appConfig with the new configuration
+	appConfig = newConfig
 }
 
 
+type NetworkConfig struct {
+	DNS  string   `yaml:"DNS"`
+	URLs []string `yaml:"URLs"`
+}
 
+type NetworkOption int
+
+const (
+	TestNet NetworkOption = iota
+	BuildNet
+	LabNet
+)
+
+var networkOptionNames = [...]string{
+	"testnet",
+	"buildnet",
+	"labnet",
+}
+
+func (option NetworkOption) String() string {
+	return networkOptionNames[option]
+}
+
+func GetNetworkOptions() []NetworkOption {
+	options := make([]NetworkOption, 0, len(Networks()))
+	for network := range Networks() {
+		switch network {
+		case "testnet":
+			options = append(options, TestNet)
+		case "buildnet":
+			options = append(options, BuildNet)
+		case "labnet":
+			options = append(options, LabNet)
+		}
+	}
+	return options
+}
+
+func GetAppConfig(selectedNetwork NetworkOption) (AppConfig, error) {
+	// Convert the NetworkOption to string for lookup
+	selectedNetworkStr := selectedNetwork.String()
+
+	config, ok := Networks()[selectedNetworkStr]
+	if !ok {
+		return AppConfig{}, fmt.Errorf("selected network '%s' not found", selectedNetworkStr)
+	}
+
+	appConfig := AppConfig{
+		NodeURL:    config.URLs[0],
+		DNSAddress: config.DNS,
+		Network:    selectedNetworkStr,
+	}
+
+	return appConfig, nil
+}
 
 // LoadConfig reads the YAML configuration file and returns a map of network configurations.
 // The keys of the map represent the network names, and the values contain the corresponding network configuration.
 // If the configuration file is successfully loaded and parsed, the map of network configurations is returned along with nil error.
 // If there is an error reading the file or parsing the YAML data, the function returns nil map and the encountered error.
 func LoadConfig(filename string) (map[string]NetworkConfig, error) {
-	var config map[string]NetworkConfig
+	var networksData map[string]NetworkConfig
 
-	// Read the configuration file
-	data, err := ioutil.ReadFile(filename)
+	// Read the YAML file
+	yamlFile, err := ioutil.ReadFile(filename)
 	if err != nil {
-		log.Println("Error reading configuration file:", err)
 		return nil, err
 	}
 
-	// Parse the YAML data
-	err = yaml.Unmarshal(data, &config)
+	// Unmarshal the YAML data into the configData variable
+	err = yaml.Unmarshal(yamlFile, &networksData)
 	if err != nil {
-		log.Println("Error parsing YAML data:", err)
 		return nil, err
 	}
-	testvalue :=map[string]NetworkConfig{
-		"testnet": {
-		  DNS: "AS12YMz7NjyP3aeEWcSsiC58Hba8UxHapfGv7i4PmNMS2eKfmaqqC",
-		  URLs: []string{"https://test.massa.net/api/v2"},
-		},
-		"buildnet": {
-		  DNS: "AS12aGWkBorEM2EpKeNyigSkoCqwdxm872g5KkzUiox3v4VosFW3F",
-		  URLs: []string{"https://buildernet.massa.net/api/v2"},
-		},
-		"labnet": {
-		  DNS: "AS1PV17jWkbUs7mfXsn8Xfs9AK6tHiJoxuGu7RySFMV8GYdMeUSh",
-		  URLs: []string{"192.168.2.1", "192.168.2.2"},
-		},
-	  }
-	  
-
-	log.Println("Configuration loaded successfully:", config)
-
-	return testvalue, nil
+	
+	return networksData, nil
 }
-
-
-
-
 
 // NodeURL returns a list of available URLs for a given network.
 // If the network is found in the configuration, it returns the corresponding URLs.
@@ -114,47 +154,4 @@ func DNSAddress(network string, networkConfig map[string]NetworkConfig) string {
 	}
 	// Network not found, return an empty string
 	return ""
-}
-
-
-func GetNodeURL(urlOrNetwork string) string {
-	switch urlOrNetwork {
-	case "TESTNET":
-		return testnetNodeURL
-
-	case "LABNET":
-		return labnetNodeURL
-
-	case "BUILDNET":
-		return buildnetNodeURL
-
-	case "LOCALHOST":
-		return "http://127.0.0.1:33035"
-	default:
-		return urlOrNetwork
-	}
-}
-
-
-func GetDNSAddress(urlOrNetwork string, dnsFlag string) string {
-	if dnsFlag != "" {
-		return dnsFlag
-	}
-
-	switch urlOrNetwork {
-	case "TESTNET":
-		return testnetDNSAddress
-
-	case "LABNET":
-		return labnetDNSAddress
-
-	case "BUILDNET":
-		return buildnetDNSAddress
-
-	case "LOCALHOST":
-		return ""
-
-	default:
-		return ""
-	}
 }
