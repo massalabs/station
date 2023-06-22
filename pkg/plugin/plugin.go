@@ -239,6 +239,8 @@ func (p *Plugin) SetInformation(parsedURL *url.URL) error {
 	}
 
 	info.URL = parsedURL
+	logoPath := filepath.Join(filepath.Dir(p.BinPath), info.Logo)
+	info.Logo = logoPath
 
 	isUpdatable, err := store.StoreInstance.CheckForPluginUpdates(info.Name, info.Version)
 	if err != nil {

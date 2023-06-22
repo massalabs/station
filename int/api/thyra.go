@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/int/api/utils"
 	"github.com/massalabs/station/int/api/websites"
 )
 
@@ -41,10 +42,10 @@ func WebsiteUploaderHandler(params operations.WebsiteUploaderParams) middleware.
 	if params.Resource == indexHTML {
 		maxArchiveSize := websites.GetMaxArchiveSize()
 
-		return NewTemplateResponder(string(resource), contentType(params.Resource), WebSiteCreatorData{maxArchiveSize})
+		return utils.NewTemplateResponder(string(resource), utils.ContentType(params.Resource), WebSiteCreatorData{maxArchiveSize})
 	}
 
-	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)
+	return utils.NewCustomResponder(resource, utils.ContentType(params.Resource), http.StatusOK)
 }
 
 func WebOnChainSearchHandler(params operations.WebOnChainSearchParams) middleware.Responder {
@@ -58,7 +59,7 @@ func WebOnChainSearchHandler(params operations.WebOnChainSearchParams) middlewar
 		return operations.NewWebsiteUploaderNotFound()
 	}
 
-	return NewCustomResponder(resource, contentType(params.Resource), http.StatusOK)
+	return utils.NewCustomResponder(resource, utils.ContentType(params.Resource), http.StatusOK)
 }
 
 //nolint:nolintlint,ireturn
@@ -68,7 +69,7 @@ func MassaStationHomeHandler(params operations.MassaStationHomeParams) middlewar
 		return operations.NewMassaStationHomeNotFound()
 	}
 
-	return NewCustomResponder(content, contentType(params.Resource), http.StatusOK)
+	return utils.NewCustomResponder(content, utils.ContentType(params.Resource), http.StatusOK)
 }
 
 func MassaStationPluginManagerHandler(params operations.MassaStationPluginManagerParams) middleware.Responder {
@@ -77,7 +78,7 @@ func MassaStationPluginManagerHandler(params operations.MassaStationPluginManage
 		return operations.NewMassaStationPluginManagerNotFound()
 	}
 
-	return NewCustomResponder(content, contentType(params.Resource), http.StatusOK)
+	return utils.NewCustomResponder(content, utils.ContentType(params.Resource), http.StatusOK)
 }
 
 func MassaStationWebAppHandler(params operations.MassaStationWebAppParams) middleware.Responder {
@@ -93,5 +94,5 @@ func MassaStationWebAppHandler(params operations.MassaStationWebAppParams) middl
 		}
 	}
 
-	return NewCustomResponder(resourceContent, contentType(resourceName), http.StatusOK)
+	return utils.NewCustomResponder(resourceContent, utils.ContentType(resourceName), http.StatusOK)
 }
