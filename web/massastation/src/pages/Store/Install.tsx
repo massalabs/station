@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import { BaseSyntheticEvent, SyntheticEvent, useEffect, useState } from 'react';
 import Intl from '../../i18n/i18n';
 
+import { Button, Input, SidePanel, Spinner } from '@massalabs/react-ui-kit';
 import { isZipFile } from '../../utils/massaConstants';
 
 import { usePost } from '../../custom/api';
 import { UseQueryResult } from '@tanstack/react-query';
 
-import { Button, Input, SidePanel, Spinner } from '@massalabs/react-ui-kit';
 import { IMassaPlugin } from '../../../../shared/interfaces/IPlugin';
 
 function Install({
@@ -35,14 +35,14 @@ function Install({
     return true;
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (!validate(url)) return;
     const params = { source: url };
     mutate({ params });
   }
 
-  function handleChange(e: any) {
+  function handleChange(e: BaseSyntheticEvent) {
     setError('');
     setUrl(e.target.value);
   }
