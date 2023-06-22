@@ -29,7 +29,7 @@ export function StationPlugin({
   fetchPlugins: () => void;
 }) {
   const [myPlugin, setMyPlugin] = useState<IMassaPlugin>(plugin);
-  const { author, name, home, logo, status, updatable, id } = myPlugin;
+  const { author, name, home, status, updatable, id } = myPlugin;
   const {
     data: newPlugin,
     refetch,
@@ -43,7 +43,7 @@ export function StationPlugin({
   const { mutate: deletePlugin, isSuccess: deleteSuccess } = useDelete(
     `plugin-manager/${id}`,
   );
-
+  const { data: logo } = useResource(`plugin-manager/${id}/logo`);
   useEffect(() => {
     if (isSuccess) {
       refetch();
