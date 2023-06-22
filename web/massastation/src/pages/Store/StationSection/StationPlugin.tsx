@@ -21,6 +21,8 @@ interface PluginExecuteRequest {
   command: string;
 }
 
+const baseAPI = import.meta.env.VITE_BASE_API;
+
 export function StationPlugin({
   plugin,
   fetchPlugins,
@@ -29,7 +31,7 @@ export function StationPlugin({
   fetchPlugins: () => void;
 }) {
   const [myPlugin, setMyPlugin] = useState<IMassaPlugin>(plugin);
-  const { author, name, home, logo, status, updatable, id } = myPlugin;
+  const { author, name, home, status, updatable, id } = myPlugin;
   const {
     data: newPlugin,
     refetch,
@@ -43,6 +45,8 @@ export function StationPlugin({
   const { mutate: deletePlugin, isSuccess: deleteSuccess } = useDelete(
     `plugin-manager/${id}`,
   );
+
+  const logoURL = `${baseAPI}/plugin-manager/${id}/logo`;
 
   useEffect(() => {
     if (isSuccess) {
@@ -66,9 +70,8 @@ export function StationPlugin({
     const payload = { command } as PluginExecuteRequest;
     mutate({ payload });
   }
-
   const argsOn = {
-    preIcon: <img src={logo} alt="plugin-logo" />,
+    preIcon: <img src={logoURL} alt="plugin-logo" />,
     topAction: (
       <Button onClick={() => updatePluginState(PLUGIN_STOP)} variant="toggle">
         on
@@ -96,7 +99,7 @@ export function StationPlugin({
   };
 
   const argsOff = {
-    preIcon: <img src={logo} alt="plugin-logo" />,
+    preIcon: <img src={logoURL} alt="plugin-logo" />,
     topAction: (
       // we use customClass because "disabled" doesn't let us click on the button to turn it back on
       <Button
