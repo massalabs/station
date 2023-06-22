@@ -25,12 +25,14 @@ import {
 import { usePost, useResource } from '../../custom/api';
 import Intl from '../../i18n/i18n';
 import { routeFor } from '../../utils';
+import { useConfigStore } from '../../store/store';
 
 export function Index() {
   const navigate = useNavigate();
   const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
   const [urlPlugin, setUrlPlugin] = useState('');
   const [refreshPlugins, setRefreshPlugins] = useState(0);
+  const theme = useConfigStore((s) => s.theme);
 
   const { data: plugins } = useResource<PluginHomePage[]>('plugin-manager');
 
@@ -106,6 +108,7 @@ export function Index() {
             </div>
             <DashboardStation
               key={refreshPlugins}
+              theme={theme}
               imagesDark={[
                 <Image1Dark />,
                 <Image2Dark />,
