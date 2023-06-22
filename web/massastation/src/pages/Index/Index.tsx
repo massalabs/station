@@ -24,6 +24,7 @@ import {
 } from '../../../../shared/interfaces/IPlugin';
 import { usePost, useResource } from '../../custom/api';
 import Intl from '../../i18n/i18n';
+import { routeFor } from '../../utils';
 
 export function Index() {
   const navigate = useNavigate();
@@ -82,7 +83,7 @@ export function Index() {
               <Button
                 preIcon={<FiGlobe />}
                 customClass="w-96"
-                onClick={() => navigate('/search')}
+                onClick={() => navigate(routeFor('search'))}
               >
                 <div className="flex items-center mas-buttons">
                   {Intl.t('index.buttons.search')}
@@ -92,7 +93,7 @@ export function Index() {
                 variant="secondary"
                 preIcon={<FiCodepen />}
                 customClass="w-96"
-                onClick={() => navigate('/store')}
+                onClick={() => navigate(routeFor('store'))}
               >
                 <div className="flex items-center mas-buttons">
                   {Intl.t('index.buttons.explore')}
