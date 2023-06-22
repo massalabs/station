@@ -10,7 +10,7 @@ Resource            ../variables.resource
 Suite Setup         Suite Setup
 
 *** Variables ***
-${HELLO_WORLD_PLUGIN_VERSION}       0.0.7
+${HELLO_WORLD_PLUGIN_VERSION}       v0.0.9
 
 *** Test Cases ***
 GET /plugin-manager with no plugins
