@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/go-openapi/runtime/middleware"
+
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/int/api/utils"
