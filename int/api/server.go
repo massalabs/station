@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -90,11 +91,17 @@ func NewServer(flags StartServerFlags) *Server {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
+	networkConfig, err := config.LoadConfig("config_network.yaml")
+	fmt.Println("🚀 ~ file: server.go:94 ~ funcNewServer ~ networkConfig:", networkConfig)
+	if err != nil {
+		log.Fatal("Failed to load configuration:", err)
+	}
+	fmt.Println("🚀 ~ fil ",  config.NodeURL("buildnet",networkConfig)[0])
 	config := config.AppConfig{
-		NodeURL:    config.GetNodeURL(flags.MassaNodeServer),
-		DNSAddress: config.GetDNSAddress(flags.MassaNodeServer, flags.DNSAddress),
-		Network:    config.GetNetwork(flags.MassaNodeServer),
+		NodeURL:    "buildnet",
+		DNSAddress: config.DNSAddress("buildnet",networkConfig),
+		Network:    config.NodeURL("buildnet",networkConfig)[0],
+
 	}
 
 	return &Server{

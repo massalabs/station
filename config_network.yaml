@@ -1,0 +1,15 @@
+config:
+  network:
+    testnet:
+      dns: AS12YMz7NjyP3aeEWcSsiC58Hba8UxHapfGv7i4PmNMS2eKfmaqqC
+      urls:
+        - https://test.massa.net/api/v2
+    buildnet:
+      dns: AS12aGWkBorEM2EpKeNyigSkoCqwdxm872g5KkzUiox3v4VosFW3F
+      urls:
+        - https://buildernet.massa.net/api/v2
+    labnet:
+      dns: AS1PV17jWkbUs7mfXsn8Xfs9AK6tHiJoxuGu7RySFMV8GYdMeUSh
+      urls:
+        - 192.168.2.1
+        - 192.168.2.2
