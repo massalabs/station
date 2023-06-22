@@ -43,7 +43,9 @@ export function StationPlugin({
   const { mutate: deletePlugin, isSuccess: deleteSuccess } = useDelete(
     `plugin-manager/${id}`,
   );
+
   const { data: logo } = useResource<string>(`plugin-manager/${id}/logo`);
+
   useEffect(() => {
     if (isSuccess) {
       refetch();
@@ -68,7 +70,7 @@ export function StationPlugin({
   }
 
   const argsOn = {
-    preIcon: <img src={logo} />,
+    preIcon: <img src={logo} alt="plugin-logo" />,
     topAction: (
       <Button onClick={() => updatePluginState(PLUGIN_STOP)} variant="toggle">
         on
@@ -96,7 +98,7 @@ export function StationPlugin({
   };
 
   const argsOff = {
-    preIcon: <img src={logo} />,
+    preIcon: <img src={logo} alt="plugin-logo" />,
     topAction: (
       // we use customClass because "disabled" doesn't let us click on the button to turn it back on
       <Button
