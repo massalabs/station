@@ -21,6 +21,8 @@ interface PluginPostMethod {
   command: string;
 }
 
+const baseAPI = import.meta.env.VITE_BASE_API;
+
 export function StationPlugin({
   plugin,
   fetchPlugins,
@@ -44,7 +46,7 @@ export function StationPlugin({
     `plugin-manager/${id}`,
   );
 
-  const { data: logo } = useResource<string>(`plugin-manager/${id}/logo`);
+  const logoURL = `${baseAPI}/plugin-manager/${id}/logo`;
 
   useEffect(() => {
     if (isSuccess) {
@@ -68,9 +70,8 @@ export function StationPlugin({
     const payload = { command };
     mutate({ payload });
   }
-
   const argsOn = {
-    preIcon: <img src={logo} alt="plugin-logo" />,
+    preIcon: <img src={logoURL} alt="plugin-logo" />,
     topAction: (
       <Button onClick={() => updatePluginState(PLUGIN_STOP)} variant="toggle">
         on
@@ -98,7 +99,7 @@ export function StationPlugin({
   };
 
   const argsOff = {
-    preIcon: <img src={logo} alt="plugin-logo" />,
+    preIcon: <img src={logoURL} alt="plugin-logo" />,
     topAction: (
       // we use customClass because "disabled" doesn't let us click on the button to turn it back on
       <Button
