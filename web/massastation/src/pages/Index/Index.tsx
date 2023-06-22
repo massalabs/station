@@ -48,7 +48,7 @@ export function Index() {
     setPluginWalletIsInstalled(Boolean(isWalletInstalled));
     if (!isWalletInstalled && availablePlugins) {
       const walletPlugin = availablePlugins.find(
-        (plugin: PluginStoreItemRequest) => plugin.name === 'MassaWallet',
+        (plugin: PluginStoreItemRequest) => plugin.name === 'Massa Wallet',
       );
       if (walletPlugin) {
         setUrlPlugin(walletPlugin.file.url);
