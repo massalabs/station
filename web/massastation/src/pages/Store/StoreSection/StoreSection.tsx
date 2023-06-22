@@ -7,6 +7,7 @@ import Intl from '../../../i18n/i18n';
 import StorePlugin from './StorePlugin';
 import { UseQueryResult } from '@tanstack/react-query';
 import { IMassaPlugin } from '../StationSection/StationSection';
+import { sortPlugins } from '../../../utils/sortArray';
 
 export interface IMassaStore {
   name: string;
@@ -55,7 +56,7 @@ function StoreSection({
         </div>
       ) : plugins && plugins.length ? (
         <div className="flex gap-4 flex-wrap">
-          {plugins.map(
+          {sortPlugins(plugins).map(
             (plugin, index: number) =>
               !isDownloaded(plugin) && (
                 <StorePlugin key={index} plugin={plugin} refetch={refetch} />
