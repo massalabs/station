@@ -4,18 +4,15 @@
 [![codecov](https://codecov.io/gh/massalabs/station/branch/main/graph/badge.svg?token=592LPZLC4M)](https://codecov.io/gh/massalabs/station)
 [![Go Report Card](https://goreportcard.com/badge/github.com/massalabs/station)](https://goreportcard.com/report/github.com/massalabs/station)
 
-
 ## Install MassaStation
 
 To install MassaStation, please follow the instructions available in the [Installation Guide](./INSTALLATION.md).
-
 
 ## Contributing
 
 We welcome contributions of all kinds, from bug reports to feature requests and code contributions.
 
-If you're interested in contributing to MassaStation, please make sure to read our [Contribution Guidelines](./CONTRIBUTING.md) for detailed instructions on how to get started. 
-
+If you're interested in contributing to MassaStation, please make sure to read our [Contribution Guidelines](./CONTRIBUTING.md) for detailed instructions on how to get started.
 
 ## Going further
 
@@ -29,16 +26,15 @@ You can install modules that were validated by Massa Labs from the [Module Store
 
 The module will be automatically installed and activated after a few seconds directly in your Station. Browse MassaStation store to find the module you need.
 
-
 #### Create a module
 
 If you are working on a module, you can install it manually to test it using MassaStation:
+
 1. Get the `.zip` file download URL of the module you want to install. Make sure this URL matches the version of MassaStation you are using, your computer OS and architecture.
 2. Paste the URL in the `Install a plugin` field of the [module manager page](https://station.massa/store/).
 3. Click on the `Install` button.
 
 > **Note:** A complete guide on how to create a module will be available soon.
-
 
 ### Network
 
