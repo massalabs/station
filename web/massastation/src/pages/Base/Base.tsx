@@ -14,6 +14,7 @@ import { useResource } from '../../custom/api';
 import { AccountObject } from '../../models/AccountModel';
 import { useAccountStore } from '../../store/store';
 import { URL } from '../../const/url/url';
+import { useConfigStore } from '../../store/store';
 
 type ThemeSettings = {
   [key: string]: {
@@ -61,10 +62,11 @@ const navigatorSteps: INavigatorSteps = {
 
 export function Base() {
   // Hooks
-  const [theme, setTheme] = useLocalStorage<string>(
+  const [theme, setThemeStorage] = useLocalStorage<string>(
     'massa-station-theme',
     'theme-dark',
   );
+
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
@@ -83,9 +85,7 @@ export function Base() {
   // Store
   const nickname = useAccountStore((state) => state.nickname);
   const setNickname = useAccountStore((state) => state.setNickname);
-
-  // Constants
-  const context = { handleSetTheme };
+  const setThemeStore = useConfigStore((s) => s.setTheme);
 
   const navigator = (
     <Navigator
@@ -137,20 +137,22 @@ export function Base() {
   }
 
   function handleSetTheme() {
-    setTheme(theme === 'theme-dark' ? 'theme-light' : 'theme-dark');
+    let toggledTheme = theme === 'theme-dark' ? 'theme-light' : 'theme-dark';
+
+    setThemeStorage(toggledTheme);
+    setThemeStore(toggledTheme);
   }
 
   // Template
   return (
     <div className={`${theme}`}>
       <LayoutStation navigator={navigator} onSetTheme={handleSetTheme}>
-        <Outlet context={[theme, setTheme]} />
         <div className="absolute top-5 right-32 p-6">
           <div className="w-64">
             <Dropdown options={accountsItems} select={selectedAccountKey} />
           </div>
         </div>
-        <Outlet context={context} />
+        <Outlet />
       </LayoutStation>
     </div>
   );
