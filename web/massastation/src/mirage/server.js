@@ -216,6 +216,7 @@ function mockServer(environment = ENV.DEV) {
       );
 
       this.put('websiteUploader/prepare', (schema) => {
+        // TODO: fix this, it doesn't work as expected, it returns only {id: 4}
         return schema.create('website');
       });
     },
