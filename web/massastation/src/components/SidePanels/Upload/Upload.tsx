@@ -65,7 +65,7 @@ export default function Upload() {
       return false;
     }
 
-    if (websiteName === '') {
+    if (!websiteName) {
       setFormError({ websiteName: Intl.t('search.errors.no-website-name') });
       return false;
     }
