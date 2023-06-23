@@ -46,7 +46,8 @@
       "no-file": "File is missing.",
       "no-description": "Description is missing.",
       "invalid-file-extension": "File format must be a \".zip\".",
-      "invalid-file-content": "Website file must contain index.html at the source."
+      "invalid-file-content": "Website file must contain index.html at the source.",
+      "upload-error": "Failed to upload website."
     }
   },
   "index": {

@@ -1,4 +1,4 @@
-import { SyntheticEvent, useRef, useState } from 'react';
+import { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import Intl from '../../../i18n/i18n';
 
 import {
@@ -41,15 +41,25 @@ export default function Upload() {
   const [formError, setFormError] = useState<IFormError | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [accountsError, setAccountError] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const nickname = useAccountStore((state) => state.nickname);
 
-  const { mutate: mutableUpload, isLoading: uploadLoading } = usePut<
-    FormData,
-    IUploadResponse
-  >('websiteUploader/prepare', {
+  const {
+    mutate: mutableUpload,
+    isLoading: uploadLoading,
+    error: uploadFail,
+  } = usePut<FormData, IUploadResponse>('websiteUploader/prepare', {
     'Content-Type': 'multipart/form-data',
   });
+
+  useEffect(() => {
+    if (uploadFail) {
+      setUploadError(Intl.t('search.errors.upload-error'));
+    } else {
+      setUploadError(null);
+    }
+  }, [uploadFail]);
 
   async function validate(e: SyntheticEvent): Promise<boolean> {
     const formObject = parseForm<IFormObject>(e);
@@ -82,6 +92,7 @@ export default function Upload() {
     }
 
     if (!validateDescriptionLength(description)) {
+      // this can never happen because TextArea component has maxLength={280}
       setFormError({
         description: Intl.t('search.errors.description-too-long'),
       });
@@ -191,6 +202,9 @@ export default function Upload() {
           )}
           {accountsError && (
             <p className="mas-body pt-4 text-s-error">{accountsError}</p>
+          )}
+          {uploadError && (
+            <p className="mas-body pt-4 text-s-error">{uploadError}</p>
           )}
         </div>
       </div>
