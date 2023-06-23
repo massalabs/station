@@ -39,18 +39,17 @@ export function Index() {
   const { data: availablePlugins } =
     useResource<PluginStoreItemRequest[]>('plugin-store');
 
-  const { mutate, isSuccess, isError } = usePost<any, any>(
-    `plugin-manager?source=${urlPlugin}`,
-  );
+  const { mutate, isSuccess, isError } = usePost<null>('plugin-manager');
+  const walletName = 'Massa Wallet';
 
   useEffect(() => {
     const isWalletInstalled = plugins?.some(
-      (plugin: PluginHomePage) => plugin.name === 'wallet',
+      (plugin: PluginHomePage) => plugin.name === walletName,
     );
     setPluginWalletIsInstalled(Boolean(isWalletInstalled));
     if (!isWalletInstalled && availablePlugins) {
       const walletPlugin = availablePlugins.find(
-        (plugin: PluginStoreItemRequest) => plugin.name === 'MassaWallet',
+        (plugin: PluginStoreItemRequest) => plugin.name === walletName,
       );
       if (walletPlugin) {
         setUrlPlugin(walletPlugin.file.url);
@@ -73,7 +72,8 @@ export function Index() {
 
   function handleInstallPlugin() {
     try {
-      mutate({});
+      const params = { source: urlPlugin };
+      mutate({ params });
     } catch (error) {
       console.error('Error installing plugin:', error);
     }
