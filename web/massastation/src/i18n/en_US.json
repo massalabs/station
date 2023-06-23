@@ -50,6 +50,11 @@
       "upload-error": "Failed to upload website."
     }
   },
+  "unexpected-error": {
+    "title": "Oops!",
+    "description": "An unexpected error has occurred",
+    "link": "Go back to the Welcome page!"
+  },
   "index": {
     "title-banner": "Decentralization made easy",
     "buttons": {
