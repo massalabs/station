@@ -131,7 +131,10 @@ export function Index() {
                   iconActive={<WalletActive />}
                   iconInactive={<WalletInactive />}
                   onClickActive={() =>
-                    navigate('/plugin/massa-labs/massa-wallet/web-app/index')
+                    window.open(
+                      '/plugin/massa-labs/massa-wallet/web-app/index',
+                      '_blank',
+                    )
                   }
                   onClickInactive={handleInstallPlugin}
                 />,
