@@ -99,10 +99,10 @@ func NewServer(flags StartServerFlags) *Server {
 
 // Starts the server.
 // This function starts the server in a new goroutine to avoid blocking the main thread.
-func (server *Server) Start() {
-	server.printNodeVersion()
-	initLocalAPI(server.localAPI, config.Config())
-	server.api.ConfigureMassaStationAPI(config.Config(), server.shutdown)
+func (server *Server) Start(networkManager *config.NetworkManager) {
+	server.printNodeVersion(networkManager)
+	initLocalAPI(server.localAPI, networkManager.Network())
+	server.api.ConfigureMassaStationAPI(networkManager.Network(), server.shutdown)
 
 	go func() {
 		if err := server.api.Serve(); err != nil {
@@ -125,8 +125,8 @@ func (server *Server) Stop() {
 }
 
 // Displays the node version of the connected node.
-func (server *Server) printNodeVersion() {
-	client := node.NewClient(config.Config().NodeURL)
+func (server *Server) printNodeVersion(networkManager *config.NetworkManager) {
+	client := node.NewClient(networkManager.Network().NodeURL)
 	status, err := node.Status(client)
 
 	nodeVersion := "unknown"
@@ -136,5 +136,5 @@ func (server *Server) printNodeVersion() {
 		log.Println("Could not get node version:", err)
 	}
 
-	log.Printf("Connected to node server %s (version %s)\n", config.Config().NodeURL, nodeVersion)
+	log.Printf("Connected to node server %s (version %s)\n", networkManager.Network().NodeURL, nodeVersion)
 }

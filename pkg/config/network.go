@@ -39,41 +39,6 @@ func (option NetworkOption) String() string {
 	return networkOptionNames[option]
 }
 
-func GetNetworkOptions() []NetworkOption {
-	options := make([]NetworkOption, 0, len(Networks()))
-
-	for network := range Networks() {
-		switch network {
-		case "testnet":
-			options = append(options, TestNet)
-		case "buildnet":
-			options = append(options, BuildNet)
-		case "labnet":
-			options = append(options, LabNet)
-		}
-	}
-
-	return options
-}
-
-func GetAppConfig(selectedNetwork NetworkOption) (AppConfig, error) {
-	// Convert the NetworkOption to string for lookup
-	selectedNetworkStr := selectedNetwork.String()
-
-	config, ok := Networks()[selectedNetworkStr]
-	if !ok {
-		return AppConfig{}, fmt.Errorf("selected network '%s' not found", selectedNetworkStr)
-	}
-
-	appConfig := AppConfig{
-		// TODO add logique to choose which URL to use
-		NodeURL:    config.URLs[0],
-		DNSAddress: config.DNS,
-		Network:    selectedNetworkStr,
-	}
-
-	return appConfig, nil
-}
 
 // LoadConfig reads the YAML configuration file and returns a map of network configurations.
 // The keys of the map represent the network names, and the values contain the corresponding network configuration.

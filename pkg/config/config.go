@@ -2,66 +2,103 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
 )
+var Version = "dev"
 
-var (
+
+type NetworkManager struct {
 	appConfig     AppConfig
 	knownNetworks map[string]NetworkConfig
-	Version       = "dev"
-)
+}
 
-// init initializes the known networks and the app configuration.
-func init() {
-	// Load network configuration from "config_network.yaml"
-	initNetworksData, err := LoadConfig("config_network.yaml")
+func NewNetworkManager(configFile string) (*NetworkManager, error) {
+	nm := &NetworkManager{}
+
+	// Load network configuration from file
+	initNetworksData, err := LoadConfig(configFile)
 	if err != nil {
-		log.Fatal("Failed to load configuration:", err)
+		return nil, fmt.Errorf("failed to load configuration: %w", err)
 	}
 
-	SetNetworks(initNetworksData)
+	nm.SetNetworks(initNetworksData)
 
 	// Get AppConfig for the selected network (BuildNet)
-	initConfig, err := GetAppConfig(BuildNet)
+	initConfig, err := nm.GetAppConfig(BuildNet)
 	if err != nil {
-		log.Fatal("Failed to get app configuration:", err)
+		return nil, fmt.Errorf("failed to get app configuration: %w", err)
 	}
 
-	SetAppConfig(initConfig)
+	nm.SetAppConfig(initConfig)
+
+	return nm, nil
 }
 
-// Config returns the current app configuration.
-func Config() AppConfig {
-	return appConfig
+func (nm *NetworkManager) Network() AppConfig {
+	return nm.appConfig
 }
 
-// SetAppConfig sets the app configuration.
-func SetAppConfig(config AppConfig) {
-	appConfig = config
+func (nm *NetworkManager) SetAppConfig(config AppConfig) {
+	nm.appConfig = config
 }
 
-// SetNetworks sets the known networks configuration.
-func SetNetworks(networks map[string]NetworkConfig) {
-	knownNetworks = networks
+func (nm *NetworkManager) SetNetworks(networks map[string]NetworkConfig) {
+	nm.knownNetworks = networks
 }
 
-// Networks returns the map of network configurations.
-func Networks() map[string]NetworkConfig {
-	return knownNetworks
+func (nm *NetworkManager) Networks() map[string]NetworkConfig {
+	return nm.knownNetworks
 }
 
-// SwitchNetworkTO updates the app configuration based on the selected network.
-func SwitchNetworkTO(selectedNetwork NetworkOption) {
+func (nm *NetworkManager) GetNetworkOptions() []NetworkOption {
+	options := make([]NetworkOption, 0, len(nm.knownNetworks))
+
+	for network := range nm.knownNetworks {
+		switch network {
+		case "testnet":
+			options = append(options, TestNet)
+		case "buildnet":
+			options = append(options, BuildNet)
+		case "labnet":
+			options = append(options, LabNet)
+		}
+	}
+
+	return options
+}
+
+func (nm *NetworkManager) GetAppConfig(selectedNetwork NetworkOption) (AppConfig, error) {
+	// Convert the NetworkOption to string for lookup
+	selectedNetworkStr := selectedNetwork.String()
+
+	config, ok := nm.knownNetworks[selectedNetworkStr]
+	if !ok {
+		return AppConfig{}, fmt.Errorf("selected network '%s' not found", selectedNetworkStr)
+	}
+
+	appConfig := AppConfig{
+		// TODO: Add logic to choose which URL to use
+		NodeURL:    config.URLs[0],
+		DNSAddress: config.DNS,
+		Network:    selectedNetworkStr,
+	}
+
+	return appConfig, nil
+}
+
+func (nm *NetworkManager) SwitchNetwork(selectedNetwork NetworkOption) error {
 	// Get AppConfig for the selected network
-	newConfig, err := GetAppConfig(selectedNetwork)
+	newConfig, err := nm.GetAppConfig(selectedNetwork)
 	if err != nil {
-		log.Fatal("Failed to get app configuration:", err)
+		return fmt.Errorf("failed to get app configuration: %w", err)
 	}
 
 	// Set the new configuration
-	SetAppConfig(newConfig)
+	nm.SetAppConfig(newConfig)
+
+	return nil
 }
+
 
 // GetConfigDir returns the config directory for the current OS.
 func GetConfigDir() (string, error) {
