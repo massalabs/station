@@ -1,15 +1,21 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { routeFor } from '../../utils';
 
 import { useResource } from '../../custom/api';
 import { AccountObject } from '../../models/AccountModel';
 import { useAccountStore } from '../../store/store';
 import { URL } from '../../const/url/url';
+import { PluginHomePage } from '../../../../shared/interfaces/IPlugin';
+
+import { PAGES } from '../../const/pages/pages';
 
 import {
   ThemeMode,
   StationLogo,
   Dropdown,
   Identicon,
+  Button,
 } from '@massalabs/react-ui-kit';
 
 export interface LayoutStationProps {
@@ -23,11 +29,13 @@ export interface LayoutStationProps {
 export function LayoutStation({ ...props }) {
   const { children, navigator, onSetTheme, storedTheme, activePage } = props;
 
+  const navigate = useNavigate();
+
   const [selectedTheme, setSelectedTheme] = useState(
     storedTheme || 'theme-dark',
   );
 
-  const searchIsActive = activePage === 'search';
+  const searchIsActive = activePage === PAGES.SEARCH;
 
   function handleSetTheme(theme: string) {
     setSelectedTheme(theme);
@@ -39,7 +47,6 @@ export function LayoutStation({ ...props }) {
     `${URL.WALLET_BASE_API}/${URL.WALLET_ACCOUNTS}`,
   );
 
-  // Store
   const nickname = useAccountStore((state) => state.nickname);
   const setNickname = useAccountStore((state) => state.setNickname);
 
@@ -54,6 +61,23 @@ export function LayoutStation({ ...props }) {
       (_, idx) => accounts[idx].nickname === nickname,
     ) || '0',
   );
+
+  const existingAccount: boolean = accounts.length > 0;
+
+  const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
+
+  const { data: plugins, isSuccess } =
+    useResource<PluginHomePage[]>('plugin-manager');
+
+  useEffect(() => {
+    if (isSuccess) {
+      plugins.forEach((plugin) => {
+        if (plugin.name === 'Massa Wallet') {
+          setPluginWalletIsInstalled(true);
+        }
+      });
+    }
+  }, [isSuccess]);
 
   return (
     <div
@@ -70,11 +94,36 @@ export function LayoutStation({ ...props }) {
           {navigator && <div className="flex-row-reversed">{navigator}</div>}
         </div>
         <div className="flex justify-end items-start gap-20">
-          {searchIsActive && (
-            <div className="w-64">
-              <Dropdown options={accountsItems} select={selectedAccountKey} />
-            </div>
-          )}
+          {searchIsActive &&
+            (pluginWalletIsInstalled ? (
+              existingAccount ? (
+                <div className="w-64">
+                  <Dropdown
+                    options={accountsItems}
+                    select={selectedAccountKey}
+                  />
+                </div>
+              ) : (
+                <Button
+                  customClass="w-64"
+                  onClick={() =>
+                    window.open(
+                      '/plugin/massa-labs/massa-wallet/web-app/',
+                      '_blank',
+                    )
+                  }
+                >
+                  Create Account
+                </Button>
+              )
+            ) : (
+              <Button
+                customClass="w-64"
+                onClick={() => navigate(routeFor('index'))}
+              >
+                Install Wallet
+              </Button>
+            ))}
           <ThemeMode onSetTheme={handleSetTheme} />
         </div>
       </div>
