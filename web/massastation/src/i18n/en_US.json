@@ -36,7 +36,7 @@
       "website-description": "Description",
       "file": "Drag and drop your .zip file"
     },
-    "loading": "Uploading you website...",
+    "loading": "Uploading your website to the blockchain, this may take a while...",
     "errors": {
       "no-nickname": "Account is missing.",
       "no-website-name": "Website's name is missing.",
