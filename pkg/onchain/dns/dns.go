@@ -3,6 +3,7 @@ package dns
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/convert"
@@ -58,6 +59,12 @@ func SetRecord(
 	)
 	if err != nil {
 		return "", fmt.Errorf("calling setResolver with '%+v' at '%s': %w", rec, addr, err)
+	}
+
+	event := operationWithEventResponse.Event
+
+	if strings.HasPrefix(event, "ERROR") {
+		return event, fmt.Errorf("calling setResolver failed with '%+v' at '%s': %s", rec, addr, event)
 	}
 
 	return operationWithEventResponse.Event, nil

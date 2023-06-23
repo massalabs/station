@@ -14,9 +14,10 @@ import {
   Button,
   DashboardStation,
   PluginWallet,
+  Spinner,
 } from '@massalabs/react-ui-kit';
 import { FiCodepen, FiGlobe } from 'react-icons/fi';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
   PluginHomePage,
@@ -25,30 +26,32 @@ import {
 import { usePost, useResource } from '../../custom/api';
 import Intl from '../../i18n/i18n';
 import { routeFor } from '../../utils';
+import { useConfigStore } from '../../store/store';
 
 export function Index() {
   const navigate = useNavigate();
   const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
   const [urlPlugin, setUrlPlugin] = useState('');
-  const [theme]: string = useOutletContext();
+  const [refreshPlugins, setRefreshPlugins] = useState(0);
+  const theme = useConfigStore((s) => s.theme);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: plugins } = useResource<PluginHomePage[]>('plugin-manager');
 
   const { data: availablePlugins } =
     useResource<PluginStoreItemRequest[]>('plugin-store');
 
-  const { mutate, isSuccess, isError } = usePost<any, any>(
-    `plugin-manager?source=${urlPlugin}`,
-  );
+  const { mutate, isSuccess, isError } = usePost<null>('plugin-manager');
+  const walletName = 'Massa Wallet';
 
   useEffect(() => {
     const isWalletInstalled = plugins?.some(
-      (plugin: PluginHomePage) => plugin.name === 'wallet',
+      (plugin: PluginHomePage) => plugin.name === walletName,
     );
     setPluginWalletIsInstalled(Boolean(isWalletInstalled));
     if (!isWalletInstalled && availablePlugins) {
       const walletPlugin = availablePlugins.find(
-        (plugin: PluginStoreItemRequest) => plugin.name === 'Massa Wallet',
+        (plugin: PluginStoreItemRequest) => plugin.name === walletName,
       );
       if (walletPlugin) {
         setUrlPlugin(walletPlugin.file.url);
@@ -59,17 +62,25 @@ export function Index() {
   useEffect(() => {
     if (isSuccess) {
       setPluginWalletIsInstalled(true);
+      setIsLoading(false);
     }
     if (isError) {
       setPluginWalletIsInstalled(false);
+      setIsLoading(false);
     }
   }, [isSuccess, isError]);
 
+  useEffect(() => {
+    setRefreshPlugins(refreshPlugins + 1);
+  }, [pluginWalletIsInstalled, isLoading]);
+
   function handleInstallPlugin() {
     try {
-      mutate({});
+      const params = { source: urlPlugin };
+      mutate({ params });
     } catch (error) {
       console.error('Error installing plugin:', error);
+      setIsLoading(false);
     }
   }
 
@@ -101,6 +112,7 @@ export function Index() {
               </Button>
             </div>
             <DashboardStation
+              key={refreshPlugins}
               theme={theme}
               imagesDark={[
                 <Image1Dark />,
@@ -116,19 +128,33 @@ export function Index() {
                 <Image4Light />,
                 <Image5Light />,
               ]}
-              components={[
-                <PluginWallet
-                  key="wallet"
-                  isActive={pluginWalletIsInstalled}
-                  title="Massa Wallet"
-                  iconActive={<WalletActive />}
-                  iconInactive={<WalletInactive />}
-                  onClickActive={() =>
-                    navigate('/plugin/massa-labs/massa-wallet/web-app/index')
-                  }
-                  onClickInactive={handleInstallPlugin}
-                />,
-              ]}
+              components={
+                !isLoading
+                  ? [
+                      <PluginWallet
+                        key="wallet"
+                        isActive={pluginWalletIsInstalled}
+                        title="Massa Wallet"
+                        iconActive={<WalletActive />}
+                        iconInactive={<WalletInactive />}
+                        onClickActive={() =>
+                          window.open(
+                            '/plugin/massa-labs/massa-wallet/web-app/index',
+                            '_blank',
+                          )
+                        }
+                        onClickInactive={handleInstallPlugin}
+                      />,
+                    ]
+                  : [
+                      <>
+                        <WalletInactive />
+                        <Button disabled={true}>
+                          <Spinner variant="button" />
+                        </Button>
+                      </>,
+                    ]
+              }
             />
           </div>
         </div>

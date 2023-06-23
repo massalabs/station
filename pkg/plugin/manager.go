@@ -13,6 +13,7 @@ import (
 
 	"github.com/cavaliergopher/grab/v3"
 	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/plugin/utils"
 	"github.com/massalabs/station/pkg/store"
 	"github.com/xyproto/unzip"
 )
@@ -204,6 +205,9 @@ func (m *Manager) RunAll() error {
 	return nil
 }
 
+// DownloadPlugin downloads a plugin from a given URL.
+// Pass isNew to false to update the plugin.
+// Returns the plugin path.
 func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
 	pluginsDir := Directory()
 
@@ -220,10 +224,10 @@ func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
 	}()
 
 	archiveName := filepath.Base(resp.Filename)
-	pluginFilename := strings.Split(archiveName, ".zip")[0]
+	pluginFilename := utils.PluginFileName(archiveName)
 	pluginName := strings.Split(archiveName, "_")[0]
 	pluginDirectory := filepath.Join(pluginsDir, pluginName)
-	pluginPath := filepath.Join(pluginDirectory, pluginName)
+	pluginPath := utils.PluginPath(pluginDirectory, pluginName)
 
 	if isNew {
 		_, err = os.Stat(pluginDirectory)

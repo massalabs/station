@@ -1,4 +1,4 @@
-package api
+package utils
 
 import (
 	"mime"
@@ -9,7 +9,7 @@ import (
 	"github.com/go-openapi/runtime"
 )
 
-func contentType(rsc string) map[string]string {
+func ContentType(rsc string) map[string]string {
 	var contentType map[string]string
 
 	fileExtension := filepath.Ext(rsc)

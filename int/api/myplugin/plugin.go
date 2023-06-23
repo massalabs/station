@@ -20,6 +20,7 @@ func InitializePluginAPI(api *operations.MassastationAPI) {
 	api.PluginManagerListHandler = newList(manager)
 	api.PluginManagerRegisterHandler = newRegister(manager)
 	api.PluginManagerUninstallHandler = newUninstall(manager)
+	api.PluginManagerGetLogoHandler = newLogo(manager)
 
 	// This endpoint is not defined by the go-swagger API.
 	plugin.Handler = *plugin.NewAPIHandler(manager)
@@ -34,4 +35,6 @@ const (
 	errorCodePluginRegisterInvalidData = "Plugin-0020"
 
 	errorCodePluginExecuteCmdBadRequest = "Plugin-0030"
+
+	errorCodePluginLogoNotFound = "Plugin-0040"
 )
