@@ -8,18 +8,7 @@ import Intl from '../../../i18n/i18n';
 import { UseQueryResult } from '@tanstack/react-query';
 
 import StationPlugin from './StationPlugin';
-
-export interface IMassaPlugin {
-  name: string;
-  id: string;
-  author: string;
-  description: string;
-  logo: string;
-  version: string;
-  home: string;
-  status: string;
-  updatable: boolean;
-}
+import { IMassaPlugin } from '../../../../../shared/interfaces/IPlugin';
 
 function StationSection({
   getPlugins,
