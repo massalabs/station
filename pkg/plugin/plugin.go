@@ -66,15 +66,18 @@ func (p *Plugin) getInformation() (*Information, error) {
 		return nil, fmt.Errorf("reading manifest file '%s': %w", manifestPath, err)
 	}
 
-	var manifest *Information
+	var info *Information
 
-	err = json.Unmarshal(jsonObj, &manifest)
+	err = json.Unmarshal(jsonObj, &info)
 
 	if err != nil {
 		return nil, fmt.Errorf("parsing manifest file '%s': %w", manifestPath, err)
 	}
 
-	return manifest, nil
+	logoPath := filepath.Join(filepath.Dir(p.BinPath), info.Logo)
+	info.Logo = logoPath
+
+	return info, nil
 }
 
 func (p *Plugin) Status() Status {
@@ -233,8 +236,6 @@ func (p *Plugin) SetInformation(parsedURL *url.URL) error {
 	}
 
 	info.URL = parsedURL
-	logoPath := filepath.Join(filepath.Dir(p.BinPath), info.Logo)
-	info.Logo = logoPath
 
 	isUpdatable, err := store.StoreInstance.CheckForPluginUpdates(info.Name, info.Version)
 	if err != nil {
