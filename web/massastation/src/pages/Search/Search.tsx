@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { routeFor } from '../../utils';
+import Intl from '../../i18n/i18n';
+
 import { useResource } from '../../custom/api';
 import { DomainModel } from '../../models/DomainModel';
 import { Loading } from './Loading';
-import Intl from '../../i18n/i18n';
 import Upload from '../../components/SidePanels/Upload/Upload';
 import DomainModelItem from './DomainModelItem/DomainModelItem';
-import { routeFor } from '../../utils';
-
-const FAVORITES = ['flappy', 'psychedelic', 'flappynathana1'];
+import { FAVORITES_WEBSITES } from '../../utils/massaConstants';
 
 export function Search() {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ export function Search() {
 
   if (isSuccess) {
     websites.forEach((website) => {
-      if (FAVORITES.includes(website.name)) {
+      if (FAVORITES_WEBSITES.includes(website.name)) {
         fav.push(website);
       }
     });

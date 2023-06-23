@@ -1,21 +1,13 @@
+import { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useLocalStorage } from '../../custom/useLocalStorage';
-import { FiSun, FiMoon } from 'react-icons/fi';
-import {
-  Navigator,
-  LayoutStation,
-  Dropdown,
-  Identicon,
-  Toast,
-} from '@massalabs/react-ui-kit';
-import { FiCodepen, FiGlobe, FiHome } from 'react-icons/fi';
-import { useEffect, useState } from 'react';
-import { PAGES } from '../../const/pages/pages';
-import { useResource } from '../../custom/api';
-import { AccountObject } from '../../models/AccountModel';
-import { useAccountStore } from '../../store/store';
-import { URL } from '../../const/url/url';
 import { useConfigStore } from '../../store/store';
+
+import { Navigator, Toast } from '@massalabs/react-ui-kit';
+import { FiCodepen, FiGlobe, FiHome, FiSun, FiMoon } from 'react-icons/fi';
+import { LayoutStation } from '../../layouts/LayoutStation/LayoutStation';
+
+import { PAGES } from '../../const/pages/pages';
 
 type ThemeSettings = {
   [key: string]: {
@@ -72,20 +64,14 @@ export function Base() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setActive(currentPage);
+    setActivePage(currentPage);
   }, [pathname]);
-
-  const { data: accounts = [] } = useResource<AccountObject[]>(
-    `${URL.WALLET_BASE_API}/${URL.WALLET_ACCOUNTS}`,
-  );
 
   // State
   const currentPage = pathname.split('/').pop() || 'index';
-  const [active, setActive] = useState(currentPage);
+  const [activePage, setActivePage] = useState(currentPage);
 
   // Store
-  const nickname = useAccountStore((state) => state.nickname);
-  const setNickname = useAccountStore((state) => state.setNickname);
   const setThemeStore = useConfigStore((s) => s.setTheme);
 
   const navigator = (
@@ -93,15 +79,15 @@ export function Base() {
       items={[
         {
           icon: <FiHome />,
-          isActive: PAGES.INDEX === active,
+          isActive: PAGES.INDEX === activePage,
         },
         {
           icon: <FiCodepen />,
-          isActive: PAGES.STORE === active,
+          isActive: PAGES.STORE === activePage,
         },
         {
           icon: <FiGlobe />,
-          isActive: PAGES.SEARCH === active,
+          isActive: PAGES.SEARCH === activePage,
         },
       ]}
       onClickNext={handleNext}
@@ -110,30 +96,18 @@ export function Base() {
   );
   const STEP = navigatorSteps[currentPage] as INavigatorSteps;
 
-  const accountsItems = accounts.map((account) => ({
-    icon: <Identicon username={account.nickname} size={32} />,
-    item: account.nickname,
-    onClick: () => setNickname(account.nickname),
-  }));
-
-  const selectedAccountKey: number = parseInt(
-    Object.keys(accounts).find(
-      (_, idx) => accounts[idx].nickname === nickname,
-    ) || '0',
-  );
-
   // Functions
   function handleNext() {
     let { next } = STEP;
 
-    setActive(next.toString());
+    setActivePage(next.toString());
     navigate(next);
   }
 
   function handlePrevious() {
     let { previous } = STEP;
 
-    setActive(previous.toString());
+    setActivePage(previous.toString());
     navigate(previous);
   }
 
@@ -147,12 +121,12 @@ export function Base() {
   // Template
   return (
     <div className={`${theme}`}>
-      <LayoutStation navigator={navigator} onSetTheme={handleSetTheme}>
-        <div className="absolute top-5 right-32 p-6">
-          <div className="w-64">
-            <Dropdown options={accountsItems} select={selectedAccountKey} />
-          </div>
-        </div>
+      <LayoutStation
+        navigator={navigator}
+        onSetTheme={handleSetTheme}
+        storedTheme={theme}
+        activePage={activePage}
+      >
         <Outlet />
         <Toast />
       </LayoutStation>
