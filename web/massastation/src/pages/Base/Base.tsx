@@ -6,6 +6,7 @@ import {
   LayoutStation,
   Dropdown,
   Identicon,
+  Toast,
 } from '@massalabs/react-ui-kit';
 import { FiCodepen, FiGlobe, FiHome } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
@@ -153,6 +154,7 @@ export function Base() {
           </div>
         </div>
         <Outlet />
+        <Toast />
       </LayoutStation>
     </div>
   );
