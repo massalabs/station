@@ -7,6 +7,7 @@ import {
   SidePanel,
   TextArea,
   DragDrop,
+  Spinner,
 } from '@massalabs/react-ui-kit';
 import { usePut } from '../../../custom/api';
 import {
@@ -209,7 +210,10 @@ export default function Upload() {
                 allowed={['zip']}
               />
             </div>
-            <Button type="submit">{Intl.t('search.buttons.upload')}</Button>
+            <Button type="submit" disabled={uploadLoading}>
+              {uploadLoading && <Spinner variant="button" />}
+              {Intl.t('search.buttons.upload')}
+            </Button>
           </form>
           {fileError && (
             <p className="mas-body pt-4 text-s-error">{fileError}</p>
