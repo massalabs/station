@@ -18,6 +18,7 @@ import {
 } from '../../../validation/upload';
 import { parseForm } from '../../../utils/ParseForm';
 import { useAccountStore } from '../../../store/store';
+import { AxiosError } from 'axios';
 
 interface IFormError {
   websiteName?: string;
@@ -36,6 +37,10 @@ interface IUploadResponse {
   brokenChunks: string[];
 }
 
+interface IUploadError {
+  message: string;
+}
+
 export default function Upload() {
   const form = useRef(null);
   const [formError, setFormError] = useState<IFormError | null>(null);
@@ -49,13 +54,27 @@ export default function Upload() {
     mutate: mutableUpload,
     isLoading: uploadLoading,
     error: uploadFail,
-  } = usePut<FormData, IUploadResponse>('websiteUploader/prepare', {
-    'Content-Type': 'multipart/form-data',
-  });
+  } = usePut<FormData, IUploadResponse, AxiosError<IUploadError>>(
+    'websiteUploader/prepare',
+    {
+      'Content-Type': 'multipart/form-data',
+    },
+  );
 
   useEffect(() => {
     if (uploadFail) {
-      setUploadError(Intl.t('search.errors.upload-error'));
+      if (
+        uploadFail.response &&
+        uploadFail.response.data.message.includes(
+          'Try another website name, this one is already taken',
+        )
+      ) {
+        setFormError({
+          websiteName: Intl.t('search.errors.website-name-already-exists'),
+        });
+      } else {
+        setUploadError(Intl.t('search.errors.upload-error'));
+      }
     } else {
       setUploadError(null);
     }
