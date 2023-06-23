@@ -60,9 +60,9 @@ func main() {
 	}
 
 	networkManager, err := config.NewNetworkManager("config_network.yaml")
-if err != nil {
-	log.Fatal("Failed to create NetworkManager:", err)
-}
+	if err != nil {
+		log.Fatal("Failed to create NetworkManager:", err)
+	}
 
 	stationGUI, systrayMenu := systray.MakeGUI()
 	server := api.NewServer(flags)

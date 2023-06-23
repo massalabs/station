@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"os"
 )
-var Version = "dev"
 
+//nolint:gochecknoglobals
+var Version = "dev"
 
 type NetworkManager struct {
 	appConfig     AppConfig
@@ -13,7 +14,14 @@ type NetworkManager struct {
 }
 
 func NewNetworkManager(configFile string) (*NetworkManager, error) {
-	nm := &NetworkManager{}
+	networkManager := &NetworkManager{
+		appConfig: AppConfig{
+			Network:    "",
+			NodeURL:    "",
+			DNSAddress: "",
+		},
+		knownNetworks: make(map[string]NetworkConfig),
+	}
 
 	// Load network configuration from file
 	initNetworksData, err := LoadConfig(configFile)
@@ -21,39 +29,39 @@ func NewNetworkManager(configFile string) (*NetworkManager, error) {
 		return nil, fmt.Errorf("failed to load configuration: %w", err)
 	}
 
-	nm.SetNetworks(initNetworksData)
+	networkManager.SetNetworks(initNetworksData)
 
 	// Get AppConfig for the selected network (BuildNet)
-	initConfig, err := nm.GetAppConfig(BuildNet)
+	initConfig, err := networkManager.GetAppConfig(BuildNet)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get app configuration: %w", err)
 	}
 
-	nm.SetAppConfig(initConfig)
+	networkManager.SetAppConfig(initConfig)
 
-	return nm, nil
+	return networkManager, nil
 }
 
-func (nm *NetworkManager) Network() AppConfig {
-	return nm.appConfig
+func (n *NetworkManager) Network() AppConfig {
+	return n.appConfig
 }
 
-func (nm *NetworkManager) SetAppConfig(config AppConfig) {
-	nm.appConfig = config
+func (n *NetworkManager) SetAppConfig(config AppConfig) {
+	n.appConfig = config
 }
 
-func (nm *NetworkManager) SetNetworks(networks map[string]NetworkConfig) {
-	nm.knownNetworks = networks
+func (n *NetworkManager) SetNetworks(networks map[string]NetworkConfig) {
+	n.knownNetworks = networks
 }
 
-func (nm *NetworkManager) Networks() map[string]NetworkConfig {
-	return nm.knownNetworks
+func (n *NetworkManager) Networks() map[string]NetworkConfig {
+	return n.knownNetworks
 }
 
-func (nm *NetworkManager) GetNetworkOptions() []NetworkOption {
-	options := make([]NetworkOption, 0, len(nm.knownNetworks))
+func (n *NetworkManager) GetNetworkOptions() []NetworkOption {
+	options := make([]NetworkOption, 0, len(n.knownNetworks))
 
-	for network := range nm.knownNetworks {
+	for network := range n.knownNetworks {
 		switch network {
 		case "testnet":
 			options = append(options, TestNet)
@@ -67,17 +75,17 @@ func (nm *NetworkManager) GetNetworkOptions() []NetworkOption {
 	return options
 }
 
-func (nm *NetworkManager) GetAppConfig(selectedNetwork NetworkOption) (AppConfig, error) {
+func (n *NetworkManager) GetAppConfig(selectedNetwork NetworkOption) (AppConfig, error) {
 	// Convert the NetworkOption to string for lookup
 	selectedNetworkStr := selectedNetwork.String()
 
-	config, ok := nm.knownNetworks[selectedNetworkStr]
+	config, ok := n.knownNetworks[selectedNetworkStr]
 	if !ok {
 		return AppConfig{}, fmt.Errorf("selected network '%s' not found", selectedNetworkStr)
 	}
 
 	appConfig := AppConfig{
-		// TODO: Add logic to choose which URL to use
+		// we will Implement later the logic to choose the appropriate URL based on the selected network configuration.
 		NodeURL:    config.URLs[0],
 		DNSAddress: config.DNS,
 		Network:    selectedNetworkStr,
@@ -86,19 +94,18 @@ func (nm *NetworkManager) GetAppConfig(selectedNetwork NetworkOption) (AppConfig
 	return appConfig, nil
 }
 
-func (nm *NetworkManager) SwitchNetwork(selectedNetwork NetworkOption) error {
+func (n *NetworkManager) SwitchNetwork(selectedNetwork NetworkOption) error {
 	// Get AppConfig for the selected network
-	newConfig, err := nm.GetAppConfig(selectedNetwork)
+	newConfig, err := n.GetAppConfig(selectedNetwork)
 	if err != nil {
 		return fmt.Errorf("failed to get app configuration: %w", err)
 	}
 
 	// Set the new configuration
-	nm.SetAppConfig(newConfig)
+	n.SetAppConfig(newConfig)
 
 	return nil
 }
-
 
 // GetConfigDir returns the config directory for the current OS.
 func GetConfigDir() (string, error) {

@@ -16,6 +16,8 @@ type AppConfig struct {
 	NodeURL    string
 	DNSAddress string
 }
+
+//nolint:tagliatelle
 type NetworkConfig struct {
 	DNS  string   `yaml:"DNS"`
 	URLs []string `yaml:"URLs"`
@@ -38,7 +40,6 @@ var networkOptionNames = [...]string{
 func (option NetworkOption) String() string {
 	return networkOptionNames[option]
 }
-
 
 // LoadConfig reads the YAML configuration file and returns a map of network configurations.
 // The keys of the map represent the network names, and the values contain the corresponding network configuration.
