@@ -55,10 +55,20 @@ func Fetch(client *node.Client, websiteStorerAddress string) ([]byte, error) {
 		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
 	}
 
+	if len(response) != chunkNumber {
+		return nil, fmt.Errorf("expected %d entries, got %d", chunkNumber, len(response))
+	}
+
 	var dataStore []byte
-	for i := 0; i < chunkNumber; i++ {
+
+	for index := 0; index < chunkNumber; index++ {
 		// content is prefixed with it's length encoded using a u32 (4 bytes).
-		dataStore = append(dataStore, response[i].CandidateValue[4:]...)
+		prefixLength := 4
+		if len(response[index].CandidateValue) < prefixLength {
+			return nil, fmt.Errorf("invalid chunk size for chunk %d", index)
+		}
+
+		dataStore = append(dataStore, response[index].CandidateValue[prefixLength:]...)
 	}
 
 	return dataStore, nil
