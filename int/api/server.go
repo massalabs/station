@@ -41,28 +41,31 @@ func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 	}
 }
 
-func initLocalAPI(localAPI *operations.MassastationAPI, config config.AppConfig) {
-	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunctionHandler(&config)
+func initLocalAPI(localAPI *operations.MassastationAPI, networkManager *config.NetworkManager) {
+	config := networkManager.Network()
 
-	localAPI.MassaGetAddressesHandler = massa.NewGetAddressHandler(&config)
-	localAPI.GetNodeHandler = massa.NewGetNodeHandler(&config)
+	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunctionHandler(config)
 
-	localAPI.CmdDeploySCHandler = cmd.NewDeploySCHandler(&config)
+	localAPI.MassaGetAddressesHandler = massa.NewGetAddressHandler(config)
+	localAPI.GetNodeHandler = massa.NewGetNodeHandler(config)
 
-	localAPI.WebsiteUploaderPrepareHandler = websites.NewWebsitePrepareHandler(&config)
-	localAPI.WebsiteUploaderUploadHandler = websites.NewWebsiteUploadHandler(&config)
-	localAPI.WebsiteUploadMissingChunksHandler = websites.NewWebsiteUploadMissedChunkHandler(&config)
+	localAPI.CmdDeploySCHandler = cmd.NewDeploySCHandler(config)
 
-	localAPI.MyDomainsGetterHandler = websites.NewDomainsHandler(&config)
-	localAPI.AllDomainsGetterHandler = websites.NewRegistryHandler(&config)
+	localAPI.WebsiteUploaderPrepareHandler = websites.NewWebsitePrepareHandler(config)
+	localAPI.WebsiteUploaderUploadHandler = websites.NewWebsiteUploadHandler(config)
+	localAPI.WebsiteUploadMissingChunksHandler = websites.NewWebsiteUploadMissedChunkHandler(config)
+
+	localAPI.MyDomainsGetterHandler = websites.NewDomainsHandler(config)
+	localAPI.AllDomainsGetterHandler = websites.NewRegistryHandler(config)
 
 	localAPI.WebOnChainSearchHandler = operations.WebOnChainSearchHandlerFunc(WebOnChainSearchHandler)
 	localAPI.MassaStationHomeHandler = operations.MassaStationHomeHandlerFunc(MassaStationHomeHandler)
-	localAPI.EventsGetterHandler = NewEventListenerHandler(&config)
+	localAPI.EventsGetterHandler = NewEventListenerHandler(config)
 	localAPI.MassaStationPluginManagerHandler = operations.MassaStationPluginManagerHandlerFunc(MassaStationPluginManagerHandler)
 	localAPI.MassaStationWebAppHandler = operations.MassaStationWebAppHandlerFunc(MassaStationWebAppHandler)
 
 	localAPI.WebsiteUploaderHandler = operations.WebsiteUploaderHandlerFunc(WebsiteUploaderHandler)
+
 	pluginstore.InitializePluginStoreAPI(localAPI)
 	myplugin.InitializePluginAPI(localAPI)
 }
@@ -101,8 +104,9 @@ func NewServer(flags StartServerFlags) *Server {
 // This function starts the server in a new goroutine to avoid blocking the main thread.
 func (server *Server) Start(networkManager *config.NetworkManager) {
 	server.printNodeVersion(networkManager)
-	initLocalAPI(server.localAPI, networkManager.Network())
-	server.api.ConfigureMassaStationAPI(networkManager.Network(), server.shutdown)
+
+	initLocalAPI(server.localAPI, networkManager)
+	server.api.ConfigureMassaStationAPI(*networkManager.Network(), server.shutdown)
 
 	go func() {
 		if err := server.api.Serve(); err != nil {
