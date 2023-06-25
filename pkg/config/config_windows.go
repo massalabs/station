@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"os"
-	"path"
 	"path/filepath"
 )
 
@@ -28,7 +27,7 @@ func getCertDir() (string, error) {
 		return "", fmt.Errorf("getting config directory: %w", err)
 	}
 
-	certDir := path.Join(confDir, "certs")
+	certDir := filepath.Join(confDir, "certs")
 
 	return certDir, nil
 }

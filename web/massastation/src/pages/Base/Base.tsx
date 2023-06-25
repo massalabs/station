@@ -1,9 +1,12 @@
+import { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useLocalStorage } from '../../custom/useLocalStorage';
-import { FiSun, FiMoon } from 'react-icons/fi';
-import { Navigator, LayoutStation } from '@massalabs/react-ui-kit';
-import { FiCodepen, FiGlobe, FiHome } from 'react-icons/fi';
-import { useEffect, useState } from 'react';
+import { useConfigStore } from '../../store/store';
+
+import { Navigator, Toast } from '@massalabs/react-ui-kit';
+import { FiCodepen, FiGlobe, FiHome, FiSun, FiMoon } from 'react-icons/fi';
+import { LayoutStation } from '../../layouts/LayoutStation/LayoutStation';
+
 import { PAGES } from '../../const/pages/pages';
 
 type ThemeSettings = {
@@ -51,28 +54,40 @@ const navigatorSteps: INavigatorSteps = {
 };
 
 export function Base() {
-  const [theme, setTheme] = useLocalStorage<string>(
+  // Hooks
+  const [theme, setThemeStorage] = useLocalStorage<string>(
     'massa-station-theme',
     'theme-dark',
   );
+
   const { pathname } = useLocation();
-  const currentPage = pathname.split('/').pop() || 'index';
-  const [active, setActive] = useState(currentPage);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setActivePage(currentPage);
+  }, [pathname]);
+
+  // State
+  const currentPage = pathname.split('/').pop() || 'index';
+  const [activePage, setActivePage] = useState(currentPage);
+
+  // Store
+  const setThemeStore = useConfigStore((s) => s.setTheme);
+
   const navigator = (
     <Navigator
       items={[
         {
           icon: <FiHome />,
-          isActive: PAGES.INDEX === active,
+          isActive: PAGES.INDEX === activePage,
         },
         {
           icon: <FiCodepen />,
-          isActive: PAGES.STORE === active,
+          isActive: PAGES.STORE === activePage,
         },
         {
           icon: <FiGlobe />,
-          isActive: PAGES.SEARCH === active,
+          isActive: PAGES.SEARCH === activePage,
         },
       ]}
       onClickNext={handleNext}
@@ -81,32 +96,39 @@ export function Base() {
   );
   const STEP = navigatorSteps[currentPage] as INavigatorSteps;
 
-  useEffect(() => {
-    setActive(currentPage);
-  }, [pathname]);
-
+  // Functions
   function handleNext() {
     let { next } = STEP;
 
-    setActive(next.toString());
+    setActivePage(next.toString());
     navigate(next);
   }
 
   function handlePrevious() {
     let { previous } = STEP;
 
-    setActive(previous.toString());
+    setActivePage(previous.toString());
     navigate(previous);
   }
 
   function handleSetTheme() {
-    setTheme(theme === 'theme-dark' ? 'theme-light' : 'theme-dark');
+    let toggledTheme = theme === 'theme-dark' ? 'theme-light' : 'theme-dark';
+
+    setThemeStorage(toggledTheme);
+    setThemeStore(toggledTheme);
   }
 
+  // Template
   return (
     <div className={`${theme}`}>
-      <LayoutStation navigator={navigator} onSetTheme={handleSetTheme}>
-        <Outlet context={[theme, setTheme]} />
+      <LayoutStation
+        navigator={navigator}
+        onSetTheme={handleSetTheme}
+        storedTheme={theme}
+        activePage={activePage}
+      >
+        <Outlet />
+        <Toast />
       </LayoutStation>
     </div>
   );

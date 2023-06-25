@@ -37,7 +37,7 @@ POST /cmd/executeFunction
     ...    json=${data}
     ...    expected_status=${STATUS_OK}
     Log To Console    ${response.json()}
-    Should Be Equal    ${response.json()}    I'm an event! My id is ${randomID}
+    Should Be Equal    ${response.json()['firstEvent']['data']}    I'm an event! My id is ${randomID}
 
 # Error cases
 

@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import {
-  Button,
-  Certificate,
-  MassaWallet,
-  Plugin,
-} from '@massalabs/react-ui-kit';
+import { Button, Certificate, Plugin } from '@massalabs/react-ui-kit';
 import { FiArrowUpRight, FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
 import { IMassaPlugin } from './StationSection';
 import {
@@ -22,9 +17,11 @@ enum PluginStatus {
   Down = 'Down',
 }
 
-interface PluginPostMethod {
+interface PluginExecuteRequest {
   command: string;
 }
+
+const baseAPI = import.meta.env.VITE_BASE_API;
 
 export function StationPlugin({
   plugin,
@@ -34,20 +31,22 @@ export function StationPlugin({
   fetchPlugins: () => void;
 }) {
   const [myPlugin, setMyPlugin] = useState<IMassaPlugin>(plugin);
-  const { author, name, home, logo, status, updatable, id } = myPlugin;
+  const { author, name, home, status, updatable, id } = myPlugin;
   const {
     data: newPlugin,
     refetch,
     isRefetching,
   } = useResource<IMassaPlugin>(`plugin-manager/${id}`);
 
-  const { mutate, isSuccess } = usePost<PluginPostMethod>(
+  const { mutate, isSuccess } = usePost<PluginExecuteRequest>(
     `plugin-manager/${id}/execute`,
   );
 
   const { mutate: deletePlugin, isSuccess: deleteSuccess } = useDelete(
     `plugin-manager/${id}`,
   );
+
+  const logoURL = `${baseAPI}/plugin-manager/${id}/logo`;
 
   useEffect(() => {
     if (isSuccess) {
@@ -68,16 +67,11 @@ export function StationPlugin({
   }, [deleteSuccess]);
 
   function updatePluginState(command: string) {
-    const payload = { command };
+    const payload = { command } as PluginExecuteRequest;
     mutate({ payload });
   }
-
   const argsOn = {
-    preIcon: massalabsNomination.includes(author) ? (
-      <MassaWallet variant="rounded" />
-    ) : (
-      <img src={logo} />
-    ),
+    preIcon: <img src={logoURL} alt="plugin-logo" />,
     topAction: (
       <Button onClick={() => updatePluginState(PLUGIN_STOP)} variant="toggle">
         on
@@ -105,11 +99,7 @@ export function StationPlugin({
   };
 
   const argsOff = {
-    preIcon: massalabsNomination.includes(author) ? (
-      <MassaWallet variant="rounded" />
-    ) : (
-      <img src={logo} />
-    ),
+    preIcon: <img src={logoURL} alt="plugin-logo" />,
     topAction: (
       // we use customClass because "disabled" doesn't let us click on the button to turn it back on
       <Button

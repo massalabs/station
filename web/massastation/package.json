@@ -21,6 +21,7 @@
     "axios": "^1.4.0",
     "dot-object": "^2.1.4",
     "esbuild": "0.17.19",
+    "jszip": "^3.10.1",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
     "miragejs": "^0.1.47",

@@ -1,9 +1,12 @@
-import { Button, Input, SidePanel } from '@massalabs/react-ui-kit';
-import Intl from '../../i18n/i18n';
 import { useEffect, useState } from 'react';
+import Intl from '../../i18n/i18n';
+
 import { isZipFile } from '../../utils/massaConstants';
+
 import { usePost } from '../../custom/api';
 import { UseQueryResult } from '@tanstack/react-query';
+
+import { Button, Input, SidePanel, Spinner } from '@massalabs/react-ui-kit';
 import { IMassaPlugin } from './StationSection/StationSection';
 
 function Install({
@@ -80,25 +83,21 @@ function Install({
               <div className="mas-caption text-neutral mb-3">
                 {Intl.t('store.sidepanel.subtitle')}
               </div>
-              {isLoading ? (
-                <div className="mas-body2 mb-4 text-neutral">
-                  {Intl.t('store.loading')}
-                </div>
-              ) : (
-                <>
-                  <Input
-                    placeholder={Intl.t('store.sidepanel.placeholder')}
-                    name="url"
-                    value={url}
-                    onChange={(e) => handleChange(e)}
-                    error={error}
-                    customClass="bg-primary mb-3"
-                  />
-                  <Button type="submit" customClass="mt-3">
-                    {Intl.t('store.sidepanel.button')}
-                  </Button>
-                </>
-              )}
+              <>
+                <Input
+                  placeholder={Intl.t('store.sidepanel.placeholder')}
+                  name="url"
+                  value={url}
+                  onChange={handleChange}
+                  error={error}
+                  customClass="bg-primary mb-3"
+                />
+
+                <Button type="submit" customClass="mt-3" disabled={isLoading}>
+                  {isLoading && <Spinner variant="button" />}
+                  {Intl.t('store.sidepanel.button')}
+                </Button>
+              </>
             </div>
           </div>
         </div>

@@ -61,7 +61,7 @@ paths:
               keyId: default
             properties:
               nickname:
-                description: Wallet's short name.
+                description: Account nickname used to sign the operation.
                 type: string
                 x-nullable: false
               name:
@@ -78,7 +78,7 @@ paths:
                 default: ""
               gas:
                 type: object
-                description: Gas attibutes. Has is a virtual resource consumed by node while running smart contract.
+                description: Gas attributes. Has is a virtual resource consumed by node while running smart contract.
                 properties:
                   price:
                     type: number
@@ -110,8 +110,14 @@ paths:
         "200":
           description: OK.
           schema:
-            type: string
-            description: Operation id.
+            type: object
+            properties:
+              operationId:
+                description: Operation id.
+                type: string
+              firstEvent:
+                description: first event emitted by the called smart contract. Kept for backward compatibility.
+                $ref: "#/definitions/Events"
         "422":
           description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
           schema:
@@ -459,43 +465,14 @@ paths:
             type: object
             required:
               - id
-              - name
-              - author
-              - description
-              - logo
               - url
-              - api-spec
             properties:
                 id:
                   description: Plugin identifier.
                   type: string
                   x-nullable: false
-                name:
-                  description: Plugin name.
-                  type: string
-                  x-nullable: false
-                author:
-                  description: Plugin author.
-                  type: string
-                  x-nullable: false
-                description:
-                  description: Plugin description.
-                  type: string
-                  x-nullable: false
-                logo:
-                  description: Plugin logo.
-                  type: string
-                  x-nullable: false
-                home:
-                  description: Plugin home url.
-                  type: string
-                  x-nullable: false
                 url:
                   description: URL authority to use to connect to the plugin
-                  type: string
-                  x-nullable: false
-                api_spec:
-                  description: Plugin API specification
                   type: string
                   x-nullable: false
       responses:
@@ -623,6 +600,40 @@ paths:
           description: Not Implemented - the server does not support the functionality required to fulfill the request.
           schema:
             $ref: "#/definitions/Error"
+  /plugin-manager/{id}/logo:
+    get:
+      summary: Get plugin logo
+      operationId: pluginManagerGetLogo
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required : true
+          description: Plugin unique identifier.
+      produces:
+        - image/*
+      responses:
+        '200':
+          description: Plugin logo
+          schema:
+            type: file
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - The syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+
   /plugin-store:
     get:
       summary: Get list of available plugins from store

@@ -11,7 +11,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"sync"
 
@@ -67,15 +66,18 @@ func (p *Plugin) getInformation() (*Information, error) {
 		return nil, fmt.Errorf("reading manifest file '%s': %w", manifestPath, err)
 	}
 
-	var manifest *Information
+	var info *Information
 
-	err = json.Unmarshal(jsonObj, &manifest)
+	err = json.Unmarshal(jsonObj, &info)
 
 	if err != nil {
 		return nil, fmt.Errorf("parsing manifest file '%s': %w", manifestPath, err)
 	}
 
-	return manifest, nil
+	logoPath := filepath.Join(filepath.Dir(p.BinPath), info.Logo)
+	info.Logo = logoPath
+
+	return info, nil
 }
 
 func (p *Plugin) Status() Status {
@@ -201,15 +203,10 @@ func (p *Plugin) Stop() error {
 }
 
 func New(binPath string, pluginID string) (*Plugin, error) {
-	ext := ""
-	if runtime.GOOS == "windows" {
-		ext = ".exe"
-	}
-
 	//nolint:exhaustruct
 	plgn := &Plugin{
 		status:   Starting,
-		BinPath:  binPath + ext,
+		BinPath:  binPath,
 		ID:       pluginID,
 		quitChan: make(chan bool),
 	}
