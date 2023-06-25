@@ -32,7 +32,7 @@ type registryHandler struct {
 }
 
 func (h *registryHandler) Handle(_ operations.AllDomainsGetterParams) middleware.Responder {
-	results, err := Registry(*h.config)
+	results, err := Registry(h.config)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().
 			WithPayload(
@@ -51,11 +51,11 @@ smart contract MassaStation is connected to. Once this data has been fetched fro
 the various website storer contracts, the function builds an array of Registry objects
 and returns it to the frontend for display on the Registry page.
 */
-func Registry(config config.AppConfig) ([]*models.Registry, error) {
+func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 	client := node.NewClient(config.NodeURL)
 
 	// Fetch website names to display
-	websiteNames, err := filterEntriesToDisplay(config, client)
+	websiteNames, err := filterEntriesToDisplay(*config, client)
 	if err != nil {
 		return nil, fmt.Errorf("filtering keys to be displayed at '%s': %w", config.DNSAddress, err)
 	}
