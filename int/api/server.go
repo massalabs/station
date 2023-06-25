@@ -100,37 +100,6 @@ func NewServer(flags StartServerFlags) *Server {
 	}
 }
 
-
-//func NewServer(flags StartServerFlags) *Server {
-//	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
-//	if err != nil {
-//		log.Fatalln(err)
-//	}
-
-//	localAPI := operations.NewMassastationAPI(swaggerSpec)
-//	server := restapi.NewServer(localAPI)
-
-//	setAPIFlags(server, flags)
-
-//	err = store.NewStore()
-//	if err != nil {
-//		log.Fatalln(err)
-//	}
-
-//	config := config.AppConfig{
-//		NodeURL:    config.GetNodeURL(flags.MassaNodeServer),
-//		DNSAddress: config.GetDNSAddress(flags.MassaNodeServer, flags.DNSAddress),
-//		Network:    config.GetNetwork(flags.MassaNodeServer),
-//	}
-
-//	return &Server{
-//		config:   config,
-//		api:      server,
-//		localAPI: localAPI,
-//		shutdown: make(chan struct{}),
-//	}
-//}
-
 // Starts the server.
 // This function starts the server in a new goroutine to avoid blocking the main thread.
 func (server *Server) Start(networkManager *config.NetworkManager) {
