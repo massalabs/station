@@ -374,6 +374,51 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /network:
+    get:
+      description: Retrieves the network configuration.
+      operationId: getNetworkConfig
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Network configuration returned.
+          schema:
+            $ref: "#/definitions/NetworkManagerItem"
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+
+
+  /network/{network}:
+    post:
+      description: Switches the application to the specified network.
+      operationId: switchNetwork
+      parameters:
+        - in: path
+          name: network
+          type: string
+          enum: ["testnet", "buildnet", "labnet"]
+          required: true
+          description: The network to switch to (e.g., testnet, buildnet, labnet, mynet).
+      responses:
+        "200":
+          description: Network successfully switched.
+          schema:
+            type: object
+            $ref: "#/definitions/NetworkManagerItem"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+      produces:
+        - application/json
+
   /plugin-manager:
     post:
       description: Install a plugin from a given URL.
@@ -1002,6 +1047,21 @@ definitions:
       address:
         description: Event caller.
         type: string
+  NetworkManagerItem:
+    type: object
+    description: Network manager item.
+    properties:
+      currentNetwork:
+        description: actual network.
+        type: string
+      availableNetworks:
+        description: available networks
+        type: array
+        items:
+          type: string
+    required:
+      - currentNetwork
+      - availableNetworks
   Registry:
     type: object
     description: Registry object (V0).

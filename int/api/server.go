@@ -11,6 +11,7 @@ import (
 	"github.com/massalabs/station/int/api/cmd"
 	"github.com/massalabs/station/int/api/massa"
 	"github.com/massalabs/station/int/api/myplugin"
+	"github.com/massalabs/station/int/api/network"
 	"github.com/massalabs/station/int/api/pluginstore"
 	"github.com/massalabs/station/int/api/websites"
 	"github.com/massalabs/station/pkg/config"
@@ -65,6 +66,8 @@ func initLocalAPI(localAPI *operations.MassastationAPI, networkManager *config.N
 	localAPI.MassaStationWebAppHandler = operations.MassaStationWebAppHandlerFunc(MassaStationWebAppHandler)
 
 	localAPI.WebsiteUploaderHandler = operations.WebsiteUploaderHandlerFunc(WebsiteUploaderHandler)
+	localAPI.SwitchNetworkHandler = network.NewSwitchNetworkHandler(networkManager)
+	localAPI.GetNetworkConfigHandler = network.NewGetNetworkConfigHandler(networkManager)
 
 	pluginstore.InitializePluginStoreAPI(localAPI)
 	myplugin.InitializePluginAPI(localAPI)
