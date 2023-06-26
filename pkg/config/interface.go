@@ -7,7 +7,8 @@ type AppConfig struct {
 }
 
 // NetworkConfig represents the configuration of a network.
-//nolint: tagliatelle
+//
+//nolint:tagliatelle
 type NetworkConfig struct {
 	DNS     string   `yaml:"DNS"`
 	URLs    []string `yaml:"URLs"`

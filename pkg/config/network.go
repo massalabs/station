@@ -21,7 +21,8 @@ type NetworkManager struct {
 }
 
 // Verify at compilation time that NetworkManager implements NetworkManagerInterface.
-//nolint: exhaustruct
+//
+//nolint:exhaustruct
 var _ NetworkManagerInterface = &NetworkManager{}
 
 // NewNetworkManager creates a new instance of NetworkManager.
