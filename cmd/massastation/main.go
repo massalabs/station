@@ -59,13 +59,20 @@ func main() {
 		os.Exit(0)
 	}
 
+	networkManager, err := config.NewNetworkManager()
+	if err != nil {
+		log.Fatal("Failed to create NetworkManager:", err)
+	}
+
 	stationGUI, systrayMenu := systray.MakeGUI()
 	server := api.NewServer(flags)
 
 	update.StartUpdateCheck(&stationGUI, systrayMenu)
 
 	stationGUI.Lifecycle().SetOnStopped(server.Stop)
-	stationGUI.Lifecycle().SetOnStarted(server.Start)
+	stationGUI.Lifecycle().SetOnStarted(func() {
+		server.Start(networkManager)
+	})
 
 	stationGUI.Run()
 }

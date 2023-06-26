@@ -73,5 +73,5 @@ require (
 	go.mongodb.org/mongo-driver v1.8.3 // indirect
 	golang.org/x/exp v0.0.0-20221114191408-850992195362
 	golang.org/x/text v0.6.0 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
+	gopkg.in/yaml.v2 v2.4.0
 )
