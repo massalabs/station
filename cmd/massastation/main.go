@@ -59,7 +59,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	networkManager, err := config.NewNetworkManager("config_network.yaml")
+	networkManager, err := config.NewNetworkManager()
 	if err != nil {
 		log.Fatal("Failed to create NetworkManager:", err)
 	}

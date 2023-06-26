@@ -1,8 +1,8 @@
 package config
 
 import (
+	"embed"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"sync"
 
@@ -27,17 +27,16 @@ var _ NetworkManagerInterface = &NetworkManager{}
 
 // NewNetworkManager creates a new instance of NetworkManager.
 // It loads the initial network configurations from the specified file and sets the default network configuration.
-// configFile: The path to the YAML configuration file.
 // Returns the initialized NetworkManager and any error encountered during initialization.
-func NewNetworkManager(configFile string) (*NetworkManager, error) {
+func NewNetworkManager() (*NetworkManager, error) {
 	//nolint: exhaustruct
 	networkManager := &NetworkManager{
 		appConfig:     AppConfig{},
 		knownNetworks: make(map[string]NetworkConfig),
 	}
 
-	// Load network configuration from file
-	initNetworksData, err := LoadConfig(configFile)
+	// Load network configuration
+	initNetworksData, err := LoadConfig()
 	if err != nil {
 		return nil, fmt.Errorf("failed to load configuration: %w", err)
 	}
@@ -144,14 +143,16 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 	return nil
 }
 
-// LoadConfig loads network configurations from a YAML file.
-// filename: The path to the YAML configuration file.
+//go:embed config_network.yaml
+var configData embed.FS
+
+// LoadConfig loads network configurations from an embedded YAML file.
 // Returns the loaded network configurations and any error encountered during loading.
-func LoadConfig(filename string) (map[string]NetworkConfig, error) {
+func LoadConfig() (map[string]NetworkConfig, error) {
 	var networksData map[string]NetworkConfig
 
-	// Read the YAML file
-	yamlFile, err := ioutil.ReadFile(filename)
+	// Read the embedded YAML file
+	yamlFile, err := configData.ReadFile("config_network.yaml")
 	if err != nil {
 		return nil, fmt.Errorf("failed to read YAML file: %w", err)
 	}
