@@ -9,6 +9,7 @@ buildnet:
     - https://buildernet.massa.net/api/v2
   Default: true
 
+
 labnet:
   DNS: AS1PV17jWkbUs7mfXsn8Xfs9AK6tHiJoxuGu7RySFMV8GYdMeUSh
   URLs:

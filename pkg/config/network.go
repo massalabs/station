@@ -1,8 +1,8 @@
 package config
 
 import (
+	"embed"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"sync"
 
@@ -13,6 +13,21 @@ const (
 	MassaStationURL = "station.massa"
 )
 
+type AppConfig struct {
+	Network    string
+	NodeURL    string
+	DNSAddress string
+}
+
+// NetworkConfig represents the configuration of a network.
+//
+//nolint:tagliatelle
+type NetworkConfig struct {
+	DNS     string   `yaml:"DNS"`
+	URLs    []string `yaml:"URLs"`
+	Default bool     `yaml:"Default"`
+}
+
 // NetworkManager represents a manager for network configurations.
 type NetworkManager struct {
 	appConfig     AppConfig                // Current network configuration
@@ -20,23 +35,18 @@ type NetworkManager struct {
 	networkMutex  sync.RWMutex             // Mutex for concurrent access to network configuration
 }
 
-// Verify at compilation time that NetworkManager implements NetworkManagerInterface.
-//nolint: exhaustruct
-var _ NetworkManagerInterface = &NetworkManager{}
-
 // NewNetworkManager creates a new instance of NetworkManager.
 // It loads the initial network configurations from the specified file and sets the default network configuration.
-// configFile: The path to the YAML configuration file.
 // Returns the initialized NetworkManager and any error encountered during initialization.
-func NewNetworkManager(configFile string) (*NetworkManager, error) {
+func NewNetworkManager() (*NetworkManager, error) {
 	//nolint: exhaustruct
 	networkManager := &NetworkManager{
 		appConfig:     AppConfig{},
 		knownNetworks: make(map[string]NetworkConfig),
 	}
 
-	// Load network configuration from file
-	initNetworksData, err := LoadConfig(configFile)
+	// Load network configuration
+	initNetworksData, err := LoadConfig()
 	if err != nil {
 		return nil, fmt.Errorf("failed to load configuration: %w", err)
 	}
@@ -74,10 +84,14 @@ func NewNetworkManager(configFile string) (*NetworkManager, error) {
 	return networkManager, nil
 }
 
+// SetNetworks sets the known networks for the NetworkManager.
 func (n *NetworkManager) SetNetworks(networks map[string]NetworkConfig) {
 	n.knownNetworks = networks
 }
 
+// Networks retrieves a pointer to a slice of known networks from the NetworkManager.
+// It returns a pointer to a slice containing the names of the known networks.
+// The slice will be updated if the known networks are modified.
 func (n *NetworkManager) Networks() *[]string {
 	options := make([]string, 0, len(n.knownNetworks))
 
@@ -88,29 +102,33 @@ func (n *NetworkManager) Networks() *[]string {
 	return &options
 }
 
-func (n *NetworkManager) NetworkFromString(optionStr string) (*AppConfig, error) {
+// NetworkFromString retrieves the network configuration corresponding to the given network name.
+// It returns the network configuration represented by an AppConfig struct.
+// An error is returned if the network configuration is not found or if the provided network name is invalid.
+func (n *NetworkManager) NetworkFromString(networkName string) (*AppConfig, error) {
 	knownNetworks := *n.Networks()
 
 	for _, name := range knownNetworks {
-		if name == optionStr {
-			config, ok := n.knownNetworks[optionStr]
+		if name == networkName {
+			config, ok := n.knownNetworks[networkName]
 			if !ok {
-				return nil, fmt.Errorf("failed to find configuration for network '%s'", optionStr)
+				return nil, fmt.Errorf("failed to find configuration for network '%s'", networkName)
 			}
 
 			appConfig := &AppConfig{
 				NodeURL:    config.URLs[0],
 				DNSAddress: config.DNS,
-				Network:    optionStr,
+				Network:    networkName,
 			}
 
 			return appConfig, nil
 		}
 	}
 
-	return nil, fmt.Errorf("invalid network option: '%s'", optionStr)
+	return nil, fmt.Errorf("invalid network option: '%s'", networkName)
 }
 
+// SetNetwork sets the current network configuration for the NetworkManager.
 func (n *NetworkManager) SetNetwork(config AppConfig) {
 	n.networkMutex.Lock()
 	defer n.networkMutex.Unlock()
@@ -118,13 +136,15 @@ func (n *NetworkManager) SetNetwork(config AppConfig) {
 	n.appConfig = config
 }
 
+// Network returns the current network configuration.
+// It returns the network configuration represented by an AppConfig struct.
 func (n *NetworkManager) Network() *AppConfig {
-	n.networkMutex.RLock()
-	defer n.networkMutex.RUnlock()
-
 	return &n.appConfig
 }
 
+// SwitchNetwork switches the current network configuration to the specified network.
+// selectedNetworkStr: The name of the network configuration to switch to.
+// Returns any error encountered during the switch operation.
 func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 	config, ok := n.knownNetworks[selectedNetworkStr]
 	if !ok {
@@ -143,14 +163,17 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 	return nil
 }
 
-// LoadConfig loads network configurations from a YAML file.
-// filename: The path to the YAML configuration file.
+//nolint:typecheck,nolintlint
+//go:embed config_network.yaml
+var configData embed.FS
+
+// LoadConfig loads network configurations from an embedded YAML file.
 // Returns the loaded network configurations and any error encountered during loading.
-func LoadConfig(filename string) (map[string]NetworkConfig, error) {
+func LoadConfig() (map[string]NetworkConfig, error) {
 	var networksData map[string]NetworkConfig
 
-	// Read the YAML file
-	yamlFile, err := ioutil.ReadFile(filename)
+	// Read the embedded YAML file
+	yamlFile, err := configData.ReadFile("config_network.yaml")
 	if err != nil {
 		return nil, fmt.Errorf("failed to read YAML file: %w", err)
 	}
