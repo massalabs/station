@@ -89,27 +89,27 @@ func (n *NetworkManager) Networks() *[]string {
 	return &options
 }
 
-func (n *NetworkManager) NetworkFromString(optionStr string) (*AppConfig, error) {
+func (n *NetworkManager) NetworkFromString(networkName string) (*AppConfig, error) {
 	knownNetworks := *n.Networks()
 
 	for _, name := range knownNetworks {
-		if name == optionStr {
-			config, ok := n.knownNetworks[optionStr]
+		if name == networkName {
+			config, ok := n.knownNetworks[networkName]
 			if !ok {
-				return nil, fmt.Errorf("failed to find configuration for network '%s'", optionStr)
+				return nil, fmt.Errorf("failed to find configuration for network '%s'", networkName)
 			}
 
 			appConfig := &AppConfig{
 				NodeURL:    config.URLs[0],
 				DNSAddress: config.DNS,
-				Network:    optionStr,
+				Network:    networkName,
 			}
 
 			return appConfig, nil
 		}
 	}
 
-	return nil, fmt.Errorf("invalid network option: '%s'", optionStr)
+	return nil, fmt.Errorf("invalid network option: '%s'", networkName)
 }
 
 func (n *NetworkManager) SetNetwork(config AppConfig) {

@@ -28,7 +28,7 @@ type NetworkManagerInterface interface {
 	// NetworkFromString retrieves the network configuration corresponding to the given network name.
 	// It returns the network configuration represented by an AppConfig struct.
 	// An error is returned if the network configuration is not found or if the provided network name is invalid.
-	NetworkFromString(optionStr string) (*AppConfig, error)
+	NetworkFromString(networkName string) (*AppConfig, error)
 
 	// SetNetwork sets the current network configuration for the NetworkManager.
 	SetNetwork(config AppConfig)
