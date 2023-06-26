@@ -30,35 +30,45 @@ import { useConfigStore } from '../../store/store';
 export function Index() {
   const navigate = useNavigate();
   const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
-  const [urlPlugin, setUrlPlugin] = useState('intit');
+  const [urlPlugin, setUrlPlugin] = useState('');
   const [refreshPlugins, setRefreshPlugins] = useState(0);
   const walletName = 'Massa Wallet';
 
   const theme = useConfigStore((s) => s.theme);
 
-  const { data: plugins } = useResource<PluginHomePage[]>('plugin-manager');
+  const { data: installedPlugins } =
+    useResource<PluginHomePage[]>('plugin-manager');
 
   const { data: availablePlugins } =
     useResource<PluginStoreItemRequest[]>('plugin-store');
 
-  const { mutate, isSuccess, isError, isLoading } =
-    usePost<null>('plugin-manager');
+  const {
+    mutate,
+    isSuccess,
+    isError,
+    isLoading: installPluginIsLoading,
+  } = usePost<null>('plugin-manager');
 
   function checkIfWalletIsInstalled() {
-    console.log('checking');
-    if (plugins) {
+    if (installedPlugins) {
       setPluginWalletIsInstalled(
-        plugins.some((plugin: PluginHomePage) => plugin.name === walletName) ||
-          false,
+        installedPlugins.some(
+          (plugin: PluginHomePage) => plugin.name === walletName,
+        ),
       );
+    } else {
+      setPluginWalletIsInstalled(false);
     }
   }
 
   function availablePluginsList(name: string) {
-    const walletPlugin =
-      availablePlugins?.find((plugin) => plugin.name === name) || null;
-    console.log('walletPlugin', walletPlugin);
-    setUrlPlugin(walletPlugin?.file.url || 'reinit');
+    if (availablePlugins) {
+      const walletPlugin =
+        availablePlugins.find((plugin) => plugin.name === name) || null;
+      setUrlPlugin(walletPlugin ? walletPlugin.file.url : '');
+    } else {
+      setUrlPlugin('');
+    }
   }
 
   useEffect(() => {
@@ -67,8 +77,7 @@ export function Index() {
     if (!pluginWalletIsInstalled && availablePlugins) {
       availablePluginsList(walletName);
     }
-    console.log('urlPlugin', urlPlugin);
-  }, [pluginWalletIsInstalled, availablePlugins, urlPlugin]);
+  }, [pluginWalletIsInstalled, availablePlugins, urlPlugin, installedPlugins]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -77,16 +86,14 @@ export function Index() {
     if (isError) {
       setPluginWalletIsInstalled(false);
     }
-  }, [isLoading]);
+  }, [installPluginIsLoading, isError]);
 
   useEffect(() => {
     setRefreshPlugins(refreshPlugins + 1);
-  }, [pluginWalletIsInstalled, isLoading]);
+  }, [pluginWalletIsInstalled, installPluginIsLoading]);
 
   function handleInstallPlugin() {
-    console.log(urlPlugin);
     const params = { source: urlPlugin };
-    console.log('params', params);
     mutate({ params });
   }
 
@@ -117,11 +124,8 @@ export function Index() {
                 </div>
               </Button>
             </div>
-            {/* <div>
-              <Button onClick={handleInstallPlugin}>install</Button>
-            </div> */}
             <DashboardStation
-              key={refreshPlugins}
+              key={refreshPlugins + urlPlugin}
               theme={theme}
               imagesDark={[
                 <Image1Dark />,
@@ -141,7 +145,7 @@ export function Index() {
                 <PluginWallet
                   key="wallet"
                   isActive={pluginWalletIsInstalled}
-                  isLoading={isLoading}
+                  isLoading={installPluginIsLoading || urlPlugin === ''}
                   title="Massa Wallet"
                   iconActive={<WalletActive />}
                   iconInactive={<WalletInactive />}
