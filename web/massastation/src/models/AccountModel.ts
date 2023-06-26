@@ -12,3 +12,8 @@ export type AccountObject = {
   keyPair: keyPairObject;
   nickname: string;
 };
+
+export type NetworksObject = {
+  availableNetworks: string[];
+  currentNetwork: string;
+};

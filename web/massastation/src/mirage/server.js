@@ -17,6 +17,7 @@ function mockServer(environment = ENV.DEV) {
       domain: Model,
       account: Model,
       website: Model,
+      network: Model,
     },
     factories: {
       plugin: Factory.extend({
@@ -111,6 +112,14 @@ function mockServer(environment = ENV.DEV) {
         },
         brokenChunks: [],
       }),
+      network: Factory.extend({
+        availableNetworks() {
+          return ['testnet', 'buildnet', 'labnet'];
+        },
+        currentNetwork() {
+          return 'buildnet';
+        },
+      }),
     },
 
     seeds(server) {
@@ -119,6 +128,7 @@ function mockServer(environment = ENV.DEV) {
       server.createList('store', 7);
       server.createList('account', 5);
       server.createList('website', 2);
+      server.create('network');
     },
 
     routes() {
@@ -187,6 +197,12 @@ function mockServer(environment = ENV.DEV) {
           return new Response(404, {}, { code: '404', error: 'Not Found' });
 
         return plugin.destroy();
+      });
+
+      this.get('/network', (schema) => {
+        let { models: network } = schema.networks.all();
+
+        return network.pop().attrs;
       });
 
       this.get(
