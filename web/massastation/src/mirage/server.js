@@ -206,7 +206,7 @@ function mockServer(environment = ENV.DEV) {
       });
 
       this.get(
-        'plugin/massalabs/wallet/api/accounts',
+        '/plugin/massa-labs/massa-wallet/api/accounts',
         (schema) => {
           let { models: accounts } = schema.accounts.all();
 
