@@ -17,6 +17,7 @@ import {
   Button,
 } from '@massalabs/react-ui-kit';
 import { IMassaStore } from '../../../../shared/interfaces/IPlugin';
+import Intl from '../../i18n/i18n';
 
 export interface LayoutStationProps {
   children?: ReactNode;
@@ -111,7 +112,7 @@ export function LayoutStation({ ...props }) {
                     )
                   }
                 >
-                  Create Account
+                  {Intl.t('search.buttons.create-account')}
                 </Button>
               )
             ) : (
@@ -119,7 +120,7 @@ export function LayoutStation({ ...props }) {
                 customClass="w-64"
                 onClick={() => navigate(routeFor('index'))}
               >
-                Install Wallet
+                {Intl.t('search.buttons.install-wallet')}
               </Button>
             ))}
           <ThemeMode onSetTheme={handleSetTheme} />
