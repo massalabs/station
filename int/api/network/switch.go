@@ -31,7 +31,7 @@ func (h *switchNetworkHandler) Handle(params operations.SwitchNetworkParams) mid
 
 	// Build the response with the current network information.
 	response := &models.NetworkManagerItem{
-		ActualNetwork:     &h.networkManager.Network().Network,
+		CurrentNetwork:     &h.networkManager.Network().Network,
 		AvailableNetworks: *h.networkManager.Networks(),
 	}
 
