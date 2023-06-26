@@ -237,12 +237,12 @@ export default function Upload() {
                     )
                   }
                 >
-                  Create Account
+                  {Intl.t('search.buttons.create-account')}
                 </Button>
               )
             ) : (
               <Button onClick={() => navigate(routeFor('index'))}>
-                Install Wallet
+                {Intl.t('search.buttons.install-wallet')}
               </Button>
             )}
           </div>
