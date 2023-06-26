@@ -66,8 +66,6 @@ func initLocalAPI(localAPI *operations.MassastationAPI, networkManager *config.N
 	localAPI.MassaStationWebAppHandler = operations.MassaStationWebAppHandlerFunc(MassaStationWebAppHandler)
 
 	localAPI.WebsiteUploaderHandler = operations.WebsiteUploaderHandlerFunc(WebsiteUploaderHandler)
-
-	// add network manager handlers
 	localAPI.SwitchNetworkHandler = network.NewSwitchNetworkHandler(networkManager)
 	localAPI.GetNetworkConfigHandler = network.NewGetNetworkConfigHandler(networkManager)
 

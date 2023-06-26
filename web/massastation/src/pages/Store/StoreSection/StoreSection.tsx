@@ -6,18 +6,11 @@ import Intl from '../../../i18n/i18n';
 
 import StorePlugin from './StorePlugin';
 import { UseQueryResult } from '@tanstack/react-query';
-import { IMassaPlugin } from '../StationSection/StationSection';
 import { sortPlugins } from '../../../utils/sortArray';
-
-export interface IMassaStore {
-  name: string;
-  author: string;
-  description: string;
-  version: string;
-  url: string;
-  logo: string;
-  file: { url: string };
-}
+import {
+  IMassaPlugin,
+  IMassaStore,
+} from '../../../../../shared/interfaces/IPlugin';
 
 function StoreSection({
   getPlugins,

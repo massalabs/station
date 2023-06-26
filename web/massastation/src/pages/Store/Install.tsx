@@ -7,7 +7,7 @@ import { usePost } from '../../custom/api';
 import { UseQueryResult } from '@tanstack/react-query';
 
 import { Button, Input, SidePanel, Spinner } from '@massalabs/react-ui-kit';
-import { IMassaPlugin } from './StationSection/StationSection';
+import { IMassaPlugin } from '../../../../shared/interfaces/IPlugin';
 
 function Install({
   getPlugins,

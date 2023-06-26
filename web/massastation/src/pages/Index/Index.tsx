@@ -19,8 +19,8 @@ import { FiCodepen, FiGlobe } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
-  PluginHomePage,
-  PluginStoreItemRequest,
+  IMassaPlugin,
+  IMassaStore,
 } from '../../../../shared/interfaces/IPlugin';
 import { usePost, useResource } from '../../custom/api';
 import Intl from '../../i18n/i18n';
@@ -34,10 +34,9 @@ export function Index() {
   const [refreshPlugins, setRefreshPlugins] = useState(0);
   const theme = useConfigStore((s) => s.theme);
 
-  const { data: plugins } = useResource<PluginHomePage[]>('plugin-manager');
+  const { data: plugins } = useResource<IMassaPlugin[]>('plugin-manager');
 
-  const { data: availablePlugins } =
-    useResource<PluginStoreItemRequest[]>('plugin-store');
+  const { data: availablePlugins } = useResource<IMassaStore[]>('plugin-store');
 
   const { mutate, isSuccess, isError, isLoading } =
     usePost<null>('plugin-manager');
@@ -45,12 +44,12 @@ export function Index() {
 
   useEffect(() => {
     const isWalletInstalled = plugins?.some(
-      (plugin: PluginHomePage) => plugin.name === walletName,
+      (plugin: IMassaPlugin) => plugin.name === walletName,
     );
     setPluginWalletIsInstalled(Boolean(isWalletInstalled));
     if (!isWalletInstalled && availablePlugins) {
       const walletPlugin = availablePlugins.find(
-        (plugin: PluginStoreItemRequest) => plugin.name === walletName,
+        (plugin: IMassaStore) => plugin.name === walletName,
       );
       if (walletPlugin) {
         setUrlPlugin(walletPlugin.file.url);

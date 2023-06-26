@@ -6,7 +6,6 @@ import { useResource } from '../../custom/api';
 import { AccountObject } from '../../models/AccountModel';
 import { useAccountStore } from '../../store/store';
 import { URL } from '../../const/url/url';
-import { PluginHomePage } from '../../../../shared/interfaces/IPlugin';
 
 import { PAGES } from '../../const/pages/pages';
 
@@ -17,6 +16,7 @@ import {
   Identicon,
   Button,
 } from '@massalabs/react-ui-kit';
+import { IMassaStore } from '../../../../shared/interfaces/IPlugin';
 
 export interface LayoutStationProps {
   children?: ReactNode;
@@ -47,18 +47,18 @@ export function LayoutStation({ ...props }) {
     `${URL.WALLET_BASE_API}/${URL.WALLET_ACCOUNTS}`,
   );
 
-  const nickname = useAccountStore((state) => state.nickname);
-  const setNickname = useAccountStore((state) => state.setNickname);
+  const currentAccount = useAccountStore((state) => state.currentAccount);
+  const setCurrentAccount = useAccountStore((state) => state.setCurrentAccount);
 
   const accountsItems = accounts.map((account) => ({
     icon: <Identicon username={account.nickname} size={32} />,
     item: account.nickname,
-    onClick: () => setNickname(account.nickname),
+    onClick: () => setCurrentAccount(account.nickname),
   }));
 
   const selectedAccountKey: number = parseInt(
     Object.keys(accounts).find(
-      (_, idx) => accounts[idx].nickname === nickname,
+      (_, idx) => accounts[idx].nickname === currentAccount,
     ) || '0',
   );
 
@@ -67,7 +67,7 @@ export function LayoutStation({ ...props }) {
   const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
 
   const { data: plugins, isSuccess } =
-    useResource<PluginHomePage[]>('plugin-manager');
+    useResource<IMassaStore[]>('plugin-manager');
 
   useEffect(() => {
     if (isSuccess) {

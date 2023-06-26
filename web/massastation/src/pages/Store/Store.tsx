@@ -1,8 +1,9 @@
 import { useResource } from '../../custom/api';
-import StationSection, { IMassaPlugin } from './StationSection/StationSection';
+import StationSection from './StationSection/StationSection';
 import StoreSection from './StoreSection/StoreSection';
 import Intl from '../../i18n/i18n';
 import Install from './Install';
+import { IMassaPlugin } from '../../../../shared/interfaces/IPlugin';
 
 export function Store() {
   const getPlugins = useResource<IMassaPlugin[]>('plugin-manager');

@@ -4,7 +4,7 @@ import massaLogomark from '../../assets/massa_logomark_detailed.png';
 
 import axios from 'axios';
 import {
-  PluginHomePage,
+  IMassaPlugin,
   PluginStatus,
 } from '../../../../shared/interfaces/IPlugin';
 import { PluginCard } from '../../components/pluginCard';
@@ -24,9 +24,10 @@ import MainTitle from '../../components/MainTitle';
 function Home() {
   // Fetch plugins installed by calling get /plugin/manager
 
-  const fakePluginsList: PluginHomePage[] = [
+  const fakePluginsList: IMassaPlugin[] = [
     {
       name: 'Web On Chain',
+      author: 'Massa Labs',
       description:
         'Buy your .massa domain and upload websites on the blockchain',
       id: '421',
@@ -36,6 +37,7 @@ function Home() {
     },
     {
       name: 'Registry',
+      author: 'Massa Labs',
       description: 'Browse Massa blockchain and its .massa websites',
       id: '423',
       logo: registry,
@@ -70,13 +72,13 @@ function Home() {
   };
 
   // Contains the list of plugins populated by fakeplugins
-  const [plugins, setPlugins] = useState<PluginHomePage[]>(fakePluginsList);
+  const [plugins, setPlugins] = useState<IMassaPlugin[]>(fakePluginsList);
   // Keep track of the previous fetch
-  const [previousFetch, setPreviousFetch] = useState<PluginHomePage[]>([]);
+  const [previousFetch, setPreviousFetch] = useState<IMassaPlugin[]>([]);
   const displayPlugins = async () => {
     await getPlugins()
-      .then((res: PluginHomePage[]) => {
-        let combinedPlugins: PluginHomePage[] = [...fakePluginsList, ...res];
+      .then((res: IMassaPlugin[]) => {
+        let combinedPlugins: IMassaPlugin[] = [...fakePluginsList, ...res];
         // If the list of plugins has changed, update the state
         if (JSON.stringify(previousFetch) !== JSON.stringify(res)) {
           setPlugins(combinedPlugins);
@@ -119,10 +121,12 @@ function Home() {
               {...{
                 plugin: {
                   id: plugin.id,
+                  author: plugin.author ? plugin.author : '',
                   logo: plugin.logo ? plugin.logo : massaLogomark,
                   name: plugin ? plugin.name : '',
                   description: plugin.description ? plugin.description : '',
                   status: plugin.status ? plugin.status : '',
+                  home: plugin.home ? plugin.home : '',
                 },
                 handleOpenPlugin: handleOpenPlugin,
                 key: plugin.id,

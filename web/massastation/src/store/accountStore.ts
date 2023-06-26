@@ -2,14 +2,15 @@
 import { persist } from 'zustand/middleware';
 
 export interface AccountStoreState {
-  nickname: string | null;
-  setNickname: (nickname: string | null) => void;
+  currentAccount: string | null;
+  setCurrentAccount: (nickname: string | null) => void;
 }
 
 const accountStore = persist<AccountStoreState>(
   (set) => ({
-    nickname: null,
-    setNickname: (nickname: string | null) => set({ nickname }),
+    currentAccount: null,
+    setCurrentAccount: (nickname: string | null) =>
+      set({ currentAccount: nickname }),
   }),
   {
     name: 'account-store',
