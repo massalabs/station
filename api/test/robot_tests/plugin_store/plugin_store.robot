@@ -10,7 +10,11 @@ Suite Setup         Basic Suite Setup
 
 *** Test Cases ***
 GET /plugin-store
-    ${response}=    GET    ${API_URL}/plugin-store
-    ${response}=    Set Variable    ${response.json()}
-    Should Be Equal As Strings    ${response[0]['name']}    Massa Node-manager
-    Should Be Equal As Strings    ${response[0]['description']}    Join Massa network now. Automatically install, configure and manage Massa nodes.
+    ${actual}=    GET    ${API_URL}/plugin-store
+    ${actual}=    Set Variable    ${actual.json()}
+
+    ${expected}=    GET     https://raw.githubusercontent.com/massalabs/station-store/main/plugins.json
+    ${expected}=    Set Variable    ${expected.json()}
+
+    Should Be Equal As Strings    ${actual[0]['name']}    ${expected[0]['name']}
+    Should Be Equal As Strings    ${actual[0]['description']}    ${expected[0]['description']}
