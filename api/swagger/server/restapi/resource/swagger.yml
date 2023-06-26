@@ -403,6 +403,7 @@ paths:
         - in: path
           name: network
           type: string
+          enum: ["testnet", "buildnet", "labnet"]
           required: true
           description: The network to switch to (e.g., testnet, buildnet, labnet, mynet).
       responses:
