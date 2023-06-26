@@ -137,9 +137,6 @@ func (n *NetworkManager) SetNetwork(config AppConfig) {
 // Network returns the current network configuration.
 // It returns the network configuration represented by an AppConfig struct.
 func (n *NetworkManager) Network() *AppConfig {
-	n.networkMutex.RLock()
-	defer n.networkMutex.RUnlock()
-
 	return &n.appConfig
 }
 
