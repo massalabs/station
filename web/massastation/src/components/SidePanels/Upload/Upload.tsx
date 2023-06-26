@@ -28,6 +28,7 @@ import {
   validateWebsiteDescription,
   validateWebsiteName,
 } from '../../../validation/upload';
+import { MASSA_WALLET } from '../../../const/const';
 
 interface IFormError {
   websiteName?: string;
@@ -201,7 +202,7 @@ export default function Upload() {
   useEffect(() => {
     if (isSuccess) {
       plugins.forEach((plugin) => {
-        if (plugin.name === 'Massa Wallet') {
+        if (plugin.name === MASSA_WALLET) {
           setPluginWalletIsInstalled(true);
         }
       });
