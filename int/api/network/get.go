@@ -20,7 +20,7 @@ func NewGetNetworkConfigHandler(networkManager *config.NetworkManager) operation
 func (h *getNetworkConfigHandler) Handle(_ operations.GetNetworkConfigParams) middleware.Responder {
 	// Build the response with the current network information.
 	response := &models.NetworkManagerItem{
-		CurrentNetwork:     &h.networkManager.Network().Network,
+		CurrentNetwork:    &h.networkManager.Network().Network,
 		AvailableNetworks: *h.networkManager.Networks(),
 	}
 
