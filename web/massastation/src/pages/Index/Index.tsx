@@ -22,19 +22,39 @@ import {
   IMassaPlugin,
   IMassaStore,
 } from '../../../../shared/interfaces/IPlugin';
-import { usePost, useResource } from '../../custom/api';
 import Intl from '../../i18n/i18n';
 import { routeFor } from '../../utils';
 import { useConfigStore } from '../../store/store';
+import { usePost, useResource } from '../../custom/api';
+import { UseQueryResult } from '@tanstack/react-query';
 
 export function Index() {
+  const plugins = useResource<IMassaPlugin[]>('plugin-manager');
+  const store = useResource<IMassaStore[]>('plugin-store');
+  const { isLoading: isPluginsLoading } = plugins;
+  const { isLoading: isStoreLoading } = store;
+
+  return isPluginsLoading || isStoreLoading ? (
+    <>Loading</>
+  ) : (
+    <NestedIndex store={store} plugins={plugins}></NestedIndex>
+  );
+}
+
+function NestedIndex({
+  store,
+  plugins,
+}: {
+  store: UseQueryResult<IMassaStore[]>;
+  plugins: UseQueryResult<IMassaPlugin[]>;
+}) {
   const navigate = useNavigate();
   const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
   const [urlPlugin, setUrlPlugin] = useState('');
   const [refreshPlugins, setRefreshPlugins] = useState(0);
   const theme = useConfigStore((s) => s.theme);
 
-  const { data: plugins } = useResource<IMassaPlugin[]>('plugin-manager');
+  const { data: massaPlugins } = plugins;
 
   const { data: availablePlugins } = useResource<IMassaStore[]>('plugin-store');
 
@@ -43,7 +63,7 @@ export function Index() {
   const walletName = 'Massa Wallet';
 
   useEffect(() => {
-    const isWalletInstalled = plugins?.some(
+    const isWalletInstalled = massaPlugins?.some(
       (plugin: IMassaPlugin) => plugin.name === walletName,
     );
     setPluginWalletIsInstalled(Boolean(isWalletInstalled));
@@ -55,7 +75,7 @@ export function Index() {
         setUrlPlugin(walletPlugin.file.url);
       }
     }
-  }, [plugins, availablePlugins]);
+  }, [plugins, store]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -70,13 +90,9 @@ export function Index() {
     setRefreshPlugins(refreshPlugins + 1);
   }, [pluginWalletIsInstalled, isLoading]);
 
-  function handleInstallPlugin() {
-    try {
-      const params = { source: urlPlugin };
-      mutate({ params });
-    } catch (error) {
-      console.error('Error installing plugin:', error);
-    }
+  function handleInstallPlugin(url: string) {
+    const params = { source: url };
+    mutate({ params });
   }
 
   return (
@@ -137,7 +153,7 @@ export function Index() {
                       '_blank',
                     )
                   }
-                  onClickInactive={handleInstallPlugin}
+                  onClickInactive={() => handleInstallPlugin(urlPlugin)}
                 />,
               ]}
             />
