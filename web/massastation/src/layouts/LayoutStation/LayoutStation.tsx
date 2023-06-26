@@ -71,13 +71,11 @@ export function LayoutStation({ ...props }) {
 
   useEffect(() => {
     if (isSuccess) {
-      plugins.forEach((plugin) => {
-        if (plugin.name === 'Massa Wallet') {
-          setPluginWalletIsInstalled(true);
-        }
-      });
+      setPluginWalletIsInstalled(
+        plugins.some((plugin) => plugin.name === 'Massa Wallet'),
+      );
     }
-  }, [isSuccess]);
+  }, [isSuccess, plugins]);
 
   return (
     <div
