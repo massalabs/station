@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 
 import { Button, Certificate, Plugin } from '@massalabs/react-ui-kit';
 import { FiArrowUpRight, FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
-import { IMassaPlugin } from './StationSection';
 import {
   massalabsNomination,
   PLUGIN_START,
@@ -11,11 +10,10 @@ import {
 } from '../../../utils/massaConstants';
 
 import { useDelete, usePost, useResource } from '../../../custom/api';
-
-enum PluginStatus {
-  Up = 'Up',
-  Down = 'Down',
-}
+import {
+  IMassaPlugin,
+  PluginStatus,
+} from '../../../../../shared/interfaces/IPlugin';
 
 interface PluginExecuteRequest {
   command: string;

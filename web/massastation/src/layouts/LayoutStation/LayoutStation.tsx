@@ -6,7 +6,6 @@ import { useResource } from '../../custom/api';
 import { AccountObject } from '../../models/AccountModel';
 import { useAccountStore } from '../../store/store';
 import { URL } from '../../const/url/url';
-import { PluginHomePage } from '../../../../shared/interfaces/IPlugin';
 
 import { PAGES } from '../../const/pages/pages';
 
@@ -17,6 +16,7 @@ import {
   Identicon,
   Button,
 } from '@massalabs/react-ui-kit';
+import { IMassaStore } from '../../../../shared/interfaces/IPlugin';
 
 export interface LayoutStationProps {
   children?: ReactNode;
@@ -67,7 +67,7 @@ export function LayoutStation({ ...props }) {
   const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
 
   const { data: plugins, isSuccess } =
-    useResource<PluginHomePage[]>('plugin-manager');
+    useResource<IMassaStore[]>('plugin-manager');
 
   useEffect(() => {
     if (isSuccess) {

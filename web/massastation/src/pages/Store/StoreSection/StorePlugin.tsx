@@ -3,7 +3,7 @@ import { massalabsNomination } from '../../../utils/massaConstants';
 import { FiDownload } from 'react-icons/fi';
 import { usePost } from '../../../custom/api';
 import { useEffect } from 'react';
-import { IMassaStore } from './StoreSection';
+import { IMassaStore } from '../../../../../shared/interfaces/IPlugin';
 
 interface StorePluginProps {
   plugin: IMassaStore;

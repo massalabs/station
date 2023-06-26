@@ -1,9 +1,9 @@
+import { IMassaPlugin } from '../../../shared/interfaces/IPlugin';
 import Arrow6 from '../assets/pictos/arrow6.svg';
 import ArrowWhite6 from '../assets/pictos/ArrowWhite6.svg';
-import { PluginHomePage } from '../../../shared/interfaces/IPlugin';
 import { UIStore } from '../store/UIStore';
 type Props = {
-  plugin: PluginHomePage;
+  plugin: IMassaPlugin;
   handleOpenPlugin: (pluginName: string) => void;
   key: string;
 };

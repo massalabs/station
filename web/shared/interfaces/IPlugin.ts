@@ -26,21 +26,24 @@ export enum PluginStatus {
     Error = "Error",
     NotInstalled = "NotInstalled",
 }
-export interface PluginHomePage {
+export interface IMassaPlugin {
     id:string;
     name: string;
+    author:string;
     description: string;
     logo: string;
     status: string;
-    home?: string;
+    home: string;
+    updatable?: boolean;
 }
-export interface PluginNotInstalled {
-    id: string;
+export interface IMassaStore {
     name: string;
+    author: string;
     description: string;
+    version: string;
     url: string;
     logo: string;
-    status: PluginStatus;
+    file:pluginStoreItemFile
 }
 
 export interface PluginStoreItemRequest{
