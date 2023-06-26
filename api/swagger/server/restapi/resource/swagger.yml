@@ -1051,7 +1051,7 @@ definitions:
     type: object
     description: Network manager item.
     properties:
-      actualNetwork:
+      currentNetwork:
         description: actual network.
         type: string
       availableNetworks:
@@ -1060,7 +1060,7 @@ definitions:
         items:
           type: string
     required:
-      - actualNetwork
+      - currentNetwork
       - availableNetworks
   Registry:
     type: object
