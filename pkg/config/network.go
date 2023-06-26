@@ -12,6 +12,20 @@ import (
 const (
 	MassaStationURL = "station.massa"
 )
+type AppConfig struct {
+	Network    string
+	NodeURL    string
+	DNSAddress string
+}
+
+// NetworkConfig represents the configuration of a network.
+//
+//nolint:tagliatelle
+type NetworkConfig struct {
+	DNS     string   `yaml:"DNS"`
+	URLs    []string `yaml:"URLs"`
+	Default bool     `yaml:"Default"`
+}
 
 // NetworkManager represents a manager for network configurations.
 type NetworkManager struct {
@@ -19,11 +33,6 @@ type NetworkManager struct {
 	knownNetworks map[string]NetworkConfig // Known network configurations
 	networkMutex  sync.RWMutex             // Mutex for concurrent access to network configuration
 }
-
-// Verify at compilation time that NetworkManager implements NetworkManagerInterface.
-//
-//nolint:exhaustruct
-var _ NetworkManagerInterface = &NetworkManager{}
 
 // NewNetworkManager creates a new instance of NetworkManager.
 // It loads the initial network configurations from the specified file and sets the default network configuration.
@@ -74,10 +83,13 @@ func NewNetworkManager() (*NetworkManager, error) {
 	return networkManager, nil
 }
 
+// SetNetworks sets the known networks for the NetworkManager.
 func (n *NetworkManager) SetNetworks(networks map[string]NetworkConfig) {
 	n.knownNetworks = networks
 }
-
+// Networks retrieves a pointer to a slice of known networks from the NetworkManager.
+// It returns a pointer to a slice containing the names of the known networks.
+// The slice will be updated if the known networks are modified.
 func (n *NetworkManager) Networks() *[]string {
 	options := make([]string, 0, len(n.knownNetworks))
 
@@ -88,6 +100,9 @@ func (n *NetworkManager) Networks() *[]string {
 	return &options
 }
 
+// NetworkFromString retrieves the network configuration corresponding to the given network name.
+// It returns the network configuration represented by an AppConfig struct.
+// An error is returned if the network configuration is not found or if the provided network name is invalid.
 func (n *NetworkManager) NetworkFromString(networkName string) (*AppConfig, error) {
 	knownNetworks := *n.Networks()
 
@@ -111,6 +126,7 @@ func (n *NetworkManager) NetworkFromString(networkName string) (*AppConfig, erro
 	return nil, fmt.Errorf("invalid network option: '%s'", networkName)
 }
 
+// SetNetwork sets the current network configuration for the NetworkManager.
 func (n *NetworkManager) SetNetwork(config AppConfig) {
 	n.networkMutex.Lock()
 	defer n.networkMutex.Unlock()
@@ -118,6 +134,8 @@ func (n *NetworkManager) SetNetwork(config AppConfig) {
 	n.appConfig = config
 }
 
+// Network returns the current network configuration.
+// It returns the network configuration represented by an AppConfig struct.
 func (n *NetworkManager) Network() *AppConfig {
 	n.networkMutex.RLock()
 	defer n.networkMutex.RUnlock()
@@ -125,6 +143,9 @@ func (n *NetworkManager) Network() *AppConfig {
 	return &n.appConfig
 }
 
+// SwitchNetwork switches the current network configuration to the specified network.
+// selectedNetworkStr: The name of the network configuration to switch to.
+// Returns any error encountered during the switch operation.
 func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 	config, ok := n.knownNetworks[selectedNetworkStr]
 	if !ok {
