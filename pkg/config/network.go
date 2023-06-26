@@ -12,6 +12,7 @@ import (
 const (
 	MassaStationURL = "station.massa"
 )
+
 type AppConfig struct {
 	Network    string
 	NodeURL    string
@@ -87,6 +88,7 @@ func NewNetworkManager() (*NetworkManager, error) {
 func (n *NetworkManager) SetNetworks(networks map[string]NetworkConfig) {
 	n.knownNetworks = networks
 }
+
 // Networks retrieves a pointer to a slice of known networks from the NetworkManager.
 // It returns a pointer to a slice containing the names of the known networks.
 // The slice will be updated if the known networks are modified.
