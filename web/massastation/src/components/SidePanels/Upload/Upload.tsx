@@ -49,7 +49,7 @@ export default function Upload() {
   const [accountsError, setAccountError] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const nickname = useAccountStore((state) => state.nickname);
+  const nickname = useAccountStore((state) => state.currentAccount);
 
   const {
     mutate: mutableUpload,

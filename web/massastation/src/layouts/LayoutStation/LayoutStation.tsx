@@ -47,18 +47,18 @@ export function LayoutStation({ ...props }) {
     `${URL.WALLET_BASE_API}/${URL.WALLET_ACCOUNTS}`,
   );
 
-  const nickname = useAccountStore((state) => state.nickname);
-  const setNickname = useAccountStore((state) => state.setNickname);
+  const currentAccount = useAccountStore((state) => state.currentAccount);
+  const setCurrentAccount = useAccountStore((state) => state.setCurrentAccount);
 
   const accountsItems = accounts.map((account) => ({
     icon: <Identicon username={account.nickname} size={32} />,
     item: account.nickname,
-    onClick: () => setNickname(account.nickname),
+    onClick: () => setCurrentAccount(account.nickname),
   }));
 
   const selectedAccountKey: number = parseInt(
     Object.keys(accounts).find(
-      (_, idx) => accounts[idx].nickname === nickname,
+      (_, idx) => accounts[idx].nickname === currentAccount,
     ) || '0',
   );
 
