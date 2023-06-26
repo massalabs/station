@@ -1,5 +1,15 @@
 import { SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
 import Intl from '../../../i18n/i18n';
+import { usePut, useResource } from '../../../custom/api';
+import { routeFor } from '../../../utils';
+import { parseForm } from '../../../utils/ParseForm';
+import { useAccountStore } from '../../../store/store';
+import { AccountObject } from '../../../models/AccountModel';
+
+import { URL } from '../../../const/url/url';
+import { IMassaPlugin } from '../../../../../shared/interfaces/IPlugin';
 
 import {
   Button,
@@ -8,8 +18,9 @@ import {
   TextArea,
   DragDrop,
   Spinner,
+  Identicon,
+  Dropdown,
 } from '@massalabs/react-ui-kit';
-import { usePut } from '../../../custom/api';
 import {
   validateDescriptionLength,
   validateFileContent,
@@ -17,9 +28,6 @@ import {
   validateWebsiteDescription,
   validateWebsiteName,
 } from '../../../validation/upload';
-import { parseForm } from '../../../utils/ParseForm';
-import { useAccountStore } from '../../../store/store';
-import { AxiosError } from 'axios';
 
 interface IFormError {
   websiteName?: string;
@@ -44,12 +52,15 @@ interface IUploadError {
 
 export default function Upload() {
   const form = useRef(null);
+  const navigate = useNavigate();
+
   const [formError, setFormError] = useState<IFormError | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [accountsError, setAccountError] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const nickname = useAccountStore((state) => state.currentAccount);
+  const setNickname = useAccountStore((state) => state.setCurrentAccount);
 
   const {
     mutate: mutableUpload,
@@ -164,6 +175,39 @@ export default function Upload() {
     });
   }
 
+  const { data: accounts = [] } = useResource<AccountObject[]>(
+    `${URL.WALLET_BASE_API}/${URL.WALLET_ACCOUNTS}`,
+  );
+
+  const accountsItems = accounts.map((account) => ({
+    icon: <Identicon username={account.nickname} size={32} />,
+    item: account.nickname,
+    onClick: () => setNickname(account.nickname),
+  }));
+
+  const selectedAccountKey: number = parseInt(
+    Object.keys(accounts).find(
+      (_, idx) => accounts[idx].nickname === nickname,
+    ) || '0',
+  );
+
+  const existingAccount: boolean = accounts.length > 0;
+
+  const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
+
+  const { data: plugins, isSuccess } =
+    useResource<IMassaPlugin[]>('plugin-manager');
+
+  useEffect(() => {
+    if (isSuccess) {
+      plugins.forEach((plugin) => {
+        if (plugin.name === 'Massa Wallet') {
+          setPluginWalletIsInstalled(true);
+        }
+      });
+    }
+  }, [isSuccess]);
+
   return (
     <SidePanel customClass="border-l border-c-default bg-secondary">
       <div className="pr-4 m-auto">
@@ -178,6 +222,28 @@ export default function Upload() {
                 howtouploadwebsite.com
               </a>
             </h3>
+          </div>
+          <div className="mb-6">
+            {pluginWalletIsInstalled ? (
+              existingAccount ? (
+                <Dropdown options={accountsItems} select={selectedAccountKey} />
+              ) : (
+                <Button
+                  onClick={() =>
+                    window.open(
+                      '/plugin/massa-labs/massa-wallet/web-app/',
+                      '_blank',
+                    )
+                  }
+                >
+                  Create Account
+                </Button>
+              )
+            ) : (
+              <Button onClick={() => navigate(routeFor('index'))}>
+                Install Wallet
+              </Button>
+            )}
           </div>
           <form ref={form} onSubmit={handleSubmit}>
             <div className="bg-secondary rounded-lg p-4 mb-6">
