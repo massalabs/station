@@ -143,7 +143,7 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 	return nil
 }
 
-//nolint:typecheck
+//nolint:typecheck,nolintlint
 //go:embed config_network.yaml
 var configData embed.FS
 
