@@ -3,6 +3,5 @@ export interface DomainModel {
   address: string;
   description: string;
   metadata: string;
-  icon: JSX.Element | null;
   favicon: string;
 }
