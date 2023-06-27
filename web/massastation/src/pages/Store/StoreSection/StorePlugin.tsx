@@ -1,4 +1,4 @@
-import { Certificate, Plugin, Spinner } from '@massalabs/react-ui-kit';
+import { Button, Certificate, Plugin } from '@massalabs/react-ui-kit';
 import { massalabsNomination } from '../../../utils/massaConstants';
 import { FiDownload } from 'react-icons/fi';
 import { usePost } from '../../../custom/api';
@@ -30,10 +30,18 @@ function StorePlugin(props: StorePluginProps) {
 
   const argsStore = {
     preIcon: <img src={logo} alt="plugin-logo" />,
-    topAction: isLoading ? (
-      <Spinner />
-    ) : (
-      <FiDownload onClick={() => mutate({ params })} />
+    topAction: (
+      <Button
+        customClass={isLoading ? 'animate-pulse blur-sm' : ''}
+        onClick={() => mutate({ params })}
+        disabled={isLoading}
+      >
+        <div
+          className={`rounded-full ${isLoading ? 'animate-pulse blur-sm' : ''}`}
+        >
+          <FiDownload />
+        </div>
+      </Button>
     ),
     title: name,
     subtitle: author,
