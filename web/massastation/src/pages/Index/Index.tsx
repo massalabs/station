@@ -27,6 +27,7 @@ import { routeFor } from '../../utils';
 import { useConfigStore } from '../../store/store';
 import { usePost, useResource } from '../../custom/api';
 import { UseQueryResult } from '@tanstack/react-query';
+import { MASSA_WALLET } from '../../const/const';
 
 export function Index() {
   const plugins = useResource<IMassaPlugin[]>('plugin-manager');
@@ -60,16 +61,15 @@ function NestedIndex({
 
   const { mutate, isSuccess, isError, isLoading } =
     usePost<null>('plugin-manager');
-  const walletName = 'Massa Wallet';
 
   useEffect(() => {
     const isWalletInstalled = massaPlugins?.some(
-      (plugin: IMassaPlugin) => plugin.name === walletName,
+      (plugin: IMassaPlugin) => plugin.name === MASSA_WALLET,
     );
     setPluginWalletIsInstalled(Boolean(isWalletInstalled));
     if (!isWalletInstalled && availablePlugins) {
       const walletPlugin = availablePlugins.find(
-        (plugin: IMassaStore) => plugin.name === walletName,
+        (plugin: IMassaStore) => plugin.name === MASSA_WALLET,
       );
       if (walletPlugin) {
         setUrlPlugin(walletPlugin.file.url);

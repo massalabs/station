@@ -29,7 +29,9 @@
       "your-website-description": "Define your website name and description."
     },
     "buttons": {
-      "upload": "Upload"
+      "upload": "Upload",
+      "install-wallet": "Install Wallet",
+      "create-account": "Create Account"
     },
     "inputs": {
       "website-name": "Name",
