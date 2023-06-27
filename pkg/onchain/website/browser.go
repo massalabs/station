@@ -2,10 +2,9 @@ package website
 
 import (
 	"fmt"
-	"mime"
 	"net/http"
-	"path/filepath"
 
+	"github.com/massalabs/station/int/api/utils"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/onchain/storage"
 )
@@ -20,13 +19,7 @@ func Fetch(c *node.Client, addr string, filename string) ([]byte, error) {
 }
 
 func setContentType(file string, writer http.ResponseWriter) {
-	ctype := mime.TypeByExtension(filepath.Ext(file))
-
-	if ctype == "" {
-		ctype = "text/plain"
-	}
-
-	writer.Header().Set("Content-Type", ctype)
+	writer.Header().Set(utils.ContentTypeHeader, utils.ContentType(file)[utils.ContentTypeHeader])
 }
 
 func Request(writer http.ResponseWriter, _ *http.Request, client *node.Client, address string, resource string) {

@@ -9,19 +9,21 @@ import (
 	"github.com/go-openapi/runtime"
 )
 
+const ContentTypeHeader = "Content-Type"
+
 func ContentType(rsc string) map[string]string {
 	var contentType map[string]string
 
 	fileExtension := filepath.Ext(rsc)
 	if fileExtension == ".otf" {
-		return map[string]string{"Content-Type": "font/otf"}
+		return map[string]string{ContentTypeHeader: "font/otf"}
 	}
 
 	ctype := mime.TypeByExtension(fileExtension)
 	if ctype == "" {
-		contentType = map[string]string{"Content-Type": "text/plain"}
+		contentType = map[string]string{ContentTypeHeader: "text/plain"}
 	} else {
-		contentType = map[string]string{"Content-Type": ctype}
+		contentType = map[string]string{ContentTypeHeader: ctype}
 	}
 
 	return contentType
