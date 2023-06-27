@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Button, Certificate, Plugin } from '@massalabs/react-ui-kit';
-import { FiArrowUpRight, FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
+import { FiArrowUpRight, FiRefreshCw, FiTrash2 } from 'react-icons/fi';
 import {
   massalabsNomination,
   PLUGIN_START,
@@ -83,7 +83,7 @@ export function StationPlugin({
     content: [
       updatable && (
         <Button variant="icon" disabled={isExecuteLoading}>
-          <FiRefreshCcw
+          <FiRefreshCw
             className={`text-s-warning${
               isExecuteLoading ? ' animate-spin ' : ''
             }`}
