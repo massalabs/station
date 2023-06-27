@@ -1,7 +1,7 @@
 import JSZip from 'jszip';
 
 export function validateWebsiteName(websiteName: string): boolean {
-  return /^[a-z0-9_.\-~]{3,50}$/.test(websiteName);
+  return /^[a-z0-9_\\-]{3,50}$/.test(websiteName);
 }
 
 export function validateWebsiteDescription(description: string): boolean {
