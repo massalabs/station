@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { SyntheticEvent, useEffect, useState } from 'react';
 
 import { Button, Certificate, Plugin } from '@massalabs/react-ui-kit';
 import { FiArrowUpRight, FiRefreshCw, FiTrash2 } from 'react-icons/fi';
@@ -37,7 +37,7 @@ export function StationPlugin({
   } = useResource<IMassaPlugin>(`plugin-manager/${id}`);
 
   const {
-    mutate,
+    mutate: mutateExecute,
     isSuccess: isExecuteSuccess,
     isLoading: isExecuteLoading,
   } = usePost<PluginExecuteRequest>(`plugin-manager/${id}/execute`);
@@ -66,14 +66,23 @@ export function StationPlugin({
     }
   }, [deleteSuccess]);
 
-  function updatePluginState(command: string) {
+  function updatePluginState(e: SyntheticEvent, command: string) {
+    e.preventDefault();
+    if (isExecuteLoading) return;
     const payload = { command } as PluginExecuteRequest;
-    mutate({ payload });
+    mutateExecute({ payload });
+  }
+
+  function UpdateLoading() {
+    return <FiRefreshCw className={`text-s-warning animate-spin`} />;
   }
   const argsOn = {
     preIcon: <img src={logoURL} alt="plugin-logo" />,
     topAction: (
-      <Button onClick={() => updatePluginState(PLUGIN_STOP)} variant="toggle">
+      <Button
+        onClick={(e) => updatePluginState(e, PLUGIN_STOP)}
+        variant="toggle"
+      >
         on
       </Button>
     ),
@@ -81,16 +90,14 @@ export function StationPlugin({
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
     content: [
-      updatable && (
-        <Button variant="icon" disabled={isExecuteLoading}>
-          <FiRefreshCw
-            className={`text-s-warning${
-              isExecuteLoading ? ' animate-spin ' : ''
-            }`}
-            onClick={() => updatePluginState(PLUGIN_UPDATE)}
-          />
-        </Button>
-      ),
+      updatable &&
+        (isExecuteLoading ? (
+          UpdateLoading
+        ) : (
+          <Button variant="icon" disabled={isExecuteLoading}>
+            <FiRefreshCw className="text-s-warning" />
+          </Button>
+        )),
       <Button variant="icon">
         <FiArrowUpRight onClick={() => window.open(home, '_blank')} />
       </Button>,
@@ -105,7 +112,7 @@ export function StationPlugin({
     topAction: (
       // we use customClass because "disabled" doesn't let us click on the button to turn it back on
       <Button
-        onClick={() => updatePluginState(PLUGIN_START)}
+        onClick={(e) => updatePluginState(e, PLUGIN_START)}
         customClass="bg-primary text-tertiary"
         variant="toggle"
       >
