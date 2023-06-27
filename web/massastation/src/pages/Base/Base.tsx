@@ -125,7 +125,6 @@ export function Base() {
         navigator={navigator}
         onSetTheme={handleSetTheme}
         storedTheme={theme}
-        activePage={activePage}
       >
         <Outlet />
         <Toast />

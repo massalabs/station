@@ -17,6 +17,7 @@ function mockServer(environment = ENV.DEV) {
       domain: Model,
       account: Model,
       website: Model,
+      network: Model,
     },
     factories: {
       plugin: Factory.extend({
@@ -111,6 +112,14 @@ function mockServer(environment = ENV.DEV) {
         },
         brokenChunks: [],
       }),
+      network: Factory.extend({
+        availableNetworks() {
+          return ['testnet', 'buildnet', 'labnet'];
+        },
+        currentNetwork() {
+          return 'buildnet';
+        },
+      }),
     },
 
     seeds(server) {
@@ -119,6 +128,7 @@ function mockServer(environment = ENV.DEV) {
       server.createList('store', 7);
       server.createList('account', 5);
       server.createList('website', 2);
+      server.create('network');
     },
 
     routes() {
@@ -218,6 +228,18 @@ function mockServer(environment = ENV.DEV) {
       this.put('websiteUploader/prepare', (schema) => {
         // TODO: fix this, it doesn't work as expected, it returns only {id: 4}
         return schema.create('website');
+      });
+
+      this.get('/network', (schema) => {
+        let { models: network } = schema.networks.all();
+
+        return network.pop().attrs;
+      });
+
+      this.post('/network/:network', (schema, request) => {
+        const storedNetwork = schema.networks.find('1');
+
+        return storedNetwork.update({ currentNetwork: request.params.network });
       });
     },
   });

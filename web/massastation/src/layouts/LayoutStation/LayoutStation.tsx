@@ -1,43 +1,29 @@
 import { ReactNode, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { routeFor } from '../../utils';
 
-import { useResource } from '../../custom/api';
-import { AccountObject } from '../../models/AccountModel';
-import { useAccountStore } from '../../store/store';
+import { useResource, usePost } from '../../custom/api';
 import { URL } from '../../const/url/url';
+import { NetworkModel } from '../../models';
+import { useNetworkStore } from '../../store/store';
 
-import { PAGES } from '../../const/pages/pages';
-
-import {
-  ThemeMode,
-  StationLogo,
-  Dropdown,
-  Identicon,
-  Button,
-} from '@massalabs/react-ui-kit';
-import { IMassaStore } from '../../../../shared/interfaces/IPlugin';
-import Intl from '../../i18n/i18n';
-import { MASSA_WALLET } from '../../const/const';
+import { ThemeMode, StationLogo, Dropdown } from '@massalabs/react-ui-kit';
 
 export interface LayoutStationProps {
   children?: ReactNode;
   navigator?: Navigator;
   onSetTheme?: () => void;
   storedTheme?: string;
-  activePage: string;
+}
+
+interface NetworkRequest {
+  network: string;
 }
 
 export function LayoutStation({ ...props }) {
-  const { children, navigator, onSetTheme, storedTheme, activePage } = props;
-
-  const navigate = useNavigate();
+  const { children, navigator, onSetTheme, storedTheme } = props;
 
   const [selectedTheme, setSelectedTheme] = useState(
     storedTheme || 'theme-dark',
   );
-
-  const searchIsActive = activePage === PAGES.SEARCH;
 
   function handleSetTheme(theme: string) {
     setSelectedTheme(theme);
@@ -45,39 +31,47 @@ export function LayoutStation({ ...props }) {
     onSetTheme?.(theme);
   }
 
-  const { data: accounts = [] } = useResource<AccountObject[]>(
-    `${URL.WALLET_BASE_API}/${URL.WALLET_ACCOUNTS}`,
-  );
+  const { data: network, isSuccess: isSuccessNetwork } =
+    useResource<NetworkModel>(URL.PATH_NETWORKS);
 
-  const currentAccount = useAccountStore((state) => state.currentAccount);
-  const setCurrentAccount = useAccountStore((state) => state.setCurrentAccount);
+  const [
+    currentNetwork,
+    availableNetworks,
+    setCurrentNetwork,
+    setAvailableNetworks,
+  ] = useNetworkStore((state) => [
+    state.currentNetwork,
+    state.availableNetworks,
+    state.setCurrentNetwork,
+    state.setAvailableNetworks,
+  ]);
 
-  const accountsItems = accounts.map((account) => ({
-    icon: <Identicon username={account.nickname} size={32} />,
-    item: account.nickname,
-    onClick: () => setCurrentAccount(account.nickname),
-  }));
+  useEffect(() => {
+    if (isSuccessNetwork) {
+      if (network.currentNetwork) setCurrentNetwork(network.currentNetwork);
+      if (network.availableNetworks)
+        setAvailableNetworks(network.availableNetworks);
+    }
+  }, [isSuccessNetwork]);
 
-  const selectedAccountKey: number = parseInt(
-    Object.keys(accounts).find(
-      (_, idx) => accounts[idx].nickname === currentAccount,
+  const selectedNetworkKey: number = parseInt(
+    Object.keys(availableNetworks).find(
+      (_, idx) => availableNetworks[idx] === currentNetwork,
     ) || '0',
   );
 
-  const existingAccount: boolean = accounts.length > 0;
+  const { mutate: mutateUpdateNetwork } = usePost<NetworkRequest>(
+    `${URL.PATH_NETWORKS}/${currentNetwork}`,
+  );
 
-  const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
-
-  const { data: plugins, isSuccess } =
-    useResource<IMassaStore[]>('plugin-manager');
-
-  useEffect(() => {
-    if (isSuccess) {
-      setPluginWalletIsInstalled(
-        plugins.some((plugin) => plugin.name === MASSA_WALLET),
-      );
-    }
-  }, [isSuccess, plugins]);
+  const availableNetworksItems = availableNetworks.map((network) => ({
+    item: network,
+    onClick: () => {
+      setCurrentNetwork(network);
+      mutateUpdateNetwork({});
+      window.location.reload();
+    },
+  }));
 
   return (
     <div
@@ -94,36 +88,12 @@ export function LayoutStation({ ...props }) {
           {navigator && <div className="flex-row-reversed">{navigator}</div>}
         </div>
         <div className="flex justify-end items-start gap-20">
-          {searchIsActive &&
-            (pluginWalletIsInstalled ? (
-              existingAccount ? (
-                <div className="w-64">
-                  <Dropdown
-                    options={accountsItems}
-                    select={selectedAccountKey}
-                  />
-                </div>
-              ) : (
-                <Button
-                  customClass="w-64"
-                  onClick={() =>
-                    window.open(
-                      '/plugin/massa-labs/massa-wallet/web-app/',
-                      '_blank',
-                    )
-                  }
-                >
-                  {Intl.t('search.buttons.create-account')}
-                </Button>
-              )
-            ) : (
-              <Button
-                customClass="w-64"
-                onClick={() => navigate(routeFor('index'))}
-              >
-                {Intl.t('search.buttons.install-wallet')}
-              </Button>
-            ))}
+          <div className="w-64">
+            <Dropdown
+              options={availableNetworksItems}
+              select={selectedNetworkKey}
+            />
+          </div>
           <ThemeMode onSetTheme={handleSetTheme} />
         </div>
       </div>
