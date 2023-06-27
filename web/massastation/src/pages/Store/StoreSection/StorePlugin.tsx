@@ -1,4 +1,4 @@
-import { Certificate, Plugin } from '@massalabs/react-ui-kit';
+import { Certificate, Plugin, Spinner } from '@massalabs/react-ui-kit';
 import { massalabsNomination } from '../../../utils/massaConstants';
 import { FiDownload } from 'react-icons/fi';
 import { usePost } from '../../../custom/api';
@@ -18,7 +18,7 @@ function StorePlugin(props: StorePluginProps) {
     description,
     file: { url },
   } = plugin;
-  const { mutate, isSuccess } = usePost(`plugin-manager`);
+  const { mutate, isSuccess, isLoading } = usePost(`plugin-manager`);
 
   const params = { source: url };
 
@@ -30,7 +30,11 @@ function StorePlugin(props: StorePluginProps) {
 
   const argsStore = {
     preIcon: <img src={logo} alt="plugin-logo" />,
-    topAction: <FiDownload onClick={() => mutate({ params })} />,
+    topAction: isLoading ? (
+      <Spinner />
+    ) : (
+      <FiDownload onClick={() => mutate({ params })} />
+    ),
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
