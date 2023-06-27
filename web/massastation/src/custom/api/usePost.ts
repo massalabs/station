@@ -27,8 +27,10 @@ export function usePost<TBody, TResponse = null>(
     mutationKey: [resource],
     mutationFn: async ({ params, payload }) => {
       const queryParams = new URLSearchParams(params).toString();
-      const fullURL = `${url}?${queryParams}`;
-      const decodedURL = decodeURIComponent(fullURL);
+      if (queryParams) {
+        url.concat(`?${queryParams}`);
+      }
+      const decodedURL = decodeURIComponent(url);
       const { data: responseData } = await axios.post<
         TBody,
         AxiosResponse<TResponse>
