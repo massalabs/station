@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Button, Certificate, Plugin } from '@massalabs/react-ui-kit';
+import { Button, Certificate, Plugin, Spinner } from '@massalabs/react-ui-kit';
 import { FiArrowUpRight, FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
 import {
   massalabsNomination,
@@ -36,9 +36,11 @@ export function StationPlugin({
     isRefetching,
   } = useResource<IMassaPlugin>(`plugin-manager/${id}`);
 
-  const { mutate, isSuccess } = usePost<PluginExecuteRequest>(
-    `plugin-manager/${id}/execute`,
-  );
+  const {
+    mutate,
+    isSuccess: isExecuteSuccess,
+    isLoading: isExecuteLoading,
+  } = usePost<PluginExecuteRequest>(`plugin-manager/${id}/execute`);
 
   const { mutate: deletePlugin, isSuccess: deleteSuccess } = useDelete(
     `plugin-manager/${id}`,
@@ -47,10 +49,10 @@ export function StationPlugin({
   const logoURL = `${baseAPI}/plugin-manager/${id}/logo`;
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isExecuteSuccess) {
       refetch();
     }
-  }, [isSuccess]);
+  }, [isExecuteSuccess]);
 
   useEffect(() => {
     if (!isRefetching && newPlugin) {
@@ -80,9 +82,11 @@ export function StationPlugin({
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
     content: [
       updatable && (
-        <Button variant="icon">
+        <Button variant="icon" disabled={isExecuteLoading}>
           <FiRefreshCcw
-            className="text-s-warning"
+            className={`text-s-warning${
+              isExecuteLoading ? ' animate-spin ' : ''
+            }`}
             onClick={() => updatePluginState(PLUGIN_UPDATE)}
           />
         </Button>
