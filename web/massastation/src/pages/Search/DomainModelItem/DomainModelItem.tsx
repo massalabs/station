@@ -13,7 +13,7 @@ export default function DomainModelItem(props: DomainModelItemProps) {
   return (
     <Description
       variant="secondary"
-      preIcon={<FiGlobe />}
+      preIcon={website.favicon ? <img src={website.favicon} /> : <FiGlobe />}
       title={website.name}
       website={website.name + '.massa'}
       description={website.description}
