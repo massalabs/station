@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Button, Certificate, Plugin, Spinner } from '@massalabs/react-ui-kit';
+import { Button, Certificate, Plugin } from '@massalabs/react-ui-kit';
 import { FiArrowUpRight, FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
 import {
   massalabsNomination,
