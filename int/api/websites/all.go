@@ -13,6 +13,7 @@ import (
 	"github.com/massalabs/station/pkg/convert"
 	"github.com/massalabs/station/pkg/dnshelper"
 	"github.com/massalabs/station/pkg/node"
+	"github.com/massalabs/station/pkg/onchain/website"
 )
 
 const (
@@ -21,6 +22,7 @@ const (
 	ownerKey            = "owner"
 	blackListKey        = "blackList"
 	secondsToMilliCoeff = 1000
+	faviconIcon         = "favicon.ico"
 )
 
 func NewRegistryHandler(config *config.AppConfig) operations.AllDomainsGetterHandler {
@@ -46,8 +48,8 @@ func (h *registryHandler) Handle(_ operations.AllDomainsGetterParams) middleware
 }
 
 /*
-This function fetch all websites data that are associated with the DNS
-smart contract MassaStation is connected to. Once this data has been fetched from the DNS and
+Registry fetches all websites data that are associated with the DNS
+smart contract Massa Station is connected to. Once this data has been fetched from the DNS and
 the various website storer contracts, the function builds an array of Registry objects
 and returns it to the frontend for display on the Registry page.
 */
@@ -80,11 +82,14 @@ func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 			return nil, fmt.Errorf("reading website metadata at '%s': %w", websiteStorerAddress, err)
 		}
 
+		name := convert.BytesToString(websiteNames[index])
+
 		registry[index] = &models.Registry{
-			Name:        convert.BytesToString(websiteNames[index]),
+			Name:        name,
 			Address:     websiteStorerAddress,
 			Description: websiteDescription,
 			Metadata:    websiteMetadata,
+			Favicon:     DNSRecordFavicon(name, websiteStorerAddress, client),
 		}
 	}
 
@@ -96,8 +101,17 @@ func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 	return registry, nil
 }
 
+func DNSRecordFavicon(name, websiteStorerAddress string, client *node.Client) string {
+	body, err := website.Fetch(client, websiteStorerAddress, faviconIcon)
+	if err != nil || len(body) == 0 {
+		return ""
+	}
+
+	return "https://" + name + ".massa/" + faviconIcon
+}
+
 /*
-The dns SC has 4 differents kinds of key :
+The dns SC has 4 different kinds of key:
 -the website names
 -keys owned concatenated with the owner's address
 -a key blackList
