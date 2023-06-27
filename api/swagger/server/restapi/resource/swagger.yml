@@ -865,7 +865,7 @@ paths:
         - in: formData
           name: url
           type: string
-          pattern: "^[a-z0-9_-]+$"
+          pattern: "^[a-z0-9_\\-]{3,50}$"
           required: true
           x-nullable: false
           description: URL using lowercase letters (a-z), numbers (0-9), hyphen (-), and underscore (_).
