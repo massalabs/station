@@ -14,7 +14,7 @@ import './index.css';
 
 import { ENV } from './const/env/env';
 import { Error, NotFound, Index, Base, Store, Search } from './pages/index';
-import mockServer from './mirage/server.js';
+import { mockServer } from './mirage';
 import { PAGES } from './const/pages/pages';
 
 const baseURL = import.meta.env.VITE_BASE_APP;

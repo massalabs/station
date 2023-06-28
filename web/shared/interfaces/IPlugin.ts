@@ -35,6 +35,7 @@ export interface IMassaPlugin {
     status: string;
     home: string;
     updatable?: boolean;
+    version?: string;
 }
 export interface IMassaStore {
     name: string;
@@ -43,19 +44,20 @@ export interface IMassaStore {
     version: string;
     url: string;
     logo: string;
-    file:pluginStoreItemFile
+    file: pluginStoreItemFile
+    os: string;
 }
 
 export interface PluginStoreItemRequest{
-    name:string
-    description:string
+    name: string
+    description: string
     version: string
-    url:string
-    file:pluginStoreItemFile
-    os:string
+    url: string
+    file: pluginStoreItemFile
+    os: string
 }
 
 export interface pluginStoreItemFile{
-    url:string
-    checksum:string
+    url: string
+    checksum: string
 }
