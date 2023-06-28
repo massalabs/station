@@ -92,9 +92,13 @@ export function StationPlugin({
     content: [
       updatable &&
         (isExecuteLoading ? (
-          UpdateLoading
+          <UpdateLoading />
         ) : (
-          <Button variant="icon" disabled={isExecuteLoading}>
+          <Button
+            variant="icon"
+            onClick={(e) => updatePluginState(e, PLUGIN_UPDATE)}
+            disabled={isExecuteLoading}
+          >
             <FiRefreshCw className="text-s-warning" />
           </Button>
         )),
