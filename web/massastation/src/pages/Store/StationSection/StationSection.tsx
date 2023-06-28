@@ -34,8 +34,15 @@ function StationSection({
   return (
     <>
       {isLoading || isRefetching ? (
-        <div className="mas-body2 mb-4 text-neutral">
-          {Intl.t('store.loading')}
+        <div className="flex gap-4 flex-wrap animate-pulse blur-sm">
+          {plugins &&
+            sortPlugins(plugins)?.map((plugin, index) => (
+              <StationPlugin
+                key={index}
+                plugin={plugin}
+                fetchPlugins={() => refetchPlugins()}
+              />
+            ))}
         </div>
       ) : (
         <>

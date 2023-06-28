@@ -9,6 +9,11 @@ interface StorePluginProps {
   plugin: IMassaStore;
   refetch: () => void;
 }
+
+function LoadingDownload() {
+  return <FiDownload className="animate-ping" />;
+}
+
 function StorePlugin(props: StorePluginProps) {
   const { plugin, refetch } = props;
   let {
@@ -18,19 +23,27 @@ function StorePlugin(props: StorePluginProps) {
     description,
     file: { url },
   } = plugin;
-  const { mutate, isSuccess } = usePost(`plugin-manager`);
+  const {
+    mutate,
+    isSuccess: isInstallSuccess,
+    isLoading: isInstallLoading,
+  } = usePost(`plugin-manager`);
 
   const params = { source: url };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isInstallSuccess) {
       refetch();
     }
-  }, [isSuccess]);
+  }, [isInstallSuccess]);
 
   const argsStore = {
     preIcon: <img src={logo} alt="plugin-logo" />,
-    topAction: <FiDownload onClick={() => mutate({ params })} />,
+    topAction: isInstallLoading ? (
+      <LoadingDownload />
+    ) : (
+      <FiDownload onClick={() => mutate({ params })} />
+    ),
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
