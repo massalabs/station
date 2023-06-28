@@ -1,8 +1,6 @@
 package myplugin
 
 import (
-	"fmt"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"

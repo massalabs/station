@@ -44,5 +44,6 @@ func NewLogger() *zap.SugaredLogger {
 
 	// Create the logger
 	logger := zap.New(core, zap.AddCaller())
+
 	return logger.Sugar()
 }
