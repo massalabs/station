@@ -156,8 +156,8 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 		Network:    selectedNetworkStr,
 	})
 
-	Logger.Info(fmt.Sprintf("Switched to network: %s\n", selectedNetworkStr))
-	Logger.Info(fmt.Sprintf("Current config: %+v\n", n.Network()))
+	Logger.Debug(fmt.Sprintf("Switched to network: %s\n", selectedNetworkStr))
+	Logger.Debug(fmt.Sprintf("Current config: %+v\n", n.Network()))
 
 	return nil
 }

@@ -134,7 +134,7 @@ func (s *Store) FetchStorePeriodically() {
 			config.Logger.Error(fmt.Sprintf("while fetching plugin list: %s", err))
 		}
 
-		config.Logger.Info(fmt.Sprintf("Fetched plugin list. %d plugins in store.", len(s.Plugins)))
+		config.Logger.Debug(fmt.Sprintf("Fetched plugin list. %d plugins in store.", len(s.Plugins)))
 	}
 }
 

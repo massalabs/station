@@ -182,7 +182,7 @@ func (p *Plugin) Start() error {
 			return
 		}
 
-		config.Logger.Info(fmt.Sprintf("plugin '%s' exiting without error.\n", pluginName))
+		config.Logger.Debug(fmt.Sprintf("plugin '%s' exiting without error.\n", pluginName))
 	}()
 
 	p.status = Up
@@ -192,7 +192,7 @@ func (p *Plugin) Start() error {
 
 // Kills a plugin.
 func (p *Plugin) Stop() error {
-	config.Logger.Info(fmt.Sprintf("Stopping plugin %s.\n", p.ID))
+	config.Logger.Debug(fmt.Sprintf("Stopping plugin %s.\n", p.ID))
 
 	status := p.Status()
 	if status != Up && status != Crashed {

@@ -83,7 +83,7 @@ type Server struct {
 func NewServer(flags StartServerFlags) *Server {
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
-		config.Logger.Error(err.Error())
+		config.Logger.Fatal(err.Error())
 	}
 
 	localAPI := operations.NewMassastationAPI(swaggerSpec)
@@ -93,7 +93,7 @@ func NewServer(flags StartServerFlags) *Server {
 
 	err = store.NewStore()
 	if err != nil {
-		config.Logger.Error(err.Error())
+		config.Logger.Fatal(err.Error())
 	}
 
 	return &Server{
@@ -113,7 +113,7 @@ func (server *Server) Start(networkManager *config.NetworkManager) {
 
 	go func() {
 		if err := server.api.Serve(); err != nil {
-			config.Logger.Error(err.Error())
+			config.Logger.Fatal(err.Error())
 		}
 	}()
 
@@ -123,7 +123,7 @@ func (server *Server) Start(networkManager *config.NetworkManager) {
 // Stops the server and waits for it to finish.
 func (server *Server) Stop() {
 	if err := server.api.Shutdown(); err != nil {
-		config.Logger.Error(err.Error())
+		config.Logger.Fatal(err.Error())
 	}
 
 	<-server.shutdown
