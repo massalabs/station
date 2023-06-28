@@ -33,6 +33,7 @@ export function StationPlugin({
   const {
     data: newPlugin,
     refetch,
+    isLoading,
     isRefetching,
   } = useResource<IMassaPlugin>(`plugin-manager/${id}`);
 
@@ -53,9 +54,10 @@ export function StationPlugin({
       refetch();
     }
   }, [isExecuteSuccess]);
-
+  // add isLoading conditional so that the useRessource isn't called b4
+  // useDelete is finished
   useEffect(() => {
-    if (!isRefetching && newPlugin) {
+    if (newPlugin && !isRefetching && !isLoading) {
       setMyPlugin(newPlugin);
     }
   }, [isRefetching]);
