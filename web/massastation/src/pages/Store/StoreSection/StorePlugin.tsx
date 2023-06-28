@@ -1,4 +1,4 @@
-import { Certificate, Plugin } from '@massalabs/react-ui-kit';
+import { Button, Certificate, Plugin } from '@massalabs/react-ui-kit';
 import { massalabsNomination } from '../../../utils/massaConstants';
 import { FiDownload } from 'react-icons/fi';
 import { usePost } from '../../../custom/api';
@@ -11,7 +11,11 @@ interface StorePluginProps {
 }
 
 function LoadingDownload() {
-  return <FiDownload className="animate-pulse" />;
+  return (
+    <div className={`rounded-full animate-pulse blur-sm`}>
+      <FiDownload />
+    </div>
+  );
 }
 
 function StorePlugin(props: StorePluginProps) {
@@ -42,7 +46,9 @@ function StorePlugin(props: StorePluginProps) {
     topAction: isInstallLoading ? (
       <LoadingDownload />
     ) : (
-      <FiDownload onClick={() => mutate({ params })} />
+      <Button onClick={() => mutate({ params })} disabled={isInstallLoading}>
+        <FiDownload />
+      </Button>
     ),
     title: name,
     subtitle: author,

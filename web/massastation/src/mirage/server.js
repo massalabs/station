@@ -169,7 +169,7 @@ function mockServer(environment = ENV.DEV) {
         return new Response(200, {});
       });
 
-      this.post('plugin-manager', { timing: 5000 }, (schema, request) => {
+      this.post('plugin-manager', (schema, request) => {
         const sourceURL = request.queryParams.source;
 
         const storePlugin = schema.stores.findBy(
