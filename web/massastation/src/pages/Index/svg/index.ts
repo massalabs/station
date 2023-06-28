@@ -1,0 +1,12 @@
+export { ReactComponent as WalletActive } from '../../../assets/wallet/walletActive.svg';
+export { ReactComponent as WalletInactive } from '../../../assets/wallet/walletInactive.svg';
+export { ReactComponent as Image1Dark } from '../../../assets/subduedImages/dark/1.svg';
+export { ReactComponent as Image2Dark } from '../../../assets/subduedImages/dark/2.svg';
+export { ReactComponent as Image3Dark } from '../../../assets/subduedImages/dark/3.svg';
+export { ReactComponent as Image4Dark } from '../../../assets/subduedImages/dark/4.svg';
+export { ReactComponent as Image5Dark } from '../../../assets/subduedImages/dark/5.svg';
+export { ReactComponent as Image1Light } from '../../../assets/subduedImages/light/1.svg';
+export { ReactComponent as Image2Light } from '../../../assets/subduedImages/light/2.svg';
+export { ReactComponent as Image3Light } from '../../../assets/subduedImages/light/3.svg';
+export { ReactComponent as Image4Light } from '../../../assets/subduedImages/light/4.svg';
+export { ReactComponent as Image5Light } from '../../../assets/subduedImages/light/5.svg';

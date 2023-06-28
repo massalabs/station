@@ -1,4 +1,3 @@
-export * from './Base/Base';
 export * from './Index/Index';
 export * from './Store/Store';
 export * from './NotFound';

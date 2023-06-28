@@ -51,7 +51,7 @@ interface IUploadError {
   message: string;
 }
 
-export default function Upload() {
+export function Upload() {
   const form = useRef(null);
   const navigate = useNavigate();
 

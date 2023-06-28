@@ -2,13 +2,13 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { routeFor } from '../../utils';
 import Intl from '../../i18n/i18n';
-
 import { useResource } from '../../custom/api';
 import { DomainModel } from '../../models/DomainModel';
-import { Loading } from './Loading';
-import Upload from '../../components/SidePanels/Upload/Upload';
-import DomainModelItem from './DomainModelItem/DomainModelItem';
 import { FAVORITES_WEBSITES } from '../../utils/massaConstants';
+
+import DomainModelItem from './DomainModelItem/DomainModelItem';
+import { Loading } from './Loading';
+import { Upload } from '../../components/SidePanel/Upload/Upload';
 
 export function Search() {
   const navigate = useNavigate();

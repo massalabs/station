@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useLocalStorage } from '../../custom/useLocalStorage';
 import { useConfigStore } from '../../store/store';
 
@@ -8,6 +8,7 @@ import { FiCodepen, FiGlobe, FiHome, FiSun, FiMoon } from 'react-icons/fi';
 import { LayoutStation } from '../../layouts/LayoutStation/LayoutStation';
 
 import { PAGES } from '../../const/pages/pages';
+import { routeFor } from '../../utils';
 
 type ThemeSettings = {
   [key: string]: {
@@ -61,6 +62,7 @@ export function Base() {
   );
 
   const { pathname } = useLocation();
+  const { network } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -101,14 +103,14 @@ export function Base() {
     let { next } = STEP;
 
     setActivePage(next.toString());
-    navigate(next);
+    navigate(routeFor(`${network}/${next.toString()}`));
   }
 
   function handlePrevious() {
     let { previous } = STEP;
 
     setActivePage(previous.toString());
-    navigate(previous);
+    navigate(routeFor(`${network}/${previous.toString()}`));
   }
 
   function handleSetTheme() {
@@ -120,7 +122,7 @@ export function Base() {
 
   // Template
   return (
-    <div className={`${theme}`}>
+    <div className={theme}>
       <LayoutStation
         navigator={navigator}
         onSetTheme={handleSetTheme}
