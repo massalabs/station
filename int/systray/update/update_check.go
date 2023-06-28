@@ -94,20 +94,20 @@ func updateCheck(app *fyne.App, systrayMenu *fyne.Menu) {
 
 	latestVersion, err := getLatestVersion()
 	if err != nil {
-		config.Logger.Error(fmt.Sprintf("Error getting last version:%s", err))
+		config.Logger.Errorf("Error getting last version:%s", err)
 
 		return
 	}
 
 	currentVersion, err := version.NewVersion(config.Version)
 	if err != nil {
-		config.Logger.Error(fmt.Sprintf("Error getting current version:%s", err))
+		config.Logger.Errorf("Error getting current version:%s", err)
 
 		return
 	}
 
 	if latestVersion.GreaterThan(currentVersion) {
-		config.Logger.Debug(fmt.Sprintf("New version available:%s", latestVersion))
+		config.Logger.Debugf("New version available:%s", latestVersion)
 		addUpdateButton(app, systrayMenu)
 
 		logoNotification := fyne.NewStaticResource("logo_notification", embedded.NotificationLogo)

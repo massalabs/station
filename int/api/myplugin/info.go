@@ -19,7 +19,7 @@ type info struct {
 }
 
 func (i *info) Handle(param operations.PluginManagerGetInformationParams) middleware.Responder {
-	config.Logger.Debug(fmt.Sprintf("[GET /plugin-manager/%s]", param.ID))
+	config.Logger.Debugf("[GET /plugin-manager/%s]", param.ID)
 
 	plgn, err := i.manager.Plugin(param.ID)
 	if err != nil {

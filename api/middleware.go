@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/massalabs/station/api/interceptor"
@@ -18,7 +17,7 @@ import (
 func TopMiddleware(handler http.Handler, cfg config.AppConfig) http.Handler {
 	//nolint:varnamelen
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		config.Logger.Info(fmt.Sprintf("[%s %s]", r.Method, r.URL.Path))
+		config.Logger.Infof("[%s %s]", r.Method, r.URL.Path)
 		// Goes through all local interceptors.
 		req := RedirectToDefaultResourceInterceptor(
 			plugin.Interceptor(

@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"net/url"
 
 	"fyne.io/fyne/v2"
@@ -11,11 +10,11 @@ import (
 func OpenURL(app *fyne.App, urlToOpen string) {
 	u, err := url.Parse(urlToOpen)
 	if err != nil {
-		config.Logger.Error(fmt.Sprintf("Error parsing URL:%s", err))
+		config.Logger.Errorf("Error parsing URL:%s", err)
 	}
 
 	err = (*app).OpenURL(u)
 	if err != nil {
-		config.Logger.Error(fmt.Sprintf("Error parsing URL:%s", err))
+		config.Logger.Errorf("Error parsing URL:%s", err)
 	}
 }

@@ -218,7 +218,7 @@ func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
 	defer func() {
 		err = os.Remove(resp.Filename)
 		if err != nil {
-			config.Logger.Error(fmt.Sprintf("deleting archive %s: %s", resp.Filename, err))
+			config.Logger.Errorf("deleting archive %s: %s", resp.Filename, err)
 		}
 	}()
 

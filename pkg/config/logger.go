@@ -10,9 +10,9 @@ import (
 )
 
 //nolint:gochecknoglobals
-var Logger *zap.Logger
+var Logger *zap.SugaredLogger
 
-func NewLogger() *zap.Logger {
+func NewLogger() *zap.SugaredLogger {
 	logDir, err := GetConfigDir()
 	if err != nil {
 		log.Fatal(err)
@@ -43,5 +43,6 @@ func NewLogger() *zap.Logger {
 		zapcore.InfoLevel)
 
 	// Create the logger
-	return zap.New(core, zap.AddCaller())
+	logger := zap.New(core, zap.AddCaller())
+	return logger.Sugar()
 }

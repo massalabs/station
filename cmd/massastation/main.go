@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"path"
 
@@ -21,15 +20,15 @@ func ParseFlags() api.StartServerFlags {
 
 	_, err := config.GetConfigDir()
 	if err != nil {
-		config.Logger.Error(fmt.Sprintf("Unable to read config dir: %s\n%s", err, "MassaStation can't run without a config directory.\nPlease reinstall MassaStation using the installer at https://github.com/massalabs/station and try again."))
+		config.Logger.Error("Unable to read config dir: %s\n%s", err, "MassaStation can't run without a config directory.\nPlease reinstall MassaStation using the installer at https://github.com/massalabs/station and try again.")
 	}
 
 	certDir, err := config.GetCertDir()
 	if err != nil {
-		config.Logger.Fatal(fmt.Sprintf("Unable to read cert dir:%s\n%s", err,
+		config.Logger.Fatal("Unable to read cert dir:%s\n%s", err,
 			`MassaStation can't run without a certificate directory.
 			Please reinstall MassaStation using the installer at https://github.com/massalabs/station and try again.`,
-		))
+		)
 	}
 
 	defaultCertFile := path.Join(certDir, "cert.pem")
@@ -54,13 +53,13 @@ func main() {
 	defer config.Logger.Sync()
 	flags := ParseFlags()
 	if flags.Version {
-		config.Logger.Info(fmt.Sprintf("Version:%s", config.Version))
+		config.Logger.Infof("Version:%s", config.Version)
 		os.Exit(0)
 	}
 
 	networkManager, err := config.NewNetworkManager()
 	if err != nil {
-		config.Logger.Fatal(fmt.Sprintf("Failed to create NetworkManager:%s", err))
+		config.Logger.Fatalf("Failed to create NetworkManager:%s", err.Error())
 	}
 
 	stationGUI, systrayMenu := systray.MakeGUI()

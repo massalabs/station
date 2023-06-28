@@ -131,10 +131,10 @@ func (s *Store) FetchStorePeriodically() {
 	for range ticker.C {
 		err := s.FetchPluginList()
 		if err != nil {
-			config.Logger.Error(fmt.Sprintf("while fetching plugin list: %s", err))
+			config.Logger.Errorf("while fetching plugin list: %s", err)
 		}
 
-		config.Logger.Debug(fmt.Sprintf("Fetched plugin list. %d plugins in store.", len(s.Plugins)))
+		config.Logger.Debugf("Fetched plugin list. %d plugins in store.", len(s.Plugins))
 	}
 }
 
