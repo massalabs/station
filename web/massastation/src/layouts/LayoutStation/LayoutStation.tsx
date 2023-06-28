@@ -52,17 +52,18 @@ export function LayoutStation({ ...props }) {
       className={`min-h-screen bg-primary px-20 pt-12 pb-8 $}`}
     >
       <div className="grid grid-cols-3">
-        <div className="flex justify-start">
+        <div className="flex justify-start items-center">
           <a href="/">
             <StationLogo theme={selectedTheme} />
           </a>
         </div>
-        <div className="flex justify-center">
+        <div className="flex justify-center items-center">
           {navigator && <div className="flex-row-reversed">{navigator}</div>}
         </div>
-        <div className="flex justify-end items-start gap-20">
-          <div className="w-64">
+        <div className="flex justify-end items-center gap-3">
+          <div className="w-44">
             <Dropdown
+              size="xs"
               options={availableNetworksItems}
               select={selectedNetworkKey}
             />
