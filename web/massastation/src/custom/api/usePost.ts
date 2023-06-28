@@ -28,7 +28,7 @@ export function usePost<TBody, TResponse = null>(
     mutationFn: async ({ params, payload }) => {
       const queryParams = new URLSearchParams(params).toString();
       if (queryParams) {
-        url = `${url}?${queryParams}`;
+        url = url.concat(`?${queryParams}`);
       }
       const decodedURL = decodeURIComponent(url);
 
