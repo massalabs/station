@@ -66,6 +66,7 @@ generate_certificate() {
     curl -sL $MKCERT_URL -o mkcert >&2 || fatal "mkcert download failed."
     chmod +x mkcert || fatal "mkcert permission change failed."
     ./mkcert -install || fatal "mkcert installation failed."
+    chmod 644 ~/Library/Application\ Support/mkcert/rootCA.pem ~/Library/Application\ Support/mkcert/rootCA-key.pem || fatal "root certs permission change failed."
     mkdir -m 777 -p $MASSASTATION_CERT_DIR || fatal "certs directory creation failed."
     ./mkcert -cert-file $MASSASTATION_CERT_DIR/cert.pem -key-file $MASSASTATION_CERT_DIR/cert-key.pem station.massa || fatal "mkcert certificate generation failed."
     chmod 644 $MASSASTATION_CERT_DIR/cert.pem $MASSASTATION_CERT_DIR/cert-key.pem || fatal "certs permission change failed."
