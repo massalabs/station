@@ -2,13 +2,11 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
-	"runtime"
 
 	"github.com/massalabs/station/int/api"
 	"github.com/massalabs/station/int/systray"
@@ -62,21 +60,14 @@ type logger struct {
 }
 
 func newLogger() *logger {
-	logFilePath, err := getLogFilePath()
+	logDir, err := config.GetConfigDir()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Create the log file if it doesn't exist
-	_, err = os.Stat(logFilePath)
-	if os.IsNotExist(err) {
-		_, err := os.Create(logFilePath)
-		if err != nil {
-			log.Fatalf("error creating log file: %v", err)
-		}
-	}
+	logFilePath := filepath.Join(logDir, "massastation.log")
 
-	f, err := os.OpenFile(logFilePath, os.O_RDWR|os.O_APPEND|os.O_TRUNC, 0o644)
+	f, err := os.OpenFile(logFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0o644)
 	if err != nil {
 		log.Fatalf("error opening log file: %v", err)
 	}
@@ -89,33 +80,6 @@ func newLogger() *logger {
 func (l *logger) close() {
 	l.f.Close()
 	l.wrt = nil
-}
-
-func getLogFilePath() (string, error) {
-	// Get the operating system name
-	osName := runtime.GOOS
-
-	// Define the default log directory paths based on the operating system
-	var logDir string
-	switch osName {
-	case "linux":
-		logDir = "/usr/local/share/massastation"
-	case "darwin":
-		logDir = "/Library/Logs/"
-	case "windows":
-		logDir = os.Getenv("USERPROFILE")
-	default:
-		return "", fmt.Errorf("unsupported operating system: %s", osName)
-	}
-
-	// Create the logs directory if it doesn't exist
-	err := os.MkdirAll(logDir, os.ModePerm)
-	if err != nil {
-		return "", err
-	}
-
-	// Return the log file path
-	return filepath.Join(logDir, "massastation.log"), nil
 }
 
 func main() {
