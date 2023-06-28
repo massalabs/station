@@ -16,7 +16,7 @@ export function usePost<TBody, TResponse = null>(
   unknown
 > {
   const baseURL = import.meta.env.VITE_BASE_API;
-  const url = `${baseURL}/${resource}`;
+  let url = `${baseURL}/${resource}`;
 
   return useMutation<
     TResponse,
@@ -28,9 +28,10 @@ export function usePost<TBody, TResponse = null>(
     mutationFn: async ({ params, payload }) => {
       const queryParams = new URLSearchParams(params).toString();
       if (queryParams) {
-        url.concat(`?${queryParams}`);
+        url = `${url}?${queryParams}`;
       }
       const decodedURL = decodeURIComponent(url);
+
       const { data: responseData } = await axios.post<
         TBody,
         AxiosResponse<TResponse>
