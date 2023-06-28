@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Outlet, useParams, useNavigate } from 'react-router-dom';
 import { useResource, usePost } from '../../custom/api';
-import { routeFor } from '../../utils';
+import { routeFor } from '@/utils/utils';
 
 import { URL } from '../../const/url/url';
 import { NetworkModel } from '../../models';

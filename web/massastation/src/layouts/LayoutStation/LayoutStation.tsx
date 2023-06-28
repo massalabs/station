@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useNetworkStore } from '../../store/store';
 
 import { ThemeMode, StationLogo, Dropdown } from '@massalabs/react-ui-kit';
-import { routeFor } from '../../utils';
+import { routeFor } from '@/utils/utils';
 
 export interface LayoutStationProps {
   children?: ReactNode;
