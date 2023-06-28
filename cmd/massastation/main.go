@@ -2,11 +2,9 @@ package main
 
 import (
 	"flag"
-	"io"
-	"log"
+	"fmt"
 	"os"
 	"path"
-	"path/filepath"
 
 	"github.com/massalabs/station/int/api"
 	"github.com/massalabs/station/int/systray"
@@ -23,18 +21,15 @@ func ParseFlags() api.StartServerFlags {
 
 	_, err := config.GetConfigDir()
 	if err != nil {
-		log.Fatalln("Unable to read config dir:", err,
-			`MassaStation can't run without a config directory.
-			Please reinstall MassaStation using the installer at https://github.com/massalabs/station and try again.`,
-		)
+		config.Logger.Error(fmt.Sprintf("Unable to read config dir: %s\n%s", err, "MassaStation can't run without a config directory.\nPlease reinstall MassaStation using the installer at https://github.com/massalabs/station and try again."))
 	}
 
 	certDir, err := config.GetCertDir()
 	if err != nil {
-		log.Fatalln("Unable to read cert dir:", err,
+		config.Logger.Fatal(fmt.Sprintf("Unable to read cert dir:%s\n%s", err,
 			`MassaStation can't run without a certificate directory.
 			Please reinstall MassaStation using the installer at https://github.com/massalabs/station and try again.`,
-		)
+		))
 	}
 
 	defaultCertFile := path.Join(certDir, "cert.pem")
@@ -54,46 +49,18 @@ func ParseFlags() api.StartServerFlags {
 	return flags
 }
 
-type logger struct {
-	f   *os.File
-	wrt io.Writer
-}
-
-func newLogger() *logger {
-	logDir, err := config.GetConfigDir()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	logFilePath := filepath.Join(logDir, "massastation.log")
-
-	f, err := os.OpenFile(logFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0o644)
-	if err != nil {
-		log.Fatalf("error opening log file: %v", err)
-	}
-
-	wrt := io.MultiWriter(os.Stdout, f)
-	log.SetOutput(wrt)
-	return &logger{f, wrt}
-}
-
-func (l *logger) close() {
-	l.f.Close()
-	l.wrt = nil
-}
-
 func main() {
-	logger := newLogger()
-	defer logger.close()
+	config.Logger = config.NewLogger()
+	defer config.Logger.Sync()
 	flags := ParseFlags()
 	if flags.Version {
-		log.Println("Version:", config.Version)
+		config.Logger.Info(fmt.Sprintf("Version:%s", config.Version))
 		os.Exit(0)
 	}
 
 	networkManager, err := config.NewNetworkManager()
 	if err != nil {
-		log.Fatal("Failed to create NetworkManager:", err)
+		config.Logger.Fatal(fmt.Sprintf("Failed to create NetworkManager:%s", err))
 	}
 
 	stationGUI, systrayMenu := systray.MakeGUI()

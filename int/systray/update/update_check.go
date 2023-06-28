@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -91,24 +90,24 @@ func addUpdateButton(app *fyne.App, systrayMenu *fyne.Menu) {
 
 // Checks from the latest release on GitHub if there is a newer version available.
 func updateCheck(app *fyne.App, systrayMenu *fyne.Menu) {
-	log.Println("Checking for updates...")
+	config.Logger.Debug("Checking for updates...")
 
 	latestVersion, err := getLatestVersion()
 	if err != nil {
-		log.Println("Error getting last version:", err)
+		config.Logger.Error(fmt.Sprintf("Error getting last version:%s", err))
 
 		return
 	}
 
 	currentVersion, err := version.NewVersion(config.Version)
 	if err != nil {
-		log.Println("Error parsing current version:", err)
+		config.Logger.Error(fmt.Sprintf("Error getting current version:%s", err))
 
 		return
 	}
 
 	if latestVersion.GreaterThan(currentVersion) {
-		log.Println("New version available:", latestVersion)
+		config.Logger.Debug(fmt.Sprintf("New version available:%s", latestVersion))
 		addUpdateButton(app, systrayMenu)
 
 		logoNotification := fyne.NewStaticResource("logo_notification", embedded.NotificationLogo)

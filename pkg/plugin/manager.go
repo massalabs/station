@@ -3,7 +3,6 @@ package plugin
 import (
 	"crypto/rand"
 	"fmt"
-	"log"
 	"math/big"
 	"os"
 	"path"
@@ -219,7 +218,7 @@ func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
 	defer func() {
 		err = os.Remove(resp.Filename)
 		if err != nil {
-			log.Printf("deleting archive %s: %s", resp.Filename, err)
+			config.Logger.Error(fmt.Sprintf("deleting archive %s: %s", resp.Filename, err))
 		}
 	}()
 

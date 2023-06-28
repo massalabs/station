@@ -3,7 +3,6 @@ package config
 import (
 	"embed"
 	"fmt"
-	"log"
 	"sync"
 
 	"gopkg.in/yaml.v2"
@@ -146,19 +145,19 @@ func (n *NetworkManager) Network() *AppConfig {
 // selectedNetworkStr: The name of the network configuration to switch to.
 // Returns any error encountered during the switch operation.
 func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
-	config, ok := n.knownNetworks[selectedNetworkStr]
+	cfg, ok := n.knownNetworks[selectedNetworkStr]
 	if !ok {
 		return fmt.Errorf("unknown network option: %s", selectedNetworkStr)
 	}
 
 	n.SetNetwork(AppConfig{
-		NodeURL:    config.URLs[0],
-		DNSAddress: config.DNS,
+		NodeURL:    cfg.URLs[0],
+		DNSAddress: cfg.DNS,
 		Network:    selectedNetworkStr,
 	})
 
-	log.Printf("Switched to network: %s\n", selectedNetworkStr)
-	log.Printf("Current config: %+v\n", n.Network())
+	Logger.Info(fmt.Sprintf("Switched to network: %s\n", selectedNetworkStr))
+	Logger.Info(fmt.Sprintf("Current config: %+v\n", n.Network()))
 
 	return nil
 }

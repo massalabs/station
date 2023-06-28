@@ -1,11 +1,12 @@
 package myplugin
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/plugin"
 )
 
@@ -18,7 +19,7 @@ type uninstall struct {
 }
 
 func (u *uninstall) Handle(param operations.PluginManagerUninstallParams) middleware.Responder {
-	log.Printf("[DELETE /plugin-manager/%s]", param.ID)
+	config.Logger.Debug(fmt.Sprintf("[DELETE /plugin-manager/%s]", param.ID))
 
 	err := u.manager.Delete(param.ID)
 	if err != nil {
