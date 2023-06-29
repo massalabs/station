@@ -51,7 +51,7 @@ tasks:
     platforms: [windows]
     cmds:
       - cmd: mkdir build\massastation
-      - cmd: go build -o build\massastation\massastation.exe cmd/massastation/main.go
+      - cmd: go build -ldflags -H=windowsgui -o build\massastation\massastation.exe cmd/massastation/main.go
 
   run:
     cmds:
