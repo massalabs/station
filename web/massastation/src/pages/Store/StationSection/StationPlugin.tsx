@@ -33,6 +33,7 @@ export function StationPlugin({
   const {
     data: newPlugin,
     refetch,
+    isLoading,
     isRefetching,
   } = useResource<IMassaPlugin>(`plugin-manager/${id}`);
 
@@ -53,9 +54,9 @@ export function StationPlugin({
       refetch();
     }
   }, [isExecuteSuccess]);
-
+  
   useEffect(() => {
-    if (!isRefetching && newPlugin) {
+    if (newPlugin && !isRefetching && !isLoading) {
       setMyPlugin(newPlugin);
     }
   }, [isRefetching]);
