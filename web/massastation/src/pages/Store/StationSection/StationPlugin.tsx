@@ -54,8 +54,7 @@ export function StationPlugin({
       refetch();
     }
   }, [isExecuteSuccess]);
-  // add isLoading conditional so that the useRessource isn't called b4
-  // useDelete is finished
+  
   useEffect(() => {
     if (newPlugin && !isRefetching && !isLoading) {
       setMyPlugin(newPlugin);
