@@ -6,6 +6,7 @@ import (
 
 	"github.com/massalabs/station/pkg/convert"
 	"github.com/massalabs/station/pkg/node"
+	"github.com/massalabs/station/pkg/node/base58"
 )
 
 const (
@@ -16,17 +17,17 @@ const (
 	indexOfWebsiteDescription = 2 // Index of website Description in the dnsValue array
 )
 
-// AddressAndDescription fetch the website address and it's description from the DNS entry.
+// AddressAndDescription fetches the website address and its description from the DNS entry.
 func AddressAndDescription(dnsValue []byte) (string, string, error) {
-	// In dnsRecords we have 3 values respecting the following order:
-	// websiteAddress, ownerAddress, and finally websitedescription
-	// here we retrieve only websiteAddress and websitedescription.
 	dnsRecords := convert.ByteToStringArray(dnsValue)
 	if len(dnsRecords) <= indexOfWebsiteAddress {
 		return "", "", fmt.Errorf("invalid website value: missing website address")
 	}
 
 	address := dnsRecords[indexOfWebsiteAddress]
+	if !IsValidAddress(address) {
+		return "", "", fmt.Errorf("invalid website address: %s", address)
+	}
 
 	description := ""
 
@@ -43,6 +44,7 @@ func AddressAndDescription(dnsValue []byte) (string, string, error) {
 	return address, description, nil
 }
 
+
 // GetWebsiteMetadata retrieves candidate metadata of the website.
 func GetWebsiteMetadata(client *node.Client, address string) ([]byte, error) {
 	websiteMetadata, err := node.DatastoreEntry(client, address, convert.StringToBytes(metaKey))
@@ -51,4 +53,24 @@ func GetWebsiteMetadata(client *node.Client, address string) ([]byte, error) {
 	}
 
 	return websiteMetadata.CandidateValue, nil
+}
+
+
+// IsValidAddress checks if the address is valid based on the prefix rule, non-empty rule, and successful decoding.
+func IsValidAddress(addr string) bool {
+	if addr == "" {
+		return false
+	}
+
+	addressPrefix := addr[:2]
+	addressWithoutPrefix := addr[2:]
+
+	if addressPrefix == "AS" && len(addressWithoutPrefix) > 0 {
+		_, _, err := base58.VersionedCheckDecode(addressWithoutPrefix)
+		if err == nil {
+			return true
+		}
+	}
+
+	return false
 }
