@@ -2,12 +2,12 @@ package myplugin
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/plugin"
 )
 
@@ -49,7 +49,7 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 	err = r.manager.SetAlias(alias, param.Body.ID)
 
 	if err != nil {
-		log.Printf("setting plugin alias: %s", err)
+		config.Logger.Debugf("setting plugin alias: %s", err)
 
 		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
 			&models.Error{Code: errorCodePluginRegisterUnknown, Message: fmt.Sprintf("setting alias: %s", err.Error())},

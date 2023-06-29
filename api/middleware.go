@@ -1,7 +1,6 @@
 package api
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/massalabs/station/api/interceptor"
@@ -15,14 +14,14 @@ import (
 // - MassaTLDInterceptor to handle *.massa websites
 // - Plugin interceptor to handle call to registered plugins
 // - Default resource interceptor to handle browser call (needed for mobile?) and web resources not yet pluginized.
-func TopMiddleware(handler http.Handler, config config.AppConfig) http.Handler {
+func TopMiddleware(handler http.Handler, cfg config.AppConfig) http.Handler {
 	//nolint:varnamelen
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("[%s %s]", r.Method, r.URL.Path)
+		config.Logger.Infof("[%s %s]", r.Method, r.URL.Path)
 		// Goes through all local interceptors.
 		req := RedirectToDefaultResourceInterceptor(
 			plugin.Interceptor(
-				website.MassaTLDInterceptor(&interceptor.Interceptor{Writer: w, Request: r}, config))) //nolint:contextcheck
+				website.MassaTLDInterceptor(&interceptor.Interceptor{Writer: w, Request: r}, cfg))) //nolint:contextcheck
 		// if the request was not handled by any interceptor, let the swagger API takes care of it.
 		if req != nil {
 			handler.ServeHTTP(w, r)

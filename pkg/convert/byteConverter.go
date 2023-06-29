@@ -3,8 +3,9 @@ package convert
 import (
 	"bytes"
 	"encoding/binary"
-	"log"
 	"unicode/utf16"
+
+	"github.com/massalabs/station/pkg/config"
 )
 
 const BytesPerUint64 = 8
@@ -92,7 +93,7 @@ func BytesToU64(byteArray []byte) uint64 {
 
 	err := binary.Read(bytes.NewReader(byteArray), binary.LittleEndian, &u64)
 	if err != nil {
-		log.Printf("error converting bytesToU64 :%v\n", err)
+		config.Logger.Errorf("error converting bytesToU64 :%v\n", err)
 	}
 
 	return u64

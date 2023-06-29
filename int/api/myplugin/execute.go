@@ -2,12 +2,12 @@ package myplugin
 
 import (
 	"fmt"
-	"log"
 	"path/filepath"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/plugin"
 )
 
@@ -23,7 +23,7 @@ type execute struct {
 func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) middleware.Responder {
 	cmd := params.Body.Command
 
-	log.Printf("[POST /plugin-manager/%s/execute] command: %s", params.ID, cmd)
+	config.Logger.Debugf("[POST /plugin-manager/%s/execute] command: %s", params.ID, cmd)
 
 	plugin, err := e.manager.Plugin(params.ID)
 	if err != nil {
