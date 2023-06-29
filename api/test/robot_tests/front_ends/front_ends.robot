@@ -14,15 +14,12 @@ Suite Teardown      Close All Browsers
 *** Test Cases ***
 GET /
     Open Massa Station Page    ${API_URL}/
-    Sleep    5    wait for redirection
-    Page Should Contain    Decentralization made easy
+    Wait Until Page Contains    Decentralization made easy    10
 
 GET /web/
     Open Massa Station Page    ${API_URL}/web/
-    Sleep    5    wait for redirection
-    Page Should Contain    Decentralization made easy
+    Wait Until Page Contains    Decentralization made easy    10
 
 GET /web/index
     Open Massa Station Page    ${API_URL}/web/index
-    Sleep    5    wait for redirection
     Page Should Contain    Decentralization made easy
