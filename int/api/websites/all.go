@@ -68,7 +68,8 @@ func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, config.DNSAddress, err)
 	}
 
-	var registry []*models.Registry
+	// Pre-allocate registry with the estimated capacity
+	registry := make([]*models.Registry, 0, len(dnsValues))
 
 	// Iterate over the DNS values to populate Registry objects with website values
 	for index, dnsValue := range dnsValues {
@@ -102,7 +103,6 @@ func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 
 	return registry, nil
 }
-
 
 func DNSRecordFavicon(name, websiteStorerAddress string, client *node.Client) string {
 	body, err := website.Fetch(client, websiteStorerAddress, faviconIcon)

@@ -44,7 +44,6 @@ func AddressAndDescription(dnsValue []byte) (string, string, error) {
 	return address, description, nil
 }
 
-
 // GetWebsiteMetadata retrieves candidate metadata of the website.
 func GetWebsiteMetadata(client *node.Client, address string) ([]byte, error) {
 	websiteMetadata, err := node.DatastoreEntry(client, address, convert.StringToBytes(metaKey))
@@ -54,7 +53,6 @@ func GetWebsiteMetadata(client *node.Client, address string) ([]byte, error) {
 
 	return websiteMetadata.CandidateValue, nil
 }
-
 
 // IsValidAddress checks if the address is valid based on the prefix rule, non-empty rule, and successful decoding.
 func IsValidAddress(addr string) bool {
