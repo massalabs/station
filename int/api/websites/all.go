@@ -68,29 +68,32 @@ func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, config.DNSAddress, err)
 	}
 
-	registry := make([]*models.Registry, len(dnsValues))
+	// Pre-allocate registry with the estimated capacity
+	registry := make([]*models.Registry, 0, len(dnsValues))
 
 	// Iterate over the DNS values to populate Registry objects with website values
 	for index, dnsValue := range dnsValues {
 		websiteStorerAddress, websiteDescription, err := dnshelper.AddressAndDescription(dnsValue.CandidateValue)
 		if err != nil {
-			return nil, fmt.Errorf("failed to retrieve website values: %w", err)
+			// Skip invalid entry and continue to the next iteration
+			continue
 		}
 
 		websiteMetadata, err := dnshelper.GetWebsiteMetadata(client, websiteStorerAddress)
 		if err != nil {
-			return nil, fmt.Errorf("reading website metadata at '%s': %w", websiteStorerAddress, err)
+			// Skip invalid entry and continue to the next iteration
+			continue
 		}
 
 		name := convert.BytesToString(websiteNames[index])
 
-		registry[index] = &models.Registry{
+		registry = append(registry, &models.Registry{
 			Name:        name,
 			Address:     websiteStorerAddress,
 			Description: websiteDescription,
 			Metadata:    websiteMetadata,
 			Favicon:     DNSRecordFavicon(name, websiteStorerAddress, client),
-		}
+		})
 	}
 
 	// Sort website names with alphanumeric order

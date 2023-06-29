@@ -7,7 +7,7 @@ import (
 )
 
 func TestAddressAndDescription(t *testing.T) {
-	websiteAddressStr := ""
+	websiteAddressStr := "AS12RsqDwktfxfTygPcxRt9mqoW3kn5sWJvqWLdfLstaTCxJsFvni"
 	ownerAddressStr := ""
 	descriptionStr := "<script>alert('XSS');</script>"
 
