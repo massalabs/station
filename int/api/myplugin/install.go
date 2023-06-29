@@ -2,13 +2,13 @@ package myplugin
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/plugin"
 )
 
@@ -21,7 +21,7 @@ type install struct {
 }
 
 func (i *install) Handle(param operations.PluginManagerInstallParams) middleware.Responder {
-	log.Printf("[POST /plugin-manager] source: %s", param.Source)
+	config.Logger.Debugf("[POST /plugin-manager] source: %s", param.Source)
 
 	_, err := url.ParseRequestURI(strings.TrimSpace(param.Source))
 	if err != nil {

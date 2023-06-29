@@ -2,11 +2,11 @@ package myplugin
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/plugin"
 )
 
@@ -19,7 +19,7 @@ type info struct {
 }
 
 func (i *info) Handle(param operations.PluginManagerGetInformationParams) middleware.Responder {
-	log.Printf("[GET /plugin-manager/%s]", param.ID)
+	config.Logger.Debugf("[GET /plugin-manager/%s]", param.ID)
 
 	plgn, err := i.manager.Plugin(param.ID)
 	if err != nil {

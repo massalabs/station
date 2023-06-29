@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -15,6 +14,7 @@ import (
 	"sync"
 
 	"github.com/gosimple/slug"
+	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/store"
 )
 
@@ -143,7 +143,7 @@ func (pw prefixWriter) Write(buf []byte) (n int, err error) {
 func (p *Plugin) Start() error {
 	pluginName := filepath.Base(p.BinPath)
 
-	log.Printf("Starting plugin '%s' with id %s\n", pluginName, p.ID)
+	config.Logger.Debugf("Starting plugin '%s' with id %s\n", pluginName, p.ID)
 
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
@@ -175,14 +175,14 @@ func (p *Plugin) Start() error {
 
 		err := p.command.Wait()
 		if err != nil && !(err.Error() == "signal: killed" || strings.Contains(err.Error(), "exit status")) {
-			log.Printf("plugin '%s' exiting with error: %s\n", pluginName, err)
+			config.Logger.Errorf("plugin '%s' exiting with error: %s\n", pluginName, err)
 
 			p.status = Crashed
 
 			return
 		}
 
-		log.Printf("plugin '%s' exiting without error.\n", pluginName)
+		config.Logger.Debugf("plugin '%s' exiting without error.\n", pluginName)
 	}()
 
 	p.status = Up
@@ -192,7 +192,7 @@ func (p *Plugin) Start() error {
 
 // Kills a plugin.
 func (p *Plugin) Stop() error {
-	log.Printf("Stopping plugin %s.\n", p.ID)
+	config.Logger.Debugf("Stopping plugin %s.\n", p.ID)
 
 	status := p.Status()
 	if status != Up && status != Crashed {
@@ -239,7 +239,7 @@ func (p *Plugin) SetInformation(parsedURL *url.URL) error {
 
 	isUpdatable, err := store.StoreInstance.CheckForPluginUpdates(info.Name, info.Version)
 	if err != nil {
-		log.Printf("error finding updates: %s", err)
+		config.Logger.Errorf("error finding updates: %s", err)
 	}
 
 	info.Updatable = isUpdatable

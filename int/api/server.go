@@ -1,7 +1,7 @@
 package api
 
 import (
-	"log"
+	"fmt"
 	"os"
 
 	"github.com/go-openapi/loads"
@@ -83,7 +83,7 @@ type Server struct {
 func NewServer(flags StartServerFlags) *Server {
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
-		log.Fatalln(err)
+		config.Logger.Fatal(err.Error())
 	}
 
 	localAPI := operations.NewMassastationAPI(swaggerSpec)
@@ -93,7 +93,7 @@ func NewServer(flags StartServerFlags) *Server {
 
 	err = store.NewStore()
 	if err != nil {
-		log.Fatalln(err)
+		config.Logger.Fatal(err.Error())
 	}
 
 	return &Server{
@@ -113,22 +113,22 @@ func (server *Server) Start(networkManager *config.NetworkManager) {
 
 	go func() {
 		if err := server.api.Serve(); err != nil {
-			log.Fatalln(err)
+			config.Logger.Fatal(err.Error())
 		}
 	}()
 
-	log.Println("Server started")
+	config.Logger.Debug("Server started")
 }
 
 // Stops the server and waits for it to finish.
 func (server *Server) Stop() {
 	if err := server.api.Shutdown(); err != nil {
-		log.Fatalln(err)
+		config.Logger.Fatal(err.Error())
 	}
 
 	<-server.shutdown
 
-	log.Println("Server stopped")
+	config.Logger.Debug("Server stopped")
 }
 
 // Displays the node version of the connected node.
@@ -140,8 +140,8 @@ func (server *Server) printNodeVersion(networkManager *config.NetworkManager) {
 	if err == nil {
 		nodeVersion = *status.Version
 	} else {
-		log.Println("Could not get node version:", err)
+		config.Logger.Errorf("Could not get node version: %s", err.Error())
 	}
 
-	log.Printf("Connected to node server %s (version %s)\n", networkManager.Network().NodeURL, nodeVersion)
+	config.Logger.Info(fmt.Sprintf("Connected to node server %s (version %s)", networkManager.Network().NodeURL, nodeVersion))
 }
