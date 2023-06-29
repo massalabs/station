@@ -10,7 +10,20 @@
     font-family: "TT Commons";
     src: url("./assets/fonts/TTCommons/TTCommonsMedium.otf");
   }
+  @layer utilities {
+    @variants responsive {
 
+      .no-scrollbar::-webkit-scrollbar {
+          display: none;
+      }
+
+     
+      .no-scrollbar {
+          -ms-overflow-style: none;  
+          scrollbar-width: none;  
+      }
+    }
+  }
   /* Toggle Theme */
   .custom-classname.react-toggle--checked .react-toggle-track {
     background-color: hsl(var(--twc-secondaryButton));
