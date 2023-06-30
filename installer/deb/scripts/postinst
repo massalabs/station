@@ -68,9 +68,7 @@ wait_for_network() {
     done
 
     if ((counter >= timeout)); then
-        echo "Timeout reached. Network manager is not available."
-    else
-        echo "Network manager is up and running."
+        fatal "Network manager is not available: Timeout reached. "
     fi
 }
 
