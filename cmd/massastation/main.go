@@ -9,6 +9,7 @@ import (
 	"github.com/massalabs/station/int/systray"
 	"github.com/massalabs/station/int/systray/update"
 	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/plugin"
 )
 
 func ParseFlags() api.StartServerFlags {
@@ -62,14 +63,23 @@ func main() {
 		config.Logger.Fatalf("Failed to create NetworkManager:%s", err.Error())
 	}
 
+	pluginManager := plugin.NewManager()
+
 	stationGUI, systrayMenu := systray.MakeGUI()
 	server := api.NewServer(flags)
 
 	update.StartUpdateCheck(&stationGUI, systrayMenu)
 
-	stationGUI.Lifecycle().SetOnStopped(server.Stop)
+	stationGUI.Lifecycle().SetOnStopped(func() {
+		server.Stop()
+		pluginManager.Stop()
+	})
 	stationGUI.Lifecycle().SetOnStarted(func() {
-		server.Start(networkManager)
+		server.Start(networkManager, pluginManager)
+		err := pluginManager.RunAll()
+		if err != nil {
+			config.Logger.Fatalf("while running all plugins: %w", err.Error())
+		}
 	})
 
 	stationGUI.Run()
