@@ -35,6 +35,11 @@ export function validateFileExtension(fileName: string): boolean {
   return fileName.endsWith('.zip');
 }
 
+export async function validateFileSize(file: File): Promise<boolean> {
+  const maxSizeInBytes = 1.5 * 1024 * 1024; // 1.5 MB in bytes
+  return file.size <= maxSizeInBytes;
+}
+
 export async function validateFileContent(file: File): Promise<boolean> {
   try {
     const zip = await JSZip.loadAsync(file);
