@@ -154,7 +154,7 @@ export default function Upload() {
       return false;
     }
 
-    if (!(await validateFileSize(file))) {
+    if (!validateFileSize(file)) {
       setFileError(Intl.t('search.errors.file-too-big'));
       return false;
     }

@@ -54,7 +54,7 @@ export function StationPlugin({
       refetch();
     }
   }, [isExecuteSuccess]);
-  
+
   useEffect(() => {
     if (newPlugin && !isRefetching && !isLoading) {
       setMyPlugin(newPlugin);
