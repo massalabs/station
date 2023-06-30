@@ -18,8 +18,8 @@ func NewLogger() *zap.SugaredLogger {
 		log.Fatal(err)
 	}
 
-	logFilePath := filepath.Join(logDir, "logs", "massastation.log")
-	logDirPath := filepath.Dir(logFilePath)
+	logDirPath := filepath.Join(logDir, "logs")
+	logFilePath := filepath.Join(logDirPath, "massastation.log")
 
 	// Create the log directory if it doesn't exist
 	if err := os.MkdirAll(logDirPath, os.ModePerm); err != nil {
