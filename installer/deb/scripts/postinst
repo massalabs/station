@@ -59,9 +59,9 @@ set_local_dns() {
 
 wait_for_network() {
     counter=0
-    timeout=20  # Timeout in seconds
+    timeout=30  # Timeout in seconds
 
-    while ! ifconfig | grep "192.168." > /dev/null && ((counter < timeout)); do
+    while ! ip a | grep "192.168." > /dev/null && ((counter < timeout)); do
         echo "Waiting for network manager to be up and running"
         sleep 1
         ((counter+=1))
