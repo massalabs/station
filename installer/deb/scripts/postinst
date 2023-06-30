@@ -57,12 +57,26 @@ set_local_dns() {
     echo "DNS configuration complete."
 }
 
+wait_for_network() {
+    counter=0
+    timeout=20  # Timeout in seconds
+
+    while ! ifconfig | grep "192.168." > /dev/null && ((counter < timeout)); do
+        echo "Waiting for network manager to be up and running"
+        sleep 1
+        ((counter+=1))
+    done
+
+    if ((counter >= timeout)); then
+        echo "Timeout reached. Network manager is not available."
+    else
+        echo "Network manager is up and running."
+    fi
+}
+
 # Download and install mkcert, generate a certificate for MassaStation.
 generate_certificate() {
-    while ! ifconfig | grep "192.168." > /dev/null; do
-        echo "waiting for network manager to be up and running"
-        sleep 2
-    done
+    wait_for_network
     curl -sL $MKCERT_URL -o mkcert || fatal "mkcert download failed."
     chmod +x mkcert || fatal "mkcert permission change failed."
 
