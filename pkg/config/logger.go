@@ -18,11 +18,14 @@ func NewLogger() *zap.SugaredLogger {
 		log.Fatal(err)
 	}
 
-	logFilePath := filepath.Join(logDir, "massastation.log")
+	logDirPath := filepath.Join(logDir, "logs")
+	logFilePath := filepath.Join(logDirPath, "massastation.log")
+
 	// Create the log directory if it doesn't exist
-	if err := os.MkdirAll(logDir, os.ModePerm); err != nil {
+	if err := os.MkdirAll(logDirPath, os.ModePerm); err != nil {
 		log.Fatal(err)
 	}
+
 	// Configure log encoder
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder

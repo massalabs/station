@@ -200,6 +200,13 @@ def create_wxs_file():
                             </CreateFolder>
                         </Component>
                     </Directory>
+                    <Directory Id="MassaStationLogs" Name="logs">
+                        <Component Id="CreateLogsDir" Guid="4b24bfe1-c564-47a7-95d5-1268c661ef8a">
+                            <CreateFolder>
+                                <util:PermissionEx User="Users" GenericAll="yes"/>
+                            </CreateFolder>
+                        </Component>
+                    </Directory>
                 </Directory>
                 <Directory Id="AcrylicDNSProxy" Name="Acrylic DNS Proxy">
                     <Component Id="Acrylic" Guid="563952aa-5f05-4c00-b3e0-6c004c36dc77">
@@ -231,6 +238,7 @@ def create_wxs_file():
             <ComponentRef Id="MassaStationServer" />
             <ComponentRef Id="CreateCertsDir" />
             <ComponentRef Id="CreatePluginsDir" />
+            <ComponentRef Id="CreateLogsDir" />
         </Feature>
 
         <Feature Id="DesktopShortcut" Title="Desktop Shortcut" Level="1" Absent="allow">
