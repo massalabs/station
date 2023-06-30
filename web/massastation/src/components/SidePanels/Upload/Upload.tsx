@@ -155,7 +155,6 @@ export default function Upload() {
     }
 
     if (!(await validateFileSize(file))) {
-      console.log('my function is working ....');
       setFileError(Intl.t('search.errors.file-too-big'));
       return false;
     }
