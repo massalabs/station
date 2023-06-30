@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useLocalStorage } from '../../custom/useLocalStorage';
-import { useConfigStore } from '../../store/store';
+import { useLocalStorage } from '@/custom/useLocalStorage';
+import { useConfigStore } from '@/store/store';
 
 import { Navigator, Toast } from '@massalabs/react-ui-kit';
 import { FiCodepen, FiGlobe, FiHome, FiSun, FiMoon } from 'react-icons/fi';
-import { LayoutStation } from '../../layouts/LayoutStation/LayoutStation';
+import { LayoutStation } from '@/layouts/LayoutStation/LayoutStation';
 
-import { PAGES } from '../../const/pages/pages';
+import { PAGES } from '@/const/pages/pages';
 
 type ThemeSettings = {
   [key: string]: {

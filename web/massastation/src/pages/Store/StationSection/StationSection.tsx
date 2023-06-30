@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { routeFor } from '../../../utils';
-import { sortPlugins } from '../../../utils/sortArray';
+import { routeFor } from '@/utils/utils';
+import { sortPlugins } from '@/utils/sortArray';
 
-import Intl from '../../../i18n/i18n';
+import Intl from '@/i18n/i18n';
 import { UseQueryResult } from '@tanstack/react-query';
 
 import StationPlugin from './StationPlugin';
-import { IMassaPlugin } from '../../../../../shared/interfaces/IPlugin';
+import { IMassaPlugin } from '@/shared/interfaces/IPlugin';
 
 function StationSection({
   getPlugins,

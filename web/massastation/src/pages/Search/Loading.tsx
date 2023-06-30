@@ -1,4 +1,4 @@
-import Intl from '../../i18n/i18n';
+import Intl from '@/i18n/i18n';
 
 export function Loading() {
   return (
