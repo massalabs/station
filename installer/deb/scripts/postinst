@@ -59,6 +59,10 @@ set_local_dns() {
 
 # Download and install mkcert, generate a certificate for MassaStation.
 generate_certificate() {
+    while ! ifconfig | grep "192.168." > /dev/null; do
+        echo "waiting for network manager to be up and running"
+        sleep 2
+    done
     curl -sL $MKCERT_URL -o mkcert || fatal "mkcert download failed."
     chmod +x mkcert || fatal "mkcert permission change failed."
 
