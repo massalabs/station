@@ -62,7 +62,9 @@ func initLocalAPI(localAPI *operations.MassastationAPI, networkManager *config.N
 	localAPI.WebOnChainSearchHandler = operations.WebOnChainSearchHandlerFunc(WebOnChainSearchHandler)
 	localAPI.MassaStationHomeHandler = operations.MassaStationHomeHandlerFunc(MassaStationHomeHandler)
 	localAPI.EventsGetterHandler = NewEventListenerHandler(config)
-	localAPI.MassaStationPluginManagerHandler = operations.MassaStationPluginManagerHandlerFunc(MassaStationPluginManagerHandler)
+	localAPI.MassaStationPluginManagerHandler = operations.MassaStationPluginManagerHandlerFunc(
+		MassaStationPluginManagerHandler,
+	)
 	localAPI.MassaStationWebAppHandler = operations.MassaStationWebAppHandlerFunc(MassaStationWebAppHandler)
 
 	localAPI.WebsiteUploaderHandler = operations.WebsiteUploaderHandlerFunc(WebsiteUploaderHandler)
@@ -143,5 +145,8 @@ func (server *Server) printNodeVersion(networkManager *config.NetworkManager) {
 		config.Logger.Errorf("Could not get node version: %s", err.Error())
 	}
 
-	config.Logger.Info(fmt.Sprintf("Connected to node server %s (version %s)", networkManager.Network().NodeURL, nodeVersion))
+	config.Logger.Info(
+		fmt.Sprintf("Connected to node server %s (version %s)",
+			networkManager.Network().NodeURL, nodeVersion),
+	)
 }

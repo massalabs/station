@@ -28,6 +28,7 @@ func (l *logo) Handle(param operations.PluginManagerGetLogoParams) middleware.Re
 		return operations.NewPluginManagerGetLogoNotFound().WithPayload(
 			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("plugin %s not found", param.ID)})
 	}
+
 	info := plgn.Information()
 	logoPath := info.Logo
 
@@ -35,6 +36,7 @@ func (l *logo) Handle(param operations.PluginManagerGetLogoParams) middleware.Re
 	logoFile, err := os.Open(logoPath)
 	if err != nil {
 		config.Logger.Errorf("Error opening logo file: %s", err)
+
 		if err != nil {
 			return operations.NewPluginManagerExecuteCommandNotFound().WithPayload(
 				&models.Error{Code: errorCodePluginLogoNotFound, Message: fmt.Sprintf("plugin %s logo not found", param.ID)})
@@ -46,9 +48,9 @@ func (l *logo) Handle(param operations.PluginManagerGetLogoParams) middleware.Re
 	logoData, err := ioutil.ReadAll(logoFile)
 	if err != nil {
 		config.Logger.Errorf("Error reading logo file: %s", err)
+
 		return operations.NewPluginManagerGetLogoInternalServerError().WithPayload(
 			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin logo error: %s", err.Error())})
-
 	}
 
 	return utils.NewCustomResponder(logoData, utils.ContentType(logoPath), http.StatusOK)

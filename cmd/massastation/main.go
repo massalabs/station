@@ -20,7 +20,11 @@ func ParseFlags() api.StartServerFlags {
 
 	_, err := config.GetConfigDir()
 	if err != nil {
-		config.Logger.Error("Unable to read config dir: %s\n%s", err, "MassaStation can't run without a config directory.\nPlease reinstall MassaStation using the installer at https://github.com/massalabs/station and try again.")
+		config.Logger.Error(
+			"Unable to read config dir: %s\n%s",
+			err,
+			`MassaStation can't run without a config directory.\n
+			Please reinstall MassaStation using the installer at https://github.com/massalabs/station and try again.`)
 	}
 
 	certDir, err := config.GetCertDir()
@@ -51,6 +55,7 @@ func ParseFlags() api.StartServerFlags {
 func main() {
 	config.Logger = config.NewLogger()
 	defer config.Logger.Sync()
+
 	flags := ParseFlags()
 	if flags.Version {
 		config.Logger.Infof("Version:%s", config.Version)
