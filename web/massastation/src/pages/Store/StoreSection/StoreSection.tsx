@@ -1,16 +1,13 @@
 import { useEffect } from 'react';
-import { useResource } from '../../../custom/api';
 import { useNavigate } from 'react-router-dom';
-import { routeFor } from '../../../utils';
-import Intl from '../../../i18n/i18n';
+import { UseQueryResult } from '@tanstack/react-query';
+import { useResource } from '@/custom/api';
+import { routeFor } from '@/utils/utils';
+import Intl from '@/i18n/i18n';
 
 import StorePlugin from './StorePlugin';
-import { UseQueryResult } from '@tanstack/react-query';
-import { sortPlugins } from '../../../utils/sortArray';
-import {
-  IMassaPlugin,
-  IMassaStore,
-} from '../../../../../shared/interfaces/IPlugin';
+import { sortPlugins } from '@/utils/sortArray';
+import { IMassaPlugin, IMassaStore } from '@/shared/interfaces/IPlugin';
 
 function StoreSection({
   getPlugins,

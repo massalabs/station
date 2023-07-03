@@ -1,14 +1,15 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { routeFor } from '../../utils';
-import Intl from '../../i18n/i18n';
-import { useResource } from '../../custom/api';
-import { DomainModel } from '../../models/DomainModel';
-import { FAVORITES_WEBSITES } from '../../utils/massaConstants';
+import { routeFor } from '../../utils/utils';
+import Intl from '@/i18n/i18n';
 
-import DomainModelItem from './DomainModelItem/DomainModelItem';
+import { useResource } from '@/custom/api';
+import { DomainModel } from '@/models/DomainModel';
+import { Upload } from '@/components';
+import { FAVORITES_WEBSITES } from '@/const';
+
 import { Loading } from './Loading';
-import { Upload } from '../../components/SidePanel/Upload/Upload';
+import DomainModelItem from './DomainModelItem/DomainModelItem';
 
 export function Search() {
   const navigate = useNavigate();

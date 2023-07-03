@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import Intl from '../../../i18n/i18n';
 import { usePut, useResource } from '../../../custom/api';
-import { routeFor } from '../../../utils';
+import { routeFor } from '../../../utils/utils';
 import { parseForm } from '../../../utils/ParseForm';
 import { useAccountStore } from '../../../store/store';
 import { AccountObject } from '../../../models/AccountModel';

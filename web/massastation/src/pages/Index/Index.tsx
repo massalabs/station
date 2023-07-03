@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UseQueryResult } from '@tanstack/react-query';
-import { routeFor } from '../../utils';
-import { useConfigStore } from '../../store/store';
-import Intl from '../../i18n/i18n';
-import { usePost, useResource } from '../../custom/api';
+import { routeFor } from '@/utils/utils';
+import { useConfigStore } from '@/store/store';
+import Intl from '@/i18n/i18n';
+import { usePost, useResource } from '@/custom/api';
 
 import {
   IMassaPlugin,
   IMassaStore,
 } from '../../../../shared/interfaces/IPlugin';
-import { MASSA_WALLET } from '../../const/const';
+import { MASSA_WALLET } from '@/const/const';
 
 import {
   Button,
