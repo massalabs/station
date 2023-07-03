@@ -44,16 +44,11 @@ type Manager struct {
 }
 
 // NewManager instantiates a manager struct.
-func NewManager() (*Manager, error) {
+func NewManager() *Manager {
 	//nolint:exhaust,exhaustruct
 	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string)}
 
-	err := manager.RunAll()
-	if err != nil {
-		return manager, fmt.Errorf("while running all plugins: %w", err)
-	}
-
-	return manager, nil
+	return manager
 }
 
 // ID returns the list of all the plugin correlationID.
@@ -128,8 +123,10 @@ func (m *Manager) Delete(correlationID string) error {
 	m.mutex.Lock()
 
 	// Ignore Stop errors. We want to delete the plugin anyway
-	//nolint:errcheck
-	plgn.Stop()
+	err = plgn.Stop()
+	if err != nil {
+		config.Logger.Warnf("stopping plugin before delete %s: %s\n", correlationID, err)
+	}
 
 	alias := Alias(plgn.info.Author, plgn.info.Name)
 
@@ -202,6 +199,17 @@ func (m *Manager) RunAll() error {
 	}
 
 	return nil
+}
+
+func (m *Manager) Stop() {
+	config.Logger.Info("Stopping all plugins...")
+
+	for _, plugin := range m.plugins {
+		err := plugin.Stop()
+		if err != nil {
+			config.Logger.Warnf("Error while stopping plugin %s: %s", plugin.info.Name, err)
+		}
+	}
 }
 
 // DownloadPlugin downloads a plugin from a given URL.

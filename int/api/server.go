@@ -16,6 +16,7 @@ import (
 	"github.com/massalabs/station/int/api/websites"
 	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/node"
+	"github.com/massalabs/station/pkg/plugin"
 	"github.com/massalabs/station/pkg/store"
 )
 
@@ -42,7 +43,7 @@ func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 	}
 }
 
-func initLocalAPI(localAPI *operations.MassastationAPI, networkManager *config.NetworkManager) {
+func initLocalAPI(localAPI *operations.MassastationAPI, networkManager *config.NetworkManager, pluginManager *plugin.Manager) {
 	config := networkManager.Network()
 
 	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunctionHandler(config)
@@ -70,7 +71,7 @@ func initLocalAPI(localAPI *operations.MassastationAPI, networkManager *config.N
 	localAPI.GetNetworkConfigHandler = network.NewGetNetworkConfigHandler(networkManager)
 
 	pluginstore.InitializePluginStoreAPI(localAPI)
-	myplugin.InitializePluginAPI(localAPI)
+	myplugin.InitializePluginAPI(localAPI, pluginManager)
 }
 
 type Server struct {
@@ -105,10 +106,10 @@ func NewServer(flags StartServerFlags) *Server {
 
 // Starts the server.
 // This function starts the server in a new goroutine to avoid blocking the main thread.
-func (server *Server) Start(networkManager *config.NetworkManager) {
+func (server *Server) Start(networkManager *config.NetworkManager, pluginManager *plugin.Manager) {
 	server.printNodeVersion(networkManager)
 
-	initLocalAPI(server.localAPI, networkManager)
+	initLocalAPI(server.localAPI, networkManager, pluginManager)
 	server.api.ConfigureMassaStationAPI(*networkManager.Network(), server.shutdown)
 
 	go func() {
@@ -122,6 +123,8 @@ func (server *Server) Start(networkManager *config.NetworkManager) {
 
 // Stops the server and waits for it to finish.
 func (server *Server) Stop() {
+	config.Logger.Info("Stopping server...")
+
 	if err := server.api.Shutdown(); err != nil {
 		config.Logger.Fatal(err.Error())
 	}

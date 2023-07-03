@@ -1,29 +1,21 @@
 package myplugin
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/pkg/plugin"
 )
 
-func InitializePluginAPI(api *operations.MassastationAPI) {
-	manager, err := plugin.NewManager()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "WARN: while starting plugin manager %s.\n", err)
-	}
-
-	api.PluginManagerInstallHandler = newInstall(manager)
-	api.PluginManagerExecuteCommandHandler = newExecute(manager)
-	api.PluginManagerGetInformationHandler = newInfo(manager)
-	api.PluginManagerListHandler = newList(manager)
-	api.PluginManagerRegisterHandler = newRegister(manager)
-	api.PluginManagerUninstallHandler = newUninstall(manager)
-	api.PluginManagerGetLogoHandler = newLogo(manager)
+func InitializePluginAPI(api *operations.MassastationAPI, pluginManager *plugin.Manager) {
+	api.PluginManagerInstallHandler = newInstall(pluginManager)
+	api.PluginManagerExecuteCommandHandler = newExecute(pluginManager)
+	api.PluginManagerGetInformationHandler = newInfo(pluginManager)
+	api.PluginManagerListHandler = newList(pluginManager)
+	api.PluginManagerRegisterHandler = newRegister(pluginManager)
+	api.PluginManagerUninstallHandler = newUninstall(pluginManager)
+	api.PluginManagerGetLogoHandler = newLogo(pluginManager)
 
 	// This endpoint is not defined by the go-swagger API.
-	plugin.Handler = *plugin.NewAPIHandler(manager)
+	plugin.Handler = *plugin.NewAPIHandler(pluginManager)
 }
 
 const (
