@@ -24,6 +24,7 @@ import {
 import {
   validateDescriptionLength,
   validateFileContent,
+  validateFileSize,
   validateFileExtension,
   validateWebsiteDescription,
   validateWebsiteName,
@@ -150,6 +151,11 @@ export default function Upload() {
 
     if (!(await validateFileContent(file))) {
       setFileError(Intl.t('search.errors.invalid-file-content'));
+      return false;
+    }
+
+    if (!validateFileSize(file)) {
+      setFileError(Intl.t('search.errors.file-too-big'));
       return false;
     }
 

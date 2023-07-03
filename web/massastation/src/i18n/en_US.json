@@ -50,7 +50,8 @@
       "invalid-file-extension": "File format must be a \".zip\".",
       "invalid-file-content": "Website file must contain index.html at the source.",
       "upload-error": "Failed to upload website.",
-      "website-name-already-exists": "Website name already taken."
+      "website-name-already-exists": "Website name already taken.",
+      "file-too-big": "Website zip file is too big. Maximum size allowed is 1.5 MB."
     }
   },
   "unexpected-error": {
