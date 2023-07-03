@@ -30,6 +30,7 @@ ACRYLIC_CONFIG_SCRIPT = "configure_acrylic.bat"
 NIC_CONFIG_SCRIPT = "configure_network_interfaces.bat"
 NIC_RESET_SCRIPT = "reset_network_interfaces.bat"
 GEN_CERT_SCRIPT = "generate_certificate.bat"
+RUN_VBS = "run.vbs"
 
 WIX_DIR = "wixtoolset"
 
@@ -129,6 +130,10 @@ def move_binaries():
         os.path.join("windows", "scripts", GEN_CERT_SCRIPT),
         os.path.join(BUILD_DIR, GEN_CERT_SCRIPT),
     )
+    shutil.copy(
+        os.path.join("windows", "scripts", RUN_VBS),
+        os.path.join(BUILD_DIR, RUN_VBS),
+    )
 
 
 def create_wxs_file():
@@ -187,6 +192,7 @@ def create_wxs_file():
                         <File Id="NICConfigScript" Name="{NIC_CONFIG_SCRIPT}" Source="{BUILD_DIR}\\{NIC_CONFIG_SCRIPT}" />
                         <File Id="NICResetScript" Name="{NIC_RESET_SCRIPT}" Source="{BUILD_DIR}\\{NIC_RESET_SCRIPT}" />
                         <File Id="GenCertScript" Name="{GEN_CERT_SCRIPT}" Source="{BUILD_DIR}\\{GEN_CERT_SCRIPT}" />
+                        <File Id="MassaStationRunScript" Name="{RUN_VBS}" Source="{BUILD_DIR}\\{RUN_VBS}" />
                     </Component>
                     <Directory Id="MassaStationCerts" Name="certs">
                         <Component Id="CreateCertsDir" Guid="e96619b3-48a7-4629-8a19-e1c8270b331c">
@@ -219,7 +225,7 @@ def create_wxs_file():
             <Directory Id="ProgramMenuFolder" Name="Programs">
                 <Directory Id="ApplicationProgramsFolder" Name="{MANUFACTURER}">
                     <Component Id="ApplicationShortcutProgramMenu" Guid="e2f5b2a0-0b0a-4b1e-9b0e-9b0e9b0e9b0e">
-                        <Shortcut Id="ApplicationStartMenuShortcut" Name="{PRODUCT_NAME}" Target="[#MassaStationAppEXE]" WorkingDirectory="INSTALLDIR" />
+                        <Shortcut Id="ApplicationStartMenuShortcut" Name="{PRODUCT_NAME}" Target="[#MassaStationRunScript]" WorkingDirectory="INSTALLDIR" />
                         <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
                         <RegistryValue Root="HKCU" Key="Software\{MANUFACTURER}\{PRODUCT_NAME}" Name="installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
@@ -229,7 +235,7 @@ def create_wxs_file():
 
             <Directory Id="DesktopFolder" Name="Desktop">
                 <Component Id="ApplicationShortcutDesktop" Guid="3e6f0b0e-1e0b-5a3c-7b0c-9c007a32f0e9">
-                    <Shortcut Id="ApplicationDesktopShortcut" Name="{PRODUCT_NAME}" Target="[#MassaStationAppEXE]" WorkingDirectory="INSTALLDIR" />
+                    <Shortcut Id="ApplicationDesktopShortcut" Name="{PRODUCT_NAME}" Target="[#MassaStationRunScript]" WorkingDirectory="INSTALLDIR" />
                 </Component>
             </Directory>
         </Directory>
@@ -258,7 +264,7 @@ def create_wxs_file():
             Execute="immediate" 
             Return="asyncNoWait"
             Impersonate="yes"
-            FileKey="MassaStationAppEXE"
+            FileKey="MassaStationRunScript"
             ExeCommand=""
         />
 
