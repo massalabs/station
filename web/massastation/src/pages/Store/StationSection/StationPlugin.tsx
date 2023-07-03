@@ -1,5 +1,5 @@
-import { SyntheticEvent, useEffect, useState } from 'react';
-import { useDelete, usePost, useResource } from '@/custom/api';
+import { SyntheticEvent, useEffect } from 'react';
+import { useDelete, usePost } from '@/custom/api';
 
 import { Button, Certificate, Plugin } from '@massalabs/react-ui-kit';
 import { FiArrowUpRight, FiRefreshCw, FiTrash2 } from 'react-icons/fi';
@@ -20,19 +20,18 @@ const baseAPI = import.meta.env.VITE_BASE_API;
 
 export function StationPlugin({
   plugin,
-  fetchPlugins,
+  refetch,
 }: {
   plugin: IMassaPlugin;
-  fetchPlugins: () => void;
+  refetch: () => void;
 }) {
-  const [myPlugin, setMyPlugin] = useState<IMassaPlugin>(plugin);
-  const { author, name, home, status, updatable, id } = myPlugin;
-  const {
-    data: newPlugin,
-    refetch,
-    isLoading,
-    isRefetching,
-  } = useResource<IMassaPlugin>(`plugin-manager/${id}`);
+  // const [myPlugin, setMyPlugin] = useState<IMassaPlugin>(plugin);
+  const { author, name, home, status, updatable, id } = plugin;
+  // const {
+  // data: newPlugin,
+  // isLoading,
+  // isRefetching,
+  // } = useResource<IMassaPlugin>(`plugin-manager/${id}`);
 
   const {
     mutate: mutateExecute,
@@ -48,19 +47,15 @@ export function StationPlugin({
 
   useEffect(() => {
     if (isExecuteSuccess) {
+      console.log('isExecuteSuccess');
       refetch();
     }
   }, [isExecuteSuccess]);
 
   useEffect(() => {
-    if (newPlugin && !isRefetching && !isLoading) {
-      setMyPlugin(newPlugin);
-    }
-  }, [isRefetching]);
-
-  useEffect(() => {
     if (deleteSuccess) {
-      fetchPlugins();
+      console.log('delete success');
+      refetch();
     }
   }, [deleteSuccess]);
 

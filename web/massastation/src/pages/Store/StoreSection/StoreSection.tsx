@@ -14,21 +14,22 @@ function StoreSection({
 }: {
   getPlugins: UseQueryResult<IMassaPlugin[], undefined>;
 }) {
-  const navigate = useNavigate();
   const {
     error,
     data: plugins,
     isLoading,
   } = useResource<IMassaStore[]>('plugin-store');
 
-  const { refetch, data: myPlugins } = getPlugins;
+  const { data: myPlugins, refetch } = getPlugins;
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (error) {
-      navigate(routeFor('error'));
-    }
-  });
+    console.log('myPlugins', myPlugins);
+    console.log('plugins', plugins);
+  }, [myPlugins, plugins]);
 
+  // Checks to see if plugin is already downloaded
   const isDownloaded = (plugin: IMassaStore) => {
     return (
       myPlugins?.some((myPlugin) => {
@@ -37,6 +38,12 @@ function StoreSection({
       }) || false
     );
   };
+
+  useEffect(() => {
+    if (error) {
+      navigate(routeFor('error'));
+    }
+  });
 
   return (
     <>

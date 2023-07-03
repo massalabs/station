@@ -20,10 +20,22 @@ function StationSection({
   const {
     error,
     data: plugins,
-    refetch: refetchPlugins,
+    refetch,
     isLoading,
     isRefetching,
+    isSuccess,
   } = getPlugins;
+
+  // function refetchingPlugins() {
+  //   console.log(plugins);
+  //   console.log('refetching plugins');
+  //   refetchPlugins();
+  // }
+
+  useEffect(() => {
+    console.log('refetching', plugins);
+    refetch();
+  }, [plugins, isSuccess]);
 
   useEffect(() => {
     if (error) {
@@ -40,7 +52,7 @@ function StationSection({
               <StationPlugin
                 key={index}
                 plugin={plugin}
-                fetchPlugins={() => refetchPlugins()}
+                refetch={() => refetch()}
               />
             ))}
         </div>
@@ -52,7 +64,7 @@ function StationSection({
                 <StationPlugin
                   key={index}
                   plugin={plugin}
-                  fetchPlugins={() => refetchPlugins()}
+                  refetch={() => refetch()}
                 />
               ))}
             </div>
