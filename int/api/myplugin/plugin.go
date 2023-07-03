@@ -24,8 +24,8 @@ const (
 	errorCodePluginInstallationInvalidSource = "Plugin-0010"
 
 	errorCodePluginRegisterUnknown           = "Plugin-0020"
-	errorCodePluginRegisterInvalidData       = "Plugin-0020"
-	errorCodePluginRegisterAlreadyRegistered = "Plugin-0020"
+	errorCodePluginRegisterInvalidData       = "Plugin-0021"
+	errorCodePluginRegisterAlreadyRegistered = "Plugin-0022"
 
 	errorCodePluginExecuteCmdBadRequest = "Plugin-0030"
 
