@@ -264,8 +264,7 @@ def create_wxs_file():
             Execute="immediate" 
             Return="asyncNoWait"
             Impersonate="yes"
-            FileKey="MassaStationRunScript"
-            ExeCommand=""
+            VBScriptCall="{BUILD_DIR}\\{RUN_VBS}"
         />
 
         <CustomAction Id="ExtractAcrylic"
