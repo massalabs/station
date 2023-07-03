@@ -1,14 +1,9 @@
 package utils
 
-import (
-	"path/filepath"
-	"strings"
-)
-
 func pluginFileName(archiveName string) string {
-	return strings.Split(archiveName, ".zip")[0] + ".exe"
+	return pluginFileNameWithoutExtension(archiveName) + ".exe"
 }
 
 func pluginPath(pluginDirectory string, pluginName string) string {
-	return filepath.Join(pluginDirectory, pluginName) + ".exe"
+	return pluginPathWithoutExtension(pluginDirectory, pluginName) + ".exe"
 }
