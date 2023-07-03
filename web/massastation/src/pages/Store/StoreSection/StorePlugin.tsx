@@ -24,6 +24,7 @@ function StorePlugin(props: StorePluginProps) {
     description,
     file: { url },
   } = plugin;
+
   const {
     mutate,
     isSuccess: isInstallSuccess,
@@ -33,10 +34,15 @@ function StorePlugin(props: StorePluginProps) {
   const params = { source: url };
 
   useEffect(() => {
-    if (isInstallSuccess) {
-      refetch();
+    if (isInstallLoading) {
+      console.log('install loading', plugin);
     }
-  }, [isInstallSuccess]);
+    if (isInstallSuccess) {
+      console.log('install success');
+      console.log('refetch', refetch);
+      // refetch();
+    }
+  }, [isInstallSuccess, isInstallLoading]);
 
   const argsStore = {
     preIcon: <img src={logo} alt="plugin-logo" />,

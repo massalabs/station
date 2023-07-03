@@ -24,12 +24,6 @@ function StoreSection({
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log('myPlugins', myPlugins);
-    console.log('plugins', plugins);
-  }, [myPlugins, plugins]);
-
-  // Checks to see if plugin is already downloaded
   const isDownloaded = (plugin: IMassaStore) => {
     return (
       myPlugins?.some((myPlugin) => {

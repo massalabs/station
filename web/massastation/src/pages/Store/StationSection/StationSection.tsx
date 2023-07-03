@@ -26,12 +26,6 @@ function StationSection({
     isSuccess,
   } = getPlugins;
 
-  // function refetchingPlugins() {
-  //   console.log(plugins);
-  //   console.log('refetching plugins');
-  //   refetchPlugins();
-  // }
-
   useEffect(() => {
     console.log('refetching', plugins);
     refetch();
