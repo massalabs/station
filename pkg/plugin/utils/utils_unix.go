@@ -2,15 +2,10 @@
 
 package utils
 
-import (
-	"path/filepath"
-	"strings"
-)
-
 func pluginFileName(archiveName string) string {
-	return strings.Split(archiveName, ".zip")[0]
+	return pluginFileNameWithoutExtension(archiveName)
 }
 
 func pluginPath(pluginDirectory string, pluginName string) string {
-	return filepath.Join(pluginDirectory, pluginName)
+	return pluginPathWithoutExtension(pluginDirectory, pluginName)
 }
