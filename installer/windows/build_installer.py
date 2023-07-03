@@ -259,12 +259,13 @@ def create_wxs_file():
             <ComponentRef Id="Acrylic" />
         </Feature>
 
+        <Binary Id='LaunchMassaStation' SourceFile='MassaStationRunScript' />
         <CustomAction
-            Id="LaunchMassaStation"
-            Execute="immediate" 
-            Return="asyncNoWait"
-            Impersonate="yes"
-            VBScriptCall="{BUILD_DIR}\\{RUN_VBS}"
+            Id='LaunchMassaStation'
+            VBScriptCall=''
+            BinaryKey='LaunchMassaStation'
+            Execute='immediate'
+            Return='ignore'
         />
 
         <CustomAction Id="ExtractAcrylic"
