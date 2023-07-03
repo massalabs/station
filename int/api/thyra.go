@@ -42,7 +42,11 @@ func WebsiteUploaderHandler(params operations.WebsiteUploaderParams) middleware.
 	if params.Resource == indexHTML {
 		maxArchiveSize := websites.GetMaxArchiveSize()
 
-		return utils.NewTemplateResponder(string(resource), utils.ContentType(params.Resource), WebSiteCreatorData{maxArchiveSize})
+		return utils.NewTemplateResponder(
+			string(resource),
+			utils.ContentType(params.Resource),
+			WebSiteCreatorData{maxArchiveSize},
+		)
 	}
 
 	return utils.NewCustomResponder(resource, utils.ContentType(params.Resource), http.StatusOK)

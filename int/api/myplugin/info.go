@@ -26,8 +26,11 @@ func (i *info) Handle(param operations.PluginManagerGetInformationParams) middle
 		return operations.NewPluginManagerGetInformationNotFound().WithPayload(
 			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
 	}
+
 	info := plgn.Information()
+
 	var payload *models.Plugin
+
 	if info != nil {
 		pluginURL := fmt.Sprintf("%s%s/", plugin.EndpointPattern, plugin.Alias(info.Author, info.Name))
 
@@ -43,5 +46,6 @@ func (i *info) Handle(param operations.PluginManagerGetInformationParams) middle
 			Status:      plgn.Status().String(),
 		}
 	}
+
 	return operations.NewPluginManagerGetInformationOK().WithPayload(payload)
 }

@@ -22,9 +22,8 @@ func (l *list) Handle(_ operations.PluginManagerListParams) middleware.Responder
 
 	payload := make([]*models.Plugin, len(ids))
 
-	for index, id := range ids {
-
-		plgn, err := l.manager.Plugin(id)
+	for index, correlationID := range ids {
+		plgn, err := l.manager.Plugin(correlationID)
 		if err != nil {
 			return operations.NewPluginManagerListNotFound().WithPayload(
 				&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
@@ -36,7 +35,7 @@ func (l *list) Handle(_ operations.PluginManagerListParams) middleware.Responder
 			pluginURL := fmt.Sprintf("%s%s/", plugin.EndpointPattern, plugin.Alias(info.Author, info.Name))
 
 			payload[index] = &models.Plugin{
-				ID:          id,
+				ID:          correlationID,
 				Name:        info.Name,
 				Author:      info.Author,
 				Description: info.Description,
@@ -48,5 +47,6 @@ func (l *list) Handle(_ operations.PluginManagerListParams) middleware.Responder
 			}
 		}
 	}
+
 	return operations.NewPluginManagerListOK().WithPayload(payload)
 }
