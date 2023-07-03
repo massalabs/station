@@ -1,4 +1,5 @@
 import { SyntheticEvent, useEffect, useState } from 'react';
+import { useDelete, usePost, useResource } from '@/custom/api';
 
 import { Button, Certificate, Plugin } from '@massalabs/react-ui-kit';
 import { FiArrowUpRight, FiRefreshCw, FiTrash2 } from 'react-icons/fi';
@@ -7,13 +8,9 @@ import {
   PLUGIN_START,
   PLUGIN_STOP,
   PLUGIN_UPDATE,
-} from '../../../utils/massaConstants';
+} from '@/const';
 
-import { useDelete, usePost, useResource } from '../../../custom/api';
-import {
-  IMassaPlugin,
-  PluginStatus,
-} from '../../../../../shared/interfaces/IPlugin';
+import { IMassaPlugin, PluginStatus } from '../../../../../shared/';
 
 interface PluginExecuteRequest {
   command: string;

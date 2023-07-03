@@ -18,16 +18,13 @@ import {
 import { FiCodepen, FiGlobe } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import {
-  IMassaPlugin,
-  IMassaStore,
-} from '../../../../shared/interfaces/IPlugin';
-import Intl from '../../i18n/i18n';
-import { routeFor } from '../../utils';
-import { useConfigStore } from '../../store/store';
+import { IMassaPlugin, IMassaStore } from '@/shared/interfaces/IPlugin';
+import Intl from '@/i18n/i18n';
+import { routeFor } from '@/utils/utils';
+import { useConfigStore } from '@/store/store';
 import { usePost, useResource } from '../../custom/api';
 import { UseQueryResult } from '@tanstack/react-query';
-import { MASSA_WALLET } from '../../const/const';
+import { MASSA_WALLET } from '@/const';
 
 export function Index() {
   const plugins = useResource<IMassaPlugin[]>('plugin-manager');

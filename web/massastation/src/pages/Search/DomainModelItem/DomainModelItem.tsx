@@ -1,4 +1,4 @@
-import { DomainModel } from '../../../models/DomainModel';
+import { DomainModel } from '@/models/DomainModel';
 
 import { Description } from '@massalabs/react-ui-kit';
 import { FiGlobe } from 'react-icons/fi';

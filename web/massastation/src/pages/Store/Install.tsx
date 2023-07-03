@@ -1,13 +1,13 @@
 import { BaseSyntheticEvent, SyntheticEvent, useEffect, useState } from 'react';
-import Intl from '../../i18n/i18n';
+import Intl from '@/i18n/i18n';
 
 import { Button, Input, SidePanel, Spinner } from '@massalabs/react-ui-kit';
-import { isZipFile } from '../../utils/massaConstants';
+import { isZipFile } from '@/const';
 
-import { usePost } from '../../custom/api';
+import { usePost } from '@/custom/api';
 import { UseQueryResult } from '@tanstack/react-query';
 
-import { IMassaPlugin } from '../../../../shared/interfaces/IPlugin';
+import { IMassaPlugin } from '@/shared/interfaces/IPlugin';
 
 function Install({
   getPlugins,

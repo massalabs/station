@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import Intl from '../i18n/i18n';
-import { routeFor } from '../utils';
+import Intl from '@/i18n/i18n';
+import { routeFor } from '@/utils/utils';
 
 export function Error() {
   return (

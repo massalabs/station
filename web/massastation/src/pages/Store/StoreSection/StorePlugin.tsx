@@ -1,9 +1,10 @@
-import { Certificate, Plugin } from '@massalabs/react-ui-kit';
-import { massalabsNomination } from '../../../utils/massaConstants';
-import { FiDownload } from 'react-icons/fi';
-import { usePost } from '../../../custom/api';
 import { useEffect } from 'react';
-import { IMassaStore } from '../../../../../shared/interfaces/IPlugin';
+import { usePost } from '@/custom/api';
+
+import { Certificate, Plugin } from '@massalabs/react-ui-kit';
+import { massalabsNomination } from '@/const';
+import { FiDownload } from 'react-icons/fi';
+import { IMassaStore } from '@/shared/interfaces/IPlugin';
 
 interface StorePluginProps {
   plugin: IMassaStore;
