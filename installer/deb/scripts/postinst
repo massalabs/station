@@ -59,9 +59,9 @@ set_local_dns() {
 
 wait_for_network() {
     counter=0
-    timeout=30  # Timeout in seconds
+    timeout=30 # Timeout in seconds
 
-    while ! ip a | grep "192.168." > /dev/null && ((counter < timeout)); do
+    while [[ $(nmcli networking connectivity check) == "none" ]]; do
         echo "Waiting for network manager to be up and running"
         sleep 1
         ((counter+=1))
@@ -78,7 +78,7 @@ generate_certificate() {
     curl -sL $MKCERT_URL -o mkcert || fatal "mkcert download failed."
     chmod +x mkcert || fatal "mkcert permission change failed."
 
-    # We ensure that CAROOT is set. Otherwise, mkcert installation will fail. 
+    # We ensure that CAROOT is set. Otherwise, mkcert installation will fail.
     # It especially happens on systems that install packages in sandboxed environments.
     export CAROOT=$(./mkcert -CAROOT)
     if [[ -z $CAROOT ]]; then
