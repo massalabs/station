@@ -123,8 +123,10 @@ func (m *Manager) Delete(correlationID string) error {
 	m.mutex.Lock()
 
 	// Ignore Stop errors. We want to delete the plugin anyway
-	//nolint:errcheck
-	plgn.Stop()
+	err = plgn.Stop()
+	if err != nil {
+		config.Logger.Warnf("stopping plugin before delete %s: %s\n", correlationID, err)
+	}
 
 	alias := Alias(plgn.info.Author, plgn.info.Name)
 
