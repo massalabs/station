@@ -2,7 +2,6 @@ package myplugin
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
@@ -25,35 +24,37 @@ func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) mi
 
 	config.Logger.Debugf("[POST /plugin-manager/%s/execute] command: %s", params.ID, cmd)
 
-	plugin, err := e.manager.Plugin(params.ID)
+	plgn, err := e.manager.Plugin(params.ID)
 	if err != nil {
 		return operations.NewPluginManagerExecuteCommandNotFound().WithPayload(
 			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
 	}
 
-	status := plugin.Status()
-
-	pluginName := filepath.Base(plugin.BinPath)
+	status := plgn.Status()
+	pluginName := plgn.Information().Name
+	pluginAuthor := plgn.Information().Author
+	alias := plugin.Alias(pluginAuthor, pluginName)
 
 	switch cmd {
 	case "start":
-		err := plugin.Start()
+		err := plgn.Start()
 		if err != nil {
 			return executeFailed(cmd, status,
 				fmt.Sprintf("Error while starting plugin %s: %s.\n", pluginName, err))
 		}
 	case "stop":
-		err := plugin.Stop()
+		err := plgn.Stop()
 		if err != nil {
 			return executeFailed(cmd, status, fmt.Sprintf("Error while stopping plugin %s: %s.\n", pluginName, err))
 		}
+		err = e.manager.RemoveAlias(alias)
 	case "restart":
-		err := plugin.Stop()
+		err := plgn.Stop()
 		if err != nil {
 			return executeFailed(cmd, status, fmt.Sprintf("Error while stopping plugin %s: %s.\n", pluginName, err))
 		}
-
-		err = plugin.Start()
+		err = e.manager.RemoveAlias(alias)
+		err = plgn.Start()
 		if err != nil {
 			return executeFailed(cmd, status,
 				fmt.Sprintf("Error while restarting plugin %s: %s.\n", pluginName, err))
