@@ -31,6 +31,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"time"
+
+	"github.com/massalabs/station/pkg/config"
 )
 
 const privateKeySizeInBits = 2048
@@ -44,6 +46,27 @@ func wrapAndPrint(msg string, err error) error {
 	fmt.Fprintf(os.Stderr, "%s: %v", wrappingMsg, err)
 
 	return fmt.Errorf("%s: %w", wrappingMsg, err)
+}
+
+func Check() error {
+	certCa := CA{}
+
+	err := certCa.Load()
+	if err != nil {
+		// non blocking error
+		config.Logger.Warnf("failed to load the CA: %s.", err)
+		config.Logger.Warn("Station will only work using http, or you will have to add the CA to your browser manually.")
+	}
+
+	if !certCa.IsKnownByOS() {
+		err := certCa.AddToOS()
+		if err != nil {
+			// non blocking error
+			config.Logger.Warnf("failed to add the CA to the operating system: %s.", err)
+		}
+	}
+
+	return nil
 }
 
 // GenerateTLS processes an SNI Hello request by generating a dynamic certificate.
