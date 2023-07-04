@@ -14,6 +14,8 @@ func checkCertificate() error {
 		// non blocking error
 		Logger.Warnf("failed to load the CA: %s.", err)
 		Logger.Warn("Station will only work using http, or you will have to add the CA to your browser manually.")
+
+		return nil
 	}
 
 	if !certCa.IsKnownByOS() {
