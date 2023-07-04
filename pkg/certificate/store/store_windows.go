@@ -19,7 +19,6 @@ var (
 	procCertAddEncodedCertificateToStore = modcrypt32.NewProc("CertAddEncodedCertificateToStore")
 	procCertCloseStore                   = modcrypt32.NewProc("CertCloseStore")
 	procCertDeleteCertificateFromStore   = modcrypt32.NewProc("CertDeleteCertificateFromStore")
-	procCertDuplicateCertificateContext  = modcrypt32.NewProc("CertDuplicateCertificateContext")
 	procCertEnumCertificatesInStore      = modcrypt32.NewProc("CertEnumCertificatesInStore")
 	procCertOpenSystemStoreW             = modcrypt32.NewProc("CertOpenSystemStoreW")
 )
@@ -98,9 +97,9 @@ func addCertificateToStore(store uintptr, cert *x509.Certificate) error {
 	}
 
 	_, _, err := procCertAddEncodedCertificateToStore.Call(
-		uintptr(w),
+		uintptr(store),
 		uintptr(syscall.X509_ASN_ENCODING|syscall.PKCS_7_ASN_ENCODING),
-		uintptr(unsafe.Pointer(cert.Raw[0])),
+		uintptr(unsafe.Pointer(&cert.Raw[0])),
 		uintptr(len(cert.Raw)),
 		3,
 		0,
@@ -136,7 +135,7 @@ func deleteCertificateFromStore(store uintptr, cert *x509.Certificate) error {
 		certX509, err := x509.ParseCertificate(certBytes)
 
 		// Ignore parsing errors
-		if err != nil || parsedCert.SerialNumber == nil {
+		if err != nil || x509.SerialNumber == nil {
 			continue
 		}
 
