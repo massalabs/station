@@ -63,6 +63,11 @@ func main() {
 		os.Exit(0)
 	}
 
+	err := config.Check()
+	if err != nil {
+		config.Logger.Fatalf("Error with you current system configuration: %s", err.Error())
+	}
+
 	networkManager, err := config.NewNetworkManager()
 	if err != nil {
 		config.Logger.Fatalf("Failed to create NetworkManager:%s", err.Error())
