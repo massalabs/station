@@ -8,7 +8,6 @@ import (
 	"github.com/massalabs/station/int/api"
 	"github.com/massalabs/station/int/systray"
 	"github.com/massalabs/station/int/systray/update"
-	"github.com/massalabs/station/pkg/certificate"
 	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/plugin"
 )
@@ -64,7 +63,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	err := certificate.Check()
+	err := config.Check()
 	if err != nil {
 		config.Logger.Fatalf("Error with you current system configuration: %s", err.Error())
 	}

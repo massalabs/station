@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"syscall"
 	"unsafe"
-
-	"github.com/massalabs/station/pkg/config"
 )
 
 const (
@@ -72,9 +70,7 @@ func openStore() (uintptr, error) {
 
 	store, _, err := procCertOpenSystemStoreW.Call(0, uintptr(unsafe.Pointer(rootStr)))
 	if store == 0 && err != nil {
-		config.Logger.Warnf("procCertOpenSystemStoreW: %w", err)
 		return 0, fmt.Errorf("failed to procCertOpenSystemStoreW: %w", err)
-
 	}
 
 	return store, nil
@@ -87,9 +83,7 @@ func closeStore(store uintptr) error {
 
 	ret, _, err := procCertCloseStore.Call(store, 0)
 	if ret == 0 && err != nil {
-		config.Logger.Warnf("procCertCloseStore: %w", err)
 		return fmt.Errorf("failed to close windows root store: %v", err)
-
 	}
 
 	return nil
@@ -111,7 +105,6 @@ func addCertificateToStore(store uintptr, cert *x509.Certificate) error {
 	)
 
 	if ret == 0 && err != nil {
-		config.Logger.Warnf("procCertAddEncodedCertificateToStore: %w", err)
 		return fmt.Errorf("failed adding cert: %w", err)
 	}
 
@@ -127,7 +120,6 @@ func deleteCertificateFromStore(store uintptr, cert *x509.Certificate) error {
 		// Fetch next certificate
 		certPtr, _, err := procCertEnumCertificatesInStore.Call(store, certPtr)
 		if certPtr == 0 && err != nil {
-			config.Logger.Warnf("procCertEnumCertificatesInStore: %w", err)
 
 			errNumber, ok := err.(syscall.Errno)
 			if ok && errNumber == CRYPT_E_NOT_FOUND {
@@ -153,7 +145,6 @@ func deleteCertificateFromStore(store uintptr, cert *x509.Certificate) error {
 			ret, _, err := procCertDeleteCertificateFromStore.Call(certPtr)
 
 			if ret == 0 && err != nil {
-				config.Logger.Warnf("procCertDeleteCertificateFromStore: %w", err)
 				return fmt.Errorf("failed to delete certificate: %w", err)
 			}
 
