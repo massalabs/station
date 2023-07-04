@@ -14,7 +14,7 @@ const (
 	KeyFile         = "rootCA-key.pem"
 )
 
-// CA is an certificate authority struct
+// CA is an certificate authority struct.
 type CA struct {
 	privateKey crypto.PrivateKey
 	cert       *x509.Certificate
@@ -46,11 +46,17 @@ func (c *CA) Load() error {
 
 // IsKnownByOS checks if the CA is known by the operating system.
 func (c *CA) IsKnownByOS() bool {
+	//lint:ignore exhaustruct as we don't care about checking specific attributes
 	_, err := c.cert.Verify(x509.VerifyOptions{})
 	return err == nil
 }
 
 // AddToOS adds the CA to the operating system.
 func (c *CA) AddToOS() error {
-	return store.Add(c.cert)
+	err := store.Add(c.cert)
+	if err != nil {
+		return fmt.Errorf("failed to add the CA to the operating system: %w", err)
+	}
+
+	return nil
 }

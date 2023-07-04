@@ -2,6 +2,4 @@ package store
 
 import "fmt"
 
-var (
-	ErrCertificateNotFound = fmt.Errorf("certificate not found")
-)
+var ErrCertificateNotFound = fmt.Errorf("certificate not found")

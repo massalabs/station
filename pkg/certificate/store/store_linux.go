@@ -8,10 +8,10 @@ import (
 	"fmt"
 )
 
-func Add(cert *x509.Certificate) error {
+func Add(_ *x509.Certificate) error {
 	return fmt.Errorf("not implemented")
 }
 
-func Delete(cert *x509.Certificate) error {
+func Delete(_ *x509.Certificate) error {
 	return fmt.Errorf("not implemented")
 }
