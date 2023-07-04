@@ -32,14 +32,12 @@ NET STOP "AcrylicDNSProxySvc"
 NET START "AcrylicDNSProxySvc"
 if %errorlevel% NEQ 0 (
     call :WriteToLog "Failed to restart Acrylic DNS Proxy Service"
-    pause
     EXIT 1
 )
 
 ENDLOCAL
 
 call :WriteToLog "Success"
-pause
 EXIT 0
 
 :: decalre a function to log and print a message

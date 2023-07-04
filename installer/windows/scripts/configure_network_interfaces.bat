@@ -13,7 +13,6 @@ for /f "skip=1 delims=" %%A in ('wmic nic where "netenabled=true" get netconnect
     NETSH interface ipv6 set dnsservers "!networkAdapterName: =!" static ::1 primary
     if %errorlevel% NEQ 0 (
         call :WriteToLog "Failed to configure !networkAdapterName: =!"
-        pause
         EXIT 1
     )
 )
@@ -21,7 +20,6 @@ for /f "skip=1 delims=" %%A in ('wmic nic where "netenabled=true" get netconnect
 ENDLOCAL
 
 call :WriteToLog "Success"
-pause
 EXIT 0
 
 :: decalre a function to log and print a message
