@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"syscall"
 	"unsafe"
+
+	"github.com/massalabs/station/pkg/config"
 )
 
 const (
@@ -67,8 +69,10 @@ func openStore() (uintptr, error) {
 	}
 
 	store, _, err := procCertOpenSystemStoreW.Call(0, uintptr(unsafe.Pointer(rootStr)))
-	if store == 0 || err != nil {
-		return 0, err
+	if store == 0 && err != nil {
+		config.Logger.Warnf("procCertOpenSystemStoreW: %w", err)
+		return 0, fmt.Errorf("failed to procCertOpenSystemStoreW: %w", err)
+
 	}
 
 	return store, nil
@@ -79,9 +83,11 @@ func closeStore(store uintptr) error {
 		return nil
 	}
 
-	_, _, err := procCertCloseStore.Call(store, 0)
-	if err != nil {
-		return fmt.Errorf("failed to close windows root store: %w", err)
+	ret, _, err := procCertCloseStore.Call(store, 0)
+	if ret == 0 && err != nil {
+		config.Logger.Warnf("procCertCloseStore: %w", err)
+		return fmt.Errorf("failed to close windows root store: %v", err)
+
 	}
 
 	return nil
@@ -93,7 +99,7 @@ func addCertificateToStore(store uintptr, cert *x509.Certificate) error {
 		return fmt.Errorf("pointer is nil")
 	}
 
-	_, _, err := procCertAddEncodedCertificateToStore.Call(
+	ret, _, err := procCertAddEncodedCertificateToStore.Call(
 		uintptr(store),
 		uintptr(syscall.X509_ASN_ENCODING|syscall.PKCS_7_ASN_ENCODING),
 		uintptr(unsafe.Pointer(&cert.Raw[0])),
@@ -101,8 +107,10 @@ func addCertificateToStore(store uintptr, cert *x509.Certificate) error {
 		3,
 		0,
 	)
-	if err != nil {
-		return err
+
+	if ret == 0 && err != nil {
+		config.Logger.Warnf("procCertAddEncodedCertificateToStore: %w", err)
+		return fmt.Errorf("failed adding cert: %w", err)
 	}
 
 	return nil
@@ -116,13 +124,15 @@ func deleteCertificateFromStore(store uintptr, cert *x509.Certificate) error {
 	for {
 		// Fetch next certificate
 		certPtr, _, err := procCertEnumCertificatesInStore.Call(store, certPtr)
-		if err != nil {
+		if certPtr == 0 && err != nil {
+			config.Logger.Warnf("procCertEnumCertificatesInStore: %w", err)
+
 			errNumber, ok := err.(syscall.Errno)
 			if ok && errNumber == CRYPT_E_NOT_FOUND {
 				return ErrCertificateNotFound
 			}
 
-			return fmt.Errorf("failed to fetch certificate: %w", err)
+			return fmt.Errorf("failed to enum certificates: %w", err)
 		}
 
 		certSyscall = (*syscall.CertContext)(unsafe.Pointer(certPtr))
@@ -138,8 +148,10 @@ func deleteCertificateFromStore(store uintptr, cert *x509.Certificate) error {
 
 		// Compare certificate serial numbers
 		if certX509.SerialNumber.Cmp(cert.SerialNumber) == 0 {
-			_, _, err = procCertDeleteCertificateFromStore.Call(certPtr)
-			if err != nil {
+			ret, _, err := procCertDeleteCertificateFromStore.Call(certPtr)
+
+			if ret == 0 && err != nil {
+				config.Logger.Warnf("procCertDeleteCertificateFromStore: %w", err)
 				return fmt.Errorf("failed to delete certificate: %w", err)
 			}
 
