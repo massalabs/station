@@ -10,12 +10,11 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/rs/cors"
-
 	"github.com/massalabs/station/api"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/pkg/certificate"
 	MSConfig "github.com/massalabs/station/pkg/config"
+	"github.com/rs/cors"
 )
 
 func configureFlags(api *operations.MassastationAPI) {
@@ -73,8 +72,6 @@ func configureMassaStationAPI(api *operations.MassastationAPI, config MSConfig.A
 		// Call the appropriate method of the *zap.Logger object
 		MSConfig.Logger.Infof(msg, args...)
 	}
-
-
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares), config)
 }
