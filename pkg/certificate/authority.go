@@ -46,7 +46,8 @@ func (c *CA) Load() error {
 
 // IsKnownByOS checks if the CA is known by the operating system.
 func (c *CA) IsKnownByOS() bool {
-	//nolint:exhaustruct as we don't care about checking specific attributes
+	// disable linting as we don't care about checking specific attributes
+	//nolint:exhaustruct
 	_, err := c.cert.Verify(x509.VerifyOptions{})
 
 	return err == nil
