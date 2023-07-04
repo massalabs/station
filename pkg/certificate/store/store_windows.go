@@ -1,6 +1,3 @@
-//go:build windows
-// +build windows
-
 package store
 
 import (
@@ -135,7 +132,7 @@ func deleteCertificateFromStore(store uintptr, cert *x509.Certificate) error {
 		certX509, err := x509.ParseCertificate(certBytes)
 
 		// Ignore parsing errors
-		if err != nil || x509.SerialNumber == nil {
+		if err != nil || certX509.SerialNumber == nil {
 			continue
 		}
 
