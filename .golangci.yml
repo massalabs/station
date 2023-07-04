@@ -4,6 +4,7 @@ linters:
     - nonamedreturns
     - paralleltest
     - testpackage
+    - exhaustruct
     # deprecated
     - deadcode
     - exhaustivestruct
