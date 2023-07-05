@@ -2,12 +2,7 @@
 
 :: Set Acrylic DNS to resolve `.massa` TLD to localhost
 
-set LOG_FILE=%TEMP%\massastation_install.log
-
-:: redirect err and std output of all intructions bellow to the log file 
-(
-
-echo Executing configure_acrylic.bat
+ECHO Executing configure_acrylic.bat
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
@@ -45,5 +40,3 @@ if %errorlevel% NEQ 0 (
 ENDLOCAL
 
 EXIT 0
-
-) >> %LOG_FILE% 2>&1
