@@ -55,7 +55,7 @@ func (c *CA) IsKnownByOS() bool {
 
 // AddToOS adds the CA to the operating system.
 func (c *CA) AddToOS() error {
-	err := store.Add(c.cert)
+	err := store.AddToOS(c.cert)
 	if err != nil {
 		return fmt.Errorf("failed to add the CA to the operating system: %w", err)
 	}

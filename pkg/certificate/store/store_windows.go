@@ -22,8 +22,8 @@ var (
 	procCertOpenSystemStoreW             = modcrypt32.NewProc("CertOpenSystemStoreW")
 )
 
-// Add adds the given certificate to the windows root store.
-func Add(cert *x509.Certificate) error {
+// AddToOS adds the given certificate to the windows root store.
+func AddToOS(cert *x509.Certificate) error {
 	rootStore, err := openStore()
 	if err != nil {
 		return fmt.Errorf("failed to open windows root store: %w", err)
@@ -42,8 +42,8 @@ func Add(cert *x509.Certificate) error {
 	return nil
 }
 
-// Delete deletes the given certificate from the windows root store.
-func Delete(cert *x509.Certificate) error {
+// DeleteFromOS deletes the given certificate from the windows root store.
+func DeleteFromOS(cert *x509.Certificate) error {
 	rootStore, err := openStore()
 	if err != nil {
 		return fmt.Errorf("failed to open windows root store: %w", err)
