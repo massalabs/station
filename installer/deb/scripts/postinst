@@ -61,7 +61,7 @@ wait_for_network() {
     counter=0
     timeout=30 # Timeout in seconds
 
-    while [[ $(nmcli networking connectivity check) == "none" ]]; do
+    while [[ $(nmcli networking connectivity check) == "none" ]] && ((counter < timeout)); do
         echo "Waiting for network manager to be up and running"
         sleep 1
         ((counter+=1))
