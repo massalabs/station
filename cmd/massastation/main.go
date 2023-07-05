@@ -67,7 +67,7 @@ func main() {
 
 	err := config.Check()
 	if err != nil {
-		logger.Logger.Fatalf("Error with you current system configuration: %s", err.Error())
+		logger.Logger.Fatalf("Some checks failed: %s", err.Error())
 	}
 
 	networkManager, err := config.NewNetworkManager()
