@@ -19,7 +19,7 @@ for /f "skip=1 delims=" %%A in ('wmic nic where "netenabled=true" get netconnect
     NETSH interface ipv4 set dnsservers "!networkAdapterName: =!" static 127.0.0.1 primary
     NETSH interface ipv6 set dnsservers "!networkAdapterName: =!" static ::1 primary
     if %errorlevel% NEQ 0 (
-        echo "Failed to configure !networkAdapterName: =!"
+        ECHO "Failed to configure !networkAdapterName: =!"
         EXIT 1
     )
 )

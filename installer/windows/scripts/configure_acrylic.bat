@@ -24,7 +24,7 @@ if not exist "%acrylic_config%" (
 :: Check if the TLD is already in the file
 FINDSTR /c:".massa" "%acrylic_config%" >nul 2>&1
 if %errorlevel%==0 (
-    echo "TLD already in the file"
+    ECHO "TLD already in the file"
     EXIT 0
 )
 
@@ -38,7 +38,7 @@ ECHO ::1 *.massa >> "%acrylic_config%"
 NET STOP "AcrylicDNSProxySvc"
 NET START "AcrylicDNSProxySvc"
 if %errorlevel% NEQ 0 (
-    echo "Failed to restart Acrylic DNS Proxy Service"
+    ECHO "Failed to restart Acrylic DNS Proxy Service"
     EXIT 1
 )
 
