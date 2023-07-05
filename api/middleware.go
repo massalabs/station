@@ -5,6 +5,7 @@ import (
 
 	"github.com/massalabs/station/api/interceptor"
 	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/onchain/website"
 	"github.com/massalabs/station/pkg/plugin"
 )
@@ -17,7 +18,7 @@ import (
 func TopMiddleware(handler http.Handler, cfg config.AppConfig) http.Handler {
 	//nolint:varnamelen
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		config.Logger.Infof("[%s %s]", r.Method, r.URL.Path)
+		logger.Logger.Infof("[%s %s]", r.Method, r.URL.Path)
 		// Goes through all local interceptors.
 		req := RedirectToDefaultResourceInterceptor(
 			plugin.Interceptor(
