@@ -1,5 +1,12 @@
 @echo off
 
+set LOG_FILE=%TEMP%\massastation_install.log
+
+:: redirect err and std output of all intructions bellow to the log file 
+(
+
+echo Executing configure_network_interfaces.bat
+
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 :: List available Network Interfaces and set dnsservers to 127.0.0.1 (localhost) and ::1 (IPv6 localhost)
@@ -20,3 +27,5 @@ for /f "skip=1 delims=" %%A in ('wmic nic where "netenabled=true" get netconnect
 ENDLOCAL
 
 EXIT 0
+
+) >> %LOG_FILE% 2>&1

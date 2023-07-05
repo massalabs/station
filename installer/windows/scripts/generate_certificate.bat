@@ -2,6 +2,13 @@
 
 :: Generate a certificate for the `.massa` TLD
 
+set LOG_FILE=%TEMP%\massastation_install.log
+
+:: redirect err and std output of all intructions bellow to the log file 
+(
+
+echo Executing generate_certificate.bat
+
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 :: Download the latest mkcert release
@@ -37,3 +44,5 @@ if %ERRORLEVEL% NEQ 0 (
 ENDLOCAL
 
 EXIT 0
+
+) >> %LOG_FILE% 2>&1
