@@ -11,6 +11,7 @@ import (
 
 	"github.com/hashicorp/go-version"
 	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/logger"
 )
 
 //nolint:tagliatelle
@@ -131,10 +132,10 @@ func (s *Store) FetchStorePeriodically() {
 	for range ticker.C {
 		err := s.FetchPluginList()
 		if err != nil {
-			config.Logger.Errorf("while fetching plugin list: %s", err)
+			logger.Logger.Errorf("while fetching plugin list: %s", err)
 		}
 
-		config.Logger.Debugf("Fetched plugin list. %d plugins in store.", len(s.Plugins))
+		logger.Logger.Debugf("Fetched plugin list. %d plugins in store.", len(s.Plugins))
 	}
 }
 

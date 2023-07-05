@@ -1,6 +1,6 @@
 //go:build unix
 
-package config
+package dirs
 
 import (
 	"fmt"

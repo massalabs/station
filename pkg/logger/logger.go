@@ -1,10 +1,11 @@
-package config
+package logger
 
 import (
 	"log"
 	"os"
 	"path/filepath"
 
+	"github.com/massalabs/station/pkg/dirs"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -13,7 +14,7 @@ import (
 var Logger *zap.SugaredLogger
 
 func NewLogger() *zap.SugaredLogger {
-	logDir, err := GetConfigDir()
+	logDir, err := dirs.GetConfigDir()
 	if err != nil {
 		log.Fatal(err)
 	}

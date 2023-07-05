@@ -14,6 +14,7 @@ import (
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/pkg/certificate"
 	MSConfig "github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/logger"
 	"github.com/rs/cors"
 )
 
@@ -69,7 +70,7 @@ func configureMassaStationAPI(api *operations.MassastationAPI, config MSConfig.A
 		close(shutdown)
 	}
 	api.Logger = func(msg string, args ...interface{}) {
-		MSConfig.Logger.Infof(msg, args...)
+		logger.Logger.Infof(msg, args...)
 	}
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares), config)

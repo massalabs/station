@@ -8,7 +8,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/dirs"
 )
 
 func fullPath(fileName string) (string, error) {
@@ -32,7 +32,7 @@ func IsPresent(file string) bool {
 // fsDirectory returns the cache directory on the file system.
 // If the directory doesn't exist, it is created before being returned.
 func fsDirectory() (string, error) {
-	configDir, _ := config.GetConfigDir()
+	configDir, _ := dirs.GetConfigDir()
 	cacheDir := path.Join(configDir, "websitesCache")
 	_, err := os.Stat(cacheDir)
 
