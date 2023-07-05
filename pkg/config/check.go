@@ -13,6 +13,8 @@ import (
 	"github.com/massalabs/station/pkg/logger"
 )
 
+const certificateName = "massaStation"
+
 func Check() error {
 	return checkCertificate()
 }
@@ -35,6 +37,14 @@ func checkCertificate() error {
 		if err != nil {
 			// non blocking error
 			logger.Warnf("failed to add the CA to the operating system: %s.", err)
+		}
+	}
+
+	if !certCa.IsKnownByNSSDatabases(certificateName) {
+		err := certCa.AddToNSSDatabases(certificateName)
+		if err != nil {
+			// non blocking error
+			logger.Logger.Warnf("failed to add the CA to NSS: %s.", err)
 		}
 	}
 
