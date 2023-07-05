@@ -50,8 +50,7 @@ tasks:
   build-windows:
     platforms: [windows]
     cmds:
-      - cmd: mkdir build\massastation
-      - cmd: go build -o build\massastation\massastation.exe cmd/massastation/main.go
+      - cmd: go build -o build/massastation/massastation.exe cmd/massastation/main.go
 
   run:
     cmds:
