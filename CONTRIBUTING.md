@@ -117,13 +117,11 @@ Then, use task in the Powershell as an administrator.
      - Install `mingw` by following the instructions from [mingw-w64.org](https://www.mingw-w64.org/downloads) to provide the necessary `gcc` compiler for building MassaStation.
 
      We recommend to install in a Powershell as an administrator:
-     - go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3
-     - go install github.com/rogpeppe/godef@v1.1.2
-     - go install golang.org/x/tools/cmd/goimports@latest
-     - go install golang.org/x/tools/cmd/guru@latest
-     - go install github.com/stamblerre/gocode@v1.0.0
-
-
+     - `go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3`
+     - `go install github.com/rogpeppe/godef@v1.1.2`
+     - `go install golang.org/x/tools/cmd/goimports@latest`
+     - `go install golang.org/x/tools/cmd/guru@latest`
+     - `go install github.com/stamblerre/gocode@v1.0.0`
 
 5. **Install Go dependencies :** MassaStation uses Go Swagger to generate code from the API documentation and Go Stringer to generate declarations for enum types.
 
