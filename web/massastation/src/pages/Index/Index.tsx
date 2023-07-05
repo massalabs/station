@@ -104,7 +104,7 @@ function NestedIndex(props: NestedIndexProps) {
   return (
     <div className="bg-primary text-f-primary pt-24">
       <h1 className="mas-banner mb-10"> {Intl.t('index.title-banner')}</h1>
-      <div className="overflow-auto h-[65vh]">
+      <div className="overflow-auto">
         <div className="w-[70vw]">
           <div className="flex space-x-8 pb-10">
             <Button
