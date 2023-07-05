@@ -206,8 +206,8 @@ func (m *Manager) RunAll() error {
 
 			err = m.InitPlugin(binPath)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "WARN: while running plugin %s: %s.\n", rootItem.Name(), err)
-				fmt.Fprintln(os.Stderr, "This plugin will not be executed.")
+				config.Logger.Warnf("While running plugin %s: %s.", rootItem.Name(), err)
+				config.Logger.Warnf("This plugin will not be executed.")
 			}
 		}
 	}
