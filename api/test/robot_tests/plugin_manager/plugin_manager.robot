@@ -105,7 +105,7 @@ POST /plugins-manager/{id}/execute already started
     ...    json=${data}
 
     ${expectedError}=    Set Variable
-    ...    "[start]${SPACE}${SPACE}(Error while starting plugin station-massa-hello-world: plugin is not ready to start.\n). Current plugin status is Up."
+    ...    "[start]${SPACE}${SPACE}(Error while starting plugin Hello World: plugin is not ready to start.\n). Current plugin status is Up."
     Should Be Equal As Strings    ${response.json()['code']}    Plugin-0030
     Should Be Equal As Strings    "${response.json()['message']}"    ${expectedError}
 
