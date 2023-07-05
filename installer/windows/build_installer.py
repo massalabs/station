@@ -305,14 +305,6 @@ def create_wxs_file():
             Return="check"
         />
         <CustomAction
-            Id="RollbackAcrylicInstall"
-            Directory="AcrylicDNSProxy"
-            ExeCommand="cmd /c &quot;[AcrylicDNSProxy]UninstallAcrylicService.bat&quot;"
-            Execute="rollback"
-            Impersonate="no"
-            Return="ignore"
-        />
-        <CustomAction
             Id="ConfigureAcrylic"
             Directory="INSTALLDIR"
             ExeCommand="cmd /c &quot;[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}&quot;"
@@ -371,7 +363,6 @@ def create_wxs_file():
 
         <InstallExecuteSequence>
             <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed</Custom>
-            <Custom Action="RollbackAcrylicInstall" After="InstallAcrylic">NOT Installed</Custom>
             <Custom Action="InstallAcrylic" Before="ConfigureAcrylic">NOT Installed</Custom>
             <Custom Action="ConfigureAcrylic" Before="ConfigureNetworkInterface">NOT Installed</Custom>
             <Custom Action="ConfigureNetworkInterface" Before="GenerateCertificate">NOT Installed</Custom>
