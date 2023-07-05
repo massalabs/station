@@ -69,7 +69,6 @@ func configureMassaStationAPI(api *operations.MassastationAPI, config MSConfig.A
 		close(shutdown)
 	}
 	api.Logger = func(msg string, args ...interface{}) {
-		// Call the appropriate method of the *zap.Logger object
 		MSConfig.Logger.Infof(msg, args...)
 	}
 
