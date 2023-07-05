@@ -11,7 +11,8 @@ import (
 	"sync"
 
 	"github.com/cavaliergopher/grab/v3"
-	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/dirs"
+	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/plugin/utils"
 	"github.com/massalabs/station/pkg/store"
 	"github.com/xyproto/unzip"
@@ -20,7 +21,7 @@ import (
 // Directory returns the plugin directory.
 // Note: the plugin directory is the /plugins inside the home directory.
 func Directory() string {
-	homeDir, _ := config.GetConfigDir()
+	homeDir, _ := dirs.GetConfigDir()
 	pluginsDir := path.Join(homeDir, "plugins")
 	_, err := os.Stat(pluginsDir)
 
@@ -139,7 +140,7 @@ func (m *Manager) Delete(correlationID string) error {
 	// Ignore Stop errors. We want to delete the plugin anyway
 	err = plgn.Stop()
 	if err != nil {
-		config.Logger.Warnf("stopping plugin before delete %s: %s\n", correlationID, err)
+		logger.Logger.Warnf("stopping plugin before delete %s: %s\n", correlationID, err)
 	}
 
 	alias := Alias(plgn.info.Author, plgn.info.Name)
@@ -206,8 +207,8 @@ func (m *Manager) RunAll() error {
 
 			err = m.InitPlugin(binPath)
 			if err != nil {
-				config.Logger.Warnf("While running plugin %s: %s.", rootItem.Name(), err)
-				config.Logger.Warnf("This plugin will not be executed.")
+				logger.Logger.Warnf("While running plugin %s: %s.", rootItem.Name(), err)
+				logger.Logger.Warnf("This plugin will not be executed.")
 			}
 		}
 	}
@@ -216,12 +217,12 @@ func (m *Manager) RunAll() error {
 }
 
 func (m *Manager) Stop() {
-	config.Logger.Info("Stopping all plugins...")
+	logger.Logger.Info("Stopping all plugins...")
 
 	for _, plugin := range m.plugins {
 		err := plugin.Stop()
 		if err != nil {
-			config.Logger.Warnf("Error while stopping plugin %s: %s", plugin.info.Name, err)
+			logger.Logger.Warnf("Error while stopping plugin %s: %s", plugin.info.Name, err)
 		}
 	}
 }
@@ -240,7 +241,7 @@ func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
 	defer func() {
 		err = os.Remove(resp.Filename)
 		if err != nil {
-			config.Logger.Errorf("deleting archive %s: %s", resp.Filename, err)
+			logger.Logger.Errorf("deleting archive %s: %s", resp.Filename, err)
 		}
 	}()
 

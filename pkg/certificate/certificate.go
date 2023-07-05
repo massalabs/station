@@ -32,7 +32,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/logger"
 )
 
 const privateKeySizeInBits = 2048
@@ -43,7 +43,7 @@ func wrapAndPrint(msg string, err error) error {
 	wrappingMsg := "while handling SNI Hello request"
 
 	err = fmt.Errorf("%s: %w", msg, err)
-	config.Logger.Errorf("%s: %v", wrappingMsg, err)
+	logger.Logger.Errorf("%s: %v", wrappingMsg, err)
 
 	return fmt.Errorf("%s: %w", wrappingMsg, err)
 }

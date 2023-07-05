@@ -15,6 +15,7 @@ import (
 	"github.com/massalabs/station/int/api/pluginstore"
 	"github.com/massalabs/station/int/api/websites"
 	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/plugin"
 	"github.com/massalabs/station/pkg/store"
@@ -86,7 +87,7 @@ type Server struct {
 func NewServer(flags StartServerFlags) *Server {
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
-		config.Logger.Fatal(err.Error())
+		logger.Logger.Fatal(err.Error())
 	}
 
 	localAPI := operations.NewMassastationAPI(swaggerSpec)
@@ -96,7 +97,7 @@ func NewServer(flags StartServerFlags) *Server {
 
 	err = store.NewStore()
 	if err != nil {
-		config.Logger.Fatal(err.Error())
+		logger.Logger.Fatal(err.Error())
 	}
 
 	return &Server{
@@ -116,24 +117,24 @@ func (server *Server) Start(networkManager *config.NetworkManager, pluginManager
 
 	go func() {
 		if err := server.api.Serve(); err != nil {
-			config.Logger.Fatal(err.Error())
+			logger.Logger.Fatal(err.Error())
 		}
 	}()
 
-	config.Logger.Debug("Server started")
+	logger.Logger.Debug("Server started")
 }
 
 // Stops the server and waits for it to finish.
 func (server *Server) Stop() {
-	config.Logger.Info("Stopping server...")
+	logger.Logger.Info("Stopping server...")
 
 	if err := server.api.Shutdown(); err != nil {
-		config.Logger.Fatal(err.Error())
+		logger.Logger.Fatal(err.Error())
 	}
 
 	<-server.shutdown
 
-	config.Logger.Debug("Server stopped")
+	logger.Logger.Debug("Server stopped")
 }
 
 // Displays the node version of the connected node.
@@ -145,10 +146,10 @@ func (server *Server) printNodeVersion(networkManager *config.NetworkManager) {
 	if err == nil {
 		nodeVersion = *status.Version
 	} else {
-		config.Logger.Errorf("Could not get node version: %s", err.Error())
+		logger.Logger.Errorf("Could not get node version: %s", err.Error())
 	}
 
-	config.Logger.Info(
+	logger.Logger.Info(
 		fmt.Sprintf("Connected to node server %s (version %s)",
 			networkManager.Network().NodeURL, nodeVersion),
 	)
