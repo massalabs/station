@@ -85,6 +85,20 @@ func (m *Manager) SetAlias(alias string, correlationID string) error {
 	return nil
 }
 
+func (m *Manager) RemoveAlias(alias string) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	_, exist := m.authorNameToID[alias]
+	if !exist {
+		return fmt.Errorf("while removing alias for %s: no plugin matching the given alias", alias)
+	}
+
+	delete(m.authorNameToID, alias)
+
+	return nil
+}
+
 // PluginByAlias returns a plugin from the manager using an alias.
 func (m *Manager) PluginByAlias(alias string) (*Plugin, error) {
 	correlationID, exist := m.authorNameToID[alias]
