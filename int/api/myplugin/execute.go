@@ -2,21 +2,21 @@ package myplugin
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"github.com/go-openapi/runtime/middleware"
+
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/pkg/config"
-	"github.com/massalabs/station/pkg/plugin"
+	pluginPkg "github.com/massalabs/station/pkg/plugin"
 )
 
-func newExecute(manager *plugin.Manager) operations.PluginManagerExecuteCommandHandler {
+func newExecute(manager *pluginPkg.Manager) operations.PluginManagerExecuteCommandHandler {
 	return &execute{manager: manager}
 }
 
 type execute struct {
-	manager *plugin.Manager
+	manager *pluginPkg.Manager
 }
 
 //nolint:cyclop
@@ -32,8 +32,9 @@ func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) mi
 	}
 
 	status := plugin.Status()
-
-	pluginName := filepath.Base(plugin.BinPath)
+	pluginName := plugin.Information().Name
+	pluginAuthor := plugin.Information().Author
+	alias := pluginPkg.Alias(pluginAuthor, pluginName)
 
 	switch cmd {
 	case "start":
@@ -47,12 +48,13 @@ func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) mi
 		if err != nil {
 			return executeFailed(cmd, status, fmt.Sprintf("Error while stopping plugin %s: %s.\n", pluginName, err))
 		}
+		err = e.manager.RemoveAlias(alias)
 	case "restart":
 		err := plugin.Stop()
 		if err != nil {
 			return executeFailed(cmd, status, fmt.Sprintf("Error while stopping plugin %s: %s.\n", pluginName, err))
 		}
-
+		err = e.manager.RemoveAlias(alias)
 		err = plugin.Start()
 		if err != nil {
 			return executeFailed(cmd, status,
@@ -70,7 +72,7 @@ func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) mi
 	return operations.NewPluginManagerExecuteCommandNoContent()
 }
 
-func executeFailed(cmd string, currentStatus plugin.Status, errorMsg string,
+func executeFailed(cmd string, currentStatus pluginPkg.Status, errorMsg string,
 ) *operations.PluginManagerExecuteCommandBadRequest {
 	errStr := ""
 	if errorMsg != "" {

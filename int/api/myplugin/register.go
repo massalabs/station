@@ -25,7 +25,13 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 		return operations.NewPluginManagerRegisterNotFound().WithPayload(
 			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
 	}
+	alias := plugin.Alias(wantedPlugin.Information().Author, wantedPlugin.Information().Name)
 
+	_, err = r.manager.PluginByAlias(alias)
+	if err == nil {
+		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
+			&models.Error{Code: errorCodePluginRegisterAlreadyRegistered, Message: fmt.Sprintf("plugin already registered: %s", alias)})
+	}
 	urlPlugin, err := url.Parse(param.Body.URL)
 	if err != nil {
 		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
@@ -44,7 +50,6 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 	wantedPlugin.InitReverseProxy()
 
 	// Add alias for http requests.
-	alias := plugin.Alias(wantedPlugin.Information().Author, wantedPlugin.Information().Name)
 
 	err = r.manager.SetAlias(alias, param.Body.ID)
 
