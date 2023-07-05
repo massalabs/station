@@ -2,10 +2,12 @@
 
 :: Generate a certificate for the `.massa` TLD
 
-set LOG_FILE=%TEMP%\massa-station-install-generate-certificate.log
+set LOG_FILE=%TEMP%\massastation_install.log
 
 :: redirect err and std output of all intructions bellow to the log file 
 (
+
+echo Executing generate_certificate.bat
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 

@@ -2,6 +2,13 @@
 
 :: Set Acrylic DNS to resolve `.massa` TLD to localhost
 
+set LOG_FILE=%TEMP%\massastation_install.log
+
+:: redirect err and std output of all intructions bellow to the log file 
+(
+
+echo Executing configure_acrylic.bat
+
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 SET "acrylic_config=C:\Program Files (x86)\Acrylic DNS Proxy\AcrylicHosts.txt"
@@ -17,8 +24,8 @@ if not exist "%acrylic_config%" (
 :: Check if the TLD is already in the file
 FINDSTR /c:".massa" "%acrylic_config%" >nul 2>&1
 if %errorlevel%==0 (
-    call :WriteToLog "TLD already in the file"
-    goto :EOF
+    echo "TLD already in the file"
+    EXIT 0
 )
 
 
@@ -31,23 +38,12 @@ ECHO ::1 *.massa >> "%acrylic_config%"
 NET STOP "AcrylicDNSProxySvc"
 NET START "AcrylicDNSProxySvc"
 if %errorlevel% NEQ 0 (
-    call :WriteToLog "Failed to restart Acrylic DNS Proxy Service"
+    echo "Failed to restart Acrylic DNS Proxy Service"
     EXIT 1
 )
 
 ENDLOCAL
 
-call :WriteToLog "Success"
 EXIT 0
 
-:: decalre a function to log and print a message
-:WriteToLog
-  setlocal
-  set LOG_MESSAGE=%~1
-  echo %LOG_MESSAGE%
-  set LOG_FILE=%TEMP%\massa-station-install-configure-acrylic.log
-
-  echo %LOG_MESSAGE% >> %LOG_FILE%
-
-  endlocal
-exit /b
+) >> %LOG_FILE% 2>&1

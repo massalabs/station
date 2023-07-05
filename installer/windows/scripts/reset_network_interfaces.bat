@@ -1,9 +1,11 @@
 @echo off
 
-set LOG_FILE=%TEMP%\massa-station-install-reset-network-interfaces.log
+set LOG_FILE=%TEMP%\massastation_install.log
 
 :: redirect err and std output of all intructions bellow to the log file 
 (
+
+echo Executing reset_network_interfaces.bat
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
