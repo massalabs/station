@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/massalabs/station/pkg/logger"
 	"gopkg.in/yaml.v2"
 )
 
@@ -156,8 +157,8 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 		Network:    selectedNetworkStr,
 	})
 
-	Logger.Debugf("Switched to network: %s\n", selectedNetworkStr)
-	Logger.Debugf("Current config: %+v\n", n.Network())
+	logger.Logger.Debugf("Switched to network: %s\n", selectedNetworkStr)
+	logger.Logger.Debugf("Current config: %+v\n", n.Network())
 
 	return nil
 }

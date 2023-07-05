@@ -13,6 +13,7 @@ import (
 	"github.com/massalabs/station/int/systray/embedded"
 	"github.com/massalabs/station/int/systray/utils"
 	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/logger"
 )
 
 const (
@@ -90,24 +91,24 @@ func addUpdateButton(app *fyne.App, systrayMenu *fyne.Menu) {
 
 // Checks from the latest release on GitHub if there is a newer version available.
 func updateCheck(app *fyne.App, systrayMenu *fyne.Menu) {
-	config.Logger.Debug("Checking for updates...")
+	logger.Logger.Debug("Checking for updates...")
 
 	latestVersion, err := getLatestVersion()
 	if err != nil {
-		config.Logger.Errorf("Error getting last version:%s", err)
+		logger.Logger.Errorf("Error getting last version:%s", err)
 
 		return
 	}
 
 	currentVersion, err := version.NewVersion(config.Version)
 	if err != nil {
-		config.Logger.Errorf("Error getting current version:%s", err)
+		logger.Logger.Errorf("Error getting current version:%s", err)
 
 		return
 	}
 
 	if latestVersion.GreaterThan(currentVersion) {
-		config.Logger.Debugf("New version available:%s", latestVersion)
+		logger.Logger.Debugf("New version available:%s", latestVersion)
 		addUpdateButton(app, systrayMenu)
 
 		logoNotification := fyne.NewStaticResource("logo_notification", embedded.NotificationLogo)

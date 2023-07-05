@@ -8,6 +8,7 @@ import (
 
 	"github.com/massalabs/station/api/interceptor"
 	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/logger"
 )
 
 func NewAPIHandler(manager *Manager) *APIHandler {
@@ -70,14 +71,14 @@ func Interceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
 
 		authorName, err := url.QueryUnescape(endpoint.pluginAuthor)
 		if err != nil {
-			config.Logger.Error(err.Error())
+			logger.Logger.Error(err.Error())
 
 			return nil
 		}
 
 		pluginName, err := url.QueryUnescape(endpoint.pluginName)
 		if err != nil {
-			config.Logger.Error(err.Error())
+			logger.Logger.Error(err.Error())
 
 			return nil
 		}

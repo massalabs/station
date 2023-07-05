@@ -4,10 +4,9 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime/middleware"
-
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
-	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/pkg/logger"
 	pluginPkg "github.com/massalabs/station/pkg/plugin"
 )
 
@@ -23,7 +22,7 @@ type execute struct {
 func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) middleware.Responder {
 	cmd := params.Body.Command
 
-	config.Logger.Debugf("[POST /plugin-manager/%s/execute] command: %s", params.ID, cmd)
+	logger.Logger.Debugf("[POST /plugin-manager/%s/execute] command: %s", params.ID, cmd)
 
 	plugin, err := e.manager.Plugin(params.ID)
 	if err != nil {
@@ -48,14 +47,17 @@ func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) mi
 		if err != nil {
 			return executeFailed(cmd, status, fmt.Sprintf("Error while stopping plugin %s: %s.\n", pluginName, err))
 		}
+
 		err = e.manager.RemoveAlias(alias)
 	case "restart":
 		err := plugin.Stop()
 		if err != nil {
 			return executeFailed(cmd, status, fmt.Sprintf("Error while stopping plugin %s: %s.\n", pluginName, err))
 		}
+
 		err = e.manager.RemoveAlias(alias)
 		err = plugin.Start()
+
 		if err != nil {
 			return executeFailed(cmd, status,
 				fmt.Sprintf("Error while restarting plugin %s: %s.\n", pluginName, err))
