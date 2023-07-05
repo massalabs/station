@@ -14,7 +14,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 for /f "skip=1 delims=" %%A in ('wmic nic where "netenabled=true" get netconnectionID') do @for /f "delims=" %%B in ("%%A") do (
     SET "networkAdapterName=%%B"
 
-    echo "Configuring !networkAdapterName: =!..."
+    echo Configuring !networkAdapterName: =!...
 
     NETSH interface ipv4 set dnsservers "!networkAdapterName: =!" static 127.0.0.1 primary
     NETSH interface ipv6 set dnsservers "!networkAdapterName: =!" static ::1 primary

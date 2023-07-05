@@ -24,7 +24,7 @@ if not exist "%acrylic_config%" (
 :: Check if the TLD is already in the file
 FINDSTR /c:".massa" "%acrylic_config%" >nul 2>&1
 if %errorlevel%==0 (
-    ECHO "TLD already in the file"
+    ECHO TLD already in the file
     EXIT 0
 )
 
