@@ -26,4 +26,6 @@ for /f "skip=1 delims=" %%A in ('wmic nic where "netenabled=true" get netconnect
 
 ENDLOCAL
 
+EXIT 0
+
 ) >> %LOG_FILE% 2>&1
