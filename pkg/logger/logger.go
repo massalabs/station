@@ -71,7 +71,7 @@ func New(path string) (*Logger, error) {
 	core := zapcore.NewCore(
 		zapcore.NewConsoleEncoder(encoderConfig),
 		zapcore.NewMultiWriteSyncer(fileWriteSyncer, consoleWriteSyncer),
-		zapcore.InfoLevel,
+		logLevel,
 	)
 
 	// Create the logger.
