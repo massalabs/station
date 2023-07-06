@@ -250,7 +250,16 @@ def create_wxs_file():
 
             <Directory Id="DesktopFolder" Name="Desktop">
                 <Component Id="ApplicationShortcutDesktop" Guid="3e6f0b0e-1e0b-5a3c-7b0c-9c007a32f0e9">
-                    <Shortcut Id="ApplicationDesktopShortcut" Name="{PRODUCT_NAME}" Target="[#MassaStationRunScript]" WorkingDirectory="INSTALLDIR" />
+                    <Shortcut Id="ApplicationDesktopShortcut"
+                        Name="{PRODUCT_NAME}"
+                        Target="[#MassaStationRunScript]"
+                        WorkingDirectory="INSTALLDIR"
+                        Icon="MassaStationIcon"
+                    >
+                        <Icon Id="MassaStationIcon" SourceFile="MassaStationLogo" />
+                    <Shortcut/>
+                    <RemoveFolder Id="ApplicationShortcutDesktop" On="uninstall" />
+                    <RegistryValue Root="HKCU" Key="Software\{MANUFACTURER}\{PRODUCT_NAME}" Name="DesktopShortcut" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
             </Directory>
         </Directory>
