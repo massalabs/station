@@ -527,7 +527,29 @@ paths:
       parameters:
         - in: path
           name: id
+          type: string  /network/{network}:
+    post:
+      description: Switches the application to the specified network.
+      operationId: switchNetwork
+      parameters:
+        - in: path
+          name: network
           type: string
+          enum: ["testnet", "buildnet", "labnet"]
+          required: true
+          description: The network to switch to (e.g., testnet, buildnet, labnet, mynet).
+      responses:
+        "200":
+          description: Network successfully switched.
+          schema:
+            type: object
+            $ref: "#/definitions/NetworkManagerItem"
+        "404":
+          description: Not found.
+          schema:
+            $ref: "#/definitions/Error"
+      produces:
+        - application/json
           required : true
           description: Plugin identifier.
       responses:

@@ -31,7 +31,7 @@ NIC_CONFIG_SCRIPT = "configure_network_interfaces.bat"
 NIC_RESET_SCRIPT = "reset_network_interfaces.bat"
 GEN_CERT_SCRIPT = "generate_certificate.bat"
 RUN_VBS = "run.vbs"
-
+LOGO = "logo.png"
 WIX_DIR = "wixtoolset"
 
 # URLs to download Acrylic DNS Proxy and the WiX Toolset
@@ -62,7 +62,6 @@ def install_massastation_build_dependencies():
         ["go", "install", "golang.org/x/tools/cmd/stringer@latest"], check=True
     )
     subprocess.run(["go", "install", "fyne.io/fyne/v2/cmd/fyne@latest"], check=True)
-
 
 def build_massastation():
     """
@@ -135,7 +134,10 @@ def move_binaries():
         os.path.join("windows", "scripts", RUN_VBS),
         os.path.join(BUILD_DIR, RUN_VBS),
     )
-
+    shutil.copy(
+        os.path.join("..", "int", "systray", "embedded", LOGO),
+        os.path.join(BUILD_DIR, LOGO),
+    )
 
 def create_wxs_file():
     """
@@ -194,6 +196,7 @@ def create_wxs_file():
                         <File Id="NICResetScript" Name="{NIC_RESET_SCRIPT}" Source="{BUILD_DIR}\\{NIC_RESET_SCRIPT}" />
                         <File Id="GenCertScript" Name="{GEN_CERT_SCRIPT}" Source="{BUILD_DIR}\\{GEN_CERT_SCRIPT}" />
                         <File Id="MassaStationRunScript" Name="{RUN_VBS}" Source="{BUILD_DIR}\\{RUN_VBS}" />
+                        <File Id="MassaStationLogo" Name="{LOGO}" Source="{BUILD_DIR}\\{LOGO}" />
                     </Component>
                     <Directory Id="MassaStationCerts" Name="certs">
                         <Component Id="CreateCertsDir" Guid="e96619b3-48a7-4629-8a19-e1c8270b331c">
@@ -233,19 +236,40 @@ def create_wxs_file():
             <Directory Id="ProgramMenuFolder" Name="Programs">
                 <Directory Id="ApplicationProgramsFolder" Name="{MANUFACTURER}">
                     <Component Id="ApplicationShortcutProgramMenu" Guid="e2f5b2a0-0b0a-4b1e-9b0e-9b0e9b0e9b0e">
-                        <Shortcut Id="ApplicationStartMenuShortcut" Name="{PRODUCT_NAME}" Target="[#MassaStationRunScript]" WorkingDirectory="INSTALLDIR" />
-                        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
+                                <Shortcut
+                                    Id="ApplicationStartMenuShortcut"
+                                    Name="{PRODUCT_NAME}"
+                                    Target="[#MassaStationAppEXE]"
+                                    WorkingDirectory="INSTALLDIR"
+                                    Icon="MassaStationIcon"
+                                >
+                                    <Icon Id="MassaStationIcon" SourceFile="MassaStationLogo" />
+                                </Shortcut>
+                            <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
                         <RegistryValue Root="HKCU" Key="Software\{MANUFACTURER}\{PRODUCT_NAME}" Name="installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
                 </Directory>
             </Directory>
 
 
+
             <Directory Id="DesktopFolder" Name="Desktop">
                 <Component Id="ApplicationShortcutDesktop" Guid="3e6f0b0e-1e0b-5a3c-7b0c-9c007a32f0e9">
-                    <Shortcut Id="ApplicationDesktopShortcut" Name="{PRODUCT_NAME}" Target="[#MassaStationRunScript]" WorkingDirectory="INSTALLDIR" />
+                            <Shortcut 
+                                Id="ApplicationDesktopShortcut"
+                                Name="{PRODUCT_NAME}"
+                                Target="[#MassaStationRunScript]"
+                                WorkingDirectory="INSTALLDIR"
+                                Icon="MassaStationIcon"
+                            >
+                                <Icon Id="MassaStationIcon" SourceFile="MassaStationLogo" />
+                            </Shortcut>
+                        <RemoveFolder Id="ApplicationShortcutDesktop" On="uninstall" />
+                    <RegistryValue Root="HKCU" Key="Software\{MANUFACTURER}\{PRODUCT_NAME}" Name="DesktopShortcut" Type="integer" Value="1" KeyPath="yes" />
                 </Component>
             </Directory>
+
+
         </Directory>
 
         <Feature Id="MainApplication" Title="Main Application" Level="1">
