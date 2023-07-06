@@ -1,9 +1,4 @@
-@echo off
-
-set LOG_FILE=%TEMP%\massastation_install.log
-
-:: redirect err and std output of all intructions bellow to the log file 
-(
+@ECHO OFF
 
 echo Executing configure_network_interfaces.bat
 
@@ -14,7 +9,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 for /f "skip=1 delims=" %%A in ('wmic nic where "netenabled=true" get netconnectionID') do @for /f "delims=" %%B in ("%%A") do (
     SET "networkAdapterName=%%B"
 
-    echo Configuring !networkAdapterName: =!...
+    ECHO Configuring !networkAdapterName: =!...
 
     NETSH interface ipv4 set dnsservers "!networkAdapterName: =!" static 127.0.0.1 primary
     NETSH interface ipv6 set dnsservers "!networkAdapterName: =!" static ::1 primary
@@ -27,5 +22,3 @@ for /f "skip=1 delims=" %%A in ('wmic nic where "netenabled=true" get netconnect
 ENDLOCAL
 
 EXIT 0
-
-) >> %LOG_FILE% 2>&1
