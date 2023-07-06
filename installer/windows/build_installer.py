@@ -63,6 +63,7 @@ def install_massastation_build_dependencies():
     )
     subprocess.run(["go", "install", "fyne.io/fyne/v2/cmd/fyne@latest"], check=True)
 
+
 def build_massastation():
     """
     Build the MassaStation binary from source.
@@ -138,6 +139,7 @@ def move_binaries():
         os.path.join("..", "int", "systray", "embedded", LOGO),
         os.path.join(BUILD_DIR, LOGO),
     )
+
 
 def create_wxs_file():
     """
@@ -236,40 +238,34 @@ def create_wxs_file():
             <Directory Id="ProgramMenuFolder" Name="Programs">
                 <Directory Id="ApplicationProgramsFolder" Name="{MANUFACTURER}">
                     <Component Id="ApplicationShortcutProgramMenu" Guid="e2f5b2a0-0b0a-4b1e-9b0e-9b0e9b0e9b0e">
-                                <Shortcut
-                                    Id="ApplicationStartMenuShortcut"
-                                    Name="{PRODUCT_NAME}"
-                                    Target="[#MassaStationAppEXE]"
-                                    WorkingDirectory="INSTALLDIR"
-                                    Icon="MassaStationIcon"
-                                >
-                                    <Icon Id="MassaStationIcon" SourceFile="MassaStationLogo" />
-                                </Shortcut>
-                            <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
+                       <Shortcut
+                            Id="ApplicationStartMenuShortcut"
+                            Name="{PRODUCT_NAME}"
+                            Target="[#MassaStationAppEXE]"
+                            WorkingDirectory="INSTALLDIR"
+                            Icon ="MassaStationIcon"
+                        >
+                        <Icon Id="MassaStationIconProgramMenu" SourceFile="MassaStationLogo" />
+                        </Shortcut>
+                        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
                         <RegistryValue Root="HKCU" Key="Software\{MANUFACTURER}\{PRODUCT_NAME}" Name="installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
                 </Directory>
             </Directory>
 
 
-
             <Directory Id="DesktopFolder" Name="Desktop">
                 <Component Id="ApplicationShortcutDesktop" Guid="3e6f0b0e-1e0b-5a3c-7b0c-9c007a32f0e9">
-                            <Shortcut 
-                                Id="ApplicationDesktopShortcut"
-                                Name="{PRODUCT_NAME}"
-                                Target="[#MassaStationRunScript]"
-                                WorkingDirectory="INSTALLDIR"
-                                Icon="MassaStationIcon"
-                            >
-                                <Icon Id="MassaStationIcon" SourceFile="MassaStationLogo" />
-                            </Shortcut>
-                        <RemoveFolder Id="ApplicationShortcutDesktop" On="uninstall" />
-                    <RegistryValue Root="HKCU" Key="Software\{MANUFACTURER}\{PRODUCT_NAME}" Name="DesktopShortcut" Type="integer" Value="1" KeyPath="yes" />
+                     <Shortcut Id="ApplicationDesktopShortcut"
+                        Name="{PRODUCT_NAME}"
+                        Target="[#MassaStationRunScript]"
+                        WorkingDirectory="INSTALLDIR"
+                        Icon="MassaStationIcon"
+                    >
+                    <Icon Id="MassaStationIconDesktop" SourceFile="MassaStationLogo" />
+                    </Shortcut>
                 </Component>
             </Directory>
-
-
         </Directory>
 
         <Feature Id="MainApplication" Title="Main Application" Level="1">
