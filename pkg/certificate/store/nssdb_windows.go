@@ -1,5 +1,7 @@
 package store
 
+import "fmt"
+
 // NSSDatabases is a struct that represents the known NSS databases on the system.
 type NSSDatabases struct {
 	Paths []string

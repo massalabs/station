@@ -1,6 +1,7 @@
 package store
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -8,9 +9,10 @@ import (
 // NSSDBPaths returns all the known NSS databases directories of linux operating system.
 func NSSDBPaths() ([]string, error) {
 	var nssDBPaths []string
+
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get user home directory: %w", err)
 	}
 
 	nssDBPaths = []string{
