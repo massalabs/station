@@ -62,7 +62,7 @@ func nssCheckNonBlockingError(context string, err error) error {
 
 // checkCertificate checks the certificate configuration.
 func checkCertificate(certPath string, keyPath string) error {
-	certCa, err := certificate.NewCA(CertificateAuthorityName)
+	certCa, err := certificate.NewCA()
 	if err != nil {
 		return caCheckNonBlockingError("failed to instantiate the CA", err)
 	}
@@ -83,19 +83,6 @@ func checkCertificate(certPath string, keyPath string) error {
 		}
 	} else {
 		logger.Logger.Debug("the CA is known by the operating system.")
-	}
-
-	if !certCa.IsKnownByNSSDatabases() {
-		logger.Logger.Debug("the CA is not known by at least one local NSS database.")
-
-		err := certCa.AddToNSSDatabases()
-		if err != nil {
-			// non blocking error
-			logger.Logger.Warnf("failed to add the CA to NSS: %s.", err)
-			logger.Logger.Warn(caFailureConsequence)
-		}
-	} else {
-		logger.Logger.Debug("the CA is known by all local NSS databases.")
 	}
 
 	return nil
