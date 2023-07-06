@@ -12,10 +12,10 @@ func TestIsSuperUser(t *testing.T) {
 	assert.False(t, isSuperUser)
 }
 
-func TestCommand(t *testing.T) {
+func TestNewCommand(t *testing.T) {
 	expectedCommand := exec.Command("sudo", "ls", "-l")
 
-	cmd, err := Command("ls", "-l")
+	cmd, err := NewCommand("ls", "-l")
 
 	// Check the results
 	assert.NoError(t, err)

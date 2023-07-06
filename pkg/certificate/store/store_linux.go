@@ -24,7 +24,7 @@ func AddToOS(cert *x509.Certificate) error {
 	dir := os.Getenv("HOME")
 	dir = filepath.Join(dir, ".local", "share")
 	dir = filepath.Join(dir, "mkcert")
-	command, err := su.Command("cp", filepath.Join(dir, "rootCA.pem"), OSCertificateFilename(cert))
+	command, err := su.NewCommand("cp", filepath.Join(dir, "rootCA.pem"), OSCertificateFilename(cert))
 	if err != nil {
 		return fmt.Errorf("failed to create the command to copy CA certificates: %w", err)
 	}
@@ -34,7 +34,7 @@ func AddToOS(cert *x509.Certificate) error {
 		return fmt.Errorf("failed to copy the CA certificates: %w", err)
 	}
 
-	command, err = su.Command(OSCertificateCommand)
+	command, err = su.NewCommand(OSCertificateCommand)
 	if err != nil {
 		return fmt.Errorf("failed to create the command to update the CA certificates: %w", err)
 	}

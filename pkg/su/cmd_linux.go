@@ -17,14 +17,14 @@ func IsSuperUser() bool {
 	return currentUser.Username == SUName
 }
 
-func Command(cmd ...string) (*exec.Cmd, error) {
+func NewCommand(cmd ...string) (*Command, error) {
 	if IsSuperUser() {
-		return exec.Command(cmd[0], cmd[1:]...), nil
+		return &Command{exec.Command(cmd[0], cmd[1:]...)}, nil
 	}
 
 	if !BinaryExists("sudo") {
 		return nil, fmt.Errorf("sudo binary not found")
 	}
 
-	return exec.Command("sudo", cmd...), nil
+	return &Command{exec.Command("sudo", cmd...)}, nil
 }
