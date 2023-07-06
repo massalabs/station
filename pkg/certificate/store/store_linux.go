@@ -13,7 +13,7 @@ import (
 
 // inspired by: https://github.com/FiloSottile/mkcert/blob/master/main.go
 
-// For Debian based systems:
+// For Debian based systems.
 const (
 	OSCertificateDirectory = "/usr/local/share/ca-certificates"
 	OSCertificateCommand   = "update-ca-certificates"
@@ -25,7 +25,7 @@ func AddToOS(cert *x509.Certificate) error {
 		return fmt.Errorf("failed to write the CA certificate to the filesystem: %w", err)
 	}
 
-	command, err := su.SUCommand(OSCertificateCommand)
+	command, err := su.Command(OSCertificateCommand)
 	if err != nil {
 		return fmt.Errorf("failed to create the command to update the CA certificates: %w", err)
 	}
@@ -38,7 +38,7 @@ func AddToOS(cert *x509.Certificate) error {
 	return nil
 }
 
-func DeleteFromOS(cert *x509.Certificate) error {
+func DeleteFromOS(_ *x509.Certificate) error {
 	return fmt.Errorf("not implemented")
 }
 

@@ -11,7 +11,7 @@ import (
 var ErrCertificateNotFound = fmt.Errorf("certificate not found")
 
 func CAUniqueFilename(cert *x509.Certificate) string {
-	CAUniqueName := strings.Replace("MassaLabs CA "+cert.SerialNumber.String(), " ", "_", -1)
+	CAUniqueName := strings.ReplaceAll("MassaLabs CA "+cert.SerialNumber.String(), " ", "_")
 
 	return fmt.Sprintf("%s.cert", CAUniqueName)
 }

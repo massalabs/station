@@ -17,7 +17,7 @@ func IsSuperUser() bool {
 	return currentUser.Username == SUName
 }
 
-func SUCommand(cmd ...string) (*exec.Cmd, error) {
+func Command(cmd ...string) (*exec.Cmd, error) {
 	if IsSuperUser() {
 		return exec.Command(cmd[0], cmd[1:]...), nil
 	}
