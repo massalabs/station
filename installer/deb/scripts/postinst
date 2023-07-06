@@ -38,25 +38,6 @@ configure_dnsmasq() {
     echo "address=/.massa/127.0.0.1" > /etc/NetworkManager/dnsmasq.d/massa.conf || fatal "Failed to set dnsmasq to resolve .massa domains to localhost."
 }
 
-# Update /etc/resolv.conf to use dnsmasq.
-update_resolv_conf() {
-    mv /etc/resolv.conf /etc/resolv.conf.bak_massa || fatal "Failed to backup resolv.conf."
-
-    ln -s /var/run/NetworkManager/resolv.conf /etc/resolv.conf || fatal "Failed to update resolv.conf symlink."
-    systemctl restart NetworkManager || fatal "dnsmasq service failed to restart"
-}
-
-# Install dnsmasq and configure it to resolve .massa domains to localhost.
-set_local_dns() {
-    case $(lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//') in
-        "") configure_network_manager && configure_dnsmasq && update_resolv_conf ;;
-        dnsmasq) configure_dnsmasq && update_resolv_conf ;;
-        systemd-r) configure_network_manager && configure_dnsmasq && update_resolv_conf ;;
-        *) fatal "Unsupported DNS server" ;;
-    esac
-    echo "DNS configuration complete."
-}
-
 wait_for_network() {
     counter=0
     timeout=30 # Timeout in seconds
@@ -72,9 +53,28 @@ wait_for_network() {
     fi
 }
 
+# Update /etc/resolv.conf to use dnsmasq.
+update_resolv_conf() {
+    mv /etc/resolv.conf /etc/resolv.conf.bak_massa || fatal "Failed to backup resolv.conf."
+
+    ln -s /var/run/NetworkManager/resolv.conf /etc/resolv.conf || fatal "Failed to update resolv.conf symlink."
+    systemctl restart NetworkManager || fatal "dnsmasq service failed to restart"
+    wait_for_network
+}
+
+# Install dnsmasq and configure it to resolve .massa domains to localhost.
+set_local_dns() {
+    case $(lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//') in
+        "") configure_network_manager && configure_dnsmasq && update_resolv_conf ;;
+        dnsmasq) configure_dnsmasq && update_resolv_conf ;;
+        systemd-r) configure_network_manager && configure_dnsmasq && update_resolv_conf ;;
+        *) fatal "Unsupported DNS server" ;;
+    esac
+    echo "DNS configuration complete."
+}
+
 # Download and install mkcert, generate a certificate for MassaStation.
 generate_certificate() {
-    wait_for_network
     curl -sL $MKCERT_URL -o mkcert || fatal "mkcert download failed."
     chmod +x mkcert || fatal "mkcert permission change failed."
 
