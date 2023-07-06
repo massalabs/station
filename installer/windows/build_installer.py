@@ -285,7 +285,7 @@ def create_wxs_file():
         <CustomAction
             Id="InstallAcrylic"
             Directory="AcrylicDNSProxy"
-            ExeCommand="cmd /c &quot;[AcrylicDNSProxy]InstallAcrylicService.bat&quot; >> {INSTALLER_LOGFILE}"
+            ExeCommand="cmd /c &quot;[AcrylicDNSProxy]InstallAcrylicService.bat&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
@@ -293,7 +293,7 @@ def create_wxs_file():
         <CustomAction
             Id="ConfigureAcrylic"
             Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}&quot; >> {INSTALLER_LOGFILE}"
+            ExeCommand="cmd /c &quot;[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
@@ -301,7 +301,7 @@ def create_wxs_file():
         <CustomAction
             Id="ConfigureNetworkInterface"
             Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_CONFIG_SCRIPT}&quot; >> {INSTALLER_LOGFILE}"
+            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_CONFIG_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
@@ -309,7 +309,7 @@ def create_wxs_file():
         <CustomAction
             Id="GenerateCertificate"
             Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{GEN_CERT_SCRIPT}&quot; >> {INSTALLER_LOGFILE}"
+            ExeCommand="cmd /c &quot;[INSTALLDIR]{GEN_CERT_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
@@ -325,7 +325,7 @@ def create_wxs_file():
         <CustomAction
             Id="ResetNetworkInterface"
             Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_RESET_SCRIPT}&quot; >> {INSTALLER_LOGFILE}"
+            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_RESET_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
