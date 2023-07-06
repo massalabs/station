@@ -8,6 +8,7 @@ import (
 	"path"
 
 	"github.com/massalabs/station/int/api"
+	intconf "github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/int/initialize"
 	"github.com/massalabs/station/int/systray"
 	"github.com/massalabs/station/int/systray/update"
@@ -62,6 +63,10 @@ func main() {
 	err := initialize.Logger()
 	if err != nil {
 		log.Fatalf("while initializing logger: %s", err.Error())
+	}
+	err = intconf.Check()
+	if err != nil {
+		logger.Fatalf("Error with you current system configuration: %s", err.Error())
 	}
 
 	defer logger.Close()
