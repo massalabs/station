@@ -10,11 +10,11 @@ import (
 func OpenURL(app *fyne.App, urlToOpen string) {
 	u, err := url.Parse(urlToOpen)
 	if err != nil {
-		logger.Logger.Errorf("Error parsing URL:%s", err)
+		logger.Errorf("Error parsing URL:%s", err)
 	}
 
 	err = (*app).OpenURL(u)
 	if err != nil {
-		logger.Logger.Errorf("Error parsing URL:%s", err)
+		logger.Errorf("Error parsing URL:%s", err)
 	}
 }
