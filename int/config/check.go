@@ -52,21 +52,27 @@ func checkCertificate() error {
 	}
 
 	if !certCa.IsKnownByOS() {
+		logger.Logger.Debug("the CA is not known by the operating system.")
 		err := certCa.AddToOS()
 		if err != nil {
 			// non blocking error
 			logger.Logger.Warnf("failed to add the CA to the operating system: %s.", err)
 			logger.Logger.Warn(caFailureConsequence)
 		}
+	} else {
+		logger.Logger.Debug("the CA is known by the operating system.")
 	}
 
 	if !certCa.IsKnownByNSSDatabases() {
+		logger.Logger.Debug("the CA is not known by at least one local NSS database.")
 		err := certCa.AddToNSSDatabases()
 		if err != nil {
 			// non blocking error
 			logger.Logger.Warnf("failed to add the CA to NSS: %s.", err)
 			logger.Logger.Warn(caFailureConsequence)
 		}
+	} else {
+		logger.Logger.Debug("the CA is known by all local NSS databases.")
 	}
 
 	return nil

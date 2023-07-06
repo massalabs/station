@@ -44,28 +44,40 @@ func (n *NSSDatabases) executeOnPaths(operation func(path string) error) error {
 // Add adds the certificate to the NSS databases.
 func (n *NSSDatabases) Add(certPath string, certificateName string) error {
 	return n.executeOnPaths(func(path string) error {
-		return runCertutilCommand("-A", "-d", path, "-t", "C,,", "-n", certificateName, "-i", certPath)
+		err := runCertutilCommand("-A", "-d", path, "-t", "C,,", "-n", certificateName, "-i", certPath)
+		logger.Logger.Debugf("adding the certificate to the NSS database (%s): %s", path, err)
+
+		return err
 	})
 }
 
 // Delete deletes the certificate from the NSS databases.
 func (n *NSSDatabases) Delete(certificateName string) error {
 	return n.executeOnPaths(func(path string) error {
-		return runCertutilCommand("-D", "-d", path, "-n", certificateName)
+		err := runCertutilCommand("-D", "-d", path, "-n", certificateName)
+		logger.Logger.Debugf("deleting the certificate from the NSS database (%s): %s", path, err)
+
+		return err
 	})
 }
 
 // IsKnown checks if the certificate is known by the NSS databases.
 func (n *NSSDatabases) IsKnown(certificateName string) bool {
-	err := n.executeOnPaths(func(path string) error {
-		return runCertutilCommand("-V", "-d", path, "-u", "L", "-n", certificateName)
-	})
+	for _, path := range n.Paths {
+		err := runCertutilCommand("-V", "-d", path, "-u", "L", "-n", certificateName)
+		logger.Logger.Debugf("checking if the certificate is known by the NSS database (%s): %s", path, err)
 
-	if err != nil && !strings.Contains(err.Error(), "PR_FILE_NOT_FOUND_ERROR:") {
-		logger.Logger.Errorf("failed to check if the certificate is known by the NSS databases: %v", err)
+		if err != nil && !strings.Contains(err.Error(), "PR_FILE_NOT_FOUND_ERROR:") {
+			logger.Logger.Errorf("failed to check if the certificate is known by the NSS databases: %v", err)
+		}
+
+		if err != nil {
+			return false
+		}
+
 	}
 
-	return err == nil
+	return true
 }
 
 // filterExistingPath filters the given paths and returns only the existing ones.
