@@ -325,7 +325,7 @@ def create_wxs_file():
         <CustomAction
             Id="ResetNetworkInterface"
             Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_RESET_SCRIPT}&quot;"
+            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_RESET_SCRIPT}&quot; >> {INSTALLER_LOGFILE}"
             Execute="deferred"
             Impersonate="no"
             Return="check"
