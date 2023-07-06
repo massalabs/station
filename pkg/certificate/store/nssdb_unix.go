@@ -3,22 +3,14 @@
 package store
 
 import (
+	"fmt"
 	"log"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/massalabs/station/pkg/logger"
 )
-
-var nssDBPaths = []string{
-	"/etc/pki/nssdb/",
-	os.Getenv("HOME") + "/.pki/nssdb/",
-	os.Getenv("HOME") + "/snap/chromium/current/.pki/nssdb/",
-	os.Getenv("HOME") + "/.mozilla/firefox/*",
-	os.Getenv("HOME") + "/snap/firefox/common/.mozilla/firefox/*",
-}
 
 const databasePattern = "cert*.db"
 
@@ -28,10 +20,15 @@ type NSSDatabases struct {
 }
 
 // NewNssDatabases returns a new NSSDatabases instance.
-func NewNssDatabases() *NSSDatabases {
-	return &NSSDatabases{
-		Paths: findDB(),
+func NewNssDatabases() (*NSSDatabases, error) {
+	genericPath, err := NSSDBPaths()
+	if err != nil {
+		return nil, err
 	}
+
+	return &NSSDatabases{
+		Paths: filterExistingPath(genericPath),
+	}, nil
 }
 
 // executeOnPaths executes the given operation on each NSS database path.
@@ -64,14 +61,18 @@ func (n *NSSDatabases) IsKnown(certificateName string) bool {
 		return runCertutilCommand("-V", "-d", path, "-u", "L", "-n", certificateName)
 	})
 
+	if err != nil && !strings.Contains(err.Error(), "PR_FILE_NOT_FOUND_ERROR:") {
+		logger.Logger.Errorf("failed to check if the certificate is known by the NSS databases: %v", err)
+	}
+
 	return err == nil
 }
 
-// List lists the recognized NSS databases.
-func findDB() []string {
+// filterExistingPath filters the given paths and returns only the existing ones.
+func filterExistingPath(theoricPath []string) []string {
 	var dbPath []string
 
-	for _, path := range nssDBPaths {
+	for _, path := range theoricPath {
 		matches, err := filepath.Glob(path)
 		if err != nil {
 			log.Fatalf("failed to parse nssdb pattern (%s):  %v", path, err)
@@ -105,10 +106,7 @@ func runCertutilCommand(args ...string) error {
 	cmd := exec.Command(bin, args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		logger.Logger.Infoln("failed to run certutil command (%s): %v", cmd, err)
-		logger.Logger.Debugln("certutil output: %s", out)
-
-		return err
+		return fmt.Errorf("%s: %w", string(out), err)
 	}
 
 	return nil
