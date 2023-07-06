@@ -2,7 +2,12 @@ package nss
 
 import (
 	"fmt"
+	"path/filepath"
+	"strings"
 )
+
+// databasePattern is the pattern used to find NSS databases with dynamic path configuration.
+const databasePattern = "cert*.db"
 
 // manager encapsulates operations to execute on all the NSS databases of the operating system.
 type Manager struct {
@@ -71,4 +76,48 @@ func (m *Manager) HasCA(certName string) bool {
 	}
 
 	return true
+}
+
+// AppendDefaultNSSDatabasePaths appends the usual NSS database paths to the existing NSS database paths.
+func (m *Manager) AppendDefaultNSSDatabasePaths() error {
+	theoricPath, err := defaultNSSDatabasePaths()
+	if err != nil {
+		return err
+	}
+
+	dbPaths, err := m.expandAndFilterPaths(filepath.Glob, theoricPath)
+	if err != nil {
+		return err
+	}
+
+	m.dbPath = append(m.dbPath, dbPaths...)
+
+	return nil
+}
+
+// expandAndFilterPaths expands path patterns and filters out directories not containing a database.
+func (m *Manager) expandAndFilterPaths(expander func(string) ([]string, error), paths []string) ([]string, error) {
+	var dbPath []string
+
+	for _, path := range paths {
+		matches, err := expander(path)
+		if err != nil {
+			m.Errorf("failed to parse NSS database file pattern (%s):  %v", path, err)
+			continue
+		}
+
+		// if the path is a pattern, we need to filter the directories not containing a database
+		if strings.Contains(path, "*") {
+			for _, match := range matches {
+				dbFiles, _ := expander(filepath.Join(match, databasePattern))
+				if len(dbFiles) > 0 {
+					dbPath = append(dbPath, match)
+				}
+			}
+		} else {
+			dbPath = append(dbPath, matches...)
+		}
+	}
+
+	return dbPath, nil
 }

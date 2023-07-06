@@ -3,6 +3,7 @@ package nss
 // Logger is the interface used by the NSS package to log messages.
 type Logger interface {
 	Debugf(format string, v ...interface{})
+	Errorf(format string, v ...interface{})
 }
 
 // CertUtilServicer encapsulates operations on NSS database using certutil command.

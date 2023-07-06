@@ -43,6 +43,10 @@ func (m *MockLogger) Debugf(msg string, args ...interface{}) {
 	m.Called(msg, args)
 }
 
+func (m *MockLogger) Errorf(msg string, args ...interface{}) {
+	m.Called(msg, args)
+}
+
 func TestManager_AddCA(t *testing.T) {
 	mockCertUtilServicer := new(MockCertUtilServicer)
 	mockLogger := new(MockLogger)
@@ -131,4 +135,59 @@ func TestManager_HasCA_Error(t *testing.T) {
 	assert.False(t, result)
 	mockCertUtilServicer.AssertExpectations(t)
 	mockLogger.AssertExpectations(t)
+}
+
+func TestExpandAndFilterPaths(t *testing.T) {
+	tests := []struct {
+		name      string
+		input     []string
+		mockGlob  func(pattern string) ([]string, error)
+		want      []string
+		expectErr bool
+	}{
+		{
+			name:  "normal operation",
+			input: []string{"/path/to/", "/path/to/dir1/", "/path/to/dir2/"},
+			mockGlob: func(pattern string) ([]string, error) {
+				if pattern == "/path/to/dir1/" {
+					return []string{"/path/to/dir1/"}, nil
+				}
+				if pattern == "/path/to/dir2/" {
+					return []string{}, nil
+				}
+				return nil, nil
+			},
+			want: []string{"/path/to/dir1/"},
+		},
+		{
+			name:  "dynamic path operation",
+			input: []string{"/path/to/*"},
+			mockGlob: func(pattern string) ([]string, error) {
+				if pattern == "/path/to/*" {
+					return []string{"/path/to/dir1", "/path/to/dir2"}, nil
+				}
+				if pattern == "/path/to/dir1/cert*.db" {
+					return []string{"/path/to/dir1/cert9.db"}, nil
+				}
+				if pattern == "/path/to/dir2/cert*.db" {
+					return []string{}, nil
+				}
+				return nil, nil
+			},
+			want: []string{"/path/to/dir1"},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			manager := NewManager([]string{}, nil, nil)
+			got, err := manager.expandAndFilterPaths(tc.mockGlob, tc.input)
+			if tc.expectErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+			assert.Equal(t, tc.want, got)
+		})
+	}
 }
