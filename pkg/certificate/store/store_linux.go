@@ -6,6 +6,7 @@ package store
 import (
 	"crypto/x509"
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/massalabs/station/pkg/su"
@@ -20,12 +21,20 @@ const (
 )
 
 func AddToOS(cert *x509.Certificate) error {
-	err := WriteCertificate(OSCertificateFilename(cert), cert)
+	dir := os.Getenv("HOME")
+	dir = filepath.Join(dir, ".local", "share")
+	dir = filepath.Join(dir, "mkcert")
+	command, err := su.Command("cp", filepath.Join(dir, "rootCA.pem"), OSCertificateFilename(cert))
 	if err != nil {
-		return fmt.Errorf("failed to write the CA certificate to the filesystem: %w", err)
+		return fmt.Errorf("failed to create the command to copy CA certificates: %w", err)
 	}
 
-	command, err := su.Command(OSCertificateCommand)
+	err = command.Run()
+	if err != nil {
+		return fmt.Errorf("failed to copy the CA certificates: %w", err)
+	}
+
+	command, err = su.Command(OSCertificateCommand)
 	if err != nil {
 		return fmt.Errorf("failed to create the command to update the CA certificates: %w", err)
 	}
