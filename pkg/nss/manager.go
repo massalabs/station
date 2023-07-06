@@ -85,10 +85,7 @@ func (m *Manager) AppendDefaultNSSDatabasePaths() error {
 		return err
 	}
 
-	dbPaths, err := m.expandAndFilterPaths(filepath.Glob, theoricPath)
-	if err != nil {
-		return err
-	}
+	dbPaths := m.expandAndFilterPaths(filepath.Glob, theoricPath)
 
 	m.dbPath = append(m.dbPath, dbPaths...)
 
@@ -96,13 +93,14 @@ func (m *Manager) AppendDefaultNSSDatabasePaths() error {
 }
 
 // expandAndFilterPaths expands path patterns and filters out directories not containing a database.
-func (m *Manager) expandAndFilterPaths(expander func(string) ([]string, error), paths []string) ([]string, error) {
+func (m *Manager) expandAndFilterPaths(expander func(string) ([]string, error), paths []string) []string {
 	var dbPath []string
 
 	for _, path := range paths {
 		matches, err := expander(path)
 		if err != nil {
 			m.Errorf("failed to parse NSS database file pattern (%s):  %v", path, err)
+
 			continue
 		}
 
@@ -119,5 +117,5 @@ func (m *Manager) expandAndFilterPaths(expander func(string) ([]string, error), 
 		}
 	}
 
-	return dbPath, nil
+	return dbPath
 }

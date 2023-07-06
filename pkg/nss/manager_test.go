@@ -139,11 +139,10 @@ func TestManager_HasCA_Error(t *testing.T) {
 
 func TestExpandAndFilterPaths(t *testing.T) {
 	tests := []struct {
-		name      string
-		input     []string
-		mockGlob  func(pattern string) ([]string, error)
-		want      []string
-		expectErr bool
+		name     string
+		input    []string
+		mockGlob func(pattern string) ([]string, error)
+		want     []string
 	}{
 		{
 			name:  "normal operation",
@@ -155,6 +154,7 @@ func TestExpandAndFilterPaths(t *testing.T) {
 				if pattern == "/path/to/dir2/" {
 					return []string{}, nil
 				}
+
 				return nil, nil
 			},
 			want: []string{"/path/to/dir1/"},
@@ -172,6 +172,7 @@ func TestExpandAndFilterPaths(t *testing.T) {
 				if pattern == "/path/to/dir2/cert*.db" {
 					return []string{}, nil
 				}
+
 				return nil, nil
 			},
 			want: []string{"/path/to/dir1"},
@@ -181,12 +182,7 @@ func TestExpandAndFilterPaths(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			manager := NewManager([]string{}, nil, nil)
-			got, err := manager.expandAndFilterPaths(tc.mockGlob, tc.input)
-			if tc.expectErr {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
-			}
+			got := manager.expandAndFilterPaths(tc.mockGlob, tc.input)
 			assert.Equal(t, tc.want, got)
 		})
 	}
