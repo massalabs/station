@@ -26,7 +26,11 @@ func checkCertificate() error {
 		if err != nil {
 			// non blocking error
 			logger.Logger.Warnf("failed to add the CA to the operating system: %s.", err)
+		} else {
+			logger.Logger.Infof("the CA has been added to the operating system.")
 		}
+	} else {
+		logger.Logger.Infof("the CA is already known by the operating system.")
 	}
 
 	return nil
