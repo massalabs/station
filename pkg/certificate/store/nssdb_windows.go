@@ -14,15 +14,15 @@ func NewNssDatabases() (*NSSDatabases, error) {
 
 // Add adds the certificate to the NSS databases.
 func (n *NSSDatabases) Add(_ string, _ string) error {
-	return nil, fmt.Errorf("not implemented")
+	return fmt.Errorf("not implemented")
 }
 
 // Delete deletes the certificate from the NSS databases.
 func (n *NSSDatabases) Delete(_ string) error {
-	return nil, fmt.Errorf("not implemented")
+	return fmt.Errorf("not implemented")
 }
 
 // IsKnown checks if the certificate is known by the NSS databases.
 func (n *NSSDatabases) IsKnown(_ string) bool {
-	return nil, fmt.Errorf("not implemented")
+	return false
 }
