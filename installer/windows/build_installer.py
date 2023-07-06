@@ -40,6 +40,7 @@ WIXTOOLSET_URL = (
     "https://wixdl.blob.core.windows.net/releases/v3.14.0.6526/wix314-binaries.zip"
 )
 
+INSTALLER_LOGFILE = "%Temp%\\massastation_installer.log"
 
 def download_file(url, filename):
     """
@@ -284,7 +285,7 @@ def create_wxs_file():
         <CustomAction
             Id="InstallAcrylic"
             Directory="AcrylicDNSProxy"
-            ExeCommand="cmd /c &quot;[AcrylicDNSProxy]InstallAcrylicService.bat&quot;"
+            ExeCommand="cmd /c &quot;[AcrylicDNSProxy]InstallAcrylicService.bat&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
@@ -292,7 +293,7 @@ def create_wxs_file():
         <CustomAction
             Id="ConfigureAcrylic"
             Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}&quot;"
+            ExeCommand="cmd /c &quot;[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
@@ -300,7 +301,7 @@ def create_wxs_file():
         <CustomAction
             Id="ConfigureNetworkInterface"
             Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_CONFIG_SCRIPT}&quot;"
+            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_CONFIG_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
@@ -308,7 +309,7 @@ def create_wxs_file():
         <CustomAction
             Id="GenerateCertificate"
             Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{GEN_CERT_SCRIPT}&quot;"
+            ExeCommand="cmd /c &quot;[INSTALLDIR]{GEN_CERT_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
@@ -324,7 +325,7 @@ def create_wxs_file():
         <CustomAction
             Id="ResetNetworkInterface"
             Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_RESET_SCRIPT}&quot; reset"
+            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_RESET_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
