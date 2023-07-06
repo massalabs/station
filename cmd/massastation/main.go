@@ -2,10 +2,12 @@ package main
 
 import (
 	"flag"
+	"log"
 	"os"
 	"path"
 
 	"github.com/massalabs/station/int/api"
+	"github.com/massalabs/station/int/initialize"
 	"github.com/massalabs/station/int/systray"
 	"github.com/massalabs/station/int/systray/update"
 	"github.com/massalabs/station/pkg/config"
@@ -56,6 +58,11 @@ func ParseFlags() api.StartServerFlags {
 }
 
 func main() {
+	err := initialize.Logger()
+	if err != nil {
+		log.Fatalf("while initializing logger: %s", err.Error())
+	}
+
 	defer logger.Close()
 
 	flags := ParseFlags()
@@ -64,7 +71,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	err := config.Check()
+	err = config.Check()
 	if err != nil {
 		logger.Fatalf("Error with you current system configuration: %s", err.Error())
 	}
