@@ -53,6 +53,7 @@ func checkCertificate() error {
 
 	if !certCa.IsKnownByOS() {
 		logger.Logger.Debug("the CA is not known by the operating system.")
+
 		err := certCa.AddToOS()
 		if err != nil {
 			// non blocking error
@@ -65,6 +66,7 @@ func checkCertificate() error {
 
 	if !certCa.IsKnownByNSSDatabases() {
 		logger.Logger.Debug("the CA is not known by at least one local NSS database.")
+
 		err := certCa.AddToNSSDatabases()
 		if err != nil {
 			// non blocking error

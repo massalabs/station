@@ -74,7 +74,6 @@ func (n *NSSDatabases) IsKnown(certificateName string) bool {
 		if err != nil {
 			return false
 		}
-
 	}
 
 	return true
