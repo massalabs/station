@@ -34,7 +34,10 @@ type registryHandler struct {
 }
 
 func (h *registryHandler) Handle(_ operations.AllDomainsGetterParams) middleware.Responder {
-	results, err := Registry(h.config)
+	batchSize := 10 // Number of results per batch
+	page := 1       // Starting page
+
+	results, _, err := Registry(h.config, batchSize, page)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().
 			WithPayload(
@@ -53,19 +56,33 @@ smart contract Massa Station is connected to. Once this data has been fetched fr
 the various website storer contracts, the function builds an array of Registry objects
 and returns it to the frontend for display on the Registry page.
 */
-func Registry(config *config.AppConfig) ([]*models.Registry, error) {
+func Registry(config *config.AppConfig, batchSize int, page int) ([]*models.Registry, bool, error) {
 	client := node.NewClient(config.NodeURL)
 
 	// Fetch website names to display
 	websiteNames, err := filterEntriesToDisplay(*config, client)
 	if err != nil {
-		return nil, fmt.Errorf("filtering keys to be displayed at '%s': %w", config.DNSAddress, err)
+		return nil, false, fmt.Errorf("filtering keys to be displayed at '%s': %w", config.DNSAddress, err)
+	}
+
+	// Calculate the starting and ending index for the current batch
+	startIndex := (page - 1) * batchSize
+	endIndex := startIndex + batchSize
+
+	// Check if the page is out of range
+	if startIndex >= len(websiteNames) {
+		return nil, false, nil // No more results
+	}
+
+	// Adjust the endIndex if it exceeds the number of websiteNames
+	if endIndex > len(websiteNames) {
+		endIndex = len(websiteNames)
 	}
 
 	// Fetch DNS values of the website names: contractAddress, Description.
-	dnsValues, err := node.ContractDatastoreEntries(client, config.DNSAddress, websiteNames)
+	dnsValues, err := node.ContractDatastoreEntries(client, config.DNSAddress, websiteNames[startIndex:endIndex])
 	if err != nil {
-		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, config.DNSAddress, err)
+		return nil, false, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames[startIndex:endIndex], config.DNSAddress, err)
 	}
 
 	// Pre-allocate registry with the estimated capacity
@@ -85,8 +102,8 @@ func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 			continue
 		}
 
-		name := convert.BytesToString(websiteNames[index])
-
+		name := convert.BytesToString(websiteNames[startIndex+index])
+		fmt.Println(index)
 		registry = append(registry, &models.Registry{
 			Name:        name,
 			Address:     websiteStorerAddress,
@@ -100,9 +117,14 @@ func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 	sort.Slice(registry, func(i, j int) bool {
 		return registry[i].Name < registry[j].Name
 	})
+	fmt.Println(len(registry))
+	fmt.Println("DONE ++++++++++++++++++++==========================================")
 
-	return registry, nil
+	hasMoreResults := endIndex < len(websiteNames)
+
+	return registry, hasMoreResults, nil
 }
+
 
 func DNSRecordFavicon(name, websiteStorerAddress string, client *node.Client) string {
 	body, err := website.Fetch(client, websiteStorerAddress, faviconIcon)
