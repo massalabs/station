@@ -21,7 +21,7 @@ type install struct {
 }
 
 func (i *install) Handle(param operations.PluginManagerInstallParams) middleware.Responder {
-	logger.Logger.Debugf("[POST /plugin-manager] source: %s", param.Source)
+	logger.Debugf("[POST /plugin-manager] source: %s", param.Source)
 
 	_, err := url.ParseRequestURI(strings.TrimSpace(param.Source))
 	if err != nil {

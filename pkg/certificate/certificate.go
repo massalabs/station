@@ -43,7 +43,7 @@ func wrapAndPrint(msg string, err error) error {
 	wrappingMsg := "while handling SNI Hello request"
 
 	err = fmt.Errorf("%s: %w", msg, err)
-	logger.Logger.Errorf("%s: %v", wrappingMsg, err)
+	logger.Errorf("%s: %v", wrappingMsg, err)
 
 	return fmt.Errorf("%s: %w", wrappingMsg, err)
 }
