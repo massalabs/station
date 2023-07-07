@@ -18,8 +18,10 @@ This guide provides step-by-step instructions for installing **MassaStation** on
 
 1. Download the latest version of **MassaStation** installer for Windows (`.msi`) from [here](https://github.com/massalabs/station/releases/latest/).
 2. Locate the downloaded `.msi` installer file and double-click on it to start the installation process.
-3. Follow the on-screen instructions to proceed with the installation.
-4. Once the installation is complete, you will see a confirmation message. Click "Finish" to exit the installer.
+3. Windows will warn you about untrust software, click on "more info" and "run anyway" to continue the installation.
+4. Follow the on-screen instructions to proceed with the installation. Some terminal windows will open and close automatically during the installation process. This is normal and expected behavior.
+5. If prompted, click on "Yes" to allow the installer to make changes on certificates (this is to use Massa Station with https).
+6. Once the installation is complete, you will see a confirmation message. Click "Finish" to exit the installer.
 
 Congratulations! You have successfully installed **MassaStation** on your computer. You can start **MassaStation** by searching for it in the Start menu or by clicking on the icon on your desktop (if you chose to create one during the installation).
 
