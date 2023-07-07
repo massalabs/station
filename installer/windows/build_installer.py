@@ -136,7 +136,7 @@ def move_binaries():
         os.path.join(BUILD_DIR, RUN_VBS),
     )
     shutil.copy(
-        os.path.join("windows", LOGO),
+        os.path.join("windows","assets", LOGO),
         os.path.join(BUILD_DIR, LOGO),
     )
 
