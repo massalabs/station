@@ -93,7 +93,7 @@ func BytesToU64(byteArray []byte) uint64 {
 
 	err := binary.Read(bytes.NewReader(byteArray), binary.LittleEndian, &u64)
 	if err != nil {
-		logger.Logger.Errorf("error converting bytesToU64 :%v\n", err)
+		logger.Errorf("error converting bytesToU64 :%v\n", err)
 	}
 
 	return u64

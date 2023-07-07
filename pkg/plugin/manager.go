@@ -140,7 +140,7 @@ func (m *Manager) Delete(correlationID string) error {
 	// Ignore Stop errors. We want to delete the plugin anyway
 	err = plgn.Stop()
 	if err != nil {
-		logger.Logger.Warnf("stopping plugin before delete %s: %s\n", correlationID, err)
+		logger.Warnf("stopping plugin before delete %s: %s\n", correlationID, err)
 	}
 
 	alias := Alias(plgn.info.Author, plgn.info.Name)
@@ -207,8 +207,8 @@ func (m *Manager) RunAll() error {
 
 			err = m.InitPlugin(binPath)
 			if err != nil {
-				logger.Logger.Warnf("While running plugin %s: %s.", rootItem.Name(), err)
-				logger.Logger.Warnf("This plugin will not be executed.")
+				logger.Warnf("While running plugin %s: %s.", rootItem.Name(), err)
+				logger.Warnf("This plugin will not be executed.")
 			}
 		}
 	}
@@ -217,12 +217,12 @@ func (m *Manager) RunAll() error {
 }
 
 func (m *Manager) Stop() {
-	logger.Logger.Info("Stopping all plugins...")
+	logger.Info("Stopping all plugins...")
 
 	for _, plugin := range m.plugins {
 		err := plugin.Stop()
 		if err != nil {
-			logger.Logger.Warnf("Error while stopping plugin %s: %s", plugin.info.Name, err)
+			logger.Warnf("Error while stopping plugin %s: %s", plugin.info.Name, err)
 		}
 	}
 }
@@ -241,7 +241,7 @@ func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
 	defer func() {
 		err = os.Remove(resp.Filename)
 		if err != nil {
-			logger.Logger.Errorf("deleting archive %s: %s", resp.Filename, err)
+			logger.Errorf("deleting archive %s: %s", resp.Filename, err)
 		}
 	}()
 
