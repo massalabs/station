@@ -29,9 +29,9 @@ import (
 	"math/big"
 	"os"
 	"path/filepath"
-	"runtime"
 	"time"
 
+	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/pkg/logger"
 )
 
@@ -55,17 +55,17 @@ func GenerateTLS(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 		return nil, wrapAndPrint("while generating keypair", err)
 	}
 
-	caPath, err := mkcertCARootPath()
+	caPath, err := configuration.CAPath()
 	if err != nil {
 		return nil, wrapAndPrint("while getting mkcert CA root path", err)
 	}
 
-	caCertificate, err := LoadCertificate(filepath.Join(caPath, "rootCA.pem"))
+	caCertificate, err := LoadCertificate(filepath.Join(caPath, configuration.CertificateAuthorityFileName))
 	if err != nil {
 		return nil, wrapAndPrint("while loading CA certificate", err)
 	}
 
-	caPrivateKey, err := LoadPrivateKey(filepath.Join(caPath, "rootCA-key.pem"))
+	caPrivateKey, err := LoadPrivateKey(filepath.Join(caPath, configuration.CertificateAuthorityKeyFileName))
 	if err != nil {
 		return nil, wrapAndPrint("while loading CA key", err)
 	}
@@ -122,38 +122,6 @@ func GenerateSignedCertificate(
 	}
 
 	return cert, privateKey, nil
-}
-
-// Get the mkcert CA root path depending on the OS.
-func mkcertCARootPath() (string, error) {
-	if env := os.Getenv("CAROOT"); env != "" {
-		return env, nil
-	}
-
-	var dir string
-
-	switch {
-	case runtime.GOOS == "windows":
-		dir = os.Getenv("LocalAppData")
-
-	case os.Getenv("XDG_DATA_HOME") != "":
-		dir = os.Getenv("XDG_DATA_HOME")
-
-	case runtime.GOOS == "darwin" && os.Getenv("HOME") != "":
-		dir = os.Getenv("HOME")
-		dir = filepath.Join(dir, "Library", "Application Support")
-
-	case runtime.GOOS == "linux" && os.Getenv("HOME") != "":
-		dir = os.Getenv("HOME")
-		dir = filepath.Join(dir, ".local", "share")
-	default:
-		msg := "automatic Certificate Authority detection is not supported by your operating system. "
-		msg += "Use the CAROOT environment variable to specify its location."
-
-		return "", errors.New(msg)
-	}
-
-	return filepath.Join(dir, "mkcert"), nil
 }
 
 // Loads a PEM encoded certificate.
