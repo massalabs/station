@@ -198,7 +198,7 @@ def create_wxs_file():
                         <File Id="NICResetScript" Name="{NIC_RESET_SCRIPT}" Source="{BUILD_DIR}\\{NIC_RESET_SCRIPT}" />
                         <File Id="GenCertScript" Name="{GEN_CERT_SCRIPT}" Source="{BUILD_DIR}\\{GEN_CERT_SCRIPT}" />
                         <File Id="MassaStationRunScript" Name="{RUN_VBS}" Source="{BUILD_DIR}\\{RUN_VBS}" />
-                        <File Id="MassaStationLogo" Name="{LOGO}" Source="{BUILD_DIR}\\{LOGO}" />
+                        <File Id="MassaStationLogo" Name="{LOGO}" Source="{BUILD_DIR}\\{LOGO}.png" />
                     </Component>
                     <Directory Id="MassaStationCerts" Name="certs">
                         <Component Id="CreateCertsDir" Guid="e96619b3-48a7-4629-8a19-e1c8270b331c">
@@ -245,7 +245,7 @@ def create_wxs_file():
                             WorkingDirectory="INSTALLDIR"
                             Icon ="MassaStationIcon"
                         >
-                        <Icon Id="MassaStationIconProgramMenu" SourceFile="MassaStationLogo" />
+                          <Icon Id="MassaStationIconProgramMenu" SourceFile="MassaStationLogo.png" />
                         </Shortcut>
                         <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
                         <RegistryValue Root="HKCU" Key="Software\{MANUFACTURER}\{PRODUCT_NAME}" Name="installed" Type="integer" Value="1" KeyPath="yes" />
@@ -262,7 +262,7 @@ def create_wxs_file():
                         WorkingDirectory="INSTALLDIR"
                         Icon="MassaStationIcon"
                     >
-                    <Icon Id="MassaStationIconDesktop" SourceFile="MassaStationLogo" />
+                     <Icon Id="MassaStationIconDesktop" SourceFile="MassaStationLogo.png" />
                     </Shortcut>
                 </Component>
             </Directory>
