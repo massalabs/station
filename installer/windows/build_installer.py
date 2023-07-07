@@ -240,7 +240,7 @@ def create_wxs_file():
                        <Shortcut
                             Id="ApplicationStartMenuShortcut"
                             Name="{PRODUCT_NAME}"
-                            Target="[#MassaStationAppEXE]"
+                            Target="[#MassaStationRunScript]"
                             WorkingDirectory="INSTALLDIR"
                             Icon ="MassaStationIconProgramMenu"
                         >
