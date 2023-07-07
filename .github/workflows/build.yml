@@ -20,15 +20,6 @@ jobs:
             target: windows
             cc: x86_64-w64-mingw32-gcc
             ext: .exe
-          - os: ubuntu-20.04
-            arch: amd64
-            target: linux
-          - os: macos-latest
-            arch: amd64
-            target: darwin
-          - os: macos-latest
-            arch: arm64
-            target: darwin
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -84,40 +75,6 @@ jobs:
             MassaStation.tar.xz
           if-no-files-found: error
           retention-days: 1
-
-  build-macos-installer:
-    name: Build .pkg installer for MacOS ${{ matrix.arch }}
-    needs: build
-    defaults:
-      run:
-        working-directory: installer
-    strategy:
-      matrix:
-        arch: [amd64, arm64]
-
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Fetch all git tags
-        run: git fetch --prune --unshallow --tags
-      - name: Download MassaStation Package
-        uses: actions/download-artifact@v3
-        with:
-          name: massastation_darwin_${{ matrix.arch }}_package
-          path: installer
-      - name: Build Package
-        run: sh macos/create_pkg.sh ${{ matrix.arch }}
-        env:
-          VERSION: ${{ env.VERSION }}
-      - name: Upload Package
-        uses: actions/upload-artifact@v3
-        with:
-          name: massastation_installer_darwin_${{ matrix.arch }}
-          path: "installer/*.pkg"
-          if-no-files-found: error
-          retention-days: 7
-
   build-packages-windows:
     name: Build .msi installer for amd64
     needs: build
@@ -150,35 +107,5 @@ jobs:
         with:
           name: massastation_installer_windows_amd64
           path: "installer/*.msi"
-          if-no-files-found: error
-          retention-days: 7
-
-  build-deb-installer:
-    name: Build .deb installer for Linux amd64
-    needs: build
-    defaults:
-      run:
-        working-directory: installer
-
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Fetch all git tags
-        run: git fetch --prune --unshallow --tags
-      - name: Download MassaStation Package
-        uses: actions/download-artifact@v3
-        with:
-          name: massastation_linux_amd64_package
-          path: installer
-      - name: Build Package
-        run: sh deb/create_deb.sh
-        env:
-          VERSION: ${{ env.VERSION }}
-      - name: Upload Package
-        uses: actions/upload-artifact@v3
-        with:
-          name: massastation_installer_deb_amd64
-          path: "installer/*.deb"
           if-no-files-found: error
           retention-days: 7

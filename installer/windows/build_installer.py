@@ -31,7 +31,7 @@ NIC_CONFIG_SCRIPT = "configure_network_interfaces.bat"
 NIC_RESET_SCRIPT = "reset_network_interfaces.bat"
 GEN_CERT_SCRIPT = "generate_certificate.bat"
 RUN_VBS = "run.vbs"
-LOGO = "logo.png"
+LOGO = "logo.ico"
 WIX_DIR = "wixtoolset"
 
 # URLs to download Acrylic DNS Proxy and the WiX Toolset
@@ -136,7 +136,7 @@ def move_binaries():
         os.path.join(BUILD_DIR, RUN_VBS),
     )
     shutil.copy(
-        os.path.join("..", "int", "systray", "embedded", LOGO),
+        os.path.join("windows", LOGO),
         os.path.join(BUILD_DIR, LOGO),
     )
 
@@ -198,7 +198,6 @@ def create_wxs_file():
                         <File Id="NICResetScript" Name="{NIC_RESET_SCRIPT}" Source="{BUILD_DIR}\\{NIC_RESET_SCRIPT}" />
                         <File Id="GenCertScript" Name="{GEN_CERT_SCRIPT}" Source="{BUILD_DIR}\\{GEN_CERT_SCRIPT}" />
                         <File Id="MassaStationRunScript" Name="{RUN_VBS}" Source="{BUILD_DIR}\\{RUN_VBS}" />
-                        <File Id="MassaStationLogo" Name="{LOGO}" Source="{BUILD_DIR}\\{LOGO}.png" />
                     </Component>
                     <Directory Id="MassaStationCerts" Name="certs">
                         <Component Id="CreateCertsDir" Guid="e96619b3-48a7-4629-8a19-e1c8270b331c">
@@ -243,9 +242,9 @@ def create_wxs_file():
                             Name="{PRODUCT_NAME}"
                             Target="[#MassaStationAppEXE]"
                             WorkingDirectory="INSTALLDIR"
-                            Icon ="MassaStationIcon"
+                            Icon ="MassaStationIconProgramMenu"
                         >
-                          <Icon Id="MassaStationIconProgramMenu" SourceFile="MassaStationLogo.png" />
+                          <Icon Id="MassaStationIconProgramMenu" SourceFile="{BUILD_DIR}\\{LOGO}" />
                         </Shortcut>
                         <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
                         <RegistryValue Root="HKCU" Key="Software\{MANUFACTURER}\{PRODUCT_NAME}" Name="installed" Type="integer" Value="1" KeyPath="yes" />
@@ -260,9 +259,9 @@ def create_wxs_file():
                         Name="{PRODUCT_NAME}"
                         Target="[#MassaStationRunScript]"
                         WorkingDirectory="INSTALLDIR"
-                        Icon="MassaStationIcon"
+                        Icon="MassaStationIconDesktop"
                     >
-                     <Icon Id="MassaStationIconDesktop" SourceFile="MassaStationLogo.png" />
+                     <Icon Id="MassaStationIconDesktop" SourceFile="{BUILD_DIR}\\{LOGO}" />
                     </Shortcut>
                 </Component>
             </Directory>
