@@ -75,8 +75,13 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 To uninstall **MassaStation** from your Windows system, follow the steps below:
 
 1. Open your "Start" panel
-2. Look for MassaStation application in your list
-3. Click right on the application and click on uninstall
+2. Type "Settings" and open the settings
+3. On the left panel, click on "Apps"
+4. Click on "Installed Apps"
+5. Search for "MassaStation" in the list of installed applications
+6. On the "..." menu, click on "Uninstall"
+7. Confirm uninstallation by clicking on "Uninstall" in the confirmation dialog
+8. Follow the instructions provided by the uninstaller
 
 The application and all modules installed will be deleted from your desktop.
 
