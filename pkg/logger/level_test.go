@@ -2,6 +2,8 @@ package logger
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLogLevel(t *testing.T) {
@@ -22,15 +24,14 @@ func TestLogLevel(t *testing.T) {
 			t.Setenv("LOG_LEVEL", tt.env)
 
 			got, err := LogLevel()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("LogLevel() error = %v, wantErr %v", err, tt.wantErr)
 
-				return
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
 			}
 
-			if got != tt.want {
-				t.Errorf("LogLevel() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

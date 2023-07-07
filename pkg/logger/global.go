@@ -1,5 +1,7 @@
 package logger
 
+const notInitializedMessage = "global logger not initialized"
+
 // Initialize the logger at package level.
 var (
 	//nolint:gochecknoglobals
@@ -7,7 +9,7 @@ var (
 )
 
 // InitializeGlobal initializes the global logger at package level.
-// Once initialized, the logger can be used by calling the directly the classic logging functions (Debug, Info...).
+// Once initialized, the logger can be used by calling directly the classic logging functions (Debug, Info...).
 func InitializeGlobal(path string) error {
 	var err error
 
@@ -21,18 +23,18 @@ func InitializeGlobal(path string) error {
 // Note: The global logger must be initialized before calling this function, otherwise it will panic.
 func Debug(args ...interface{}) {
 	if logger == nil {
-		panic("global logger not initialized")
+		panic(notInitializedMessage)
 	}
 
 	logger.Debug(args...)
 }
 
-// Debug logs a message at the debug level.
+// Debugf logs a message at the debug level.
 // This function takes a variable number of arguments and uses fmt.Sprintf to construct the log message.
 // Note: The global logger must be initialized before calling this function, otherwise it will panic.
 func Debugf(template string, args ...interface{}) {
 	if logger == nil {
-		panic("global logger not initialized")
+		panic(notInitializedMessage)
 	}
 
 	logger.Debugf(template, args...)
@@ -43,7 +45,7 @@ func Debugf(template string, args ...interface{}) {
 // Note: The global logger must be initialized before calling this function, otherwise it will panic.
 func Info(args ...interface{}) {
 	if logger == nil {
-		panic("global logger not initialized")
+		panic(notInitializedMessage)
 	}
 
 	logger.Info(args...)
@@ -54,7 +56,7 @@ func Info(args ...interface{}) {
 // Note: The global logger must be initialized before calling this function, otherwise it will panic.
 func Infof(template string, args ...interface{}) {
 	if logger == nil {
-		panic("global logger not initialized")
+		panic(notInitializedMessage)
 	}
 
 	logger.Infof(template, args...)
@@ -65,7 +67,7 @@ func Infof(template string, args ...interface{}) {
 // Note: The global logger must be initialized before calling this function, otherwise it will panic.
 func Warn(args ...interface{}) {
 	if logger == nil {
-		panic("global logger not initialized")
+		panic(notInitializedMessage)
 	}
 
 	logger.Warn(args...)
@@ -76,7 +78,7 @@ func Warn(args ...interface{}) {
 // Note: The global logger must be initialized before calling this function, otherwise it will panic.
 func Warnf(template string, args ...interface{}) {
 	if logger == nil {
-		panic("global logger not initialized")
+		panic(notInitializedMessage)
 	}
 
 	logger.Warnf(template, args...)
@@ -87,7 +89,7 @@ func Warnf(template string, args ...interface{}) {
 // Note: The global logger must be initialized before calling this function, otherwise it will panic.
 func Error(args ...interface{}) {
 	if logger == nil {
-		panic("global logger not initialized")
+		panic(notInitializedMessage)
 	}
 
 	logger.Error(args...)
@@ -98,7 +100,7 @@ func Error(args ...interface{}) {
 // Note: The global logger must be initialized before calling this function, otherwise it will panic.
 func Errorf(template string, args ...interface{}) {
 	if logger == nil {
-		panic("global logger not initialized")
+		panic(notInitializedMessage)
 	}
 
 	logger.Errorf(template, args...)
@@ -109,7 +111,7 @@ func Errorf(template string, args ...interface{}) {
 // Note: The global logger must be initialized before calling this function, otherwise it will panic.
 func Fatal(args ...interface{}) {
 	if logger == nil {
-		panic("global logger not initialized")
+		panic(notInitializedMessage)
 	}
 
 	logger.Fatal(args...)
@@ -120,7 +122,7 @@ func Fatal(args ...interface{}) {
 // Note: The global logger must be initialized before calling this function, otherwise it will panic.
 func Fatalf(template string, args ...interface{}) {
 	if logger == nil {
-		panic("global logger not initialized")
+		panic(notInitializedMessage)
 	}
 
 	logger.Fatalf(template, args...)
@@ -132,7 +134,7 @@ func Fatalf(template string, args ...interface{}) {
 // Note: The global logger must be initialized before calling this function, otherwise it will panic.
 func Close() error {
 	if logger == nil {
-		panic("global logger not initialized")
+		panic(notInitializedMessage)
 	}
 
 	return logger.Close()
