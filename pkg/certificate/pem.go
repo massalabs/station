@@ -76,14 +76,14 @@ func (p PemType) String() string {
 
 // PemTypeString retrieves an enum value from the enum constants string name.
 // Throws an error if the param is not part of the enum.
-func NewPemType(s string) (PemType, error) {
-	switch s {
+func NewPemType(str string) (PemType, error) {
+	switch str {
 	case "CERTIFICATE":
 		return Certificate, nil
 	case "PRIVATE KEY":
 		return PrivateKey, nil
 	default:
-		return 0, fmt.Errorf("%w: %s", ErrInvalidPemType, s)
+		return 0, fmt.Errorf("%w: %s", ErrInvalidPemType, str)
 	}
 }
 
