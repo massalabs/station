@@ -1,6 +1,4 @@
-//go:build unix
-
-package store
+package truststore
 
 import (
 	"crypto/x509"

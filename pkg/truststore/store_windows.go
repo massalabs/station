@@ -1,4 +1,4 @@
-package store
+package truststore
 
 import (
 	"crypto/x509"
@@ -42,7 +42,7 @@ func Add(cert *x509.Certificate) error {
 	return nil
 }
 
-// Delete deletes the given certificate from the windows root store.
+// Delete removes the given certificate from the windows root store.
 func Delete(cert *x509.Certificate) error {
 	rootStore, err := openStore()
 	if err != nil {
