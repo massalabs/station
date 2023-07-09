@@ -17,7 +17,7 @@ require (
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/rs/cors v1.8.2
 	github.com/shopspring/decimal v1.3.1
-	golang.org/x/net v0.2.0
+	golang.org/x/net v0.12.0
 )
 
 require (
@@ -53,7 +53,9 @@ require (
 	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/image v0.3.0 // indirect
 	golang.org/x/mobile v0.0.0-20211207041440-4e6c2922fdee // indirect
-	golang.org/x/sys v0.2.0 // indirect
+	golang.org/x/mod v0.12.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
+	golang.org/x/tools v0.11.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/js/dom v0.0.0-20210725211120-f030747120f2 // indirect
@@ -76,7 +78,8 @@ require (
 	github.com/xyproto/unzip v0.0.0-20150601123358-823950573952
 	github.com/ybbus/jsonrpc/v3 v3.1.0
 	go.mongodb.org/mongo-driver v1.8.3 // indirect
+	go.uber.org/mock v0.2.0
 	golang.org/x/exp v0.0.0-20221114191408-850992195362
-	golang.org/x/text v0.6.0 // indirect
+	golang.org/x/text v0.11.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )
