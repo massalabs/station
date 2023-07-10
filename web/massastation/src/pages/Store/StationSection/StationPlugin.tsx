@@ -33,31 +33,23 @@ export function StationPlugin({
     isLoading: isExecuteLoading,
   } = usePost<PluginExecuteRequest>(`plugin-manager/${id}/execute`);
 
-  const {
-    mutate: deletePlugin,
-    isSuccess: deleteSuccess,
-    isLoading: isDeleteLoading,
-  } = useDelete(`plugin-manager/${id}`);
+  const { mutate: deletePlugin, isSuccess: deleteSuccess } = useDelete(
+    `plugin-manager/${id}`,
+  );
 
   const logoURL = `${baseAPI}/plugin-manager/${id}/logo`;
 
   useEffect(() => {
     if (isExecuteSuccess) {
-      // console.log('isExecuteSuccess');
       refetch();
     }
   }, [isExecuteSuccess]);
 
   useEffect(() => {
-    // if (isDeleteLoading) {
-    //   console.log('delete loading', plugin);
-    // }
     if (deleteSuccess) {
-      console.log('delete success');
-      console.log('refetch', refetch);
-      // refetch();
+      refetch();
     }
-  }, [deleteSuccess, isDeleteLoading]);
+  }, [deleteSuccess]);
 
   function updatePluginState(e: SyntheticEvent, command: string) {
     e.preventDefault();

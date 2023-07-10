@@ -37,7 +37,7 @@ function StoreSection({
     if (error) {
       navigate(routeFor('error'));
     }
-  });
+  }, [error]);
 
   return (
     <>
