@@ -131,7 +131,7 @@ func (s *CertStore) RemoveCertificate(cert *x509.Certificate) error {
 		return ErrCertStoreHandlerNotInit
 	}
 
-	certContextPtr, err := s.findCertBySubject(cert.Subject.CommonName)
+	certContextPtr, err := s.FindCertBySubject(cert.Subject.CommonName)
 	if err != nil {
 		return err
 	}
@@ -151,7 +151,7 @@ func (s *CertStore) AddCertificate(cert *x509.Certificate) error {
 		return ErrCertStoreHandlerNotInit
 	}
 
-	certContextPtr, err := s.createCertContext(cert)
+	certContextPtr, err := s.CreateCertContext(cert)
 	if err != nil {
 		return err
 	}
@@ -184,14 +184,14 @@ func interpretError(err error) error {
 	switch errno {
 	case syscall.Errno(windows.CRYPT_E_NOT_FOUND):
 		// The error code is not exported by the Windows API, so we have to format the error message.
-		return fmt.Errorf("%w: original error (CRYPT_E_NOT_FOUND - 0x%X): %s", ErrCertNotFound, windows.CRYPT_E_NOT_FOUND, err)
+		return fmt.Errorf("%w: %w (CRYPT_E_NOT_FOUND - 0x%X)", ErrCertNotFound, err, windows.CRYPT_E_NOT_FOUND)
 	case syscall.Errno(windows.CRYPT_E_EXISTS):
 		// The error code is not exported by the Windows API, so we have to format the error message.
-		return fmt.Errorf("%w: original error (CRYPT_E_EXISTS - 0x%X): %s", ErrCertAlreadyExists, windows.CRYPT_E_EXISTS, err)
+		return fmt.Errorf("%w: %w (CRYPT_E_EXISTS - 0x%X)", ErrCertAlreadyExists, err, windows.CRYPT_E_EXISTS)
 	case syscall.Errno(windows.ERROR_CANCELLED):
-		return fmt.Errorf("%w: original error: %s", ErrUserCanceled, err)
+		return fmt.Errorf("%w: %w", ErrUserCanceled, err)
 	case syscall.Errno(windows.ERROR_ACCESS_DENIED):
-		return fmt.Errorf("%w: original error: %s", ErrAccessDenied, err)
+		return fmt.Errorf("%w: %w", ErrAccessDenied, err)
 	default:
 		return err
 	}

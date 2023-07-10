@@ -8,7 +8,6 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -23,14 +22,18 @@ import (
 
 // loadCertificateFromFile is an helper function that loads a certificate from
 // testdata/cert.pem file.
-func loadCertificateFromFile(t *testing.T) *x509.Certificate {
+func loadCertificateFromFile() *x509.Certificate {
 	// Load the certificate from the file
 	certData, err := ioutil.ReadFile("testdata/cert.pem")
-	require.NoError(t, err)
+	if err != nil {
+		panic(err)
+	}
 
 	certBlock, _ := pem.Decode(certData)
 	cert, err := x509.ParseCertificate(certBlock.Bytes)
-	require.NoError(t, err)
+	if err != nil {
+		panic(err)
+	}
 
 	return cert
 }
@@ -47,9 +50,9 @@ func certInPool(cert *x509.Certificate, pool *x509.CertPool) bool {
 }
 
 var (
-	mockCertContext := &windows.CertContext{}
-	cert := loadCertificateFromFile(t)
-	otherError := errors.New("create error")
+	mockCertContext = &windows.CertContext{}
+	cert            = loadCertificateFromFile()
+	otherError      = errors.New("create error")
 )
 
 func TestCertStore_AddCertificate(t *testing.T) {
@@ -57,7 +60,6 @@ func TestCertStore_AddCertificate(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockAPI := mocks.NewMockWinAPI(mockCtrl)
-	
 
 	tests := []struct {
 		name      string
@@ -363,6 +365,69 @@ func TestNewCertStore(t *testing.T) {
 		assert.NotNil(t, store)
 		assert.Equal(t, windows.Handle(1), store.handler)
 	})
+}
+
+func TestInterpretError(t *testing.T) {
+	tests := []struct {
+		name     string
+		err      error
+		expected error
+		errStr   string
+	}{
+		{
+			name:     "Nil error",
+			err:      nil,
+			expected: nil,
+			errStr:   "",
+		},
+		{
+			name:     "CRYPT_E_NOT_FOUND error",
+			err:      windows.Errno(windows.CRYPT_E_NOT_FOUND),
+			expected: ErrCertNotFound,
+			errStr:   "certificate not found: Cannot find object or property. (CRYPT_E_NOT_FOUND - 0x80092004)",
+		},
+		{
+			name:     "CRYPT_E_EXISTS error",
+			err:      windows.Errno(windows.CRYPT_E_EXISTS),
+			expected: ErrCertAlreadyExists,
+			errStr:   "certificate already exists: The object or property already exists. (CRYPT_E_EXISTS - 0x80092005)",
+		},
+		{
+			name:     "ERROR_CANCELLED error",
+			err:      windows.Errno(windows.ERROR_CANCELLED),
+			expected: ErrUserCanceled,
+			errStr:   "operation cancelled by user: The operation was canceled by the user.",
+		},
+		{
+			name:     "ERROR_ACCESS_DENIED error",
+			err:      windows.Errno(windows.ERROR_ACCESS_DENIED),
+			expected: ErrAccessDenied,
+			errStr:   "access denied: Access is denied.",
+		},
+		{
+			name:     "Other errno error",
+			err:      windows.Errno(windows.ERROR_FILE_NOT_FOUND),
+			expected: windows.Errno(windows.ERROR_FILE_NOT_FOUND),
+			errStr:   "The system cannot find the file specified.",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			actual := interpretError(tc.err)
+			if tc.expected != nil {
+				// shall match
+				// the expected error
+				assert.ErrorIs(t, actual, tc.expected)
+				// the initial error
+				assert.ErrorAs(t, actual, &tc.err)
+				//the expected error string
+				assert.EqualError(t, actual, tc.errStr)
+			} else {
+				assert.NoError(t, actual)
+			}
+		})
+	}
 }
 
 func TestManualCheck(t *testing.T) {
