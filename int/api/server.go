@@ -97,7 +97,7 @@ func NewServer(flags StartServerFlags) *Server {
 
 	err = store.NewStore()
 	if err != nil {
-		logger.Fatal(err.Error())
+		logger.Error(err.Error())
 	}
 
 	return &Server{
