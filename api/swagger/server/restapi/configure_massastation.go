@@ -6,6 +6,7 @@ import (
 	"crypto/tls"
 	"embed"
 	"net/http"
+	"time"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
@@ -64,7 +65,15 @@ func configureMassaStationAPI(api *operations.MassastationAPI, config MSConfig.A
 		})
 	}
 
-	api.PreServerShutdown = func() {}
+	api.PreServerShutdown = func() {
+		// Create a timeout channel to force the execution of s.api.ServerShutdown()
+		timeout := time.After(5 * time.Second)
+		// Use a separate goroutine to handle the forced execution
+		go func() {
+			<-timeout
+			api.ServerShutdown()
+		}()
+	}
 
 	api.ServerShutdown = func() {
 		close(shutdown)

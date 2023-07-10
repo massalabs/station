@@ -95,7 +95,7 @@ func NewServer(flags StartServerFlags) *Server {
 	apiServer := restapi.NewServer(localAPI)
 
 	setAPIFlags(apiServer, flags)
-	apiServer.GracefulTimeout = 1 * time.Minute
+	apiServer.GracefulTimeout = 5 * time.Second
 
 	err = store.NewStore()
 	if err != nil {
