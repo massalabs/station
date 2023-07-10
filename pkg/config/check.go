@@ -15,8 +15,8 @@ func checkCertificate() error {
 	err := certCa.Load()
 	if err != nil {
 		// non blocking error
-		logger.Logger.Warnf("failed to load the CA: %s.", err)
-		logger.Logger.Warn("Station will only work using http, or you will have to add the CA to your browser manually.")
+		logger.Warnf("failed to load the CA: %s.", err)
+		logger.Warn("Station will only work using http, or you will have to add the CA to your browser manually.")
 
 		return nil
 	}
@@ -25,7 +25,7 @@ func checkCertificate() error {
 		err := certCa.AddToOS()
 		if err != nil {
 			// non blocking error
-			logger.Logger.Warnf("failed to add the CA to the operating system: %s.", err)
+			logger.Warnf("failed to add the CA to the operating system: %s.", err)
 		}
 	}
 

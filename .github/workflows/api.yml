@@ -38,6 +38,8 @@ jobs:
         run: |
           sudo mkdir -p /usr/local/share/massastation/
           sudo chmod 777 /usr/local/share/massastation/
+          sudo mkdir -p /usr/local/share/massastation/logs/
+          sudo chmod 777 /usr/local/share/massastation/logs/
           mkdir -p /usr/local/share/massastation/plugins/wallet-plugin
           sudo mkdir -p /etc/massastation/certs
           sudo chmod 777 /etc/massastation/
