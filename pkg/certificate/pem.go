@@ -74,7 +74,7 @@ func (p PemType) String() string {
 	}
 }
 
-// PemTypeString retrieves an enum value from the enum constants string name.
+// NewPemType retrieves an enum value from the enum constants string name.
 // Throws an error if the param is not part of the enum.
 func NewPemType(str string) (PemType, error) {
 	switch str {
