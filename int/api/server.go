@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
@@ -94,6 +95,7 @@ func NewServer(flags StartServerFlags) *Server {
 	server := restapi.NewServer(localAPI)
 
 	setAPIFlags(server, flags)
+	server.GracefulTimeout = 5 * time.Second
 
 	err = store.NewStore()
 	if err != nil {
