@@ -1,4 +1,9 @@
+//go:build windows
+// +build windows
+
 package certstore
+
+// This file provides the WinAPI interface and an its implementation for Windows using golang.org/x/sys/windows package.
 
 import (
 	"unsafe"
@@ -6,6 +11,8 @@ import (
 	"golang.org/x/sys/windows"
 )
 
+// WinAPI is an interface for Windows API certificate functions.
+// This interface is used for mocking in tests.
 type WinAPI interface {
 	UTF16PtrFromString(s string) (*uint16, error)
 	CertOpenSystemStore(handle windows.Handle, name *uint16) (windows.Handle, error)
@@ -17,6 +24,8 @@ type WinAPI interface {
 	CertAddCertificateContextToStore(store windows.Handle, certContext *windows.CertContext, addDisposition uint32, storeContext **windows.CertContext) error
 }
 
+// WindowsImpl is an implementation of WinAPI interface.
+// It uses golang.org/x/sys/windows package.
 type WindowsImpl struct{}
 
 func (WindowsImpl) UTF16PtrFromString(s string) (*uint16, error) {
@@ -53,6 +62,7 @@ func (WindowsImpl) CertAddCertificateContextToStore(store windows.Handle, certCo
 
 var _ WinAPI = WindowsImpl{}
 
+// NewWindowsImpl creates a new WindowsImpl.
 func NewWindowsImpl() *WindowsImpl {
 	return &WindowsImpl{}
 }

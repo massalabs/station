@@ -1,4 +1,6 @@
-// build +windows
+//go:build windows
+// +build windows
+
 package certstore
 
 import (
@@ -19,6 +21,8 @@ import (
 	"github.com/massalabs/station/pkg/certstore/mocks"
 )
 
+// loadCertificateFromFile is an helper function that loads a certificate from
+// testdata/cert.pem file.
 func loadCertificateFromFile(t *testing.T) *x509.Certificate {
 	// Load the certificate from the file
 	certData, err := ioutil.ReadFile("testdata/cert.pem")
@@ -31,14 +35,29 @@ func loadCertificateFromFile(t *testing.T) *x509.Certificate {
 	return cert
 }
 
+// certInPool is an helper function that checks if a certificate is in the certificate pool.
+// It compares the certificates by their raw subject.
+func certInPool(cert *x509.Certificate, pool *x509.CertPool) bool {
+	for _, c := range pool.Subjects() {
+		if bytes.Equal(c, cert.RawSubject) {
+			return true
+		}
+	}
+	return false
+}
+
+var (
+	mockCertContext := &windows.CertContext{}
+	cert := loadCertificateFromFile(t)
+	otherError := errors.New("create error")
+)
+
 func TestCertStore_AddCertificate(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
 	mockAPI := mocks.NewMockWinAPI(mockCtrl)
-	mockCertContext := &windows.CertContext{}
-	cert := loadCertificateFromFile(t)
-	otherError := errors.New("create error")
+	
 
 	tests := []struct {
 		name      string
@@ -106,9 +125,6 @@ func TestCertStore_RemoveCertificate(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockAPI := mocks.NewMockWinAPI(mockCtrl)
-	mockCertContext := &windows.CertContext{}
-	cert := loadCertificateFromFile(t)
-	otherError := errors.New("create error")
 
 	tests := []struct {
 		name      string
@@ -187,8 +203,6 @@ func TestCertStore_FetchCertificates(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockAPI := mocks.NewMockWinAPI(mockCtrl)
-	//mockCertContext := &windows.CertContext{}
-	otherError := errors.New("create error")
 
 	tests := []struct {
 		name       string
@@ -356,46 +370,35 @@ func TestManualCheck(t *testing.T) {
 		t.Skip("skipping test; CI environment detected")
 	}
 
-	// Initialize the certificate store
+	// Initialize the certificate store.
 	store, err := NewCertStore(NewWindowsImpl(), RootStore)
 	assert.NoError(t, err)
 
-	cert := loadCertificateFromFile(t)
-
-	// Add the certificate to the store
+	// Add the certificate to the store.
 	err = store.AddCertificate(cert)
 	assert.NoError(t, err)
 
-	// Check that the added certificate is in the list
+	// Check that the added certificate is in the list.
 	pool, err := store.FetchCertificates()
 	assert.NoError(t, err)
 	assert.True(t, certInPool(cert, pool))
 
-	// Delete the added certificate
+	// Delete the added certificate.
 	err = store.RemoveCertificate(cert)
 	assert.NoError(t, err)
 
-	// Check that the deleted certificate is no longer in the list
+	// Check that the deleted certificate is no longer in the list.
 	pool, err = store.FetchCertificates()
 	assert.NoError(t, err)
 	assert.False(t, certInPool(cert, pool))
 
-	fmt.Println("DeleteCertificate non existing")
-	// Delete a non existing certificate and verify that there is an error
+	// Delete a non existing certificate and verify that there is an error.
 	err = store.RemoveCertificate(cert)
 	assert.Error(t, err)
 
+	// Close the store checking for non freed context.
+	// This is needed to avoid memory leaks.
 	err = store.Close(true)
 	assert.NoError(t, err)
 
-}
-
-// Helper function to check if a certificate is in a certificate pool
-func certInPool(cert *x509.Certificate, pool *x509.CertPool) bool {
-	for _, c := range pool.Subjects() {
-		if bytes.Equal(c, cert.RawSubject) {
-			return true
-		}
-	}
-	return false
 }

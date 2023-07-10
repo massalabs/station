@@ -1,6 +1,7 @@
-package certstore
+//go:build windows
+// +build windows
 
-// This file provides a collection of operations to manage system certificate stores on Windows.
+// This package provides a collection of operations to manage system certificate stores on Windows.
 //
 // Specifically, this package offers a CertStore type, which represents a system certificate store.
 // This package is designed to integrate seamlessly with the native Windows API and comes with methods for creating, opening, and closing certificate stores.
@@ -21,6 +22,7 @@ package certstore
 // Future enhancements:
 // - Prior to expanding this package's utility or moving it to a standalone repository, consider adding support for other operating systems.
 // - It may be beneficial to add more features related to certificate management, depending on the broader application requirements.
+package certstore
 
 import (
 	"crypto/x509"
@@ -88,6 +90,7 @@ func (s *CertStore) Close(checkNonFreedCtx bool) error {
 }
 
 // FetchCertificates returns all certificates in the store.
+// The store must be initialized prior to calling this method.
 func (s *CertStore) FetchCertificates() (*x509.CertPool, error) {
 	if s.handler == 0 {
 		return nil, ErrCertStoreHandlerNotInit
@@ -122,6 +125,7 @@ func (s *CertStore) FetchCertificates() (*x509.CertPool, error) {
 }
 
 // RemoveCertificate removes a certificate from the store by its Common Name.
+// The store must be initialized prior to calling this method.
 func (s *CertStore) RemoveCertificate(cert *x509.Certificate) error {
 	if s.handler == 0 {
 		return ErrCertStoreHandlerNotInit
@@ -141,6 +145,7 @@ func (s *CertStore) RemoveCertificate(cert *x509.Certificate) error {
 }
 
 // AddCertificate adds a certificate to the store.
+// The store must be initialized prior to calling this method.
 func (s *CertStore) AddCertificate(cert *x509.Certificate) error {
 	if s.handler == 0 {
 		return ErrCertStoreHandlerNotInit
@@ -178,8 +183,10 @@ func interpretError(err error) error {
 
 	switch errno {
 	case syscall.Errno(windows.CRYPT_E_NOT_FOUND):
+		// The error code is not exported by the Windows API, so we have to format the error message.
 		return fmt.Errorf("%w: original error (CRYPT_E_NOT_FOUND - 0x%X): %s", ErrCertNotFound, windows.CRYPT_E_NOT_FOUND, err)
 	case syscall.Errno(windows.CRYPT_E_EXISTS):
+		// The error code is not exported by the Windows API, so we have to format the error message.
 		return fmt.Errorf("%w: original error (CRYPT_E_EXISTS - 0x%X): %s", ErrCertAlreadyExists, windows.CRYPT_E_EXISTS, err)
 	case syscall.Errno(windows.ERROR_CANCELLED):
 		return fmt.Errorf("%w: original error: %s", ErrUserCanceled, err)
@@ -193,15 +200,18 @@ func interpretError(err error) error {
 // convertCertContextToX509 creates an x509.Certificate from a Windows cert context.
 func convertCertContextToX509(ctx *windows.CertContext) (*x509.Certificate, error) {
 	var der []byte
+
+	// The byte array is manually created from the content of the cert context.
 	slice := (*reflect.SliceHeader)(unsafe.Pointer(&der))
 	slice.Data = uintptr(unsafe.Pointer(ctx.EncodedCert))
 	slice.Len = int(ctx.Length)
 	slice.Cap = int(ctx.Length)
+
 	return x509.ParseCertificate(der)
 }
 
-// findCertBySubject returns a certificate context by its Common Name.
-func (s *CertStore) findCertBySubject(subject string) (*windows.CertContext, error) {
+// FindCertBySubject returns a certificate context by its Common Name.
+func (s *CertStore) FindCertBySubject(subject string) (*windows.CertContext, error) {
 	subjectPtr, err := s.winAPI.UTF16PtrFromString(subject)
 	if err != nil {
 		return nil, err
@@ -209,7 +219,7 @@ func (s *CertStore) findCertBySubject(subject string) (*windows.CertContext, err
 
 	certContextPtr, err := s.winAPI.CertFindCertificateInStore(
 		s.handler,
-		syscall.X509_ASN_ENCODING|syscall.PKCS_7_ASN_ENCODING,
+		windows.X509_ASN_ENCODING|windows.PKCS_7_ASN_ENCODING,
 		0,
 		windows.CERT_FIND_SUBJECT_STR_W,
 		unsafe.Pointer(subjectPtr),
@@ -223,8 +233,8 @@ func (s *CertStore) findCertBySubject(subject string) (*windows.CertContext, err
 	return certContextPtr, nil
 }
 
-// createCertContext creates a new system certificate context from an x509.Certificate.
-func (s *CertStore) createCertContext(cert *x509.Certificate) (*windows.CertContext, error) {
+// CreateCertContext creates a new system certificate context from an x509.Certificate.
+func (s *CertStore) CreateCertContext(cert *x509.Certificate) (*windows.CertContext, error) {
 	certContextPtr, err := s.winAPI.CertCreateCertificateContext(
 		windows.X509_ASN_ENCODING|windows.PKCS_7_ASN_ENCODING,
 		&cert.Raw[0],
