@@ -2,10 +2,13 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"log"
 	"os"
 	"path"
 
 	"github.com/massalabs/station/int/api"
+	"github.com/massalabs/station/int/initialize"
 	"github.com/massalabs/station/int/systray"
 	"github.com/massalabs/station/int/systray/update"
 	"github.com/massalabs/station/pkg/config"
@@ -23,7 +26,7 @@ func ParseFlags() api.StartServerFlags {
 
 	_, err := dirs.GetConfigDir()
 	if err != nil {
-		logger.Logger.Error(
+		logger.Error(
 			"Unable to read config dir: %s\n%s",
 			err,
 			`MassaStation can't run without a config directory.\n
@@ -32,7 +35,7 @@ func ParseFlags() api.StartServerFlags {
 
 	certDir, err := dirs.GetCertDir()
 	if err != nil {
-		logger.Logger.Fatal("Unable to read cert dir:%s\n%s", err,
+		logger.Fatal("Unable to read cert dir:%s\n%s", err,
 			`MassaStation can't run without a certificate directory.
 			Please reinstall MassaStation using the installer at https://github.com/massalabs/station and try again.`,
 		)
@@ -56,23 +59,28 @@ func ParseFlags() api.StartServerFlags {
 }
 
 func main() {
-	logger.Logger = logger.NewLogger()
-	defer logger.Logger.Sync()
-
 	flags := ParseFlags()
 	if flags.Version {
-		logger.Logger.Infof("Version:%s", config.Version)
+		//nolint:forbidigo
+		fmt.Printf("Version:%s\n", config.Version)
 		os.Exit(0)
 	}
 
-	err := config.Check()
+	err := initialize.Logger()
 	if err != nil {
-		logger.Logger.Fatalf("Error with you current system configuration: %s", err.Error())
+		log.Fatalf("while initializing logger: %s", err.Error())
+	}
+
+	defer logger.Close()
+
+	err = config.Check()
+	if err != nil {
+		logger.Fatalf("Error with you current system configuration: %s", err.Error())
 	}
 
 	networkManager, err := config.NewNetworkManager()
 	if err != nil {
-		logger.Logger.Fatalf("Failed to create NetworkManager:%s", err.Error())
+		logger.Fatalf("Failed to create NetworkManager:%s", err.Error())
 	}
 
 	pluginManager := plugin.NewManager()
@@ -90,7 +98,7 @@ func main() {
 		server.Start(networkManager, pluginManager)
 		err := pluginManager.RunAll()
 		if err != nil {
-			logger.Logger.Fatalf("while running all plugins: %w", err.Error())
+			logger.Fatalf("while running all plugins: %w", err.Error())
 		}
 	})
 

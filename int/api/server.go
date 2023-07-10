@@ -88,7 +88,7 @@ type Server struct {
 func NewServer(flags StartServerFlags) *Server {
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
-		logger.Logger.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 
 	localAPI := operations.NewMassastationAPI(swaggerSpec)
@@ -99,7 +99,7 @@ func NewServer(flags StartServerFlags) *Server {
 
 	err = store.NewStore()
 	if err != nil {
-		logger.Logger.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 
 	server := &Server{
@@ -121,24 +121,24 @@ func (server *Server) Start(networkManager *config.NetworkManager, pluginManager
 
 	go func() {
 		if err := server.api.Serve(); err != nil {
-			logger.Logger.Fatal(err.Error())
+			logger.Fatal(err.Error())
 		}
 	}()
 
-	logger.Logger.Debug("Server started")
+	logger.Debug("Server started")
 }
 
 // Stops the server and waits for it to finish.
 func (server *Server) Stop() {
-	logger.Logger.Info("Stopping server...")
+	logger.Info("Stopping server...")
 
 	if err := server.api.Shutdown(); err != nil {
-		logger.Logger.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 
 	<-server.shutdown
 
-	logger.Logger.Debug("Server stopped")
+	logger.Debug("Server stopped")
 }
 
 // Displays the node version of the connected node.
@@ -150,10 +150,10 @@ func (server *Server) printNodeVersion(networkManager *config.NetworkManager) {
 	if err == nil {
 		nodeVersion = *status.Version
 	} else {
-		logger.Logger.Errorf("Could not get node version: %s", err.Error())
+		logger.Errorf("Could not get node version: %s", err.Error())
 	}
 
-	logger.Logger.Info(
+	logger.Info(
 		fmt.Sprintf("Connected to node server %s (version %s)",
 			networkManager.Network().NodeURL, nodeVersion),
 	)

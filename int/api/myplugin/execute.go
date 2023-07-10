@@ -22,7 +22,7 @@ type execute struct {
 func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) middleware.Responder {
 	cmd := params.Body.Command
 
-	logger.Logger.Debugf("[POST /plugin-manager/%s/execute] command: %s", params.ID, cmd)
+	logger.Debugf("[POST /plugin-manager/%s/execute] command: %s", params.ID, cmd)
 
 	plugin, err := e.manager.Plugin(params.ID)
 	if err != nil {

@@ -79,7 +79,7 @@ func configureMassaStationAPI(api *operations.MassastationAPI, config MSConfig.A
 		close(shutdown)
 	}
 	api.Logger = func(msg string, args ...interface{}) {
-		logger.Logger.Infof(msg, args...)
+		logger.Infof(msg, args...)
 	}
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares), config)

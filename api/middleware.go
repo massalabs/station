@@ -18,7 +18,7 @@ import (
 func TopMiddleware(handler http.Handler, cfg config.AppConfig) http.Handler {
 	//nolint:varnamelen
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logger.Logger.Infof("[%s %s]", r.Method, r.URL.Path)
+		logger.Infof("[%s %s]", r.Method, r.URL.Path)
 		// Goes through all local interceptors.
 		req := RedirectToDefaultResourceInterceptor(
 			plugin.Interceptor(

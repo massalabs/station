@@ -71,14 +71,14 @@ func Interceptor(req *interceptor.Interceptor) *interceptor.Interceptor {
 
 		authorName, err := url.QueryUnescape(endpoint.pluginAuthor)
 		if err != nil {
-			logger.Logger.Error(err.Error())
+			logger.Error(err.Error())
 
 			return nil
 		}
 
 		pluginName, err := url.QueryUnescape(endpoint.pluginName)
 		if err != nil {
-			logger.Logger.Error(err.Error())
+			logger.Error(err.Error())
 
 			return nil
 		}
