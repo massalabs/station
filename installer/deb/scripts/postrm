@@ -25,12 +25,28 @@ warn() {
     echo -e "\033[1;33m$1\033[0m"
 }
 
+wait_for_network() {
+    counter=0
+    timeout=30 # Timeout in seconds
+
+    while [[ $(nmcli networking connectivity check) == "none" ]] && ((counter < timeout)); do
+        echo "Waiting for network manager to be up and running"
+        sleep 1
+        ((counter+=1))
+    done
+
+    if ((counter >= timeout)); then
+        fatal "Network manager is not available: Timeout reached. "
+    fi
+}
+
 # Remove DNSMasq configuration files.
 remove_dnsmasq_configuration() {
     sudo rm -f /etc/NetworkManager/dnsmasq.d/massa.conf || fatal "failed to remove DNSMasq configuration files."
     sudo rm -f /etc/resolver/massa || fatal "failed to remove resolver configuration file."
 
     systemctl restart NetworkManager || fatal "dnsmasq service failed to restart"
+    wait_for_network
 }
 
 remove_massastation() {
