@@ -92,23 +92,21 @@ func NewServer(flags StartServerFlags) *Server {
 	}
 
 	localAPI := operations.NewMassastationAPI(swaggerSpec)
-	apiServer := restapi.NewServer(localAPI)
+	server := restapi.NewServer(localAPI)
 
-	setAPIFlags(apiServer, flags)
-	apiServer.GracefulTimeout = 5 * time.Second
+	setAPIFlags(server, flags)
+	server.GracefulTimeout = 5 * time.Second
 
 	err = store.NewStore()
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
 
-	server := &Server{
-		api:      apiServer,
+	return &Server{
+		api:      server,
 		localAPI: localAPI,
 		shutdown: make(chan struct{}),
 	}
-
-	return server
 }
 
 // Starts the server.
