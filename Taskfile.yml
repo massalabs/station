@@ -51,6 +51,9 @@ tasks:
   build-windows:
     platforms: [windows]
     cmds:
+      - cmd: mkdir -p build/massastation
+      - cmd: mkdir -p build/massastation/logs
+      - cmd: mkdir -p build/massastation/certs
       - cmd: go build -o build/massastation/massastation.exe cmd/massastation/main.go
 
   run:

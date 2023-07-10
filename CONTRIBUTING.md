@@ -103,7 +103,7 @@ To contribute to MassaStation, you'll need to set up your development environmen
 3. Install Task
 Follow the installation instructions here: [task-install](https://taskfile.dev/installation/).
 
-On Windows, we recommend to run `go install github.com/go-task/task/v3/cmd/task@latest`.
+On Windows, we recommend to run `go install github.com/go-task/task/v3/cmd/task@latest` and yo use task commands in a git bash terminal.
 
 4. **Install Dependencies:**
    - **Ubuntu:** Install the following system dependencies using `apt`:
