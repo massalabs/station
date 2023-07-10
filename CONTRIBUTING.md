@@ -103,8 +103,7 @@ To contribute to MassaStation, you'll need to set up your development environmen
 3. Install Task
 Follow the installation instructions here: [task-install](https://taskfile.dev/installation/).
 
-On Windows, we recommend to run a Powershell as an administrator and install task with `go install github.com/go-task/task/v3/cmd/task@latest`.
-Then, use task in the Powershell as an administrator.
+On Windows, we recommend to run `go install github.com/go-task/task/v3/cmd/task@latest`.
 
 4. **Install Dependencies:**
    - **Ubuntu:** Install the following system dependencies using `apt`:
@@ -115,13 +114,6 @@ Then, use task in the Powershell as an administrator.
 
    - **Windows:**
      - Install `mingw` by following the instructions from [mingw-w64.org](https://www.mingw-w64.org/downloads) to provide the necessary `gcc` compiler for building MassaStation.
-
-     We recommend to install in a Powershell as an administrator:
-     - `go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3`
-     - `go install github.com/rogpeppe/godef@v1.1.2`
-     - `go install golang.org/x/tools/cmd/goimports@latest`
-     - `go install golang.org/x/tools/cmd/guru@latest`
-     - `go install github.com/stamblerre/gocode@v1.0.0`
 
 5. **Install Go dependencies :** MassaStation uses Go Swagger to generate code from the API documentation and Go Stringer to generate declarations for enum types.
 
