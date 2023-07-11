@@ -31,7 +31,7 @@ NIC_CONFIG_SCRIPT = "configure_network_interfaces.bat"
 NIC_RESET_SCRIPT = "reset_network_interfaces.bat"
 GEN_CERT_SCRIPT = "generate_certificate.bat"
 RUN_VBS = "run.vbs"
-
+LOGO = "logo.ico"
 WIX_DIR = "wixtoolset"
 
 # URLs to download Acrylic DNS Proxy and the WiX Toolset
@@ -135,6 +135,10 @@ def move_binaries():
         os.path.join("windows", "scripts", RUN_VBS),
         os.path.join(BUILD_DIR, RUN_VBS),
     )
+    shutil.copy(
+        os.path.join("windows","assets", LOGO),
+        os.path.join(BUILD_DIR, LOGO),
+    )
 
 
 def create_wxs_file():
@@ -233,7 +237,15 @@ def create_wxs_file():
             <Directory Id="ProgramMenuFolder" Name="Programs">
                 <Directory Id="ApplicationProgramsFolder" Name="{MANUFACTURER}">
                     <Component Id="ApplicationShortcutProgramMenu" Guid="e2f5b2a0-0b0a-4b1e-9b0e-9b0e9b0e9b0e">
-                        <Shortcut Id="ApplicationStartMenuShortcut" Name="{PRODUCT_NAME}" Target="[#MassaStationRunScript]" WorkingDirectory="INSTALLDIR" />
+                       <Shortcut
+                            Id="ApplicationStartMenuShortcut"
+                            Name="{PRODUCT_NAME}"
+                            Target="[#MassaStationRunScript]"
+                            WorkingDirectory="INSTALLDIR"
+                            Icon ="MassaStationIconProgramMenu"
+                        >
+                          <Icon Id="MassaStationIconProgramMenu" SourceFile="{BUILD_DIR}\\{LOGO}" />
+                        </Shortcut>
                         <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
                         <RegistryValue Root="HKCU" Key="Software\{MANUFACTURER}\{PRODUCT_NAME}" Name="installed" Type="integer" Value="1" KeyPath="yes" />
                     </Component>
@@ -243,7 +255,14 @@ def create_wxs_file():
 
             <Directory Id="DesktopFolder" Name="Desktop">
                 <Component Id="ApplicationShortcutDesktop" Guid="3e6f0b0e-1e0b-5a3c-7b0c-9c007a32f0e9">
-                    <Shortcut Id="ApplicationDesktopShortcut" Name="{PRODUCT_NAME}" Target="[#MassaStationRunScript]" WorkingDirectory="INSTALLDIR" />
+                     <Shortcut Id="ApplicationDesktopShortcut"
+                        Name="{PRODUCT_NAME}"
+                        Target="[#MassaStationRunScript]"
+                        WorkingDirectory="INSTALLDIR"
+                        Icon="MassaStationIconDesktop"
+                    >
+                     <Icon Id="MassaStationIconDesktop" SourceFile="{BUILD_DIR}\\{LOGO}" />
+                    </Shortcut>
                 </Component>
             </Directory>
         </Directory>
