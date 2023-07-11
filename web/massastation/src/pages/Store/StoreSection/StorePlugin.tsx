@@ -24,6 +24,7 @@ function StorePlugin(props: StorePluginProps) {
     description,
     file: { url },
   } = plugin;
+
   const {
     mutate,
     isSuccess: isInstallSuccess,

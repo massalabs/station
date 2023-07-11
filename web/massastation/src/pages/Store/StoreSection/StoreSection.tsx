@@ -14,20 +14,15 @@ function StoreSection({
 }: {
   getPlugins: UseQueryResult<IMassaPlugin[], undefined>;
 }) {
-  const navigate = useNavigate();
   const {
     error,
     data: plugins,
     isLoading,
   } = useResource<IMassaStore[]>('plugin-store');
 
-  const { refetch, data: myPlugins } = getPlugins;
+  const { data: myPlugins, refetch } = getPlugins;
 
-  useEffect(() => {
-    if (error) {
-      navigate(routeFor('error'));
-    }
-  });
+  const navigate = useNavigate();
 
   const isDownloaded = (plugin: IMassaStore) => {
     return (
@@ -37,6 +32,12 @@ function StoreSection({
       }) || false
     );
   };
+
+  useEffect(() => {
+    if (error) {
+      navigate(routeFor('error'));
+    }
+  }, [error]);
 
   return (
     <>

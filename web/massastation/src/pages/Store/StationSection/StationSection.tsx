@@ -17,13 +17,7 @@ function StationSection({
 }) {
   const navigate = useNavigate();
 
-  const {
-    error,
-    data: plugins,
-    refetch: refetchPlugins,
-    isLoading,
-    isRefetching,
-  } = getPlugins;
+  const { error, data: plugins, refetch, isLoading, isRefetching } = getPlugins;
 
   useEffect(() => {
     if (error) {
@@ -33,27 +27,12 @@ function StationSection({
 
   return (
     <>
-      {isLoading || isRefetching ? (
-        <div className="flex gap-4 flex-wrap animate-pulse blur-sm">
-          {plugins &&
-            sortPlugins(plugins)?.map((plugin, index) => (
-              <StationPlugin
-                key={index}
-                plugin={plugin}
-                fetchPlugins={() => refetchPlugins()}
-              />
-            ))}
-        </div>
-      ) : (
+      {isLoading || isRefetching ? null : (
         <>
           {plugins && plugins.length ? (
             <div className="flex gap-4 flex-wrap">
               {sortPlugins(plugins)?.map((plugin, index) => (
-                <StationPlugin
-                  key={index}
-                  plugin={plugin}
-                  fetchPlugins={() => refetchPlugins()}
-                />
+                <StationPlugin key={index} plugin={plugin} refetch={refetch} />
               ))}
             </div>
           ) : (
