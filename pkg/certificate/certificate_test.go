@@ -21,9 +21,9 @@ func TestReadFile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := readFile(tt.filepath)
 			if tt.wantErr {
-				assert.NotNil(t, err, "Error was expected, got nil")
+				assert.Error(t, err)
 			} else {
-				assert.Nil(t, err, "Error was not expected, got %v", err)
+				assert.NoError(t, err)
 			}
 		})
 	}
@@ -43,9 +43,9 @@ func TestLoadCertificate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := LoadCertificate(tt.filepath)
 			if tt.wantErr {
-				assert.NotNil(t, err, "Error was expected, got nil")
+				assert.Error(t, err)
 			} else {
-				assert.Nil(t, err, "Error was not expected, got %v", err)
+				assert.NoError(t, err)
 			}
 		})
 	}
@@ -65,9 +65,9 @@ func TestLoadPrivateKey(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := LoadPrivateKey(tt.filepath)
 			if tt.wantErr {
-				assert.NotNil(t, err, "Error was expected, got nil")
+				assert.Error(t, err)
 			} else {
-				assert.Nil(t, err, "Error was not expected, got %v", err)
+				assert.NoError(t, err)
 			}
 		})
 	}

@@ -75,13 +75,17 @@ func (p PemType) String() string {
 }
 
 // NewPemType retrieves an enum value from the enum constants string name.
-// Throws an error if the param is not part of the enum.
+// It returns the decoded PEM type, or an error if the param is not part of the enum.
 func NewPemType(str string) (PemType, error) {
 	switch str {
 	case "CERTIFICATE":
 		return Certificate, nil
 	case "PRIVATE KEY":
 		return PrivateKey, nil
+	case "CERTIFICATE REQUEST":
+		return CertificateRequest, nil
+	case "X509 CRL":
+		return X509CRL, nil
 	default:
 		return 0, fmt.Errorf("%w: %s", ErrInvalidPemType, str)
 	}
