@@ -35,7 +35,9 @@ func TestLoadCertificate(t *testing.T) {
 		filepath string
 		wantErr  bool
 	}{
-		{"invalid certificate", "invalid_cert.pem", true},
+		{"file not found", "testdata/non_existent_file.pem", true},
+		{"invalid PEM type", "testdata/key.pem", true},
+		{"invalid certificate", "testdata/invalid_cert.pem", true},
 		{"successful load", "testdata/cert.pem", false},
 	}
 
@@ -57,7 +59,9 @@ func TestLoadPrivateKey(t *testing.T) {
 		filepath string
 		wantErr  bool
 	}{
-		{"invalid private key", "invalid_key.pem", true},
+		{"file not found", "testdata/non_existent_file.pem", true},
+		{"invalid PEM type", "testdata/cert.pem", true},
+		{"invalid private key", "testdata/invalid_key.pem", true},
 		{"successful load", "testdata/key.pem", false},
 	}
 

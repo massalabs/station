@@ -88,6 +88,12 @@ func TestDecodeExpectedPEM(t *testing.T) {
 			wantErr:  true,
 		},
 		{
+			name:     "Invalid PEM type",
+			data:     validCert,
+			expected: PemType(0),
+			wantErr:  true,
+		},
+		{
 			name:     "Invalid data",
 			data:     invalidBase64,
 			expected: Certificate,
@@ -193,6 +199,63 @@ func TestPemTypeString(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equal(t, tt.want, tt.p.String())
+		})
+	}
+}
+
+func TestNewPemType(t *testing.T) {
+	type args struct {
+		str string
+	}
+
+	tests := []struct {
+		name    string
+		args    args
+		want    PemType
+		wantErr bool
+	}{
+		{
+			name:    "Certificate String",
+			args:    args{"CERTIFICATE"},
+			want:    Certificate,
+			wantErr: false,
+		},
+		{
+			name:    "PrivateKey String",
+			args:    args{"PRIVATE KEY"},
+			want:    PrivateKey,
+			wantErr: false,
+		},
+		{
+			name:    "Certificate Request String",
+			args:    args{"CERTIFICATE REQUEST"},
+			want:    CertificateRequest,
+			wantErr: false,
+		},
+		{
+			name:    "X509 CRL String",
+			args:    args{"X509 CRL"},
+			want:    X509CRL,
+			wantErr: false,
+		},
+		{
+			name:    "Invalid PemType",
+			args:    args{"INVALID"},
+			want:    0,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := NewPemType(tt.args.str)
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
