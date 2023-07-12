@@ -8,12 +8,12 @@ import Intl from '@/i18n/i18n';
 import { UseQueryResult } from '@tanstack/react-query';
 
 import StationPlugin from './StationPlugin';
-import { IMassaPlugin } from '@/shared/interfaces/IPlugin';
+import { MassaPluginModel } from '@/models';
 
 function StationSection({
   getPlugins,
 }: {
-  getPlugins: UseQueryResult<IMassaPlugin[]>;
+  getPlugins: UseQueryResult<MassaPluginModel[]>;
 }) {
   const navigate = useNavigate();
 

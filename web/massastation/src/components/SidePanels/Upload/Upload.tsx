@@ -9,7 +9,6 @@ import { useAccountStore } from '../../../store/store';
 import { AccountObject } from '../../../models/AccountModel';
 
 import { URL } from '../../../const/url/url';
-import { IMassaPlugin } from '../../../../../shared/interfaces/IPlugin';
 
 import {
   Button,
@@ -30,6 +29,7 @@ import {
   validateWebsiteName,
 } from '../../../validation/upload';
 import { MASSA_WALLET } from '../../../const/const';
+import { MassaPluginModel } from '@/models';
 
 interface IFormError {
   websiteName?: string;
@@ -203,7 +203,7 @@ export default function Upload() {
   const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
 
   const { data: plugins, isSuccess } =
-    useResource<IMassaPlugin[]>('plugin-manager');
+    useResource<MassaPluginModel[]>('plugin-manager');
 
   useEffect(() => {
     if (isSuccess) {

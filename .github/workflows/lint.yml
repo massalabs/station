@@ -31,3 +31,20 @@ jobs:
         run: pip install pylint
       - name: Run PyLint
         run: pylint --rcfile=.pylintrc windows/
+
+  lint-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./web/massastation
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: [18.x, 20.x]
+          cache: "npm"
+          cache-dependency-path: ./web/massastation/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Run code formating and linting
+        run: npm run fmt:check
