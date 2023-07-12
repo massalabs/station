@@ -4,7 +4,7 @@
 
 ![](https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2023-07-11/ede19fc2-fd2f-4290-a432-87c7907278ac/ascreenshot.jpeg?tl_px=0,450&br_px=1493,1290&force_format=png&width=560&wat_scale=50&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=132,139)
 
-**2. Copy the whole content of `swagger.ym`l**
+**2. Copy the whole content of `swagger.yml`**
 
 ![](https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2023-07-11/ada29257-6d7e-4027-a1f5-39e6d1dc34a8/ascreenshot.jpeg?tl_px=1530,150&br_px=3023,990&force_format=png&width=560&wat_scale=50&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=408,139)
 
@@ -44,12 +44,12 @@
 
 ![](https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2023-07-11/9c6f9e99-8fab-4198-9de7-208ceb950e4d/ascreenshot.jpeg?tl_px=585,617&br_px=2078,1457&force_format=png&width=560&wat_scale=50&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=262,139)
 
-**12. When Import is Done, you will be able to see MassaStation APi imported, and you can browse all it's endpoints**
+**12. When Import is Done, you will be able to see MassaStation API imported, and you can browse all it's endpoints**
 
 ![](https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2023-07-11/d76fba29-49e4-41c0-bbaa-2728a6cd79c9/ascreenshot.jpeg?tl_px=0,16&br_px=1493,856&force_format=png&width=560&wat_scale=50&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=59,139)
 
 **13. let's try to call an endpoint, but before you should have your massa station running in background, you can run it directly from the terminal, inside station repo, type 
-`go run cmd/massastation/main.go `**
+`task build-run`**
 
 ![](https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2023-07-11/fc46686c-7f76-4e55-ae67-f86ea77fe124/ascreenshot.jpeg?tl_px=1117,1124&br_px=2610,1964&force_format=png&width=560&wat_scale=50&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=262,288)
 
@@ -61,7 +61,7 @@
 
 ![](https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2023-07-11/7afc05d9-5cf5-4985-86f2-683a314b879e/ascreenshot.jpeg?tl_px=399,48&br_px=1892,888&force_format=png&width=560&wat_scale=50&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=262,139)
 
-**16. click on send, and wait few seconds ...**
+**16. click on send, and wait few seconds...**
 
 ![](https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2023-07-11/51e5c1f9-b4fd-4a60-b90a-fd72c29a57d5/ascreenshot.jpeg?tl_px=1530,68&br_px=3023,908&force_format=png&width=560&wat_scale=50&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=446,139)
 
