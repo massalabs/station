@@ -51,7 +51,7 @@ func Fetch(nickname string) (*Wallet, error) {
 	httpRawResponse, err := sendoperation.ExecuteHTTPRequest(
 		http.MethodGet,
 		sendoperation.WalletPluginURL+"accounts/"+nickname,
-		bytes.NewBuffer([]byte("")),
+		bytes.NewReader([]byte("")),
 	)
 	if err != nil {
 		res := sendoperation.RespError{Code: "", Message: ""}
