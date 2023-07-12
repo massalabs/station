@@ -30,7 +30,7 @@ type ExecuteSC struct {
 The dataStore parameter represents a storage that is accessible by the SC in the constructor
 function when it gets deployed.
 */
-func New(data []byte, maxGas uint64, coins uint64, dataStore []byte) *ExecuteSC {
+func New(data []byte, maxGas uint64, _ uint64, dataStore []byte) *ExecuteSC {
 	return &ExecuteSC{
 		data:      data,
 		maxGas:    maxGas,
