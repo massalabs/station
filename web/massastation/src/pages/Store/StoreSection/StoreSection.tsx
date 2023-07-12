@@ -7,29 +7,24 @@ import Intl from '@/i18n/i18n';
 
 import StorePlugin from './StorePlugin';
 import { sortPlugins } from '@/utils/sortArray';
-import { IMassaPlugin, IMassaStore } from '@/shared/interfaces/IPlugin';
+import { MassaPluginModel, MassaStoreModel } from '@/models';
 
 function StoreSection({
   getPlugins,
 }: {
-  getPlugins: UseQueryResult<IMassaPlugin[], undefined>;
+  getPlugins: UseQueryResult<MassaPluginModel[], undefined>;
 }) {
-  const navigate = useNavigate();
   const {
     error,
     data: plugins,
     isLoading,
-  } = useResource<IMassaStore[]>('plugin-store');
+  } = useResource<MassaStoreModel[]>('plugin-store');
 
-  const { refetch, data: myPlugins } = getPlugins;
+  const { data: myPlugins, refetch } = getPlugins;
 
-  useEffect(() => {
-    if (error) {
-      navigate(routeFor('error'));
-    }
-  });
+  const navigate = useNavigate();
 
-  const isDownloaded = (plugin: IMassaStore) => {
+  const isDownloaded = (plugin: MassaStoreModel) => {
     return (
       myPlugins?.some((myPlugin) => {
         const { name, author } = myPlugin;
@@ -37,6 +32,12 @@ function StoreSection({
       }) || false
     );
   };
+
+  useEffect(() => {
+    if (error) {
+      navigate(routeFor('error'));
+    }
+  }, [error]);
 
   return (
     <>

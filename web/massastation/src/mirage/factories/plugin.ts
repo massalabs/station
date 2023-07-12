@@ -1,8 +1,8 @@
 import { Factory } from 'miragejs';
 import { faker } from '@faker-js/faker';
-import { IMassaPlugin } from '../../../../shared/interfaces/IPlugin';
+import { MassaPluginModel } from '@/models';
 
-export const pluginFactory = Factory.extend<IMassaPlugin>({
+export const pluginFactory = Factory.extend<MassaPluginModel>({
   id() {
     return faker.number.int().toString();
   },

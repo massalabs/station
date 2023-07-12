@@ -8,22 +8,16 @@ import Intl from '@/i18n/i18n';
 import { UseQueryResult } from '@tanstack/react-query';
 
 import StationPlugin from './StationPlugin';
-import { IMassaPlugin } from '@/shared/interfaces/IPlugin';
+import { MassaPluginModel } from '@/models';
 
 function StationSection({
   getPlugins,
 }: {
-  getPlugins: UseQueryResult<IMassaPlugin[]>;
+  getPlugins: UseQueryResult<MassaPluginModel[]>;
 }) {
   const navigate = useNavigate();
 
-  const {
-    error,
-    data: plugins,
-    refetch: refetchPlugins,
-    isLoading,
-    isRefetching,
-  } = getPlugins;
+  const { error, data: plugins, refetch, isLoading, isRefetching } = getPlugins;
 
   useEffect(() => {
     if (error) {
@@ -33,27 +27,12 @@ function StationSection({
 
   return (
     <>
-      {isLoading || isRefetching ? (
-        <div className="flex gap-4 flex-wrap animate-pulse blur-sm">
-          {plugins &&
-            sortPlugins(plugins)?.map((plugin, index) => (
-              <StationPlugin
-                key={index}
-                plugin={plugin}
-                fetchPlugins={() => refetchPlugins()}
-              />
-            ))}
-        </div>
-      ) : (
+      {isLoading || isRefetching ? null : (
         <>
           {plugins && plugins.length ? (
             <div className="flex gap-4 flex-wrap">
               {sortPlugins(plugins)?.map((plugin, index) => (
-                <StationPlugin
-                  key={index}
-                  plugin={plugin}
-                  fetchPlugins={() => refetchPlugins()}
-                />
+                <StationPlugin key={index} plugin={plugin} refetch={refetch} />
               ))}
             </div>
           ) : (

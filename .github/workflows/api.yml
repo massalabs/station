@@ -28,9 +28,9 @@ jobs:
       - name: Download MassaStation binary
         uses: actions/download-artifact@v3
         with:
-            name: massastation_linux_amd64_bin
+          name: massastation_linux_amd64_bin
       - name: Prepare MassaStation binary
-        run : |
+        run: |
           mv massastation_linux_amd64 massastation
           sudo chmod +x massastation
           sudo setcap CAP_NET_BIND_SERVICE=+eip ./massastation

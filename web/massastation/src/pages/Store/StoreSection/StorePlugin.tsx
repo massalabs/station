@@ -4,10 +4,10 @@ import { usePost } from '@/custom/api';
 import { Certificate, Plugin } from '@massalabs/react-ui-kit';
 import { massalabsNomination } from '@/const';
 import { FiDownload } from 'react-icons/fi';
-import { IMassaStore } from '@/shared/interfaces/IPlugin';
+import { MassaStoreModel } from '@/models';
 
 interface StorePluginProps {
-  plugin: IMassaStore;
+  plugin: MassaStoreModel;
   refetch: () => void;
 }
 
@@ -24,6 +24,7 @@ function StorePlugin(props: StorePluginProps) {
     description,
     file: { url },
   } = plugin;
+
   const {
     mutate,
     isSuccess: isInstallSuccess,

@@ -62,15 +62,9 @@ func initLocalAPI(localAPI *operations.MassastationAPI, networkManager *config.N
 	localAPI.MyDomainsGetterHandler = websites.NewDomainsHandler(config)
 	localAPI.AllDomainsGetterHandler = websites.NewRegistryHandler(config)
 
-	localAPI.WebOnChainSearchHandler = operations.WebOnChainSearchHandlerFunc(WebOnChainSearchHandler)
-	localAPI.MassaStationHomeHandler = operations.MassaStationHomeHandlerFunc(MassaStationHomeHandler)
 	localAPI.EventsGetterHandler = NewEventListenerHandler(config)
-	localAPI.MassaStationPluginManagerHandler = operations.MassaStationPluginManagerHandlerFunc(
-		MassaStationPluginManagerHandler,
-	)
 	localAPI.MassaStationWebAppHandler = operations.MassaStationWebAppHandlerFunc(MassaStationWebAppHandler)
 
-	localAPI.WebsiteUploaderHandler = operations.WebsiteUploaderHandlerFunc(WebsiteUploaderHandler)
 	localAPI.SwitchNetworkHandler = network.NewSwitchNetworkHandler(networkManager)
 	localAPI.GetNetworkConfigHandler = network.NewGetNetworkConfigHandler(networkManager)
 
