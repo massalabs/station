@@ -4,15 +4,18 @@ Thank you for your interest in contributing to MassaStation! We welcome contribu
 
 ## Table of Contents
 
-- [Reporting Issues](#reporting-issues)
-- [Suggesting Features](#suggesting-features)
-- [Reviewing Pull Requests](#reviewing-pull-requests)
-- [Contributing fixes & features](#contributing-to-fixes--features)
-- [Development](#development)
-  - [Getting Started](#getting-started)
-  - [Setting Up Development Environment](#setting-up-development-environment)
-  - [Building MassaStation](#building-massastation)
-  - [Linting and Formatting](#linting-and-formatting)
+- [MassaStation Contributing Guide](#massastation-contributing-guide)
+  - [Table of Contents](#table-of-contents)
+  - [Reporting Issues](#reporting-issues)
+  - [Suggesting Features](#suggesting-features)
+  - [Reviewing Pull Requests](#reviewing-pull-requests)
+  - [Contributing to fixes \& features](#contributing-to-fixes--features)
+  - [Development](#development)
+    - [Getting Started](#getting-started)
+    - [Setting Up Development Environment](#setting-up-development-environment)
+    - [Building MassaStation](#building-massastation)
+    - [Importing API Specifications into Postman](#importing-api-specifications-into-postman)
+    - [Linting and Formatting](#linting-and-formatting)
 
 ## Reporting Issues
 
@@ -140,6 +143,12 @@ To build MassaStation, follow these steps:
      ```
 
 3. **Running the Project:** Finally, to run MassaStation, execute the `massastation` binary. Navigate to <http://station.massa> to see MassaStation frontend.
+
+### Importing API Specifications into Postman
+
+To use the MassaStation endpoints in Postman, import the API specifications Swagger file by following the steps outlined in the [Postman Import document](docs/postman_swagger.md).
+
+
 
 ### Linting and Formatting
 
