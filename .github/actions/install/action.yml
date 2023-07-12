@@ -24,9 +24,7 @@ runs:
       with:
         node-version: 18
         cache: 'npm'
-        cache-dependency-path: |
-          web/home/package-lock.json
-          web/plugin-manager/package-lock.json
+        cache-dependency-path: web/massastation/package-lock.json
 
     - name: install go deps
       shell: bash
