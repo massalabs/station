@@ -18,8 +18,10 @@ This guide provides step-by-step instructions for installing **MassaStation** on
 
 1. Download the latest version of **MassaStation** installer for Windows (`.msi`) from [here](https://github.com/massalabs/station/releases/latest/).
 2. Locate the downloaded `.msi` installer file and double-click on it to start the installation process.
-3. Follow the on-screen instructions to proceed with the installation.
-4. Once the installation is complete, you will see a confirmation message. Click "Finish" to exit the installer.
+3. Windows will warn you about untrusted software, click on "more info" and "run anyway" to continue the installation.
+4. Follow the on-screen instructions to proceed with the installation. Some terminal windows will open and close automatically during the installation process. This is normal and expected behavior.
+5. If prompted, click on "Yes" to allow the installer to make changes on certificates (this is to use Massa Station with https).
+6. Once the installation is complete, you will see a confirmation message. Click "Finish" to exit the installer.
 
 Congratulations! You have successfully installed **MassaStation** on your computer. You can start **MassaStation** by searching for it in the Start menu or by clicking on the icon on your desktop (if you chose to create one during the installation).
 
@@ -75,8 +77,13 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 To uninstall **MassaStation** from your Windows system, follow the steps below:
 
 1. Open your "Start" panel
-2. Look for MassaStation application in your list
-3. Click right on the application and click on uninstall
+2. Type "Settings" and open the settings
+3. On the left panel, click on "Apps"
+4. Click on "Installed Apps"
+5. Search for "MassaStation" in the list of installed applications
+6. On the "..." menu, click on "Uninstall"
+7. Confirm uninstallation by clicking on "Uninstall" in the confirmation dialog
+8. Follow the instructions provided by the uninstaller
 
 The application and all modules installed will be deleted from your desktop.
 
