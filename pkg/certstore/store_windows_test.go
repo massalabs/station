@@ -158,7 +158,7 @@ func TestCertStore_RemoveCertificate(t *testing.T) {
 			wantErr: ErrCertNotFound,
 		},
 		{
-			name:    "error when deleting certificate",
+			name:    "error when deleting certificate: action canceled by user",
 			handler: windows.Handle(1),
 			setupMock: func() {
 				mockAPI.EXPECT().UTF16PtrFromString(cert.Subject.CommonName).Return(new(uint16), nil)
