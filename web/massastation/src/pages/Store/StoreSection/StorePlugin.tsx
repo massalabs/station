@@ -4,10 +4,10 @@ import { usePost } from '@/custom/api';
 import { Certificate, Plugin } from '@massalabs/react-ui-kit';
 import { massalabsNomination } from '@/const';
 import { FiDownload } from 'react-icons/fi';
-import { MassaStoreModel } from '@/models';
+import { IMassaStore } from '@/shared/interfaces/IPlugin';
 
 interface StorePluginProps {
-  plugin: MassaStoreModel;
+  plugin: IMassaStore;
   refetch: () => void;
 }
 

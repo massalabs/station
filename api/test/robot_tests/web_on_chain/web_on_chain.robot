@@ -23,11 +23,8 @@ PUT /websiteUploader/prepare
     ...    ${API_URL}/websiteUploader/prepare
     ...    data=${data}
     ...    files=${file}
-    ...    expected_status=any
+    ...    expected_status=${STATUS_OK}
 
-    Log To Console    json response: ${response.json()}    # Print the response content to the test log for debugging
-
-    Should Be Equal As Integers    ${response.status_code}    ${STATUS_OK}    # Assert the status code is 200 OK
     Should Be Equal As Strings    ${response.json()['name']}    ${website_url}
     Set Global Variable    ${WEBSITE_NAME}    ${response.json()['name']}
     Set Global Variable    ${WEBSITE_ADDRESS}    ${response.json()['address']}

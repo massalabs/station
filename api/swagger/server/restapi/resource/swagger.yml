@@ -720,6 +720,30 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /home/{resource}:
+    get:
+      description: Frontend router for the MassaStation home page.
+      operationId: MassaStationHome
+      produces:
+        - application/json
+        - text/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          required : true
+          type: string
+          description: Website resource.
+      responses:
+        "200":
+          description: Page found
+        "404":
+          description: Resource not found.
+          schema:
+            $ref: "#/definitions/Error"
   /web/{resource}:
     get:
       description: Frontend router for the MassaStation.
@@ -762,6 +786,74 @@ paths:
       responses:
         "200":
           description: Dumb response. All content and HTTP code are possible for this endpoint.
+  /store/{resource}:
+    get:
+      description: Frontend router for the MassaStation plugin manager page.
+      operationId: MassaStationPluginManager
+      produces:
+        - application/json
+        - text/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          required : true
+          type: string
+          description: Website resource.
+      responses:
+        "200":
+          description: Page found
+        "404":
+          description: Resource not found.
+          schema:
+            $ref: "#/definitions/Error"
+  /search/{resource}:
+    get:
+      description: Frontend router for the web-on-chain search page.
+      operationId: WebOnChainSearch
+      produces:
+        - application/json
+        - text/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          required : true
+          type: string
+          description: Website resource.
+      responses:
+        "200":
+          description: Page found
+  /websiteUploader/{resource}:
+    get:
+      description: Frontend router for the MassaStation website creator page.
+      operationId: websiteUploader
+      produces:
+        - application/json
+        - text/javascript
+        - text/html
+        - text/css
+        - text/webp
+        - image/png
+      parameters:
+        - in: path
+          name: resource
+          required : true
+          type: string
+          description: Website resource.
+      responses:
+        "200":
+          description: Page found
+        "404":
+          description: Resource not found.
+          schema:
+            $ref: "#/definitions/Error"
   /websiteUploader/prepare:
     put:
       summary: Deploys the given website on the blockchain. 

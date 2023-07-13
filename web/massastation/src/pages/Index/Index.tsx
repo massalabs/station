@@ -18,7 +18,7 @@ import {
 import { FiCodepen, FiGlobe } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { MassaPluginModel, MassaStoreModel } from '@/models';
+import { IMassaPlugin, IMassaStore } from '@/shared/interfaces/IPlugin';
 import Intl from '@/i18n/i18n';
 import { routeFor } from '@/utils/utils';
 import { useConfigStore } from '@/store/store';
@@ -27,8 +27,8 @@ import { UseQueryResult } from '@tanstack/react-query';
 import { MASSA_WALLET } from '@/const';
 
 export function Index() {
-  const plugins = useResource<MassaPluginModel[]>('plugin-manager');
-  const store = useResource<MassaStoreModel[]>('plugin-store');
+  const plugins = useResource<IMassaPlugin[]>('plugin-manager');
+  const store = useResource<IMassaStore[]>('plugin-store');
   const { isLoading: isPluginsLoading } = plugins;
   const { isLoading: isStoreLoading } = store;
 
@@ -43,8 +43,8 @@ function NestedIndex({
   store,
   plugins,
 }: {
-  store: UseQueryResult<MassaStoreModel[]>;
-  plugins: UseQueryResult<MassaPluginModel[]>;
+  store: UseQueryResult<IMassaStore[]>;
+  plugins: UseQueryResult<IMassaPlugin[]>;
 }) {
   const navigate = useNavigate();
   const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
@@ -54,20 +54,19 @@ function NestedIndex({
 
   const { data: massaPlugins } = plugins;
 
-  const { data: availablePlugins } =
-    useResource<MassaStoreModel[]>('plugin-store');
+  const { data: availablePlugins } = useResource<IMassaStore[]>('plugin-store');
 
   const { mutate, isSuccess, isError, isLoading } =
     usePost<null>('plugin-manager');
 
   useEffect(() => {
     const isWalletInstalled = massaPlugins?.some(
-      (plugin: MassaPluginModel) => plugin.name === MASSA_WALLET,
+      (plugin: IMassaPlugin) => plugin.name === MASSA_WALLET,
     );
     setPluginWalletIsInstalled(Boolean(isWalletInstalled));
     if (!isWalletInstalled && availablePlugins) {
       const walletPlugin = availablePlugins.find(
-        (plugin: MassaStoreModel) => plugin.name === MASSA_WALLET,
+        (plugin: IMassaStore) => plugin.name === MASSA_WALLET,
       );
       if (walletPlugin) {
         setUrlPlugin(walletPlugin.file.url);

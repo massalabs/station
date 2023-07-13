@@ -3,10 +3,10 @@ import StationSection from './StationSection/StationSection';
 import StoreSection from './StoreSection/StoreSection';
 import Intl from '@/i18n/i18n';
 import Install from './Install';
-import { MassaPluginModel } from '@/models';
+import { IMassaPlugin } from '@/shared/interfaces/IPlugin';
 
 export function Store() {
-  const getPlugins = useResource<MassaPluginModel[]>('plugin-manager');
+  const getPlugins = useResource<IMassaPlugin[]>('plugin-manager');
   return (
     <>
       <div className="bg-primary text-f-primary pt-24">

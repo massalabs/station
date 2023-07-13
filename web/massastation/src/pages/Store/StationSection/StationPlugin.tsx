@@ -10,7 +10,7 @@ import {
   PLUGIN_UPDATE,
 } from '@/const';
 
-import { MassaPluginModel, PluginStatus } from '@/models';
+import { IMassaPlugin, PluginStatus } from '../../../../../shared/';
 
 interface PluginExecuteRequest {
   command: string;
@@ -22,7 +22,7 @@ export function StationPlugin({
   plugin,
   refetch,
 }: {
-  plugin: MassaPluginModel;
+  plugin: IMassaPlugin;
   refetch: () => void;
 }) {
   const { author, name, home, status, updatable, id } = plugin;

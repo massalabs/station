@@ -1,8 +1,8 @@
 import { Factory } from 'miragejs';
 import { faker } from '@faker-js/faker';
-import { MassaStoreModel } from '@/models';
+import { IMassaStore } from '../../../../shared/interfaces/IPlugin';
 
-export const storeFactory = Factory.extend<MassaStoreModel>({
+export const storeFactory = Factory.extend<IMassaStore>({
   name() {
     return faker.lorem.word();
   },

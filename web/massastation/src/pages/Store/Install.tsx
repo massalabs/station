@@ -6,12 +6,13 @@ import { isZipFile } from '@/const';
 
 import { usePost } from '@/custom/api';
 import { UseQueryResult } from '@tanstack/react-query';
-import { MassaPluginModel } from '@/models';
+
+import { IMassaPlugin } from '@/shared/interfaces/IPlugin';
 
 function Install({
   getPlugins,
 }: {
-  getPlugins: UseQueryResult<MassaPluginModel[]>;
+  getPlugins: UseQueryResult<IMassaPlugin[]>;
 }) {
   const { refetch: refetchPlugins } = getPlugins;
   const [url, setUrl] = useState<string>('');
