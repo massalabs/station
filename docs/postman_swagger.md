@@ -58,9 +58,8 @@
 
 15. **Replace the `{{baseUrl}}` by `station.massa` or define it as an environment variable in Postman:**
    
-   For more flexibility, define `baseUrl` as your own environment variable in Postman. This allows you to easily switch between different environments or server instances without modifying the requests individually.
-   
-   Refer to the [Postman documentation](https://learning.postman.com/docs/sending-requests/variables/) for details on defining and managing environment variables in Postman.
+   For more flexibility, define `baseUrl` as your own environment variable in Postman.  
+   You can edit the collection by clicking on the "..." menu, then go to the Variables tab, and add the variable.
 
 
 
