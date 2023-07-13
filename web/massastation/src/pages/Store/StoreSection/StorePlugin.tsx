@@ -4,15 +4,12 @@ import { usePost } from '@/custom/api';
 import { Certificate, Plugin } from '@massalabs/react-ui-kit';
 import { massalabsNomination } from '@/const';
 import { FiDownload } from 'react-icons/fi';
+import { PluginCardLoading } from '../PluginCardLoading';
 import { MassaStoreModel } from '@/models';
 
 interface StorePluginProps {
   plugin: MassaStoreModel;
   refetch: () => void;
-}
-
-function LoadingDownload() {
-  return <FiDownload className="animate-ping" />;
 }
 
 function StorePlugin(props: StorePluginProps) {
@@ -41,11 +38,7 @@ function StorePlugin(props: StorePluginProps) {
 
   const argsStore = {
     preIcon: <img src={logo} alt="plugin-logo" />,
-    topAction: isInstallLoading ? (
-      <LoadingDownload />
-    ) : (
-      <FiDownload onClick={() => mutate({ params })} />
-    ),
+    topAction: <FiDownload onClick={() => mutate({ params })} />,
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
@@ -53,9 +46,7 @@ function StorePlugin(props: StorePluginProps) {
   };
 
   return (
-    <>
-      <Plugin {...argsStore} />
-    </>
+    <>{isInstallLoading ? <PluginCardLoading /> : <Plugin {...argsStore} />}</>
   );
 }
 
