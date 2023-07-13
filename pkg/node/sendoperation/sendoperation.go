@@ -120,7 +120,7 @@ func Call(client *node.Client,
 	httpRawResponse, err := ExecuteHTTPRequest(
 		http.MethodPost,
 		url,
-		bytes.NewBuffer([]byte(content)),
+		bytes.NewReader([]byte(content)),
 	)
 	if err != nil {
 		res := RespError{"", ""}
