@@ -14,15 +14,18 @@ func SerializeAddress(addr string) ([]byte, error) {
 	addressWithoutPrefix := addr[2:]
 
 	// New testnet20 addresses needs a byte 0 for AU addresses and byte 1 for AS addresses
-	bytePrefix := []byte{1}
+	result := []byte{1}
 	if addressPrefix == "AU" {
-		bytePrefix = []byte{0}
+		result = []byte{0}
 	}
 
-	addressBytes, _, err := base58.VersionedCheckDecode(addressWithoutPrefix)
+	addressBytes, version, err := base58.VersionedCheckDecode(addressWithoutPrefix)
 	if err != nil {
 		return nil, fmt.Errorf("decoding address: %w", err)
 	}
 
-	return append(bytePrefix, addressBytes...), nil
+	// New testnet23 addresses needs a version byte
+	result = append(result, version)
+
+	return append(result, addressBytes...), nil
 }
