@@ -13,7 +13,7 @@ func TestSerializeAddress(t *testing.T) {
 		{
 			addr: "AU1MPDRXuR22mwYDFCeZUDgYjcTAF1co6xujx2X6ugoHeYeGY3B5",
 			expectedBytes: []byte{
-				0, 46, 72, 55, 221, 83, 31, 169, 208, 41, 146, 210, 82, 27, 34, 114, 141, 159, 245, 209, 189, 40, 141, 126,
+				0, 0, 46, 72, 55, 221, 83, 31, 169, 208, 41, 146, 210, 82, 27, 34, 114, 141, 159, 245, 209, 189, 40, 141, 126,
 				123, 156, 223, 187, 205, 64, 236, 40, 184,
 			},
 			expectError: false,
@@ -21,7 +21,7 @@ func TestSerializeAddress(t *testing.T) {
 		{
 			addr: "AS12YMz7NjyP3aeEWcSsiC58Hba8UxHapfGv7i4PmNMS2eKfmaqqC",
 			expectedBytes: []byte{
-				1, 202, 232, 43, 43, 168, 202, 122, 146, 118, 233, 120, 40, 254, 229, 81, 255, 245, 51, 119, 228, 26, 142, 34,
+				1, 0, 202, 232, 43, 43, 168, 202, 122, 146, 118, 233, 120, 40, 254, 229, 81, 255, 245, 51, 119, 228, 26, 142, 34,
 				195, 43, 76, 3, 140, 20, 198, 15, 188,
 			},
 			expectError: false,
