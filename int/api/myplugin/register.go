@@ -31,7 +31,10 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 	_, err = r.manager.PluginByAlias(alias)
 	if err == nil {
 		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
-			&models.Error{Code: errorCodePluginRegisterAlreadyRegistered, Message: fmt.Sprintf("plugin already registered: %s", alias)})
+			&models.Error{
+				Code:    errorCodePluginRegisterAlreadyRegistered,
+				Message: fmt.Sprintf("plugin already registered: %s", alias),
+			})
 	}
 
 	urlPlugin, err := url.Parse(param.Body.URL)
