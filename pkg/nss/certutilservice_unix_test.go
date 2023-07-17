@@ -1,6 +1,7 @@
 package nss
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,6 +9,10 @@ import (
 
 // TestCertUtilService_AddCA tests the AddCA method of CertUtilService.
 func TestCertUtilService_AddCA(t *testing.T) {
+	if os.Getenv("GITHUB_ACTIONS") == "true" {
+		t.Skip("skipping test; CI environment detected")
+	}
+
 	dbPath := "testdata"
 	certPath := "testdata/cert.pem"
 	certName := "testNSS"

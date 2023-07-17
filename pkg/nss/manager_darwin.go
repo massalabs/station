@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 )
 
-// nssDBUsualPath returns the known NSS databases directories of a Darwin operating system.
-func nssDBUsualPath() ([]string, error) {
+// defaultNSSDatabasePaths returns the known NSS databases directories of a Darwin operating system.
+func defaultNSSDatabasePaths() ([]string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user home directory: %w", err)

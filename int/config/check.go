@@ -9,6 +9,8 @@ import (
 )
 
 // caFailureConsequence is the consequence of a failure to load the CA.
+//
+//nolint:lll
 const caFailureConsequence = "Station will only work using http, or you will have to add the CA to your browser manually."
 
 // nssFailureConsequence is the consequence of a failure to add the CA to NSS.
@@ -43,8 +45,8 @@ func Check() error {
 // nonBlockingError logs a non blocking error.
 func nonBlockingError(context string, consequence string, err error) error {
 	if err != nil {
-		logger.Logger.Warnf("%s: %s.", context, err)
-		logger.Logger.Warn(consequence)
+		logger.Warnf("%s: %s.", context, err)
+		logger.Warn(consequence)
 	}
 
 	return nil
@@ -73,19 +75,29 @@ func checkCertificate(certPath string, keyPath string) error {
 	}
 
 	if !certCa.IsKnownByOS() {
-		logger.Logger.Debug("the CA is not known by the operating system.")
+		logger.Debug("the CA is not known by the operating system.")
 
 		err := certCa.AddToOS()
 		if err != nil {
 			// non blocking error
-			logger.Logger.Warnf("failed to add the CA to the operating system: %s.", err)
-			logger.Logger.Warn(caFailureConsequence)
+			logger.Warnf("failed to add the CA to the operating system: %s.", err)
+			logger.Warn(caFailureConsequence)
 		}
 	} else {
-		logger.Logger.Debug("the CA is known by the operating system.")
+		logger.Debug("the CA is known by the operating system.")
 	}
 
 	return nil
+}
+
+type NSSManagerLogger struct{}
+
+func (m *NSSManagerLogger) Debugf(msg string, args ...interface{}) {
+	logger.Debugf(msg, args)
+}
+
+func (m *NSSManagerLogger) Errorf(msg string, args ...interface{}) {
+	logger.Errorf(msg, args)
 }
 
 // checkNSS checks the NSS configuration.
@@ -100,21 +112,22 @@ func checkNSS(certPath string) error {
 		return nssCheckNonBlockingError("failed to instantiate the certutil runner", err)
 	}
 
-	manager := nss.NewManager([]string{}, service, logger.Logger)
+	loggerInstance := &NSSManagerLogger{}
+	manager := nss.NewManager([]string{}, service, loggerInstance)
 
 	if !manager.HasCA(CertificateAuthorityName) {
-		logger.Logger.Debug("the CA is not known by at least one local NSS database.")
+		logger.Debug("the CA is not known by at least one local NSS database.")
 
 		err := manager.AddCA(CertificateAuthorityName, certPath)
 		if err != nil {
 			// non blocking error
-			logger.Logger.Warnf("failed to add the CA to NSS: %s.", err)
-			logger.Logger.Warn(caFailureConsequence)
+			logger.Warnf("failed to add the CA to NSS: %s.", err)
+			logger.Warn(caFailureConsequence)
 		} else {
-			logger.Logger.Debug("the CA was added to NSS.")
+			logger.Debug("the CA was added to NSS.")
 		}
 	} else {
-		logger.Logger.Debug("the CA is known by all local NSS databases.")
+		logger.Debug("the CA is known by all local NSS databases.")
 	}
 
 	return nil

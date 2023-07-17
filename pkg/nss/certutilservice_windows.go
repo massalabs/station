@@ -1,4 +1,9 @@
+//go:build windows
+// +build windows
+
 package nss
+
+import "fmt"
 
 // CertUtilService encapsulates operations on NSS database using certutil command.
 type CertUtilService struct {

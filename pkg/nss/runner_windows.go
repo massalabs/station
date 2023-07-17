@@ -1,8 +1,10 @@
+//go:build windows
+// +build windows
+
 package nss
 
 import (
 	"fmt"
-	"os/exec"
 )
 
 // CertUtilRunner encapsulates certutil commands.
