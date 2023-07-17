@@ -6,12 +6,8 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/pkg/certificate/store"
-)
-
-const (
-	CertificateFile = "rootCA.pem"
-	KeyFile         = "rootCA-key.pem"
 )
 
 // CA is an certificate authority struct.
@@ -22,19 +18,19 @@ type CA struct {
 
 // Load loads the CA certificate and private key from the default filesystem locations.
 func (c *CA) Load() error {
-	caRootPath, err := mkcertCARootPath()
+	caRootPath, err := configuration.CAPath()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get the CA root path: %w", err)
 	}
 
-	certPath := filepath.Join(caRootPath, CertificateFile)
+	certPath := filepath.Join(caRootPath, configuration.CertificateAuthorityFileName)
 
 	c.cert, err = LoadCertificate(certPath)
 	if err != nil {
 		return fmt.Errorf("failed to parse the CA certificate file (%s): %w", certPath, err)
 	}
 
-	keyPath := filepath.Join(caRootPath, KeyFile)
+	keyPath := filepath.Join(caRootPath, configuration.CertificateAuthorityKeyFileName)
 
 	c.privateKey, err = LoadPrivateKey(keyPath)
 	if err != nil {
