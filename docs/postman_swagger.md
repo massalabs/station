@@ -1,74 +1,13 @@
-# Use postman with the swagger spec
+# Using Postman with Swagger
 
-**1. Locate the last version of swagger.yml file under `api/swagger/server/restapi/resource/swagger.yml`**
+This guide provides a high-level overview of using Postman with Swagger to interact with an API. Follow these 5 steps to get started:
 
-![](images/postman_swagger/1.png)
+1. **Locate the Swagger File**: Find the `swagger.yml` [file](https://github.com/massalabs/thyra/blob/e25eef54d5901ea16dddd7258ee09481a3e794a0/api/swagger/server/restapi/resource/swagger.yml) for the API you want to work with and copy its entire content.
 
-**2. Copy the whole content of `swagger.yml`**
+2. **Importing the Swagger**: Launch Postman and navigate to the "APIs" section. From there, click on the "Import" button and select the "Raw text" option. Next, paste the contents of the copied `swagger.yml` file into the designated text field.
 
-![](images/postman_swagger/2.png)
+3. **Ensure MassaStation is Running**: Start your MassaStation by using the command `task build-run`.
 
-**3. You can also copy the content of `swagger.yml` directly from your local repository.**
+4. **Interact with an Endpoint**: Expand the imported API in Postman and select the desired endpoint (e.g., "all Domains Getter"). Replace `{{baseUrl}}` with `station.massa` by clicking on the "..." menu, then go to the Variables tab, and add the variable. From there, Click on the "Send" button in Postman to make the API request
 
-![](images/postman_swagger/3.png)
-
-**4. Now, install and Open your Postman**
-
-![](images/postman_swagger/4.png)
-
-**5. Click on APIs**
-
-![](images/postman_swagger/5.png)
-
-**6. Click on Import**
-
-![](images/postman_swagger/6.png)
-
-**7. Select Raw text**
-
-![](images/postman_swagger/7.png)
-
-**8. Paste the content of the `swagger.yml`**
-
-![](images/postman_swagger/8.png)
-
-**9. Click on Continue**
-
-![](images/postman_swagger/9.png)
-
-**10. Now Postman will detect MassaStation API and its type.**
-
-![](images/postman_swagger/10.png)
-
-**11. Click Import and wait**
-
-![](images/postman_swagger/11.png)
-
-**12. When Import is Done, you will be able to see MassaStation API imported, and you can browse all its endpoints**
-
-![](images/postman_swagger/12.png)
-
-**13. Let's try to call an endpoint, but before you should have your massa station running in the background. You can run it directly from the terminal, inside station repo, type `task build-run`**
-
-![](images/postman_swagger/13.png)
-
-**14. Expand MassaStation folder, and let's try to call an endpoint**
-
-![](images/postman_swagger/14.png)
-
-15. **Replace the `{{baseUrl}}` by `station.massa` or define it as an environment variable in Postman:**
-   
-   For more flexibility, define `baseUrl` as your own environment variable in Postman.  
-   You can edit the collection by clicking on the "..." menu, then go to the Variables tab, and add the variable.
-
-
-
-![](images/postman_swagger/15.png)
-
-**16. Click on Send, and wait a few seconds...**
-
-![](images/postman_swagger/16.png)
-
-**17. You will receive in response all websites uploaded so far to the current DNS.**
-
-![](images/postman_swagger/17.png)
+Congratulations! You've successfully used Postman with Swagger to interact with an API.
