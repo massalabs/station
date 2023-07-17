@@ -22,7 +22,9 @@ require (
 
 require (
 	github.com/stretchr/testify v1.8.0
+	go.uber.org/mock v0.2.0
 	go.uber.org/zap v1.24.0
+	golang.org/x/sys v0.5.0
 )
 
 require (
@@ -54,7 +56,6 @@ require (
 	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/image v0.3.0 // indirect
 	golang.org/x/mobile v0.0.0-20211207041440-4e6c2922fdee // indirect
-	golang.org/x/sys v0.5.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/js/dom v0.0.0-20210725211120-f030747120f2 // indirect
