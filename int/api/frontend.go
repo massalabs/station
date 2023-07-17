@@ -9,10 +9,6 @@ import (
 	"github.com/massalabs/station/int/api/utils"
 )
 
-const indexHTML = "index.html"
-
-const basePath = "html/front/"
-
 const basePathReact = "dist/"
 
 //nolint:typecheck,nolintlint

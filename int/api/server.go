@@ -45,7 +45,11 @@ func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 	}
 }
 
-func initLocalAPI(localAPI *operations.MassastationAPI, networkManager *config.NetworkManager, pluginManager *plugin.Manager) {
+func initLocalAPI(
+	localAPI *operations.MassastationAPI,
+	networkManager *config.NetworkManager,
+	pluginManager *plugin.Manager,
+) {
 	config := networkManager.Network()
 
 	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunctionHandler(config)
@@ -89,7 +93,8 @@ func NewServer(flags StartServerFlags) *Server {
 	server := restapi.NewServer(localAPI)
 
 	setAPIFlags(server, flags)
-	server.GracefulTimeout = 5 * time.Second
+	timeout := 5
+	server.GracefulTimeout = time.Duration(timeout) * time.Second
 
 	err = store.NewStore()
 	if err != nil {
