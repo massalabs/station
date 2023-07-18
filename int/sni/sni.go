@@ -10,11 +10,10 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
-	"os"
 	"path/filepath"
-	"runtime"
 	"time"
 
+	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/pkg/certificate"
 	"github.com/massalabs/station/pkg/logger"
 )
@@ -22,10 +21,8 @@ import (
 var ErrInvalidArgument = errors.New("invalid argument")
 
 const (
-	privateKeySizeInBits  = 2048
-	loggerPrefix          = "SNI -"
-	caCertificateFileName = "rootCA.pem"
-	caPrivateKeyFileName  = "rootCA-key.pem"
+	privateKeySizeInBits = 2048
+	loggerPrefix         = "SNI -"
 )
 
 // hashServerName returns a unique identifier for the server, hashing the server's name with the current time stamp.
@@ -75,23 +72,18 @@ func createCertificateTemplate(serverName string, uniqueSiteNameID []byte) (*x50
 // generateSignedCertificate creates a certificate and then signs it using the provided Certificate Authority (CA).
 // It uses root certificate and private key from the default location.
 // It uses hashServerName and createCertificateTemplate to ensure uniqueness and proper formatting of the certificate.
-func generateSignedCertificate(serverName string) ([]byte, *rsa.PrivateKey, error) {
+func generateSignedCertificate(serverName, caPath string) ([]byte, *rsa.PrivateKey, error) {
 	privateKey, err := rsa.GenerateKey(rand.Reader, privateKeySizeInBits)
 	if err != nil {
 		return nil, nil, fmt.Errorf("unable to generate private key: %w", err)
 	}
 
-	caPath, err := mkcertCARootPath()
-	if err != nil {
-		return nil, nil, fmt.Errorf("unable to get mkcert CA root path: %w", err)
-	}
-
-	caCertificate, err := certificate.LoadCertificate(filepath.Join(caPath, caCertificateFileName))
+	caCertificate, err := certificate.LoadCertificate(filepath.Join(caPath, configuration.CertificateAuthorityFileName))
 	if err != nil {
 		return nil, nil, fmt.Errorf("unable to load CA certificate: %w", err)
 	}
 
-	caPrivateKey, err := certificate.LoadPrivateKey(filepath.Join(caPath, caPrivateKeyFileName))
+	caPrivateKey, err := certificate.LoadPrivateKey(filepath.Join(caPath, configuration.CertificateAuthorityKeyFileName))
 	if err != nil {
 		return nil, nil, fmt.Errorf("unable to load CA private key: %w", err)
 	}
@@ -116,7 +108,7 @@ func generateSignedCertificate(serverName string) ([]byte, *rsa.PrivateKey, erro
 
 // GenerateTLS creates a TLS certificate using the server name of the client hello info request.
 // Implementation design: it logs information because log configuration at go-swagger level is not available.
-func GenerateTLS(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
+func GenerateTLS(hello *tls.ClientHelloInfo, caPath string) (*tls.Certificate, error) {
 	logger.Debugf("%s generating TLS certificate", loggerPrefix)
 
 	if hello == nil {
@@ -125,7 +117,7 @@ func GenerateTLS(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 		return nil, fmt.Errorf("%w: client hello info is nil", ErrInvalidArgument)
 	}
 
-	certBytes, privateKey, err := generateSignedCertificate(hello.ServerName)
+	certBytes, privateKey, err := generateSignedCertificate(caPath, hello.ServerName)
 	if err != nil {
 		logger.Errorf("%s generate signed certificate for %s failed: %w", loggerPrefix, hello.ServerName, err)
 
@@ -136,36 +128,4 @@ func GenerateTLS(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 		Certificate: [][]byte{certBytes},
 		PrivateKey:  privateKey,
 	}, nil
-}
-
-// Get the mkcert CA root path depending on the OS.
-func mkcertCARootPath() (string, error) {
-	if env := os.Getenv("CAROOT"); env != "" {
-		return env, nil
-	}
-
-	var dir string
-
-	switch {
-	case runtime.GOOS == "windows":
-		dir = os.Getenv("LocalAppData")
-
-	case os.Getenv("XDG_DATA_HOME") != "":
-		dir = os.Getenv("XDG_DATA_HOME")
-
-	case runtime.GOOS == "darwin" && os.Getenv("HOME") != "":
-		dir = os.Getenv("HOME")
-		dir = filepath.Join(dir, "Library", "Application Support")
-
-	case runtime.GOOS == "linux" && os.Getenv("HOME") != "":
-		dir = os.Getenv("HOME")
-		dir = filepath.Join(dir, ".local", "share")
-	default:
-		msg := "automatic Certificate Authority detection is not supported by your operating system. "
-		msg += "Use the CAROOT environment variable to specify its location."
-
-		return "", errors.New(msg)
-	}
-
-	return filepath.Join(dir, "mkcert"), nil
 }

@@ -65,11 +65,6 @@ func main() {
 		log.Fatalf("while initializing logger: %s", err.Error())
 	}
 
-	err = intconf.Check()
-	if err != nil {
-		logger.Fatalf("Error with you current system configuration: %s", err.Error())
-	}
-
 	defer logger.Close()
 
 	flags := ParseFlags()

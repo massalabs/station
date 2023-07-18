@@ -5,6 +5,7 @@ package restapi
 import (
 	"crypto/tls"
 	"embed"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/int/sni"
 	MSConfig "github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/logger"
@@ -90,7 +92,14 @@ var content embed.FS
 
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
-	tlsConfig.GetCertificate = sni.GenerateTLS
+	tlsConfig.GetCertificate = func(chi *tls.ClientHelloInfo) (*tls.Certificate, error) {
+		caRootPath, err := configuration.CAPath()
+		if err != nil {
+			return nil, fmt.Errorf("unable to get mkcert CA root path: %w", err)
+		}
+
+		return sni.GenerateTLS(chi, caRootPath)
+	}
 }
 
 // As soon as server is initialized but not run yet, this function will be called.

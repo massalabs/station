@@ -3,6 +3,7 @@ package config
 import (
 	"path/filepath"
 
+	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/pkg/certificate"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/nss"
@@ -11,23 +12,23 @@ import (
 // caFailureConsequence is the consequence of a failure to load the CA.
 //
 //nolint:lll
-const caFailureConsequence = "Station will only work using http, or you will have to add the CA to your browser manually."
+const caFailureConsequence = "Station will only work using http, or you will have to add the CA to your browser manually (OS store)."
 
 // nssFailureConsequence is the consequence of a failure to add the CA to NSS.
 //
 //nolint:lll
-const nssFailureConsequence = "Station will only work using http, or you will have to add the CA to your browser manually."
+const nssFailureConsequence = "Station will only work using http, or you will have to add the CA to your browser manually (NSS store)."
 
 // Check performs a check on the configuration.
 func Check() error {
-	caRootPath, err := CAPath()
+	caRootPath, err := configuration.CAPath()
 	if err != nil {
 		return caCheckNonBlockingError("failed to get CA path", err)
 	}
 
-	certPath := filepath.Join(caRootPath, CertificateAuthorityFileName)
+	certPath := filepath.Join(caRootPath, configuration.CertificateAuthorityFileName)
 
-	keyPath := filepath.Join(caRootPath, CertificateAuthorityKeyFileName)
+	keyPath := filepath.Join(caRootPath, configuration.CertificateAuthorityKeyFileName)
 
 	err = checkCertificate(certPath, keyPath)
 	if err != nil {
@@ -109,16 +110,16 @@ func checkNSS(certPath string) error {
 
 	service, err := nss.NewCertUtilService(runner)
 	if err != nil {
-		return nssCheckNonBlockingError("failed to instantiate the certutil runner", err)
+		return nssCheckNonBlockingError("failed to instantiate the certutil service", err)
 	}
 
 	loggerInstance := &NSSManagerLogger{}
 	manager := nss.NewManager([]string{}, service, loggerInstance)
 
-	if !manager.HasCA(CertificateAuthorityName) {
+	if !manager.HasCA(configuration.CertificateAuthorityName) {
 		logger.Debug("the CA is not known by at least one local NSS database.")
 
-		err := manager.AddCA(CertificateAuthorityName, certPath)
+		err := manager.AddCA(configuration.CertificateAuthorityName, certPath)
 		if err != nil {
 			// non blocking error
 			logger.Warnf("failed to add the CA to NSS: %s.", err)
