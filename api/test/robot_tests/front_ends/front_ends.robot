@@ -22,4 +22,4 @@ GET /web/
 
 GET /web/index
     Open Massa Station Page    ${API_URL}/web/index
-    Page Should Contain    Decentralization made easy
+    Wait Until Page Contains    Decentralization made easy    10

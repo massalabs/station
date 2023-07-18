@@ -12,12 +12,11 @@ import (
 	"os"
 	"testing"
 
+	"github.com/massalabs/station/pkg/certstore/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 	"golang.org/x/sys/windows"
-
-	"github.com/massalabs/station/pkg/certstore/mocks"
 )
 
 // loadCertificateFromFile is an helper function that loads a certificate from
@@ -421,7 +420,7 @@ func TestInterpretError(t *testing.T) {
 				assert.ErrorIs(t, actual, tc.expected)
 				// the initial error
 				assert.ErrorAs(t, actual, &tc.err)
-				//the expected error string
+				// the expected error string
 				assert.EqualError(t, actual, tc.errStr)
 			} else {
 				assert.NoError(t, actual)
@@ -465,5 +464,4 @@ func TestManualCheck(t *testing.T) {
 	// This is needed to avoid memory leaks.
 	err = store.Close(true)
 	assert.NoError(t, err)
-
 }

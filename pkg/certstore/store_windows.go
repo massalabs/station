@@ -225,7 +225,6 @@ func (s *CertStore) FindCertBySubject(subject string) (*windows.CertContext, err
 		unsafe.Pointer(subjectPtr),
 		nil,
 	)
-
 	if err != nil {
 		return nil, interpretError(err)
 	}
@@ -240,7 +239,6 @@ func (s *CertStore) CreateCertContext(cert *x509.Certificate) (*windows.CertCont
 		&cert.Raw[0],
 		uint32(len(cert.Raw)),
 	)
-
 	if err != nil {
 		return nil, interpretError(err)
 	}
