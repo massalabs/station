@@ -59,16 +59,17 @@ func ParseFlags() api.StartServerFlags {
 }
 
 func main() {
+	err := initialize.Logger()
+	if err != nil {
+		log.Fatalf("while initializing logger: %s", err.Error())
+	}
+
 	flags := ParseFlags()
 	if flags.Version {
 		//nolint:forbidigo
 		fmt.Printf("Version:%s\n", config.Version)
+		logger.Close()
 		os.Exit(0)
-	}
-
-	err := initialize.Logger()
-	if err != nil {
-		log.Fatalf("while initializing logger: %s", err.Error())
 	}
 
 	defer logger.Close()
