@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path"
 
 	"github.com/massalabs/station/int/api"
 	"github.com/massalabs/station/int/initialize"
@@ -33,21 +32,8 @@ func ParseFlags() api.StartServerFlags {
 			Please reinstall MassaStation using the installer at https://github.com/massalabs/station and try again.`)
 	}
 
-	certDir, err := dirs.GetCertDir()
-	if err != nil {
-		logger.Fatal("Unable to read cert dir:%s\n%s", err,
-			`MassaStation can't run without a certificate directory.
-			Please reinstall MassaStation using the installer at https://github.com/massalabs/station and try again.`,
-		)
-	}
-
-	defaultCertFile := path.Join(certDir, "cert.pem")
-	defaultCertKeyFile := path.Join(certDir, "cert-key.pem")
-
 	flag.IntVar(&flags.Port, "http-port", httpPort, "HTTP port to listen to")
 	flag.IntVar(&flags.TLSPort, "https-port", httpsPort, "HTTPS port to listen to")
-	flag.StringVar(&flags.TLSCertificate, "tls-certificate", defaultCertFile, "path to certificate file")
-	flag.StringVar(&flags.TLSCertificateKey, "tls-key", defaultCertKeyFile, "path to key file")
 	flag.StringVar(&flags.MassaNodeServer, "node-server", "TESTNET", `Massa node that MassaStation connects to. 
 	Can be an IP address, a URL or one of the following values: 'TESTNET', 'LABNET', 'BUILDNET' or LOCALHOST`)
 	flag.StringVar(&flags.DNSAddress, "dns-address", "", "Address of the DNS contract on the blockchain")

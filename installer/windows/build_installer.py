@@ -199,11 +199,6 @@ def create_wxs_file():
                         <File Id="GenCertScript" Name="{GEN_CERT_SCRIPT}" Source="{BUILD_DIR}\\{GEN_CERT_SCRIPT}" />
                         <File Id="MassaStationRunScript" Name="{RUN_VBS}" Source="{BUILD_DIR}\\{RUN_VBS}" />
                     </Component>
-                    <Directory Id="MassaStationCerts" Name="certs">
-                        <Component Id="CreateCertsDir" Guid="e96619b3-48a7-4629-8a19-e1c8270b331c">
-                            <CreateFolder />
-                        </Component>
-                    </Directory>
                     <Directory Id="MassaStationPlugins" Name="plugins">
                         <Component Id="CreatePluginsDir" Guid="130fb4bb-cb51-4e28-a5e4-b7c58c846e02">
                             <CreateFolder>

@@ -2,11 +2,9 @@ package api
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/go-openapi/loads"
-	"github.com/jessevdk/go-flags"
 	"github.com/massalabs/station/api/swagger/server/restapi"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/int/api/cmd"
@@ -23,26 +21,16 @@ import (
 )
 
 type StartServerFlags struct {
-	Port              int
-	TLSPort           int
-	TLSCertificate    string
-	TLSCertificateKey string
-	MassaNodeServer   string
-	DNSAddress        string
-	Version           bool
+	Port            int
+	TLSPort         int
+	MassaNodeServer string
+	DNSAddress      string
+	Version         bool
 }
 
 func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 	server.Port = startFlags.Port
 	server.TLSPort = startFlags.TLSPort
-
-	if _, err := os.Stat(startFlags.TLSCertificate); err == nil {
-		server.TLSCertificate = flags.Filename(startFlags.TLSCertificate)
-	}
-
-	if _, err := os.Stat(startFlags.TLSCertificateKey); err == nil {
-		server.TLSCertificateKey = flags.Filename(startFlags.TLSCertificateKey)
-	}
 }
 
 func initLocalAPI(

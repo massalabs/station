@@ -8,7 +8,6 @@ set -e
 
 # Set MassaStation configuration directories.
 export MASSASTATION_CONFIG_DIR=/usr/local/share/massastation
-export MASSASTATION_CERT_DIR=/etc/massastation/certs
 
 export MKCERT_URL="https://dl.filippo.io/mkcert/latest?for=linux/amd64"
 
@@ -86,9 +85,6 @@ generate_certificate() {
     fi
 
     ./mkcert -install || fatal "mkcert installation failed."
-    mkdir -m 777 -p $MASSASTATION_CERT_DIR || fatal "certs directory creation failed."
-    ./mkcert -cert-file $MASSASTATION_CERT_DIR/cert.pem -key-file $MASSASTATION_CERT_DIR/cert-key.pem station.massa || fatal "mkcert certificate generation failed."
-    chmod 644 $MASSASTATION_CERT_DIR/cert.pem $MASSASTATION_CERT_DIR/cert-key.pem || fatal "certs permission change failed."
 
     rm mkcert || fatal "mkcert removal failed."
 }
@@ -99,9 +95,7 @@ mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/plugins || fatal "plugins directory cre
 
 ping -c 1 -t 1 test.massa &> /dev/null || set_local_dns
 
-if [[ ! -f $MASSASTATION_CERT_DIR/cert.pem || ! -f $MASSASTATION_CERT_DIR/cert-key.pem ]]; then
-    generate_certificate
-fi
+generate_certificate
 
 # Setcap massastation to allow binding to privileged ports (80, 443).
 setcap CAP_NET_BIND_SERVICE=+eip /usr/bin/massastation || fatal "Failed to setcap massastation."

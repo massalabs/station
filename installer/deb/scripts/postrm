@@ -12,7 +12,6 @@ set -e
 
 # Set MassaStation configuration directory.
 export MASSASTATION_CONFIG_DIR=/usr/local/share/massastation
-export MASSASTATION_CERT_DIR=/etc/massastation/certs
 
 # Print error message to stderr and exit with code 1.
 fatal() {
@@ -55,9 +54,6 @@ remove_massastation() {
 
     echo "Removing MassaStation configuration directory..."
     sudo rm -rf $MASSASTATION_CONFIG_DIR || fatal "failed to remove MassaStation configuration directory."
-
-    echo "Removing MassaStation certificates..."
-    sudo rm -rf $MASSASTATION_CERT_DIR || fatal "failed to remove MassaStation certificates."
 
     echo "MassaStation was successfully uninstalled. We're sorry to see you go."
 }
