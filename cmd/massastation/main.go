@@ -7,11 +7,11 @@ import (
 	"os"
 
 	"github.com/massalabs/station/int/api"
+	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/int/initialize"
 	"github.com/massalabs/station/int/systray"
 	"github.com/massalabs/station/int/systray/update"
 	"github.com/massalabs/station/pkg/config"
-	"github.com/massalabs/station/pkg/dirs"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/plugin"
 )
@@ -23,7 +23,7 @@ func ParseFlags() api.StartServerFlags {
 
 	var flags api.StartServerFlags
 
-	_, err := dirs.GetConfigDir()
+	_, err := configuration.Path()
 	if err != nil {
 		logger.Error(
 			"Unable to read config dir: %s\n%s",

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/massalabs/station/pkg/dirs"
+	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/pkg/logger"
 )
 
@@ -15,7 +15,7 @@ const (
 
 // Logger sets up the global logger.
 func Logger() error {
-	logDir, err := dirs.GetConfigDir()
+	logDir, err := configuration.Path()
 	if err != nil {
 		return fmt.Errorf("get config dir: %w", err)
 	}

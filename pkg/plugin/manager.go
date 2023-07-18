@@ -11,7 +11,7 @@ import (
 	"sync"
 
 	"github.com/cavaliergopher/grab/v3"
-	"github.com/massalabs/station/pkg/dirs"
+	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/plugin/utils"
 	"github.com/massalabs/station/pkg/store"
@@ -21,7 +21,7 @@ import (
 // Directory returns the plugin directory.
 // Note: the plugin directory is the /plugins inside the home directory.
 func Directory() string {
-	homeDir, _ := dirs.GetConfigDir()
+	homeDir, _ := configuration.Path()
 	pluginsDir := path.Join(homeDir, "plugins")
 	_, err := os.Stat(pluginsDir)
 
