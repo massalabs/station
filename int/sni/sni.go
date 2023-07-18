@@ -117,7 +117,7 @@ func GenerateTLS(hello *tls.ClientHelloInfo, caPath string) (*tls.Certificate, e
 		return nil, fmt.Errorf("%w: client hello info is nil", ErrInvalidArgument)
 	}
 
-	certBytes, privateKey, err := generateSignedCertificate(caPath, hello.ServerName)
+	certBytes, privateKey, err := generateSignedCertificate(hello.ServerName, caPath)
 	if err != nil {
 		logger.Errorf("%s generate signed certificate for %s failed: %w", loggerPrefix, hello.ServerName, err)
 
