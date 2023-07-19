@@ -51,7 +51,7 @@ func Fetch(nickname string) (*Wallet, error) {
 	httpRawResponse, err := signer.ExecuteHTTPRequest(
 		http.MethodGet,
 		signer.WalletPluginURL+"accounts/"+nickname,
-		bytes.NewBuffer([]byte("")),
+		bytes.NewReader([]byte("")),
 	)
 	if err != nil {
 		res := signer.RespError{Code: "", Message: ""}
