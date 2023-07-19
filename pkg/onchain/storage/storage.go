@@ -11,7 +11,6 @@ import (
 	"github.com/massalabs/station/pkg/cache"
 	"github.com/massalabs/station/pkg/convert"
 	"github.com/massalabs/station/pkg/node"
-	"github.com/massalabs/station/pkg/onchain/dns"
 )
 
 func readZipFile(z *zip.File) ([]byte, error) {
@@ -80,20 +79,11 @@ func Fetch(client *node.Client, websiteStorerAddress string) ([]byte, error) {
 func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, error) {
 	content := make(map[string][]byte)
 
-	metaData, err := dns.FetchRecordMetaData(client, websiteStorerAddress)
-	if err != nil {
-		return nil, fmt.Errorf("getting metadata for '%s' : %w", websiteStorerAddress, err)
-	}
-
-	lastTimestamp := metaData.LastUpdateTimestamp
-
-	if lastTimestamp == 0 {
-		lastTimestamp = metaData.CreationTimeStamp
-	}
-
-	fileName := fmt.Sprintf("%s-%d", websiteStorerAddress, lastTimestamp)
+	fileName := websiteStorerAddress
 
 	var fileContent []byte
+
+	var err error
 
 	// we check if the website is in cache, if not we fetch it from the blockchain
 	if cache.IsPresent(fileName) {

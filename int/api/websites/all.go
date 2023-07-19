@@ -79,19 +79,12 @@ func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 			continue
 		}
 
-		websiteMetadata, err := dnshelper.GetWebsiteMetadata(client, websiteStorerAddress)
-		if err != nil {
-			// Skip invalid entry and continue to the next iteration
-			continue
-		}
-
 		name := convert.BytesToString(websiteNames[index])
 
 		registry = append(registry, &models.Registry{
 			Name:        name,
 			Address:     websiteStorerAddress,
 			Description: websiteDescription,
-			Metadata:    websiteMetadata,
 			Favicon:     DNSRecordFavicon(name, websiteStorerAddress, client),
 		})
 	}
