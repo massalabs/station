@@ -133,7 +133,7 @@ func processEntry(index int, dnsValue node.DatastoreEntryResponse, client *node.
 		Name:        name,
 		Address:     websiteStorerAddress,
 		Description: websiteDescription,
-		Metadata:    websiteMetadata,//[]byte{},
+		Metadata:    websiteMetadata, //[]byte{},
 		Favicon:     <-faviconChan,
 	}
 }
@@ -153,14 +153,11 @@ func collectRegistryResults(registryChan <-chan *models.Registry, errChan <-chan
 	return registry
 }
 
-
 func sortRegistry(registry []*models.Registry) {
 	sort.Slice(registry, func(i, j int) bool {
 		return registry[i].Name < registry[j].Name
 	})
 }
-
-
 
 func DNSRecordFavicon(name, websiteStorerAddress string, client *node.Client) string {
 	body, err := website.Fetch(client, websiteStorerAddress, faviconIcon)
@@ -176,7 +173,7 @@ The dns SC has 4 different kinds of key:
 -the website names
 -keys owned concatenated with the owner's address
 -a key blackList
--a owner key 
+-a owner key
 we only want to keep the website names keys.
 */
 func filterEntriesToDisplay(config config.AppConfig, client *node.Client) ([][]byte, error) {
