@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
@@ -12,6 +14,7 @@ import (
 	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/convert"
 	"github.com/massalabs/station/pkg/dnshelper"
+	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/onchain/website"
 )
@@ -34,7 +37,10 @@ type registryHandler struct {
 }
 
 func (h *registryHandler) Handle(_ operations.AllDomainsGetterParams) middleware.Responder {
+	startTime := time.Now()
 	results, err := Registry(h.config)
+	elapsedTime := time.Since(startTime)
+	fmt.Println("🚀 ~ file: all.go:42 ~ func ~ elapsedTime:", elapsedTime)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().
 			WithPayload(
@@ -53,56 +59,108 @@ smart contract Massa Station is connected to. Once this data has been fetched fr
 the various website storer contracts, the function builds an array of Registry objects
 and returns it to the frontend for display on the Registry page.
 */
+// Registry fetches the registry data for the given AppConfig.
 func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 	client := node.NewClient(config.NodeURL)
 
-	// Fetch website names to display
 	websiteNames, err := filterEntriesToDisplay(*config, client)
 	if err != nil {
-		return nil, fmt.Errorf("filtering keys to be displayed at '%s': %w", config.DNSAddress, err)
+		return nil, fmt.Errorf("failed to filter keys to be displayed at '%s': %w", config.DNSAddress, err)
 	}
 
-	// Fetch DNS values of the website names: contractAddress, Description.
 	dnsValues, err := node.ContractDatastoreEntries(client, config.DNSAddress, websiteNames)
 	if err != nil {
-		return nil, fmt.Errorf("reading keys '%s' at '%s': %w", websiteNames, config.DNSAddress, err)
+		return nil, fmt.Errorf("failed to read keys '%s' at '%s': %w", websiteNames, config.DNSAddress, err)
 	}
 
-	// Pre-allocate registry with the estimated capacity
-	registry := make([]*models.Registry, 0, len(dnsValues))
-
-	// Iterate over the DNS values to populate Registry objects with website values
-	for index, dnsValue := range dnsValues {
-		websiteStorerAddress, websiteDescription, err := dnshelper.AddressAndDescription(dnsValue.CandidateValue)
-		if err != nil {
-			// Skip invalid entry and continue to the next iteration
-			continue
-		}
-
-		websiteMetadata, err := dnshelper.GetWebsiteMetadata(client, websiteStorerAddress)
-		if err != nil {
-			// Skip invalid entry and continue to the next iteration
-			continue
-		}
-
-		name := convert.BytesToString(websiteNames[index])
-
-		registry = append(registry, &models.Registry{
-			Name:        name,
-			Address:     websiteStorerAddress,
-			Description: websiteDescription,
-			Metadata:    websiteMetadata,
-			Favicon:     DNSRecordFavicon(name, websiteStorerAddress, client),
-		})
+	registry, err := processDNSValues(client, dnsValues, websiteNames)
+	if err != nil {
+		return nil, err
 	}
 
-	// Sort website names with alphanumeric order
-	sort.Slice(registry, func(i, j int) bool {
-		return registry[i].Name < registry[j].Name
-	})
+	sortRegistry(registry)
 
 	return registry, nil
 }
+
+func processDNSValues(client *node.Client, dnsValues []node.DatastoreEntryResponse, websiteNames [][]byte) ([]*models.Registry, error) {
+	registryChan := make(chan *models.Registry)
+	errChan := make(chan error)
+	wg := sync.WaitGroup{}
+	wg.Add(len(dnsValues))
+
+	for index, dnsValue := range dnsValues {
+		go func(index int, dnsValue node.DatastoreEntryResponse) {
+			defer wg.Done()
+
+			processEntry(index, dnsValue, client, websiteNames, registryChan, errChan)
+		}(index, dnsValue)
+	}
+
+	go func() {
+		wg.Wait()
+		close(registryChan)
+		close(errChan)
+	}()
+
+	return collectRegistryResults(registryChan, errChan), nil
+}
+
+func processEntry(index int, dnsValue node.DatastoreEntryResponse, client *node.Client, websiteNames [][]byte, registryChan chan<- *models.Registry, errChan chan<- error) {
+	valueBytes := dnsValue.CandidateValue
+
+	websiteStorerAddress, websiteDescription, err := dnshelper.AddressAndDescription(valueBytes)
+	if err != nil {
+		errChan <- err
+		return
+	}
+
+	websiteMetadata, err := dnshelper.GetWebsiteMetadata(client, websiteStorerAddress)
+	if err != nil {
+		errChan <- err
+		return
+	}
+
+	name := convert.BytesToString(websiteNames[index])
+
+	faviconChan := make(chan string)
+	go func() {
+		favicon := DNSRecordFavicon(name, websiteStorerAddress, client)
+		faviconChan <- favicon
+	}()
+
+	registryChan <- &models.Registry{
+		Name:        name,
+		Address:     websiteStorerAddress,
+		Description: websiteDescription,
+		Metadata:    websiteMetadata,//[]byte{},
+		Favicon:     <-faviconChan,
+	}
+}
+
+func collectRegistryResults(registryChan <-chan *models.Registry, errChan <-chan error) []*models.Registry {
+	registry := make([]*models.Registry, 0)
+
+	for reg := range registryChan {
+		registry = append(registry, reg)
+	}
+
+	if err := <-errChan; err != nil {
+		// Handle the error if needed
+		logger.Error(err)
+	}
+
+	return registry
+}
+
+
+func sortRegistry(registry []*models.Registry) {
+	sort.Slice(registry, func(i, j int) bool {
+		return registry[i].Name < registry[j].Name
+	})
+}
+
+
 
 func DNSRecordFavicon(name, websiteStorerAddress string, client *node.Client) string {
 	body, err := website.Fetch(client, websiteStorerAddress, faviconIcon)
@@ -118,7 +176,7 @@ The dns SC has 4 different kinds of key:
 -the website names
 -keys owned concatenated with the owner's address
 -a key blackList
--a owner key
+-a owner key 
 we only want to keep the website names keys.
 */
 func filterEntriesToDisplay(config config.AppConfig, client *node.Client) ([][]byte, error) {
