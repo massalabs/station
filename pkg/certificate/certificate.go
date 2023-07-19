@@ -1,206 +1,93 @@
+// Package certificate provides operations for handling certificates and private keys used in TLS
+// (Transport Layer Security).
+// It is especially geared towards dealing with entities encoded in the PEM (Privacy Enhanced Mail) format.
+// These operations include loading and parsing PEM-encoded certificates and private keys from file paths.
+//
+// The package exposes:
+//   - The LoadCertificate function that retrieves a PEM-encoded certificate from a specified
+//     file path, decodes the PEM content, and parses the certificate.
+//   - The LoadPrivateKey function that fetches a PEM-encoded private key from a given
+//     file path, decodes the PEM content, and parses the private key.
+//
+// Design considerations:
+//   - This package adheres to exporting sentinel errors best practice.
+//
+// Future directions:
+//   - As the use of this package evolves, consider adding more functionality, such as writing
+//     PEM-encoded certificates and private keys to file paths.
+//   - Before transitioning this package to a standalone GitHub repository, ascertain the need
+//     for similar functionalities in other applications.
 package certificate
-
-// This package aims to solve the impossibility of generating a valid certificate for an entire top-level domain (TLD).
-//
-// The following approaches are not possible:
-// - using a *.massa certificate
-// - adding several SANs to the same certificate (e.g. *.station.massa, *.web.massa...) due to
-//    * the technical limit to the number of SANs that can be included in a certificate as well as
-//    * the delay between adding a website to the blockchain and adding it to the certificate.
-//
-// Therefore, here we use the SNI mechanism to:
-// - get the server name and
-// - generate a temporary certificate instead of just retrieving an existing one.
-//
-// To pass the security checks of the browser and the operating system, we also sign this certificate
-// with a root certificate generated with mkcert.
 
 import (
 	"crypto"
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/sha256"
-	"crypto/tls"
 	"crypto/x509"
-	"crypto/x509/pkix"
-	"encoding/pem"
 	"errors"
 	"fmt"
-	"math/big"
 	"os"
-	"path/filepath"
-	"runtime"
-	"time"
-
-	"github.com/massalabs/station/pkg/logger"
 )
 
-const privateKeySizeInBits = 2048
+var (
 
-// wrapAndPrint wraps error and print error message to std err.
-// Printing to stderr is mandatory as this is not done by the http server later in the process.
-func wrapAndPrint(msg string, err error) error {
-	wrappingMsg := "while handling SNI Hello request"
+	// ErrFailedToReadFile is returned when the provided file cannot be read.
+	ErrFailedToReadFile = errors.New("unable to read file")
+	// ErrFailedToDecodeFile is returned when the provided file cannot be decoded.
+	ErrFailedToDecodeFile = errors.New("unable to decode file content")
+	// ErrFailedToParseContent is returned when the provided content cannot be parsed.
+	ErrFailedToParseContent = errors.New("unable to parse content")
+)
 
-	err = fmt.Errorf("%s: %w", msg, err)
-	logger.Errorf("%s: %v", wrappingMsg, err)
-
-	return fmt.Errorf("%s: %w", wrappingMsg, err)
-}
-
-// GenerateTLS processes an SNI Hello request by generating a dynamic certificate.
-func GenerateTLS(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
-	privateKey, err := rsa.GenerateKey(rand.Reader, privateKeySizeInBits)
-	if err != nil {
-		return nil, wrapAndPrint("while generating keypair", err)
-	}
-
-	caPath, err := mkcertCARootPath()
-	if err != nil {
-		return nil, wrapAndPrint("while getting mkcert CA root path", err)
-	}
-
-	caCertificate, err := LoadCertificate(filepath.Join(caPath, "rootCA.pem"))
-	if err != nil {
-		return nil, wrapAndPrint("while loading CA certificate", err)
-	}
-
-	caPrivateKey, err := LoadPrivateKey(filepath.Join(caPath, "rootCA-key.pem"))
-	if err != nil {
-		return nil, wrapAndPrint("while loading CA key", err)
-	}
-
-	certBytes, privateKey, err := GenerateSignedCertificate(hello.ServerName, privateKey, caCertificate, caPrivateKey)
-	if err != nil {
-		return nil, wrapAndPrint("while generating signed certificate", err)
-	}
-
-	var cert tls.Certificate
-
-	cert.Certificate = append(cert.Certificate, certBytes)
-	cert.PrivateKey = privateKey
-
-	return &cert, nil
-}
-
-// GenerateSignedCertificate generates a certificate and signed it with the given AC.
-func GenerateSignedCertificate(
-	serverName string,
-	privateKey *rsa.PrivateKey,
-	caCertificate *x509.Certificate, caPrivateKey crypto.PrivateKey,
-) ([]byte, *rsa.PrivateKey, error) {
-	if len(serverName) == 0 {
-		return nil, nil, errors.New("while generating certificate: server name is empty")
-	}
-
-	now, err := time.Now().MarshalBinary()
-	if err != nil {
-		return nil, nil, fmt.Errorf("while marshaling now: %w", err)
-	}
-
-	uniqueSiteNameID := sha256.New().Sum(append([]byte(serverName), now...))
-
-	//nolint:exhaustruct
-	template := &x509.Certificate{
-		//nolint:lll
-		SerialNumber: new(big.Int).SetBytes(uniqueSiteNameID), // in order to have an unique ID for each website Name, we hash the website name
-		Subject: pkix.Name{ // not necessary, but cool to have if the user ask for certificate details.
-			CommonName:   serverName,
-			Organization: []string{"station dynamically generated"},
-		},
-		NotBefore: time.Now(),
-		// one day of validity is enough since the certificate is generated dynamically each time
-		NotAfter: time.Now().AddDate(0, 0, 1),
-	}
-
-	template.DNSNames = append(template.DNSNames, serverName)
-
-	// Create the certificate.
-	cert, err := x509.CreateCertificate(rand.Reader, template, caCertificate, privateKey.Public(), caPrivateKey)
-	if err != nil {
-		return nil, nil, fmt.Errorf("while creating certificate: %w", err)
-	}
-
-	return cert, privateKey, nil
-}
-
-// Get the mkcert CA root path depending on the OS.
-func mkcertCARootPath() (string, error) {
-	if env := os.Getenv("CAROOT"); env != "" {
-		return env, nil
-	}
-
-	var dir string
-
-	switch {
-	case runtime.GOOS == "windows":
-		dir = os.Getenv("LocalAppData")
-
-	case os.Getenv("XDG_DATA_HOME") != "":
-		dir = os.Getenv("XDG_DATA_HOME")
-
-	case runtime.GOOS == "darwin" && os.Getenv("HOME") != "":
-		dir = os.Getenv("HOME")
-		dir = filepath.Join(dir, "Library", "Application Support")
-
-	case runtime.GOOS == "linux" && os.Getenv("HOME") != "":
-		dir = os.Getenv("HOME")
-		dir = filepath.Join(dir, ".local", "share")
-	default:
-		msg := "automatic Certificate Authority detection is not supported by your operating system. "
-		msg += "Use the CAROOT environment variable to specify its location."
-
-		return "", errors.New(msg)
-	}
-
-	return filepath.Join(dir, "mkcert"), nil
-}
-
-// Loads a PEM encoded certificate.
-func LoadCertificate(path string) (*x509.Certificate, error) {
-	_, err := os.Stat(path)
-	if err != nil {
-		return nil, fmt.Errorf("while loading certificate file from %s: %w", path, err)
+// readFile reads the content of a file at the given path.
+func readFile(path string) ([]byte, error) {
+	if path == "" {
+		return nil, fmt.Errorf("%w: %s", ErrFailedToReadFile, "empty path")
 	}
 
 	raw, err := os.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("while reading certificate file from %s: %w", path, err)
+		return nil, fmt.Errorf("%w at %s: %w", ErrFailedToReadFile, path, err)
 	}
 
-	der, _ := pem.Decode(raw) // rest argument, additional information if any, is ignored
-	if der == nil || der.Type != "CERTIFICATE" {
-		return nil, fmt.Errorf("file %s is not a certificate", path)
+	return raw, nil
+}
+
+// LoadCertificate retrieves a PEM encoded certificate from a specified file path.
+// It decodes the PEM file and parses the certificate, returning any errors encountered during the process.
+func LoadCertificate(path string) (*x509.Certificate, error) {
+	raw, err := readFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	der, err := DecodeExpectedPEM(raw, Certificate)
+	if err != nil {
+		return nil, fmt.Errorf("%w in file %s: %w", ErrFailedToDecodeFile, path, err)
 	}
 
 	cert, err := x509.ParseCertificate(der.Bytes)
 	if err != nil {
-		return nil, fmt.Errorf("while parsing DER bytes: %w", err)
+		return nil, fmt.Errorf("%w in file %s: %w", ErrFailedToParseContent, path, err)
 	}
 
 	return cert, nil
 }
 
-// Loads a PEM encoded private key.
+// LoadPrivateKey retrieves a PEM encoded private key from a specified file path.
+// It decodes the PEM file and parses the private key, returning any errors encountered during the process.
 func LoadPrivateKey(path string) (crypto.PrivateKey, error) {
-	_, err := os.Stat(path)
+	raw, err := readFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("while loading key file from %s: %w", path, err)
+		return nil, err
 	}
 
-	raw, err := os.ReadFile(path)
+	der, err := DecodeExpectedPEM(raw, PrivateKey)
 	if err != nil {
-		return nil, fmt.Errorf("while reading key file from %s: %w", path, err)
-	}
-
-	der, _ := pem.Decode(raw)
-	if der == nil || der.Type != "PRIVATE KEY" {
-		return nil, fmt.Errorf("file %s is not a private key", path)
+		return nil, fmt.Errorf("%w in file %s: %w", ErrFailedToDecodeFile, path, err)
 	}
 
 	key, err := x509.ParsePKCS8PrivateKey(der.Bytes)
 	if err != nil {
-		return nil, fmt.Errorf("while parsing DER bytes: %w", err)
+		return nil, fmt.Errorf("%w in file %s: %w", ErrFailedToParseContent, path, err)
 	}
 
 	return key, nil

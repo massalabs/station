@@ -69,28 +69,3 @@ func SetRecord(
 
 	return operationWithEventResponse.Event, nil
 }
-
-type MetaData struct {
-	CreationTimeStamp   uint64
-	LastUpdateTimestamp uint64
-}
-
-// FetchRecordMetaData returns the website meta data from the DNS samrt contract stored on the blockchain.
-func FetchRecordMetaData(client *node.Client, websiteStorerAddress string) (MetaData, error) {
-	data, err := node.DatastoreEntry(client, websiteStorerAddress, convert.StringToBytes("META"))
-	if err != nil {
-		return MetaData{}, fmt.Errorf("while getting meta data: %w", err)
-	}
-
-	creation := convert.BytesToU64(data.CandidateValue)
-	update := uint64(0)
-
-	if len(data.CandidateValue) == 2*convert.BytesPerUint64 {
-		update = convert.BytesToU64(data.CandidateValue[convert.BytesPerUint64:])
-	}
-
-	return MetaData{
-		CreationTimeStamp:   creation,
-		LastUpdateTimestamp: update,
-	}, nil
-}

@@ -9,6 +9,7 @@ tasks:
       - cmd: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3
       - cmd: go install mvdan.cc/gofumpt@latest
       - cmd: go install github.com/daixiang0/gci@latest
+      - cmd: go install go.uber.org/mock/mockgen@latest
 
   generate: go generate ./...
 

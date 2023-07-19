@@ -133,7 +133,6 @@ func processEntry(index int, dnsValue node.DatastoreEntryResponse, client *node.
 		Name:        name,
 		Address:     websiteStorerAddress,
 		Description: websiteDescription,
-		Metadata:    websiteMetadata, //[]byte{},
 		Favicon:     <-faviconChan,
 	}
 }

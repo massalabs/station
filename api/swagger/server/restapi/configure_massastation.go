@@ -13,7 +13,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
-	"github.com/massalabs/station/pkg/certificate"
+	"github.com/massalabs/station/int/sni"
 	MSConfig "github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/rs/cors"
@@ -90,7 +90,7 @@ var content embed.FS
 
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
-	tlsConfig.GetCertificate = certificate.GenerateTLS
+	tlsConfig.GetCertificate = sni.GenerateTLS
 }
 
 // As soon as server is initialized but not run yet, this function will be called.
