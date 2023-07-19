@@ -115,25 +115,13 @@ func processEntry(index int, dnsValue node.DatastoreEntryResponse, client *node.
 		return
 	}
 
-	websiteMetadata, err := dnshelper.GetWebsiteMetadata(client, websiteStorerAddress)
-	if err != nil {
-		errChan <- err
-		return
-	}
-
 	name := convert.BytesToString(websiteNames[index])
-
-	faviconChan := make(chan string)
-	go func() {
-		favicon := DNSRecordFavicon(name, websiteStorerAddress, client)
-		faviconChan <- favicon
-	}()
 
 	registryChan <- &models.Registry{
 		Name:        name,
 		Address:     websiteStorerAddress,
 		Description: websiteDescription,
-		Favicon:     <-faviconChan,
+		Favicon:     DNSRecordFavicon(name, websiteStorerAddress, client),
 	}
 }
 
