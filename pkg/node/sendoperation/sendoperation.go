@@ -132,7 +132,7 @@ func MakeRPCCall(msg []byte, signature []byte, publicKey string, client *node.Cl
 	}
 
 	if rawResponse.Error != nil {
-		return nil, fmt.Errorf("receiving  send_operation response: %w", rawResponse.Error)
+		return nil, fmt.Errorf("receiving send_operations response: %w", rawResponse.Error)
 	}
 
 	var resp []string

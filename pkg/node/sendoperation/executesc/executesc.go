@@ -76,14 +76,16 @@ func (e *ExecuteSC) Message() []byte {
 	msg = append(msg, buf[:nbBytes]...)
 	msg = append(msg, e.data...)
 
-	//
+	// datastore
+	// If the datastore is not nil, no need to serialize it.
 	if e.dataStore != nil {
 		msg = append(msg, e.dataStore...)
 
 		return msg
 	}
-	// datastore
-	// Number of entries in the datastore
+
+	// If the datastore is nil, we need to serialize it.
+	// Number of entries in the datastore.
 	nbBytes = binary.PutUvarint(buf, uint64(len(e.dataStore)))
 	msg = append(msg, buf[:nbBytes]...)
 	msg = append(msg, e.dataStore...)
