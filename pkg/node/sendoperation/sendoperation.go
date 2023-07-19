@@ -63,8 +63,6 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 }
 
 // Call uses the plugin wallet to sign an operation, then send the call to blockchain.
-//
-//nolint:funlen
 func Call(client *node.Client,
 	expiry uint64,
 	fee uint64,
