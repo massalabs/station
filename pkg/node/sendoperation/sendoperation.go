@@ -24,8 +24,6 @@ const HundredMassa = 100_000_000_000
 
 const OneMassa = 1_000_000_000
 
-const versionByte = byte(0)
-
 //nolint:tagliatelle
 type sendOperationsReq struct {
 	SerializedContent JSONableSlice `json:"serialized_content"`
@@ -118,7 +116,7 @@ func MakeRPCCall(msg []byte, signature []byte, publicKey string, client *node.Cl
 		{
 			sendOperationsReq{
 				SerializedContent: msg,
-				Signature:         base58.VersionedCheckEncode(signature, versionByte),
+				Signature:         base58.CheckEncode(signature),
 				PublicKey:         publicKey,
 			},
 		},
