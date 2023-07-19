@@ -5,13 +5,10 @@ import (
 	"html/template"
 
 	"github.com/massalabs/station/pkg/convert"
-	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/node/base58"
 )
 
 const (
-	metaKey = "META"
-
 	// Indexes of data in website name key.
 	indexOfWebsiteAddress     = 0 // Index of website Address in the dnsValue array
 	indexOfWebsiteDescription = 2 // Index of website Description in the dnsValue array
@@ -42,16 +39,6 @@ func AddressAndDescription(dnsValue []byte) (string, string, error) {
 	}
 
 	return address, description, nil
-}
-
-// GetWebsiteMetadata retrieves candidate metadata of the website.
-func GetWebsiteMetadata(client *node.Client, address string) ([]byte, error) {
-	websiteMetadata, err := node.DatastoreEntry(client, address, convert.StringToBytes(metaKey))
-	if err != nil {
-		return nil, fmt.Errorf("reading key '%s' at '%s': %w", metaKey, address, err)
-	}
-
-	return websiteMetadata.CandidateValue, nil
 }
 
 // IsValidAddress checks if the address is valid based on the prefix rule, non-empty rule, and successful decoding.

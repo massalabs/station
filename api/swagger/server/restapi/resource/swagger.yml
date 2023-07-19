@@ -983,10 +983,6 @@ definitions:
       description:
         description: Website's description.
         type: string
-      metadata:
-        description: byte array as string including created_at and updated_at values
-        type: string
-        format: byte
       favicon:
         description: Website's favicon URL
         type: string
