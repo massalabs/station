@@ -17,12 +17,12 @@ import (
 )
 
 const (
-	dateFormat          = "2006-01-02"
-	ownedPrefix         = "owned"
-	ownerKey            = "OWNER"
-	blackListKey        = "blackList"
-	secondsToMilliCoeff = 1000
-	faviconIcon         = "favicon.ico"
+	// Keys declared in the DNS smart contract.
+	ownedPrefix  = "owned"
+	ownerKey     = "OWNER"
+	blackListKey = "blackList"
+	// Other constants.
+	faviconIcon = "favicon.ico"
 )
 
 func NewRegistryHandler(config *config.AppConfig) operations.AllDomainsGetterHandler {
