@@ -10,6 +10,7 @@ import (
 	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/node/sendoperation"
+	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 	"github.com/massalabs/station/pkg/onchain"
 )
 
@@ -60,6 +61,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		file,
 		decodedDatastore,
 		sendoperation.OperationBatch{NewBatch: false, CorrelationID: ""},
+		&signer.WalletPlugin{},
 	)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().

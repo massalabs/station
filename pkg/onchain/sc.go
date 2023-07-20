@@ -10,6 +10,7 @@ import (
 	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
 	"github.com/massalabs/station/pkg/node/sendoperation/callsc"
 	"github.com/massalabs/station/pkg/node/sendoperation/executesc"
+	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 )
 
 const maxWaitingTimeInSeconds = 45
@@ -36,6 +37,7 @@ func CallFunction(client *node.Client,
 	parameter []byte,
 	coins uint64,
 	operationBatch sendOperation.OperationBatch,
+	signer signer.Signer,
 ) (*OperationWithEventResponse, error) {
 	callSC, err := callsc.New(addr, function, parameter,
 		sendOperation.DefaultGasLimit,
@@ -50,6 +52,7 @@ func CallFunction(client *node.Client,
 		callSC,
 		nickname,
 		operationBatch,
+		signer,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
@@ -74,6 +77,7 @@ func CallFunctionUnwaited(client *node.Client,
 	function string,
 	parameter []byte,
 	operationBatch sendOperation.OperationBatch,
+	signer signer.Signer,
 ) (*sendOperation.OperationResponse, error) {
 	callSC, err := callsc.New(addr, function, parameter,
 		sendOperation.DefaultGasLimit,
@@ -88,6 +92,7 @@ func CallFunctionUnwaited(client *node.Client,
 		callSC,
 		nickname,
 		operationBatch,
+		signer,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
@@ -107,6 +112,7 @@ func DeploySC(client *node.Client,
 	contract []byte,
 	datastore []byte,
 	operationBatch sendOperation.OperationBatch,
+	signer signer.Signer,
 ) (*OperationWithEventResponse, error) {
 	exeSC := executesc.New(
 		contract,
@@ -121,6 +127,7 @@ func DeploySC(client *node.Client,
 		exeSC,
 		nickname,
 		operationBatch,
+		signer,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("calling executeSC: %w", err)

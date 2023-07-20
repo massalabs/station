@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/massalabs/station/pkg/node/sendoperation"
+	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 )
 
 // WalletKeyPair wallet's key pair.
@@ -48,13 +48,13 @@ type Wallet struct {
 }
 
 func Fetch(nickname string) (*Wallet, error) {
-	httpRawResponse, err := sendoperation.ExecuteHTTPRequest(
+	httpRawResponse, err := signer.ExecuteHTTPRequest(
 		http.MethodGet,
-		sendoperation.WalletPluginURL+"accounts/"+nickname,
+		signer.WalletPluginURL+"accounts/"+nickname,
 		bytes.NewReader([]byte("")),
 	)
 	if err != nil {
-		res := sendoperation.RespError{Code: "", Message: ""}
+		res := signer.RespError{Code: "", Message: ""}
 		_ = json.Unmarshal(httpRawResponse, &res)
 
 		return nil, fmt.Errorf("calling executeHTTPRequest: %w, message: %s", err, res.Message)

@@ -1,14 +1,13 @@
 testnet:
-  DNS: AS12YMz7NjyP3aeEWcSsiC58Hba8UxHapfGv7i4PmNMS2eKfmaqqC
+  DNS: AS12MGDGVB3xNDqzGidJM5fcAbjF1ZP5XAecm5ww4RU7sfQd4cMKk
   URLs:
     - https://test.massa.net/api/v2
 
 buildnet:
-  DNS: AS12aGWkBorEM2EpKeNyigSkoCqwdxm872g5KkzUiox3v4VosFW3F
+  DNS: AS12quYbKSv91DZoz6jL9QEswpqhsYhwYv4mt9XFXC5rx7Kww3DEH
   URLs:
-    - https://buildernet.massa.net/api/v2
+    - https://buildnet.massa.net/api/v2
   Default: true
-
 
 labnet:
   DNS: AS1PV17jWkbUs7mfXsn8Xfs9AK6tHiJoxuGu7RySFMV8GYdMeUSh

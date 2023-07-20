@@ -16,7 +16,7 @@ const (
 
 // AddressAndDescription fetches the website address and its description from the DNS entry.
 func AddressAndDescription(dnsValue []byte) (string, string, error) {
-	dnsRecords := convert.ByteToStringArray(dnsValue)
+	dnsRecords := convert.ToStringArray(dnsValue)
 	if len(dnsRecords) <= indexOfWebsiteAddress {
 		return "", "", fmt.Errorf("invalid website value: missing website address")
 	}

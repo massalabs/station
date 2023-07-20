@@ -93,6 +93,7 @@ func NewServer(flags StartServerFlags) *Server {
 	server := restapi.NewServer(localAPI)
 
 	setAPIFlags(server, flags)
+
 	timeout := 5
 	server.GracefulTimeout = time.Duration(timeout) * time.Second
 
