@@ -118,7 +118,7 @@ func processEntry(index int,
 		return
 	}
 
-	name := convert.BytesToString(websiteNames[index])
+	name := convert.ToString(websiteNames[index])
 
 	registryChan <- &models.Registry{
 		Name:        name,
