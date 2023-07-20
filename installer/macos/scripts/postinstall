@@ -75,6 +75,7 @@ generate_certificate() {
 
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR || fatal "config directory creation failed."
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/plugins || fatal "plugins directory creation failed."
+mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/logs || fatal "logs directory creation failed."
 
 ping -c 1 -t 1 test.massa >/dev/null 2>&1 || set_local_dns
 
