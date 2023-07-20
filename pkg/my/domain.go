@@ -34,7 +34,7 @@ func Domains(config config.AppConfig, client *node.Client, nickname string) ([]s
 
 	names := []string{}
 
-	ownerKey := convert.StringToBytes(ownedPrefix + wallet.Address)
+	ownerKey := convert.ToBytesWithPrefixLength(ownedPrefix + wallet.Address)
 
 	rawNames, err := node.DatastoreEntry(client, config.DNSAddress, ownerKey)
 	if err != nil {
@@ -45,7 +45,7 @@ func Domains(config config.AppConfig, client *node.Client, nickname string) ([]s
 		return names, nil
 	}
 
-	names = strings.Split(convert.BytesToString(rawNames.CandidateValue), ",")
+	names = strings.Split(convert.ToString(rawNames.CandidateValue), ",")
 
 	if err != nil {
 		return nil, fmt.Errorf("parsing json '%s': %w", rawNames.CandidateValue, err)
@@ -64,7 +64,7 @@ func GetWebsites(config config.AppConfig, client *node.Client, domainNames []str
 	for i, domain := range domainNames {
 		param := node.DatastoreEntriesKeys{
 			Address: config.DNSAddress,
-			Key:     convert.StringToBytes(domain),
+			Key:     convert.ToBytesWithPrefixLength(domain),
 		}
 		params[i] = param
 	}
@@ -111,7 +111,11 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 
 	var missedChunks []string
 
-	encodedNumberOfChunks, err := node.DatastoreEntry(client, address, convert.StringToBytes(chunkNumberKey))
+	encodedNumberOfChunks, err := node.DatastoreEntry(
+		client,
+		address,
+		convert.ToBytesWithPrefixLength(chunkNumberKey),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("reading datastore entry '%s' at address '%s': %w", chunkNumberKey, address, err)
 	}
@@ -123,7 +127,7 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 	for i := 0; i < numberOfChunks; i++ {
 		entry := node.DatastoreEntriesKeys{
 			Address: address,
-			Key:     convert.StringToBytes("massa_web_" + strconv.Itoa(i)),
+			Key:     convert.ToBytesWithPrefixLength("massa_web_" + strconv.Itoa(i)),
 		}
 		entries = append(entries, entry)
 	}

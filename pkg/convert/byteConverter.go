@@ -30,11 +30,11 @@ func U32ToBytes(nb int) (bytes []byte) {
 	return
 }
 
-func StringToBytesWithoutPrefixLength(str string) []byte {
+func ToBytes(str string) []byte {
 	return []byte(str)
 }
 
-func StringToBytes(str string) []byte {
+func ToBytesWithPrefixLength(str string) []byte {
 	// let's start by encoding the string length.
 	lenBytes := U32ToBytes(len(str))
 
@@ -50,13 +50,13 @@ func StringToBytes(str string) []byte {
 	return append(encodedLengthBytes, str...)
 }
 
-func BytesToString(entry []byte) string {
+func ToString(entry []byte) string {
 	content := entry[bytesPerUint32:] // content is always prefixed by its size encoded using a u32.
 
 	return string(content)
 }
 
-func ByteToStringArray(entry []byte) []string {
+func ToStringArray(entry []byte) []string {
 	var result []string
 
 	content := entry
@@ -86,7 +86,7 @@ func StringArrayToArrayOfByteArray(stringArray []string) [][]byte {
 	var result [][]byte
 
 	for i := 0; i < stringArrayLength; i++ {
-		result = append(result, StringToBytes(stringArray[i]))
+		result = append(result, ToBytesWithPrefixLength(stringArray[i]))
 	}
 
 	return result

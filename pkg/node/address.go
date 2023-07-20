@@ -56,7 +56,7 @@ func FilterSCKeysByPrefix(client *Client, scAddress string, keyPrefix string, in
 	var filteredKeys [][]byte
 
 	for _, candidateDatastoreKey := range results[0].CandidateDatastoreKeys {
-		isPrefixInKey := strings.Contains(convert.BytesToString(candidateDatastoreKey), keyPrefix)
+		isPrefixInKey := strings.Contains(convert.ToString(candidateDatastoreKey), keyPrefix)
 		if includePrefix && isPrefixInKey {
 			filteredKeys = append(filteredKeys, candidateDatastoreKey)
 		} else if !includePrefix && !isPrefixInKey {

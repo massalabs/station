@@ -11,9 +11,9 @@ func TestAddressAndDescription(t *testing.T) {
 	ownerAddressStr := ""
 	descriptionStr := "<script>alert('XSS');</script>"
 
-	websiteAddressBytes := convert.StringToBytes(websiteAddressStr)
-	ownerAddressBytes := convert.StringToBytes(ownerAddressStr)
-	descriptionBytes := convert.StringToBytes(descriptionStr)
+	websiteAddressBytes := convert.ToBytesWithPrefixLength(websiteAddressStr)
+	ownerAddressBytes := convert.ToBytesWithPrefixLength(ownerAddressStr)
+	descriptionBytes := convert.ToBytesWithPrefixLength(descriptionStr)
 
 	dnsValue := append(append(websiteAddressBytes, ownerAddressBytes...), (descriptionBytes)...)
 	expectedDescription := "&lt;script&gt;alert(&#39;XSS&#39;);&lt;/script&gt;"
