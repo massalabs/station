@@ -136,10 +136,13 @@ func filterEntriesToDisplay(config config.AppConfig, client *node.Client) ([][]b
 		keyListToRemove = strings.Split(convert.ToString(blackListedWebsites.CandidateValue), ",")
 	}
 
+	// we add the key blackList to the list of key to be removed
+	keyListToRemove = append(keyListToRemove, blackListKey)
+
 	// we encode the list as a slice of byteArray
 	keyListToRemoveAsArrayOfByteArray := convert.StringArrayToArrayOfByteArray(keyListToRemove)
 
-	// we add the keys blackList and ownerKey to the list of key to be removed
+	// we add the key owner to the list of key to be removed
 	keyListToRemoveAsArrayOfByteArray = append(
 		keyListToRemoveAsArrayOfByteArray,
 		convert.ToBytes(ownerKey),
