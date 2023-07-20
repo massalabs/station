@@ -19,7 +19,7 @@ import (
 const (
 	dateFormat          = "2006-01-02"
 	ownedPrefix         = "owned"
-	ownerKey            = "owner"
+	ownerKey            = "OWNER"
 	blackListKey        = "blackList"
 	secondsToMilliCoeff = 1000
 	faviconIcon         = "favicon.ico"
@@ -132,11 +132,14 @@ func filterEntriesToDisplay(config config.AppConfig, client *node.Client) ([][]b
 		keyListToRemove = strings.Split(convert.BytesToString(blackListedWebsites.CandidateValue), ",")
 	}
 
-	// we add the keys blackList and ownerKey to the list of key to be removed
-	keyListToRemove = append(keyListToRemove, blackListKey, ownerKey)
-
 	// we encode the list as a slice of byteArray
 	keyListToRemoveAsArrayOfByteArray := convert.StringArrayToArrayOfByteArray(keyListToRemove)
+
+	// we add the keys blackList and ownerKey to the list of key to be removed
+	keyListToRemoveAsArrayOfByteArray = append(
+		keyListToRemoveAsArrayOfByteArray,
+		convert.StringToBytesWithoutPrefixLength(ownerKey),
+	)
 
 	websiteNames := node.RemoveKeysFromKeyList(keyList, keyListToRemoveAsArrayOfByteArray)
 

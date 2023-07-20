@@ -30,6 +30,10 @@ func U32ToBytes(nb int) (bytes []byte) {
 	return
 }
 
+func StringToBytesWithoutPrefixLength(str string) []byte {
+	return []byte(str)
+}
+
 func StringToBytes(str string) []byte {
 	// let's start by encoding the string length.
 	lenBytes := U32ToBytes(len(str))

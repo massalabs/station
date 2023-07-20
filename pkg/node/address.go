@@ -43,9 +43,9 @@ func Addresses(client *Client, addr []string) ([]Address, error) {
 }
 
 // keysOfSCFilteredByPrefix returns an array of Key in byte array filtered with a prefix.
-
+//
 // If includePrefix is true, will return all the keys with the given prefix,
-
+//
 // If includePrefix is false, will return all the keys without the given prefix.
 func FilterSCKeysByPrefix(client *Client, scAddress string, keyPrefix string, includePrefix bool) ([][]byte, error) {
 	results, err := Addresses(client, []string{scAddress})
