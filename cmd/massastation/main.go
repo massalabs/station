@@ -64,15 +64,16 @@ func main() {
 		log.Fatalf("while initializing logger: %s", err.Error())
 	}
 
+	defer logger.Close()
+
 	flags := ParseFlags()
 	if flags.Version {
 		//nolint:forbidigo
 		fmt.Printf("Version:%s\n", config.Version)
 		logger.Close()
+		//nolint:gocritic
 		os.Exit(0)
 	}
-
-	defer logger.Close()
 
 	err = config.Check()
 	if err != nil {
