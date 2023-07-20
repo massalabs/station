@@ -6,7 +6,6 @@ import (
 	"sort"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
@@ -37,10 +36,7 @@ type registryHandler struct {
 }
 
 func (h *registryHandler) Handle(_ operations.AllDomainsGetterParams) middleware.Responder {
-	startTime := time.Now()
 	results, err := Registry(h.config)
-	elapsedTime := time.Since(startTime)
-	fmt.Println("🚀 ~ file: all.go:42 ~ func ~ elapsedTime:", elapsedTime)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().
 			WithPayload(
@@ -73,45 +69,52 @@ func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 		return nil, fmt.Errorf("failed to read keys '%s' at '%s': %w", websiteNames, config.DNSAddress, err)
 	}
 
-	registry, err := processDNSValues(client, dnsValues, websiteNames)
-	if err != nil {
-		return nil, err
-	}
+	registry := processDNSValues(client, dnsValues, websiteNames)
 
 	sortRegistry(registry)
 
 	return registry, nil
 }
 
-func processDNSValues(client *node.Client, dnsValues []node.DatastoreEntryResponse, websiteNames [][]byte) ([]*models.Registry, error) {
-	registryChan := make(chan *models.Registry)
-	errChan := make(chan error)
-	wg := sync.WaitGroup{}
-	wg.Add(len(dnsValues))
+func processDNSValues(
+	client *node.Client,
+	dnsValues []node.DatastoreEntryResponse,
+	websiteNames [][]byte,
+) []*models.Registry {
+	// Create buffered channels with the size of dnsValues slice
+	registryChan := make(chan *models.Registry, len(dnsValues))
+	errChan := make(chan error, len(dnsValues))
+	waitGroup := sync.WaitGroup{}
+	waitGroup.Add(len(dnsValues))
 
 	for index, dnsValue := range dnsValues {
 		go func(index int, dnsValue node.DatastoreEntryResponse) {
-			defer wg.Done()
+			defer waitGroup.Done()
 
 			processEntry(index, dnsValue, client, websiteNames, registryChan, errChan)
 		}(index, dnsValue)
 	}
 
 	go func() {
-		wg.Wait()
+		waitGroup.Wait()
 		close(registryChan)
 		close(errChan)
 	}()
 
-	return collectRegistryResults(registryChan, errChan), nil
+	return collectRegistryResults(registryChan, errChan)
 }
 
-func processEntry(index int, dnsValue node.DatastoreEntryResponse, client *node.Client, websiteNames [][]byte, registryChan chan<- *models.Registry, errChan chan<- error) {
+func processEntry(index int,
+	dnsValue node.DatastoreEntryResponse,
+	client *node.Client, websiteNames [][]byte,
+	registryChan chan<- *models.Registry, errChan chan<- error,
+) {
 	valueBytes := dnsValue.CandidateValue
 
 	websiteStorerAddress, websiteDescription, err := dnshelper.AddressAndDescription(valueBytes)
 	if err != nil {
 		errChan <- err
+
 		return
 	}
 
