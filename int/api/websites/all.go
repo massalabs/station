@@ -17,12 +17,12 @@ import (
 )
 
 const (
-	dateFormat          = "2006-01-02"
-	ownedPrefix         = "owned"
-	ownerKey            = "owner"
-	blackListKey        = "blackList"
-	secondsToMilliCoeff = 1000
-	faviconIcon         = "favicon.ico"
+	// Keys declared in the DNS smart contract.
+	ownedPrefix  = "owned"
+	ownerKey     = "OWNER"
+	blackListKey = "blackList"
+	// Other constants.
+	faviconIcon = "favicon.ico"
 )
 
 func NewRegistryHandler(config *config.AppConfig) operations.AllDomainsGetterHandler {
@@ -79,7 +79,7 @@ func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 			continue
 		}
 
-		name := convert.BytesToString(websiteNames[index])
+		name := convert.ToString(websiteNames[index])
 
 		registry = append(registry, &models.Registry{
 			Name:        name,
@@ -122,21 +122,31 @@ func filterEntriesToDisplay(config config.AppConfig, client *node.Client) ([][]b
 	}
 
 	// we then read the blacklisted websites
-	blackListedWebsites, err := node.DatastoreEntry(client, config.DNSAddress, convert.StringToBytes(blackListKey))
+	blackListedWebsites, err := node.DatastoreEntry(
+		client,
+		config.DNSAddress,
+		convert.ToBytesWithPrefixLength(blackListKey),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("reading entry '%s' prefix at '%s': %w", blackListKey, config.DNSAddress, err)
 	}
 
 	var keyListToRemove []string
 	if !bytes.Equal(blackListedWebsites.CandidateValue, make([]byte, 0)) {
-		keyListToRemove = strings.Split(convert.BytesToString(blackListedWebsites.CandidateValue), ",")
+		keyListToRemove = strings.Split(convert.ToString(blackListedWebsites.CandidateValue), ",")
 	}
 
-	// we add the keys blackList and ownerKey to the list of key to be removed
-	keyListToRemove = append(keyListToRemove, blackListKey, ownerKey)
+	// we add the key blackList to the list of key to be removed
+	keyListToRemove = append(keyListToRemove, blackListKey)
 
 	// we encode the list as a slice of byteArray
 	keyListToRemoveAsArrayOfByteArray := convert.StringArrayToArrayOfByteArray(keyListToRemove)
+
+	// we add the key owner to the list of key to be removed
+	keyListToRemoveAsArrayOfByteArray = append(
+		keyListToRemoveAsArrayOfByteArray,
+		convert.ToBytes(ownerKey),
+	)
 
 	websiteNames := node.RemoveKeysFromKeyList(keyList, keyListToRemoveAsArrayOfByteArray)
 

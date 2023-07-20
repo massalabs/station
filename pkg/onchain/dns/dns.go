@@ -9,6 +9,7 @@ import (
 	"github.com/massalabs/station/pkg/convert"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/node/sendoperation"
+	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 	"github.com/massalabs/station/pkg/onchain"
 )
 
@@ -17,7 +18,7 @@ This function fetch the address of the website storer associated with the name g
 from the DNS smart contract and returns it.
 */
 func Resolve(config config.AppConfig, client *node.Client, name string) (string, error) {
-	entry, err := node.DatastoreEntry(client, config.DNSAddress, convert.StringToBytes(name))
+	entry, err := node.DatastoreEntry(client, config.DNSAddress, convert.ToBytesWithPrefixLength(name))
 	if err != nil {
 		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", config.DNSAddress, name, err)
 	}
@@ -26,7 +27,7 @@ func Resolve(config config.AppConfig, client *node.Client, name string) (string,
 		return "", errors.New("name not found")
 	}
 	// entry.CandidateValue contains the website address + the owner address, we keep only the website address.
-	return convert.ByteToStringArray(entry.CandidateValue)[0], nil
+	return convert.ToStringArray(entry.CandidateValue)[0], nil
 }
 
 func SetRecord(
@@ -56,6 +57,7 @@ func SetRecord(
 		rec,
 		sendoperation.OneMassa,
 		operationBatch,
+		&signer.WalletPlugin{},
 	)
 	if err != nil {
 		return "", fmt.Errorf("calling setResolver with '%+v' at '%s': %w", rec, addr, err)

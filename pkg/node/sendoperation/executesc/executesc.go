@@ -9,8 +9,9 @@ import (
 const ExecuteSCOpID = 3
 
 type OperationDetails struct {
-	Data   []byte `json:"data"`
-	MaxGas uint64 `json:"max_gas"`
+	Data     []byte `json:"data"`
+	MaxGas   uint64 `json:"max_gas"`
+	MaxCoins uint64 `json:"max_coins"`
 	//nolint:tagliatelle
 	DataStore []byte `json:"datastore"`
 }
@@ -23,6 +24,7 @@ type Operation struct {
 type ExecuteSC struct {
 	data      []byte
 	maxGas    uint64
+	maxCoins  uint64
 	dataStore []byte
 }
 
@@ -30,10 +32,11 @@ type ExecuteSC struct {
 The dataStore parameter represents a storage that is accessible by the SC in the constructor
 function when it gets deployed.
 */
-func New(data []byte, maxGas uint64, _ uint64, dataStore []byte) *ExecuteSC {
+func New(data []byte, maxGas uint64, maxCoins uint64, dataStore []byte) *ExecuteSC {
 	return &ExecuteSC{
 		data:      data,
 		maxGas:    maxGas,
+		maxCoins:  maxCoins,
 		dataStore: dataStore,
 	}
 }
@@ -43,6 +46,7 @@ func (e *ExecuteSC) Content() interface{} {
 		ExecuteSC: OperationDetails{
 			Data:      e.data,
 			MaxGas:    e.maxGas,
+			MaxCoins:  e.maxCoins,
 			DataStore: e.dataStore,
 		},
 	}
@@ -64,19 +68,24 @@ func (e *ExecuteSC) Message() []byte {
 	nbBytes = binary.PutUvarint(buf, e.maxGas)
 	msg = append(msg, buf[:nbBytes]...)
 
+	nbBytes = binary.PutUvarint(buf, e.maxCoins)
+	msg = append(msg, buf[:nbBytes]...)
+
 	// data
 	nbBytes = binary.PutUvarint(buf, uint64(len(e.data)))
 	msg = append(msg, buf[:nbBytes]...)
 	msg = append(msg, e.data...)
 
-	//
+	// datastore
+	// If the datastore is not nil, no need to serialize it.
 	if e.dataStore != nil {
 		msg = append(msg, e.dataStore...)
 
 		return msg
 	}
-	// datastore
-	// Number of entries in the datastore
+
+	// If the datastore is nil, we need to serialize it.
+	// Number of entries in the datastore.
 	nbBytes = binary.PutUvarint(buf, uint64(len(e.dataStore)))
 	msg = append(msg, buf[:nbBytes]...)
 	msg = append(msg, e.dataStore...)
