@@ -22,15 +22,8 @@ fatal() {
     exit 1
 }
 
-# Check if brew is installed. If not, install it.
-if ! command -v brew &>/dev/null; then
-    echo "Installing Brew..."
-    ./install_homebrew.sh || fatal "failed to install brew"
-    echo "Brew installed."
-else
-    echo "Updating Brew..."
-    su - $USER -c "brew update" || fatal "brew update failed."
-fi
+# ./install_homebrew.sh is a script that installs homebrew if it's not installed. Otherwise it performs a brew update.
+./install_homebrew.sh || fatal "failed to install brew"
 
 # Configure dnsmasq to resolve .massa domains to localhost.
 configure_dnsmasq() {
