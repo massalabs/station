@@ -1,5 +1,5 @@
 testnet:
-  DNS: AS12YMz7NjyP3aeEWcSsiC58Hba8UxHapfGv7i4PmNMS2eKfmaqqC
+  DNS: AS12MGDGVB3xNDqzGidJM5fcAbjF1ZP5XAecm5ww4RU7sfQd4cMKk
   URLs:
     - https://test.massa.net/api/v2
   Default: true
