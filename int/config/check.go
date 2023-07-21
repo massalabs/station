@@ -1,10 +1,12 @@
 package config
 
 import (
+	"crypto/x509"
 	"path/filepath"
 
 	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/pkg/certificate"
+	"github.com/massalabs/station/pkg/certificate/store"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/nss"
 )
@@ -65,25 +67,23 @@ func nssCheckNonBlockingError(context string, err error) error {
 
 // checkCertificate checks the certificate configuration.
 func checkCertificate(certPath string, keyPath string) error {
-	certCa, err := certificate.NewCA()
-	if err != nil {
-		return caCheckNonBlockingError("failed to instantiate the CA", err)
-	}
-
-	err = certCa.Load(certPath, keyPath)
+	certCA, err := certificate.LoadCertificate(filepath.Join(certPath, keyPath))
 	if err != nil {
 		return caCheckNonBlockingError("failed to load the CA", err)
 	}
 
-	if !certCa.IsKnownByOS() {
+	// disable linting as we don't care about checking specific attributes
+	//nolint:exhaustruct
+	_, err = certCA.Verify(x509.VerifyOptions{})
+	if err != nil {
 		logger.Debug("the CA is not known by the operating system.")
 
-		err := certCa.AddToOS()
+		err := store.Add(certCA)
 		if err != nil {
-			// non blocking error
-			logger.Warnf("failed to add the CA to the operating system: %s.", err)
-			logger.Warn(caFailureConsequence)
+			return caCheckNonBlockingError("failed to add the CA to the operating system", err)
 		}
+
+		logger.Debug("the CA was added to the operating system.")
 	} else {
 		logger.Debug("the CA is known by the operating system.")
 	}
