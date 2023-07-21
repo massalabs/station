@@ -30,7 +30,7 @@ type Manager struct {
 }
 
 // NewManager returns a new Manager instance.
-// It will the NSS databases corresponding to the given paths.
+// It will manage the NSS databases corresponding to the given paths.
 func NewManager(dbPath []string, certutil CertUtilServicer, logger Logger) *Manager {
 	return &Manager{
 		dbPath:   dbPath,
