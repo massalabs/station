@@ -2,6 +2,7 @@ package config
 
 import (
 	"crypto/x509"
+	"fmt"
 	"path/filepath"
 
 	"github.com/massalabs/station/int/configuration"
@@ -11,21 +12,14 @@ import (
 	"github.com/massalabs/station/pkg/nss"
 )
 
-// caFailureConsequence is the consequence of a failure to load the CA.
-//
-//nolint:lll
-const caFailureConsequence = "Station will only work using http, or you will have to add the CA to your browser manually (OS store)."
-
-// nssFailureConsequence is the consequence of a failure to add the CA to NSS.
-//
-//nolint:lll
-const nssFailureConsequence = "Station will only work using http, or you will have to add the CA to your browser manually (NSS store)."
+// failureConsequence is the consequence of a failure to add the CA to NSS.
+const failureConsequence = "Station will only work using http, or you will have to add the CA to your browser manually."
 
 // Check performs a check on the configuration.
 func Check() error {
 	caRootPath, err := configuration.CAPath()
 	if err != nil {
-		return caCheckNonBlockingError("failed to get CA path", err)
+		return caNonBlockingError("failed to get CA path", err)
 	}
 
 	certPath := filepath.Join(caRootPath, configuration.CertificateAuthorityFileName)
@@ -34,12 +28,12 @@ func Check() error {
 
 	err = checkCertificate(certPath, keyPath)
 	if err != nil {
-		return err
+		return nonBlockingError("Error while checking certificate", failureConsequence, err)
 	}
 
 	err = checkNSS(certPath)
 	if err != nil {
-		return err
+		return nonBlockingError("Error while checking NSS", failureConsequence, err)
 	}
 
 	return nil
@@ -55,21 +49,16 @@ func nonBlockingError(context string, consequence string, err error) error {
 	return nil
 }
 
-// caCheckNonBlockingError logs a non blocking error related to the CA loading failure.
-func caCheckNonBlockingError(context string, err error) error {
-	return nonBlockingError(context, caFailureConsequence, err)
-}
-
-// nssCheckNonBlockingError logs a non blocking error related to the CA loading failure.
-func nssCheckNonBlockingError(context string, err error) error {
-	return nonBlockingError(context, nssFailureConsequence, err)
+// caNonBlockingError logs a non blocking error related to the CA loading failure.
+func caNonBlockingError(context string, err error) error {
+	return nonBlockingError(context, failureConsequence, err)
 }
 
 // checkCertificate checks the certificate configuration.
 func checkCertificate(certPath string, keyPath string) error {
 	certCA, err := certificate.LoadCertificate(filepath.Join(certPath, keyPath))
 	if err != nil {
-		return caCheckNonBlockingError("failed to load the CA", err)
+		return fmt.Errorf("failed to load the CA: %w", err)
 	}
 
 	// disable linting as we don't care about checking specific attributes
@@ -80,7 +69,7 @@ func checkCertificate(certPath string, keyPath string) error {
 
 		err := store.Add(certCA)
 		if err != nil {
-			return caCheckNonBlockingError("failed to add the CA to the operating system", err)
+			return fmt.Errorf("failed to add the CA to the operating system: %w", err)
 		}
 
 		logger.Debug("the CA was added to the operating system.")
@@ -105,12 +94,12 @@ func (m *NSSManagerLogger) Errorf(msg string, args ...interface{}) {
 func checkNSS(certPath string) error {
 	runner, err := nss.NewCertUtilRunner()
 	if err != nil {
-		return nssCheckNonBlockingError("failed to instantiate the certutil runner", err)
+		return fmt.Errorf("failed to instantiate the certutil runner: %w", err)
 	}
 
 	service, err := nss.NewCertUtilService(runner)
 	if err != nil {
-		return nssCheckNonBlockingError("failed to instantiate the certutil service", err)
+		return fmt.Errorf("failed to instantiate the certutil service: %w", err)
 	}
 
 	loggerInstance := &NSSManagerLogger{}
@@ -121,9 +110,8 @@ func checkNSS(certPath string) error {
 
 		err := manager.AddCA(configuration.CertificateAuthorityName, certPath)
 		if err != nil {
-			// non blocking error
-			logger.Warnf("failed to add the CA to NSS: %s.", err)
-			logger.Warn(caFailureConsequence)
+			//nolint:errcheck
+			caNonBlockingError("failed to add the CA to NSS", err)
 		} else {
 			logger.Debug("the CA was added to NSS.")
 		}
