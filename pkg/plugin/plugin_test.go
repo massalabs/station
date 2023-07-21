@@ -3,7 +3,7 @@ package plugin
 import (
 	"testing"
 
-	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/pkg/store"
 	"github.com/stretchr/testify/assert"
 )

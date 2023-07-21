@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/pkg/convert"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/node/sendoperation"

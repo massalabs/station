@@ -8,11 +8,10 @@ import (
 	"path"
 
 	"github.com/massalabs/station/int/api"
-	intconf "github.com/massalabs/station/int/config"
+	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/int/initialize"
 	"github.com/massalabs/station/int/systray"
 	"github.com/massalabs/station/int/systray/update"
-	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/dirs"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/plugin"
@@ -76,7 +75,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	err = intconf.Check()
+	err = config.Check()
 	if err != nil {
 		logger.Fatalf("Error with you current system configuration: %s", err.Error())
 	}
