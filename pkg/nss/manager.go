@@ -1,5 +1,18 @@
 package nss
 
+// This file provides a Manager struct that encapsulates operations on all NSS (Network Security Services)
+// databases within an operating system. NSS databases typically contain SSL, TLS and other cryptographic certificates.
+//
+// The Manager struct holds a list of usual OS specific database paths (dbPath), an interface to the CertUtilServicer
+// for certutil command execution, and a Logger interface for logging operations.
+//
+// The Manager struct is primarily used for batch operations on all NSS databases. It uses a CertUtilServicer to execute
+// operations on individual databases, and uses the Logger interface to log errors or debug messages.
+//
+// Future enhancements:
+// More functionalities can be added to the Manager struct as needed, based on the required interactions with the NSS
+// databases.
+
 import (
 	"fmt"
 	"path/filepath"
@@ -17,6 +30,7 @@ type Manager struct {
 }
 
 // NewManager returns a new Manager instance.
+// It will the NSS databases corresponding to the given paths.
 func NewManager(dbPath []string, certutil CertUtilServicer, logger Logger) *Manager {
 	return &Manager{
 		dbPath:   dbPath,
@@ -78,7 +92,7 @@ func (m *Manager) HasCA(certName string) bool {
 	return true
 }
 
-// AppendDefaultNSSDatabasePaths appends the usual NSS database paths to the existing NSS database paths.
+// AppendDefaultNSSDatabasePaths appends the usual NSS database paths to the given NSS database paths.
 func (m *Manager) AppendDefaultNSSDatabasePaths() error {
 	theoricPath, err := defaultNSSDatabasePaths()
 	if err != nil {
