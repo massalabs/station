@@ -22,15 +22,10 @@ fatal() {
     exit 1
 }
 
-# Check if brew is installed. If not, install it.
-if ! command -v brew &>/dev/null; then
-    echo "Installing Brew..."
-    ./install_homebrew.sh || fatal "failed to install brew"
-    echo "Brew installed."
-else
-    echo "Updating Brew..."
-    su - $USER -c "brew update" || fatal "brew update failed."
-fi
+# ./install_homebrew.sh is a script that installs homebrew if it's not installed. Otherwise it performs a brew update.
+./install_homebrew.sh || fatal "failed to install brew"
+
+HOMEBREW_PATH=$(brew --prefix)
 
 # Configure dnsmasq to resolve .massa domains to localhost.
 configure_dnsmasq() {
@@ -45,7 +40,7 @@ configure_dnsmasq() {
 # Install dnsmasq if it's not installed, otherwise configure it.
 set_local_dns() {
     case $(sudo lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//') in
-        "") (su - $USER -c "brew install dnsmasq" || fatal "failed to install dnsmasq using homebrew") && configure_dnsmasq || exit -1 ;;
+        "") (su - $USER -c "$HOMEBREW_PATH/bin/brew install dnsmasq" || fatal "failed to install dnsmasq using homebrew") && configure_dnsmasq || exit -1 ;;
         dnsmasq) configure_dnsmasq || exit -1 ;;
         *) fatal "Unsupported DNS server" ;;
     esac
@@ -54,7 +49,7 @@ set_local_dns() {
 # Generate a certificate for MassaStation.
 generate_certificate() {
     # If Firefox is installed, we need to install nss to read the certificate.
-    [[ $(find /Applications/ -type d -iname "*Firefox*.app") ]] && (su - $USER -c "brew install nss" || fatal "nss installation failed. MassaStation won't work on Firefox.")
+    [[ $(find /Applications/ -type d -iname "*Firefox*.app") ]] && (su - $USER -c "$HOMEBREW_PATH/bin/brew install nss" || fatal "nss installation failed. MassaStation won't work on Firefox.")
 
     ARCH=$(uname -m)
     if [[ $ARCH == "arm64" ]]; then
