@@ -76,7 +76,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	err = config.Check()
+	err = intconf.Check()
 	if err != nil {
 		logger.Fatalf("Error with you current system configuration: %s", err.Error())
 	}
