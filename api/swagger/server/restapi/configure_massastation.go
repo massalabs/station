@@ -4,8 +4,6 @@ package restapi
 
 import (
 	"crypto/tls"
-	"embed"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -20,6 +18,17 @@ import (
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/rs/cors"
 )
+
+var caPath string
+
+func init() {
+	var err error
+	caPath, err = configuration.CAPath()
+
+	if err != nil {
+		logger.Warnf("TLS: unable to get CA root path: %s", err)
+	}
+}
 
 func configureFlags(api *operations.MassastationAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -87,18 +96,10 @@ func configureMassaStationAPI(api *operations.MassastationAPI, config MSConfig.A
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares), config)
 }
 
-//go:embed resource
-var content embed.FS
-
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
 	tlsConfig.GetCertificate = func(chi *tls.ClientHelloInfo) (*tls.Certificate, error) {
-		caRootPath, err := configuration.CAPath()
-		if err != nil {
-			return nil, fmt.Errorf("unable to get mkcert CA root path: %w", err)
-		}
-
-		return sni.GenerateTLS(chi, caRootPath)
+		return sni.GenerateTLS(chi, caPath)
 	}
 }
 
