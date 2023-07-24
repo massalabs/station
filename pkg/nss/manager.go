@@ -22,7 +22,7 @@ import (
 // databasePattern is the pattern used to find NSS databases with dynamic path configuration.
 const databasePattern = "cert*.db"
 
-// manager encapsulates operations to execute on all the NSS databases of the operating system.
+// Manager encapsulates operations to execute on all the NSS databases of the operating system.
 type Manager struct {
 	dbPath   []string
 	certutil CertUtilServicer

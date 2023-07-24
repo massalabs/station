@@ -37,7 +37,7 @@ func Check() error {
 	return nil
 }
 
-// nonBlockingError logs a non blocking error.
+// nonBlockingError logs a non blocking error. It always returns a `nil` error to be used in `return`.
 func nonBlockingError(context string, consequence string, err error) error {
 	if err != nil {
 		logger.Warnf("%s: %s.", context, err)
