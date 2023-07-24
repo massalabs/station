@@ -24,9 +24,7 @@ func Check() error {
 
 	certPath := filepath.Join(caRootPath, configuration.CertificateAuthorityFileName)
 
-	keyPath := filepath.Join(caRootPath, configuration.CertificateAuthorityKeyFileName)
-
-	err = checkCertificate(certPath, keyPath)
+	err = checkCertificate(certPath)
 	if err != nil {
 		return nonBlockingError("Error while checking certificate", failureConsequence, err)
 	}
@@ -55,8 +53,8 @@ func caNonBlockingError(context string, err error) error {
 }
 
 // checkCertificate checks the certificate configuration.
-func checkCertificate(certPath string, keyPath string) error {
-	certCA, err := certificate.LoadCertificate(filepath.Join(certPath, keyPath))
+func checkCertificate(certPath string) error {
+	certCA, err := certificate.LoadCertificate(certPath)
 	if err != nil {
 		return fmt.Errorf("failed to load the CA: %w", err)
 	}
