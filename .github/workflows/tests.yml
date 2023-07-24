@@ -4,10 +4,19 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+          - os: ubuntu-latest
+          - os: macos-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/install
+      - name: installing dependencies
+        uses: ./.github/actions/install
+        with:
+          os: ${{ matrix.os }}
       - name: Install Task
         uses: arduino/setup-task@v1
         with:
