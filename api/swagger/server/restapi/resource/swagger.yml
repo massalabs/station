@@ -984,7 +984,8 @@ definitions:
         description: Website's description.
         type: string
       favicon:
-        description: Website's favicon URL
+        description: Website's favicon host and path
+        example: flappy.massa/favicon.ico
         type: string
   PluginStoreItem:
     type: object

@@ -155,7 +155,7 @@ func DNSRecordFavicon(name, websiteStorerAddress string, client *node.Client) st
 		return ""
 	}
 
-	return "http://" + name + ".massa/" + faviconIcon
+	return name + ".massa/" + faviconIcon
 }
 
 /*
