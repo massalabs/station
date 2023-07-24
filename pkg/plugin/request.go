@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/massalabs/station/api/interceptor"
-	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/pkg/logger"
 )
 

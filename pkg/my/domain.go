@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/massalabs/station/api/swagger/server/models"
-	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/pkg/convert"
 	"github.com/massalabs/station/pkg/dnshelper"
 	"github.com/massalabs/station/pkg/node"

@@ -4,7 +4,6 @@ package restapi
 
 import (
 	"crypto/tls"
-	"embed"
 	"net/http"
 	"time"
 
@@ -13,11 +12,23 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/int/config"
+	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/int/sni"
-	MSConfig "github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/rs/cors"
 )
+
+var caPath string
+
+func init() {
+	var err error
+	caPath, err = configuration.CAPath()
+
+	if err != nil {
+		logger.Warnf("TLS: unable to get CA root path: %s", err)
+	}
+}
 
 func configureFlags(api *operations.MassastationAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -28,13 +39,13 @@ func configureAPI(api *operations.MassastationAPI) http.Handler {
 	return nil
 }
 
-func (s *Server) ConfigureMassaStationAPI(config MSConfig.AppConfig, shutdown chan struct{}) {
+func (s *Server) ConfigureMassaStationAPI(config config.AppConfig, shutdown chan struct{}) {
 	if s.api != nil {
 		s.handler = configureMassaStationAPI(s.api, config, shutdown)
 	}
 }
 
-func configureMassaStationAPI(api *operations.MassastationAPI, config MSConfig.AppConfig, shutdown chan struct{}) http.Handler {
+func configureMassaStationAPI(api *operations.MassastationAPI, config config.AppConfig, shutdown chan struct{}) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 
@@ -85,12 +96,11 @@ func configureMassaStationAPI(api *operations.MassastationAPI, config MSConfig.A
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares), config)
 }
 
-//go:embed resource
-var content embed.FS
-
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
-	tlsConfig.GetCertificate = sni.GenerateTLS
+	tlsConfig.GetCertificate = func(chi *tls.ClientHelloInfo) (*tls.Certificate, error) {
+		return sni.GenerateTLS(chi, caPath)
+	}
 }
 
 // As soon as server is initialized but not run yet, this function will be called.
@@ -109,7 +119,7 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json
 // document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics.
-func setupGlobalMiddleware(handler http.Handler, config MSConfig.AppConfig) http.Handler {
+func setupGlobalMiddleware(handler http.Handler, config config.AppConfig) http.Handler {
 	handleCORS := cors.Default().Handler
 
 	return api.TopMiddleware(handleCORS(handler), config)

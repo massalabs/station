@@ -15,7 +15,7 @@ import (
 	"github.com/massalabs/station/int/api/network"
 	"github.com/massalabs/station/int/api/pluginstore"
 	"github.com/massalabs/station/int/api/websites"
-	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/plugin"

@@ -8,10 +8,10 @@ import (
 	"path"
 
 	"github.com/massalabs/station/int/api"
+	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/int/initialize"
 	"github.com/massalabs/station/int/systray"
 	"github.com/massalabs/station/int/systray/update"
-	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/dirs"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/plugin"

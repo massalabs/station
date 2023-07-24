@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/int/config"
 )
 
 type WalletPlugin struct{}

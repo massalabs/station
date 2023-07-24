@@ -10,9 +10,9 @@ import (
 
 	"fyne.io/fyne/v2"
 	"github.com/hashicorp/go-version"
+	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/int/systray/embedded"
 	"github.com/massalabs/station/int/systray/utils"
-	"github.com/massalabs/station/pkg/config"
 	"github.com/massalabs/station/pkg/logger"
 )
 

@@ -28,7 +28,6 @@ import (
 )
 
 var (
-
 	// ErrFailedToReadFile is returned when the provided file cannot be read.
 	ErrFailedToReadFile = errors.New("unable to read file")
 	// ErrFailedToDecodeFile is returned when the provided file cannot be decoded.

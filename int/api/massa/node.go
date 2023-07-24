@@ -4,7 +4,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
-	"github.com/massalabs/station/pkg/config"
+	"github.com/massalabs/station/int/config"
 )
 
 func NewGetNodeHandler(config *config.AppConfig) operations.GetNodeHandler {
