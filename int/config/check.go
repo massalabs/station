@@ -103,6 +103,11 @@ func checkNSS(certPath string) error {
 	loggerInstance := &NSSManagerLogger{}
 	manager := nss.NewManager([]string{}, service, loggerInstance)
 
+	err = manager.AppendDefaultNSSDatabasePaths()
+	if err != nil {
+		return fmt.Errorf("failed to append default NSS database paths: %w", err)
+	}
+
 	if !manager.HasCA(configuration.CertificateAuthorityName) {
 		logger.Debug("the CA is not known by at least one local NSS database.")
 
