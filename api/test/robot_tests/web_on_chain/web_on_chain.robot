@@ -46,6 +46,18 @@ POST /websiteUploader/upload
 
     Should Be Equal As Strings    ${response.json()['address']}    ${WEBSITE_ADDRESS}
 
+POST /cmd/executeFunction To remove the dns entry
+    ${argument}=    keywords.String To Arg    ${website_url}
+    ${data}=    Create Dictionary
+    ...    nickname=${WALLET_NICKNAME}
+    ...    name=deleteEntryFromDNS
+    ...    at=AS1G5G1SgPEfjYgB6k1jNFXszz6mFNzqhoVzBG5yMc7LnPXvLHzX
+    ...    args=${argument}
+    ${response}=    POST
+    ...    ${API_URL}/cmd/executeFunction
+    ...    json=${data}
+    ...    expected_status=${STATUS_OK}
+    
 GET /all/domains 
     ${response}=    GET
     ...    ${API_URL}/all/domains
