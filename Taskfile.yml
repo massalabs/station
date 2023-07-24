@@ -17,6 +17,10 @@ tasks:
     cmds:
       - cmd: go test -v -timeout 60s ./...
 
+  test-coverage: 
+    cmds:
+      - cmd: go test -timeout 60s ./... -coverprofile=coverage.coverprofile
+
   fmt:
     cmds:
       - cmd: go mod tidy
