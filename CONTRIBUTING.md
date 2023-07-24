@@ -119,6 +119,7 @@ On Windows, we recommend to run `go install github.com/go-task/task/v3/cmd/task@
 
    ```bash
    task install
+   task install-dev
    ```
 
 Once you have completed the above steps, your development environment for MassaStation is set up and ready to go!
