@@ -17,10 +17,6 @@ jobs:
         uses: ./.github/actions/install
         with:
           os: ${{ matrix.os }}
-      - name: Install Task
-        uses: arduino/setup-task@v1
-        with:
-          version: 3.x
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: task test-coverage
       - uses: codecov/codecov-action@v3

@@ -45,6 +45,7 @@ jobs:
         uses: ./.github/actions/install
         with:
           os: ${{ matrix.os }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install Fyne
         run: go install fyne.io/fyne/v2/cmd/fyne@latest
       - name: Set environment variables
