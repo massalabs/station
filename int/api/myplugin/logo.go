@@ -2,7 +2,7 @@ package myplugin
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 
@@ -45,7 +45,7 @@ func (l *logo) Handle(param operations.PluginManagerGetLogoParams) middleware.Re
 	defer logoFile.Close()
 
 	// Read the logo file
-	logoData, err := ioutil.ReadAll(logoFile)
+	logoData, err := io.ReadAll(logoFile)
 	if err != nil {
 		logger.Errorf("Error reading logo file: %s", err)
 
