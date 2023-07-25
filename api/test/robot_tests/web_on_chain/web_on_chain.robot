@@ -54,7 +54,7 @@ GET /my/domains/{nickname}
 
 Fetch Current DNS From API
     [Documentation]    Fetch the current DNS from the specified API endpoint
-    ${response}=    Get Request    ${API_URL}${API_ENDPOINT}
+    ${response}=    Get Request    ${API_URL}/massa/node
     ${json_response}=    Get Json Value    ${response.content}
     ${current_dns}=    Get From Dictionary    ${json_response}    dns
     Set Global Variable ${DNS}     ${current_dns}
