@@ -10,10 +10,12 @@ interface DomainModelItemProps {
 export default function DomainModelItem(props: DomainModelItemProps) {
   const { website } = props;
 
+  const faviconURL = `${location.protocol + '//' + website.favicon}`;
+
   return (
     <Description
       variant="secondary"
-      preIcon={website.favicon ? <img src={website.favicon} /> : <FiGlobe />}
+      preIcon={website.favicon ? <img src={faviconURL} /> : <FiGlobe />}
       title={website.name}
       website={website.name + '.massa'}
       description={website.description}
