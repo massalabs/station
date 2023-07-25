@@ -57,7 +57,7 @@ POST /cmd/executeFunction To remove the dns entry
     ${data}=    Create Dictionary
     ...    nickname=${WALLET_NICKNAME}
     ...    name=deleteEntryFromDNS
-    ...    at=AS12tsy5TtDyGsWggDvqDLagxZqkuTiTPqWhqmrx7KSQNJwQSbnBA
+    ...    at=${dns_address}
     ...    args=${argument}
     ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction
