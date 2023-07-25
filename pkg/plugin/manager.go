@@ -156,9 +156,43 @@ func (m *Manager) Delete(correlationID string) error {
 		logger.Warnf("stopping plugin before delete %s: %s\n", correlationID, err)
 	}
 
-	err = os.RemoveAll(filepath.Dir(plgn.BinPath))
+	err = removePlugin(plgn)
 	if err != nil {
 		return fmt.Errorf("deleting plugin %s: %w", correlationID, err)
+	}
+
+	return nil
+}
+
+// removePlugin removes all the plugin files from the file system.
+// However, for the "massa-labs/massa-wallet" plugin, it keeps the wallet files.
+// The wallet files are identified by the prefix "wallet_" and the suffix ".yaml".
+func removePlugin(plugin *Plugin) error {
+	dir := filepath.Dir(plugin.BinPath)
+
+	alias := Alias(plugin.info.Author, plugin.info.Name)
+	if alias != "massa-labs/massa-wallet" {
+		err := os.RemoveAll(dir)
+		if err != nil {
+			return fmt.Errorf("removing plugin dir %s: %w", dir, err)
+		}
+	}
+
+	// for the massa-wallet we want to keep all the wallet entries
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return fmt.Errorf("reading plugin dir %s: %w", dir, err)
+	}
+
+	for _, entry := range entries {
+		if !(strings.HasPrefix(entry.Name(), "wallet_") && strings.HasSuffix(entry.Name(), ".yaml")) {
+			item := path.Join(dir, entry.Name())
+
+			err = os.RemoveAll(item)
+			if err != nil {
+				return fmt.Errorf("removing file or directory %s: %w", item, err)
+			}
+		}
 	}
 
 	return nil
