@@ -52,12 +52,12 @@ GET /my/domains/{nickname}
     ...    expected_status=${STATUS_OK}
     Should Contain    ${response.text}    ${website_url}
 
-Fetch Current DNS From API
-    [Documentation]    Fetch the current DNS from the specified API endpoint
-    ${response}=    Get Request    ${API_URL}/massa/node
-    ${json_response}=    Get Json Value    ${response.content}
-    ${current_dns}=    Get From Dictionary    ${json_response}    dns
-    Set Global Variable ${DNS}     ${current_dns}
+Fetch Current DNS
+    ${response}=    GET    
+    ...    ${API_URL}/massa/node
+    ...    expected_status=${STATUS_OK}
+    ${current_dns}    Set Variable    ${response.json()['dns']}
+    Set Global Variable    ${DNS}    ${current_dns}
         
 POST /cmd/executeFunction To remove the dns entry
     ${argument}=    keywords.String To Arg    ${website_url}
