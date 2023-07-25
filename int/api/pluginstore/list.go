@@ -50,7 +50,8 @@ func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 				URL:      &pluginURL,
 				Checksum: &checksum,
 			},
-			Os: os,
+			Os:           os,
+			Iscompatible: plugin.IsCompatible,
 		}
 	}
 

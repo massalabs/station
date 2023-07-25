@@ -1005,6 +1005,8 @@ definitions:
         type: string
       massastationMinVersion:
         type: string
+      iscompatible:
+        type: boolean
       file:
         $ref: '#/definitions/File'
       os:

@@ -32,8 +32,11 @@ func AssertUpdate(t *testing.T, testPluginUpdate testPluginUpdate) {
 
 	pluginCompatible, err := pluginInStore.IsPluginCompatible()
 	assert.NoError(t, err)
+
+	pluginInStore.IsCompatible = pluginCompatible
 	assert.Equal(t, pluginCompatible, testPluginUpdate.compatible)
 
+	storeMS.Plugins[0].IsCompatible = pluginCompatible
 	isUpdatable, err := storeMS.CheckForPluginUpdates(plgn.info.Name, plgn.info.Version)
 	assert.NoError(t, err)
 	assert.Equal(t, isUpdatable, testPluginUpdate.updatable)

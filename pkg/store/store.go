@@ -29,6 +29,7 @@ type Plugin struct {
 	Version             string `json:"version"`
 	URL                 string `json:"url"`
 	MassaStationVersion string `json:"massaStationVersion"`
+	IsCompatible        bool   `json:"-"`
 }
 
 type File struct {
@@ -83,6 +84,15 @@ func (s *Store) FetchPluginList() error {
 	err = json.Unmarshal(body, &plugins)
 	if err != nil {
 		return fmt.Errorf("parsing plugin list JSON: %w", err)
+	}
+
+	for index := range plugins {
+		isCompatible, err := plugins[index].IsPluginCompatible()
+		if err != nil {
+			return fmt.Errorf("checking if plugin is compatible: %w", err)
+		}
+
+		plugins[index].IsCompatible = isCompatible
 	}
 
 	s.mutex.Lock()
@@ -150,11 +160,6 @@ func (s *Store) CheckForPluginUpdates(name string, vers string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("while parsing plugin version: %w", err)
 	}
-	// checks if the plugin is compatible with the current version of massaStation
-	pluginCompatibleWithMassaStation, err := pluginInStore.IsPluginCompatible()
-	if err != nil {
-		return false, fmt.Errorf("while checking if plugin is compatible: %w", err)
-	}
 
 	// checks if the version is greater than the current one.
 	pluginInStoreVersion, err := version.NewVersion(pluginInStore.Version)
@@ -163,7 +168,8 @@ func (s *Store) CheckForPluginUpdates(name string, vers string) (bool, error) {
 	}
 
 	newVersionInStore := pluginInStoreVersion.GreaterThan(pluginVersion)
-	isUpdatable := newVersionInStore && pluginCompatibleWithMassaStation
+
+	isUpdatable := newVersionInStore && pluginInStore.IsCompatible
 
 	return isUpdatable, nil
 }
