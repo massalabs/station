@@ -32,8 +32,6 @@ func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) mi
 
 	status := plugin.Status()
 	pluginName := plugin.Information().Name
-	pluginAuthor := plugin.Information().Author
-	alias := pluginPkg.Alias(pluginAuthor, pluginName)
 
 	switch cmd {
 	case "start":
@@ -43,19 +41,17 @@ func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) mi
 				fmt.Sprintf("Error while starting plugin %s: %s.\n", pluginName, err))
 		}
 	case "stop":
-		err := plugin.Stop()
+		err := e.manager.StopPlugin(plugin, false)
 		if err != nil {
 			return executeFailed(cmd, status, fmt.Sprintf("Error while stopping plugin %s: %s.\n", pluginName, err))
 		}
 
-		err = e.manager.RemoveAlias(alias)
 	case "restart":
-		err := plugin.Stop()
+		err := e.manager.StopPlugin(plugin, false)
 		if err != nil {
 			return executeFailed(cmd, status, fmt.Sprintf("Error while stopping plugin %s: %s.\n", pluginName, err))
 		}
 
-		err = e.manager.RemoveAlias(alias)
 		err = plugin.Start()
 
 		if err != nil {

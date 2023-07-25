@@ -93,7 +93,7 @@ func main() {
 	update.StartUpdateCheck(&stationGUI, systrayMenu)
 
 	stationGUI.Lifecycle().SetOnStopped(func() {
-		pluginManager.Stop()
+		pluginManager.StopAll()
 		server.Stop()
 	})
 	stationGUI.Lifecycle().SetOnStarted(func() {

@@ -128,6 +128,21 @@ func (m *Manager) Plugin(correlationID string) (*Plugin, error) {
 	return p, nil
 }
 
+// Unregister a plugin from the manager.
+func (m *Manager) UnregisterPlugin(correlationID string) error {
+	_, ok := m.plugins[correlationID]
+	if !ok {
+		return fmt.Errorf("no plugin matching correlationID %s", correlationID)
+	}
+
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	delete(m.plugins, correlationID)
+
+	return nil
+}
+
 // Delete kills a plugin and remove it from the manager.
 func (m *Manager) Delete(correlationID string) error {
 	plgn, err := m.Plugin(correlationID)
@@ -135,21 +150,11 @@ func (m *Manager) Delete(correlationID string) error {
 		return fmt.Errorf("deleting plugin %s: %w", correlationID, err)
 	}
 
-	m.mutex.Lock()
-
 	// Ignore Stop errors. We want to delete the plugin anyway
-	err = plgn.Stop()
+	err = m.StopPlugin(plgn, true)
 	if err != nil {
 		logger.Warnf("stopping plugin before delete %s: %s\n", correlationID, err)
 	}
-
-	alias := Alias(plgn.info.Author, plgn.info.Name)
-
-	delete(m.authorNameToID, alias)
-
-	delete(m.plugins, correlationID)
-
-	m.mutex.Unlock()
 
 	err = os.RemoveAll(filepath.Dir(plgn.BinPath))
 	if err != nil {
@@ -216,15 +221,38 @@ func (m *Manager) RunAll() error {
 	return nil
 }
 
-func (m *Manager) Stop() {
+func (m *Manager) StopAll() {
 	logger.Info("Stopping all plugins...")
 
 	for _, plugin := range m.plugins {
-		err := plugin.Stop()
+		err := m.StopPlugin(plugin, true)
 		if err != nil {
-			logger.Warnf("Error while stopping plugin %s: %s", plugin.info.Name, err)
+			logger.Warnf("stopping plugin %s: %w", plugin.ID, err)
 		}
 	}
+}
+
+func (m *Manager) StopPlugin(plugin *Plugin, unregister bool) error {
+	err := plugin.Stop()
+	if err != nil {
+		return fmt.Errorf("error while stopping plugin %s: %w", plugin.info.Name, err)
+	}
+
+	alias := Alias(plugin.info.Author, plugin.info.Name)
+
+	err = m.RemoveAlias(alias)
+	if err != nil {
+		return fmt.Errorf("removing alias %s: %w", alias, err)
+	}
+
+	if unregister {
+		err = m.UnregisterPlugin(plugin.ID)
+		if err != nil {
+			return fmt.Errorf("unregistering plugin %s: %w", plugin.ID, err)
+		}
+	}
+
+	return nil
 }
 
 // DownloadPlugin downloads a plugin from a given URL.
@@ -313,24 +341,19 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("while getting plugin URL of %s: %w", plgn.info.Name, err)
 	}
 
-	err = plgn.Stop()
+	err = m.StopPlugin(plgn, true)
 	if err != nil {
 		return fmt.Errorf("stopping plugin %s: %w", plgn.info.Name, err)
 	}
 
-	_, err = m.DownloadPlugin(url, false)
+	pluginPath, err := m.DownloadPlugin(url, false)
 	if err != nil {
 		return fmt.Errorf("downloading plugin %s: %w", plgn.info.Name, err)
 	}
 
-	err = plgn.Start()
+	err = m.InitPlugin(pluginPath)
 	if err != nil {
-		return fmt.Errorf("starting plugin %s: %w", plgn.info.Name, err)
-	}
-
-	err = plgn.SetInformation(plgn.info.URL)
-	if err != nil {
-		return fmt.Errorf("setting plugin %s information: %w", plgn.info.Name, err)
+		return fmt.Errorf("running plugin %s after update: %w", pluginPath, err)
 	}
 
 	return nil
