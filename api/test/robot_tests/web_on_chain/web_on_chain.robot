@@ -51,13 +51,20 @@ GET /my/domains/{nickname}
     ...    ${API_URL}/my/domains/${WALLET_NICKNAME}
     ...    expected_status=${STATUS_OK}
     Should Contain    ${response.text}    ${website_url}
-    
+
+Fetch Current DNS From API
+    [Documentation]    Fetch the current DNS from the specified API endpoint
+    ${response}=    Get Request    ${API_URL}${API_ENDPOINT}
+    ${json_response}=    Get Json Value    ${response.content}
+    ${current_dns}=    Get From Dictionary    ${json_response}    dns
+    Set Global Variable ${DNS}     ${current_dns}
+        
 POST /cmd/executeFunction To remove the dns entry
     ${argument}=    keywords.String To Arg    ${website_url}
     ${data}=    Create Dictionary
     ...    nickname=${WALLET_NICKNAME}
     ...    name=deleteEntryFromDNS
-    ...    at=${dns_address}
+    ...    at=${DNS}
     ...    args=${argument}
     ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction

@@ -3,5 +3,4 @@ robotframework-requests==0.9.4
 robotframework-seleniumlibrary==6.1.0
 robotframework-archivelibrary==0.4.2
 robotframework-async-keyword==1.1.6
-robotframework-yamllibrary==0.2.8
 selenium==4.9.1
