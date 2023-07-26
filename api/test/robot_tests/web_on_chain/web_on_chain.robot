@@ -51,13 +51,6 @@ GET /my/domains/{nickname}
     ...    ${API_URL}/my/domains/${WALLET_NICKNAME}
     ...    expected_status=${STATUS_OK}
     Should Contain    ${response.text}    ${website_url}
-
-Fetch Current DNS
-    ${response}=    GET    
-    ...    ${API_URL}/massa/node
-    ...    expected_status=${STATUS_OK}
-    ${current_dns}    Set Variable    ${response.json()['dns']}
-    Set Global Variable    ${DNS}    ${current_dns}
         
 POST /cmd/executeFunction To remove the dns entry
     ${argument}=    keywords.String To Arg    ${website_url}
