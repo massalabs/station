@@ -2,6 +2,7 @@ package nss
 
 import (
 	"errors"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -138,6 +139,15 @@ func TestManager_HasCA_Error(t *testing.T) {
 }
 
 func TestExpandAndFilterPaths(t *testing.T) {
+	var (
+		pathTo                = filepath.Join("path", "to")
+		pathToPattern         = filepath.Join("path", "to", "*")
+		pathToDir1            = filepath.Join("path", "to", "dir1")
+		pathToDir1Cert9       = filepath.Join("path", "to", "dir1", "cert9.pem")
+		pathToDir1CertPattern = filepath.Join("path", "to", "dir1", databasePattern)
+		pathToDir2            = filepath.Join("path", "to", "dir2")
+	)
+
 	tests := []struct {
 		name     string
 		input    []string
@@ -146,36 +156,36 @@ func TestExpandAndFilterPaths(t *testing.T) {
 	}{
 		{
 			name:  "normal operation",
-			input: []string{"/path/to/", "/path/to/dir1/", "/path/to/dir2/"},
+			input: []string{pathTo, pathToDir1, pathToDir2},
 			mockGlob: func(pattern string) ([]string, error) {
-				if pattern == "/path/to/dir1/" {
-					return []string{"/path/to/dir1/"}, nil
+				if pattern == pathToDir1 {
+					return []string{pathToDir1}, nil
 				}
-				if pattern == "/path/to/dir2/" {
+				if pattern == pathToDir2 {
 					return []string{}, nil
 				}
 
 				return nil, nil
 			},
-			want: []string{"/path/to/dir1/"},
+			want: []string{pathToDir1},
 		},
 		{
 			name:  "dynamic path operation",
-			input: []string{"/path/to/*"},
+			input: []string{pathToPattern},
 			mockGlob: func(pattern string) ([]string, error) {
-				if pattern == "/path/to/*" {
-					return []string{"/path/to/dir1", "/path/to/dir2"}, nil
+				if pattern == pathToPattern {
+					return []string{pathToDir1, pathToDir2}, nil
 				}
-				if pattern == "/path/to/dir1/cert*.db" {
-					return []string{"/path/to/dir1/cert9.db"}, nil
+				if pattern == pathToDir1CertPattern {
+					return []string{pathToDir1Cert9}, nil
 				}
-				if pattern == "/path/to/dir2/cert*.db" {
+				if pattern == pathToDir1CertPattern {
 					return []string{}, nil
 				}
 
 				return nil, nil
 			},
-			want: []string{"/path/to/dir1"},
+			want: []string{pathToDir1},
 		},
 	}
 
