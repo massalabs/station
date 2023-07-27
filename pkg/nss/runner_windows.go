@@ -24,7 +24,7 @@ func NewCertUtilRunner() (*CertUtilRunner, error) {
 	}
 
 	dir := filepath.Dir(ex)
-	bin := filepath.Join(dir, "certutil.exe")
+	bin := filepath.Join(dir, "mar-tools", "certutil.exe")
 
 	_, err = os.Stat(bin)
 	if err != nil {
