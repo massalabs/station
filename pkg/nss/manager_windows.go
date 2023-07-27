@@ -15,7 +15,7 @@ func getFirefoxProfilePath() (string, error) {
 		return "", fmt.Errorf("failed to get APPDATA environment variable")
 	}
 
-	firefoxProfilesDir := filepath.Join(appData, "Mozilla\\Firefox\\Profiles")
+	firefoxProfilesDir := filepath.Join(appData, "Mozilla", "Firefox", "Profiles")
 	_, err := os.Stat(firefoxProfilesDir)
 	if err != nil {
 		if os.IsNotExist(err) {
