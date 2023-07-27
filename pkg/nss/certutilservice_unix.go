@@ -2,8 +2,6 @@
 
 package nss
 
-import "strings"
-
 // CertUtilService encapsulates operations on NSS database using certutil command.
 type CertUtilService struct {
 	runner Runner
@@ -29,7 +27,7 @@ func (s *CertUtilService) DeleteCA(dbPath string, certificateName string) error 
 // IsKnownCA checks if a certificate is known by the NSS database CA list.
 func (s *CertUtilService) IsKnownCA(dbPath string, certificateName string) error {
 	err := s.runner.Run("-V", "-d", dbPath, "-u", "L", "-n", certificateName)
-	if err != nil && !strings.Contains(err.Error(), "PR_FILE_NOT_FOUND_ERROR:") {
+	if err != nil {
 		//nolint:wrapcheck
 		return err
 	}
