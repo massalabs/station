@@ -25,5 +25,10 @@ Set Suite Variables
     ${random_string}=    Generate Random String    8    [LOWER][NUMBERS]
     ${website_url}=    Set Variable    test${random_string}
     ${website_description}=    Set Variable    description${random_string}
+    ${response}=    GET    
+    ...    ${API_URL}/massa/node
+    ...    expected_status=${STATUS_OK}
+    ${current_dns}    Set Variable    ${response.json()['dns']}
+    Set Global Variable    ${DNS}    ${current_dns}
     Set Suite Variable    ${website_url}    ${website_url}
     Set Suite Variable    ${website_description}    ${website_description}

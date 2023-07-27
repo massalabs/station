@@ -46,14 +46,26 @@ POST /websiteUploader/upload
 
     Should Be Equal As Strings    ${response.json()['address']}    ${WEBSITE_ADDRESS}
 
-GET /all/domains 
-    ${response}=    GET
-    ...    ${API_URL}/all/domains
-    ...    expected_status=${STATUS_OK}
-    Should Contain    ${response.text}    flappy
-
 GET /my/domains/{nickname}
     ${response}=    GET
     ...    ${API_URL}/my/domains/${WALLET_NICKNAME}
     ...    expected_status=${STATUS_OK}
     Should Contain    ${response.text}    ${website_url}
+        
+POST /cmd/executeFunction To remove the dns entry
+    ${argument}=    keywords.String To Arg    ${website_url}
+    ${data}=    Create Dictionary
+    ...    nickname=${WALLET_NICKNAME}
+    ...    name=deleteEntryFromDNS
+    ...    at=${DNS}
+    ...    args=${argument}
+    ${response}=    POST
+    ...    ${API_URL}/cmd/executeFunction
+    ...    json=${data}
+    ...    expected_status=${STATUS_OK}
+    
+GET /all/domains 
+    ${response}=    GET
+    ...    ${API_URL}/all/domains
+    ...    expected_status=${STATUS_OK}
+    Should Contain    ${response.text}    flappy
