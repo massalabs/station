@@ -82,11 +82,13 @@ func (m *Manager) DeleteCA(certName string) error {
 func (m *Manager) HasCA(certName string) bool {
 	for _, path := range m.dbPath {
 		err := m.certutil.IsKnownCA(path, certName)
-		m.Debugf("checking if the certificate is known by the NSS database (%s): %s", path, err)
-
 		if err != nil {
+			m.Debugf("certificate is unknown by the NSS database (%s): %v", path, err)
+
 			return false
 		}
+
+		m.Debugf("certificate is known by the NSS database (%s)", path)
 	}
 
 	return true
