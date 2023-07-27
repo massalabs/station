@@ -11,6 +11,7 @@ export default function DomainModelItem(props: DomainModelItemProps) {
   const { website } = props;
 
   const faviconURL = `${location.protocol + '//' + website.favicon}`;
+  const url = `${location.protocol + '//' + website.name + '.massa'}`;
 
   return (
     <Description
@@ -19,7 +20,7 @@ export default function DomainModelItem(props: DomainModelItemProps) {
       title={website.name}
       website={website.name + '.massa'}
       description={website.description}
-      onClick={() => window.open('http://' + website.name + '.massa', '_blank')}
+      onClick={() => window.open(url, '_blank')}
     />
   );
 }
