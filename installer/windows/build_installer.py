@@ -190,7 +190,9 @@ def create_wxs_file():
                     </Component>
                     <Directory Id="MassaStationCerts" Name="certs">
                         <Component Id="CreateCertsDir" Guid="e96619b3-48a7-4629-8a19-e1c8270b331c">
-                            <CreateFolder />
+                            <CreateFolder>
+                                <util:PermissionEx User="Users" GenericAll="yes"/>
+                            </CreateFolder>
                         </Component>
                     </Directory>
                     <Directory Id="MassaStationLogs" Name="logs">

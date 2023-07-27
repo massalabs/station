@@ -13,8 +13,8 @@ import (
 	"github.com/massalabs/station/api"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/int/config"
-	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/int/sni"
+	"github.com/massalabs/station/pkg/dirs"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/rs/cors"
 )
@@ -23,7 +23,7 @@ var caPath string
 
 func init() {
 	var err error
-	caPath, err = configuration.CAPath()
+	caPath, err = dirs.GetCertDir()
 
 	if err != nil {
 		logger.Warnf("TLS: unable to get CA root path: %s", err)

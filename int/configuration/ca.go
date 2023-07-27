@@ -9,9 +9,7 @@ import (
 
 // Constants for CA-related files and names.
 const (
-	CertificateAuthorityFileName    = "rootCA.pem"
-	CertificateAuthorityKeyFileName = "rootCA-key.pem"
-	CertificateAuthorityName        = "massaStation"
+	CertificateAuthorityName = "massaStation"
 )
 
 const errMsgCAPath = "CAPath detection is not supported, use the CAROOT environment variable to specify its location"
