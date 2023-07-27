@@ -11,7 +11,7 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-//go:generate mockgen . WinAPI -destination=mocks/mock_api_windows.go -package=mocks
+//go:generate mockgen -destination=mocks/mock_api_windows.go -package=mocks . WinAPI
 
 // WinAPI is an interface for Windows API certificate functions.
 // This interface is used for mocking in tests.
