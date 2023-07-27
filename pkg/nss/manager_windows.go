@@ -57,6 +57,8 @@ func defaultNSSDatabasePaths() ([]string, error) {
 
 	firefoxDBPath, err := getFirefoxProfilePath()
 	if err == nil {
+		// If we found the Firefox profile directory, we add it to the list of NSS databases.
+		// If we didn't find it, we just ignore it and continue because it means that Firefox is not installed.
 		nssDBPaths = append(nssDBPaths, firefoxDBPath)
 	}
 
