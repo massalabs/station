@@ -23,6 +23,7 @@ VERSION = "0.0.0"
 # Binaries to be included in the installer
 MASSASTATION_BINARY = "massastation.exe"
 ACRYLIC_ZIP = "acrylic.zip"
+MARTOOLS_ZIP = "martools.zip"
 WIXTOOLSET_ZIP = "wixtoolset.zip"
 
 # Scripts to be included in the installer
@@ -36,6 +37,7 @@ WIX_DIR = "wixtoolset"
 
 # URLs to download Acrylic DNS Proxy and the WiX Toolset
 ACRYLIC_URL = "https://sourceforge.net/projects/acrylic/files/Acrylic/2.1.1/Acrylic-Portable.zip/download"
+MARTOOLS_URL = "https://archive.torproject.org/tor-package-archive/torbrowser/12.5.1/mar-tools-win64.zip"
 WIXTOOLSET_URL = (
     "https://wixdl.blob.core.windows.net/releases/v3.14.0.6526/wix314-binaries.zip"
 )
@@ -100,6 +102,7 @@ def move_binaries():
         os.path.join(BUILD_DIR, MASSASTATION_BINARY),
     )
     os.rename(ACRYLIC_ZIP, os.path.join(BUILD_DIR, ACRYLIC_ZIP))
+    os.rename(MARTOOLS_ZIP, os.path.join(BUILD_DIR, MARTOOLS_ZIP))
 
     shutil.copy(
         os.path.join("windows", "scripts", ACRYLIC_CONFIG_SCRIPT),
@@ -190,15 +193,20 @@ def create_wxs_file():
                             <CreateFolder />
                         </Component>
                     </Directory>
-                    <Directory Id="MassaStationPlugins" Name="plugins">
-                        <Component Id="CreatePluginsDir" Guid="130fb4bb-cb51-4e28-a5e4-b7c58c846e02">
+                    <Directory Id="MassaStationLogs" Name="logs">
+                        <Component Id="CreateLogsDir" Guid="4b24bfe1-c564-47a7-95d5-1268c661ef8a">
                             <CreateFolder>
                                 <util:PermissionEx User="Users" GenericAll="yes"/>
                             </CreateFolder>
                         </Component>
                     </Directory>
-                    <Directory Id="MassaStationLogs" Name="logs">
-                        <Component Id="CreateLogsDir" Guid="4b24bfe1-c564-47a7-95d5-1268c661ef8a">
+                    <Directory Id="MassaStationMartools" Name="mar-tools">
+                        <Component Id="CreateMartoolsDir" Guid="ac6a3582-6996-4d79-80c2-1cd2dc462da8">
+                            <File Id="MartoolsZIP" Name="{MARTOOLS_ZIP}" Source="{BUILD_DIR}\\{MARTOOLS_ZIP}" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="MassaStationPlugins" Name="plugins">
+                        <Component Id="CreatePluginsDir" Guid="130fb4bb-cb51-4e28-a5e4-b7c58c846e02">
                             <CreateFolder>
                                 <util:PermissionEx User="Users" GenericAll="yes"/>
                             </CreateFolder>
@@ -258,6 +266,7 @@ def create_wxs_file():
             <ComponentRef Id="CreatePluginsDir" />
             <ComponentRef Id="CreateLogsDir" />
             <ComponentRef Id="CreateWebsitesCacheDir" />
+            <ComponentRef Id="CreateMartoolsDir" />
         </Feature>
 
         <Feature Id="DesktopShortcut" Title="Desktop Shortcut" Level="1" Absent="allow">
@@ -280,6 +289,20 @@ def create_wxs_file():
             Return='ignore'
         />
 
+        <CustomAction Id="ExtractMartools"
+            Directory="INSTALLDIR"
+            ExeCommand="powershell.exe -Command &quot;Expand-Archive '[MassaStationMartools]{MARTOOLS_ZIP}' -d '[INSTALLDIR]'&quot;"
+            Execute="deferred"
+            Impersonate="no"
+            Return="check"
+        />
+        <CustomAction Id="DeleteMartoolsZip"
+            Directory="MassaStationMartools"
+            ExeCommand="cmd /c del &quot;[MassaStationMartools]{MARTOOLS_ZIP}&quot;"
+            Execute="deferred"
+            Impersonate="no"
+            Return="check"
+        />
         <CustomAction Id="ExtractAcrylic"
             Directory="AcrylicDNSProxy"
             ExeCommand="powershell.exe -Command &quot;Expand-Archive '[AcrylicDNSProxy]{ACRYLIC_ZIP}' -d '[AcrylicDNSProxy]'&quot;"
@@ -360,12 +383,14 @@ def create_wxs_file():
         />
 
         <InstallExecuteSequence>
+            <Custom Action="ExtractMartools" Before="ExtractAcrylic">NOT Installed</Custom>
             <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed</Custom>
             <Custom Action="InstallAcrylic" Before="ConfigureAcrylic">NOT Installed</Custom>
             <Custom Action="ConfigureAcrylic" Before="ConfigureNetworkInterface">NOT Installed</Custom>
             <Custom Action="ConfigureNetworkInterface" Before="GenerateCertificate">NOT Installed</Custom>
             <Custom Action="GenerateCertificate" Before="DeleteAcrylicZip">NOT Installed</Custom>
             <Custom Action="DeleteAcrylicZip" Before="InstallFinalize">NOT Installed</Custom>
+            <Custom Action="DeleteMartoolsZip" Before="InstallFinalize">NOT Installed</Custom>
 
             <Custom Action='UninstallAcrylic' Before='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
             <Custom Action='ResetNetworkInterface' Before='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
@@ -388,6 +413,7 @@ def build_installer():
     """
 
     download_file(ACRYLIC_URL, ACRYLIC_ZIP)
+    download_file(MARTOOLS_URL, MARTOOLS_ZIP)
 
     if not os.path.exists(MASSASTATION_BINARY):
         build_massastation()
