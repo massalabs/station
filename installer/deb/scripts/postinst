@@ -10,8 +10,6 @@ set -e
 export MASSASTATION_CONFIG_DIR=/usr/local/share/massastation
 export MASSASTATION_CERT_DIR=/etc/massastation/certs
 
-export MKCERT_URL="https://dl.filippo.io/mkcert/latest?for=linux/amd64"
-
 # Print error message to stderr and exit with code 1.
 fatal() {
     echo "FATAL: $1" >&2
@@ -73,36 +71,13 @@ set_local_dns() {
     echo "DNS configuration complete."
 }
 
-# Download and install mkcert, generate a certificate for MassaStation.
-generate_certificate() {
-    curl -sL $MKCERT_URL -o mkcert || fatal "mkcert download failed."
-    chmod +x mkcert || fatal "mkcert permission change failed."
-
-    # We ensure that CAROOT is set. Otherwise, mkcert installation will fail.
-    # It especially happens on systems that install packages in sandboxed environments.
-    export CAROOT=$(./mkcert -CAROOT)
-    if [[ -z $CAROOT ]]; then
-        CAROOT=/usr/local/share/ca-certificates/
-    fi
-
-    ./mkcert -install || fatal "mkcert installation failed."
-    mkdir -m 777 -p $MASSASTATION_CERT_DIR || fatal "certs directory creation failed."
-    ./mkcert -cert-file $MASSASTATION_CERT_DIR/cert.pem -key-file $MASSASTATION_CERT_DIR/cert-key.pem station.massa || fatal "mkcert certificate generation failed."
-    chmod 644 $MASSASTATION_CERT_DIR/cert.pem $MASSASTATION_CERT_DIR/cert-key.pem || fatal "certs permission change failed."
-
-    rm mkcert || fatal "mkcert removal failed."
-}
-
 # Create MassaStation configuration directories.
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR || fatal "config directory creation failed."
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/plugins || fatal "plugins directory creation failed."
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/logs || fatal "logs directory creation failed."
+mkdir -m 777 -p $MASSASTATION_CERT_DIR || fatal "certs directory creation failed."
 
 ping -c 1 -t 1 test.massa &> /dev/null || set_local_dns
-
-if [[ ! -f $MASSASTATION_CERT_DIR/cert.pem || ! -f $MASSASTATION_CERT_DIR/cert-key.pem ]]; then
-    generate_certificate
-fi
 
 # Setcap massastation to allow binding to privileged ports (80, 443).
 setcap CAP_NET_BIND_SERVICE=+eip /usr/bin/massastation || fatal "Failed to setcap massastation."

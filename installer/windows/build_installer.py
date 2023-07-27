@@ -30,7 +30,6 @@ WIXTOOLSET_ZIP = "wixtoolset.zip"
 ACRYLIC_CONFIG_SCRIPT = "configure_acrylic.bat"
 NIC_CONFIG_SCRIPT = "configure_network_interfaces.bat"
 NIC_RESET_SCRIPT = "reset_network_interfaces.bat"
-GEN_CERT_SCRIPT = "generate_certificate.bat"
 RUN_VBS = "run.vbs"
 LOGO = "logo.ico"
 WIX_DIR = "wixtoolset"
@@ -117,10 +116,6 @@ def move_binaries():
         os.path.join(BUILD_DIR, NIC_RESET_SCRIPT),
     )
     shutil.copy(
-        os.path.join("windows", "scripts", GEN_CERT_SCRIPT),
-        os.path.join(BUILD_DIR, GEN_CERT_SCRIPT),
-    )
-    shutil.copy(
         os.path.join("windows", "scripts", RUN_VBS),
         os.path.join(BUILD_DIR, RUN_VBS),
     )
@@ -185,7 +180,6 @@ def create_wxs_file():
                         <File Id="AcrylicConfigScript" Name="{ACRYLIC_CONFIG_SCRIPT}" Source="{BUILD_DIR}\\{ACRYLIC_CONFIG_SCRIPT}" />
                         <File Id="NICConfigScript" Name="{NIC_CONFIG_SCRIPT}" Source="{BUILD_DIR}\\{NIC_CONFIG_SCRIPT}" />
                         <File Id="NICResetScript" Name="{NIC_RESET_SCRIPT}" Source="{BUILD_DIR}\\{NIC_RESET_SCRIPT}" />
-                        <File Id="GenCertScript" Name="{GEN_CERT_SCRIPT}" Source="{BUILD_DIR}\\{GEN_CERT_SCRIPT}" />
                         <File Id="MassaStationRunScript" Name="{RUN_VBS}" Source="{BUILD_DIR}\\{RUN_VBS}" />
                     </Component>
                     <Directory Id="MassaStationCerts" Name="certs">
@@ -344,14 +338,6 @@ def create_wxs_file():
             Return="check"
         />
         <CustomAction
-            Id="GenerateCertificate"
-            Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{GEN_CERT_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
-            Execute="deferred"
-            Impersonate="no"
-            Return="check"
-        />
-        <CustomAction
             Id="UninstallAcrylic"
             Directory="AcrylicDNSProxy"
             ExeCommand="cmd /c &quot;[AcrylicDNSProxy]UninstallAcrylicService.bat&quot;"
@@ -389,8 +375,7 @@ def create_wxs_file():
             <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed</Custom>
             <Custom Action="InstallAcrylic" Before="ConfigureAcrylic">NOT Installed</Custom>
             <Custom Action="ConfigureAcrylic" Before="ConfigureNetworkInterface">NOT Installed</Custom>
-            <Custom Action="ConfigureNetworkInterface" Before="GenerateCertificate">NOT Installed</Custom>
-            <Custom Action="GenerateCertificate" Before="DeleteAcrylicZip">NOT Installed</Custom>
+            <Custom Action="ConfigureNetworkInterface" Before="DeleteAcrylicZip">NOT Installed</Custom>
             <Custom Action="DeleteAcrylicZip" Before="InstallFinalize">NOT Installed</Custom>
             <Custom Action="DeleteMartoolsZip" Before="InstallFinalize">NOT Installed</Custom>
 

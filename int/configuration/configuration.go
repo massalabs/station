@@ -10,6 +10,7 @@ import (
 
 // Constants for CA-related files and names.
 const (
+	CertificateAuthorityName        = "massaStation"
 	CertificateAuthorityFileName    = "rootCA.pem"
 	CertificateAuthorityKeyFileName = "rootCA-key.pem"
 	OrganizationName                = "MassaLabs"

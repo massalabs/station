@@ -44,7 +44,7 @@ func AssertUpdate(t *testing.T, testPluginUpdate testPluginUpdate) {
 
 //nolint:funlen
 func TestPlugin_Update(t *testing.T) {
-	//nolint:exhaust,exhaustruct
+	//nolint:exhaustruct
 	pluginNonUpdatable := Plugin{
 		ID: "test",
 		info: &Information{
@@ -52,7 +52,7 @@ func TestPlugin_Update(t *testing.T) {
 			Version: "10.0.0",
 		},
 	}
-	//nolint:exhaust,exhaustruct
+	//nolint:exhaustruct
 	pluginUpdatable := Plugin{
 		ID: "test",
 		info: &Information{
@@ -60,7 +60,6 @@ func TestPlugin_Update(t *testing.T) {
 			Version: "0.0.19",
 		},
 	}
-	//nolint:exhaust
 	baseStore := &store.Store{
 		Plugins: []store.Plugin{
 			{
