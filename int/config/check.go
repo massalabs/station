@@ -17,6 +17,8 @@ const failureConsequence = "Station will only work using http, or you will have 
 
 // Check performs a check on the configuration.
 func Check() error {
+	var resultErr error
+
 	caRootPath, err := configuration.CAPath()
 	if err != nil {
 		return caNonBlockingError("failed to get CA path", err)
@@ -26,15 +28,15 @@ func Check() error {
 
 	err = checkCertificate(certPath)
 	if err != nil {
-		return nonBlockingError("Error while checking certificate", failureConsequence, err)
+		resultErr = caNonBlockingError("Error while checking certificate", err)
 	}
 
 	err = checkNSS(certPath)
 	if err != nil {
-		return nonBlockingError("Error while checking NSS", failureConsequence, err)
+		resultErr = caNonBlockingError("Error while checking NSS", err)
 	}
 
-	return nil
+	return resultErr
 }
 
 // nonBlockingError logs a non blocking error. It always returns a `nil` error to be used in `return`.
