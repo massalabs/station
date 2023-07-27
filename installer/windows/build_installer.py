@@ -73,29 +73,15 @@ def build_massastation():
     subprocess.run(["go", "generate", "../..."], check=True)
     os.environ["CGO_ENABLED"] = "1"
 
-    # -icon is based on the path of the -src flag.
-    subprocess.run(
-        [
-            "fyne",
-            "package",
-            "-icon",
-            "../../int/systray/embedded/logo.png",
-            "-name",
-            "MassaStation",
-            "-appID",
-            "com.massalabs.massastation",
-            "-src",
-            "../cmd/massastation",
-        ],
-        check=True,
-    )
-
-    # The previous `fyne package` command generates MassaStation.exe binary in the src directory.
-    # That's why we need to move it in the current directory and rename it to $MASSASTATION_BINARY.
-    os.rename(
-        os.path.join("..", "cmd", "massastation", "MassaStation.exe"),
-        os.path.join(MASSASTATION_BINARY),
-    )
+    subprocess.run([
+        "go",
+        "build", 
+        "-ldflags",
+        f"-X github.com/massalabs/station/int/config.Version={VERSION}",
+        "-o",
+        "massastation.exe",
+        "../cmd/massastation/"
+    ], check=True)
 
 
 def move_binaries():
