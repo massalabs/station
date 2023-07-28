@@ -138,8 +138,7 @@ func checkNSS(certPath string, isBrandNewCA bool) error {
 		// with a different certificate.
 		err = manager.DeleteCA(configuration.CertificateAuthorityName)
 		if err != nil {
-			//nolint:errcheck
-			caNonBlockingError("failed to delete the CA from NSS", err)
+			logger.Debug("failed to delete the CA from NSS", err)
 		} else {
 			logger.Debug("the CA was deleted from NSS.")
 		}
