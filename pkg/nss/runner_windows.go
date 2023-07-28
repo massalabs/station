@@ -5,19 +5,26 @@ package nss
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 )
-
-// CertUtilRunner encapsulates certutil commands.
-type CertUtilRunner struct{}
 
 // NewCertUtilRunner returns a new CertUtilRunner.
 // It returns an error if the certutil binary is not found.
 func NewCertUtilRunner() (*CertUtilRunner, error) {
-	return nil, fmt.Errorf("not implemented")
-}
+	executablePath, err := os.Executable()
+	if err != nil {
+		return nil, fmt.Errorf("getting executable path: %w", err)
+	}
 
-// Run runs the certutil command with the given arguments.
-// It returns the combined output of stdout and stderr.
-func (r *CertUtilRunner) Run(args ...string) error {
-	return fmt.Errorf("not implemented")
+	executableDirectoryPath := filepath.Dir(executablePath)
+	certutilBinaryPath := filepath.Join(executableDirectoryPath, "mar-tools", "certutil.exe")
+
+	_, err = os.Stat(certutilBinaryPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find certutil binary: %w", err)
+	}
+
+	return &CertUtilRunner{binaryPath: certutilBinaryPath}, nil
+
 }

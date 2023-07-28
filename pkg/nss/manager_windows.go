@@ -14,7 +14,7 @@ func defaultNSSDatabasePaths() ([]string, error) {
 	}
 
 	nssDBPaths := []string{
-		filepath.Join(appData, "Mozilla\\Firefox\\Profiles"),
+		filepath.Join(appData, "Mozilla", "Firefox", "Profiles", "*"),
 	}
 
 	return nssDBPaths, nil
