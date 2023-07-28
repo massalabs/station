@@ -4,11 +4,18 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ["windows-latest", "ubuntu-latest", "macos-latest"]
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/install
-      - run: go test ./... -coverprofile=coverage.coverprofile
+      - name: installing dependencies
+        uses: ./.github/actions/install
+        with:
+          os: ${{ matrix.os }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: task test-coverage
       - uses: codecov/codecov-action@v3
         with:
           files: coverage.coverprofile

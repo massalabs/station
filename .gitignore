@@ -16,7 +16,7 @@ tmp/
 
 # MassaStation builded react files
 int/api/dist/
-main
+coverage.coverprofile
 
 # Go swagger generated files
 api/swagger/server/models/

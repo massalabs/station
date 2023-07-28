@@ -6,16 +6,23 @@ tasks:
       - echo "Installing dependencies"
       - cmd: go install github.com/go-swagger/go-swagger/cmd/swagger@latest
       - cmd: go install golang.org/x/tools/cmd/stringer@latest
-      - cmd: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3
-      - cmd: go install mvdan.cc/gofumpt@latest
-      - cmd: go install github.com/daixiang0/gci@latest
       - cmd: go install go.uber.org/mock/mockgen@latest
+
+  install-dev:
+    cmds:
+      - cmd: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3
+      - cmd: go install github.com/daixiang0/gci@latest
+      - cmd: go install mvdan.cc/gofumpt@latest
 
   generate: go generate ./...
 
   test: 
     cmds:
       - cmd: go test -v -timeout 60s ./...
+
+  test-coverage: 
+    cmds:
+      - cmd: go test -timeout 60s ./... -coverprofile=coverage.coverprofile
 
   fmt:
     cmds:

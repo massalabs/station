@@ -3,6 +3,9 @@ name: 'Massa Station install'
 inputs:
   os:
     default: 'ubuntu-20.04'
+  repo-token:
+    description: The token to use to authenticate with the GitHub API
+    required: true
 
 runs:
   using: "composite"
@@ -18,6 +21,12 @@ runs:
       with:
         go-version: 1.20.6
         cache: true
+    
+    - name: Install Task
+      uses: arduino/setup-task@v1
+      with:
+        version: 3.x
+        repo-token: ${{ inputs.repo-token }}
 
     - name: Install Node.js
       uses: actions/setup-node@v3
@@ -28,10 +37,8 @@ runs:
 
     - name: install go deps
       shell: bash
-      run: |
-        go install github.com/go-swagger/go-swagger/cmd/swagger@latest
-        go install golang.org/x/tools/cmd/stringer@latest
+      run: task install
 
     - name: Build react frontend and swagger api
       shell: bash
-      run: go generate ./...
+      run: task generate
