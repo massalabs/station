@@ -3,9 +3,6 @@ name: API
 on:
   push:
 
-env:
-  NODE_SERVER: BUILDNET
-
 jobs:
   build-release:
     uses: ./.github/workflows/build.yml
@@ -47,7 +44,7 @@ jobs:
         env:
           WALLET_TEST_WALLET: ${{ secrets.WALLET_TEST_WALLET }}
       - name: Running Massastation
-        run: xvfb-run ./massastation --node-server $NODE_SERVER > logs.txt &
+        run: xvfb-run ./massastation > logs.txt &
         env:
           WALLET_PASSWORD: ${{ secrets.WALLET_TEST_PASSWORD }}
       - name: Define station.massa
