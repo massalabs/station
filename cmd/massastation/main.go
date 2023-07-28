@@ -25,7 +25,7 @@ func ParseFlags() api.StartServerFlags {
 
 	_, err := dirs.GetConfigDir()
 	if err != nil {
-		logger.Error(
+		logger.Errorf(
 			"Unable to read config dir: %s\n%s",
 			err,
 			`MassaStation can't run without a config directory.\n
@@ -86,7 +86,7 @@ func main() {
 		server.Start(networkManager, pluginManager)
 		err := pluginManager.RunAll()
 		if err != nil {
-			logger.Fatalf("while running all plugins: %w", err.Error())
+			logger.Fatalf("while running all plugins: %w", err)
 		}
 	})
 

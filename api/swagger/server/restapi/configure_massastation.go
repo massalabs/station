@@ -21,15 +21,6 @@ import (
 
 var caPath string
 
-func init() {
-	var err error
-	caPath, err = dirs.GetCertDir()
-
-	if err != nil {
-		logger.Warnf("TLS: unable to get CA root path: %s", err)
-	}
-}
-
 func configureFlags(api *operations.MassastationAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
@@ -99,7 +90,21 @@ func configureMassaStationAPI(api *operations.MassastationAPI, config config.App
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
 	tlsConfig.GetCertificate = func(chi *tls.ClientHelloInfo) (*tls.Certificate, error) {
-		return sni.GenerateTLS(chi, caPath)
+		if caPath == "" {
+			var err error
+			caPath, err = dirs.GetCertDir()
+
+			if err != nil {
+				logger.Warnf("TLS: unable to get CA root path: %s", err)
+			}
+		}
+
+		cert, err := sni.GenerateTLS(chi, caPath)
+		if err != nil {
+			return nil, err
+		}
+
+		return cert, nil
 	}
 }
 
