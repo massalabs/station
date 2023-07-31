@@ -104,21 +104,21 @@ func BytesToU64(byteArray []byte) uint64 {
 	return u64
 }
 
-// ReverseBytes reverses a byte slice in place.
-func ReverseBytes(bytes []byte) {
-	for i, j := 0, len(bytes)-1; i < j; i, j = i+1, j-1 {
-		bytes[i], bytes[j] = bytes[j], bytes[i]
+// ReverseBytes creates and returns a new byte slice with reversed order.
+func ReverseBytes(bytes []byte) []byte {
+	reversedBytes := make([]byte, len(bytes))
+	for i, j := 0, len(bytes)-1; i < len(bytes); i, j = i+1, j-1 {
+		reversedBytes[j] = bytes[i]
 	}
+	return reversedBytes
 }
 
-// BytesToU256 decodes the given bytes (u256 representation).
+// BytesToU256 decodes the given bytes, representing a 256-bit unsigned integer in big-endian format,
+// into a big.Int. It constructs a new big.Int with the bytes interpreted in little-endian order.
+// The function returns the resulting big.Int representing the 256-bit integer.
 func BytesToU256(bytes []byte) (*big.Int, error) {
-	// Make a copy of the bytes because we will reverse them in place
-	reversedBytes := make([]byte, len(bytes))
-	copy(reversedBytes, bytes)
-
-	// Reverse the bytes to convert from little-endian to big-endian
-	ReverseBytes(reversedBytes)
+	// Reverse the bytes to convert from big-endian to little-endian
+	reversedBytes := ReverseBytes(bytes)
 
 	// Create a big.Int and set its bytes representation
 	u256Value := new(big.Int).SetBytes(reversedBytes)
