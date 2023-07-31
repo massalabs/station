@@ -107,8 +107,8 @@ func BytesToU64(byteArray []byte) uint64 {
 // ReverseBytes creates and returns a new byte slice with reversed order.
 func ReverseBytes(bytes []byte) []byte {
 	reversedBytes := make([]byte, len(bytes))
-	for i, j := 0, len(bytes)-1; i < len(bytes); i, j = i+1, j-1 {
-		reversedBytes[j] = bytes[i]
+	for i := range bytes {
+		reversedBytes[len(bytes)-1-i] = bytes[i]
 	}
 
 	return reversedBytes
