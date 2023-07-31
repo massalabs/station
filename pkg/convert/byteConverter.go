@@ -110,6 +110,7 @@ func ReverseBytes(bytes []byte) []byte {
 	for i, j := 0, len(bytes)-1; i < len(bytes); i, j = i+1, j-1 {
 		reversedBytes[j] = bytes[i]
 	}
+
 	return reversedBytes
 }
 
