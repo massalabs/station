@@ -3,6 +3,7 @@ package convert
 import (
 	"bytes"
 	"encoding/binary"
+	"math/big"
 	"unicode/utf16"
 
 	"github.com/massalabs/station/pkg/logger"
@@ -101,4 +102,26 @@ func BytesToU64(byteArray []byte) uint64 {
 	}
 
 	return u64
+}
+
+// ReverseBytes reverses a byte slice in place.
+func ReverseBytes(bytes []byte) {
+	for i, j := 0, len(bytes)-1; i < j; i, j = i+1, j-1 {
+		bytes[i], bytes[j] = bytes[j], bytes[i]
+	}
+}
+
+// BytesToU256 decodes the given bytes (u256 representation).
+func BytesToU256(bytes []byte) (*big.Int, error) {
+	// Make a copy of the bytes because we will reverse them in place
+	reversedBytes := make([]byte, len(bytes))
+	copy(reversedBytes, bytes)
+
+	// Reverse the bytes to convert from little-endian to big-endian
+	ReverseBytes(reversedBytes)
+
+	// Create a big.Int and set its bytes representation
+	u256Value := new(big.Int).SetBytes(reversedBytes)
+
+	return u256Value , nil
 }
