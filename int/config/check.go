@@ -3,11 +3,13 @@ package config
 import (
 	"crypto/x509"
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/pkg/certificate"
 	"github.com/massalabs/station/pkg/certificate/store"
+	"github.com/massalabs/station/pkg/dirs"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/nss"
 )
@@ -19,19 +21,39 @@ const failureConsequence = "Station will only work using http, or you will have 
 func Check() error {
 	var resultErr error
 
-	caRootPath, err := configuration.CAPath()
+	caRootPath, err := dirs.GetCertDir()
 	if err != nil {
 		return caNonBlockingError("failed to get CA path", err)
 	}
 
 	certPath := filepath.Join(caRootPath, configuration.CertificateAuthorityFileName)
 
+	isBrandNewCA := false
+
+	_, err = os.Stat(certPath)
+	if os.IsNotExist(err) {
+		err = certificate.GenerateCA(
+			configuration.OrganizationName,
+			configuration.CertificateAuthorityKeyFileName,
+			configuration.CertificateAuthorityFileName,
+			caRootPath,
+		)
+		if err != nil {
+			return caNonBlockingError("failed to generate new CA", err)
+		}
+
+		logger.Infof("A new CA was generated at %s.", certPath)
+
+		// A new CA was generated, we need to clean the certificates.
+		isBrandNewCA = true
+	}
+
 	err = checkCertificate(certPath)
 	if err != nil {
 		resultErr = caNonBlockingError("Error while checking certificate", err)
 	}
 
-	err = checkNSS(certPath)
+	err = checkNSS(certPath, isBrandNewCA)
 	if err != nil {
 		resultErr = caNonBlockingError("Error while checking NSS", err)
 	}
@@ -83,15 +105,15 @@ func checkCertificate(certPath string) error {
 type NSSManagerLogger struct{}
 
 func (m *NSSManagerLogger) Debugf(msg string, args ...interface{}) {
-	logger.Debugf(msg, args)
+	logger.Debugf(msg, args...)
 }
 
 func (m *NSSManagerLogger) Errorf(msg string, args ...interface{}) {
-	logger.Errorf(msg, args)
+	logger.Errorf(msg, args...)
 }
 
 // checkNSS checks the NSS configuration.
-func checkNSS(certPath string) error {
+func checkNSS(certPath string, isBrandNewCA bool) error {
 	runner, err := nss.NewCertUtilRunner()
 	if err != nil {
 		return fmt.Errorf("failed to instantiate the certutil runner: %w", err)
@@ -108,6 +130,18 @@ func checkNSS(certPath string) error {
 	err = manager.AppendDefaultNSSDatabasePaths()
 	if err != nil {
 		return fmt.Errorf("failed to append default NSS database paths: %w", err)
+	}
+
+	if isBrandNewCA {
+		// If we have a brand new CA, we need to delete it from NSS
+		// because a CA may already exist with the same name but
+		// with a different certificate.
+		err = manager.DeleteCA(configuration.CertificateAuthorityName)
+		if err != nil {
+			logger.Debug("failed to delete the CA from NSS", err)
+		} else {
+			logger.Debug("the CA was deleted from NSS.")
+		}
 	}
 
 	if !manager.HasCA(configuration.CertificateAuthorityName) {

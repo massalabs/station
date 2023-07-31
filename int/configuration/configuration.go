@@ -8,6 +8,14 @@ import (
 	"runtime"
 )
 
+// Constants for CA-related files and names.
+const (
+	CertificateAuthorityName        = "massaStation"
+	CertificateAuthorityFileName    = "rootCA.pem"
+	CertificateAuthorityKeyFileName = "rootCA-key.pem"
+	OrganizationName                = "MassaLabs"
+)
+
 //nolint:lll
 const errMsgPath = "configuration path detection is not supported, use the MASSA_HOME environment variable to specify its location"
 

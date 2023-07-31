@@ -26,5 +26,4 @@ func NewCertUtilRunner() (*CertUtilRunner, error) {
 	}
 
 	return &CertUtilRunner{binaryPath: certutilBinaryPath}, nil
-
 }

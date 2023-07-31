@@ -46,7 +46,7 @@ type Manager struct {
 
 // NewManager instantiates a manager struct.
 func NewManager() *Manager {
-	//nolint:exhaust,exhaustruct
+	//nolint:exhaustruct
 	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string)}
 
 	return manager
