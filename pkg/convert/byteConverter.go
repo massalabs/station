@@ -123,5 +123,5 @@ func BytesToU256(bytes []byte) (*big.Int, error) {
 	// Create a big.Int and set its bytes representation
 	u256Value := new(big.Int).SetBytes(reversedBytes)
 
-	return u256Value , nil
+	return u256Value, nil
 }
