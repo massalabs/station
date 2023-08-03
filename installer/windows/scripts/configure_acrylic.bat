@@ -8,7 +8,6 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 
 SET "acrylic_config_host=C:\Program Files (x86)\Acrylic DNS Proxy\AcrylicHosts.txt"
 SET "acrylic_configuration=C:\Program Files (x86)\Acrylic DNS Proxy\AcrylicConfiguration.ini"
-SET "target_file=C:\Program Files (x86)\Acrylic DNS Proxy\AcrylicConfiguration.ini"
 
 :: If it doesn't exist, create it
 if not exist "%acrylic_config_host%" (
@@ -26,8 +25,7 @@ if %errorlevel%==0 (
 )
 
 :: change LocalIPv4BindingAddress to 127.0.0.1
-findstr /V "LocalIPv4BindingAddress" "%acrylic_configuration%" > temp.txt
-MOVE /Y temp.txt "%acrylic_configuration%"
+findstr /V "LocalIPv4BindingAddress" "%acrylic_configuration%" > %acrylic_configuration%
 ECHO. >> "%acrylic_configuration%"
 ECHO LocalIPv4BindingAddress=127.0.0.1 >> "%acrylic_configuration%"
 
