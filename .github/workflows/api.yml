@@ -10,57 +10,57 @@ jobs:
   build-release:
     uses: ./.github/workflows/build.yml
 
-  # test-api-robot:
-  #   needs: build-release
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: installing Linux dependencies (workaround for wallet plugin)
-  #       run: |
-  #         sudo apt update
-  #         sudo apt install libwebkit2gtk-4.0-dev
-  #     - name: Checkout project directory
-  #       uses: actions/checkout@v3
-  #     - name: Install RobotFramework tests dependencies
-  #       working-directory: api/test
-  #       run: |
-  #         pip install -r requirements.txt
-  #         sudo apt install xvfb
-  #     - name: Download MassaStation binary
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: massastation_linux_amd64_bin
-  #     - name: Prepare MassaStation binary
-  #       run: |
-  #         mv massastation_linux_amd64 massastation
-  #         sudo chmod +x massastation
-  #         sudo setcap CAP_NET_BIND_SERVICE=+eip ./massastation
-  #     - name: Create wallet from secret
-  #       run: |
-  #         sudo mkdir -p /usr/local/share/massastation/
-  #         sudo chmod 777 /usr/local/share/massastation/
-  #         sudo mkdir -p /usr/local/share/massastation/logs/
-  #         sudo chmod 777 /usr/local/share/massastation/logs/
-  #         mkdir -p /usr/local/share/massastation/plugins/wallet-plugin
-  #         sudo mkdir -p /etc/massastation/certs
-  #         sudo chmod 777 /etc/massastation/
-  #         echo "$WALLET_TEST_WALLET" > /usr/local/share/massastation/plugins/wallet-plugin/wallet_fullpower.yaml
-  #       env:
-  #         WALLET_TEST_WALLET: ${{ secrets.WALLET_TEST_WALLET }}
-  #     - name: Running Massastation
-  #       run: xvfb-run ./massastation --node-server $NODE_SERVER > logs.txt &
-  #       env:
-  #         WALLET_PASSWORD: ${{ secrets.WALLET_TEST_PASSWORD }}
-  #     - name: Define station.massa
-  #       run: sudo echo "127.0.0.1 station.massa" | sudo tee -a /etc/hosts
-  #     - name: Wait for server to be up
-  #       uses: juliangruber/sleep-action@v1
-  #       with:
-  #         time: 5s
-  #     - name: Run RobotFramework tests
-  #       working-directory: api/test
-  #       run: |
-  #         mkdir results
-  #         robot --outputdir results robot_tests
-  #     - name: Print logs
-  #       if: always()
-  #       run: cat logs.txt
+  test-api-robot:
+    needs: build-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: installing Linux dependencies (workaround for wallet plugin)
+        run: |
+          sudo apt update
+          sudo apt install libwebkit2gtk-4.0-dev
+      - name: Checkout project directory
+        uses: actions/checkout@v3
+      - name: Install RobotFramework tests dependencies
+        working-directory: api/test
+        run: |
+          pip install -r requirements.txt
+          sudo apt install xvfb
+      - name: Download MassaStation binary
+        uses: actions/download-artifact@v3
+        with:
+          name: massastation_linux_amd64_bin
+      - name: Prepare MassaStation binary
+        run: |
+          mv massastation_linux_amd64 massastation
+          sudo chmod +x massastation
+          sudo setcap CAP_NET_BIND_SERVICE=+eip ./massastation
+      - name: Create wallet from secret
+        run: |
+          sudo mkdir -p /usr/local/share/massastation/
+          sudo chmod 777 /usr/local/share/massastation/
+          sudo mkdir -p /usr/local/share/massastation/logs/
+          sudo chmod 777 /usr/local/share/massastation/logs/
+          mkdir -p /usr/local/share/massastation/plugins/wallet-plugin
+          sudo mkdir -p /etc/massastation/certs
+          sudo chmod 777 /etc/massastation/
+          echo "$WALLET_TEST_WALLET" > /usr/local/share/massastation/plugins/wallet-plugin/wallet_fullpower.yaml
+        env:
+          WALLET_TEST_WALLET: ${{ secrets.WALLET_TEST_WALLET }}
+      - name: Running Massastation
+        run: xvfb-run ./massastation --node-server $NODE_SERVER > logs.txt &
+        env:
+          WALLET_PASSWORD: ${{ secrets.WALLET_TEST_PASSWORD }}
+      - name: Define station.massa
+        run: sudo echo "127.0.0.1 station.massa" | sudo tee -a /etc/hosts
+      - name: Wait for server to be up
+        uses: juliangruber/sleep-action@v1
+        with:
+          time: 5s
+      - name: Run RobotFramework tests
+        working-directory: api/test
+        run: |
+          mkdir results
+          robot --outputdir results robot_tests
+      - name: Print logs
+        if: always()
+        run: cat logs.txt
