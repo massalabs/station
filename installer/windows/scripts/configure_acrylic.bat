@@ -25,7 +25,8 @@ if %errorlevel%==0 (
 )
 
 :: change LocalIPv4BindingAddress to 127.0.0.1
-findstr /V "LocalIPv4BindingAddress" "%acrylic_configuration%" > %acrylic_configuration%
+FINDSTR /V "LocalIPv4BindingAddress" "%acrylic_configuration%" > temp.txt
+MOVE /Y temp.txt "%acrylic_configuration%"
 ECHO. >> "%acrylic_configuration%"
 ECHO LocalIPv4BindingAddress=127.0.0.1 >> "%acrylic_configuration%"
 
