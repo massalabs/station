@@ -22,7 +22,7 @@ MassaStation is a module manager. It enables everyone to use, create and enjoy d
 
 #### Install a module
 
-You can install modules that were validated by Massa Labs from the [Module Store](https://station.massa/store/).
+You can install modules that were validated by Massa Labs from the [Module Store](https://station.massa/web/store).
 
 The module will be automatically installed and activated after a few seconds directly in your Station. Browse MassaStation store to find the module you need.
 
@@ -31,7 +31,7 @@ The module will be automatically installed and activated after a few seconds dir
 If you are working on a module, you can install it manually to test it using MassaStation:
 
 1. Get the `.zip` file download URL of the module you want to install. Make sure this URL matches the version of MassaStation you are using, your computer OS and architecture.
-2. Paste the URL in the `Install a plugin` field of the [module manager page](https://station.massa/store/).
+2. Paste the URL in the `Install a plugin` field of the [module manager page](https://station.massa/web/store).
 3. Click on the `Install` button.
 
 > **Note:** A complete guide on how to create a module will be available soon.
