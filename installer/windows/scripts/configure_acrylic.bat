@@ -17,19 +17,17 @@ if not exist "%acrylic_config_host%" (
     ECHO # >> "%acrylic_config_host%"
 )
 
+:: change LocalIPv4BindingAddress to 127.0.0.1
+findstr /V "LocalIPv4BindingAddress" "%acrylic_configuration%" > %acrylic_configuration%
+ECHO. >> "%acrylic_configuration%"
+ECHO LocalIPv4BindingAddress=127.0.0.1 >> "%acrylic_configuration%"
+
 :: Check if the TLD is already in the file
 FINDSTR /c:".massa" "%acrylic_config_host%" >nul 2>&1
 if %errorlevel%==0 (
     ECHO TLD already in the file
     EXIT 0
 )
-
-:: change LocalIPv4BindingAddress to 127.0.0.1
-FINDSTR /V "LocalIPv4BindingAddress" "%acrylic_configuration%" > temp.txt
-MOVE /Y temp.txt "%acrylic_configuration%"
-ECHO. >> "%acrylic_configuration%"
-ECHO LocalIPv4BindingAddress=127.0.0.1 >> "%acrylic_configuration%"
-
 
 :: Add the TLD to the file
 ECHO: >> "%acrylic_config_host%"
