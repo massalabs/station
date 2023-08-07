@@ -103,7 +103,7 @@ To contribute to MassaStation, you'll need to set up your development environmen
 3. Install Task
 Follow the installation instructions here: [task-install](https://taskfile.dev/installation/).
 
-On Windows, we recommend to run `go install github.com/go-task/task/v3/cmd/task@latest` and yo use task commands in a git bash terminal.
+On Windows, we recommend to run `go install github.com/go-task/task/v3/cmd/task@latest` and you use task commands in a git bash terminal.
 
 4. **Install Dependencies:**
    - **Ubuntu:** Install the following system dependencies using `apt`:
@@ -158,3 +158,8 @@ For the Go back-end code, we use `golangci-lint` to perform linting and ensure c
     ```
 
 Following these linting and formatting guidelines will ensure a consistent code style and maintain the overall code quality of MassaStation.
+
+### Developer guide
+
+If you want to change the network to which Massa Station will connect and the DNS contract address you can change the file
+`int/config/config_network.yaml` and compile Massa Station again with `task build`.
