@@ -322,6 +322,14 @@ def create_wxs_file():
             Return="check"
         />
         <CustomAction
+            Id="RollbackAcrylicInstall"
+            Directory="AcrylicDNSProxy"
+            ExeCommand="cmd /c &quot;[AcrylicDNSProxy]UninstallAcrylicService.bat&quot;"
+            Execute="rollback"
+            Impersonate="no"
+            Return="ignore"
+        />
+        <CustomAction
             Id="ConfigureAcrylic"
             Directory="INSTALLDIR"
             ExeCommand="cmd /c &quot;[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
@@ -337,6 +345,15 @@ def create_wxs_file():
             Impersonate="no"
             Return="check"
         />
+        <CustomAction
+            Id="RollbackNetworkInterface"
+            Directory="INSTALLDIR"
+            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_RESET_SCRIPT}&quot;"
+            Execute="rollback"
+            Impersonate="no"
+            Return="ignore"
+        />
+        
         <CustomAction
             Id="UninstallAcrylic"
             Directory="AcrylicDNSProxy"
@@ -374,8 +391,10 @@ def create_wxs_file():
             <Custom Action="ExtractMartools" Before="ExtractAcrylic">NOT Installed</Custom>
             <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed</Custom>
             <Custom Action="InstallAcrylic" Before="ConfigureAcrylic">NOT Installed</Custom>
+            <Custom Action="RollbackAcrylicInstall" Before="InstallAcrylic">NOT Installed</Custom>
             <Custom Action="ConfigureAcrylic" Before="ConfigureNetworkInterface">NOT Installed</Custom>
             <Custom Action="ConfigureNetworkInterface" Before="DeleteAcrylicZip">NOT Installed</Custom>
+            <Custom Action="RollbackNetworkInterface" Before="ConfigureNetworkInterface">NOT Installed</Custom>
             <Custom Action="DeleteAcrylicZip" Before="InstallFinalize">NOT Installed</Custom>
             <Custom Action="DeleteMartoolsZip" Before="InstallFinalize">NOT Installed</Custom>
 
