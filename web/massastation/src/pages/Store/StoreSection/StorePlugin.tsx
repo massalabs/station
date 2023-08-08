@@ -20,6 +20,7 @@ function StorePlugin(props: StorePluginProps) {
     logo,
     description,
     file: { url },
+    iscompatible,
   } = plugin;
 
   const {
@@ -38,7 +39,9 @@ function StorePlugin(props: StorePluginProps) {
 
   const argsStore = {
     preIcon: <img src={logo} alt="plugin-logo" />,
-    topAction: <FiDownload onClick={() => mutate({ params })} />,
+    topAction: (
+      <FiDownload onClick={() => !iscompatible && mutate({ params })} />
+    ),
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,

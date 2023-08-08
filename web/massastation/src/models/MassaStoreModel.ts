@@ -7,6 +7,7 @@ export interface MassaStoreModel {
   logo: string;
   file: pluginStoreItemFile;
   os: string;
+  iscompatible: boolean;
 }
 
 export interface pluginStoreItemFile {
