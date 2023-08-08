@@ -74,6 +74,10 @@ func (c *CallSC) Message() []byte {
 	nbBytes = binary.PutUvarint(buf, c.coins)
 	msg = append(msg, buf[:nbBytes]...)
 
+	// target address length
+	nbBytes = binary.PutUvarint(buf, uint64(len(c.address)))
+	msg = append(msg, buf[:nbBytes]...)
+
 	// target address
 	msg = append(msg, c.address...)
 
