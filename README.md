@@ -35,15 +35,3 @@ If you are working on a module, you can install it manually to test it using Mas
 3. Click on the `Install` button.
 
 > **Note:** A complete guide on how to create a module will be available soon.
-
-### Network
-
-MassaStation can be configured to use your own node or one of Massa's networks. To do so, you have to use the `--node-server` option. This option accepts a URL, an IP address or one of the following values :
-
-- `TESTNET` : Connects MassaStation to a node running on Massa's testnet. This is the default value.
-- `LABNET` : Connects MassaStation to a node running on Massa's labnet.
-- `BUILDNET` : Connects MassaStation to a node running on Massa's buildnet.
-- `LOCALHOST` : Connects MassaStation to the node running on the same machine as MassaStation, and so, available at `127.0.0.1`.
-
-It is also possible to use a custom IP address or URL:
-`massastation --node-server={IP_ADDRESS}`

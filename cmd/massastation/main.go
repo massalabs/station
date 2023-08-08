@@ -34,9 +34,6 @@ func ParseFlags() api.StartServerFlags {
 
 	flag.IntVar(&flags.Port, "http-port", httpPort, "HTTP port to listen to")
 	flag.IntVar(&flags.TLSPort, "https-port", httpsPort, "HTTPS port to listen to")
-	flag.StringVar(&flags.MassaNodeServer, "node-server", "TESTNET", `Massa node that MassaStation connects to. 
-	Can be an IP address, a URL or one of the following values: 'TESTNET', 'LABNET', 'BUILDNET' or LOCALHOST`)
-	flag.StringVar(&flags.DNSAddress, "dns-address", "", "Address of the DNS contract on the blockchain")
 	flag.BoolVar(&flags.Version, "version", false, "Print version info and exit")
 
 	flag.Parse()

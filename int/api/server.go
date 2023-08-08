@@ -27,8 +27,6 @@ type StartServerFlags struct {
 	TLSPort           int
 	TLSCertificate    string
 	TLSCertificateKey string
-	MassaNodeServer   string
-	DNSAddress        string
 	Version           bool
 }
 

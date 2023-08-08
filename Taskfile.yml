@@ -66,9 +66,9 @@ tasks:
 
   run:
     cmds:
-      - cmd: ./build/massastation/massastation -node-server BUILDNET
+      - cmd: ./build/massastation/massastation
         platforms: [linux, darwin]
-      - cmd: ./build/massastation/massastation.exe -node-server BUILDNET
+      - cmd: ./build/massastation/massastation.exe
         platforms: [windows]
 
   build-run:
