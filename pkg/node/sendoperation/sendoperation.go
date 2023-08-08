@@ -1,6 +1,7 @@
 package sendoperation
 
 import (
+	"bytes"
 	"context"
 	b64 "encoding/base64"
 	"encoding/binary"
@@ -46,6 +47,15 @@ type OperationBatch struct {
 	CorrelationID string
 }
 
+type CallSCFromSign struct {
+	OperationID uint64
+	GasLimit    uint64
+	Coins       uint64
+	Address     string
+	Function    string
+	Parameters  []byte
+}
+
 type JSONableSlice []uint8
 
 func (u JSONableSlice) MarshalJSON() ([]byte, error) {
@@ -73,7 +83,27 @@ func Call(client *node.Client,
 	if err != nil {
 		return nil, err
 	}
+	/////////////////
+	// Just For test
+	// To Delete
 
+	params, err := GetCallSCFromSign(msgB64)
+	if err != nil {
+		fmt.Println("🚀 ~ file: sendoperation.go:93 ~ err:", err)
+	} else {
+		if params != nil {
+			// Print the fields of CallSCFromSign
+			fmt.Println("🚀 ~ file: sendoperation.go:90 ~ Print the fields of CallSCFromSign:")
+			fmt.Println("🚀 ~ file: sendoperation.go:92 ~ callSC.GasLimit:", params.GasLimit)
+			fmt.Println("🚀 ~ file: sendoperation.go:94 ~ callSC.Coins:", params.Coins)
+			fmt.Println("🚀 ~ file: sendoperation.go:96 ~ callSC.Address:", params.Address)
+			fmt.Println("🚀 ~ file: sendoperation.go:98 ~ callSC.Function:", params.Function)
+		} else {
+			fmt.Println("🚀 ~ file: sendoperation.go:98 ~ params is nil")
+		}
+	}
+	/////////////////
+	//////////////////////
 	var content string
 
 	switch {
@@ -175,4 +205,111 @@ func message(expiry uint64, fee uint64, operation Operation) []byte {
 	msg = append(msg, operation.Message()...)
 
 	return msg
+}
+
+func DecodeMessage64(msgB64 string) ([]byte, error) {
+	// Decode the base64-encoded message
+	decodedMsg, err := b64.StdEncoding.DecodeString(msgB64)
+	if err != nil {
+		return nil, fmt.Errorf("base64 decoding error: %w", err)
+	}
+
+	// Read the encoded fee from the decoded message and move the buffer index
+	_, bytesRead := binary.Uvarint(decodedMsg)
+	if bytesRead <= 0 {
+		return nil, fmt.Errorf("failed to read fee")
+	}
+	decodedMsg = decodedMsg[bytesRead:]
+
+	// Read the encoded expiry from the decoded message and move the buffer index
+	_, bytesRead = binary.Uvarint(decodedMsg)
+	if bytesRead <= 0 {
+		return nil, fmt.Errorf("failed to read expiry")
+	}
+	decodedMsg = decodedMsg[bytesRead:]
+
+	// At this point, 'decodedMsg' contains the remaining part of the message
+	// which is the 'operation.Message()' part
+	return decodedMsg, nil
+}
+
+func DecodeCallSCMessage(data []byte) (*CallSCFromSign, error) {
+	c := &CallSCFromSign{}
+	buf := bytes.NewReader(data)
+
+	// Read operationId
+	callSCOpID, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read CallSCOpID: %w", err)
+	}
+	c.OperationID = callSCOpID
+
+	// Read maxGas
+	gasLimit, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read gasLimit: %w", err)
+	}
+	c.GasLimit = gasLimit
+
+	// Read Coins
+	coins, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read coins: %w", err)
+	}
+	c.Coins = coins
+
+	// Read target address length
+	addressLength, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read address length: %w", err)
+	}
+	address := make([]byte, addressLength)
+	_, err = buf.Read(address)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read address: %w", err)
+	}
+	const versionByte = byte(1)
+	c.Address = "AS" + base58.VersionedCheckEncode(address, versionByte)
+
+	// Read target function length
+	functionLength, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read function length: %w", err)
+	}
+	functionBytes := make([]byte, functionLength)
+	_, err = buf.Read(functionBytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read function: %w", err)
+	}
+	c.Function = string(functionBytes)
+
+	// Read param length
+	paramLength, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read param length: %w", err)
+	}
+	parameters := make([]byte, paramLength)
+	_, err = buf.Read(parameters)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read parameters: %w", err)
+	}
+	c.Parameters = parameters
+
+	return c, nil
+}
+
+func GetCallSCFromSign(msgB64 string) (*CallSCFromSign, error) {
+	decodedMsg, err := DecodeMessage64(msgB64)
+	if err != nil {
+		fmt.Println("Error decoding message:", err)
+		return nil, err
+	}
+
+	callSC, err := DecodeCallSCMessage(decodedMsg)
+	if err != nil {
+		fmt.Println("Error decoding CallSC:", err)
+		return nil, err
+	}
+
+	return callSC, nil
 }
