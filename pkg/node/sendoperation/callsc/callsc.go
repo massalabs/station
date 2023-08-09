@@ -51,7 +51,8 @@ func (c *CallSC) Content() interface{} {
 		CallSC: OperationDetails{
 			MaxGas:     int64(c.gasLimit),
 			Coins:      fmt.Sprint(c.coins),
-			TargetAddr: "AS" + base58.VersionedCheckEncode(c.address, versionByte),
+			TargetAddr: "AS" + base58.VersionedCheckEncode(c.address, versionByte), // base58.VersionedCheckEncode(c.address, versionByte)
+			// base58.CheckEncode(addr[:], AddressVersion)
 			TargetFunc: c.function,
 			Param:      c.parameters,
 		},

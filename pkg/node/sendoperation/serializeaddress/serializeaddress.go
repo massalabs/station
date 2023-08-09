@@ -1,8 +1,10 @@
 package serializeaddress
 
 import (
+	"errors"
 	"fmt"
 
+	utils "github.com/btcsuite/btcutil/base58"
 	"github.com/massalabs/station/pkg/node/base58"
 )
 
@@ -28,4 +30,26 @@ func SerializeAddress(addr string) ([]byte, error) {
 	result = append(result, version)
 
 	return append(result, addressBytes...), nil
+}
+
+func DeserializeAddress(versionedAddress []byte) (string, error) {
+	if len(versionedAddress) < 2 {
+		return "", errors.New("invalid versioned address length")
+	}
+
+	prefixByte := versionedAddress[0]
+	addressBytes := versionedAddress[2:] // Skip the version byte
+
+	var addressPrefix string
+	if prefixByte == 0 {
+		addressPrefix = "AU"
+	} else if prefixByte == 1 {
+		addressPrefix = "AS"
+	} else {
+		return "", errors.New("unknown address prefix")
+	}
+
+	addressWithoutPrefix := utils.CheckEncode(addressBytes, versionedAddress[1])
+
+	return addressPrefix + addressWithoutPrefix, nil
 }

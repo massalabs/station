@@ -10,6 +10,7 @@ import (
 
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/node/base58"
+	utils "github.com/massalabs/station/pkg/node/sendoperation/serializeaddress"
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 )
 
@@ -219,6 +220,7 @@ func DecodeMessage64(msgB64 string) ([]byte, error) {
 	if bytesRead <= 0 {
 		return nil, fmt.Errorf("failed to read fee")
 	}
+
 	decodedMsg = decodedMsg[bytesRead:]
 
 	// Read the encoded expiry from the decoded message and move the buffer index
@@ -226,6 +228,7 @@ func DecodeMessage64(msgB64 string) ([]byte, error) {
 	if bytesRead <= 0 {
 		return nil, fmt.Errorf("failed to read expiry")
 	}
+
 	decodedMsg = decodedMsg[bytesRead:]
 
 	// At this point, 'decodedMsg' contains the remaining part of the message
@@ -233,6 +236,7 @@ func DecodeMessage64(msgB64 string) ([]byte, error) {
 	return decodedMsg, nil
 }
 
+//nolint:funlen
 func DecodeCallSCMessage(data []byte) (*CallSCFromSign, error) {
 	c := &CallSCFromSign{}
 	buf := bytes.NewReader(data)
@@ -268,9 +272,13 @@ func DecodeCallSCMessage(data []byte) (*CallSCFromSign, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read address: %w", err)
 	}
-	const versionByte = byte(1)
-	c.Address = "AS" + base58.VersionedCheckEncode(address, versionByte)
 
+	addressString, err := utils.DeserializeAddress(address)
+	if err != nil {
+		return nil, fmt.Errorf("failed to deserialize address: %w", err)
+	}
+
+	c.Address = addressString
 	// Read target function length
 	functionLength, err := binary.ReadUvarint(buf)
 	if err != nil {
@@ -302,12 +310,14 @@ func GetCallSCFromSign(msgB64 string) (*CallSCFromSign, error) {
 	decodedMsg, err := DecodeMessage64(msgB64)
 	if err != nil {
 		fmt.Println("Error decoding message:", err)
+
 		return nil, err
 	}
 
 	callSC, err := DecodeCallSCMessage(decodedMsg)
 	if err != nil {
 		fmt.Println("Error decoding CallSC:", err)
+
 		return nil, err
 	}
 
