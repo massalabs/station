@@ -40,7 +40,8 @@ func DeserializeAddress(versionedAddress []byte) (string, error) {
 	}
 
 	prefixByte := versionedAddress[0]
-	addressBytes := versionedAddress[2:] // Skip the version byte
+	addressVersion := versionedAddress[1]
+	addressBytes := versionedAddress[2:]
 
 	var addressPrefix string
 
@@ -53,7 +54,7 @@ func DeserializeAddress(versionedAddress []byte) (string, error) {
 		return "", errors.New("unknown address prefix")
 	}
 
-	addressWithoutPrefix := utils.CheckEncode(addressBytes, versionedAddress[1])
+	addressWithoutPrefix := utils.CheckEncode(addressBytes, addressVersion)
 
 	return addressPrefix + addressWithoutPrefix, nil
 }

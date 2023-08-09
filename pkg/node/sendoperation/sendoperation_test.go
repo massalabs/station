@@ -33,7 +33,7 @@ func TestSerializeDeserializeCallSCMessage(t *testing.T) {
 		t.Fatalf("Error decoding message: %v", err)
 	}
 
-	callSC, err := callsc.DecodeCallSCMessage(decodedMsg)
+	callSC, err := callsc.DecodeMessage(decodedMsg)
 	if err != nil {
 		t.Fatalf("Error decoding CallSC: %v", err)
 	}

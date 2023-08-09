@@ -107,7 +107,7 @@ func (c *CallSC) Message() []byte {
 }
 
 //nolint:funlen, cyclop
-func DecodeCallSCMessage(data []byte) (*MessageContent, error) {
+func DecodeMessage(data []byte) (*MessageContent, error) {
 	callSCContent := &MessageContent{}
 	buf := bytes.NewReader(data)
 
