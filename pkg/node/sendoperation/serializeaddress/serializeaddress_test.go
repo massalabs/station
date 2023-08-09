@@ -79,7 +79,6 @@ func TestDeserializeAddress(t *testing.T) {
 			expectedAddress: "AU1MPDRXuR22mwYDFCeZUDgYjcTAF1co6xujx2X6ugoHeYeGY3B5",
 			expectError:     false,
 		},
-		// Add more test cases for DeserializeAddress
 	}
 
 	for _, testCase := range testCases {
