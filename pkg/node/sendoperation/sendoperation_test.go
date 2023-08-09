@@ -7,7 +7,7 @@ import (
 	"github.com/massalabs/station/pkg/node/sendoperation/callsc"
 )
 
-func TestCallSerialization(t *testing.T) {
+func TestSerializeDeserializeCallSCMessage(t *testing.T) {
 	// Create some example data
 	expiry := uint64(123456)
 	fee := uint64(789)
