@@ -5,57 +5,54 @@ import (
 	"testing"
 
 	"github.com/massalabs/station/pkg/node/sendoperation/callsc"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSerializeDeserializeCallSCMessage(t *testing.T) {
-	// Create some example data
-	expiry := uint64(123456)
-	fee := uint64(789)
-	address := "AU1MPDRXuR22mwYDFCeZUDgYjcTAF1co6xujx2X6ugoHeYeGY3B5"
-	function := "exampleFunction"
-	parameters := []byte("exampleParameters")
-	gasLimit := uint64(1000000)
-	coins := uint64(12345)
+	assert := assert.New(t)
 
-	// Create a new CallSC operation
-	operation, err := callsc.New(address, function, parameters, gasLimit, coins)
-	if err != nil {
-		t.Fatalf("Failed to create CallSC operation: %v", err)
+	testestcaseases := []struct {
+		expiry     uint64
+		fee        uint64
+		address    string
+		function   string
+		parameters []byte
+		gasLimit   uint64
+		coins      uint64
+	}{
+		{
+			expiry:     uint64(123456),
+			fee:        uint64(789),
+			address:    "AU1MPDRXuR22mwYDFCeZUDgYjcTAF1co6xujx2X6ugoHeYeGY3B5",
+			function:   "exampleFunction",
+			parameters: []byte("exampleParameters"),
+			gasLimit:   uint64(1000000),
+			coins:      uint64(12345),
+		},
 	}
 
-	// Serialize the operation
-	msg := message(expiry, fee, operation)
-	msgB64 := base64.StdEncoding.EncodeToString(msg)
+	for _, testcase := range testestcaseases {
+		// Create a new CallSC operation
+		operation, err := callsc.New(testcase.address, testcase.function, testcase.parameters,
+			testcase.gasLimit, testcase.coins)
+		assert.NoError(err, "Failed to create CallSC operation")
 
-	// Simulate decoding and deserialization
-	decodedMsg, err := DecodeMessage64(msgB64)
-	if err != nil {
-		t.Fatalf("Error decoding message: %v", err)
-	}
+		// Serialize the operation
+		msg := message(testcase.expiry, testcase.fee, operation)
+		msgB64 := base64.StdEncoding.EncodeToString(msg)
 
-	callSC, err := callsc.DecodeMessage(decodedMsg)
-	if err != nil {
-		t.Fatalf("Error decoding CallSC: %v", err)
-	}
+		// Simulate decoding and deserialization
+		decodedMsg, err := DecodeMessage64(msgB64)
+		assert.NoError(err, "Error decoding message")
 
-	// Verify the fields
-	if callSC.Address != address {
-		t.Errorf("Address mismatch: expected %s, got %s", address, callSC.Address)
-	}
+		callSC, err := callsc.DecodeMessage(decodedMsg)
+		assert.NoError(err, "Error decoding CallSC")
 
-	if callSC.Function != function {
-		t.Errorf("Function mismatch: expected %s, got %s", function, callSC.Function)
-	}
-
-	if string(callSC.Parameters) != string(parameters) {
-		t.Errorf("Parameters mismatch: expected %v, got %v", parameters, callSC.Parameters)
-	}
-
-	if callSC.GasLimit != gasLimit {
-		t.Errorf("GasLimit mismatch: expected %d, got %d", gasLimit, callSC.GasLimit)
-	}
-
-	if callSC.Coins != coins {
-		t.Errorf("Coins mismatch: expected %d, got %d", coins, callSC.Coins)
+		// Verify the fields
+		assert.Equal(testcase.address, callSC.Address, "Address mismatestcaseh")
+		assert.Equal(testcase.function, callSC.Function, "Function mismatestcaseh")
+		assert.Equal(testcase.parameters, callSC.Parameters, "Parameters mismatestcaseh")
+		assert.Equal(testcase.gasLimit, callSC.GasLimit, "GasLimit mismatestcaseh")
+		assert.Equal(testcase.coins, callSC.Coins, "Coins mismatestcaseh")
 	}
 }
