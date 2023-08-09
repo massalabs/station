@@ -23,7 +23,7 @@ type Operation struct {
 	CallSC OperationDetails `json:"CallSC"`
 }
 
-type FromSign struct {
+type MessageContent struct {
 	OperationID uint64
 	GasLimit    uint64
 	Coins       uint64
@@ -107,8 +107,8 @@ func (c *CallSC) Message() []byte {
 }
 
 //nolint:funlen, cyclop
-func DecodeCallSCMessage(data []byte) (*FromSign, error) {
-	callSCContent := &FromSign{}
+func DecodeCallSCMessage(data []byte) (*MessageContent, error) {
+	callSCContent := &MessageContent{}
 	buf := bytes.NewReader(data)
 
 	// Read operationId
