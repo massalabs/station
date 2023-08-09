@@ -64,3 +64,39 @@ func bytesEqual(byteA, byteB []byte) bool {
 
 	return true
 }
+
+func TestDeserializeAddress(t *testing.T) {
+	testCases := []struct {
+		versionedAddress []byte
+		expectedAddress  string
+		expectError      bool
+	}{
+		{
+			versionedAddress: []byte{
+				0, 0, 46, 72, 55, 221, 83, 31, 169, 208, 41, 146, 210, 82, 27, 34, 114, 141, 159, 245, 209, 189, 40, 141, 126,
+				123, 156, 223, 187, 205, 64, 236, 40, 184,
+			},
+			expectedAddress: "AU1MPDRXuR22mwYDFCeZUDgYjcTAF1co6xujx2X6ugoHeYeGY3B5",
+			expectError:     false,
+		},
+		// Add more test cases for DeserializeAddress
+	}
+
+	for _, testCase := range testCases {
+		address, err := DeserializeAddress(testCase.versionedAddress)
+		if testCase.expectError {
+			if err == nil {
+				t.Errorf("Expected an error but did not receive one for versioned address %v", testCase.versionedAddress)
+			}
+		} else {
+			if err != nil {
+				t.Errorf("Received an unexpected error %v for versioned address %v", err, testCase.versionedAddress)
+			}
+
+			if address != testCase.expectedAddress {
+				t.Errorf("Address mismatch for versioned address %v: expected %s, but got %s",
+					testCase.versionedAddress, testCase.expectedAddress, address)
+			}
+		}
+	}
+}

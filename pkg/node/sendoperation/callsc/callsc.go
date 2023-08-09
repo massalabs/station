@@ -1,16 +1,14 @@
 package callsc
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 
-	"github.com/massalabs/station/pkg/node/base58"
-	serializeAddress "github.com/massalabs/station/pkg/node/sendoperation/serializeaddress"
+	utils "github.com/massalabs/station/pkg/node/sendoperation/serializeaddress"
 )
 
 const CallSCOpID = uint64(4)
-
-const versionByte = byte(1)
 
 type OperationDetails struct {
 	MaxGas     int64       `json:"max_gas"`
@@ -25,6 +23,15 @@ type Operation struct {
 	CallSC OperationDetails `json:"CallSC"`
 }
 
+type FromSign struct {
+	OperationID uint64
+	GasLimit    uint64
+	Coins       uint64
+	Address     string
+	Function    string
+	Parameters  []byte
+}
+
 type CallSC struct {
 	address    []byte
 	function   string
@@ -35,7 +42,7 @@ type CallSC struct {
 
 func New(address string, function string, parameters []byte, gasLimit uint64, coins uint64,
 ) (*CallSC, error) {
-	versionedAddress, err := serializeAddress.SerializeAddress(address)
+	versionedAddress, err := utils.SerializeAddress(address)
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare address: %w", err)
 	}
@@ -47,12 +54,16 @@ func New(address string, function string, parameters []byte, gasLimit uint64, co
 }
 
 func (c *CallSC) Content() interface{} {
+	addressString, err := utils.DeserializeAddress(c.address)
+	if err != nil {
+		return nil
+	}
+
 	return &Operation{
 		CallSC: OperationDetails{
 			MaxGas:     int64(c.gasLimit),
 			Coins:      fmt.Sprint(c.coins),
-			TargetAddr: "AS" + base58.VersionedCheckEncode(c.address, versionByte), // base58.VersionedCheckEncode(c.address, versionByte)
-			// base58.CheckEncode(addr[:], AddressVersion)
+			TargetAddr: addressString,
 			TargetFunc: c.function,
 			Param:      c.parameters,
 		},
@@ -93,4 +104,85 @@ func (c *CallSC) Message() []byte {
 	msg = append(msg, c.parameters...)
 
 	return msg
+}
+
+//nolint:funlen, cyclop
+func DecodeCallSCMessage(data []byte) (*FromSign, error) {
+	callSCContent := &FromSign{}
+	buf := bytes.NewReader(data)
+
+	// Read operationId
+	callSCOpID, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read CallSCOpID: %w", err)
+	}
+
+	callSCContent.OperationID = callSCOpID
+
+	// Read maxGas
+	gasLimit, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read gasLimit: %w", err)
+	}
+
+	callSCContent.GasLimit = gasLimit
+
+	// Read Coins
+	coins, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read coins: %w", err)
+	}
+
+	callSCContent.Coins = coins
+
+	// Read target address length
+	addressLength, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read address length: %w", err)
+	}
+
+	address := make([]byte, addressLength)
+
+	_, err = buf.Read(address)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read address: %w", err)
+	}
+
+	addressString, err := utils.DeserializeAddress(address)
+	if err != nil {
+		return nil, fmt.Errorf("failed to deserialize address: %w", err)
+	}
+
+	callSCContent.Address = addressString
+	// Read target function length
+	functionLength, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read function length: %w", err)
+	}
+
+	functionBytes := make([]byte, functionLength)
+
+	_, err = buf.Read(functionBytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read function: %w", err)
+	}
+
+	callSCContent.Function = string(functionBytes)
+
+	// Read param length
+	paramLength, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read param length: %w", err)
+	}
+
+	parameters := make([]byte, paramLength)
+
+	_, err = buf.Read(parameters)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read parameters: %w", err)
+	}
+
+	callSCContent.Parameters = parameters
+
+	return callSCContent, nil
 }

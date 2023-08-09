@@ -33,7 +33,9 @@ func SerializeAddress(addr string) ([]byte, error) {
 }
 
 func DeserializeAddress(versionedAddress []byte) (string, error) {
-	if len(versionedAddress) < 2 {
+	const minAddressLength = 2
+
+	if len(versionedAddress) < minAddressLength {
 		return "", errors.New("invalid versioned address length")
 	}
 
@@ -41,11 +43,13 @@ func DeserializeAddress(versionedAddress []byte) (string, error) {
 	addressBytes := versionedAddress[2:] // Skip the version byte
 
 	var addressPrefix string
-	if prefixByte == 0 {
+
+	switch prefixByte {
+	case 0:
 		addressPrefix = "AU"
-	} else if prefixByte == 1 {
+	case 1:
 		addressPrefix = "AS"
-	} else {
+	default:
 		return "", errors.New("unknown address prefix")
 	}
 

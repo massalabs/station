@@ -1,7 +1,6 @@
 package sendoperation
 
 import (
-	"bytes"
 	"context"
 	b64 "encoding/base64"
 	"encoding/binary"
@@ -10,7 +9,6 @@ import (
 
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/node/base58"
-	utils "github.com/massalabs/station/pkg/node/sendoperation/serializeaddress"
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 )
 
@@ -48,15 +46,6 @@ type OperationBatch struct {
 	CorrelationID string
 }
 
-type CallSCFromSign struct {
-	OperationID uint64
-	GasLimit    uint64
-	Coins       uint64
-	Address     string
-	Function    string
-	Parameters  []byte
-}
-
 type JSONableSlice []uint8
 
 func (u JSONableSlice) MarshalJSON() ([]byte, error) {
@@ -84,27 +73,7 @@ func Call(client *node.Client,
 	if err != nil {
 		return nil, err
 	}
-	/////////////////
-	// Just For test
-	// To Delete
 
-	params, err := GetCallSCFromSign(msgB64)
-	if err != nil {
-		fmt.Println("🚀 ~ file: sendoperation.go:93 ~ err:", err)
-	} else {
-		if params != nil {
-			// Print the fields of CallSCFromSign
-			fmt.Println("🚀 ~ file: sendoperation.go:90 ~ Print the fields of CallSCFromSign:")
-			fmt.Println("🚀 ~ file: sendoperation.go:92 ~ callSC.GasLimit:", params.GasLimit)
-			fmt.Println("🚀 ~ file: sendoperation.go:94 ~ callSC.Coins:", params.Coins)
-			fmt.Println("🚀 ~ file: sendoperation.go:96 ~ callSC.Address:", params.Address)
-			fmt.Println("🚀 ~ file: sendoperation.go:98 ~ callSC.Function:", params.Function)
-		} else {
-			fmt.Println("🚀 ~ file: sendoperation.go:98 ~ params is nil")
-		}
-	}
-	/////////////////
-	//////////////////////
 	var content string
 
 	switch {
@@ -234,92 +203,4 @@ func DecodeMessage64(msgB64 string) ([]byte, error) {
 	// At this point, 'decodedMsg' contains the remaining part of the message
 	// which is the 'operation.Message()' part
 	return decodedMsg, nil
-}
-
-//nolint:funlen
-func DecodeCallSCMessage(data []byte) (*CallSCFromSign, error) {
-	c := &CallSCFromSign{}
-	buf := bytes.NewReader(data)
-
-	// Read operationId
-	callSCOpID, err := binary.ReadUvarint(buf)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read CallSCOpID: %w", err)
-	}
-	c.OperationID = callSCOpID
-
-	// Read maxGas
-	gasLimit, err := binary.ReadUvarint(buf)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read gasLimit: %w", err)
-	}
-	c.GasLimit = gasLimit
-
-	// Read Coins
-	coins, err := binary.ReadUvarint(buf)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read coins: %w", err)
-	}
-	c.Coins = coins
-
-	// Read target address length
-	addressLength, err := binary.ReadUvarint(buf)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read address length: %w", err)
-	}
-	address := make([]byte, addressLength)
-	_, err = buf.Read(address)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read address: %w", err)
-	}
-
-	addressString, err := utils.DeserializeAddress(address)
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize address: %w", err)
-	}
-
-	c.Address = addressString
-	// Read target function length
-	functionLength, err := binary.ReadUvarint(buf)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read function length: %w", err)
-	}
-	functionBytes := make([]byte, functionLength)
-	_, err = buf.Read(functionBytes)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read function: %w", err)
-	}
-	c.Function = string(functionBytes)
-
-	// Read param length
-	paramLength, err := binary.ReadUvarint(buf)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read param length: %w", err)
-	}
-	parameters := make([]byte, paramLength)
-	_, err = buf.Read(parameters)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read parameters: %w", err)
-	}
-	c.Parameters = parameters
-
-	return c, nil
-}
-
-func GetCallSCFromSign(msgB64 string) (*CallSCFromSign, error) {
-	decodedMsg, err := DecodeMessage64(msgB64)
-	if err != nil {
-		fmt.Println("Error decoding message:", err)
-
-		return nil, err
-	}
-
-	callSC, err := DecodeCallSCMessage(decodedMsg)
-	if err != nil {
-		fmt.Println("Error decoding CallSC:", err)
-
-		return nil, err
-	}
-
-	return callSC, nil
 }
