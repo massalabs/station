@@ -9,8 +9,8 @@ import (
 	"github.com/massalabs/station/pkg/onchain/storage"
 )
 
-func Fetch(c *node.Client, addr string, filename string) ([]byte, error) {
-	m, err := storage.Get(c, addr)
+func Fetch(c *node.Client, addr, filename, configDir string) ([]byte, error) {
+	m, err := storage.Get(c, addr, configDir)
 	if err != nil {
 		return nil, fmt.Errorf("fetching the '%s' web resource at '%s': %w", filename, addr, err)
 	}
@@ -22,8 +22,8 @@ func setContentType(file string, writer http.ResponseWriter) {
 	writer.Header().Set(utils.ContentTypeHeader, utils.ContentType(file)[utils.ContentTypeHeader])
 }
 
-func Request(writer http.ResponseWriter, _ *http.Request, client *node.Client, address string, resource string) error {
-	body, err := Fetch(client, address, resource)
+func Request(writer http.ResponseWriter, _ *http.Request, client *node.Client, address, resource, configDir string) error {
+	body, err := Fetch(client, address, resource, configDir)
 	if err != nil {
 		return fmt.Errorf("fetching the '%s' web resource at '%s': %w", resource, address, err)
 	}

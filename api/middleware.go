@@ -5,10 +5,14 @@ import (
 
 	"github.com/massalabs/station/api/interceptor"
 	"github.com/massalabs/station/int/config"
+	"github.com/massalabs/station/int/configuration/dirs"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/onchain/website"
 	"github.com/massalabs/station/pkg/plugin"
 )
+
+//nolint:gochecknoglobals
+var configDir string
 
 // TopMiddleware is called by go-swagger framework before its endpoints.
 // current defined interceptor are:
@@ -19,10 +23,19 @@ func TopMiddleware(handler http.Handler, cfg config.AppConfig) http.Handler {
 	//nolint:varnamelen
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logger.Infof("[%s %s]", r.Method, r.URL.Path)
+		if configDir == "" {
+			var err error
+			configDir, err = dirs.GetCertDir()
+
+			if err != nil {
+				logger.Warnf("TLS: unable to get CA root path: %s", err)
+			}
+		}
+
 		// Goes through all local interceptors.
 		req := RedirectToDefaultResourceInterceptor(
 			plugin.Interceptor(
-				website.MassaTLDInterceptor(&interceptor.Interceptor{Writer: w, Request: r}, cfg))) //nolint:contextcheck
+				website.MassaTLDInterceptor(&interceptor.Interceptor{Writer: w, Request: r}, cfg, configDir))) //nolint:contextcheck
 		// if the request was not handled by any interceptor, let the swagger API takes care of it.
 		if req != nil {
 			handler.ServeHTTP(w, r)

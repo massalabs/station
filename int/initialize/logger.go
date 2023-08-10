@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/massalabs/station/pkg/dirs"
 	"github.com/massalabs/station/pkg/logger"
 )
 
@@ -15,13 +14,8 @@ const (
 )
 
 // Logger sets up the global logger.
-func Logger(repairMode bool) error {
-	logDir, err := dirs.GetConfigDir()
-	if err != nil {
-		return fmt.Errorf("get config dir: %w", err)
-	}
-
-	logDirPath := filepath.Join(logDir, LogSubDirName)
+func Logger(repairMode bool, configDir string) error {
+	logDirPath := filepath.Join(configDir, LogSubDirName)
 
 	var logFilePath string
 

@@ -84,7 +84,7 @@ func Fetch(client *node.Client, websiteStorerAddress string) ([]byte, error) {
 // Get tries to get the file from the cache and fallback to Fetch from the datastore.
 // New files are automatically added to the cache.
 // New website version at the same address are handled thanks to the LastUpdateTimestamp.
-func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, error) {
+func Get(client *node.Client, websiteStorerAddress, configDir string) (map[string][]byte, error) {
 	content := make(map[string][]byte)
 
 	fileName := websiteStorerAddress
@@ -94,8 +94,8 @@ func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, e
 	var err error
 
 	// we check if the website is in cache, if not we fetch it from the blockchain
-	if cache.IsPresent(fileName) {
-		fileContent, err = cache.Read(fileName)
+	if cache.IsPresent(fileName, configDir) {
+		fileContent, err = cache.Read(fileName, configDir)
 		if err != nil {
 			return nil, fmt.Errorf("reading file '%s': %w", fileName, err)
 		}
@@ -105,7 +105,7 @@ func Get(client *node.Client, websiteStorerAddress string) (map[string][]byte, e
 			return nil, fmt.Errorf("fetching website content at %s from blockchain: %w", websiteStorerAddress, err)
 		}
 
-		err = cache.Save(fileName, fileContent)
+		err = cache.Save(fileName, fileContent, configDir)
 		if err != nil {
 			return nil, fmt.Errorf("caching %s: %w", fileName, err)
 		}

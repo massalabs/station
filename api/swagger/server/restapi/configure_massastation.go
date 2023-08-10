@@ -13,8 +13,8 @@ import (
 	"github.com/massalabs/station/api"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/int/config"
+	"github.com/massalabs/station/int/configuration/dirs"
 	"github.com/massalabs/station/int/sni"
-	"github.com/massalabs/station/pkg/dirs"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/rs/cors"
 )
