@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	CallSCOpID                      = uint64(4)
-	addressWithoutPrefixVersionSize = 32
+	CallSCOpID        = uint64(4)
+	publicKeyHashSize = 32
 )
 
 type OperationDetails struct {
@@ -134,10 +134,10 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 
 	callSCContent.Coins = coins
 
-	// Read address prefix
-	addressPrefix, err := binary.ReadUvarint(buf)
+	// Read address type
+	addressType, err := binary.ReadUvarint(buf)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read address prefix: %w", err)
+		return nil, fmt.Errorf("failed to read address type: %w", err)
 	}
 
 	// Read address version
@@ -147,7 +147,7 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 	}
 
 	// Read fixed-size 32-byte portion left of the address
-	addressBytes := make([]byte, addressWithoutPrefixVersionSize)
+	addressBytes := make([]byte, publicKeyHashSize)
 
 	_, err = buf.Read(addressBytes)
 	if err != nil {
@@ -155,7 +155,7 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 	}
 
 	// Concatenate address prefix, address version, and addressBytes to form the full address
-	fullAddressBytes := append([]byte{byte(addressPrefix)}, byte(addressVersion))
+	fullAddressBytes := append([]byte{byte(addressType)}, byte(addressVersion))
 	fullAddressBytes = append(fullAddressBytes, addressBytes...)
 
 	addressString, err := utils.DeserializeAddress(fullAddressBytes)
