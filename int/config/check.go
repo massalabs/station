@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/massalabs/station/int/configuration"
-	"github.com/massalabs/station/int/configuration/dirs"
 	"github.com/massalabs/station/pkg/certificate"
 	"github.com/massalabs/station/pkg/certificate/store"
 	"github.com/massalabs/station/pkg/logger"
@@ -22,7 +21,7 @@ func Check() error {
 	var resultErr error
 
 	// Check certificates.
-	caRootPath, err := dirs.GetCertDir()
+	caRootPath, err := configuration.CertPath()
 	if err != nil {
 		return caNonBlockingError("failed to get CA path", err)
 	}

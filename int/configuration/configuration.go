@@ -44,3 +44,23 @@ func Path() (string, error) {
 		return "", fmt.Errorf(errMsgPath)
 	}
 }
+
+func CertPath() (string, error) {
+	switch {
+	case runtime.GOOS == "windows":
+		confDir, err := Path()
+		if err != nil {
+			return "", fmt.Errorf("getting config directory: %w", err)
+		}
+
+		certDir := filepath.Join(confDir, "certs")
+
+		return certDir, nil
+
+	case runtime.GOOS == "linux", runtime.GOOS == "darwin":
+		return path.Join("/", "etc", "massastation", "certs"), nil
+
+	default:
+		return "", fmt.Errorf("certification path detection is not supported on this OS/architecture")
+	}
+}

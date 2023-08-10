@@ -13,7 +13,7 @@ import (
 	"github.com/massalabs/station/api"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/int/config"
-	"github.com/massalabs/station/int/configuration/dirs"
+	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/int/sni"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/rs/cors"
@@ -92,7 +92,7 @@ func configureTLS(tlsConfig *tls.Config) {
 	tlsConfig.GetCertificate = func(chi *tls.ClientHelloInfo) (*tls.Certificate, error) {
 		if caPath == "" {
 			var err error
-			caPath, err = dirs.GetCertDir()
+			caPath, err = configuration.CertPath()
 
 			if err != nil {
 				logger.Warnf("TLS: unable to get CA root path: %s", err)

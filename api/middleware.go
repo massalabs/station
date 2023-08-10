@@ -5,7 +5,7 @@ import (
 
 	"github.com/massalabs/station/api/interceptor"
 	"github.com/massalabs/station/int/config"
-	"github.com/massalabs/station/int/configuration/dirs"
+	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/onchain/website"
 	"github.com/massalabs/station/pkg/plugin"
@@ -25,7 +25,7 @@ func TopMiddleware(handler http.Handler, cfg config.AppConfig) http.Handler {
 		logger.Infof("[%s %s]", r.Method, r.URL.Path)
 		if configDir == "" {
 			var err error
-			configDir, err = dirs.GetCertDir()
+			configDir, err = configuration.CertPath()
 
 			if err != nil {
 				logger.Warnf("TLS: unable to get CA root path: %s", err)
