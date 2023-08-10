@@ -41,7 +41,7 @@ func New(data []byte, maxGas uint64, maxCoins uint64, dataStore []byte) *Execute
 	}
 }
 
-func (e *ExecuteSC) Content() interface{} {
+func (e *ExecuteSC) Content() (interface{}, error) {
 	return &Operation{
 		ExecuteSC: OperationDetails{
 			Data:      e.data,
@@ -49,7 +49,7 @@ func (e *ExecuteSC) Content() interface{} {
 			MaxCoins:  e.maxCoins,
 			DataStore: e.dataStore,
 		},
-	}
+	}, nil
 }
 
 // To date the datastore sent by the deploySC endpoint is always serialized.

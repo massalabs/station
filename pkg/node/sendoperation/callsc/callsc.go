@@ -53,10 +53,10 @@ func New(address string, function string, parameters []byte, gasLimit uint64, co
 	}, nil
 }
 
-func (c *CallSC) Content() interface{} {
+func (c *CallSC) Content() (interface{}, error) {
 	addressString, err := utils.DeserializeAddress(c.address)
 	if err != nil {
-		return nil
+		return nil, fmt.Errorf("failed to deserialize address: %w", err)
 	}
 
 	return &Operation{
@@ -67,7 +67,7 @@ func (c *CallSC) Content() interface{} {
 			TargetFunc: c.function,
 			Param:      c.parameters,
 		},
-	}
+	}, nil
 }
 
 func (c *CallSC) Message() []byte {

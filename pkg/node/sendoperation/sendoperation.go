@@ -32,7 +32,7 @@ type sendOperationsReq struct {
 }
 
 type Operation interface {
-	Content() interface{}
+	Content() (interface{}, error)
 	Message() []byte
 }
 
