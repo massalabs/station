@@ -89,8 +89,19 @@ func (c *CallSC) Message() []byte {
 	nbBytes = binary.PutUvarint(buf, c.coins)
 	msg = append(msg, buf[:nbBytes]...)
 
-	// target address
-	msg = append(msg, c.address...)
+	// Extract type and version from the address (assuming format: type + version + 32 bytes)
+	addressType := c.address[0]
+	addressVersion := c.address[1]
+
+	// Encode and append address type and version
+	nbBytes = binary.PutUvarint(buf, uint64(addressType))
+	msg = append(msg, buf[:nbBytes]...)
+
+	nbBytes = binary.PutUvarint(buf, uint64(addressVersion))
+	msg = append(msg, buf[:nbBytes]...)
+
+	// Append the rest of the address (excluding type and version)
+	msg = append(msg, c.address[2:]...)
 
 	// target function
 	nbBytes = binary.PutUvarint(buf, uint64(len([]byte(c.function))))
