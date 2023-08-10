@@ -9,6 +9,10 @@ import (
 	"path"
 )
 
+type Cache struct {
+	ConfigDir string
+}
+
 func fullPath(fileName, configDir string) (string, error) {
 	cacheDir, err := fsDirectory(configDir)
 	if err != nil {
@@ -19,8 +23,8 @@ func fullPath(fileName, configDir string) (string, error) {
 }
 
 // IsPresent checks if the file is present in the local cache.
-func IsPresent(file, configDir string) bool {
-	fp, _ := fullPath(file, configDir)
+func (c *Cache) IsPresent(file string) bool {
+	fp, _ := fullPath(file, c.ConfigDir)
 
 	_, err := os.Stat(fp)
 
@@ -44,8 +48,8 @@ func fsDirectory(configDir string) (string, error) {
 }
 
 // Read returns the cached file content corresponding to the given name.
-func Read(file, configDir string) ([]byte, error) {
-	fullPath, err := fullPath(file, configDir)
+func (c *Cache) Read(file string) ([]byte, error) {
+	fullPath, err := fullPath(file, c.ConfigDir)
 	if err != nil {
 		return nil, fmt.Errorf("while reading cached file %s: %w", file, err)
 	}
@@ -59,8 +63,8 @@ func Read(file, configDir string) ([]byte, error) {
 }
 
 // Save adds a new file to the cache.
-func Save(fileName string, content []byte, configDir string) error {
-	fullPath, err := fullPath(fileName, configDir)
+func (c *Cache) Save(fileName string, content []byte) error {
+	fullPath, err := fullPath(fileName, c.ConfigDir)
 	if err != nil {
 		return fmt.Errorf("while reading cached file %s: %w", fileName, err)
 	}
