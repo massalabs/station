@@ -8,7 +8,10 @@ import (
 	utils "github.com/massalabs/station/pkg/node/sendoperation/serializeaddress"
 )
 
-const CallSCOpID = uint64(4)
+const (
+	CallSCOpID                      = uint64(4)
+	addressWithoutPrefixVersionSize = 32
+)
 
 type OperationDetails struct {
 	MaxGas     int64       `json:"max_gas"`
@@ -86,10 +89,6 @@ func (c *CallSC) Message() []byte {
 	nbBytes = binary.PutUvarint(buf, c.coins)
 	msg = append(msg, buf[:nbBytes]...)
 
-	// target address length
-	nbBytes = binary.PutUvarint(buf, uint64(len(c.address)))
-	msg = append(msg, buf[:nbBytes]...)
-
 	// target address
 	msg = append(msg, c.address...)
 
@@ -135,25 +134,37 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 
 	callSCContent.Coins = coins
 
-	// Read target address length
-	addressLength, err := binary.ReadUvarint(buf)
+	// Read address prefix
+	addressPrefix, err := binary.ReadUvarint(buf)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read address length: %w", err)
+		return nil, fmt.Errorf("failed to read address prefix: %w", err)
 	}
 
-	address := make([]byte, addressLength)
-
-	_, err = buf.Read(address)
+	// Read address version
+	addressVersion, err := binary.ReadUvarint(buf)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read address: %w", err)
+		return nil, fmt.Errorf("failed to read address version: %w", err)
 	}
 
-	addressString, err := utils.DeserializeAddress(address)
+	// Read fixed-size 32-byte portion left of the address
+	addressBytes := make([]byte, addressWithoutPrefixVersionSize)
+
+	_, err = buf.Read(addressBytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read address portion: %w", err)
+	}
+
+	// Concatenate address prefix, address version, and addressBytes to form the full address
+	fullAddressBytes := append([]byte{byte(addressPrefix)}, byte(addressVersion))
+	fullAddressBytes = append(fullAddressBytes, addressBytes...)
+
+	addressString, err := utils.DeserializeAddress(fullAddressBytes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to deserialize address: %w", err)
 	}
 
 	callSCContent.Address = addressString
+
 	// Read target function length
 	functionLength, err := binary.ReadUvarint(buf)
 	if err != nil {
