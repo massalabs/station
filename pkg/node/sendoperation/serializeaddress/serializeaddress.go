@@ -33,7 +33,7 @@ func SerializeAddress(addr string) ([]byte, error) {
 }
 
 func DeserializeAddress(versionedAddress []byte) (string, error) {
-	const minAddressLength = 2
+	const minAddressLength = 34
 
 	if len(versionedAddress) < minAddressLength {
 		return "", errors.New("invalid versioned address length")
