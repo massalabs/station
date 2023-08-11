@@ -39,13 +39,13 @@ func New(recipientAddress string, amount uint64) (*Transaction, error) {
 	}, nil
 }
 
-func (t *Transaction) Content() interface{} {
+func (t *Transaction) Content() (interface{}, error) {
 	return &Operation{
 		Transaction: OperationDetails{
 			RecipientAddress: "AU" + base58.VersionedCheckEncode(t.recipientAddress, versionByte),
 			Amount:           fmt.Sprint(t.amount),
 		},
-	}
+	}, nil
 }
 
 func (t *Transaction) Message() []byte {
