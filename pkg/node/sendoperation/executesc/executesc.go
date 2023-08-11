@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/gob"
+	"fmt"
 )
 
 const ExecuteSCOpID = 3
@@ -121,4 +122,68 @@ func compactAndAppendBytes(msg *[]byte, value interface{}) {
 	*msg = append(*msg, buf[:nbBytes]...)
 	// Value in bytes
 	*msg = append(*msg, bytesBuffer.Bytes()...)
+}
+
+// Implement the DecodeMessage function for the ExecuteSC package.
+func DecodeMessage(data []byte) (*OperationDetails, error) {
+	operationContent := &OperationDetails{}
+	buf := bytes.NewReader(data)
+
+	// Read operationId
+	operationID, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read ExecuteSCOpID: %w", err)
+	}
+
+	if operationID != ExecuteSCOpID {
+		return nil, fmt.Errorf("unexpected operation ID: %d", operationID)
+	}
+
+	// Read maxGas
+	maxGas, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read maxGas: %w", err)
+	}
+
+	operationContent.MaxGas = maxGas
+
+	// Read maxCoins
+	maxCoins, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read maxCoins: %w", err)
+	}
+
+	operationContent.MaxCoins = maxCoins
+
+	// Read data
+	dataLength, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read data length: %w", err)
+	}
+
+	dataBytes := make([]byte, dataLength)
+
+	_, err = buf.Read(dataBytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read data: %w", err)
+	}
+
+	operationContent.Data = dataBytes
+
+	// Read dataStore
+	dataStoreLength, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read dataStore length: %w", err)
+	}
+
+	dataStoreBytes := make([]byte, dataStoreLength)
+
+	_, err = buf.Read(dataStoreBytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read dataStore: %w", err)
+	}
+
+	operationContent.DataStore = dataStoreBytes
+
+	return operationContent, nil
 }
