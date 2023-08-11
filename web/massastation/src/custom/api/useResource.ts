@@ -2,11 +2,18 @@
 
 // EXTERNALS
 import axios, { AxiosResponse } from 'axios';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import {
+  useQuery,
+  UseQueryOptions,
+  UseQueryResult,
+} from '@tanstack/react-query';
 
 // LOCALS
 
-export function useResource<T>(resource: string): UseQueryResult<T, undefined> {
+export function useResource<T>(
+  resource: string,
+  option: UseQueryOptions<T, undefined> | undefined = undefined,
+): UseQueryResult<T, undefined> {
   const url = `${import.meta.env.VITE_BASE_API}/${resource}`;
 
   return useQuery<T, undefined>({
@@ -16,5 +23,6 @@ export function useResource<T>(resource: string): UseQueryResult<T, undefined> {
 
       return data;
     },
+    ...option,
   });
 }

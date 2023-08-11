@@ -69,7 +69,6 @@ export function LayoutStation({ ...props }) {
     onClick: () => {
       setCurrentNetwork(network);
       mutateUpdateNetwork({});
-      window.location.reload();
     },
   }));
 

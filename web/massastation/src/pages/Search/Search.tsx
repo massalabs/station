@@ -19,7 +19,7 @@ export function Search() {
     error,
     isSuccess,
     isLoading,
-  } = useResource<DomainModel[]>('all/domains');
+  } = useResource<DomainModel[]>('all/domains', { refetchInterval: 2000 });
 
   const fav: DomainModel[] = [];
 
