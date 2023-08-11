@@ -32,7 +32,7 @@ type sendOperationsReq struct {
 }
 
 type Operation interface {
-	Content() interface{}
+	Content() (interface{}, error)
 	Message() []byte
 }
 
@@ -175,4 +175,32 @@ func message(expiry uint64, fee uint64, operation Operation) []byte {
 	msg = append(msg, operation.Message()...)
 
 	return msg
+}
+
+func DecodeMessage64(msgB64 string) ([]byte, error) {
+	// Decode the base64-encoded message
+	decodedMsg, err := b64.StdEncoding.DecodeString(msgB64)
+	if err != nil {
+		return nil, fmt.Errorf("base64 decoding error: %w", err)
+	}
+
+	// Read the encoded fee from the decoded message and move the buffer index
+	_, bytesRead := binary.Uvarint(decodedMsg)
+	if bytesRead <= 0 {
+		return nil, fmt.Errorf("failed to read fee")
+	}
+
+	decodedMsg = decodedMsg[bytesRead:]
+
+	// Read the encoded expiry from the decoded message and move the buffer index
+	_, bytesRead = binary.Uvarint(decodedMsg)
+	if bytesRead <= 0 {
+		return nil, fmt.Errorf("failed to read expiry")
+	}
+
+	decodedMsg = decodedMsg[bytesRead:]
+
+	// At this point, 'decodedMsg' contains the remaining part of the message
+	// which is the 'operation.Message()' part
+	return decodedMsg, nil
 }

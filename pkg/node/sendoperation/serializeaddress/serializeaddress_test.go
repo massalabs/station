@@ -2,6 +2,8 @@ package serializeaddress
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSerializeAddress(t *testing.T) {
@@ -63,4 +65,27 @@ func bytesEqual(byteA, byteB []byte) bool {
 	}
 
 	return true
+}
+
+func TestDeserializeAddress(t *testing.T) {
+	testCases := []struct {
+		versionedAddress []byte
+		expectedAddress  string
+	}{
+		{
+			versionedAddress: []byte{
+				0, 0, 46, 72, 55, 221, 83, 31, 169, 208, 41, 146, 210, 82, 27, 34, 114, 141, 159, 245, 209, 189, 40, 141, 126,
+				123, 156, 223, 187, 205, 64, 236, 40, 184,
+			},
+			expectedAddress: "AU1MPDRXuR22mwYDFCeZUDgYjcTAF1co6xujx2X6ugoHeYeGY3B5",
+		},
+	}
+
+	for _, testCase := range testCases {
+		address, err := DeserializeAddress(testCase.versionedAddress)
+
+		assert.NoError(t, err, "Received an unexpected error for versioned address %v", testCase.versionedAddress)
+		assert.Equal(t, testCase.expectedAddress, address, "Address mismatch for versioned address %v",
+			testCase.versionedAddress)
+	}
 }
