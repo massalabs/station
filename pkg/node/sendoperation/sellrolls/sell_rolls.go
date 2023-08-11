@@ -26,12 +26,12 @@ func New(countRolls uint64) *SellRolls {
 	}
 }
 
-func (b *SellRolls) Content() interface{} {
+func (b *SellRolls) Content() (interface{}, error) {
 	return &Operation{
 		SellRolls: OperationDetails{
 			CountRoll: b.countRoll,
 		},
-	}
+	}, nil
 }
 
 func (b *SellRolls) Message() []byte {
