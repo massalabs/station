@@ -188,7 +188,7 @@ export default function Upload() {
   const nicknameInAccounts = accounts.find(
     (account) => account.nickname === nickname,
   );
-  !nicknameInAccounts && setNickname(accounts[0]?.nickname || '');
+  if (!nicknameInAccounts) setNickname(accounts[0]?.nickname || '');
 
   const accountsItems = accounts.map((account) => ({
     icon: <Identicon username={account.nickname} size={32} />,
