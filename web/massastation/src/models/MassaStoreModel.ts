@@ -8,6 +8,7 @@ export interface MassaStoreModel {
   file: pluginStoreItemFile;
   os: string;
   iscompatible: boolean;
+  massastationMinVersion: string;
 }
 
 export interface pluginStoreItemFile {
