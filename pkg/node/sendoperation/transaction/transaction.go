@@ -4,10 +4,13 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	utils "github.com/massalabs/station/pkg/node/sendoperation/serializeaddress"
+	"github.com/massalabs/station/pkg/node/base58"
+	serializeAddress "github.com/massalabs/station/pkg/node/sendoperation/serializeaddress"
 )
 
 const TransactionOpID = 0
+
+const versionByte = byte(0)
 
 type OperationDetails struct {
 	Amount           string `json:"amount"`
@@ -25,7 +28,7 @@ type Transaction struct {
 }
 
 func New(recipientAddress string, amount uint64) (*Transaction, error) {
-	versionedAddress, err := utils.SerializeAddress(recipientAddress)
+	versionedAddress, err := serializeAddress.SerializeAddress(recipientAddress)
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare address: %w", err)
 	}
@@ -36,18 +39,13 @@ func New(recipientAddress string, amount uint64) (*Transaction, error) {
 	}, nil
 }
 
-func (t *Transaction) Content() (interface{}, error) {
-	addressString, err := utils.DeserializeAddress(t.recipientAddress)
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize address: %w", err)
-	}
-
+func (t *Transaction) Content() (interface{},error) {
 	return &Operation{
 		Transaction: OperationDetails{
-			RecipientAddress: addressString,
+			RecipientAddress: "AU" + base58.VersionedCheckEncode(t.recipientAddress, versionByte),
 			Amount:           fmt.Sprint(t.amount),
 		},
-	}, nil
+	},nil
 }
 
 func (t *Transaction) Message() []byte {
