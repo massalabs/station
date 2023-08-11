@@ -47,7 +47,7 @@ function StorePlugin(props: StorePluginProps) {
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
     >
-      <FiAlertTriangle color="#FFA41D" />
+      <FiAlertTriangle className="w-6 h-10 text-s-warning" />
       <ToolTip showTooltip={showTooltip} content={warningMessage} />
     </div>,
     <FiDownload className="w-6 h-10 text-tertiary" />,
