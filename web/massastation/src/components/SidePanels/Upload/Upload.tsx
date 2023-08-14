@@ -185,6 +185,9 @@ export default function Upload() {
   const { data: accounts = [] } = useResource<AccountObject[]>(
     `${URL.WALLET_BASE_API}/${URL.WALLET_ACCOUNTS}`,
   );
+  const nicknameExistInAccountsList = accounts.find(
+    (account) => account.nickname === nickname,
+  );
 
   const accountsItems = accounts.map((account) => ({
     icon: <Identicon username={account.nickname} size={32} />,
@@ -199,6 +202,9 @@ export default function Upload() {
   );
 
   const existingAccount: boolean = accounts.length > 0;
+
+  if (!nicknameExistInAccountsList && existingAccount)
+    setNickname(accounts[0].nickname);
 
   const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
 
