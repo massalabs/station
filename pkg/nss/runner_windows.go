@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/massalabs/station/pkg/runner"
 )
 
 // NewCertUtilRunner returns a new CertUtilRunner.
@@ -25,5 +27,5 @@ func NewCertUtilRunner() (*CertUtilRunner, error) {
 		return nil, fmt.Errorf("failed to find certutil binary: %w", err)
 	}
 
-	return &CertUtilRunner{binaryPath: certutilBinaryPath}, nil
+	return &CertUtilRunner{runner.CommandRunner{BinaryPath: bin}}, nil
 }
