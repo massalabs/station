@@ -65,6 +65,8 @@ tasks:
       - cmd: go build -o build/massastation/massastation.exe cmd/massastation/main.go
 
   run:
+    env:
+      LOG_LEVEL: DEBUG
     cmds:
       - cmd: ./build/massastation/massastation
         platforms: [linux, darwin]
