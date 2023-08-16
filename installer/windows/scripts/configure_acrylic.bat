@@ -24,10 +24,20 @@ if not exist "%acrylic_config_host%" (
     ECHO # >> "%acrylic_config_host%"
 )
 
-:: change LocalIPv4BindingAddress to 127.0.0.1
-findstr /V "LocalIPv4BindingAddress" "%acrylic_configuration%" > %acrylic_configuration%
-ECHO. >> "%acrylic_configuration%"
-ECHO LocalIPv4BindingAddress=127.0.0.1 >> "%acrylic_configuration%"
+@REM If LocalIPv4BindingAddress is set to default 0.0.0.0, we set it to 127.0.0.1 for backward compatibility with Windows 10
+FINDSTR /c:"LocalIPv4BindingAddress=127.0.0.1" "%acrylic_configuration%" >nul 2>&1
+if %errorlevel%==0 (
+    ECHO LocalIPv4BindingAddress already set to 127.0.0.1, skipping
+) else (
+    ECHO LocalIPv4BindingAddress not set to 127.0.0.1, setting it
+    powershell -Command "Get-Content '%acrylic_configuration%' | %%{$_ -replace 'LocalIPv4BindingAddress=0.0.0.0','LocalIPv4BindingAddress=127.0.0.1'} | Out-File -Encoding UTF8 '%acrylic_configuration%.tmp'"
+    FINDSTR /c:"LocalIPv4BindingAddress=127.0.0.1" "%acrylic_configuration%.tmp" >nul 2>&1
+    if !errorlevel!==0 (
+        MOVE /Y "%acrylic_configuration%.tmp" "%acrylic_configuration%"
+    ) else (
+        ECHO Failed to set LocalIPv4BindingAddress to 127.0.0.1, aborting this step
+    )
+)
 
 @REM If .massa TLD is already in AcrylicHosts.txt, we can exit
 FINDSTR /c:".massa" "%acrylic_config_host%" >nul 2>&1
