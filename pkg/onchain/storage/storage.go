@@ -37,7 +37,15 @@ func Fetch(client *node.Client, websiteStorerAddress string) ([]byte, error) {
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", websiteStorerAddress, chunkNumberKey, err)
 	}
 
-	chunkNumber := int(binary.LittleEndian.Uint64(keyNumber.CandidateValue))
+	var chunkNumber int
+
+	minLength := 8
+
+	if len(keyNumber.CandidateValue) >= minLength {
+		chunkNumber = int(binary.LittleEndian.Uint64(keyNumber.CandidateValue))
+	} else {
+		return nil, fmt.Errorf("insufficient data in keyNumber for '%s'", websiteStorerAddress)
+	}
 
 	entries := []node.DatastoreEntriesKeys{}
 
