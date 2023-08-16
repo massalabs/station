@@ -100,8 +100,8 @@ def move_binaries():
         os.path.join(MASSASTATION_BINARY),
         os.path.join(BUILD_DIR, MASSASTATION_BINARY),
     )
-    os.rename(ACRYLIC_ZIP, os.path.join(BUILD_DIR, ACRYLIC_ZIP))
-    os.rename(MARTOOLS_ZIP, os.path.join(BUILD_DIR, MARTOOLS_ZIP))
+    shutil.copy(ACRYLIC_ZIP, os.path.join(BUILD_DIR, ACRYLIC_ZIP))
+    shutil.copy(MARTOOLS_ZIP, os.path.join(BUILD_DIR, MARTOOLS_ZIP))
 
     shutil.copy(
         os.path.join("windows", "scripts", ACRYLIC_CONFIG_SCRIPT),
@@ -332,7 +332,7 @@ def create_wxs_file():
         <CustomAction
             Id="ConfigureAcrylic"
             Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
+            ExeCommand="powershell.exe -Command &quot; &amp; '[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}' '[AcrylicDNSProxy]' &quot; >> $env:Temp/massastation_installer.log 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
