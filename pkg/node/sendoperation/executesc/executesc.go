@@ -29,6 +29,13 @@ type ExecuteSC struct {
 	dataStore []byte
 }
 
+// MessageContent stores essential fields extracted from the message during the sign operation.
+type MessageContent struct {
+	OperationID uint64
+	MaxGas      uint64
+	MaxCoins    uint64
+}
+
 /*
 The dataStore parameter represents a storage that is accessible by the SC in the constructor
 function when it gets deployed.
@@ -124,9 +131,10 @@ func compactAndAppendBytes(msg *[]byte, value interface{}) {
 	*msg = append(*msg, bytesBuffer.Bytes()...)
 }
 
-// Implement the DecodeMessage function for the ExecuteSC package.
-func DecodeMessage(data []byte) (*OperationDetails, error) {
-	operationContent := &OperationDetails{}
+// DecodeMessage decodes a byte slice,
+// It extracts the necessary fields: operationID, maxGas, and MaxCoin for display in the Wails pop-up.
+func DecodeMessage(data []byte) (*MessageContent, error) {
+	operationContent := &MessageContent{}
 	buf := bytes.NewReader(data)
 
 	// Read operationId
@@ -138,6 +146,8 @@ func DecodeMessage(data []byte) (*OperationDetails, error) {
 	if operationID != ExecuteSCOpID {
 		return nil, fmt.Errorf("unexpected operation ID: %d", operationID)
 	}
+
+	operationContent.OperationID = operationID
 
 	// Read maxGas
 	maxGas, err := binary.ReadUvarint(buf)
@@ -154,36 +164,6 @@ func DecodeMessage(data []byte) (*OperationDetails, error) {
 	}
 
 	operationContent.MaxCoins = maxCoins
-
-	// Read data
-	dataLength, err := binary.ReadUvarint(buf)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read data length: %w", err)
-	}
-
-	dataBytes := make([]byte, dataLength)
-
-	_, err = buf.Read(dataBytes)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read data: %w", err)
-	}
-
-	operationContent.Data = dataBytes
-
-	// Read dataStore
-	dataStoreLength, err := binary.ReadUvarint(buf)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read dataStore length: %w", err)
-	}
-
-	dataStoreBytes := make([]byte, dataStoreLength)
-
-	_, err = buf.Read(dataStoreBytes)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read dataStore: %w", err)
-	}
-
-	operationContent.DataStore = dataStoreBytes
 
 	return operationContent, nil
 }
