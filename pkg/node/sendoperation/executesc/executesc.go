@@ -31,8 +31,8 @@ type ExecuteSC struct {
 
 // MessageContent stores essential fields extracted from the message during the sign operation.
 type MessageContent struct {
-	MaxGas      uint64
-	MaxCoins    uint64
+	MaxGas   uint64
+	MaxCoins uint64
 }
 
 /*
