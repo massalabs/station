@@ -14,7 +14,7 @@ interface StorePluginProps {
 
 function StorePlugin(props: StorePluginProps) {
   const { plugin, refetch } = props;
-  const [showTooltip, setShowTooltip] = useState<boolean>(false);
+  const [message, setMessage] = useState<boolean>(false);
   let {
     author,
     name,
@@ -43,12 +43,18 @@ function StorePlugin(props: StorePluginProps) {
   }, [isInstallSuccess]);
 
   const argsStoreError = [
-    <div
-      onMouseEnter={() => setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
-    >
-      <FiAlertTriangle className="w-6 h-10 text-s-warning" />
-      <ToolTip showTooltip={showTooltip} content={warningMessage} />
+    <div>
+      <div
+        onMouseEnter={() => setMessage(true)}
+        onMouseLeave={() => setMessage(false)}
+      >
+        <FiAlertTriangle className="text-s-warning w-6 h-10" />
+      </div>
+      {message && (
+        <div className="w-fit absolute z-10 l-10 bg-tertiary p-3 rounded-lg text-neutral">
+          {warningMessage}
+        </div>
+      )}
     </div>,
     <FiDownload className="w-6 h-10 text-tertiary" />,
   ];
@@ -62,19 +68,6 @@ function StorePlugin(props: StorePluginProps) {
     content: description,
     topActions: !iscompatible ? argsStoreError : undefined,
   };
-
-  function ToolTip({ ...props }) {
-    const { showTooltip, content } = props;
-    return (
-      <>
-        {showTooltip && (
-          <div className="w-96 absolute z-10 t-10 l-10 bg-tertiary p-3 rounded-lg text-neutral">
-            {content}
-          </div>
-        )}
-      </>
-    );
-  }
 
   return (
     <>{isInstallLoading ? <PluginCardLoading /> : <Plugin {...argsStore} />}</>
