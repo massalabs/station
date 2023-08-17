@@ -137,18 +137,11 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 	operationContent := &MessageContent{}
 	buf := bytes.NewReader(data)
 
-	// Read operationId
-	operationID, err := binary.ReadUvarint(buf)
+	// Skip the  operationId
+	_, err := binary.ReadUvarint(buf)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read ExecuteSCOpID: %w", err)
 	}
-
-	if operationID != ExecuteSCOpID {
-		return nil, fmt.Errorf("unexpected operation ID: %d", operationID)
-	}
-
-	operationContent.OperationID = operationID
-
 	// Read maxGas
 	maxGas, err := binary.ReadUvarint(buf)
 	if err != nil {
