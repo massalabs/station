@@ -145,12 +145,11 @@ func (server *Server) printNodeVersion(networkManager *config.NetworkManager) {
 	nodeVersion := "unknown"
 	if err == nil {
 		nodeVersion = *status.Version
+		logger.Info(
+			fmt.Sprintf("Connected to node server %s (version %s)",
+				networkManager.Network().NodeURL, nodeVersion),
+		)
 	} else {
 		logger.Errorf("Could not get node version: %s", err.Error())
 	}
-
-	logger.Info(
-		fmt.Sprintf("Connected to node server %s (version %s)",
-			networkManager.Network().NodeURL, nodeVersion),
-	)
 }
