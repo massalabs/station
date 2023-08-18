@@ -27,6 +27,7 @@ func ParseFlags() (api.StartServerFlags, StartFlags) {
 	const httpsPort = 443
 
 	var serverFlags api.StartServerFlags
+
 	var startFlags StartFlags
 
 	_, err := dirs.GetConfigDir()
