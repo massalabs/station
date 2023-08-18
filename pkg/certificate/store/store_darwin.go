@@ -165,7 +165,6 @@ func updateTrustSettings(plistRoot map[string]interface{}, cert *x509.Certificat
 	trustList := plistRoot["trustList"].(map[string]interface{})
 
 	for key := range trustList {
-		logger.Debug(key)
 		entry := trustList[key].(map[string]interface{})
 
 		if _, ok := entry["issuerName"]; !ok {
