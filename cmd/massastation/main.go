@@ -16,12 +16,18 @@ import (
 	"github.com/massalabs/station/pkg/plugin"
 )
 
-func ParseFlags() api.StartServerFlags {
+type StartFlags struct {
+	Version bool
+	Repair  bool
+}
+
+func ParseFlags() (api.StartServerFlags, StartFlags) {
 	const httpPort = 80
 
 	const httpsPort = 443
 
-	var flags api.StartServerFlags
+	var serverFlags api.StartServerFlags
+	var startFlags StartFlags
 
 	_, err := dirs.GetConfigDir()
 	if err != nil {
@@ -32,13 +38,14 @@ func ParseFlags() api.StartServerFlags {
 			Please reinstall MassaStation using the installer at https://github.com/massalabs/station and try again.`)
 	}
 
-	flag.IntVar(&flags.Port, "http-port", httpPort, "HTTP port to listen to")
-	flag.IntVar(&flags.TLSPort, "https-port", httpsPort, "HTTPS port to listen to")
-	flag.BoolVar(&flags.Version, "version", false, "Print version info and exit")
+	flag.IntVar(&serverFlags.Port, "http-port", httpPort, "HTTP port to listen to")
+	flag.IntVar(&serverFlags.TLSPort, "https-port", httpsPort, "HTTPS port to listen to")
+	flag.BoolVar(&startFlags.Version, "version", false, "Print version info and exit")
+	flag.BoolVar(&startFlags.Repair, "repair", false, "Repair MassaStation")
 
 	flag.Parse()
 
-	return flags
+	return serverFlags, startFlags
 }
 
 func main() {
@@ -49,8 +56,8 @@ func main() {
 
 	defer logger.Close()
 
-	flags := ParseFlags()
-	if flags.Version {
+	serverFlags, startFlags := ParseFlags()
+	if startFlags.Version {
 		//nolint:forbidigo
 		fmt.Printf("Version:%s\n", config.Version)
 		logger.Close()
@@ -63,6 +70,10 @@ func main() {
 		logger.Fatalf("Error with you current system configuration: %s", err.Error())
 	}
 
+	if startFlags.Repair {
+		os.Exit(0)
+	}
+
 	networkManager, err := config.NewNetworkManager()
 	if err != nil {
 		logger.Fatalf("Failed to create NetworkManager:%s", err.Error())
@@ -71,7 +82,7 @@ func main() {
 	pluginManager := plugin.NewManager()
 
 	stationGUI, systrayMenu := systray.MakeGUI()
-	server := api.NewServer(flags)
+	server := api.NewServer(serverFlags)
 
 	update.StartUpdateCheck(&stationGUI, systrayMenu)
 
