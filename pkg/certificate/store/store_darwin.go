@@ -12,7 +12,6 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/runner"
 	"howett.net/plist"
 )
