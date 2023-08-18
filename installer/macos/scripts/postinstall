@@ -50,3 +50,5 @@ mkdir -m 777 -p $MASSASTATION_CERT_DIR || fatal "certs directory creation failed
 ping -c 1 -t 1 test.massa >/dev/null 2>&1 || set_local_dns
 
 mv ./uninstall.sh $MASSASTATION_CONFIG_DIR || fatal "uninstall script move failed."
+
+$2/MassaStation.app/Contents/MacOS/massastation --repair || fatal "failed to repair MassaStation"
