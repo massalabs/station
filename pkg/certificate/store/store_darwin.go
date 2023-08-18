@@ -124,6 +124,7 @@ func exportTrustSettingsContent(security *SecurityRunner) (map[string]interface{
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshall plistData: %w", err)
 	}
+
 	return plistRoot, nil
 }
 
