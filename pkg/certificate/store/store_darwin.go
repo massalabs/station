@@ -120,7 +120,7 @@ func Add(cert *x509.Certificate) error {
 	rootSubjectASN1, _ := asn1.Marshal(cert.Subject.ToRDNSequence())
 
 	if plistRoot["trustVersion"].(uint64) != 1 {
-		return fmt.Errorf("unsupported trust settings version:", plistRoot["trustVersion"])
+		return fmt.Errorf("unsupported trust settings version: %s", plistRoot["trustVersion"])
 	}
 
 	trustList := plistRoot["trustList"].(map[string]interface{})
