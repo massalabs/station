@@ -27,5 +27,5 @@ func NewCertUtilRunner() (*CertUtilRunner, error) {
 		return nil, fmt.Errorf("failed to find certutil binary: %w", err)
 	}
 
-	return &CertUtilRunner{runner.CommandRunner{BinaryPath: bin}}, nil
+	return &CertUtilRunner{runner.CommandRunner{BinaryPath: certutilBinaryPath}}, nil
 }
