@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/gob"
+	"fmt"
 )
 
 const ExecuteSCOpID = 3
@@ -26,6 +27,12 @@ type ExecuteSC struct {
 	maxGas    uint64
 	maxCoins  uint64
 	dataStore []byte
+}
+
+// MessageContent stores essential fields extracted from the message during the sign operation.
+type MessageContent struct {
+	MaxGas   uint64
+	MaxCoins uint64
 }
 
 /*
@@ -121,4 +128,34 @@ func compactAndAppendBytes(msg *[]byte, value interface{}) {
 	*msg = append(*msg, buf[:nbBytes]...)
 	// Value in bytes
 	*msg = append(*msg, bytesBuffer.Bytes()...)
+}
+
+// DecodeMessage decodes a byte slice,
+// It extracts the necessary fields: operationID, maxGas, and MaxCoin for display in the Wails pop-up.
+func DecodeMessage(data []byte) (*MessageContent, error) {
+	operationContent := &MessageContent{}
+	buf := bytes.NewReader(data)
+
+	// Skip the  operationId
+	_, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read ExecuteSCOpID: %w", err)
+	}
+	// Read maxGas
+	maxGas, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read maxGas: %w", err)
+	}
+
+	operationContent.MaxGas = maxGas
+
+	// Read maxCoins
+	maxCoins, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read maxCoins: %w", err)
+	}
+
+	operationContent.MaxCoins = maxCoins
+
+	return operationContent, nil
 }
