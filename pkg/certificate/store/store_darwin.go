@@ -147,13 +147,14 @@ func importTrustSettings(plistRoot map[string]interface{}, security *SecurityRun
 	if err != nil {
 		return fmt.Errorf("failed to re-import settings")
 	}
+
 	return nil
 }
 
 // updateTrustSettings updates the trust settings with the certificate.
 func updateTrustSettings(plistRoot map[string]interface{}, cert *x509.Certificate) error {
-	if plistRoot["trustVersion"].(uint64) != 1 {
-		return fmt.Errorf("unsupported trust settings version: %d", plistRoot["trustVersion"])
+	if trustVersion, ok := plistRoot["trustVersion"].(uint64); ok && trustVersion != 1 {
+		return fmt.Errorf("unsupported trust settings version: %d", trustVersion)
 	}
 
 	rootSubjectASN1, err := asn1.Marshal(cert.Subject.ToRDNSequence())
@@ -166,16 +167,25 @@ func updateTrustSettings(plistRoot map[string]interface{}, cert *x509.Certificat
 		return fmt.Errorf("failed to create trust settings: %w", err)
 	}
 
-	trustList := plistRoot["trustList"].(map[string]interface{})
+	trustList, ok := plistRoot["trustList"].(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("failed to get trust list")
+	}
 
 	for key := range trustList {
-		entry := trustList[key].(map[string]interface{})
+		entry, entryOk := trustList[key].(map[string]interface{})
+		if !entryOk {
+			continue
+		}
 
 		if _, ok := entry["issuerName"]; !ok {
 			continue
 		}
 
-		issuerName := entry["issuerName"].([]byte)
+		issuerName, issuerNameOk := entry["issuerName"].([]byte)
+		if !issuerNameOk {
+			continue
+		}
 
 		if !bytes.Equal(rootSubjectASN1, issuerName) {
 			continue
