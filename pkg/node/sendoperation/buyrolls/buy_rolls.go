@@ -1,7 +1,9 @@
 package buyrolls
 
 import (
+	"bytes"
 	"encoding/binary"
+	"fmt"
 )
 
 const OpID = 1
@@ -46,4 +48,24 @@ func (b *BuyRolls) Message() []byte {
 	nbBytes = binary.PutUvarint(buf, b.countRoll)
 
 	return append(msg, buf[:nbBytes]...)
+}
+
+func DecodeMessage(data []byte) (*OperationDetails, error) {
+	buf := bytes.NewReader(data)
+
+	// Read operationId
+	_, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read OpID: %w", err)
+	}
+
+	// Read count rolls
+	countRoll, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read countRoll: %w", err)
+	}
+
+	return &OperationDetails{
+		CountRoll: countRoll,
+	}, nil
 }
