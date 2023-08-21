@@ -12,6 +12,11 @@ func TestManualCheck(t *testing.T) {
 	if os.Getenv("GITHUB_ACTIONS") == "true" {
 		t.Skip("skipping test; CI environment detected")
 	}
+
+	if os.Geteuid() != 0 {
+		t.Skip("skipping test; not running as root")
+	}
+
 	certPath := "../testdata/cert.pem"
 
 	cert, err := certificate.LoadCertificate(certPath)
