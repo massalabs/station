@@ -1,5 +1,5 @@
 package store
 
-import "fmt"
+import "errors"
 
-var ErrCertificateNotFound = fmt.Errorf("certificate not found")
+var ErrCertificateNotFound = errors.New("certificate not found")

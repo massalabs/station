@@ -27,7 +27,6 @@ type StartServerFlags struct {
 	TLSPort           int
 	TLSCertificate    string
 	TLSCertificateKey string
-	Version           bool
 }
 
 func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {

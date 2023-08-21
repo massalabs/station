@@ -15,9 +15,3 @@ type CertUtilServicer interface {
 	// IsKnownCA checks if a certificate is known by the NSS database CA list.
 	IsKnownCA(dbPath string, certificateName string) error
 }
-
-// Runner is the interface used by the NSS package to run commands.
-type Runner interface {
-	// Run runs the given command and returns the combined output of stdout and stderr.
-	Run(args ...string) error
-}
