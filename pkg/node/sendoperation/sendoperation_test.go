@@ -4,8 +4,10 @@ import (
 	"encoding/base64"
 	"testing"
 
+	"github.com/massalabs/station/pkg/node/sendoperation/buyrolls"
 	"github.com/massalabs/station/pkg/node/sendoperation/callsc"
 	"github.com/massalabs/station/pkg/node/sendoperation/executesc"
+	"github.com/massalabs/station/pkg/node/sendoperation/sellrolls"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -93,5 +95,53 @@ func TestSerializeDeserializeExecuteSCMessage(t *testing.T) {
 		// Verify the fields
 		assert.Equal(testCase.maxGas, executeSC.MaxGas, "MaxGas mismatch")
 		assert.Equal(testCase.maxCoins, executeSC.MaxCoins, "MaxCoins mismatch")
+	}
+}
+
+func TestSerializeDeserializeBuyRollsMessage(t *testing.T) {
+	assert := assert.New(t)
+
+	testcases := []struct {
+		countRolls uint64
+	}{
+		{
+			countRolls: 5,
+		},
+	}
+
+	for _, testcase := range testcases {
+		// Create a new BuyRolls operation
+		operation := buyrolls.New(testcase.countRolls)
+
+		// Simulate decoding and deserialization
+		buyRolls, err := buyrolls.DecodeMessage(operation.Message())
+		assert.NoError(err, "Error decoding BuyRolls")
+
+		// Verify the countRolls field
+		assert.Equal(testcase.countRolls, buyRolls.CountRoll, "CountRolls mismatch")
+	}
+}
+
+func TestSerializeDeserializeSellRollsMessage(t *testing.T) {
+	assert := assert.New(t)
+
+	testcases := []struct {
+		countRolls uint64
+	}{
+		{
+			countRolls: 10,
+		},
+	}
+
+	for _, testcase := range testcases {
+		// Create a new SellRolls operation
+		operation := sellrolls.New(testcase.countRolls)
+
+		// Simulate decoding and deserialization
+		sellRolls, err := sellrolls.DecodeMessage(operation.Message())
+		assert.NoError(err, "Error decoding SellRolls")
+
+		// Verify the countRolls field
+		assert.Equal(testcase.countRolls, sellRolls.CountRoll, "CountRolls mismatch")
 	}
 }

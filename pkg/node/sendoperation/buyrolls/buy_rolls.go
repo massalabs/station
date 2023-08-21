@@ -56,7 +56,7 @@ func DecodeMessage(data []byte) (*OperationDetails, error) {
 	// Read operationId
 	_, err := binary.ReadUvarint(buf)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read OpID: %w", err)
+		return nil, fmt.Errorf("failed to read BuyRollOpID: %w", err)
 	}
 
 	// Read count rolls
