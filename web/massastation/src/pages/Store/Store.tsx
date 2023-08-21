@@ -11,7 +11,7 @@ export function Store() {
     <>
       <div className="bg-primary text-f-primary pt-24">
         <h1 className="mas-banner mb-10"> {Intl.t('store.modules-banner')}</h1>
-        <div className="overflow-auto h-full">
+        <div className="overflow-auto h-[65vh]">
           <div className="mas-body mb-3 text-neutral">
             {Intl.t('store.mystation-banner')}
           </div>

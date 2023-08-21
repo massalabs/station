@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { usePost } from '@/custom/api';
 
-import { Certificate, Plugin } from '@massalabs/react-ui-kit';
+import { Certificate, Plugin, Tooltip } from '@massalabs/react-ui-kit';
 import { massalabsNomination } from '@/const';
 import { FiAlertTriangle, FiDownload } from 'react-icons/fi';
 import { PluginCardLoading } from '../PluginCardLoading';
@@ -14,14 +14,13 @@ interface StorePluginProps {
 
 function StorePlugin(props: StorePluginProps) {
   const { plugin, refetch } = props;
-  const [message, setMessage] = useState<boolean>(false);
   let {
     author,
     name,
     logo,
     description,
     file: { url },
-    iscompatible,
+    iscompatible: isCompatible,
     massastationMinVersion,
   } = plugin;
 
@@ -42,31 +41,31 @@ function StorePlugin(props: StorePluginProps) {
     }
   }, [isInstallSuccess]);
 
-  const argsStoreError = [
-    <div>
-      <div
-        onMouseEnter={() => setMessage(true)}
-        onMouseLeave={() => setMessage(false)}
-      >
-        <FiAlertTriangle className="text-s-warning w-6 h-10" />
-      </div>
-      {message && (
-        <div className="w-fit absolute z-10 l-10 bg-tertiary p-3 rounded-lg text-neutral">
-          {warningMessage}
-        </div>
-      )}
+  const incompatibleActions = [
+    <div className="relative whitespace-nowrap">
+      <Tooltip
+        content={warningMessage}
+        icon={<FiAlertTriangle className="text-s-warning" size={24} />}
+      />
     </div>,
     <FiDownload className="w-6 h-10 text-tertiary" />,
   ];
 
+  const downloadAction = [
+    <FiDownload
+      className="hover:cursor-pointer"
+      size={24}
+      onClick={() => mutate({ params })}
+    />,
+  ];
+
   const argsStore = {
     preIcon: <img src={logo} alt="plugin-logo" />,
-    topAction: <FiDownload onClick={() => mutate({ params })} />,
+    topActions: !isCompatible ? incompatibleActions : downloadAction,
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
     content: description,
-    topActions: !iscompatible ? argsStoreError : undefined,
   };
 
   return (
