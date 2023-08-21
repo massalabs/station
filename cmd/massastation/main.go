@@ -63,7 +63,7 @@ func main() {
 	}
 
 	if stationStartFlags.Repair {
-		logger.Infof("MassaStation has been repaired")
+		logger.Infof("Repair process completed. Please check the logs for any potential errors.")
 		os.Exit(0)
 	}
 
