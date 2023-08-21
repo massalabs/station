@@ -40,14 +40,15 @@ func ParseFlags() (api.StartServerFlags, StartFlags) {
 }
 
 func main() {
-	err := initialize.Logger()
+	serverFlags, stationStartFlags := ParseFlags()
+
+	err := initialize.Logger(stationStartFlags.Repair)
 	if err != nil {
 		log.Fatalf("while initializing logger: %s", err.Error())
 	}
 
 	defer logger.Close()
 
-	serverFlags, stationStartFlags := ParseFlags()
 	if stationStartFlags.Version {
 		//nolint:forbidigo
 		fmt.Printf("Version:%s\n", config.Version)

@@ -9,19 +9,27 @@ import (
 )
 
 const (
-	LogFileName   = "massastation.log"
-	LogSubDirName = "logs"
+	LogFileName       = "massastation.log"
+	RepairLogFileName = "massastation-repair.log"
+	LogSubDirName     = "logs"
 )
 
 // Logger sets up the global logger.
-func Logger() error {
+func Logger(repairMode bool) error {
 	logDir, err := dirs.GetConfigDir()
 	if err != nil {
 		return fmt.Errorf("get config dir: %w", err)
 	}
 
 	logDirPath := filepath.Join(logDir, LogSubDirName)
-	logFilePath := filepath.Join(logDirPath, LogFileName)
+
+	var logFilePath string
+
+	if repairMode {
+		logFilePath = filepath.Join(logDirPath, RepairLogFileName)
+	} else {
+		logFilePath = filepath.Join(logDirPath, LogFileName)
+	}
 
 	if err := logger.InitializeGlobal(logFilePath); err != nil {
 		return fmt.Errorf("initialize global logger: %w", err)
