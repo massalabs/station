@@ -11,7 +11,6 @@ import (
 	"github.com/massalabs/station/int/initialize"
 	"github.com/massalabs/station/int/systray"
 	"github.com/massalabs/station/int/systray/update"
-	"github.com/massalabs/station/pkg/dirs"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/plugin"
 )
@@ -29,15 +28,6 @@ func ParseFlags() (api.StartServerFlags, StartFlags) {
 	var serverFlags api.StartServerFlags
 
 	var startFlags StartFlags
-
-	_, err := dirs.GetConfigDir()
-	if err != nil {
-		logger.Errorf(
-			"Unable to read config dir: %s\n%s",
-			err,
-			`MassaStation can't run without a config directory.\n
-			Please reinstall MassaStation using the installer at https://github.com/massalabs/station and try again.`)
-	}
 
 	flag.IntVar(&serverFlags.Port, "http-port", httpPort, "HTTP port to listen to")
 	flag.IntVar(&serverFlags.TLSPort, "https-port", httpsPort, "HTTPS port to listen to")
