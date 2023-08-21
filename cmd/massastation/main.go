@@ -57,8 +57,8 @@ func main() {
 
 	defer logger.Close()
 
-	serverFlags, startFlags := ParseFlags()
-	if startFlags.Version {
+	serverFlags, stationStartFlags := ParseFlags()
+	if stationStartFlags.Version {
 		//nolint:forbidigo
 		fmt.Printf("Version:%s\n", config.Version)
 		logger.Close()
@@ -71,7 +71,8 @@ func main() {
 		logger.Fatalf("Error with you current system configuration: %s", err.Error())
 	}
 
-	if startFlags.Repair {
+	if stationStartFlags.Repair {
+		logger.Infof("MassaStation has been repaired")
 		os.Exit(0)
 	}
 

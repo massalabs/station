@@ -1,0 +1,22 @@
+<array>
+	<dict>
+		<key>kSecTrustSettingsPolicy</key>
+		<data>
+		KoZIhvdjZAED
+		</data>
+		<key>kSecTrustSettingsPolicyName</key>
+		<string>sslServer</string>
+		<key>kSecTrustSettingsResult</key>
+		<integer>1</integer>
+	</dict>
+	<dict>
+		<key>kSecTrustSettingsPolicy</key>
+		<data>
+		KoZIhvdjZAEC
+		</data>
+		<key>kSecTrustSettingsPolicyName</key>
+		<string>basicX509</string>
+		<key>kSecTrustSettingsResult</key>
+		<integer>1</integer>
+	</dict>
+</array>

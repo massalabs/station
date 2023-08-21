@@ -5,6 +5,7 @@ package store
 import (
 	"bytes"
 	"crypto/x509"
+	_ "embed"
 	"encoding/asn1"
 	"encoding/pem"
 	"fmt"
@@ -22,9 +23,12 @@ const (
 	permissionUrwGrOr = 0o644
 	permissionUrw     = 0o600
 
-	tmpTrustSettingsFile = "trust-settings.plist"
-	tmpTrustedCertFile   = "trusted-cert"
+	trustSettingsFile = "trust-settings.plist"
+	trustedCertFile   = "trusted-cert"
 )
+
+//go:embed trust_darwin.plist
+var trustSettingsData []byte
 
 // SecurityRunner encapsulates security commands.
 type SecurityRunner struct {
@@ -77,7 +81,7 @@ func Delete(_ *x509.Certificate) error {
 
 // addTrustedCert adds the certificate to the system keychain.
 func addTrustedCert(cert *x509.Certificate, security *SecurityRunner) error {
-	trustedCertFile, err := os.CreateTemp("", tmpTrustedCertFile)
+	trustedCertFile, err := os.CreateTemp("", trustedCertFile)
 	if err != nil {
 		return fmt.Errorf("failed to create temporary file: %w", err)
 	}
@@ -101,7 +105,7 @@ func addTrustedCert(cert *x509.Certificate, security *SecurityRunner) error {
 
 // exportTrustSettingsContent exports the trust settings to a temporary file.
 func exportTrustSettingsContent(security *SecurityRunner) (map[string]interface{}, error) {
-	plistFile, err := os.CreateTemp("", tmpTrustSettingsFile)
+	plistFile, err := os.CreateTemp("", trustSettingsFile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create temporary trust-settings file: %w", err)
 	}
@@ -134,12 +138,12 @@ func importTrustSettings(plistRoot map[string]interface{}, security *SecurityRun
 		return fmt.Errorf("failed to marshal trust settings: %w", err)
 	}
 
-	err = os.WriteFile(tmpTrustSettingsFile, updatedPlistData, fs.FileMode(permissionUrw))
+	err = os.WriteFile(trustSettingsFile, updatedPlistData, fs.FileMode(permissionUrw))
 	if err != nil {
 		return fmt.Errorf("failed to write trust settings: %w", err)
 	}
 
-	err = security.Run("trust-settings-import", "-d", tmpTrustSettingsFile)
+	err = security.Run("trust-settings-import", "-d", trustSettingsFile)
 	if err != nil {
 		return fmt.Errorf("failed to re-import settings")
 	}
@@ -188,31 +192,6 @@ func updateTrustSettings(plistRoot map[string]interface{}, cert *x509.Certificat
 // createCertTrustSettings creates the trust settings for the certificate.
 func createCertTrustSettings() ([]interface{}, error) {
 	var trustSettings []interface{}
-
-	trustSettingsData := []byte(`
-<array>
-	<dict>
-		<key>kSecTrustSettingsPolicy</key>
-		<data>
-		KoZIhvdjZAED
-		</data>
-		<key>kSecTrustSettingsPolicyName</key>
-		<string>sslServer</string>
-		<key>kSecTrustSettingsResult</key>
-		<integer>1</integer>
-	</dict>
-	<dict>
-		<key>kSecTrustSettingsPolicy</key>
-		<data>
-		KoZIhvdjZAEC
-		</data>
-		<key>kSecTrustSettingsPolicyName</key>
-		<string>basicX509</string>
-		<key>kSecTrustSettingsResult</key>
-		<integer>1</integer>
-	</dict>
-</array>
-`)
 
 	_, err := plist.Unmarshal(trustSettingsData, &trustSettings)
 	if err != nil {
