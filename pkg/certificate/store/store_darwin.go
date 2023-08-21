@@ -172,6 +172,12 @@ func updateTrustSettings(plistRoot map[string]interface{}, cert *x509.Certificat
 		return fmt.Errorf("failed to get trust list")
 	}
 
+	incorporateTrustList(trustList, rootSubjectASN1, trustSettings)
+
+	return nil
+}
+
+func incorporateTrustList(trustList map[string]interface{}, rootSubjectASN1 []byte, trustSettings []interface{}) {
 	for key := range trustList {
 		entry, entryOk := trustList[key].(map[string]interface{})
 		if !entryOk {
@@ -195,8 +201,6 @@ func updateTrustSettings(plistRoot map[string]interface{}, cert *x509.Certificat
 
 		break
 	}
-
-	return nil
 }
 
 // createCertTrustSettings creates the trust settings for the certificate.
