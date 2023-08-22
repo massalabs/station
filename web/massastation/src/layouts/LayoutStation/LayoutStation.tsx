@@ -76,7 +76,7 @@ export function LayoutStation({ ...props }) {
   return (
     <div
       data-testid="layout-station"
-      className={`min-h-screen bg-primary px-20 pt-12 pb-8 $}`}
+      className="min-h-screen bg-primary px-20 pt-12 pb-8"
     >
       <div className="grid grid-cols-3">
         <div className="flex justify-start items-center">
