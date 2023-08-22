@@ -25,7 +25,7 @@ func TopMiddleware(handler http.Handler, cfg config.AppConfig) http.Handler {
 		logger.Infof("[%s %s]", r.Method, r.URL.Path)
 		if configDir == "" {
 			var err error
-			configDir, err = configuration.CertPath()
+			configDir, err = configuration.Path()
 
 			if err != nil {
 				logger.Warnf("TLS: unable to get CA root path: %s", err)
