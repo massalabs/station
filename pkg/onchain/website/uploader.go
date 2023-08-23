@@ -116,6 +116,8 @@ func upload(
 		"initializeWebsite",
 		convert.U64ToBytes(len(chunks)),
 		sendOperation.OneMassa,
+		sendOperation.DefaultSlotsDuration,
+		false,
 		operationBatch,
 		&signer.WalletPlugin{},
 	)
@@ -135,13 +137,15 @@ func upload(
 		// Chunk data encoding
 		params = append(params, chunks[index]...)
 
-		operationResponse, err := onchain.CallFunctionUnwaited(
+		operationResponse, err := onchain.CallFunction(
 			client,
 			nickname,
-			maxExpiryPeriod(index),
 			addr,
 			"appendBytesToWebsite",
 			params,
+			sendOperation.HundredMassa,
+			maxExpiryPeriod(index),
+			false,
 			sendOperation.OperationBatch{
 				NewBatch:      false,
 				CorrelationID: operationWithEventResponse.OperationResponse.CorrelationID,
@@ -152,7 +156,7 @@ func upload(
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
 
-		operations[index+1] = operationResponse.OperationID
+		operations[index+1] = operationResponse.OperationResponse.OperationID
 	}
 
 	return operations, nil
@@ -211,13 +215,15 @@ func uploadMissedChunks(
 		//nolint:ineffassign,nolintlint
 		params = append(params, chunks[chunkID]...)
 
-		operationResponse, err := onchain.CallFunctionUnwaited(
+		operationResponse, err := onchain.CallFunction(
 			client,
 			nickname,
-			maxExpiryPeriod(index),
 			addr,
 			"appendBytesToWebsite",
 			params,
+			sendOperation.HundredMassa,
+			maxExpiryPeriod(index),
+			false,
 			operationBatch,
 			&signer.WalletPlugin{},
 		)
@@ -225,9 +231,9 @@ func uploadMissedChunks(
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
 		}
 
-		operations[index] = operationResponse.OperationID
+		operations[index] = operationResponse.OperationResponse.OperationID
 		operationBatch.NewBatch = false
-		operationBatch.CorrelationID = operationResponse.CorrelationID
+		operationBatch.CorrelationID = operationResponse.OperationResponse.CorrelationID
 	}
 
 	return operations, nil
