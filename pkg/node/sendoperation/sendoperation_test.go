@@ -114,7 +114,7 @@ func TestSerializeDeserializeBuyRollsMessage(t *testing.T) {
 		operation := buyrolls.New(testcase.countRolls)
 
 		// Simulate decoding and deserialization
-		buyRolls, err := rollsDecodeMessage(operation.Message())
+		buyRolls, err := RollDecodeMessage(operation.Message())
 		assert.NoError(err, "Error decoding BuyRolls")
 
 		// Verify the countRolls field
@@ -138,7 +138,7 @@ func TestSerializeDeserializeSellRollsMessage(t *testing.T) {
 		operation := sellrolls.New(testcase.countRolls)
 
 		// Simulate decoding and deserialization
-		sellRolls, err := rollsDecodeMessage(operation.Message())
+		sellRolls, err := RollDecodeMessage(operation.Message())
 		assert.NoError(err, "Error decoding SellRolls")
 
 		// Verify the countRolls field

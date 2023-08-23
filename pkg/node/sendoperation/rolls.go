@@ -11,7 +11,7 @@ type MessageContent struct {
 	RollCount   uint64 `json:"roll_count"`
 }
 
-func rollsDecodeMessage(data []byte) (*MessageContent, error) {
+func RollDecodeMessage(data []byte) (*MessageContent, error) {
 	buf := bytes.NewReader(data)
 
 	// Read operationId
