@@ -9,7 +9,6 @@ import (
 	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/pkg/certificate"
 	"github.com/massalabs/station/pkg/certificate/store"
-	"github.com/massalabs/station/pkg/dirs"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/nss"
 )
@@ -21,18 +20,8 @@ const failureConsequence = "Station will only work using http, or you will have 
 func Check() error {
 	var resultErr error
 
-	// Check config directory.
-	_, err := dirs.GetConfigDir()
-	if err != nil {
-		logger.Errorf(
-			"Unable to read config dir: %s\n%s",
-			err,
-			`MassaStation can't run without a config directory.\n
-			Please reinstall MassaStation using the installer at https://github.com/massalabs/station and try again.`)
-	}
-
 	// Check certificates.
-	caRootPath, err := dirs.GetCertDir()
+	caRootPath, err := configuration.CertPath()
 	if err != nil {
 		return caNonBlockingError("failed to get CA path", err)
 	}

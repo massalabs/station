@@ -7,12 +7,14 @@ import (
 	"fmt"
 	"os"
 	"path"
-
-	"github.com/massalabs/station/pkg/dirs"
 )
 
-func fullPath(fileName string) (string, error) {
-	cacheDir, err := fsDirectory()
+type Cache struct {
+	ConfigDir string
+}
+
+func fullPath(fileName, configDir string) (string, error) {
+	cacheDir, err := fsDirectory(configDir)
 	if err != nil {
 		return "", fmt.Errorf("while reading cached file %s: %w", fileName, err)
 	}
@@ -21,8 +23,8 @@ func fullPath(fileName string) (string, error) {
 }
 
 // IsPresent checks if the file is present in the local cache.
-func IsPresent(file string) bool {
-	fp, _ := fullPath(file)
+func (c *Cache) IsPresent(file string) bool {
+	fp, _ := fullPath(file, c.ConfigDir)
 
 	_, err := os.Stat(fp)
 
@@ -31,8 +33,7 @@ func IsPresent(file string) bool {
 
 // fsDirectory returns the cache directory on the file system.
 // If the directory doesn't exist, it is created before being returned.
-func fsDirectory() (string, error) {
-	configDir, _ := dirs.GetConfigDir()
+func fsDirectory(configDir string) (string, error) {
 	cacheDir := path.Join(configDir, "websitesCache")
 	_, err := os.Stat(cacheDir)
 
@@ -47,8 +48,8 @@ func fsDirectory() (string, error) {
 }
 
 // Read returns the cached file content corresponding to the given name.
-func Read(file string) ([]byte, error) {
-	fullPath, err := fullPath(file)
+func (c *Cache) Read(file string) ([]byte, error) {
+	fullPath, err := fullPath(file, c.ConfigDir)
 	if err != nil {
 		return nil, fmt.Errorf("while reading cached file %s: %w", file, err)
 	}
@@ -62,8 +63,8 @@ func Read(file string) ([]byte, error) {
 }
 
 // Save adds a new file to the cache.
-func Save(fileName string, content []byte) error {
-	fullPath, err := fullPath(fileName)
+func (c *Cache) Save(fileName string, content []byte) error {
+	fullPath, err := fullPath(fileName, c.ConfigDir)
 	if err != nil {
 		return fmt.Errorf("while reading cached file %s: %w", fileName, err)
 	}

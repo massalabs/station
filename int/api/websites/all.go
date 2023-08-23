@@ -27,16 +27,17 @@ const (
 	faviconIcon = "favicon.ico"
 )
 
-func NewRegistryHandler(config *config.AppConfig) operations.AllDomainsGetterHandler {
-	return &registryHandler{config: config}
+func NewRegistryHandler(config *config.AppConfig, configDir string) operations.AllDomainsGetterHandler {
+	return &registryHandler{config: config, configDir: configDir}
 }
 
 type registryHandler struct {
-	config *config.AppConfig
+	config    *config.AppConfig
+	configDir string
 }
 
 func (h *registryHandler) Handle(_ operations.AllDomainsGetterParams) middleware.Responder {
-	results, err := Registry(h.config)
+	results, err := Registry(h.config, h.configDir)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().
 			WithPayload(
@@ -56,7 +57,7 @@ the various website storer contracts, the function builds an array of Registry o
 and returns it to the frontend for display on the Registry page.
 */
 // Registry fetches the registry data for the given AppConfig.
-func Registry(config *config.AppConfig) ([]*models.Registry, error) {
+func Registry(config *config.AppConfig, configDir string) ([]*models.Registry, error) {
 	client := node.NewClient(config.NodeURL)
 
 	websiteNames, err := filterEntriesToDisplay(*config, client)
@@ -69,7 +70,7 @@ func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 		return nil, fmt.Errorf("failed to read keys '%s' at '%s': %w", websiteNames, config.DNSAddress, err)
 	}
 
-	registry := processDNSValues(client, dnsValues, websiteNames)
+	registry := processDNSValues(client, dnsValues, websiteNames, configDir)
 
 	sortRegistry(registry)
 
@@ -80,6 +81,7 @@ func processDNSValues(
 	client *node.Client,
 	dnsValues []node.DatastoreEntryResponse,
 	websiteNames [][]byte,
+	configDir string,
 ) []*models.Registry {
 	// Create buffered channels with the size of dnsValues slice
 	registryChan := make(chan *models.Registry, len(dnsValues))
@@ -91,7 +93,7 @@ func processDNSValues(
 		go func(index int, dnsValue node.DatastoreEntryResponse) {
 			defer waitGroup.Done()
 
-			processEntry(index, dnsValue, client, websiteNames, registryChan, errChan)
+			processEntry(index, dnsValue, client, websiteNames, registryChan, errChan, configDir)
 		}(index, dnsValue)
 	}
 
@@ -107,7 +109,9 @@ func processDNSValues(
 func processEntry(index int,
 	dnsValue node.DatastoreEntryResponse,
 	client *node.Client, websiteNames [][]byte,
-	registryChan chan<- *models.Registry, errChan chan<- error,
+	registryChan chan<- *models.Registry,
+	errChan chan<- error,
+	configDir string,
 ) {
 	valueBytes := dnsValue.CandidateValue
 
@@ -124,7 +128,7 @@ func processEntry(index int,
 		Name:        name,
 		Address:     websiteStorerAddress,
 		Description: websiteDescription,
-		Favicon:     DNSRecordFavicon(name, websiteStorerAddress, client),
+		Favicon:     DNSRecordFavicon(name, websiteStorerAddress, client, configDir),
 	}
 }
 
@@ -149,8 +153,8 @@ func sortRegistry(registry []*models.Registry) {
 	})
 }
 
-func DNSRecordFavicon(name, websiteStorerAddress string, client *node.Client) string {
-	body, err := website.Fetch(client, websiteStorerAddress, faviconIcon)
+func DNSRecordFavicon(name, websiteStorerAddress string, client *node.Client, configDir string) string {
+	body, err := website.Fetch(client, websiteStorerAddress, faviconIcon, configDir)
 	if err != nil || len(body) == 0 {
 		return ""
 	}

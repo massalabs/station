@@ -17,6 +17,7 @@ func handleMassaDomainRequest(
 	reader *http.Request,
 	index int,
 	config config.AppConfig,
+	configDir string,
 ) error {
 	name := reader.Host[:index]
 
@@ -34,11 +35,15 @@ func handleMassaDomainRequest(
 		target = reader.URL.Path[1:]
 	}
 
-	return Request(writer, reader, rpcClient, addr, target)
+	return Request(writer, reader, rpcClient, addr, target, configDir)
 }
 
 // MassaTLDInterceptor intercepts request for web on-chain.
-func MassaTLDInterceptor(req *interceptor.Interceptor, appConfig config.AppConfig) *interceptor.Interceptor {
+func MassaTLDInterceptor(
+	req *interceptor.Interceptor,
+	appConfig config.AppConfig,
+	configDir string,
+) *interceptor.Interceptor {
 	if req == nil {
 		return nil
 	}
@@ -46,7 +51,7 @@ func MassaTLDInterceptor(req *interceptor.Interceptor, appConfig config.AppConfi
 	massaIndex := strings.Index(req.Request.Host, ".massa")
 
 	if massaIndex > 0 && !strings.HasPrefix(req.Request.Host, config.MassaStationURL) {
-		err := handleMassaDomainRequest(req.Writer, req.Request, massaIndex, appConfig)
+		err := handleMassaDomainRequest(req.Writer, req.Request, massaIndex, appConfig, configDir)
 		if err != nil {
 			logger.Errorf("handling massa domain request: %v", err)
 

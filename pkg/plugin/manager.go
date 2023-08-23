@@ -11,7 +11,6 @@ import (
 	"sync"
 
 	"github.com/cavaliergopher/grab/v3"
-	"github.com/massalabs/station/pkg/dirs"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/plugin/utils"
 	"github.com/massalabs/station/pkg/store"
@@ -20,9 +19,8 @@ import (
 
 // Directory returns the plugin directory.
 // Note: the plugin directory is the /plugins inside the home directory.
-func Directory() string {
-	homeDir, _ := dirs.GetConfigDir()
-	pluginsDir := path.Join(homeDir, "plugins")
+func Directory(configDir string) string {
+	pluginsDir := path.Join(configDir, "plugins")
 	_, err := os.Stat(pluginsDir)
 
 	if os.IsNotExist(err) {
@@ -42,12 +40,17 @@ type Manager struct {
 	mutex          sync.RWMutex
 	plugins        map[string]*Plugin
 	authorNameToID map[string]string
+	configDir      string
 }
 
 // NewManager instantiates a manager struct.
-func NewManager() *Manager {
+func NewManager(configDir string) *Manager {
 	//nolint:exhaustruct
-	manager := &Manager{plugins: make(map[string]*Plugin), authorNameToID: make(map[string]string)}
+	manager := &Manager{
+		plugins:        make(map[string]*Plugin),
+		authorNameToID: make(map[string]string),
+		configDir:      configDir,
+	}
 
 	return manager
 }
@@ -233,7 +236,7 @@ func (m *Manager) InitPlugin(binPath string) error {
 
 // RunALL runs all the installed plugins.
 func (m *Manager) RunAll() error {
-	pluginDir := Directory()
+	pluginDir := Directory(m.configDir)
 
 	rootItems, err := os.ReadDir(pluginDir)
 	if err != nil {
@@ -293,7 +296,7 @@ func (m *Manager) StopPlugin(plugin *Plugin, unregister bool) error {
 // Pass isNew to false to update the plugin.
 // Returns the plugin path.
 func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
-	pluginsDir := Directory()
+	pluginsDir := Directory(m.configDir)
 
 	resp, err := grab.Get(pluginsDir, url)
 	if err != nil {
