@@ -43,7 +43,6 @@ func CallFunction(client *node.Client,
 	callSC, err := callsc.New(addr, function, parameter,
 		sendOperation.DefaultGasLimit,
 		coins)
-
 	if err != nil {
 		return nil, fmt.Errorf("creating callSC with '%s' at '%s': %w", function, addr, err)
 	}
@@ -56,7 +55,6 @@ func CallFunction(client *node.Client,
 		operationBatch,
 		signer,
 	)
-
 	if err != nil {
 		return nil, fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
 	}
