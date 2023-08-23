@@ -16,11 +16,6 @@ type Operation struct {
 	SellRolls OperationDetails `json:"SellRolls"`
 }
 
-type MessageContent struct {
-	OperationID uint64 `json:"operation_id"`
-	RollCount   uint64 `json:"roll_count"`
-}
-
 type SellRolls struct {
 	countRoll uint64
 }

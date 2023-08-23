@@ -15,6 +15,7 @@ type OperationDetails struct {
 type Operation struct {
 	BuyRolls OperationDetails `json:"BuyRolls"`
 }
+
 type BuyRolls struct {
 	countRoll uint64
 }
