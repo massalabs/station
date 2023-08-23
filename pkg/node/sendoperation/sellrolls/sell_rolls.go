@@ -18,6 +18,11 @@ type Operation struct {
 	SellRolls OperationDetails `json:"SellRolls"`
 }
 
+type MessageContent struct {
+	OperationID uint64 `json:"operation_id"`
+	RollCount   uint64 `json:"roll_count"`
+}
+
 type SellRolls struct {
 	countRoll uint64
 }
@@ -51,13 +56,13 @@ func (b *SellRolls) Message() []byte {
 	return msg
 }
 
-func DecodeMessage(data []byte) (*OperationDetails, error) {
+func DecodeMessage(data []byte) (*MessageContent, error) {
 	buf := bytes.NewReader(data)
 
-	// Skip operationId
-	_, err := binary.ReadUvarint(buf)
+	// Read operationId
+	opID, err := binary.ReadUvarint(buf)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read SellRollOpID: %w", err)
+		return nil, fmt.Errorf("failed to read BuyRollOpID: %w", err)
 	}
 
 	// Read count rolls
@@ -66,7 +71,10 @@ func DecodeMessage(data []byte) (*OperationDetails, error) {
 		return nil, fmt.Errorf("failed to read countRoll: %w", err)
 	}
 
-	return &OperationDetails{
-		CountRoll: countRoll,
-	}, nil
+	operationDetails := &MessageContent{
+		OperationID: opID,
+		RollCount:   countRoll,
+	}
+
+	return operationDetails, nil
 }

@@ -118,7 +118,7 @@ func TestSerializeDeserializeBuyRollsMessage(t *testing.T) {
 		assert.NoError(err, "Error decoding BuyRolls")
 
 		// Verify the countRolls field
-		assert.Equal(testcase.countRolls, buyRolls.CountRoll, "CountRolls mismatch")
+		assert.Equal(testcase.countRolls, buyRolls.RollCount, "CountRolls mismatch")
 	}
 }
 
@@ -142,6 +142,6 @@ func TestSerializeDeserializeSellRollsMessage(t *testing.T) {
 		assert.NoError(err, "Error decoding SellRolls")
 
 		// Verify the countRolls field
-		assert.Equal(testcase.countRolls, sellRolls.CountRoll, "CountRolls mismatch")
+		assert.Equal(testcase.countRolls, sellRolls.RollCount, "CountRolls mismatch")
 	}
 }
