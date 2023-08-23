@@ -1,9 +1,7 @@
 package buyrolls
 
 import (
-	"bytes"
 	"encoding/binary"
-	"fmt"
 )
 
 const OpID = 1
@@ -16,11 +14,6 @@ type OperationDetails struct {
 //nolint:tagliatelle
 type Operation struct {
 	BuyRolls OperationDetails `json:"BuyRolls"`
-}
-
-type MessageContent struct {
-	OperationID uint64 `json:"operation_id"`
-	RollCount   uint64 `json:"roll_count"`
 }
 type BuyRolls struct {
 	countRoll uint64
@@ -52,27 +45,4 @@ func (b *BuyRolls) Message() []byte {
 	nbBytes = binary.PutUvarint(buf, b.countRoll)
 
 	return append(msg, buf[:nbBytes]...)
-}
-
-func DecodeMessage(data []byte) (*MessageContent, error) {
-	buf := bytes.NewReader(data)
-
-	// Read operationId
-	opID, err := binary.ReadUvarint(buf)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read BuyRollOpID: %w", err)
-	}
-
-	// Read count rolls
-	countRoll, err := binary.ReadUvarint(buf)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read countRoll: %w", err)
-	}
-
-	operationDetails := &MessageContent{
-		OperationID: opID,
-		RollCount:   countRoll,
-	}
-
-	return operationDetails, nil
 }
