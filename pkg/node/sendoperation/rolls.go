@@ -6,12 +6,12 @@ import (
 	"fmt"
 )
 
-type MessageContent struct {
+type RollMessageContent struct {
 	OperationID uint64 `json:"operation_id"`
 	RollCount   uint64 `json:"roll_count"`
 }
 
-func RollDecodeMessage(data []byte) (*MessageContent, error) {
+func RollDecodeMessage(data []byte) (*RollMessageContent, error) {
 	buf := bytes.NewReader(data)
 
 	// Read operationId
@@ -26,7 +26,7 @@ func RollDecodeMessage(data []byte) (*MessageContent, error) {
 		return nil, fmt.Errorf("failed to read countRoll: %w", err)
 	}
 
-	operationDetails := &MessageContent{
+	operationDetails := &RollMessageContent{
 		OperationID: opID,
 		RollCount:   countRoll,
 	}
