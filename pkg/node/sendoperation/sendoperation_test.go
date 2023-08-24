@@ -8,6 +8,7 @@ import (
 	"github.com/massalabs/station/pkg/node/sendoperation/callsc"
 	"github.com/massalabs/station/pkg/node/sendoperation/executesc"
 	"github.com/massalabs/station/pkg/node/sendoperation/sellrolls"
+	"github.com/massalabs/station/pkg/node/sendoperation/transaction"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -151,5 +152,33 @@ func TestSerializeDeserializeSellRollsMessage(t *testing.T) {
 
 		// Verify the countRolls field
 		assert.Equal(testcase.countRolls, sellRolls.RollCount, "CountRolls mismatch")
+	}
+}
+
+func TestSerializeDeserializeTransactionMessage(t *testing.T) {
+	assert := assert.New(t)
+
+	testCases := []struct {
+		recipientAddress string
+		amount           uint64
+	}{
+		{
+			recipientAddress: "AU1MPDRXuR22mwYDFCeZUDgYjcTAF1co6xujx2X6ugoHeYeGY3B5",
+			amount:           uint64(12345),
+		},
+	}
+
+	for _, testCase := range testCases {
+		// Create a new Transaction
+		tx, err := transaction.New(testCase.recipientAddress, testCase.amount)
+		assert.NoError(err, "Failed to create Transaction")
+
+		// Simulate decoding and deserialization
+		decodedTransaction, err := transaction.DecodeMessage(tx.Message())
+		assert.NoError(err, "Error decoding message")
+
+		// Verify the fields
+		assert.Equal(testCase.recipientAddress, decodedTransaction.RecipientAddress, "RecipientAddress mismatch")
+		assert.Equal(testCase.amount, decodedTransaction.Amount, "Amount mismatch")
 	}
 }
