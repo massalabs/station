@@ -150,7 +150,7 @@ func (m *Manager) UnregisterPlugin(correlationID string) error {
 func (m *Manager) Delete(correlationID string) error {
 	plgn, err := m.Plugin(correlationID)
 	if err != nil {
-		return fmt.Errorf("deleting plugin %s: %w", correlationID, err)
+		return fmt.Errorf("getting plugin %s: %w", correlationID, err)
 	}
 
 	// Ignore Stop errors. We want to delete the plugin anyway
@@ -179,6 +179,8 @@ func removePlugin(plugin *Plugin) error {
 		if err != nil {
 			return fmt.Errorf("removing plugin dir %s: %w", dir, err)
 		}
+
+		return nil
 	}
 
 	// for the massa-wallet we want to keep all the wallet entries
