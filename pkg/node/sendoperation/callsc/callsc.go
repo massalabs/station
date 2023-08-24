@@ -10,7 +10,6 @@ import (
 
 const (
 	CallSCOpID        = uint64(4)
-	publicKeyHashSize = 32
 )
 
 type OperationDetails struct {
