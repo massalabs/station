@@ -160,6 +160,8 @@ func MakeOperation(client *node.Client, expiry uint64, fee uint64, operation Ope
 	return msg, msgB64, nil
 }
 
+// message constructs a message byte slice with the provided expiry, fee, and operation.
+// It returns the composed message.
 func message(expiry uint64, fee uint64, operation Operation) []byte {
 	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
@@ -177,6 +179,9 @@ func message(expiry uint64, fee uint64, operation Operation) []byte {
 	return msg
 }
 
+// DecodeMessage64 decodes a base64-encoded message and extracts the fee, expiry,
+// and the actual message content(operation : CallSc, ExecuteSC, BuyRoll, SellRoll).
+// It returns the decoded message, fee, expiry, and an error if any.
 func DecodeMessage64(msgB64 string) ([]byte, uint64, uint64, error) {
 	// Decode the base64-encoded message
 	decodedMsg, err := b64.StdEncoding.DecodeString(msgB64)
@@ -200,7 +205,5 @@ func DecodeMessage64(msgB64 string) ([]byte, uint64, uint64, error) {
 
 	decodedMsg = decodedMsg[bytesRead:]
 
-	// At this point, 'decodedMsg' contains the remaining part of the message
-	// which is the 'operation.Message()' part
 	return decodedMsg, fee, expiry, nil
 }

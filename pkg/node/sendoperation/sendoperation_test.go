@@ -43,18 +43,22 @@ func TestSerializeDeserializeCallSCMessage(t *testing.T) {
 		msgB64 := base64.StdEncoding.EncodeToString(msg)
 
 		// Simulate decoding and deserialization
-		decodedMsg, _, _, err := DecodeMessage64(msgB64)
+		decodedMsg, fee, expiry, err := DecodeMessage64(msgB64)
 		assert.NoError(err, "Error decoding message")
+
+		// verify the fee and expiry
+		assert.Equal(testcase.fee, fee, "fee mismatch")
+		assert.Equal(testcase.expiry, expiry, "expiry mismatch")
 
 		callSC, err := callsc.DecodeMessage(decodedMsg)
 		assert.NoError(err, "Error decoding CallSC")
 
 		// Verify the fields
-		assert.Equal(testcase.address, callSC.Address, "Address mismatestcaseh")
-		assert.Equal(testcase.function, callSC.Function, "Function mismatestcaseh")
-		assert.Equal(testcase.parameters, callSC.Parameters, "Parameters mismatestcaseh")
-		assert.Equal(testcase.gasLimit, callSC.GasLimit, "GasLimit mismatestcaseh")
-		assert.Equal(testcase.coins, callSC.Coins, "Coins mismatestcaseh")
+		assert.Equal(testcase.address, callSC.Address, "Address mismatch")
+		assert.Equal(testcase.function, callSC.Function, "Function mismatch")
+		assert.Equal(testcase.parameters, callSC.Parameters, "Parameters mismatch")
+		assert.Equal(testcase.gasLimit, callSC.GasLimit, "GasLimit mismatch")
+		assert.Equal(testcase.coins, callSC.Coins, "Coins mismatch")
 	}
 }
 
@@ -84,8 +88,12 @@ func TestSerializeDeserializeExecuteSCMessage(t *testing.T) {
 		msgB64 := base64.StdEncoding.EncodeToString(msg)
 
 		// Simulate decoding and deserialization
-		decodedMsg, _, _, err := DecodeMessage64(msgB64)
+		decodedMsg, fee, expiry, err := DecodeMessage64(msgB64)
 		assert.NoError(err, "Error decoding message")
+
+		// verify the fee and expiry
+		assert.Equal(testCase.fee, fee, "fee mismatch")
+		assert.Equal(testCase.expiry, expiry, "expiry mismatch")
 
 		executeSC, err := executesc.DecodeMessage(decodedMsg)
 		assert.NoError(err, "Error decoding ExecuteSC")
