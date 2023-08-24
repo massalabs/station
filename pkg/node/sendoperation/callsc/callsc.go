@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	CallSCOpID        = uint64(4)
+	CallSCOpID = uint64(4)
 )
 
 type OperationDetails struct {
