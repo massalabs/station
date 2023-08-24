@@ -131,7 +131,7 @@ DELETE /plugin-manager/{id} with invalid id
     ${response}=    DELETE    ${API_URL}/plugin-manager/3829029    expected_status=${STATUS_INTERNAL_SERVER_ERROR}
     Should Be Equal As Strings
     ...    ${response.json()['message']}
-    ...    deleting plugin 3829029: no plugin matching correlationID 3829029
+    ...    getting plugin 3829029: no plugin matching correlationID 3829029
 
 POST /plugin-manager/{id}/execute with invalid body
     ${data}=    Create Dictionary    command=test
