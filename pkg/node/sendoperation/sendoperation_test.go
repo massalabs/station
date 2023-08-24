@@ -12,6 +12,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	TransactionOpID = uint64(0)
+	BuyRollOpID     = uint64(1)
+	SellRollOpID    = uint64(2)
+	ExecuteSCOpID   = uint64(3)
+	CallSCOpID      = uint64(4)
+)
+
 func TestSerializeDeserializeCallSCMessage(t *testing.T) {
 	assert := assert.New(t)
 
@@ -57,6 +65,7 @@ func TestSerializeDeserializeCallSCMessage(t *testing.T) {
 		assert.NoError(err, "Error decoding CallSC")
 
 		// Verify the fields
+		assert.Equal(CallSCOpID, callSC.OperationID, "OperationID mismatch")
 		assert.Equal(testcase.address, callSC.Address, "Address mismatch")
 		assert.Equal(testcase.function, callSC.Function, "Function mismatch")
 		assert.Equal(testcase.parameters, callSC.Parameters, "Parameters mismatch")
@@ -102,6 +111,7 @@ func TestSerializeDeserializeExecuteSCMessage(t *testing.T) {
 		assert.NoError(err, "Error decoding ExecuteSC")
 
 		// Verify the fields
+		assert.Equal(ExecuteSCOpID, executeSC.OperationID, "OperationID mismatch")
 		assert.Equal(testCase.maxGas, executeSC.MaxGas, "MaxGas mismatch")
 		assert.Equal(testCase.maxCoins, executeSC.MaxCoins, "MaxCoins mismatch")
 	}
@@ -127,6 +137,7 @@ func TestSerializeDeserializeBuyRollsMessage(t *testing.T) {
 		assert.NoError(err, "Error decoding BuyRolls")
 
 		// Verify the countRolls field
+		assert.Equal(BuyRollOpID, buyRolls.OperationID, "OperationID mismatch")
 		assert.Equal(testcase.countRolls, buyRolls.RollCount, "CountRolls mismatch")
 	}
 }
@@ -151,6 +162,7 @@ func TestSerializeDeserializeSellRollsMessage(t *testing.T) {
 		assert.NoError(err, "Error decoding SellRolls")
 
 		// Verify the countRolls field
+		assert.Equal(SellRollOpID, sellRolls.OperationID, "OperationID mismatch")
 		assert.Equal(testcase.countRolls, sellRolls.RollCount, "CountRolls mismatch")
 	}
 }
@@ -178,6 +190,7 @@ func TestSerializeDeserializeTransactionMessage(t *testing.T) {
 		assert.NoError(err, "Error decoding message")
 
 		// Verify the fields
+		assert.Equal(TransactionOpID, decodedTransaction.OperationID, "OperationID mismatch")
 		assert.Equal(testCase.recipientAddress, decodedTransaction.RecipientAddress, "RecipientAddress mismatch")
 		assert.Equal(testCase.amount, decodedTransaction.Amount, "Amount mismatch")
 	}
