@@ -1,6 +1,7 @@
 package sendoperation
 
 import (
+	"bytes"
 	"context"
 	b64 "encoding/base64"
 	"encoding/binary"
@@ -206,4 +207,17 @@ func DecodeMessage64(msgB64 string) ([]byte, uint64, uint64, error) {
 	decodedMsg = decodedMsg[bytesRead:]
 
 	return decodedMsg, fee, expiry, nil
+}
+
+// DecodeOperationID decodes a byte slice to retrieve the operation ID.
+func DecodeOperationID(data []byte) (uint64, error) {
+	buf := bytes.NewReader(data)
+
+	// Read operationId
+	opID, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return 0, fmt.Errorf("failed to read operation ID: %w", err)
+	}
+
+	return opID, nil
 }
