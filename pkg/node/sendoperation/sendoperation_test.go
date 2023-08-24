@@ -43,7 +43,7 @@ func TestSerializeDeserializeCallSCMessage(t *testing.T) {
 		msgB64 := base64.StdEncoding.EncodeToString(msg)
 
 		// Simulate decoding and deserialization
-		decodedMsg, err := DecodeMessage64(msgB64)
+		decodedMsg, _, _, err := DecodeMessage64(msgB64)
 		assert.NoError(err, "Error decoding message")
 
 		callSC, err := callsc.DecodeMessage(decodedMsg)
@@ -84,7 +84,7 @@ func TestSerializeDeserializeExecuteSCMessage(t *testing.T) {
 		msgB64 := base64.StdEncoding.EncodeToString(msg)
 
 		// Simulate decoding and deserialization
-		decodedMsg, err := DecodeMessage64(msgB64)
+		decodedMsg, _, _, err := DecodeMessage64(msgB64)
 		assert.NoError(err, "Error decoding message")
 
 		executeSC, err := executesc.DecodeMessage(decodedMsg)

@@ -177,30 +177,30 @@ func message(expiry uint64, fee uint64, operation Operation) []byte {
 	return msg
 }
 
-func DecodeMessage64(msgB64 string) ([]byte, error) {
+func DecodeMessage64(msgB64 string) ([]byte, uint64, uint64, error) {
 	// Decode the base64-encoded message
 	decodedMsg, err := b64.StdEncoding.DecodeString(msgB64)
 	if err != nil {
-		return nil, fmt.Errorf("base64 decoding error: %w", err)
+		return nil, 0, 0, fmt.Errorf("base64 decoding error: %w", err)
 	}
 
 	// Read the encoded fee from the decoded message and move the buffer index
-	_, bytesRead := binary.Uvarint(decodedMsg)
+	fee, bytesRead := binary.Uvarint(decodedMsg)
 	if bytesRead <= 0 {
-		return nil, fmt.Errorf("failed to read fee")
+		return nil, 0, 0, fmt.Errorf("failed to read fee")
 	}
 
 	decodedMsg = decodedMsg[bytesRead:]
 
 	// Read the encoded expiry from the decoded message and move the buffer index
-	_, bytesRead = binary.Uvarint(decodedMsg)
+	expiry, bytesRead := binary.Uvarint(decodedMsg)
 	if bytesRead <= 0 {
-		return nil, fmt.Errorf("failed to read expiry")
+		return nil, 0, 0, fmt.Errorf("failed to read expiry")
 	}
 
 	decodedMsg = decodedMsg[bytesRead:]
 
 	// At this point, 'decodedMsg' contains the remaining part of the message
 	// which is the 'operation.Message()' part
-	return decodedMsg, nil
+	return decodedMsg, fee, expiry, nil
 }
