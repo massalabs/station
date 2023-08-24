@@ -10,9 +10,8 @@ import (
 )
 
 const (
-	TransactionOpID   = uint64(0)
-	versionByte       = byte(0)
-	publicKeyHashSize = 32
+	TransactionOpID = uint64(0)
+	versionByte     = byte(0)
 )
 
 type OperationDetails struct {
@@ -91,31 +90,9 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 	transactionContent.OperationID = opID
 
 	// Read recipient address
-	addressType, err := binary.ReadUvarint(buf)
+	addressString, err := serializeAddress.DecodeAddress(buf)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read address type: %w", err)
-	}
-
-	addressVersion, err := binary.ReadUvarint(buf)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read address version: %w", err)
-	}
-
-	// Read fixed-size 32-byte portion left of the address
-	addressBytes := make([]byte, publicKeyHashSize)
-	_, err = buf.Read(addressBytes)
-
-	if err != nil {
-		return nil, fmt.Errorf("failed to read address portion: %w", err)
-	}
-
-	// Concatenate address type, version, and addressBytes to form the full address
-	fullAddressBytes := append([]byte{byte(addressType)}, byte(addressVersion))
-	fullAddressBytes = append(fullAddressBytes, addressBytes...)
-
-	addressString, err := serializeAddress.DeserializeAddress(fullAddressBytes)
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize address: %w", err)
+		return nil, fmt.Errorf("failed to read address: %w", err)
 	}
 
 	transactionContent.RecipientAddress = addressString

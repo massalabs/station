@@ -1,12 +1,16 @@
 package serializeaddress
 
 import (
+	"bytes"
+	"encoding/binary"
 	"errors"
 	"fmt"
 
 	utils "github.com/btcsuite/btcutil/base58"
 	"github.com/massalabs/station/pkg/node/base58"
 )
+
+const publicKeyHashSize = 32
 
 // SerializeAddress return the address in byte, ready to be used by the API
 // It will add the prefix 1 or 0 depending on if it's a account address or a smart contract address
@@ -57,4 +61,34 @@ func DeserializeAddress(versionedAddress []byte) (string, error) {
 	addressWithoutPrefix := utils.CheckEncode(addressBytes, addressVersion)
 
 	return addressPrefix + addressWithoutPrefix, nil
+}
+
+func DecodeAddress(buf *bytes.Reader) (string, error) {
+	addressType, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return "", fmt.Errorf("failed to read address type: %w", err)
+	}
+
+	addressVersion, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return "", fmt.Errorf("failed to read address version: %w", err)
+	}
+
+	addressBytes := make([]byte, publicKeyHashSize)
+
+	_, err = buf.Read(addressBytes)
+
+	if err != nil {
+		return "", fmt.Errorf("failed to read address portion: %w", err)
+	}
+
+	fullAddressBytes := append([]byte{byte(addressType)}, byte(addressVersion))
+	fullAddressBytes = append(fullAddressBytes, addressBytes...)
+
+	addressString, err := DeserializeAddress(fullAddressBytes)
+	if err != nil {
+		return "", fmt.Errorf("failed to deserialize address: %w", err)
+	}
+
+	return addressString, nil
 }
