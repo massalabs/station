@@ -50,6 +50,7 @@ paths:
             default:
               nickname: "test"
               name: "test"
+              async: false
               at: "A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh"
               args: ""
               gas:
@@ -68,6 +69,9 @@ paths:
                 description: Function name to call.
                 type: string
                 x-nullable: false
+              async:
+                description: Whether the function should be called without waiting for first event.
+                type: boolean
               at:
                 description: Smart contract address exporting the function to call.
                 type: string

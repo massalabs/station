@@ -24,7 +24,7 @@ POST a Smart Contract
     ${sc_address}=    Get SC address    ${response.json()}
     Set Global Variable    ${DEPLOYED_SC_ADDR}    ${sc_address}
 
-POST /cmd/executeFunction
+POST /cmd/executeFunction sync
     ${randomID}=    Generate Random String    10
     ${argument}=    keywords.String To Arg    ${randomID}
     ${data}=    Create Dictionary
@@ -38,6 +38,24 @@ POST /cmd/executeFunction
     ...    expected_status=${STATUS_OK}
     Log To Console    ${response.json()}
     Should Be Equal    ${response.json()['firstEvent']['data']}    I'm an event! My id is ${randomID}
+
+POST /cmd/executeFunction async
+    ${randomID}=    Generate Random String    10
+    ${argument}=    keywords.String To Arg    ${randomID}
+    ${data}=    Create Dictionary
+    ...    nickname=${WALLET_NICKNAME}
+    ...    name=event
+    ...    at=${DEPLOYED_SC_ADDR}
+    ...    args=${argument}
+    ...    async=${True}
+    ${response}=    POST
+    ...    ${API_URL}/cmd/executeFunction
+    ...    json=${data}
+    ...    expected_status=${STATUS_OK}
+    Log To Console    ${response.json()}
+    Should Be Equal
+    ...    ${response.json()['firstEvent']['data']}
+    ...    Function called successfully but did not wait for event
 
 # Error cases
 
@@ -65,7 +83,9 @@ POST /cmd/executeFunction with invalid address
     ...    json=${data}
     ...    expected_status=${STATUS_INTERNAL_SERVER_ERROR}
     Should Be Equal    ${response.json()["code"]}    Execute-0001
-    Should Be Equal    ${response.json()["message"]}    Error: callSC failed: creating callSC with 'event' at 'invalid': failed to prepare address: decoding address: invalid format: version and/or checksum bytes missing
+    Should Be Equal
+    ...    ${response.json()["message"]}
+    ...    Error: callSC failed: creating callSC with 'event' at 'invalid': failed to prepare address: decoding address: invalid format: version and/or checksum bytes missing
 
 POST /cmd/executeFunction with invalid arguments
     ${data}=    Create Dictionary
