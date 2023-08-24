@@ -182,15 +182,14 @@ func TestSerializeDeserializeTransactionMessage(t *testing.T) {
 
 	for _, testCase := range testCases {
 		// Create a new Transaction
-		tx, err := transaction.New(testCase.recipientAddress, testCase.amount)
+		myTx, err := transaction.New(testCase.recipientAddress, testCase.amount)
 		assert.NoError(err, "Failed to create Transaction")
 
-		decodedID, err := DecodeOperationID(tx.Message())
-		assert.NoError(err, "Failed to retreive operationID")
-
+		decodedID, err := DecodeOperationID(myTx.Message())
+		assert.NoError(err, "Failed to retrieve operationID")
 
 		// Simulate decoding and deserialization
-		decodedTransaction, err := transaction.DecodeMessage(tx.Message())
+		decodedTransaction, err := transaction.DecodeMessage(myTx.Message())
 		assert.NoError(err, "Error decoding message")
 
 		// Verify the fields

@@ -7,8 +7,6 @@ import (
 
 	"github.com/massalabs/station/pkg/node/base58"
 	serializeAddress "github.com/massalabs/station/pkg/node/sendoperation/serializeaddress"
-
-	utils "github.com/massalabs/station/pkg/node/sendoperation/serializeaddress"
 )
 
 const (
@@ -89,6 +87,7 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read TransactionOpID: %w", err)
 	}
+
 	transactionContent.OperationID = opID
 
 	// Read recipient address
@@ -105,6 +104,7 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 	// Read fixed-size 32-byte portion left of the address
 	addressBytes := make([]byte, publicKeyHashSize)
 	_, err = buf.Read(addressBytes)
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to read address portion: %w", err)
 	}
@@ -113,7 +113,7 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 	fullAddressBytes := append([]byte{byte(addressType)}, byte(addressVersion))
 	fullAddressBytes = append(fullAddressBytes, addressBytes...)
 
-	addressString, err := utils.DeserializeAddress(fullAddressBytes)
+	addressString, err := serializeAddress.DeserializeAddress(fullAddressBytes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to deserialize address: %w", err)
 	}
