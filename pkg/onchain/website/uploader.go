@@ -47,8 +47,8 @@ func PrepareForUpload(
 		client,
 		nickname,
 		sendOperation.DefaultGasLimit,
-		sendOperation.NoCoin,
-		sendOperation.NoFee,
+		sendOperation.AccountCreationStorageCost,
+		sendOperation.DefaultFee,
 		sendOperation.DefaultSlotsDuration,
 		websiteStorer,
 		nil,
@@ -100,6 +100,7 @@ func Upload(
 	return operations, nil
 }
 
+//nolint:funlen
 func upload(
 	client *node.Client,
 	addr string,
@@ -107,15 +108,16 @@ func upload(
 	nickname string,
 	operationBatch sendOperation.OperationBatch,
 ) ([]string, error) {
-	operations := make([]string, len(chunks)+1)
+	nbChunks := len(chunks)
+	operations := make([]string, nbChunks+1)
 
 	operationWithEventResponse, err := onchain.CallFunction(
 		client,
 		nickname,
 		addr,
 		"initializeWebsite",
-		convert.U64ToBytes(len(chunks)),
-		sendOperation.OneMassa,
+		convert.U64ToBytes(nbChunks),
+		sendOperation.OneMassa, // To be updated when readonly is working to estimate storage cost
 		sendOperation.DefaultSlotsDuration,
 		false,
 		operationBatch,
@@ -127,12 +129,13 @@ func upload(
 
 	operations[0] = operationWithEventResponse.OperationResponse.OperationID
 
-	for index := 0; index < len(chunks); index++ {
+	for index := 0; index < nbChunks; index++ {
+		chunkSize := len(chunks[index])
 		// Chunk ID encoding
 		params := convert.U64ToBytes(index)
 
 		// Chunk data length encoding
-		params = append(params, convert.U32ToBytes(len(chunks[index]))...)
+		params = append(params, convert.U32ToBytes(chunkSize)...)
 
 		// Chunk data encoding
 		params = append(params, chunks[index]...)
@@ -143,7 +146,7 @@ func upload(
 			addr,
 			"appendBytesToWebsite",
 			params,
-			sendOperation.HundredMassa,
+			sendOperation.StorageCostPerByte*uint64(chunkSize),
 			maxExpiryPeriod(index),
 			false,
 			sendOperation.OperationBatch{
@@ -206,11 +209,13 @@ func uploadMissedChunks(
 			return nil, fmt.Errorf("error while converting chunk ID")
 		}
 
+		chunkSize := len(chunks[chunkID])
+
 		params := convert.U64ToBytes(chunkID)
 
 		// Chunk data length encoding
 		//nolint:ineffassign,nolintlint
-		params = append(params, convert.U32ToBytes(len(chunks[chunkID]))...)
+		params = append(params, convert.U32ToBytes(chunkSize)...)
 		// Chunk data encoding
 		//nolint:ineffassign,nolintlint
 		params = append(params, chunks[chunkID]...)
@@ -221,7 +226,7 @@ func uploadMissedChunks(
 			addr,
 			"appendBytesToWebsite",
 			params,
-			sendOperation.HundredMassa,
+			sendOperation.StorageCostPerByte*uint64(chunkSize),
 			maxExpiryPeriod(index),
 			false,
 			operationBatch,

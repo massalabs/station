@@ -46,7 +46,7 @@ func CallFunction(client *node.Client,
 	operationResponse, err := sendOperation.Call(
 		client,
 		expiryDelta,
-		sendOperation.NoFee,
+		sendOperation.DefaultFee,
 		callSC,
 		nickname,
 		operationBatch,
