@@ -93,6 +93,10 @@ func GetWebsites(config config.AppConfig, client *node.Client, domainNames []str
 		}
 
 		// Create a response object with website information
+		// Careful handle this in frontend:
+		// 	BrokenChunks = [] => no missed chunks
+		//  BrokenChunks = nil => website not stored on the blockchain
+
 		response := &models.Websites{
 			Address:      websiteStorerAddress,
 			Name:         domainName,
@@ -118,6 +122,12 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 	)
 	if err != nil {
 		return nil, fmt.Errorf("reading datastore entry '%s' at address '%s': %w", chunkNumberKey, address, err)
+	}
+
+	//nolint:gomnd
+	if len(encodedNumberOfChunks.CandidateValue) < 8 /*sizeof uint64*/ {
+		// If the key is not valid, it means that the website is not stored on the blockchain.
+		return nil, nil
 	}
 
 	numberOfChunks := int(binary.LittleEndian.Uint64(encodedNumberOfChunks.CandidateValue))

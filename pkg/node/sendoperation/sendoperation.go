@@ -17,11 +17,12 @@ const DefaultGasLimit = 700_000_000
 
 const DefaultSlotsDuration = 2
 
-const NoFee = 0
+const DefaultFee = 0
 
-const NoCoin = 0
+// To be updated when storage costs reduction will be deployed (testnet 26?)
+const AccountCreationStorageCost = 10_000_000
 
-const HundredMassa = 100_000_000_000
+const StorageCostPerByte = 1_000_000
 
 const OneMassa = 1_000_000_000
 
