@@ -9,8 +9,7 @@ import (
 )
 
 const (
-	CallSCOpID        = uint64(4)
-	publicKeyHashSize = 32
+	CallSCOpID = uint64(4)
 )
 
 type OperationDetails struct {
@@ -116,7 +115,7 @@ func (c *CallSC) Message() []byte {
 	return msg
 }
 
-//nolint:funlen, cyclop
+//nolint:funlen
 func DecodeMessage(data []byte) (*MessageContent, error) {
 	callSCContent := &MessageContent{}
 	buf := bytes.NewReader(data)
@@ -145,33 +144,10 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 
 	callSCContent.Coins = coins
 
-	// Read address type
-	addressType, err := binary.ReadUvarint(buf)
+	// Read recipient address
+	addressString, err := utils.DecodeAddress(buf)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read address type: %w", err)
-	}
-
-	// Read address version
-	addressVersion, err := binary.ReadUvarint(buf)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read address version: %w", err)
-	}
-
-	// Read fixed-size 32-byte portion left of the address
-	addressBytes := make([]byte, publicKeyHashSize)
-
-	_, err = buf.Read(addressBytes)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read address portion: %w", err)
-	}
-
-	// Concatenate address prefix, address version, and addressBytes to form the full address
-	fullAddressBytes := append([]byte{byte(addressType)}, byte(addressVersion))
-	fullAddressBytes = append(fullAddressBytes, addressBytes...)
-
-	addressString, err := utils.DeserializeAddress(fullAddressBytes)
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize address: %w", err)
+		return nil, fmt.Errorf("failed to read Target address: %w", err)
 	}
 
 	callSCContent.Address = addressString

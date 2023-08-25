@@ -31,8 +31,9 @@ type ExecuteSC struct {
 
 // MessageContent stores essential fields extracted from the message during the sign operation.
 type MessageContent struct {
-	MaxGas   uint64
-	MaxCoins uint64
+	OperationID uint64
+	MaxGas      uint64
+	MaxCoins    uint64
 }
 
 /*
@@ -136,11 +137,14 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 	operationContent := &MessageContent{}
 	buf := bytes.NewReader(data)
 
-	// Skip the  operationId
-	_, err := binary.ReadUvarint(buf)
+	// Read operationId
+	operationID, err := binary.ReadUvarint(buf)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read ExecuteSCOpID: %w", err)
 	}
+
+	operationContent.OperationID = operationID
+
 	// Read maxGas
 	maxGas, err := binary.ReadUvarint(buf)
 	if err != nil {

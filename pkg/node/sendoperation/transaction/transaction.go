@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 
@@ -8,9 +9,10 @@ import (
 	serializeAddress "github.com/massalabs/station/pkg/node/sendoperation/serializeaddress"
 )
 
-const TransactionOpID = 0
-
-const versionByte = byte(0)
+const (
+	TransactionOpID = uint64(0)
+	versionByte     = byte(0)
+)
 
 type OperationDetails struct {
 	Amount           string `json:"amount"`
@@ -20,6 +22,13 @@ type OperationDetails struct {
 //nolint:tagliatelle
 type Operation struct {
 	Transaction OperationDetails `json:"Transaction"`
+}
+
+// MessageContent stores essential fields extracted from the message during the sign operation.
+type MessageContent struct {
+	OperationID      uint64
+	RecipientAddress string
+	Amount           uint64
 }
 
 type Transaction struct {
@@ -64,4 +73,37 @@ func (t *Transaction) Message() []byte {
 	msg = append(msg, buf[:nbBytes]...)
 
 	return msg
+}
+
+// DecodeMessage decodes a byte slice for a transaction,
+// It extracts the necessary fields: operationID, recipient address, and amount.
+func DecodeMessage(data []byte) (*MessageContent, error) {
+	transactionContent := &MessageContent{}
+	buf := bytes.NewReader(data)
+
+	// Read operationId
+	opID, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read TransactionOpID: %w", err)
+	}
+
+	transactionContent.OperationID = opID
+
+	// Read recipient address
+	addressString, err := serializeAddress.DecodeAddress(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read address: %w", err)
+	}
+
+	transactionContent.RecipientAddress = addressString
+
+	// Read amount
+	amount, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read amount: %w", err)
+	}
+
+	transactionContent.Amount = amount
+
+	return transactionContent, nil
 }
