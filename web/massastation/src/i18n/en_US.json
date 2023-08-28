@@ -27,7 +27,9 @@
       "title": "I want upload my own website",
       "how-to": "How to do it:",
       "your-website": "Your website",
-      "your-website-description": "Define your website name and description."
+      "your-website-description": "Define your website name and description.",
+      "placeholder-title": " Upload website on-chain is coming soon",
+      "placeholder-description": "If you're here, it's because you wanted to upload your website! The feature will be available soon!"
     },
     "buttons": {
       "upload": "Upload",

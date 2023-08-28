@@ -10,6 +10,7 @@ import { FAVORITES_WEBSITES } from '@/const';
 
 import { Loading } from './Loading';
 import DomainModelItem from './DomainModelItem/DomainModelItem';
+import { UploadPlaceholder } from '@/components/SidePanels/Upload/UploadPlaceHolder';
 
 export function Search() {
   const navigate = useNavigate();
@@ -36,6 +37,8 @@ export function Search() {
       navigate(routeFor('error'));
     }
   }, [error, navigate]);
+
+  const websiteUploadIsDisabled = true;
 
   return (
     <>
@@ -68,7 +71,7 @@ export function Search() {
           </div>
         </div>
       )}
-      <Upload />
+      {websiteUploadIsDisabled ? <UploadPlaceholder /> : <Upload />}
     </>
   );
 }
