@@ -2,6 +2,7 @@ package sendoperation
 
 import (
 	"encoding/base64"
+	"fmt"
 	"testing"
 
 	"github.com/massalabs/station/pkg/node/sendoperation/buyrolls"
@@ -34,7 +35,7 @@ func TestSerializeDeserializeCallSCMessage(t *testing.T) {
 	}{
 		{
 			expiry:     uint64(123456),
-			fee:        uint64(789),
+			fee:        uint64(1000),
 			address:    "AU1MPDRXuR22mwYDFCeZUDgYjcTAF1co6xujx2X6ugoHeYeGY3B5",
 			function:   "exampleFunction",
 			parameters: []byte("exampleParameters"),
@@ -52,6 +53,10 @@ func TestSerializeDeserializeCallSCMessage(t *testing.T) {
 		// Serialize the operation
 		msg := message(testcase.expiry, testcase.fee, operation)
 		msgB64 := base64.StdEncoding.EncodeToString(msg)
+
+		fmt.Println(msgB64)
+		//go test -v -timeout 30s -run ^TestSerializeDeserializeCallSCMessage$ github.com/massalabs/station/pkg/node/sendoperation
+		//6AfAxAcEwIQ9uWAAAC5IN91TH6nQKZLSUhsico2f9dG9KI1+e5zfu81A7Ci4D2V4YW1wbGVGdW5jdGlvbhFleGFtcGxlUGFyYW1ldGVycw==
 
 		// Simulate decoding and deserialization
 		decodedMsg, fee, expiry, err := DecodeMessage64(msgB64)
@@ -99,6 +104,11 @@ func TestSerializeDeserializeExecuteSCMessage(t *testing.T) {
 		msg := message(testCase.expiry, testCase.fee, operation)
 		msgB64 := base64.StdEncoding.EncodeToString(msg)
 
+		fmt.Println(msgB64)
+		//go test -v -timeout 30s -run ^TestSerializeDeserializeExecuteSCMessage$ github.com/massalabs/station/pkg/node/sendoperation
+		//lQbAxAcDoI0G0IYDAAA=
+
+
 		// Simulate decoding and deserialization
 		decodedMsg, fee, expiry, err := DecodeMessage64(msgB64)
 		assert.NoError(err, "Error decoding message")
@@ -122,6 +132,8 @@ func TestSerializeDeserializeBuyRollsMessage(t *testing.T) {
 
 	testcases := []struct {
 		countRolls uint64
+		expiry   uint64
+		fee      uint64
 	}{
 		{
 			countRolls: 5,
@@ -136,6 +148,12 @@ func TestSerializeDeserializeBuyRollsMessage(t *testing.T) {
 		buyRolls, err := RollDecodeMessage(operation.Message())
 		assert.NoError(err, "Error decoding BuyRolls")
 
+		msg := message(testcase.fee, testcase.expiry, operation)
+		msgB64 := base64.StdEncoding.EncodeToString(msg)
+
+		fmt.Println(msgB64)
+		//go test -v -timeout 30s -run ^TestSerializeDeserializeBuyRollsMessage$ github.com/massalabs/station/pkg/node/sendoperation
+		//AAABBQ==
 		// Verify the countRolls field
 		assert.Equal(BuyRollOpID, buyRolls.OperationID, "OperationID mismatch")
 		assert.Equal(testcase.countRolls, buyRolls.RollCount, "CountRolls mismatch")
@@ -147,6 +165,8 @@ func TestSerializeDeserializeSellRollsMessage(t *testing.T) {
 
 	testcases := []struct {
 		countRolls uint64
+		expiry   uint64
+		fee      uint64
 	}{
 		{
 			countRolls: 10,
@@ -160,6 +180,13 @@ func TestSerializeDeserializeSellRollsMessage(t *testing.T) {
 		// Simulate decoding and deserialization
 		sellRolls, err := RollDecodeMessage(operation.Message())
 		assert.NoError(err, "Error decoding SellRolls")
+
+		msg := message(testcase.fee, testcase.expiry, operation)
+		msgB64 := base64.StdEncoding.EncodeToString(msg)
+
+		fmt.Println(msgB64)
+		//go test -v -timeout 30s -run ^TestSerializeDeserializeSellRollsMessage$ github.com/massalabs/station/pkg/node/sendoperation
+		//AAACCg==
 
 		// Verify the countRolls field
 		assert.Equal(SellRollOpID, sellRolls.OperationID, "OperationID mismatch")
