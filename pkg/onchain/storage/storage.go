@@ -32,7 +32,9 @@ func readZipFile(z *zip.File) ([]byte, error) {
 func Fetch(client *node.Client, websiteStorerAddress string) ([]byte, error) {
 	chunkNumberKey := "total_chunks"
 
-	keyNumber, err := node.DatastoreEntry(client, websiteStorerAddress, convert.ToBytesWithPrefixLength(chunkNumberKey))
+	key := convert.ToBytesWithPrefixLength(chunkNumberKey)
+
+	keyNumber, err := node.FetchDatastoreEntry(client, websiteStorerAddress, key)
 	if err != nil {
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", websiteStorerAddress, chunkNumberKey, err)
 	}
@@ -43,19 +45,15 @@ func Fetch(client *node.Client, websiteStorerAddress string) ([]byte, error) {
 	}
 
 	chunkNumber := int(binary.LittleEndian.Uint64(keyNumber.CandidateValue))
-	entries := []node.DatastoreEntriesKeys{}
+	keys := make([][]byte, chunkNumber)
 
 	for i := 0; i < chunkNumber; i++ {
-		entry := node.DatastoreEntriesKeys{
-			Address: websiteStorerAddress,
-			Key:     convert.ToBytesWithPrefixLength("massa_web_" + strconv.Itoa(i)),
-		}
-		entries = append(entries, entry)
+		keys[i] = convert.ToBytesWithPrefixLength("massa_web_" + strconv.Itoa(i))
 	}
 
-	response, err := node.DatastoreEntries(client, entries)
+	response, err := node.ContractDatastoreEntries(client, websiteStorerAddress, keys)
 	if err != nil {
-		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
+		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", keys, err)
 	}
 
 	if len(response) != chunkNumber {

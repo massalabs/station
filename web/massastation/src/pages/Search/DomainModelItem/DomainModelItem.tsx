@@ -1,6 +1,8 @@
 import { DomainModel } from '@/models/DomainModel';
 
 import { Description } from '@massalabs/react-ui-kit';
+import { HttpStatusCode } from 'axios';
+import { useEffect, useState } from 'react';
 import { FiGlobe } from 'react-icons/fi';
 
 interface DomainModelItemProps {
@@ -13,10 +15,37 @@ export default function DomainModelItem(props: DomainModelItemProps) {
   const faviconURL = `${location.protocol + '//' + website.favicon}`;
   const url = `${location.protocol + '//' + website.name + '.massa'}`;
 
+  const [imageDataURL, setImageDataURL] = useState('');
+
+  useEffect(() => {
+    // Try to fetch favicon if exists
+    const fetchFavicon = async () => {
+      try {
+        const response = await fetch(faviconURL);
+        console.log(website.name, response.status);
+        if (response.status !== HttpStatusCode.Ok) {
+          return;
+        }
+        const buffer = await response.arrayBuffer();
+
+        if (!buffer.byteLength) {
+          return;
+        }
+        const blob = new Blob([buffer]);
+        const dataURL = URL.createObjectURL(blob);
+        setImageDataURL(dataURL);
+      } catch (error) {
+        console.log(`error fetching favicon for ${website.name}.massa`, error);
+      }
+    };
+
+    fetchFavicon();
+  }, [website.favicon]);
+
   return (
     <Description
       variant="secondary"
-      preIcon={website.favicon ? <img src={faviconURL} /> : <FiGlobe />}
+      preIcon={imageDataURL.length ? <img src={imageDataURL} /> : <FiGlobe />}
       title={website.name}
       website={website.name + '.massa'}
       description={website.description}

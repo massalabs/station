@@ -7,6 +7,7 @@ import (
 
 	"github.com/massalabs/station/api/interceptor"
 	"github.com/massalabs/station/int/config"
+	"github.com/massalabs/station/pkg/dnshelper"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/onchain/dns"
@@ -51,9 +52,19 @@ func MassaTLDInterceptor(
 	massaIndex := strings.Index(req.Request.Host, ".massa")
 
 	if massaIndex > 0 && !strings.HasPrefix(req.Request.Host, config.MassaStationURL) {
+		// This is mandatory to avoid CORS issues.
+		req.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+
 		err := handleMassaDomainRequest(req.Writer, req.Request, massaIndex, appConfig, configDir)
 		if err != nil {
-			logger.Errorf("handling massa domain request: %v", err)
+			isFaviconError := strings.Index(err.Error(), dnshelper.FaviconIcon)
+
+			// avoid spamming logs with favicon.ico fetching errors
+			if isFaviconError == 0 {
+				logger.Errorf("handling massa domain request: %v", err)
+			}
+
+			http.NotFound(req.Writer, req.Request)
 
 			return nil
 		}

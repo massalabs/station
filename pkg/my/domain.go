@@ -36,7 +36,7 @@ func Domains(config config.AppConfig, client *node.Client, nickname string) ([]s
 
 	ownerKey := convert.ToBytesWithPrefixLength(ownedPrefix + wallet.Address)
 
-	rawNames, err := node.DatastoreEntry(client, config.DNSAddress, ownerKey)
+	rawNames, err := node.FetchDatastoreEntry(client, config.DNSAddress, ownerKey)
 	if err != nil {
 		return nil, fmt.Errorf("reading entry '%s' at '%s': %w", config.DNSAddress, ownedPrefix+wallet.Address, err)
 	}
@@ -58,25 +58,20 @@ func Domains(config config.AppConfig, client *node.Client, nickname string) ([]s
 // It queries the DNS entries for the specified domain names, retrieves relevant data, checks chunk integrity,
 // and returns a list of website information including contract address, name, description, and broken chunks.
 func GetWebsites(config config.AppConfig, client *node.Client, domainNames []string) ([]*models.Websites, error) {
-	// Prepare parameters for querying DNS entries
-	params := make([]node.DatastoreEntriesKeys, len(domainNames))
+	keys := make([][]byte, len(domainNames))
 
 	for i, domain := range domainNames {
-		param := node.DatastoreEntriesKeys{
-			Address: config.DNSAddress,
-			Key:     convert.ToBytesWithPrefixLength(domain),
-		}
-		params[i] = param
+		keys[i] = convert.ToBytesWithPrefixLength(domain)
+	}
+
+	// Retrieve DNS entries for the specified domain names
+	dnsValues, err := node.ContractDatastoreEntries(client, config.DNSAddress, keys)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read entries '%v': %w", keys, err)
 	}
 
 	// Store website information for each domain
 	responses := make([]*models.Websites, len(domainNames))
-
-	// Retrieve DNS entries for the specified domain names
-	dnsValues, err := node.DatastoreEntries(client, params)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read entries '%v': %w", params, err)
-	}
 
 	// Process each domain's DNS entry
 	for index, domainName := range domainNames {
@@ -115,7 +110,7 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 
 	var missedChunks []string
 
-	encodedNumberOfChunks, err := node.DatastoreEntry(
+	encodedNumberOfChunks, err := node.FetchDatastoreEntry(
 		client,
 		address,
 		convert.ToBytesWithPrefixLength(chunkNumberKey),
@@ -132,19 +127,15 @@ func getMissingChunkIds(client *node.Client, address string) ([]string, error) {
 
 	numberOfChunks := int(binary.LittleEndian.Uint64(encodedNumberOfChunks.CandidateValue))
 
-	entries := []node.DatastoreEntriesKeys{}
+	keys := make([][]byte, numberOfChunks)
 
 	for i := 0; i < numberOfChunks; i++ {
-		entry := node.DatastoreEntriesKeys{
-			Address: address,
-			Key:     convert.ToBytesWithPrefixLength("massa_web_" + strconv.Itoa(i)),
-		}
-		entries = append(entries, entry)
+		keys[i] = convert.ToBytesWithPrefixLength("massa_web_" + strconv.Itoa(i))
 	}
 
-	response, err := node.DatastoreEntries(client, entries)
+	response, err := node.ContractDatastoreEntries(client, address, keys)
 	if err != nil {
-		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
+		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", keys, err)
 	}
 
 	for i := 0; i < numberOfChunks; i++ {

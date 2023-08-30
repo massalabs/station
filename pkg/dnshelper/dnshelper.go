@@ -12,6 +12,7 @@ const (
 	// Indexes of data in website name key.
 	indexOfWebsiteAddress     = 0 // Index of website Address in the dnsValue array
 	indexOfWebsiteDescription = 2 // Index of website Description in the dnsValue array
+	FaviconIcon               = "favicon.ico"
 )
 
 // AddressAndDescription fetches the website address and its description from the DNS entry.
