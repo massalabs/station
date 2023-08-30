@@ -18,7 +18,7 @@ This function fetch the address of the website storer associated with the name g
 from the DNS smart contract and returns it.
 */
 func Resolve(config config.AppConfig, client *node.Client, name string) (string, error) {
-	entry, err := node.DatastoreEntry(client, config.DNSAddress, convert.ToBytesWithPrefixLength(name))
+	entry, err := node.FetchDatastoreEntry(client, config.DNSAddress, convert.ToBytesWithPrefixLength(name))
 	if err != nil {
 		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", config.DNSAddress, name, err)
 	}

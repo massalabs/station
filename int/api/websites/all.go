@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-	"sync"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
@@ -15,7 +14,6 @@ import (
 	"github.com/massalabs/station/pkg/dnshelper"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
-	"github.com/massalabs/station/pkg/onchain/website"
 )
 
 const (
@@ -23,8 +21,6 @@ const (
 	ownedPrefix  = "owned"
 	ownerKey     = "OWNER"
 	blackListKey = "blackList"
-	// Other constants.
-	faviconIcon = "favicon.ico"
 )
 
 func NewRegistryHandler(config *config.AppConfig, configDir string) operations.AllDomainsGetterHandler {
@@ -37,7 +33,7 @@ type registryHandler struct {
 }
 
 func (h *registryHandler) Handle(_ operations.AllDomainsGetterParams) middleware.Responder {
-	results, err := Registry(h.config, h.configDir)
+	results, err := Registry(h.config)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().
 			WithPayload(
@@ -57,7 +53,7 @@ the various website storer contracts, the function builds an array of Registry o
 and returns it to the frontend for display on the Registry page.
 */
 // Registry fetches the registry data for the given AppConfig.
-func Registry(config *config.AppConfig, configDir string) ([]*models.Registry, error) {
+func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 	client := node.NewClient(config.NodeURL)
 
 	websiteNames, err := filterEntriesToDisplay(*config, client)
@@ -70,96 +66,36 @@ func Registry(config *config.AppConfig, configDir string) ([]*models.Registry, e
 		return nil, fmt.Errorf("failed to read keys '%s' at '%s': %w", websiteNames, config.DNSAddress, err)
 	}
 
-	registry := processDNSValues(client, dnsValues, websiteNames, configDir)
+	registry := make([]*models.Registry, 0)
+	for index, dnsValue := range dnsValues {
+		name := convert.ToString(websiteNames[index])
+
+		websiteStorerAddress, websiteDescription, err := dnshelper.AddressAndDescription(dnsValue.CandidateValue)
+		if err != nil {
+			logger.Error("failed to retrieve website infos for %s: %w", name, err)
+
+			continue
+		}
+
+		webSiteInfos := &models.Registry{
+			Name:        name,
+			Address:     websiteStorerAddress,
+			Description: websiteDescription,
+			Favicon:     name + ".massa/" + dnshelper.FaviconIcon,
+		}
+
+		registry = append(registry, webSiteInfos)
+	}
 
 	sortRegistry(registry)
 
 	return registry, nil
 }
 
-func processDNSValues(
-	client *node.Client,
-	dnsValues []node.DatastoreEntryResponse,
-	websiteNames [][]byte,
-	configDir string,
-) []*models.Registry {
-	// Create buffered channels with the size of dnsValues slice
-	registryChan := make(chan *models.Registry, len(dnsValues))
-	errChan := make(chan error, len(dnsValues))
-	waitGroup := sync.WaitGroup{}
-	waitGroup.Add(len(dnsValues))
-
-	for index, dnsValue := range dnsValues {
-		go func(index int, dnsValue node.DatastoreEntryResponse) {
-			defer waitGroup.Done()
-
-			processEntry(index, dnsValue, client, websiteNames, registryChan, errChan, configDir)
-		}(index, dnsValue)
-	}
-
-	go func() {
-		waitGroup.Wait()
-		close(registryChan)
-		close(errChan)
-	}()
-
-	return collectRegistryResults(registryChan, errChan)
-}
-
-func processEntry(index int,
-	dnsValue node.DatastoreEntryResponse,
-	client *node.Client, websiteNames [][]byte,
-	registryChan chan<- *models.Registry,
-	errChan chan<- error,
-	configDir string,
-) {
-	valueBytes := dnsValue.CandidateValue
-
-	websiteStorerAddress, websiteDescription, err := dnshelper.AddressAndDescription(valueBytes)
-	if err != nil {
-		errChan <- err
-
-		return
-	}
-
-	name := convert.ToString(websiteNames[index])
-
-	registryChan <- &models.Registry{
-		Name:        name,
-		Address:     websiteStorerAddress,
-		Description: websiteDescription,
-		Favicon:     DNSRecordFavicon(name, websiteStorerAddress, client, configDir),
-	}
-}
-
-func collectRegistryResults(registryChan <-chan *models.Registry, errChan <-chan error) []*models.Registry {
-	registry := make([]*models.Registry, 0)
-
-	for reg := range registryChan {
-		registry = append(registry, reg)
-	}
-
-	if err := <-errChan; err != nil {
-		// Handle the error if needed
-		logger.Error(err)
-	}
-
-	return registry
-}
-
 func sortRegistry(registry []*models.Registry) {
 	sort.Slice(registry, func(i, j int) bool {
 		return registry[i].Name < registry[j].Name
 	})
-}
-
-func DNSRecordFavicon(name, websiteStorerAddress string, client *node.Client, configDir string) string {
-	body, err := website.Fetch(client, websiteStorerAddress, faviconIcon, configDir)
-	if err != nil || len(body) == 0 {
-		return ""
-	}
-
-	return name + ".massa/" + faviconIcon
 }
 
 /*
@@ -178,7 +114,7 @@ func filterEntriesToDisplay(config config.AppConfig, client *node.Client) ([][]b
 	}
 
 	// we then read the blacklisted websites
-	blackListedWebsites, err := node.DatastoreEntry(
+	blackListedWebsites, err := node.FetchDatastoreEntry(
 		client,
 		config.DNSAddress,
 		convert.ToBytesWithPrefixLength(blackListKey),

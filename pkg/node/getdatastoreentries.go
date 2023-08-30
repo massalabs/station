@@ -6,22 +6,17 @@ import (
 	"strings"
 )
 
-type getDatastoreEntries struct {
-	Address string        `json:"address"`
-	Key     JSONableSlice `json:"key"`
-}
-
 type DatastoreEntryResponse struct {
 	CandidateValue []byte `json:"candidate_value"`
 	FinalValue     []byte `json:"final_value"`
 }
 
-type DatastoreEntriesKeys struct {
-	Address string `json:"address"`
-	Key     []byte `json:"key"`
+type DatastoreEntry struct {
+	Address string        `json:"address"`
+	Key     JSONableSlice `json:"key"`
 }
 
-type JSONableSlice []uint8
+type JSONableSlice []byte
 
 func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 	var result string
@@ -34,16 +29,18 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 	return []byte(result), nil
 }
 
-func DatastoreEntry(client *Client, address string, key []byte) (*DatastoreEntryResponse, error) {
-	entries := []DatastoreEntriesKeys{}
-	entry := DatastoreEntriesKeys{
+func NewDatastoreEntry(address string, key []byte) DatastoreEntry {
+	return DatastoreEntry{
 		Address: address,
 		Key:     key,
 	}
+}
 
-	entries = append(entries, entry)
+func FetchDatastoreEntry(client *Client, address string, key []byte) (*DatastoreEntryResponse, error) {
+	entries := make([]DatastoreEntry, 1)
+	entries[0] = NewDatastoreEntry(address, key)
 
-	response, err := DatastoreEntries(client, entries)
+	response, err := FetchDatastoreEntries(client, entries)
 	if err != nil {
 		return nil, err
 	}
@@ -52,17 +49,13 @@ func DatastoreEntry(client *Client, address string, key []byte) (*DatastoreEntry
 }
 
 func ContractDatastoreEntries(client *Client, address string, keys [][]byte) ([]DatastoreEntryResponse, error) {
-	entries := []DatastoreEntriesKeys{}
+	entries := make([]DatastoreEntry, len(keys))
 
-	for i := 0; i < len(keys); i++ {
-		entry := DatastoreEntriesKeys{
-			Address: address,
-			Key:     keys[i],
-		}
-		entries = append(entries, entry)
+	for i, key := range keys {
+		entries[i] = NewDatastoreEntry(address, key)
 	}
 
-	response, err := DatastoreEntries(client, entries)
+	response, err := FetchDatastoreEntries(client, entries)
 	if err != nil {
 		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
 	}
@@ -70,24 +63,14 @@ func ContractDatastoreEntries(client *Client, address string, keys [][]byte) ([]
 	return response, nil
 }
 
-func DatastoreEntries(client *Client, params []DatastoreEntriesKeys) ([]DatastoreEntryResponse, error) {
-	entries := [][]getDatastoreEntries{
-		{},
-	}
-
-	for i := 0; i < len(params); i++ {
-		entry := getDatastoreEntries{
-			Address: params[i].Address,
-			Key:     params[i].Key,
-		}
-
-		entries[0] = append(entries[0], entry)
-	}
+func FetchDatastoreEntries(client *Client, entries []DatastoreEntry) ([]DatastoreEntryResponse, error) {
+	data := make([][]DatastoreEntry, 1)
+	data[0] = entries
 
 	response, err := client.RPCClient.Call(
 		context.Background(),
 		"get_datastore_entries",
-		entries,
+		data,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", entries, err)
