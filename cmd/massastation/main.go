@@ -33,6 +33,7 @@ func ParseFlags() (api.StartServerFlags, StartFlags) {
 	flag.IntVar(&serverFlags.Port, "http-port", httpPort, "HTTP port to listen to")
 	flag.IntVar(&serverFlags.TLSPort, "https-port", httpsPort, "HTTPS port to listen to")
 	flag.BoolVar(&startFlags.Version, "version", false, "Print version info and exit")
+	flag.BoolVar(&startFlags.Repair, "repair", false, "Repair MassaStation")
 
 	flag.Parse()
 
