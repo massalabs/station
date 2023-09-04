@@ -115,4 +115,7 @@ POST /cmd/executeFunction with invalid function name
     ...    Error: callSC failed
     Should Contain
     ...    ${response.json()["message"]}
+    ...    "massa_execution_error":"Runtime error: runtime error when executing operation
+    Should Contain
+    ...    ${response.json()["message"]}
     ...    VM Error in CallSC context: VM execution error: Missing export invalid
