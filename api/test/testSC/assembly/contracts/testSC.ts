@@ -29,3 +29,7 @@ export function event(binaryArgs: StaticArray<u8>): StaticArray<u8> {
   generateEvent(message);
   return stringToBytes(message);
 }
+
+export function test(): void {
+  generateEvent('TestSC test() called');
+}

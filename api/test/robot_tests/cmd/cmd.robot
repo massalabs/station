@@ -39,6 +39,19 @@ POST /cmd/executeFunction sync
     Log To Console    ${response.json()}
     Should Be Equal    ${response.json()['firstEvent']['data']}    I'm an event! My id is ${randomID}
 
+POST /cmd/executeFunction sync without arguments
+    ${data}=    Create Dictionary
+    ...    nickname=${WALLET_NICKNAME}
+    ...    name=test
+    ...    at=${DEPLOYED_SC_ADDR}
+    ...    args=
+    ${response}=    POST
+    ...    ${API_URL}/cmd/executeFunction
+    ...    json=${data}
+    ...    expected_status=${STATUS_OK}
+    Log To Console    ${response.json()}
+    Should Be Equal    ${response.json()['firstEvent']['data']}    TestSC test() called
+
 POST /cmd/executeFunction async
     ${randomID}=    Generate Random String    10
     ${argument}=    keywords.String To Arg    ${randomID}
@@ -56,6 +69,7 @@ POST /cmd/executeFunction async
     Should Be Equal
     ...    ${response.json()['firstEvent']['data']}
     ...    Function called successfully but did not wait for event
+
 
 # Error cases
 
