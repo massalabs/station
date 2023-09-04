@@ -173,14 +173,18 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 		return nil, fmt.Errorf("failed to read param length: %w", err)
 	}
 
-	parameters := make([]byte, paramLength)
+	if paramLength == 0 {
+		callSCContent.Parameters = []byte{}
+	} else {
+		parameters := make([]byte, paramLength)
 
-	_, err = buf.Read(parameters)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read parameters: %w", err)
+		_, err = buf.Read(parameters)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read parameters: %w", err)
+		}
+
+		callSCContent.Parameters = parameters
 	}
-
-	callSCContent.Parameters = parameters
 
 	return callSCContent, nil
 }
