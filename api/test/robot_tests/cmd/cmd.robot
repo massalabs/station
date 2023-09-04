@@ -48,7 +48,7 @@ POST /cmd/executeFunction sync without arguments
     ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction
     ...    json=${data}
-    ...    expected_status=any
+    ...    expected_status=${STATUS_OK}
     Log To Console    ${response.json()}
     Should Be Equal    ${response.json()['firstEvent']['data']}    TestSC test() called
 
