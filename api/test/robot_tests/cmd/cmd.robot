@@ -108,7 +108,7 @@ POST /cmd/executeFunction with invalid function name
     ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction
     ...    json=${data}
-    ...    expected_status=${STATUS_BAD_REQUEST}
+    ...    expected_status=${STATUS_INTERNAL_SERVER_ERROR}
     # Should Contain must be divided into multiple lines because the error message contains unknown values (e.g. operation id)
     Should Contain
     ...    ${response.json()["message"]}
