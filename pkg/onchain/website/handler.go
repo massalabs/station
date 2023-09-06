@@ -57,11 +57,11 @@ func MassaTLDInterceptor(
 
 		err := handleMassaDomainRequest(req.Writer, req.Request, massaIndex, appConfig, configDir)
 		if err != nil {
-			isFaviconError := strings.Index(err.Error(), dnshelper.FaviconIcon)
+			isFaviconError := strings.Contains(err.Error(), dnshelper.FaviconIcon)
 
 			// avoid spamming logs with favicon.ico fetching errors
-			if isFaviconError == 0 {
-				logger.Errorf("handling massa domain request: %v", err)
+			if isFaviconError {
+				logger.Warn("handling massa domain request:", err)
 			}
 
 			http.NotFound(req.Writer, req.Request)

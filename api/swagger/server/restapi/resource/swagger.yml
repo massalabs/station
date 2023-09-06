@@ -195,8 +195,14 @@ paths:
         "200":
           description: OK.
           schema:
-            type: string
-            description: Operation id.
+            type: object
+            properties:
+              operationId:
+                description: Operation id.
+                type: string
+              firstEvent:
+                description: first event emitted by the called smart contract.
+                $ref: "#/definitions/Events"
         "400":
           description: Bad request.
           schema:
@@ -957,7 +963,7 @@ definitions:
         description: Event data.
         type: string
       address:
-        description: Event caller.
+        description: SC address that emitted the event.
         type: string
   NetworkManagerItem:
     type: object

@@ -3,6 +3,7 @@ package onchain
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
@@ -15,7 +16,7 @@ import (
 
 const maxWaitingTimeInSeconds = 45
 
-const evenHeartbeat = 2
+const pollIntervalSec = 1
 
 type OperationWithEventResponse struct {
 	Event             string
@@ -63,13 +64,22 @@ func CallFunction(client *node.Client,
 		}, nil
 	}
 
-	eventFound, operationWithEventResponse, err := listenEvents(client, operationResponse)
-	if eventFound {
-		return operationWithEventResponse, err
+	events, err := listenEvents(client, operationResponse.OperationID)
+	if err != nil {
+		if strings.Contains(err.Error(), "Timeout") {
+			return &OperationWithEventResponse{
+				Event:             "Operation submited successfully but no event generated. The operation may have been rejected",
+				OperationResponse: *operationResponse,
+			}, nil
+		}
+
+		return nil, err
 	}
 
+	// return first event
+	// TO DO: return all events
 	return &OperationWithEventResponse{
-		Event:             "Function called successfully but no event generated",
+		Event:             events[0].Data,
 		OperationResponse: *operationResponse,
 	}, nil
 }
@@ -79,18 +89,18 @@ func CallFunction(client *node.Client,
 func DeploySC(client *node.Client,
 	nickname string,
 	gasLimit uint64,
-	coins uint64,
+	maxCoins uint64,
 	fee uint64,
 	expiry uint64,
 	contract []byte,
 	datastore []byte,
 	operationBatch sendOperation.OperationBatch,
 	signer signer.Signer,
-) (*OperationWithEventResponse, error) {
+) (*sendOperation.OperationResponse, []node.Event, error) {
 	exeSC := executesc.New(
 		contract,
 		gasLimit,
-		coins,
+		maxCoins,
 		datastore)
 
 	operationResponse, err := sendOperation.Call(
@@ -103,57 +113,62 @@ func DeploySC(client *node.Client,
 		signer,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("calling executeSC: %w", err)
+		return nil, nil, fmt.Errorf("calling executeSC: %w", err)
 	}
 
-	eventFound, operationWithEventResponse, err := listenEvents(client, operationResponse)
-	if eventFound {
-		return operationWithEventResponse, err
+	events, err := listenEvents(client, operationResponse.OperationID)
+	if err != nil {
+		return nil, nil, err
 	}
 
-	// If no event received, return a message to announce sc is deployed
-	return &OperationWithEventResponse{
-		Event:             "sc deployed successfully but no event received",
-		OperationResponse: *operationResponse,
-	}, nil
+	return operationResponse, events, nil
 }
 
 func listenEvents(
 	client *node.Client,
-	operationResponse *sendOperation.OperationResponse,
-) (bool, *OperationWithEventResponse, error) {
+	operationID string,
+) ([]node.Event, error) {
 	counter := 0
 
-	ticker := time.NewTicker(time.Second * evenHeartbeat)
+	ticker := time.NewTicker(time.Second * pollIntervalSec)
 
 	for ; true; <-ticker.C {
 		counter++
 
-		if counter > maxWaitingTimeInSeconds*evenHeartbeat {
+		if counter > maxWaitingTimeInSeconds/pollIntervalSec {
 			break
 		}
 
-		events, err := node.Events(client, nil, nil, nil, nil, &operationResponse.OperationID)
+		events, err := node.Events(client, nil, nil, nil, nil, &operationID)
 		if err != nil {
-			return true, nil, fmt.Errorf("waiting SC deployment: %w", err)
+			return nil, fmt.Errorf("fetching events for opId %s: %w", operationID, err)
+		}
+
+		for _, event := range events {
+			if strings.Contains(event.Data, "massa_execution_error") {
+				// return the event containing the error
+				return nil, errors.New(event.Data)
+			}
 		}
 
 		if len(events) > 0 {
-			event := events[0].Data
-
-			// Catch Run Time Error and return it
-			if strings.Contains(event, "massa_execution_error") {
-				// return the event containing the error
-				return true, nil, errors.New(event)
-			}
-
-			// if there is an event, return the first event
-			return true, &OperationWithEventResponse{
-				Event:             event,
-				OperationResponse: *operationResponse,
-			}, nil
+			return events, nil
 		}
 	}
 
-	return false, nil, nil
+	return nil, fmt.Errorf("listening events for opId %s: Timeout", operationID)
+}
+
+func FindDeployedAddress(events []node.Event) (string, bool) {
+	pattern := "Contract deployed at address: (.+)"
+	re := regexp.MustCompile(pattern)
+
+	for _, event := range events {
+		match := re.FindStringSubmatch(event.Data)
+		if len(match) > 1 {
+			return match[1], true
+		}
+	}
+
+	return "", false
 }

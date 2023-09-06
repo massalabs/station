@@ -56,7 +56,7 @@ func SetRecord(
 		"setResolver",
 		rec,
 		sendoperation.OneMassa,
-		sendoperation.DefaultSlotsDuration,
+		sendoperation.DefaultExpiryInSlot,
 		false,
 		operationBatch,
 		&signer.WalletPlugin{},

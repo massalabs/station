@@ -3,10 +3,8 @@ package storage
 import (
 	"archive/zip"
 	"bytes"
-	"encoding/binary"
 	"fmt"
 	"io"
-	"strconv"
 
 	"github.com/massalabs/station/pkg/cache"
 	"github.com/massalabs/station/pkg/convert"
@@ -28,27 +26,26 @@ func readZipFile(z *zip.File) ([]byte, error) {
 	return content, nil
 }
 
-// Fetch retrieves data from the blockchain ledger at the given address.
+// Fetch website chunks.
 func Fetch(client *node.Client, websiteStorerAddress string) ([]byte, error) {
-	chunkNumberKey := "total_chunks"
+	chunkNumberKey := "NB_CHUNKS"
 
-	key := convert.ToBytesWithPrefixLength(chunkNumberKey)
+	key := convert.ToBytes(chunkNumberKey)
 
-	keyNumber, err := node.FetchDatastoreEntry(client, websiteStorerAddress, key)
+	chunkNbByte, err := node.FetchDatastoreEntry(client, websiteStorerAddress, key)
 	if err != nil {
 		return nil, fmt.Errorf("reading datastore entry '%s' at '%s': %w", websiteStorerAddress, chunkNumberKey, err)
 	}
 
-	//nolint:gomnd
-	if len(keyNumber.CandidateValue) < 8 /*sizeof uint64*/ {
-		return nil, fmt.Errorf("insufficient data in keyNumber for '%s'", websiteStorerAddress)
+	chunkNumber, err := convert.BytesToI32(chunkNbByte.CandidateValue)
+	if err != nil {
+		return nil, fmt.Errorf("converting fetched data for key '%s': %w ", chunkNumberKey, err)
 	}
 
-	chunkNumber := int(binary.LittleEndian.Uint64(keyNumber.CandidateValue))
 	keys := make([][]byte, chunkNumber)
 
-	for i := 0; i < chunkNumber; i++ {
-		keys[i] = convert.ToBytesWithPrefixLength("massa_web_" + strconv.Itoa(i))
+	for i := 0; i < int(chunkNumber); i++ {
+		keys[i] = convert.I32ToBytes(i)
 	}
 
 	response, err := node.ContractDatastoreEntries(client, websiteStorerAddress, keys)
@@ -56,20 +53,14 @@ func Fetch(client *node.Client, websiteStorerAddress string) ([]byte, error) {
 		return nil, fmt.Errorf("calling get_datastore_entries '%+v': %w", keys, err)
 	}
 
-	if len(response) != chunkNumber {
+	if len(response) != int(chunkNumber) {
 		return nil, fmt.Errorf("expected %d entries, got %d", chunkNumber, len(response))
 	}
 
 	var dataStore []byte
 
-	for index := 0; index < chunkNumber; index++ {
-		// content is prefixed with it's length encoded using a u32 (4 bytes).
-		prefixLength := 4
-		if len(response[index].CandidateValue) < prefixLength {
-			return nil, fmt.Errorf("invalid chunk size for chunk %d", index)
-		}
-
-		dataStore = append(dataStore, response[index].CandidateValue[prefixLength:]...)
+	for index := 0; index < int(chunkNumber); index++ {
+		dataStore = append(dataStore, response[index].CandidateValue...)
 	}
 
 	return dataStore, nil

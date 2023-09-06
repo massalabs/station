@@ -41,6 +41,7 @@ func ParseFlags() (api.StartServerFlags, StartFlags) {
 	return serverFlags, startFlags
 }
 
+//nolint:funlen
 func main() {
 	serverFlags, stationStartFlags := ParseFlags()
 

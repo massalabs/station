@@ -52,7 +52,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		decodedDatastore = nil
 	}
 
-	operationWithEventResponse, err := onchain.DeploySC(client,
+	operationResponse, events, err := onchain.DeploySC(client,
 		params.WalletNickname,
 		*params.GasLimit,
 		*params.Coins,
@@ -72,6 +72,14 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 				})
 	}
 
+	scAddress, _ := onchain.FindDeployedAddress(events)
+
 	return operations.NewCmdDeploySCOK().
-		WithPayload(operationWithEventResponse.Event)
+		WithPayload(&operations.CmdDeploySCOKBody{
+			OperationID: operationResponse.OperationID,
+			FirstEvent: &models.Events{
+				Data:    events[0].Data,
+				Address: scAddress,
+			},
+		})
 }
