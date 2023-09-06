@@ -19,9 +19,9 @@ POST a Smart Contract
     Log To Console    json response: ${response.json()}    # Print the response content to the test log for debugging
 
     Should Be Equal As Integers    ${response.status_code}    ${STATUS_OK}    # Assert the status code is 200 OK
-    Should Contain    ${response.json()}    TestSC is deployed at :
+    Should Contain    ${response.json()['firstEvent']['data']}    TestSC is deployed at
 
-    ${sc_address}=    Get SC address    ${response.json()}
+    ${sc_address}=    Get SC address    ${response.json()['firstEvent']['data']}
     Set Global Variable    ${DEPLOYED_SC_ADDR}    ${sc_address}
 
 POST /cmd/executeFunction sync

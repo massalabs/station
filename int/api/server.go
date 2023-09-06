@@ -130,12 +130,10 @@ func (server *Server) printNodeVersion(networkManager *config.NetworkManager) {
 	client := node.NewClient(networkManager.Network().NodeURL)
 	status, err := node.Status(client)
 
-	nodeVersion := "unknown"
 	if err == nil {
-		nodeVersion = *status.Version
 		logger.Info(
 			fmt.Sprintf("Connected to node server %s (version %s)",
-				networkManager.Network().NodeURL, nodeVersion),
+				networkManager.Network().NodeURL, *status.Version),
 		)
 	} else {
 		logger.Errorf("Could not get node version: %s", err.Error())

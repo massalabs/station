@@ -1,12 +1,10 @@
 package convert
 
 import (
-	"bytes"
 	"encoding/binary"
+	"fmt"
 	"math/big"
 	"unicode/utf16"
-
-	"github.com/massalabs/station/pkg/logger"
 )
 
 const BytesPerUint64 = 8
@@ -20,13 +18,22 @@ func U64ToBytes(nb int) (bytes []byte) {
 	return
 }
 
-const bytesPerUint32 = 4
+const BytesPerUint32 = 4
 
 // Encode uint32 to byte array.
 func U32ToBytes(nb int) (bytes []byte) {
 	u32 := uint32(nb)
-	bytes = make([]byte, bytesPerUint32)
+	bytes = make([]byte, BytesPerUint32)
 	binary.LittleEndian.PutUint32(bytes, u32)
+
+	return
+}
+
+// Encode int32 to byte array.
+func I32ToBytes(nb int) (bytes []byte) {
+	i32 := int32(nb)
+	bytes = make([]byte, BytesPerUint32)
+	binary.LittleEndian.PutUint32(bytes, uint32(i32))
 
 	return
 }
@@ -39,7 +46,7 @@ func ToBytesWithPrefixLength(str string) []byte {
 	// let's start by encoding the string length.
 	lenBytes := U32ToBytes(len(str))
 
-	runesBuffer := make([]rune, bytesPerUint32)
+	runesBuffer := make([]rune, BytesPerUint32)
 
 	for i := 0; i < len(lenBytes); i++ {
 		runesBuffer[i] = utf16.Decode([]uint16{uint16(lenBytes[i])})[0]
@@ -52,7 +59,7 @@ func ToBytesWithPrefixLength(str string) []byte {
 }
 
 func ToString(entry []byte) string {
-	content := entry[bytesPerUint32:] // content is always prefixed by its size encoded using a u32.
+	content := entry[BytesPerUint32:] // content is always prefixed by its size encoded using a u32.
 
 	return string(content)
 }
@@ -62,19 +69,19 @@ func ToStringArray(entry []byte) []string {
 
 	content := entry
 	// with args you will have at least 5 bytes for a string (4 for the size and 1 for the value).
-	minimumNbBytes := bytesPerUint32 + 1
+	minimumNbBytes := BytesPerUint32 + 1
 	// we parse the content until there is no more string left inside.
 	for len(content) >= minimumNbBytes {
 		// we check the string length and we update the offset.
-		stringLength := binary.LittleEndian.Uint32(content[:bytesPerUint32])
-		offset := bytesPerUint32 + int(stringLength)
+		stringLength := binary.LittleEndian.Uint32(content[:BytesPerUint32])
+		offset := BytesPerUint32 + int(stringLength)
 
-		str := string(content[bytesPerUint32:offset])
+		str := string(content[BytesPerUint32:offset])
 
 		result = append(result, str)
 
 		// we remove the string and its length header from the content.
-		content = content[bytesPerUint32+int(stringLength):]
+		content = content[BytesPerUint32+int(stringLength):]
 	}
 
 	return result
@@ -93,15 +100,20 @@ func StringArrayToArrayOfByteArray(stringArray []string) [][]byte {
 	return result
 }
 
-func BytesToU64(byteArray []byte) uint64 {
-	var u64 uint64
-
-	err := binary.Read(bytes.NewReader(byteArray), binary.LittleEndian, &u64)
-	if err != nil {
-		logger.Errorf("error converting bytesToU64 :%v\n", err)
+func BytesToI32(byteArray []byte) (int32, error) {
+	if len(byteArray) < BytesPerUint32 {
+		return 0, fmt.Errorf("invalid buffer size to decode int32")
 	}
 
-	return u64
+	return int32(binary.LittleEndian.Uint32(byteArray)), nil
+}
+
+func BytesToU64(byteArray []byte) (uint64, error) {
+	if len(byteArray) < BytesPerUint64 {
+		return 0, fmt.Errorf("invalid buffer size to decode uint64")
+	}
+
+	return binary.LittleEndian.Uint64(byteArray), nil
 }
 
 // ReverseBytes creates and returns a new byte slice with reversed order.

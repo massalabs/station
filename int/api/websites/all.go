@@ -67,6 +67,7 @@ func Registry(config *config.AppConfig) ([]*models.Registry, error) {
 	}
 
 	registry := make([]*models.Registry, 0)
+
 	for index, dnsValue := range dnsValues {
 		name := convert.ToString(websiteNames[index])
 

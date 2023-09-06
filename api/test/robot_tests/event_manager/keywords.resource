@@ -16,9 +16,9 @@ Deploy testSC
     ${data}=    Create Dictionary    walletNickname=${WALLET_NICKNAME}
     ${file}=    Create Dictionary    smartContract=${sc}
     ${response}=    POST    ${API_URL}/cmd/deploySC    data=${data}    files=${file}    expected_status=${STATUS_OK}
-    Should Contain    ${response.json()}    TestSC is deployed at :
+    Should Contain    ${response.json()['firstEvent']['data']}    TestSC is deployed at :
 
-    ${sc_address}=    Get SC address    ${response.json()}
+    ${sc_address}=    Get SC address    ${response.json()['firstEvent']['data']}
     Set Global Variable    ${DEPLOYED_SC_ADDR}    ${sc_address}
 
 Get Wallet Address

@@ -13,18 +13,19 @@ import (
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 )
 
-const DefaultGasLimit = 700_000_000
-
-const DefaultSlotsDuration = 2
-
-const DefaultFee = 0
-
-// To be updated when storage costs reduction will be deployed (testnet 26?)
-const AccountCreationStorageCost = 10_000_000
-
-const StorageCostPerByte = 1_000_000
-
-const OneMassa = 1_000_000_000
+const (
+	DefaultGasLimit     = 700_000_000
+	DefaultExpiryInSlot = 3
+	DefaultFee          = 0
+	// To be updated when storage costs reduction will be deployed (testnet 26?)
+	AccountCreationStorageCost = 10_000_000
+	StorageCostPerByte         = 1_000_000
+	// Today, the cost of storage to create a new storagekey is fixed to 10*StorageCostPerByte
+	// This should be updated when key creation cost will be charged for actual size.
+	chargedBytesForKey     = 10
+	StorageKeyCreationCost = chargedBytesForKey * StorageCostPerByte
+	OneMassa               = 1_000_000_000
+)
 
 //nolint:tagliatelle
 type sendOperationsReq struct {
