@@ -172,7 +172,7 @@ func (m *Manager) Delete(correlationID string) error {
 // However, for the "massa-labs/massa-wallet" plugin, it keeps the wallet files.
 // The wallet files are identified by the prefix "wallet_" and the suffix ".yaml".
 func removePlugin(plugin *Plugin) error {
-	dir := filepath.Dir(plugin.BinPath)
+	dir := plugin.Path
 
 	alias := Alias(plugin.info.Author, plugin.info.Name)
 	if alias != "massa-labs/massa-wallet" {
@@ -222,10 +222,10 @@ func (m *Manager) generateCorrelationID() string {
 }
 
 // InitPlugin starts new plugin and adds it to manager.
-func (m *Manager) InitPlugin(binPath string) error {
+func (m *Manager) InitPlugin(pluginPath string) error {
 	correlationID := m.generateCorrelationID()
 
-	plugin, err := New(binPath, correlationID)
+	plugin, err := New(pluginPath, correlationID)
 	if err != nil {
 		return err
 	}
@@ -248,11 +248,12 @@ func (m *Manager) RunAll() error {
 
 	for _, rootItem := range rootItems {
 		if rootItem.IsDir() {
-			binPath := filepath.Join(pluginDir, rootItem.Name(), rootItem.Name())
+			pluginName := rootItem.Name()
+			pluginPath := filepath.Join(pluginDir, pluginName)
 
-			err = m.InitPlugin(binPath)
+			err = m.InitPlugin(pluginPath)
 			if err != nil {
-				logger.Warnf("While running plugin %s: %s.", rootItem.Name(), err)
+				logger.Warnf("While running plugin %s: %s.", pluginName, err)
 				logger.Warnf("This plugin will not be executed.")
 			}
 		}
@@ -295,10 +296,10 @@ func (m *Manager) StopPlugin(plugin *Plugin, unregister bool) error {
 	return nil
 }
 
-// DownloadPlugin downloads a plugin from a given URL.
+// downloadPlugin downloads a plugin from a given URL.
 // Pass isNew to false to update the plugin.
 // Returns the plugin path.
-func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
+func (m *Manager) downloadPlugin(url string, isNew bool) (string, error) {
 	pluginsDir := Directory(m.configDir)
 
 	req, err := grab.NewRequest(pluginsDir, url)
@@ -313,38 +314,36 @@ func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
 		return "", fmt.Errorf("downloading plugin at %s: %w", url, err)
 	}
 
+	archivePath := resp.Filename
+
 	defer func() {
-		err = os.Remove(resp.Filename)
+		err = os.Remove(archivePath)
 		if err != nil {
-			logger.Errorf("deleting archive %s: %s", resp.Filename, err)
+			logger.Errorf("deleting archive %s: %s", archivePath, err)
 		}
 	}()
 
-	archiveName := filepath.Base(resp.Filename)
+	archiveName := filepath.Base(archivePath)
 	pluginFilename := utils.PluginFileName(archiveName)
-	pluginName := strings.Split(archiveName, "_")[0]
-	pluginDirectory := filepath.Join(pluginsDir, pluginName)
-	pluginPath := utils.PluginPath(pluginDirectory, pluginName)
+	pluginName := getPluginName(archiveName)
+	pluginPath := filepath.Join(pluginsDir, pluginName)
 
 	if isNew {
-		_, err = os.Stat(pluginDirectory)
-
+		_, err = os.Stat(pluginPath)
 		if os.IsNotExist(err) {
-			err := os.MkdirAll(pluginDirectory, os.ModePerm)
+			err := os.MkdirAll(pluginPath, os.ModePerm)
 			if err != nil {
-				return "", fmt.Errorf("creating plugin directory %s: %w", pluginDirectory, err)
+				return "", fmt.Errorf("creating plugin directory %s: %w", pluginPath, err)
 			}
-		} else if _, err = os.Stat(pluginPath); err == nil {
-			return "", fmt.Errorf("plugin %s already exists", pluginName)
 		}
 	}
 
-	err = unzip.Extract(resp.Filename, pluginDirectory)
+	err = unzip.Extract(archivePath, pluginPath)
 	if err != nil {
-		return "", fmt.Errorf("extracting the plugin at %s: %w", resp.Filename, err)
+		return "", fmt.Errorf("extracting the plugin at %s: %w", archivePath, err)
 	}
 
-	err = os.Rename(filepath.Join(pluginDirectory, pluginFilename), pluginPath)
+	err = prepareBinary(pluginFilename, pluginPath)
 	if err != nil {
 		return "", fmt.Errorf("renaming plugin %s: %w", pluginName, err)
 	}
@@ -354,7 +353,7 @@ func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
 
 // Install grabs a remote plugin from the given url and install it locally.
 func (m *Manager) Install(url string) error {
-	pluginPath, err := m.DownloadPlugin(url, true)
+	pluginPath, err := m.downloadPlugin(url, true)
 	if err != nil {
 		return fmt.Errorf("downloading plugin at %s: %w", url, err)
 	}
@@ -393,7 +392,7 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("stopping plugin %s: %w", plgn.info.Name, err)
 	}
 
-	pluginPath, err := m.DownloadPlugin(url, false)
+	pluginPath, err := m.downloadPlugin(url, false)
 	if err != nil {
 		return fmt.Errorf("downloading plugin %s: %w", plgn.info.Name, err)
 	}

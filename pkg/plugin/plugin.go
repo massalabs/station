@@ -15,7 +15,9 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/massalabs/station/pkg/logger"
+	"github.com/massalabs/station/pkg/plugin/utils"
 	"github.com/massalabs/station/pkg/store"
+	"github.com/xyproto/unzip"
 )
 
 //go:generate stringer -type=Status
@@ -49,7 +51,7 @@ type Plugin struct {
 	status       Status
 	info         *Information
 	reverseProxy *httputil.ReverseProxy
-	BinPath      string
+	Path         string
 	ID           string
 	quitChan     chan bool
 }
@@ -59,7 +61,7 @@ func (p *Plugin) Information() *Information {
 }
 
 func (p *Plugin) getInformation() (*Information, error) {
-	manifestPath := filepath.Join(filepath.Dir(p.BinPath), "manifest.json")
+	manifestPath := filepath.Join(p.Path, "manifest.json")
 
 	jsonObj, err := os.ReadFile(manifestPath)
 	if err != nil {
@@ -74,7 +76,7 @@ func (p *Plugin) getInformation() (*Information, error) {
 		return nil, fmt.Errorf("parsing manifest file '%s': %w", manifestPath, err)
 	}
 
-	logoPath := filepath.Join(filepath.Dir(p.BinPath), info.Logo)
+	logoPath := filepath.Join(p.Path, info.Logo)
 	info.Logo = logoPath
 
 	return info, nil
@@ -140,8 +142,66 @@ func (pw prefixWriter) Write(buf []byte) (n int, err error) {
 	return len(buf), nil
 }
 
+func getPluginName(archiveName string) string {
+	// if the archive name contains ".app", then it's a macOS app
+	if strings.Contains(archiveName, ".app") {
+		return strings.Split(archiveName, ".app")[0]
+	}
+
+	return strings.Split(archiveName, "_")[0]
+}
+
+func prepareBinary(pluginFilename, pluginPath string) error {
+	pluginName := filepath.Base(pluginPath)
+	binPath := utils.PluginPath(pluginPath, pluginFilename)
+
+	if _, err := os.Stat(binPath); os.IsNotExist(err) {
+		// If the plugin binary does not exist, it means that the plugin is a MacOS .app directory.
+		// No need to rename the binary.
+
+		// We extract the .app.zip file to the plugin directory
+		appPath := filepath.Join(pluginPath, pluginName+".app")
+
+		err = os.Mkdir(appPath, os.ModePerm)
+		if err != nil {
+			return fmt.Errorf("creating the plugin .app directory at %s: %w", appPath, err)
+		}
+
+		appZip := filepath.Join(pluginPath, pluginName+".app.zip")
+
+		err = unzip.Extract(appZip, appPath)
+		if err != nil {
+			return fmt.Errorf("extracting the plugin at %s: %w", appZip, err)
+		}
+
+		return nil
+	}
+
+	newBinPath := utils.PluginPath(pluginPath, pluginName)
+
+	err := os.Rename(filepath.Join(pluginPath, pluginFilename), newBinPath)
+	if err != nil {
+		return fmt.Errorf("renaming plugin %s: %w", pluginName, err)
+	}
+
+	return nil
+}
+
+// binPath returns the path to the plugin binary.
+func (p *Plugin) binPath() string {
+	pluginName := filepath.Base(p.Path)
+
+	binPath := utils.PluginPath(p.Path, pluginName)
+	if _, err := os.Stat(binPath); os.IsNotExist(err) {
+		// Assuming that the plugin is a MacOS .app directory
+		binPath = filepath.Join(p.Path, pluginName+".app", "Contents", "MacOS", pluginName)
+	}
+
+	return binPath
+}
+
 func (p *Plugin) Start() error {
-	pluginName := filepath.Base(p.BinPath)
+	pluginName := filepath.Base(p.Path)
 
 	logger.Debugf("Starting plugin '%s' with id %s\n", pluginName, p.ID)
 
@@ -154,7 +214,7 @@ func (p *Plugin) Start() error {
 		return fmt.Errorf("plugin is not ready to start")
 	}
 
-	p.command = exec.Command(p.BinPath, p.ID) // #nosec G204
+	p.command = exec.Command(p.binPath(), p.ID) // #nosec G204
 
 	stdOutWriter := &prefixWriter{w: os.Stdout, prefix: fmt.Sprintf("[%s] - ", pluginName)}
 	stdErrWriter := &prefixWriter{w: os.Stderr, prefix: fmt.Sprintf("[%s] Error: ", pluginName)}
@@ -202,11 +262,11 @@ func (p *Plugin) Stop() error {
 	return p.Kill()
 }
 
-func New(binPath string, pluginID string) (*Plugin, error) {
+func New(path, pluginID string) (*Plugin, error) {
 	//nolint:exhaustruct
 	plgn := &Plugin{
 		status:   Starting,
-		BinPath:  binPath,
+		Path:     path,
 		ID:       pluginID,
 		quitChan: make(chan bool),
 	}

@@ -57,7 +57,7 @@ func Test_removePlugin(t *testing.T) {
 				t.Fatalf("Failed to create temp directory: %v", err)
 			}
 
-			testCase.plugin.BinPath = filepath.Join(tempDir, "pluginBinary")
+			testCase.plugin.Path = tempDir
 
 			// Create dummy files.
 			for _, file := range testCase.createFiles {
