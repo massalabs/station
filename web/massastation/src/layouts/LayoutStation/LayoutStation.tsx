@@ -6,6 +6,7 @@ import { NetworkModel } from '../../models';
 import { useNetworkStore } from '../../store/store';
 
 import { ThemeMode, StationLogo, Dropdown } from '@massalabs/react-ui-kit';
+import { useNavigate } from 'react-router-dom';
 
 export interface LayoutStationProps {
   children?: ReactNode;
@@ -30,6 +31,8 @@ export function LayoutStation({ ...props }) {
 
     onSetTheme?.(theme);
   }
+
+  const navigate = useNavigate();
 
   const { data: network, isSuccess: isSuccessNetwork } =
     useResource<NetworkModel>(URL.PATH_NETWORKS);
@@ -60,16 +63,20 @@ export function LayoutStation({ ...props }) {
     ) || '0',
   );
 
-  const { mutate: mutateUpdateNetwork } = usePost<NetworkRequest>(
-    `${URL.PATH_NETWORKS}/${currentNetwork}`,
-  );
+  const { mutate: mutateUpdateNetwork, isSuccess: isSuccessUpdateNetwork } =
+    usePost<NetworkRequest>(`${URL.PATH_NETWORKS}/${currentNetwork}`);
+
+  useEffect(() => {
+    if (isSuccessUpdateNetwork) {
+      navigate(0);
+    }
+  }, [isSuccessUpdateNetwork]);
 
   const availableNetworksItems = availableNetworks.map((network) => ({
     item: network,
     onClick: () => {
       setCurrentNetwork(network);
       mutateUpdateNetwork({});
-      location.replace(location.href);
     },
   }));
 
