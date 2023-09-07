@@ -12,6 +12,7 @@ import (
 	"github.com/massalabs/station/int/initialize"
 	"github.com/massalabs/station/int/systray"
 	"github.com/massalabs/station/int/systray/update"
+	"github.com/massalabs/station/int/systray/utils"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/plugin"
 )
@@ -99,6 +100,7 @@ func main() {
 		if err != nil {
 			logger.Fatalf("while running all plugins: %w", err)
 		}
+		utils.OpenURL(&stationGUI, fmt.Sprintf("https://%s", config.MassaStationURL))
 	})
 
 	stationGUI.Run()
