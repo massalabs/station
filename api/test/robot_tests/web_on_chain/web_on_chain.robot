@@ -56,7 +56,7 @@ POST /cmd/executeFunction To remove the dns entry
     ${argument}=    keywords.String To Arg    ${website_url}
     ${data}=    Create Dictionary
     ...    nickname=${WALLET_NICKNAME}
-    ...    name=deleteEntryFromDNS
+    ...    name=dns1_deleteEntryFromDNS
     ...    at=${DNS}
     ...    args=${argument}
     ${response}=    POST
@@ -68,4 +68,3 @@ GET /all/domains
     ${response}=    GET
     ...    ${API_URL}/all/domains
     ...    expected_status=${STATUS_OK}
-    Should Contain    ${response.text}    flappy

@@ -4,7 +4,7 @@ testnet:
     - https://test.massa.net/api/v2
 
 buildnet:
-  DNS: AS12GwD3UEk2BP1zMx2zSdvKov97z8gs1MtsoN4u4C9emLBbhYa3U
+  DNS: AS1pzpVk79cubdM7Zk9pNdg1JR4qKooVa6usyquiCEQhPeRWD9k7
   URLs:
     - https://buildnet.massa.net/api/v2
   Default: true

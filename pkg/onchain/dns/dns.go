@@ -53,7 +53,7 @@ func SetRecord(
 		client,
 		nickname,
 		addr,
-		"setResolver",
+		"dns1_setResolver",
 		rec,
 		sendoperation.OneMassa,
 		sendoperation.DefaultExpiryInSlot,
