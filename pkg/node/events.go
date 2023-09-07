@@ -2,7 +2,10 @@ package node
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"strings"
+	"time"
 )
 
 type EventSearchCriteria struct {
@@ -27,6 +30,11 @@ type Context struct {
 	OriginOperationID *string   `json:"origin_operation_id"`
 }
 
+const (
+	maxWaitingTimeInSeconds = 45
+	pollIntervalSec         = 1
+)
+
 /**
  * Filters events based on given arguments.
  *
@@ -35,14 +43,14 @@ type Context struct {
  * 	* after => start
  * 	* before => end
  * - callstack address:
- *  * last address in the callstack => trigger
- *  * first address in the callstack => originator
+ *  * last address in the callstack => emitter
+ *  * first address in the callstack => originaCaller
  * - operation id.
  *
  * All these criterion are optional.
  */
 func Events(client *Client, start *Slot, end *Slot,
-	trigger *string, originator *string,
+	emitter *string, originaCaller *string,
 	operationID *string,
 ) ([]Event, error) {
 	rawResponse, err := client.RPCClient.Call(
@@ -52,8 +60,8 @@ func Events(client *Client, start *Slot, end *Slot,
 			{
 				Start:                 start,
 				End:                   end,
-				EmitterAddress:        trigger,
-				OriginalCallerAddress: originator,
+				EmitterAddress:        emitter,
+				OriginalCallerAddress: originaCaller,
 				OriginalOperationID:   operationID,
 			},
 		},
@@ -64,8 +72,8 @@ func Events(client *Client, start *Slot, end *Slot,
 				{
 					Start:                 start,
 					End:                   end,
-					EmitterAddress:        trigger,
-					OriginalCallerAddress: originator,
+					EmitterAddress:        emitter,
+					OriginalCallerAddress: originaCaller,
 					OriginalOperationID:   operationID,
 				},
 			}, err)
@@ -83,4 +91,44 @@ func Events(client *Client, start *Slot, end *Slot,
 	}
 
 	return resp, nil
+}
+
+func ListenEvents(
+	client *Client,
+	start *Slot, end *Slot,
+	emitter *string,
+	operationID *string,
+	caller *string,
+) ([]Event, error) {
+	counter := 0
+
+	ticker := time.NewTicker(time.Second * pollIntervalSec)
+
+	for ; true; <-ticker.C {
+		counter++
+
+		if counter > maxWaitingTimeInSeconds/pollIntervalSec {
+			break
+		}
+
+		events, err := Events(client, start, end, emitter, caller, operationID)
+		if err != nil {
+			return nil,
+				fmt.Errorf("fetching events for: opId %s, caller %s, emitter %s: %w", *operationID, *caller, *emitter, err)
+		}
+
+		for _, event := range events {
+			if strings.Contains(event.Data, "massa_execution_error") {
+				// return the event containing the error
+				return nil, errors.New(event.Data)
+			}
+		}
+
+		if len(events) > 0 {
+			return events, nil
+		}
+	}
+
+	return nil,
+		fmt.Errorf("listening events for: opId %s, caller %s, emitter %s: Timeout", *operationID, *caller, *emitter)
 }

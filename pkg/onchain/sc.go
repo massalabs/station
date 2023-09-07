@@ -1,11 +1,9 @@
 package onchain
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
-	"time"
 
 	"github.com/massalabs/station/pkg/node"
 	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
@@ -13,10 +11,6 @@ import (
 	"github.com/massalabs/station/pkg/node/sendoperation/executesc"
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 )
-
-const maxWaitingTimeInSeconds = 45
-
-const pollIntervalSec = 1
 
 type OperationWithEventResponse struct {
 	Event             string
@@ -64,7 +58,7 @@ func CallFunction(client *node.Client,
 		}, nil
 	}
 
-	events, err := listenEvents(client, operationResponse.OperationID)
+	events, err := node.ListenEvents(client, nil, nil, nil, &operationResponse.OperationID, nil)
 	if err != nil {
 		if strings.Contains(err.Error(), "Timeout") {
 			return &OperationWithEventResponse{
@@ -73,7 +67,7 @@ func CallFunction(client *node.Client,
 			}, nil
 		}
 
-		return nil, err
+		return nil, fmt.Errorf("listening events for opId at %s : %w", operationResponse.OperationID, err)
 	}
 
 	// return first event
@@ -116,47 +110,12 @@ func DeploySC(client *node.Client,
 		return nil, nil, fmt.Errorf("calling executeSC: %w", err)
 	}
 
-	events, err := listenEvents(client, operationResponse.OperationID)
+	events, err := node.ListenEvents(client, nil, nil, nil, &operationResponse.OperationID, nil)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("listening events for opId at %s : %w", operationResponse.OperationID, err)
 	}
 
 	return operationResponse, events, nil
-}
-
-func listenEvents(
-	client *node.Client,
-	operationID string,
-) ([]node.Event, error) {
-	counter := 0
-
-	ticker := time.NewTicker(time.Second * pollIntervalSec)
-
-	for ; true; <-ticker.C {
-		counter++
-
-		if counter > maxWaitingTimeInSeconds/pollIntervalSec {
-			break
-		}
-
-		events, err := node.Events(client, nil, nil, nil, nil, &operationID)
-		if err != nil {
-			return nil, fmt.Errorf("fetching events for opId %s: %w", operationID, err)
-		}
-
-		for _, event := range events {
-			if strings.Contains(event.Data, "massa_execution_error") {
-				// return the event containing the error
-				return nil, errors.New(event.Data)
-			}
-		}
-
-		if len(events) > 0 {
-			return events, nil
-		}
-	}
-
-	return nil, fmt.Errorf("listening events for opId %s: Timeout", operationID)
 }
 
 func FindDeployedAddress(events []node.Event) (string, bool) {
