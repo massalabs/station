@@ -15,7 +15,7 @@
       "subtitle": "Paste the link of the zip module",
       "placeholder": "URL",
       "fe-error": "Please enter a valid url",
-      "be-error": "Failed to upload plugin",
+      "be-error": "Failed to install plugin",
       "button": "Install"
     }
   },
