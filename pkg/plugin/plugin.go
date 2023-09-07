@@ -158,7 +158,6 @@ func prepareBinary(pluginFilename, pluginPath string) error {
 	if _, err := os.Stat(binPath); os.IsNotExist(err) {
 		// If the plugin binary does not exist, it means that the plugin is a MacOS .app directory.
 		// No need to rename the binary.
-
 		// We extract the .app.zip file to the plugin directory
 		appPath := filepath.Join(pluginPath, pluginName+".app")
 
