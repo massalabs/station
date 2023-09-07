@@ -298,10 +298,22 @@ func (m *Manager) StopPlugin(plugin *Plugin, unregister bool) error {
 func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
 	pluginsDir := Directory(m.configDir)
 
-	resp, err := grab.Get(pluginsDir, url)
+	req, err := grab.NewRequest(pluginsDir, url)
 	if err != nil {
-		return "", fmt.Errorf("grabbing a plugin at %s: %w", url, err)
+		return "", fmt.Errorf("creating a new request for %s: %w", url, err)
 	}
+
+	req.HTTPRequest.Header.Set("User-Agent", "MassaStation/0.3.3")
+
+	resp := grab.DefaultClient.Do(req)
+	if err := resp.Err(); err != nil {
+		return "", fmt.Errorf("downloading plugin at %s: %w", url, err)
+	}
+
+	// resp, err := grab.Get(pluginsDir, url)
+	// if err != nil {
+	// 	return "", fmt.Errorf("grabbing a plugin at %s: %w", url, err)
+	// }
 
 	defer func() {
 		err = os.Remove(resp.Filename)
