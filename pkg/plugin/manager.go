@@ -11,6 +11,7 @@ import (
 	"sync"
 
 	"github.com/cavaliergopher/grab/v3"
+	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/plugin/utils"
 	"github.com/massalabs/station/pkg/store"
@@ -298,9 +299,16 @@ func (m *Manager) StopPlugin(plugin *Plugin, unregister bool) error {
 func (m *Manager) DownloadPlugin(url string, isNew bool) (string, error) {
 	pluginsDir := Directory(m.configDir)
 
-	resp, err := grab.Get(pluginsDir, url)
+	req, err := grab.NewRequest(pluginsDir, url)
 	if err != nil {
-		return "", fmt.Errorf("grabbing a plugin at %s: %w", url, err)
+		return "", fmt.Errorf("creating a new request for %s: %w", url, err)
+	}
+
+	req.HTTPRequest.Header.Set("User-Agent", fmt.Sprintf("MassaStation/%s", config.Version))
+
+	resp := grab.DefaultClient.Do(req)
+	if err := resp.Err(); err != nil {
+		return "", fmt.Errorf("downloading plugin at %s: %w", url, err)
 	}
 
 	defer func() {
