@@ -11,11 +11,6 @@ import (
 	"github.com/massalabs/station/pkg/node"
 )
 
-const (
-	periodThreshold = 1
-	tickerDuration  = time.Second
-)
-
 func NewEventListenerHandler(config *config.AppConfig) operations.EventsGetterHandler {
 	return &eventListener{config: config}
 }
@@ -24,7 +19,8 @@ type eventListener struct {
 	config *config.AppConfig
 }
 
-//nolint:funlen
+const timeoutSec = 60
+
 func (h *eventListener) Handle(params operations.EventsGetterParams) middleware.Responder {
 	client := node.NewClient(h.config.NodeURL)
 
@@ -38,22 +34,17 @@ func (h *eventListener) Handle(params operations.EventsGetterParams) middleware.
 	}
 
 	slotStart := node.Slot{
-		Period: status.LastSlot.Period,
+		// Listen to events from the last slot
+		Period: status.LastSlot.Period - 1,
 		Thread: 0,
 	}
 
-	ticker := time.NewTicker(tickerDuration)
+	start := time.Now()
 
-	var event node.Event
+	var event *node.Event
 
-	for ; true; <-ticker.C {
-		trigger := false
-
-		// In some cases, the event has been emitted in the previous period and we miss it.
-		// So we check a given number of previous periods to be sure to catch it.
-		slotStart.Period -= periodThreshold
-
-		events, err := node.Events(client, &slotStart, nil, &params.Caller, nil, nil)
+	for {
+		events, err := node.ListenEvents(client, &slotStart, nil, &params.Caller, nil, nil)
 		if err != nil {
 			return operations.NewEventsGetterInternalServerError().
 				WithPayload(
@@ -63,27 +54,27 @@ func (h *eventListener) Handle(params operations.EventsGetterParams) middleware.
 					})
 		}
 
-		for _, e := range events {
-			if strings.Contains(e.Data, params.Str) {
-				trigger = true
-				event = e
+		for index := range events {
+			if strings.Contains(events[index].Data, params.Str) {
+				event = &events[index]
+
+				break
 			}
 		}
 
-		if trigger {
+		if event != nil {
 			break
 		}
 
-		status, err := node.Status(client)
-		if err != nil {
-			return operations.NewEventsGetterInternalServerError().WithPayload(
-				&models.Error{
-					Code:    errorCodeEventListener,
-					Message: err.Error(),
-				})
+		elapsed := time.Since(start)
+		if elapsed.Seconds() > timeoutSec {
+			return operations.NewEventsGetterBadRequest().
+				WithPayload(
+					&models.Error{
+						Code:    timeoutError,
+						Message: "Event not found",
+					})
 		}
-
-		slotStart.Period = status.LastSlot.Period
 	}
 
 	return operations.NewEventsGetterOK().WithPayload(&models.Events{
