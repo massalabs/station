@@ -24,7 +24,7 @@ fatal() {
 HOMEBREW_PATH=$(brew --prefix)
 
 # nss contains certutil which is used to generate a certificate.
-brew install nss || fatal "failed to install nss using homebrew"
+su - $USER -c "$HOMEBREW_PATH/bin/brew install nss" || fatal "failed to install nss using homebrew"
 
 # Configure dnsmasq to resolve .massa domains to localhost.
 configure_dnsmasq() {
