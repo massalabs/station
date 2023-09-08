@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 
@@ -189,6 +190,8 @@ func (plugin *Plugin) IsPluginCompatible() (bool, error) {
 	if config.Version == "dev" {
 		return true, nil
 	}
+
+	config.Version = strings.TrimSuffix(config.Version, "-dev")
 
 	massaStationVersion, err := version.NewVersion(config.Version)
 	if err != nil {
