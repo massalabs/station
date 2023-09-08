@@ -23,13 +23,12 @@ const (
 	blackListKey = "blackList"
 )
 
-func NewRegistryHandler(config *config.AppConfig, configDir string) operations.AllDomainsGetterHandler {
-	return &registryHandler{config: config, configDir: configDir}
+func NewRegistryHandler(config *config.AppConfig) operations.AllDomainsGetterHandler {
+	return &registryHandler{config: config}
 }
 
 type registryHandler struct {
-	config    *config.AppConfig
-	configDir string
+	config *config.AppConfig
 }
 
 func (h *registryHandler) Handle(_ operations.AllDomainsGetterParams) middleware.Responder {
