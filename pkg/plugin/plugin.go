@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 
@@ -159,6 +160,10 @@ func prepareBinary(pluginFilename, pluginPath string) error {
 		// If the plugin binary does not exist, it means that the plugin is a MacOS .app directory.
 		// No need to rename the binary.
 		// We extract the .app.zip file to the plugin directory
+		if runtime.GOOS != "darwin" {
+			return fmt.Errorf("plugin binary not found at %s", binPath)
+		}
+
 		appPath := filepath.Join(pluginPath, pluginName+".app")
 
 		err = os.Mkdir(appPath, os.ModePerm)
