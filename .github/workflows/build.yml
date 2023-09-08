@@ -39,7 +39,7 @@ jobs:
       - name: Set Version
         if: ${{ env.VERSION == '' }}
         run: |
-          export VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
+          export VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')-dev
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: installing dependencies
         uses: ./.github/actions/install
