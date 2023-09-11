@@ -173,6 +173,13 @@ func prepareBinary(pluginFilename, pluginPath string) error {
 
 		appZip := filepath.Join(pluginPath, pluginName+".app.zip")
 
+		defer func() {
+			err = os.Remove(appZip)
+			if err != nil {
+				logger.Errorf("deleting .app archive %s: %s", appZip, err)
+			}
+		}()
+
 		err = unzip.Extract(appZip, appPath)
 		if err != nil {
 			return fmt.Errorf("extracting the plugin at %s: %w", appZip, err)
@@ -195,13 +202,14 @@ func prepareBinary(pluginFilename, pluginPath string) error {
 func (p *Plugin) binPath() string {
 	pluginName := filepath.Base(p.Path)
 
-	binPath := utils.PluginPath(p.Path, pluginName)
-	if _, err := os.Stat(binPath); os.IsNotExist(err) {
-		// Assuming that the plugin is a MacOS .app directory
-		binPath = filepath.Join(p.Path, pluginName+".app", "Contents", "MacOS", pluginName)
+	// Check if the MacOS .app directory exists.
+	macOSAppDirPath := filepath.Join(p.Path, pluginName+".app")
+	if _, err := os.Stat(macOSAppDirPath); os.IsNotExist(err) {
+		// Return the binary if not.
+		return utils.PluginPath(p.Path, pluginName)
 	}
 
-	return binPath
+	return filepath.Join(p.Path, pluginName+".app", "Contents", "MacOS", pluginName)
 }
 
 func (p *Plugin) Start() error {
