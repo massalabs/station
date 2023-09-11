@@ -392,6 +392,10 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("stopping plugin %s: %w", plgn.info.Name, err)
 	}
 
+	// Remove the old binary file.
+	pluginName := filepath.Base(plgn.Path)
+	os.Remove(utils.PluginPath(plgn.Path, pluginName))
+
 	pluginPath, err := m.downloadPlugin(url, false)
 	if err != nil {
 		return fmt.Errorf("downloading plugin %s: %w", plgn.info.Name, err)
