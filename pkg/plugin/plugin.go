@@ -154,7 +154,7 @@ func getPluginName(archiveName string) string {
 
 func prepareBinary(pluginFilename, pluginPath string) error {
 	pluginName := filepath.Base(pluginPath)
-	binPath := utils.PluginPath(pluginPath, pluginFilename)
+	binPath := filepath.Join(pluginPath, pluginFilename)
 
 	if _, err := os.Stat(binPath); os.IsNotExist(err) {
 		// If the plugin binary does not exist, it means that the plugin is a MacOS .app directory.

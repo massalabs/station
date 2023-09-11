@@ -13,6 +13,13 @@ tasks:
       - cmd: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3
       - cmd: go install github.com/daixiang0/gci@latest
       - cmd: go install mvdan.cc/gofumpt@latest
+      - task: install-dev-win
+
+  install-dev-win:
+    plateform: [windows]
+    cmds:
+      - cmd: mkdir -p build/massastation
+      - cmd: curl -o build/massastation/mar-tools-win64.zip https://archive.torproject.org/tor-package-archive/torbrowser/12.5.1/mar-tools-win64.zip
 
   generate: go generate ./...
 
