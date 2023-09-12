@@ -25,6 +25,8 @@ func CallFunction(client *node.Client,
 	addr string,
 	function string,
 	parameter []byte,
+	fee uint64,
+	maxGas uint64,
 	coins uint64,
 	expiryDelta uint64,
 	async bool,
@@ -32,7 +34,7 @@ func CallFunction(client *node.Client,
 	signer signer.Signer,
 ) (*OperationWithEventResponse, error) {
 	callSC, err := callsc.New(addr, function, parameter,
-		sendOperation.DefaultGasLimit,
+		maxGas,
 		coins)
 	if err != nil {
 		return nil, fmt.Errorf("creating callSC with '%s' at '%s': %w", function, addr, err)
@@ -41,7 +43,7 @@ func CallFunction(client *node.Client,
 	operationResponse, err := sendOperation.Call(
 		client,
 		expiryDelta,
-		sendOperation.DefaultFee,
+		fee,
 		callSC,
 		nickname,
 		operationBatch,
