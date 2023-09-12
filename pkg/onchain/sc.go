@@ -58,7 +58,7 @@ func CallFunction(client *node.Client,
 		}, nil
 	}
 
-	events, err := node.ListenEvents(client, nil, nil, nil, &operationResponse.OperationID, nil)
+	events, err := node.ListenEvents(client, nil, nil, nil, &operationResponse.OperationID, nil, true)
 	if err != nil {
 		if strings.Contains(err.Error(), "Timeout") {
 			return &OperationWithEventResponse{
@@ -110,7 +110,7 @@ func DeploySC(client *node.Client,
 		return nil, nil, fmt.Errorf("calling executeSC: %w", err)
 	}
 
-	events, err := node.ListenEvents(client, nil, nil, nil, &operationResponse.OperationID, nil)
+	events, err := node.ListenEvents(client, nil, nil, nil, &operationResponse.OperationID, nil, true)
 	if err != nil {
 		return nil, nil, fmt.Errorf("listening events for opId at %s : %w", operationResponse.OperationID, err)
 	}

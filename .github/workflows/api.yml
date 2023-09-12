@@ -37,10 +37,10 @@ jobs:
           sudo chmod 777 /usr/local/share/massastation/
           sudo mkdir -p /usr/local/share/massastation/logs/
           sudo chmod 777 /usr/local/share/massastation/logs/
-          mkdir -p /usr/local/share/massastation/plugins/wallet-plugin
           sudo mkdir -p /etc/massastation/certs
           sudo chmod 777 /etc/massastation/
-          echo "$WALLET_TEST_WALLET" > /usr/local/share/massastation/plugins/wallet-plugin/wallet_fullpower.yaml
+          mkdir -p $HOME/.config/massa-station-wallet/
+          echo "$WALLET_TEST_WALLET" > $HOME/.config/massa-station-wallet/wallet_fullpower.yaml
         env:
           WALLET_TEST_WALLET: ${{ secrets.WALLET_TEST_WALLET }}
       - name: Running Massastation
