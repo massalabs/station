@@ -99,6 +99,7 @@ func ListenEvents(
 	emitter *string,
 	operationID *string,
 	caller *string,
+	failOnExecError bool,
 ) ([]Event, error) {
 	counter := 0
 
@@ -118,7 +119,7 @@ func ListenEvents(
 		}
 
 		for _, event := range events {
-			if strings.Contains(event.Data, "massa_execution_error") {
+			if failOnExecError && strings.Contains(event.Data, "massa_execution_error") {
 				// return the event containing the error
 				return nil, errors.New(event.Data)
 			}
