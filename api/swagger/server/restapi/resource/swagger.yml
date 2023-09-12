@@ -47,19 +47,6 @@ paths:
               - nickname
               - name
               - at
-            default:
-              nickname: "test"
-              name: "test"
-              async: false
-              at: "A1MrqLgWq5XXDpTBH6fzXHUg7E8M5U2fYDAF3E1xnUSzyZuKpMh"
-              args: ""
-              gas:
-                price: 0
-                limit: 700000000
-              coins: 0
-              expiry: 3
-              fee: 0
-              keyId: default
             properties:
               nickname:
                 description: Account nickname used to sign the operation.
@@ -72,6 +59,7 @@ paths:
               async:
                 description: Whether the function should be called without waiting for first event.
                 type: boolean
+                default: false
               at:
                 description: Smart contract address exporting the function to call.
                 type: string
@@ -80,34 +68,23 @@ paths:
                 description: Arguments to pass to the function.
                 type: string
                 default: ""
-              gas:
-                type: object
-                description: Gas attributes. Has is a virtual resource consumed by node while running smart contract.
-                properties:
-                  price:
-                    type: number
-                    description: Price of a gas unit.
-                    default: 0
-                  limit:
-                    type: integer
-                    description: Maximum number of gas unit that a node will be able consume.
-                    default: 700000000
+              maxGas:
+                $ref: "#/definitions/Amount"
+                description: Maximum number of gas unit that a operation will be able consume.
+                default: 700000000 # DefaultGasLimit
               coins:
-                description: Set the fee amount (in massa) that will be given to the block creator.
-                type: number
-                default: 0
+                #$ref: "#/definitions/Amount"
+                description: Set the coin amount that will be transfered to the smartContract.
+                type: number # This is kept for backward compatibilty
+                default: 0 # DefaultGasLimit
               expiry:
                 description: Set the expiry duration (in number of slots) of the transaction.
                 type: integer
-                default: 3
+                default: 3 # DefaultExpiryInSlot
               fee:
-                description: Set the fee amount (in massa) that will be given to the block creator.
-                type: number
-                default: 0
-              keyId:
-                description: Defines the key to used to sign the transaction.
-                type: string
-                default: default
+                $ref: "#/definitions/Amount"
+                description: Set the fee amount that will be given to the block creator.
+                default: 0 # DefaultFee
       produces:
         - application/json
       responses:
@@ -122,6 +99,10 @@ paths:
               firstEvent:
                 description: first event emitted by the called smart contract. Kept for backward compatibility.
                 $ref: "#/definitions/Events"
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
         "422":
           description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
           schema:
@@ -922,6 +903,10 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 definitions:
+  Amount:
+    description: Amount in nanoMassa.
+    type: string
+    x-nullable: false
   Error:
     type: object
     description: Error object.

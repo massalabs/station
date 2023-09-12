@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/base64"
+	"strconv"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
@@ -21,13 +22,59 @@ type executeFunction struct {
 	config *config.AppConfig
 }
 
+//nolint:funlen
 func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) middleware.Responder {
+
+	// convert fee to uint64
+	fee := uint64(sendOperation.DefaultFee)
+
+	if string(params.Body.Fee) != "" {
+		parsedFee, err := strconv.ParseUint(string(params.Body.Fee), 10, 64)
+		if err != nil {
+			return operations.NewCmdExecuteFunctionBadRequest().WithPayload(
+				&models.Error{
+					Code:    errorInvalidFee,
+					Message: "Error during amount conversion: " + err.Error(),
+				})
+		}
+
+		fee = parsedFee
+	}
+
+	// convert maxGas to uint64
+	maxGas := uint64(sendOperation.DefaultGasLimit)
+
+	if string(params.Body.MaxGas) != "" {
+		parsedMmaxGas, err := strconv.ParseUint(string(params.Body.MaxGas), 10, 64)
+		if err != nil {
+			return operations.NewCmdExecuteFunctionBadRequest().WithPayload(
+				&models.Error{
+					Code:    errorInvalidMaxGas,
+					Message: "Error during amount conversion: " + err.Error(),
+				})
+		}
+
+		maxGas = parsedMmaxGas
+	}
+
+	expiry := uint64(sendOperation.DefaultExpiryInSlot)
+
+	if params.Body.Expiry != nil {
+		expiry = uint64(*params.Body.Expiry)
+	}
+
+	asyncReq := false
+
+	if params.Body.Async != nil {
+		asyncReq = *params.Body.Async
+	}
+
 	args, err := base64.StdEncoding.DecodeString(params.Body.Args)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionUnprocessableEntity().
 			WithPayload(
 				&models.Error{
-					Code:    errorCodeInvalidArgs,
+					Code:    errorInvalidArgs,
 					Message: err.Error(),
 				})
 	}
@@ -40,15 +87,17 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 		params.Body.At,
 		params.Body.Name,
 		args,
+		fee,
+		maxGas,
 		uint64(params.Body.Coins),
-		uint64(*params.Body.Expiry),
-		params.Body.Async,
+		expiry,
+		asyncReq,
 		sendOperation.OperationBatch{NewBatch: false, CorrelationID: ""},
 		&signer.WalletPlugin{},
 	)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(
-			&models.Error{Code: errorCodeSendOperation, Message: "Error: callSC failed: " + err.Error()})
+			&models.Error{Code: errorSendOperation, Message: "Error: callSC failed: " + err.Error()})
 	}
 
 	return operations.NewCmdExecuteFunctionOK().WithPayload(
