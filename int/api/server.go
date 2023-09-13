@@ -34,7 +34,6 @@ func initLocalAPI(
 	localAPI *operations.MassastationAPI,
 	networkManager *config.NetworkManager,
 	pluginManager *plugin.Manager,
-	configDir string,
 ) {
 	config := networkManager.Network()
 
@@ -50,7 +49,7 @@ func initLocalAPI(
 	localAPI.WebsiteUploadMissingChunksHandler = websites.NewWebsiteUploadMissedChunkHandler(config)
 
 	localAPI.MyDomainsGetterHandler = websites.NewDomainsHandler(config)
-	localAPI.AllDomainsGetterHandler = websites.NewRegistryHandler(config, configDir)
+	localAPI.AllDomainsGetterHandler = websites.NewRegistryHandler(config)
 
 	localAPI.EventsGetterHandler = NewEventListenerHandler(config)
 	localAPI.MassaStationWebAppHandler = operations.MassaStationWebAppHandlerFunc(MassaStationWebAppHandler)
@@ -97,10 +96,10 @@ func NewServer(flags StartServerFlags) *Server {
 
 // Starts the server.
 // This function starts the server in a new goroutine to avoid blocking the main thread.
-func (server *Server) Start(networkManager *config.NetworkManager, pluginManager *plugin.Manager, configDir string) {
+func (server *Server) Start(networkManager *config.NetworkManager, pluginManager *plugin.Manager) {
 	server.printNodeVersion(networkManager)
 
-	initLocalAPI(server.localAPI, networkManager, pluginManager, configDir)
+	initLocalAPI(server.localAPI, networkManager, pluginManager)
 	server.api.ConfigureMassaStationAPI(*networkManager.Network(), server.shutdown)
 
 	go func() {
