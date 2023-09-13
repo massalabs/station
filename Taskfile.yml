@@ -16,7 +16,7 @@ tasks:
       - task: install-dev-win
 
   install-dev-win:
-    plateform: [windows]
+    platforms: [windows]
     cmds:
       - cmd: mkdir -p build/massastation
       - cmd: curl -o build/massastation/mar-tools-win64.zip https://archive.torproject.org/tor-package-archive/torbrowser/12.5.1/mar-tools-win64.zip
@@ -26,6 +26,11 @@ tasks:
   test: 
     cmds:
       - cmd: go test -v -timeout 60s ./...
+
+  test-2e2:
+    dir: scripts
+    cmds:
+      - cmd: test-2e2.sh
 
   test-coverage: 
     cmds:
