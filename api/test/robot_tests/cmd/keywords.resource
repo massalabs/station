@@ -8,12 +8,12 @@ Resource            ../variables.resource
 
 *** Variables ***
 ${WALLET_PLUGIN_VERSION}       v0.2.5
-${GITHUB_ACTIONS}    %{GITHUB_ACTIONS}
 
 *** Keywords ***
 Suite Setup
     Basic Suite Setup
     Init SC build environment
+    ${GITHUB_ACTIONS}    Get Environment Variable    GITHUB_ACTIONS    false
     IF    "${GITHUB_ACTIONS}" == "true"
         Log To Console    We are in the CI
         Delete Wallet Plugin
