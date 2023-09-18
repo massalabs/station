@@ -27,7 +27,7 @@ type Operation struct {
 
 type MessageContent struct {
 	OperationID uint64
-	GasLimit    uint64
+	MaxGas      uint64
 	Coins       uint64
 	Address     string
 	Function    string
@@ -38,11 +38,11 @@ type CallSC struct {
 	address    []byte
 	function   string
 	parameters []byte
-	gasLimit   uint64
+	maxGas     uint64
 	coins      uint64
 }
 
-func New(address string, function string, parameters []byte, gasLimit uint64, coins uint64,
+func New(address string, function string, parameters []byte, maxGas uint64, coins uint64,
 ) (*CallSC, error) {
 	versionedAddress, err := utils.SerializeAddress(address)
 	if err != nil {
@@ -51,7 +51,7 @@ func New(address string, function string, parameters []byte, gasLimit uint64, co
 
 	return &CallSC{
 		address: versionedAddress, function: function, parameters: parameters,
-		gasLimit: gasLimit, coins: coins,
+		maxGas: maxGas, coins: coins,
 	}, nil
 }
 
@@ -63,7 +63,7 @@ func (c *CallSC) Content() (interface{}, error) {
 
 	return &Operation{
 		CallSC: OperationDetails{
-			MaxGas:     int64(c.gasLimit),
+			MaxGas:     int64(c.maxGas),
 			Coins:      fmt.Sprint(c.coins),
 			TargetAddr: addressString,
 			TargetFunc: c.function,
@@ -81,7 +81,7 @@ func (c *CallSC) Message() []byte {
 	msg = append(msg, buf[:nbBytes]...)
 
 	// maxGas
-	nbBytes = binary.PutUvarint(buf, c.gasLimit)
+	nbBytes = binary.PutUvarint(buf, c.maxGas)
 	msg = append(msg, buf[:nbBytes]...)
 
 	// Coins
@@ -129,12 +129,12 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 	callSCContent.OperationID = callSCOpID
 
 	// Read maxGas
-	gasLimit, err := binary.ReadUvarint(buf)
+	maxGas, err := binary.ReadUvarint(buf)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read gasLimit: %w", err)
+		return nil, fmt.Errorf("failed to read maxGas: %w", err)
 	}
 
-	callSCContent.GasLimit = gasLimit
+	callSCContent.MaxGas = maxGas
 
 	// Read Coins
 	coins, err := binary.ReadUvarint(buf)

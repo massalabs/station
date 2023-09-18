@@ -29,7 +29,7 @@ func TestSerializeDeserializeCallSCMessage(t *testing.T) {
 		address    string
 		function   string
 		parameters []byte
-		gasLimit   uint64
+		maxGas     uint64
 		coins      uint64
 	}{
 		{
@@ -38,7 +38,7 @@ func TestSerializeDeserializeCallSCMessage(t *testing.T) {
 			address:    "AU1MPDRXuR22mwYDFCeZUDgYjcTAF1co6xujx2X6ugoHeYeGY3B5",
 			function:   "exampleFunction",
 			parameters: []byte("exampleParameters"),
-			gasLimit:   uint64(1000000),
+			maxGas:     uint64(1000000),
 			coins:      uint64(12345),
 		},
 	}
@@ -46,7 +46,7 @@ func TestSerializeDeserializeCallSCMessage(t *testing.T) {
 	for _, testcase := range testestcaseases {
 		// Create a new CallSC operation
 		operation, err := callsc.New(testcase.address, testcase.function, testcase.parameters,
-			testcase.gasLimit, testcase.coins)
+			testcase.maxGas, testcase.coins)
 		assert.NoError(err, "Failed to create CallSC operation")
 
 		// Serialize the operation
@@ -69,7 +69,7 @@ func TestSerializeDeserializeCallSCMessage(t *testing.T) {
 		assert.Equal(testcase.address, callSC.Address, "Address mismatch")
 		assert.Equal(testcase.function, callSC.Function, "Function mismatch")
 		assert.Equal(testcase.parameters, callSC.Parameters, "Parameters mismatch")
-		assert.Equal(testcase.gasLimit, callSC.GasLimit, "GasLimit mismatch")
+		assert.Equal(testcase.maxGas, callSC.MaxGas, "maxGas mismatch")
 		assert.Equal(testcase.coins, callSC.Coins, "Coins mismatch")
 	}
 }

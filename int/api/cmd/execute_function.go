@@ -24,7 +24,6 @@ type executeFunction struct {
 
 //nolint:funlen
 func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) middleware.Responder {
-
 	// convert fee to uint64
 	fee := uint64(sendOperation.DefaultFee)
 
