@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 tasks:
   install:
@@ -23,7 +23,7 @@ tasks:
 
   generate: go generate ./...
 
-  test: 
+  test:
     cmds:
       - cmd: go test -v -timeout 60s ./...
 
@@ -31,7 +31,7 @@ tasks:
     cmds:
       - cmd: scripts/test-e2e.sh
 
-  test-coverage: 
+  test-coverage:
     cmds:
       - cmd: go test -timeout 60s ./... -coverprofile=coverage.coverprofile
 
@@ -88,6 +88,12 @@ tasks:
     cmds:
       - task: build
       - task: run
+
+  build-install-plugin:
+    cmds:
+      - task: generate
+      - task: build
+      - task: install-plugin
 
   all:
     cmds:
