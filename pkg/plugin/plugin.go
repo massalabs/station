@@ -166,7 +166,7 @@ func prepareBinary(pluginFilename, pluginPath string) error {
 
 		appPath := filepath.Join(pluginPath, pluginName+".app")
 
-		err = os.Mkdir(appPath, os.ModePerm)
+		err = os.MkdirAll(appPath, os.ModePerm)
 		if err != nil {
 			return fmt.Errorf("creating the plugin .app directory at %s: %w", appPath, err)
 		}
