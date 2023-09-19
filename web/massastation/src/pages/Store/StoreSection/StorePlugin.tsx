@@ -20,6 +20,7 @@ function StorePlugin(props: StorePluginProps) {
     logo,
     description,
     file: { url },
+    version,
     iscompatible: isCompatible,
     massastationMinVersion,
   } = plugin;
@@ -65,6 +66,7 @@ function StorePlugin(props: StorePluginProps) {
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
+    version: `v.${version}`,
     content: description,
   };
 
