@@ -345,7 +345,7 @@ func (m *Manager) downloadPlugin(url string, isNew bool) (string, error) {
 
 	err = prepareBinary(pluginFilename, pluginPath)
 	if err != nil {
-		return "", fmt.Errorf("renaming plugin %s: %w", pluginName, err)
+		return "", fmt.Errorf("preparing plugin binary %s: %w", pluginName, err)
 	}
 
 	return pluginPath, nil

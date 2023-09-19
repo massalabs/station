@@ -158,31 +158,9 @@ func prepareBinary(pluginFilename, pluginPath string) error {
 
 	if _, err := os.Stat(binPath); os.IsNotExist(err) {
 		// If the plugin binary does not exist, it means that the plugin is a MacOS .app directory.
-		// No need to rename the binary.
-		// We extract the .app.zip file to the plugin directory
-		if runtime.GOOS != "darwin" {
-			return fmt.Errorf("plugin binary not found at %s", binPath)
-		}
-
-		appPath := filepath.Join(pluginPath, pluginName+".app")
-
-		err = os.Mkdir(appPath, os.ModePerm)
+		err := prepareAppDirectory(binPath, pluginPath, pluginName)
 		if err != nil {
-			return fmt.Errorf("creating the plugin .app directory at %s: %w", appPath, err)
-		}
-
-		appZip := filepath.Join(pluginPath, pluginName+".app.zip")
-
-		defer func() {
-			err = os.Remove(appZip)
-			if err != nil {
-				logger.Errorf("deleting .app archive %s: %s", appZip, err)
-			}
-		}()
-
-		err = unzip.Extract(appZip, appPath)
-		if err != nil {
-			return fmt.Errorf("extracting the plugin at %s: %w", appZip, err)
+			return err
 		}
 
 		return nil
@@ -193,6 +171,44 @@ func prepareBinary(pluginFilename, pluginPath string) error {
 	err := os.Rename(filepath.Join(pluginPath, pluginFilename), newBinPath)
 	if err != nil {
 		return fmt.Errorf("renaming plugin %s: %w", pluginName, err)
+	}
+
+	return nil
+}
+
+// prepareAppDirectory prepares the binary and .app directory for MacOs plugins.
+// No need to rename the binary.
+// We extract the .app.zip file to the plugin directory.
+func prepareAppDirectory(binPath, pluginPath, pluginName string) error {
+	if runtime.GOOS != "darwin" {
+		return fmt.Errorf("plugin binary not found at %s", binPath)
+	}
+
+	appPath := filepath.Join(pluginPath, pluginName+".app")
+
+	if _, err := os.Stat(appPath); err == nil {
+		if err := os.RemoveAll(appPath); err != nil {
+			return fmt.Errorf("removing .app directory: %w", err)
+		}
+	}
+
+	err := os.MkdirAll(appPath, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("creating the plugin .app directory at %s: %w", appPath, err)
+	}
+
+	appZip := filepath.Join(pluginPath, pluginName+".app.zip")
+
+	defer func() {
+		err = os.Remove(appZip)
+		if err != nil {
+			logger.Errorf("deleting .app archive %s: %s", appZip, err)
+		}
+	}()
+
+	err = unzip.Extract(appZip, appPath)
+	if err != nil {
+		return fmt.Errorf("extracting the plugin at %s: %w", appZip, err)
 	}
 
 	return nil
