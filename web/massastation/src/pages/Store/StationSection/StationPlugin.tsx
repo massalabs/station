@@ -74,7 +74,7 @@ export function StationPlugin({
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
-    version: `v.${version}`,
+    version: `v${version}`,
     content: [
       updatable &&
         (isExecuteLoading ? (
@@ -112,7 +112,7 @@ export function StationPlugin({
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
-    version: `v.${version}`,
+    version: `v${version}`,
     content: [
       <Button variant="icon" disabled>
         <FiArrowUpRight />
