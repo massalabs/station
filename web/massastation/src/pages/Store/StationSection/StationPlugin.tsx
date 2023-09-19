@@ -25,7 +25,7 @@ export function StationPlugin({
   plugin: MassaPluginModel;
   refetch: () => void;
 }) {
-  const { author, name, home, status, updatable, id } = plugin;
+  const { author, name, home, status, updatable, id, version } = plugin;
 
   const {
     mutate: mutateExecute,
@@ -74,6 +74,7 @@ export function StationPlugin({
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
+    version: `v.${version}`,
     content: [
       updatable &&
         (isExecuteLoading ? (
@@ -111,6 +112,7 @@ export function StationPlugin({
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
+    version: `v.${version}`,
     content: [
       <Button variant="icon" disabled>
         <FiArrowUpRight />
