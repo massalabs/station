@@ -1,7 +1,7 @@
 changelog:
   exclude:
     labels:
-      - ignore-for-release
+      - ignore-for-changelog
   categories:
     - title: Breaking Changes 🚨
       labels:
