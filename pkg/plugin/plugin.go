@@ -262,15 +262,23 @@ func (p *Plugin) Start() error {
 		}()
 
 		err := p.command.Wait()
-		if err != nil && !(err.Error() == "signal: killed" || strings.Contains(err.Error(), "exit status")) {
-			logger.Errorf("plugin '%s' exiting with error: %s\n", pluginName, err)
+		if err != nil {
 
+			logger.Infof("plugin '%s' exit message: %s\n", pluginName, err.Error())
+
+			if exitErr, ok := err.(*exec.ExitError); ok {
+				exitCode := exitErr.ExitCode()
+				fmt.Printf("Process exited with non-zero status code: %d\n", exitCode)
+
+				if exitCode == -1 {
+					// plugin successfully killed
+					logger.Infof("plugin '%s' exiting without error.\n", pluginName)
+					return
+				}
+			}
 			p.status = Crashed
-
-			return
 		}
 
-		logger.Debugf("plugin '%s' exiting without error.\n", pluginName)
 	}()
 
 	p.status = Up

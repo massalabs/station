@@ -48,7 +48,7 @@ function NestedIndex({
 }) {
   const navigate = useNavigate();
   const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
-  const [urlPlugin, setUrlPlugin] = useState('');
+  const [urlPlugin, setUrlPlugin] = useState<string | undefined>(undefined);
   const [refreshPlugins, setRefreshPlugins] = useState(0);
   const theme = useConfigStore((s) => s.theme);
 
@@ -57,32 +57,36 @@ function NestedIndex({
   const { data: availablePlugins } =
     useResource<MassaStoreModel[]>('plugin-store');
 
-  const { mutate, isSuccess, isError, isLoading } =
-    usePost<null>('plugin-manager');
+  const {
+    mutate: installPlugin,
+    isSuccess: installSuccess,
+    isError: installError,
+    isLoading,
+    data: installResult,
+  } = usePost<null>('plugin-manager');
 
   useEffect(() => {
     const isWalletInstalled = massaPlugins?.some(
       (plugin: MassaPluginModel) => plugin.name === MASSA_WALLET,
     );
-    setPluginWalletIsInstalled(Boolean(isWalletInstalled));
-    if (!isWalletInstalled && availablePlugins) {
-      const walletPlugin = availablePlugins.find(
+    if (isWalletInstalled) {
+      setPluginWalletIsInstalled(true);
+    } else {
+      const walletPlugin = availablePlugins?.find(
         (plugin: MassaStoreModel) => plugin.name === MASSA_WALLET,
       );
-      if (walletPlugin) {
-        setUrlPlugin(walletPlugin.file.url);
-      }
+      setUrlPlugin(walletPlugin?.file.url);
     }
   }, [plugins, store]);
 
   useEffect(() => {
-    if (isSuccess) {
+    if (installSuccess) {
       setPluginWalletIsInstalled(true);
     }
-    if (isError) {
+    if (installError) {
       setPluginWalletIsInstalled(false);
     }
-  }, [isSuccess, isError]);
+  }, [installSuccess, installError]);
 
   useEffect(() => {
     setRefreshPlugins(refreshPlugins + 1);
@@ -90,7 +94,8 @@ function NestedIndex({
 
   function handleInstallPlugin(url: string) {
     const params = { source: url };
-    mutate({ params });
+    const res = installPlugin({ params });
+    console.log('res:', res);
   }
 
   return (
@@ -151,7 +156,7 @@ function NestedIndex({
                       '_blank',
                     )
                   }
-                  onClickInactive={() => handleInstallPlugin(urlPlugin)}
+                  onClickInactive={() => handleInstallPlugin(urlPlugin!)}
                 />,
               ]}
             />
