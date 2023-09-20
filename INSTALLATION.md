@@ -42,6 +42,7 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 ## Debian Linux Installation
 
+
 ### Terminal Installation using apt
 
 1. Download the latest version of **MassaStation** installer for Debian Linux from [here](https://github.com/massalabs/station/releases/latest/).
@@ -70,7 +71,6 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 7. The installation will commence, and you will see a progress bar indicating the status.
 8. Once the installation is complete, you will receive a notification confirming the successful installation.
 
-
 #### GUI update:
 
 1. Before proceeding to the update of Massastation, run the following command to uninstall the package:
@@ -79,7 +79,7 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 sudo dpkg -r massastation
 ```
 
-2. Proceed to follow GUI Installation instructions.
+2. Proceed to follow GUI Installation instructions starting at step 2.
 
 ## Uninstallation
 
@@ -107,6 +107,7 @@ To uninstall **MassaStation** from your MacOS system, follow the steps below:
 2. Open the Terminal application on your MacOS system.
 3. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
 
+<<<<<<< HEAD
     ```bash
     /usr/local/share/massastation/uninstall.sh
     ```
@@ -114,6 +115,15 @@ To uninstall **MassaStation** from your MacOS system, follow the steps below:
    This command will remove MassaStation and its associated files from your system.
 4. Follow any prompts or instructions provided by the uninstaller script. This may involve confirming the removal and providing your password for administrative privileges.
 5. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
+=======
+   ```bash
+   /usr/local/share/massastation/uninstall.sh
+   ```
+
+   This command will remove MassaStation and its associated files from your system.
+3. Follow any prompts or instructions provided by the uninstaller script. This may involve confirming the removal and providing your password for administrative privileges.
+4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
+>>>>>>> 91f6cf2 (Revert "edit-installation-docs")
 
 > **Note:** DNSMasq and Homebrew might have been installed on your system as dependencies for MassaStation. We do not remove these packages automatically as they may be used by other applications on your system.
 
@@ -125,9 +135,18 @@ To uninstall **MassaStation** from your Linux system, follow the steps below:
 2. Open the Terminal application on your Linux system.
 3. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
 
+<<<<<<< HEAD
     ```bash
     sudo dpkg -r massastation
     ```
 
    This command will remove MassaStation and its associated files from your system.
 4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
+=======
+   ```bash
+   sudo dpkg -r massastation
+   ```
+
+   This command will remove MassaStation and its associated files from your system.
+3. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
+>>>>>>> 91f6cf2 (Revert "edit-installation-docs")
