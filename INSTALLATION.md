@@ -42,17 +42,6 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 ## Debian Linux Installation
 
-### GUI Installation
-
-1. Download the latest version of **MassaStation** installer for Debian Linux (`.deb`) from [here](https://github.com/massalabs/station/releases/latest/).
-2. Open your file manager and navigate to the location where the `.deb` package is saved.
-3. Right-click on the `.deb` package and choose "Open with Software Install" or a similar option.
-4. The package manager will launch and display **MassaStation** installation page.
-5. Review the package information and dependencies, if any, and click on the "Install" button.
-6. If prompted, enter your administrator password to authorize the installation.
-7. The installation will commence, and you will see a progress bar indicating the status.
-8. Once the installation is complete, you will receive a notification confirming the successful installation.
-
 ### Terminal Installation using apt
 
 1. Download the latest version of **MassaStation** installer for Debian Linux from [here](https://github.com/massalabs/station/releases/latest/).
@@ -69,6 +58,28 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 7. Once the installation is complete, you can close the terminal.
 
 Congratulations! You have successfully installed **MassaStation** on your computer. You can start **MassaStation** by searching for it in the Applications folder.
+
+### GUI Installation
+
+1. Download the latest version of **MassaStation** installer for Debian Linux (`.deb`) from [here](https://github.com/massalabs/station/releases/latest/).
+2. Open your file manager and navigate to the location where the `.deb` package is saved.
+3. Right-click on the `.deb` package and choose "Open with Software Install" or a similar option.
+4. The package manager will launch and display **MassaStation** installation page.
+5. Review the package information and dependencies, if any, and click on the "Install" button.
+6. If prompted, enter your administrator password to authorize the installation.
+7. The installation will commence, and you will see a progress bar indicating the status.
+8. Once the installation is complete, you will receive a notification confirming the successful installation.
+
+
+#### GUI update:
+
+1. Before proceeding to the update of Massastation, run the following command to uninstall the package:
+
+```bash
+sudo dpkg -r massastation
+```
+
+2. Proceed to follow GUI Installation instructions.
 
 ## Uninstallation
 
@@ -96,9 +107,9 @@ To uninstall **MassaStation** from your MacOS system, follow the steps below:
 2. Open the Terminal application on your MacOS system.
 3. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
 
-   ```bash
-   /usr/local/share/massastation/uninstall.sh
-   ```
+    ```bash
+    /usr/local/share/massastation/uninstall.sh
+    ```
 
    This command will remove MassaStation and its associated files from your system.
 4. Follow any prompts or instructions provided by the uninstaller script. This may involve confirming the removal and providing your password for administrative privileges.
@@ -114,9 +125,9 @@ To uninstall **MassaStation** from your Linux system, follow the steps below:
 2. Open the Terminal application on your Linux system.
 3. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
 
-   ```bash
-   sudo dpkg -r massastation
-   ```
+    ```bash
+    sudo dpkg -r massastation
+    ```
 
    This command will remove MassaStation and its associated files from your system.
 4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
