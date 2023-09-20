@@ -73,13 +73,13 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 #### GUI update:
 
-1. Before proceeding to the update of Massastation, run the following command to uninstall the package:
+1. Download the latest version of **MassaStation** installer for Debian Linux (`.deb`) from [here](https://github.com/massalabs/station/releases/latest/).
+2. Open your file manager and navigate to the location where the `.deb` package is saved.
+3. The package manager will launch and display **MassaStation** installation page. 
+4. Review the package information and dependencies, if any, and click on the red "Delete" button.
+5. Proceed to GUI installation starting at step 2. 
 
-```bash
-sudo dpkg -r massastation
-```
 
-2. Proceed to follow GUI Installation instructions starting at step 2.
 
 ## Uninstallation
 
