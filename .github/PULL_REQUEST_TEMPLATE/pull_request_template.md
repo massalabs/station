@@ -5,8 +5,9 @@
     - If yes, have you considered making it backward compatible?
     - If backward compatibility is not considered, set the "breaking-change" label.
 
-- [ ] **Bugfix:**
-  For bugfix PR, set the "bugfix" label
+- [ ] **Changelog:**
+  - [ ] For bugfix PR, set the "bugfix" label
+  - [ ] If this change should not appear in changelog, use "ignore-for-changelog" label
 
 - [ ] **Version Update Handling:**
   Have you ensured that the version update by user is handled correctly?
