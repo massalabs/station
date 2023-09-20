@@ -1,6 +1,6 @@
 # Installation Guide
 
-This guide provides step-by-step instructions for installing **MassaStation** on your computer. Please follow the instructions specific to your operating system.
+This guide provides step-by-step instructions for installing **Massa Station** on your computer. Please follow the instructions specific to your operating system.
 
 * [Windows Installation](#windows-installation)
 * [MacOS Installation](#macos-installation)
@@ -10,24 +10,24 @@ This guide provides step-by-step instructions for installing **MassaStation** on
   * [MacOS](#macos)
   * [Linux](#linux)
 
-> **Note:** **MassaStation** is currently available for Windows, MacOS, and Debian Linux. Support for other Linux distributions will be added in the future. Likewise, this application isn't working on virtual machines. It might be added in the future.
+> **Note:** **Massa Station** is currently available for Windows, MacOS, and Debian Linux. Support for other Linux distributions will be added in the future. Likewise, this application isn't working on virtual machines. It might be added in the future.
 
 > **Troubleshooting:** If you encounter any issues during the installation process, do not hesitate to [open an issue](https://github.com/massalabs/station/issues/new) on GitHub.
 
 ## Windows Installation
 
-1. Download the latest version of **MassaStation** installer for Windows (`.msi`) from [here](https://github.com/massalabs/station/releases/latest/).
+1. Download the latest version of **Massa Station** installer for Windows (`.msi`) from [here](https://github.com/massalabs/station/releases/latest/).
 2. Locate the downloaded `.msi` installer file and double-click on it to start the installation process.
 3. Windows will warn you about untrusted software, click on "more info" and "run anyway" to continue the installation.
 4. Follow the on-screen instructions to proceed with the installation. Some terminal windows will open and close automatically during the installation process. This is normal and expected behavior.
 5. If prompted, click on "Yes" to allow the installer to make changes on certificates (this is to use Massa Station with https).
 6. Once the installation is complete, you will see a confirmation message. Click "Finish" to exit the installer.
 
-Congratulations! You have successfully installed **MassaStation** on your computer. You can start **MassaStation** by searching for it in the Start menu or by clicking on the icon on your desktop (if you chose to create one during the installation).
+Congratulations! You have successfully installed **Massa Station** on your computer. You can start **Massa Station** by searching for it in the Start menu or by clicking on the icon on your desktop (if you chose to create one during the installation).
 
 ## MacOS Installation
 
-1. Download the latest version of **MassaStation** installer for MacOS depending on your CPU architecture:
+1. Download the latest version of **Massa Station** installer for MacOS depending on your CPU architecture:
 
    * For Intel-based Macs (i5, i7, etc.), download the installer for `amd64` architecture from [here](https://github.com/massalabs/station/releases/latest/).
    * For Apple Silicon-based Macs (M1, M2, etc.), download the installer for `arm64` architecture from [here](https://github.com/massalabs/station/releases/latest/).
@@ -38,14 +38,14 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 5. Follow the on-screen instructions to proceed with the installation.
 6. Once the installation is complete, you will see a confirmation message. Click "Close" to exit the installer.
 
-Congratulations! You have successfully installed **MassaStation** on your computer. You can start **MassaStation** by searching for it in the Applications folder or by clicking on the icon in the Launchpad.
+Congratulations! You have successfully installed **Massa Station** on your computer. You can start **Massa Station** by searching for it in the Applications folder or by clicking on the icon in the Launchpad.
 
 ## Debian Linux Installation
 
 
 ### Terminal Installation using apt
 
-1. Download the latest version of **MassaStation** installer for Debian Linux from [here](https://github.com/massalabs/station/releases/latest/).
+1. Download the latest version of **Massa Station** installer for Debian Linux from [here](https://github.com/massalabs/station/releases/latest/).
 2. Open a terminal on your Debian Linux system.
 3. Navigate to the directory where the downloaded `.deb` package is located.
 4. Run the following command to install the package:
@@ -58,14 +58,14 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 6. The installation will begin, and you will see progress information in the terminal.
 7. Once the installation is complete, you can close the terminal.
 
-Congratulations! You have successfully installed **MassaStation** on your computer. You can start **MassaStation** by searching for it in the Applications folder.
+Congratulations! You have successfully installed **Massa Station** on your computer. You can start **Massa Station** by searching for it in the Applications folder.
 
 ### GUI Installation
 
-1. Download the latest version of **MassaStation** installer for Debian Linux (`.deb`) from [here](https://github.com/massalabs/station/releases/latest/).
+1. Download the latest version of **Massa Station** installer for Debian Linux (`.deb`) from [here](https://github.com/massalabs/station/releases/latest/).
 2. Open your file manager and navigate to the location where the `.deb` package is saved.
 3. Right-click on the `.deb` package and choose "Open with Software Install" or a similar option.
-4. The package manager will launch and display **MassaStation** installation page.
+4. The package manager will launch and display **Massa Station** installation page.
 5. Review the package information and dependencies, if any, and click on the "Install" button.
 6. If prompted, enter your administrator password to authorize the installation.
 7. The installation will commence, and you will see a progress bar indicating the status.
@@ -73,9 +73,9 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 #### GUI update:
 
-1. Download the latest version of **MassaStation** installer for Debian Linux (`.deb`) from [here](https://github.com/massalabs/station/releases/latest/).
+1. Download the latest version of **Massa Station** installer for Debian Linux (`.deb`) from [here](https://github.com/massalabs/station/releases/latest/).
 2. Open your file manager and navigate to the location where the `.deb` package is saved.
-3. The package manager will launch and display **MassaStation** installation page. 
+3. The package manager will launch and display **Massa Station** installation page. 
 4. Review the package information and dependencies, if any, and click on the red "Delete" button.
 5. Proceed to GUI installation starting at step 2. 
 
@@ -85,8 +85,9 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 ### Windows
 
-To uninstall **MassaStation** from your Windows system, follow the steps below:
+To uninstall **Massa Station** from your Windows system, follow the steps below:
 
+<<<<<<< HEAD
 1. Stop MassaStation by right-clicking on the icon in the system tray and selecting "Quit"
 2. Open your "Start" panel
 3. Type "Settings" and open the settings
@@ -96,16 +97,31 @@ To uninstall **MassaStation** from your Windows system, follow the steps below:
 7. On the "..." menu, click on "Uninstall"
 8. Confirm uninstallation by clicking on "Uninstall" in the confirmation dialog
 9. Follow the instructions provided by the uninstaller
+=======
+1. Open your "Start" panel
+2. Type "Settings" and open the settings
+3. On the left panel, click on "Apps"
+4. Click on "Installed Apps"
+5. Search for "Massa Station" in the list of installed applications
+6. On the "..." menu, click on "Uninstall"
+7. Confirm uninstallation by clicking on "Uninstall" in the confirmation dialog
+8. Follow the instructions provided by the uninstaller
+>>>>>>> f94bcfe (Change Massa Station Naming)
 
 The application and all modules installed will be deleted from your desktop.
 
 ### MacOS
 
-To uninstall **MassaStation** from your MacOS system, follow the steps below:
+To uninstall **Massa Station** from your MacOS system, follow the steps below:
 
+<<<<<<< HEAD
 1. Stop MassaStation by right-clicking on the icon in the system tray and selecting "Quit"
 2. Open the Terminal application on your MacOS system.
 3. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
+=======
+1. Open the Terminal application on your MacOS system.
+2. Execute the following command in the terminal to download and run the **Massa Station** uninstaller script:
+>>>>>>> f94bcfe (Change Massa Station Naming)
 
 <<<<<<< HEAD
     ```bash
@@ -120,20 +136,29 @@ To uninstall **MassaStation** from your MacOS system, follow the steps below:
    /usr/local/share/massastation/uninstall.sh
    ```
 
-   This command will remove MassaStation and its associated files from your system.
+   This command will remove Massa Station and its associated files from your system.
 3. Follow any prompts or instructions provided by the uninstaller script. This may involve confirming the removal and providing your password for administrative privileges.
+<<<<<<< HEAD
 4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
 >>>>>>> 91f6cf2 (Revert "edit-installation-docs")
+=======
+4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **Massa Station** has been successfully uninstalled.
+>>>>>>> f94bcfe (Change Massa Station Naming)
 
-> **Note:** DNSMasq and Homebrew might have been installed on your system as dependencies for MassaStation. We do not remove these packages automatically as they may be used by other applications on your system.
+> **Note:** DNSMasq and Homebrew might have been installed on your system as dependencies for Massa Station. We do not remove these packages automatically as they may be used by other applications on your system.
 
 ### Linux
 
-To uninstall **MassaStation** from your Linux system, follow the steps below:
+To uninstall **Massa Station** from your Linux system, follow the steps below:
 
+<<<<<<< HEAD
 1. Stop MassaStation by right-clicking on the icon in the system tray and selecting "Quit"
 2. Open the Terminal application on your Linux system.
 3. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
+=======
+1. Open the Terminal application on your Linux system.
+2. Execute the following command in the terminal to download and run the **Massa Station** uninstaller script:
+>>>>>>> f94bcfe (Change Massa Station Naming)
 
 <<<<<<< HEAD
     ```bash
@@ -147,6 +172,11 @@ To uninstall **MassaStation** from your Linux system, follow the steps below:
    sudo dpkg -r massastation
    ```
 
+<<<<<<< HEAD
    This command will remove MassaStation and its associated files from your system.
 3. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
 >>>>>>> 91f6cf2 (Revert "edit-installation-docs")
+=======
+   This command will remove Massa Station and its associated files from your system.
+3. Once the uninstallation process is complete, you will receive a confirmation message indicating that **Massa Station** has been successfully uninstalled.
+>>>>>>> f94bcfe (Change Massa Station Naming)
