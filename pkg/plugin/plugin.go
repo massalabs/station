@@ -288,7 +288,7 @@ func (p *Plugin) Start() error {
 
 // Kills a plugin.
 func (p *Plugin) Stop() error {
-	logger.Debugf("Stopping plugin %s.\n", p.ID)
+	logger.Infof("Stopping plugin %s.\n", p.ID)
 
 	status := p.Status()
 	if status != Up && status != Crashed {
