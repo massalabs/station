@@ -24,7 +24,10 @@ export const pluginFactory = Factory.extend<MassaPluginModel>({
     const name = this.name.toString().toLowerCase();
     return `/plugin/massalabs/${name}/logo.svg`;
   },
-  status: 'Up',
+  status() {
+    const status = ['Up', 'Down', 'Crashed'];
+    return status[Math.floor(Math.random() * status.length)];
+  },
   updatable() {
     return Math.random() < 0.5;
   },

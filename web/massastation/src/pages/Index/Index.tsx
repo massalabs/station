@@ -62,7 +62,6 @@ function NestedIndex({
     isSuccess: installSuccess,
     isError: installError,
     isLoading,
-    data: installResult,
   } = usePost<null>('plugin-manager');
 
   useEffect(() => {
@@ -156,7 +155,9 @@ function NestedIndex({
                       '_blank',
                     )
                   }
-                  onClickInactive={() => handleInstallPlugin(urlPlugin!)}
+                  onClickInactive={() =>
+                    urlPlugin ? handleInstallPlugin(urlPlugin) : null
+                  }
                 />,
               ]}
             />
