@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -263,22 +264,22 @@ func (p *Plugin) Start() error {
 
 		err := p.command.Wait()
 		if err != nil {
-
 			logger.Infof("plugin '%s' exit message: %s\n", pluginName, err.Error())
 
-			if exitErr, ok := err.(*exec.ExitError); ok {
+			var exitErr *exec.ExitError
+			if errors.As(err, &exitErr) {
 				exitCode := exitErr.ExitCode()
-				fmt.Printf("Process exited with non-zero status code: %d\n", exitCode)
 
 				if exitCode == -1 {
 					// plugin successfully killed
 					logger.Infof("plugin '%s' exiting without error.\n", pluginName)
+
 					return
 				}
 			}
+
 			p.status = Crashed
 		}
-
 	}()
 
 	p.status = Up

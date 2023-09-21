@@ -121,7 +121,7 @@ export function StationPlugin({
         content: [
           <Tooltip
             className="mas-tooltip"
-            content="The plugin is not working, please uninstall it and install it again."
+            content="The module is not working. Please delete it and then  reinstall it."
             icon={<FiAlertCircle className="text-s-error" />}
           />,
           <Button variant="icon" disabled>
