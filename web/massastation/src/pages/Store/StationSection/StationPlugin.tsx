@@ -1,7 +1,13 @@
 import { SyntheticEvent, useEffect } from 'react';
 import { useDelete, usePost } from '@/custom/api';
 
-import { Button, Certificate, Plugin, Tooltip } from '@massalabs/react-ui-kit';
+import {
+  Button,
+  Certificate,
+  Plugin,
+  PluginProps,
+  Tooltip,
+} from '@massalabs/react-ui-kit';
 import {
   FiAlertCircle,
   FiArrowUpRight,
@@ -67,46 +73,18 @@ export function StationPlugin({
     return <FiRefreshCw className={`text-s-warning animate-spin`} />;
   }
 
-  let args = {
+  let pluginArgs = {
     preIcon: <img src={logoURL} alt="plugin-logo" />,
-    topAction: (
-      <Button
-        onClick={(e) => updatePluginState(e, PLUGIN_STOP)}
-        variant="toggle"
-      >
-        on
-      </Button>
-    ),
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
     version: `v${version}`,
-    content: [
-      updatable &&
-        (isExecuteLoading ? (
-          <UpdateLoading />
-        ) : (
-          <Button
-            variant="icon"
-            onClick={(e) => updatePluginState(e, PLUGIN_UPDATE)}
-            disabled={isExecuteLoading}
-          >
-            <FiRefreshCw className="text-s-warning" />
-          </Button>
-        )),
-      <Button variant="icon">
-        <FiArrowUpRight onClick={() => window.open(home, '_blank')} />
-      </Button>,
-      <Button variant="icon" onClick={() => deletePlugin({})}>
-        <FiTrash2 />
-      </Button>,
-    ],
-  };
+  } as PluginProps;
 
   switch (status) {
     case PluginStatus.Down:
-      args = {
-        preIcon: <img src={logoURL} alt="plugin-logo" />,
+      pluginArgs = {
+        ...pluginArgs,
         topAction: (
           // we use customClass because "disabled" doesn't let us click on the button to turn it back on
           <Button
@@ -117,12 +95,6 @@ export function StationPlugin({
             off
           </Button>
         ),
-        title: name,
-        subtitle: author,
-        subtitleIcon: massalabsNomination.includes(author) ? (
-          <Certificate />
-        ) : null,
-        version: `v${version}`,
         content: [
           <Button variant="icon" disabled>
             <FiArrowUpRight />
@@ -134,8 +106,8 @@ export function StationPlugin({
       };
       break;
     case PluginStatus.Crashed:
-      args = {
-        preIcon: <img src={logoURL} alt="plugin-logo" />,
+      pluginArgs = {
+        ...pluginArgs,
         topAction: (
           <Button
             disabled
@@ -146,12 +118,6 @@ export function StationPlugin({
             off
           </Button>
         ),
-        title: name,
-        subtitle: author,
-        subtitleIcon: massalabsNomination.includes(author) ? (
-          <Certificate />
-        ) : null,
-        version: `v${version}`,
         content: [
           <Tooltip
             className="mas-tooltip"
@@ -167,9 +133,42 @@ export function StationPlugin({
         ],
       };
       break;
+    default:
+      pluginArgs = {
+        ...pluginArgs,
+        topAction: (
+          <Button
+            onClick={(e) => updatePluginState(e, PLUGIN_STOP)}
+            variant="toggle"
+          >
+            on
+          </Button>
+        ),
+        content: [
+          updatable &&
+            (isExecuteLoading ? (
+              <UpdateLoading />
+            ) : (
+              <Button
+                variant="icon"
+                onClick={(e) => updatePluginState(e, PLUGIN_UPDATE)}
+                disabled={isExecuteLoading}
+              >
+                <FiRefreshCw className="text-s-warning" />
+              </Button>
+            )),
+          <Button variant="icon">
+            <FiArrowUpRight onClick={() => window.open(home, '_blank')} />
+          </Button>,
+          <Button variant="icon" onClick={() => deletePlugin({})}>
+            <FiTrash2 />
+          </Button>,
+        ],
+      };
+      break;
   }
 
-  return <Plugin {...args} />;
+  return <Plugin {...pluginArgs} />;
 }
 
 export default StationPlugin;
