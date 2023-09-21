@@ -245,6 +245,7 @@ func (m *Manager) StopPlugin(plugin *Plugin, unregister bool) error {
 	err := plugin.Stop()
 	if err != nil {
 		msg := fmt.Sprintf("error while stopping plugin %s: %s", plugin.info.Name, err)
+		// if we want to unregister, then this error is not blocking
 		if unregister {
 			logger.Info(msg)
 		} else {
