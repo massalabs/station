@@ -48,7 +48,7 @@ function NestedIndex({
 }) {
   const navigate = useNavigate();
   const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
-  const [urlPlugin, setUrlPlugin] = useState('');
+  const [urlPlugin, setUrlPlugin] = useState<string | undefined>(undefined);
   const [refreshPlugins, setRefreshPlugins] = useState(0);
   const theme = useConfigStore((s) => s.theme);
 
@@ -57,32 +57,36 @@ function NestedIndex({
   const { data: availablePlugins } =
     useResource<MassaStoreModel[]>('plugin-store');
 
-  const { mutate, isSuccess, isError, isLoading } =
-    usePost<null>('plugin-manager');
+  const {
+    mutate: installPlugin,
+    isSuccess: installSuccess,
+    isError: installError,
+    isLoading,
+  } = usePost<null>('plugin-manager');
 
   useEffect(() => {
     const isWalletInstalled = massaPlugins?.some(
       (plugin: MassaPluginModel) => plugin.name === MASSA_WALLET,
     );
-    setPluginWalletIsInstalled(Boolean(isWalletInstalled));
-    if (!isWalletInstalled && availablePlugins) {
-      const walletPlugin = availablePlugins.find(
+    if (isWalletInstalled) {
+      setPluginWalletIsInstalled(true);
+    } else {
+      const storeWalletPlugin = availablePlugins?.find(
         (plugin: MassaStoreModel) => plugin.name === MASSA_WALLET,
       );
-      if (walletPlugin) {
-        setUrlPlugin(walletPlugin.file.url);
-      }
+      setUrlPlugin(storeWalletPlugin?.file.url);
     }
   }, [plugins, store]);
 
   useEffect(() => {
-    if (isSuccess) {
+    // we should check that installed plugin is actually the wallet
+    if (installSuccess) {
       setPluginWalletIsInstalled(true);
     }
-    if (isError) {
+    if (installError) {
       setPluginWalletIsInstalled(false);
     }
-  }, [isSuccess, isError]);
+  }, [installSuccess, installError]);
 
   useEffect(() => {
     setRefreshPlugins(refreshPlugins + 1);
@@ -90,7 +94,7 @@ function NestedIndex({
 
   function handleInstallPlugin(url: string) {
     const params = { source: url };
-    mutate({ params });
+    installPlugin({ params });
   }
 
   return (
@@ -141,6 +145,12 @@ function NestedIndex({
                 <PluginWallet
                   key="wallet"
                   isActive={pluginWalletIsInstalled}
+                  status={
+                    massaPlugins?.find(
+                      (plugin: MassaPluginModel) =>
+                        plugin.name === MASSA_WALLET,
+                    )?.status
+                  }
                   isLoading={isLoading}
                   title="Massa Wallet"
                   iconActive={<WalletActive />}
@@ -151,7 +161,9 @@ function NestedIndex({
                       '_blank',
                     )
                   }
-                  onClickInactive={() => handleInstallPlugin(urlPlugin)}
+                  onClickInactive={() =>
+                    urlPlugin ? handleInstallPlugin(urlPlugin) : null
+                  }
                 />,
               ]}
             />

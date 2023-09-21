@@ -89,18 +89,11 @@ func (m *Manager) SetAlias(alias string, correlationID string) error {
 	return nil
 }
 
-func (m *Manager) RemoveAlias(alias string) error {
+func (m *Manager) RemoveAlias(alias string) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	_, exist := m.authorNameToID[alias]
-	if !exist {
-		return fmt.Errorf("while removing alias for %s: no plugin matching the given alias", alias)
-	}
-
 	delete(m.authorNameToID, alias)
-
-	return nil
 }
 
 // PluginByAlias returns a plugin from the manager using an alias.
@@ -251,15 +244,18 @@ func (m *Manager) StopAll() {
 func (m *Manager) StopPlugin(plugin *Plugin, unregister bool) error {
 	err := plugin.Stop()
 	if err != nil {
-		return fmt.Errorf("error while stopping plugin %s: %w", plugin.info.Name, err)
+		msg := fmt.Sprintf("error while stopping plugin %s: %s", plugin.info.Name, err)
+		// if we want to unregister, then this error is not blocking
+		if unregister {
+			logger.Info(msg)
+		} else {
+			return fmt.Errorf(msg)
+		}
 	}
 
 	alias := Alias(plugin.info.Author, plugin.info.Name)
 
-	err = m.RemoveAlias(alias)
-	if err != nil {
-		return fmt.Errorf("removing alias %s: %w", alias, err)
-	}
+	m.RemoveAlias(alias)
 
 	if unregister {
 		err = m.UnregisterPlugin(plugin.ID)

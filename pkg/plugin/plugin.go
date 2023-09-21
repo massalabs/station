@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -262,15 +263,23 @@ func (p *Plugin) Start() error {
 		}()
 
 		err := p.command.Wait()
-		if err != nil && !(err.Error() == "signal: killed" || strings.Contains(err.Error(), "exit status")) {
-			logger.Errorf("plugin '%s' exiting with error: %s\n", pluginName, err)
+		if err != nil {
+			logger.Infof("plugin '%s' exit message: %s\n", pluginName, err.Error())
+
+			var exitErr *exec.ExitError
+			if errors.As(err, &exitErr) {
+				exitCode := exitErr.ExitCode()
+
+				if exitCode == -1 {
+					// plugin successfully killed
+					logger.Infof("plugin '%s' exiting without error.\n", pluginName)
+
+					return
+				}
+			}
 
 			p.status = Crashed
-
-			return
 		}
-
-		logger.Debugf("plugin '%s' exiting without error.\n", pluginName)
 	}()
 
 	p.status = Up
@@ -280,7 +289,7 @@ func (p *Plugin) Start() error {
 
 // Kills a plugin.
 func (p *Plugin) Stop() error {
-	logger.Debugf("Stopping plugin %s.\n", p.ID)
+	logger.Infof("Stopping plugin %s.\n", p.ID)
 
 	status := p.Status()
 	if status != Up && status != Crashed {

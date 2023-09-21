@@ -23,4 +23,5 @@ export enum PluginStatus {
   Stopping = 'Stopping',
   Error = 'Error',
   NotInstalled = 'NotInstalled',
+  Crashed = 'Crashed',
 }
