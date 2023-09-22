@@ -6,16 +6,18 @@ import (
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-// FileModeReadWriteReadRead is the file mode used to create the log file.
-// It is -rw-r--r--.
-const FileModeReadWriteReadRead = 0o644
+const (
+	maxSizePerFile = 10 // megabytes
+	maxBackups     = 5
+	maxAge         = 60 // days
+)
 
 // Logger holds the logger instance.
 type Logger struct {
 	*zap.SugaredLogger
-	file *os.File
 }
 
 // Close closes the logger.
@@ -31,11 +33,6 @@ func (l *Logger) Close() error {
 	}
 
 	l.SugaredLogger = nil
-
-	err = l.file.Close()
-	if err != nil {
-		return fmt.Errorf("close log file: %w", err)
-	}
 
 	return nil
 }
@@ -60,13 +57,16 @@ func New(path string) (*Logger, error) {
 	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 
-	logFile, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, FileModeReadWriteReadRead)
-	if err != nil {
-		return nil, fmt.Errorf("open log file: %w", err)
+	rotator := &lumberjack.Logger{
+		Filename:   path,
+		MaxSize:    maxSizePerFile,
+		MaxBackups: maxBackups,
+		MaxAge:     maxAge,
+		Compress:   false,
 	}
 
 	// Create the log core.
-	fileWriteSyncer := zapcore.AddSync(logFile)
+	fileWriteSyncer := zapcore.AddSync(rotator)
 	consoleWriteSyncer := zapcore.AddSync(os.Stdout)
 	core := zapcore.NewCore(
 		zapcore.NewConsoleEncoder(encoderConfig),
@@ -75,7 +75,7 @@ func New(path string) (*Logger, error) {
 	)
 
 	// Create the logger.
-	logger := zap.New(core, zap.AddCaller())
+	logger := zap.New(core, zap.AddStacktrace(zapcore.ErrorLevel))
 
-	return &Logger{SugaredLogger: logger.Sugar(), file: logFile}, nil
+	return &Logger{SugaredLogger: logger.Sugar()}, nil
 }
