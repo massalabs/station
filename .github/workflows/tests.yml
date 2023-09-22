@@ -15,7 +15,28 @@ jobs:
         with:
           os: ${{ matrix.os }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+
       - run: task test-coverage
-      - uses: codecov/codecov-action@v3
+
+      - name: Test coverage
+        if: matrix.os == 'ubuntu-latest'
+        id: coverageStep
+        uses: vladopajic/go-test-coverage@v2
         with:
-          files: coverage.coverprofile
+          profile: coverage.coverprofile
+          local-prefix: github.com/massalabs/station
+          # this will break the build if coverage is less than tresholds
+          # threshold-file: 50
+          # threshold-package: 50
+          # threshold-total: 50
+
+      - name: make coverage badge
+        uses: action-badges/core@0.2.2
+        if: contains(github.ref, 'main') && matrix.os == 'ubuntu-latest'
+        with:
+          label: coverage
+          message: ${{ steps.coverageStep.outputs.badge-text }}
+          message-color: ${{ steps.coverageStep.outputs.badge-color }}
+          file-name: coverage.svg
+          badge-branch: badges ## orphan branch where badge will be committed
+          github-token: "${{ secrets.GITHUB_TOKEN }}"

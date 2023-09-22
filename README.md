@@ -1,7 +1,7 @@
 # MassaStation: An entrance to the Massa blockchain
 
 [![CI](https://github.com/massalabs/station/actions/workflows/api.yml/badge.svg?branch=main)](https://github.com/massalabs/station/actions/workflows/api.yml?query=branch%3Amain)
-[![codecov](https://codecov.io/gh/massalabs/station/branch/main/graph/badge.svg?token=592LPZLC4M)](https://codecov.io/gh/massalabs/station)
+![coverage](https://raw.githubusercontent.com/massalabs/station/badges/.badges/main/coverage.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/massalabs/station)](https://goreportcard.com/report/github.com/massalabs/station)
 
 ## Install MassaStation
