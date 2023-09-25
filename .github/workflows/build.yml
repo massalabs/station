@@ -114,13 +114,23 @@ jobs:
           VERSION: ${{ env.VERSION }}
       - name: Store Apple Development Certificate
         run: |
-          echo "${{ secrets.APPLE_CERTIFICATE_DEV_BASE64 }}" > cert.p12
-          echo "${{ secrets.APPLE_CERTIFICATE_DEV_PASSWORD }}" > cert.p12.password
+          echo "$APPLE_CERTIFICATE_DEV_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          security import $CERTIFICATE_PATH -P "$APPLE_CERTIFICATE_DEV_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+        env:
+          APPLE_CERTIFICATE_DEV_BASE64: ${{ secrets.APPLE_CERTIFICATE_DEV_BASE64 }}
+          APPLE_CERTIFICATE_DEV_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_DEV_PASSWORD }}
+          CERTIFICATE_PATH: cert.p12
+          KEYCHAIN_PATH: app-signing.keychain-db
       - name: Find identity for signing
-        run: security find-identity -v -p codesigning
+        run: security find-identity -v $KEYCHAIN_PATH
+        env:
+          KEYCHAIN_PATH: app-signing.keychain-db
       - name: Sign Package with Apple Development Certificate
         run: |
           productsign --sign "Developer ID Installer: Massa Labs, Inc. (7Z4Z4Z7Z7Z)" ./massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg ./massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg
+        env:
+          VERSION: 'v0.3.4'
       - name: Check Package Signature
         run: spctl --assess --type install ./massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg
       - name: Upload Package
