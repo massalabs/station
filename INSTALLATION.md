@@ -87,7 +87,6 @@ Congratulations! You have successfully installed **Massa Station** on your compu
 
 To uninstall **Massa Station** from your Windows system, follow the steps below:
 
-<<<<<<< HEAD
 1. Stop MassaStation by right-clicking on the icon in the system tray and selecting "Quit"
 2. Open your "Start" panel
 3. Type "Settings" and open the settings
@@ -97,16 +96,6 @@ To uninstall **Massa Station** from your Windows system, follow the steps below:
 7. On the "..." menu, click on "Uninstall"
 8. Confirm uninstallation by clicking on "Uninstall" in the confirmation dialog
 9. Follow the instructions provided by the uninstaller
-=======
-1. Open your "Start" panel
-2. Type "Settings" and open the settings
-3. On the left panel, click on "Apps"
-4. Click on "Installed Apps"
-5. Search for "Massa Station" in the list of installed applications
-6. On the "..." menu, click on "Uninstall"
-7. Confirm uninstallation by clicking on "Uninstall" in the confirmation dialog
-8. Follow the instructions provided by the uninstaller
->>>>>>> f94bcfe (Change Massa Station Naming)
 
 The application and all modules installed will be deleted from your desktop.
 
@@ -114,36 +103,18 @@ The application and all modules installed will be deleted from your desktop.
 
 To uninstall **Massa Station** from your MacOS system, follow the steps below:
 
-<<<<<<< HEAD
 1. Stop MassaStation by right-clicking on the icon in the system tray and selecting "Quit"
 2. Open the Terminal application on your MacOS system.
-3. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
-=======
-1. Open the Terminal application on your MacOS system.
-2. Execute the following command in the terminal to download and run the **Massa Station** uninstaller script:
->>>>>>> f94bcfe (Change Massa Station Naming)
+3. Execute the following command in the terminal to download and run the **Massa Station** uninstaller script:
 
-<<<<<<< HEAD
+
     ```bash
     /usr/local/share/massastation/uninstall.sh
     ```
 
    This command will remove MassaStation and its associated files from your system.
 4. Follow any prompts or instructions provided by the uninstaller script. This may involve confirming the removal and providing your password for administrative privileges.
-5. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
-=======
-   ```bash
-   /usr/local/share/massastation/uninstall.sh
-   ```
-
-   This command will remove Massa Station and its associated files from your system.
-3. Follow any prompts or instructions provided by the uninstaller script. This may involve confirming the removal and providing your password for administrative privileges.
-<<<<<<< HEAD
-4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
->>>>>>> 91f6cf2 (Revert "edit-installation-docs")
-=======
-4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **Massa Station** has been successfully uninstalled.
->>>>>>> f94bcfe (Change Massa Station Naming)
+5. Once the uninstallation process is complete, you will receive a confirmation message indicating that **Massa Station** has been successfully uninstalled.
 
 > **Note:** DNSMasq and Homebrew might have been installed on your system as dependencies for Massa Station. We do not remove these packages automatically as they may be used by other applications on your system.
 
@@ -151,32 +122,17 @@ To uninstall **Massa Station** from your MacOS system, follow the steps below:
 
 To uninstall **Massa Station** from your Linux system, follow the steps below:
 
-<<<<<<< HEAD
 1. Stop MassaStation by right-clicking on the icon in the system tray and selecting "Quit"
 2. Open the Terminal application on your Linux system.
-3. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
-=======
-1. Open the Terminal application on your Linux system.
-2. Execute the following command in the terminal to download and run the **Massa Station** uninstaller script:
->>>>>>> f94bcfe (Change Massa Station Naming)
+3. Execute the following command in the terminal to download and run the **Massa Station** uninstaller script:
 
-<<<<<<< HEAD
     ```bash
     sudo dpkg -r massastation
     ```
 
    This command will remove MassaStation and its associated files from your system.
-4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
-=======
-   ```bash
-   sudo dpkg -r massastation
-   ```
 
-<<<<<<< HEAD
-   This command will remove MassaStation and its associated files from your system.
-3. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
->>>>>>> 91f6cf2 (Revert "edit-installation-docs")
-=======
-   This command will remove Massa Station and its associated files from your system.
-3. Once the uninstallation process is complete, you will receive a confirmation message indicating that **Massa Station** has been successfully uninstalled.
->>>>>>> f94bcfe (Change Massa Station Naming)
+4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **Massa Station** has been successfully uninstalled.
+
+
+
