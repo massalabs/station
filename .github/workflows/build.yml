@@ -112,6 +112,17 @@ jobs:
         run: sh macos/create_pkg.sh ${{ matrix.arch }}
         env:
           VERSION: ${{ env.VERSION }}
+      - name: Store Apple Development Certificate
+        run: |
+          echo "${{ secrets.APPLE_CERTIFICATE_DEV_BASE64 }}" > cert.p12
+          echo "${{ secrets.APPLE_CERTIFICATE_DEV_PASSWORD }}" > cert.p12.password
+      - name: Find identity for signing
+        run: security find-identity -v -p codesigning
+      - name: Sign Package with Apple Development Certificate
+        run: |
+          productsign --sign "Developer ID Installer: Massa Labs, Inc. (7Z4Z4Z7Z7Z)" ./massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg ./massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg
+      - name: Check Package Signature
+        run: spctl --assess --type install ./massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg
       - name: Upload Package
         uses: actions/upload-artifact@v3
         with:
