@@ -76,14 +76,15 @@ Congratulations! You have successfully installed **MassaStation** on your comput
 
 To uninstall **MassaStation** from your Windows system, follow the steps below:
 
-1. Open your "Start" panel
-2. Type "Settings" and open the settings
-3. On the left panel, click on "Apps"
-4. Click on "Installed Apps"
-5. Search for "MassaStation" in the list of installed applications
-6. On the "..." menu, click on "Uninstall"
-7. Confirm uninstallation by clicking on "Uninstall" in the confirmation dialog
-8. Follow the instructions provided by the uninstaller
+1. Stop MassaStation by right-clicking on the icon in the system tray and selecting "Quit"
+2. Open your "Start" panel
+3. Type "Settings" and open the settings
+4. On the left panel, click on "Apps"
+5. Click on "Installed Apps"
+6. Search for "MassaStation" in the list of installed applications
+7. On the "..." menu, click on "Uninstall"
+8. Confirm uninstallation by clicking on "Uninstall" in the confirmation dialog
+9. Follow the instructions provided by the uninstaller
 
 The application and all modules installed will be deleted from your desktop.
 
@@ -91,16 +92,17 @@ The application and all modules installed will be deleted from your desktop.
 
 To uninstall **MassaStation** from your MacOS system, follow the steps below:
 
-1. Open the Terminal application on your MacOS system.
-2. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
+1. Stop MassaStation by right-clicking on the icon in the system tray and selecting "Quit"
+2. Open the Terminal application on your MacOS system.
+3. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
 
    ```bash
    /usr/local/share/massastation/uninstall.sh
    ```
 
    This command will remove MassaStation and its associated files from your system.
-3. Follow any prompts or instructions provided by the uninstaller script. This may involve confirming the removal and providing your password for administrative privileges.
-4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
+4. Follow any prompts or instructions provided by the uninstaller script. This may involve confirming the removal and providing your password for administrative privileges.
+5. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
 
 > **Note:** DNSMasq and Homebrew might have been installed on your system as dependencies for MassaStation. We do not remove these packages automatically as they may be used by other applications on your system.
 
@@ -108,12 +110,13 @@ To uninstall **MassaStation** from your MacOS system, follow the steps below:
 
 To uninstall **MassaStation** from your Linux system, follow the steps below:
 
-1. Open the Terminal application on your Linux system.
-2. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
+1. Stop MassaStation by right-clicking on the icon in the system tray and selecting "Quit"
+2. Open the Terminal application on your Linux system.
+3. Execute the following command in the terminal to download and run the **MassaStation** uninstaller script:
 
    ```bash
    sudo dpkg -r massastation
    ```
 
    This command will remove MassaStation and its associated files from your system.
-3. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
+4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **MassaStation** has been successfully uninstalled.
