@@ -66,7 +66,7 @@ function StorePlugin(props: StorePluginProps) {
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
-    version: `v${version}`,
+    version: version,
     content: description,
   };
 

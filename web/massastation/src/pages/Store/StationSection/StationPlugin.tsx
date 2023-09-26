@@ -78,7 +78,7 @@ export function StationPlugin({
     title: name,
     subtitle: author,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
-    version: `v${version}`,
+    version: version,
   } as PluginProps;
 
   switch (status) {
