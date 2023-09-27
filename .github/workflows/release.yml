@@ -28,6 +28,12 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       tag_name: ${{ github.event.inputs.release-version }}
+    secrets:
+      AZURE_KEY_VAULT_URI: ${{ secrets.AZURE_KEY_VAULT_URI }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
 
   create-release:
     name: Release

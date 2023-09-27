@@ -1,4 +1,5 @@
 name: build and upload artifacts
+
 on:
   workflow_dispatch:
   workflow_call:
@@ -20,20 +21,20 @@ jobs:
             target: windows
             cc: x86_64-w64-mingw32-gcc
             ext: .exe
-          - os: ubuntu-20.04
-            arch: amd64
-            target: linux
-          - os: macos-latest
-            arch: amd64
-            target: darwin
-          - os: macos-latest
-            arch: arm64
-            target: darwin
+          # - os: ubuntu-20.04
+          #   arch: amd64
+          #   target: linux
+          # - os: macos-latest
+          #   arch: amd64
+          #   target: darwin
+          # - os: macos-latest
+          #   arch: arm64
+          #   target: darwin
 
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Fetch all git tags
         run: git fetch --prune --unshallow --tags
       - name: Set Version
@@ -86,38 +87,38 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  build-macos-installer:
-    name: Build .pkg installer for MacOS ${{ matrix.arch }}
-    needs: build
-    defaults:
-      run:
-        working-directory: installer
-    strategy:
-      matrix:
-        arch: [amd64, arm64]
+  # build-macos-installer:
+  #   name: Build .pkg installer for MacOS ${{ matrix.arch }}
+  #   needs: build
+  #   defaults:
+  #     run:
+  #       working-directory: installer
+  #   strategy:
+  #     matrix:
+  #       arch: [amd64, arm64]
 
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Fetch all git tags
-        run: git fetch --prune --unshallow --tags
-      - name: Download MassaStation Package
-        uses: actions/download-artifact@v3
-        with:
-          name: massastation_darwin_${{ matrix.arch }}_package
-          path: installer
-      - name: Build Package
-        run: sh macos/create_pkg.sh ${{ matrix.arch }}
-        env:
-          VERSION: ${{ env.VERSION }}
-      - name: Upload Package
-        uses: actions/upload-artifact@v3
-        with:
-          name: massastation_installer_darwin_${{ matrix.arch }}
-          path: "installer/*.pkg"
-          if-no-files-found: error
-          retention-days: 7
+  #   runs-on: macos-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+  #     - name: Fetch all git tags
+  #       run: git fetch --prune --unshallow --tags
+  #     - name: Download MassaStation Package
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: massastation_darwin_${{ matrix.arch }}_package
+  #         path: installer
+  #     - name: Build Package
+  #       run: sh macos/create_pkg.sh ${{ matrix.arch }}
+  #       env:
+  #         VERSION: ${{ env.VERSION }}
+  #     - name: Upload Package
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: massastation_installer_darwin_${{ matrix.arch }}
+  #         path: "installer/*.pkg"
+  #         if-no-files-found: error
+  #         retention-days: 7
 
   build-packages-windows:
     name: Build .msi installer for amd64
@@ -125,17 +126,22 @@ jobs:
     defaults:
       run:
         working-directory: ./installer
-
     runs-on: windows-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: Fetch all git tags
+        run: git fetch --prune --unshallow --tags
+      - name: Set Version
+        if: ${{ env.VERSION == '' }}
+        shell: bash
+        run: |
+          export VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
-      - name: Fetch all git tags
-        run: git fetch --prune --unshallow --tags
       - name: Download MassaStation
         uses: actions/download-artifact@v3
         with:
@@ -146,6 +152,10 @@ jobs:
         run: python windows/build_installer.py
         env:
           VERSION: ${{ env.VERSION }}
+      - name: Sign with EV cert on Azure
+        run: |
+          dotnet tool install --global AzureSignTool
+          AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v "massastation_${{ env.VERSION }}_amd64.msi"
       - name: Upload Installer
         uses: actions/upload-artifact@v3
         with:
@@ -154,32 +164,32 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  build-deb-installer:
-    name: Build .deb installer for Linux amd64
-    needs: build
-    defaults:
-      run:
-        working-directory: installer
+  # build-deb-installer:
+  #   name: Build .deb installer for Linux amd64
+  #   needs: build
+  #   defaults:
+  #     run:
+  #       working-directory: installer
 
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Fetch all git tags
-        run: git fetch --prune --unshallow --tags
-      - name: Download MassaStation Package
-        uses: actions/download-artifact@v3
-        with:
-          name: massastation_linux_amd64_package
-          path: installer
-      - name: Build Package
-        run: sh deb/create_deb.sh
-        env:
-          VERSION: ${{ env.VERSION }}
-      - name: Upload Package
-        uses: actions/upload-artifact@v3
-        with:
-          name: massastation_installer_deb_amd64
-          path: "installer/*.deb"
-          if-no-files-found: error
-          retention-days: 7
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+  #     - name: Fetch all git tags
+  #       run: git fetch --prune --unshallow --tags
+  #     - name: Download MassaStation Package
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: massastation_linux_amd64_package
+  #         path: installer
+  #     - name: Build Package
+  #       run: sh deb/create_deb.sh
+  #       env:
+  #         VERSION: ${{ env.VERSION }}
+  #     - name: Upload Package
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: massastation_installer_deb_amd64
+  #         path: "installer/*.deb"
+  #         if-no-files-found: error
+  #         retention-days: 7
