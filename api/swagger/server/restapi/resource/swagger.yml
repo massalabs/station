@@ -902,7 +902,27 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /version:
+    get:
+      description: "Get current massastation version"
+      operationId: GetMassaStationVersion
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Massa Station version retreived.
+          schema:
+            $ref: "#/definitions/Version"
+        "400": 
+          description: "Failed to retrieve Massa Station version"
+          schema:
+            $ref: "#/definitions/Version"
+
 definitions:
+  Version: 
+    description: Current Massa Station version.
+    type: string
+    x-nullable: false
   Amount:
     description: Amount in nanoMassa.
     type: string
