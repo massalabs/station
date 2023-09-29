@@ -95,17 +95,21 @@ export function StationPlugin({
       pluginArgs = {
         ...pluginArgs,
         topAction: (
-          // we use customClass because "disabled" doesn't let us click on the button to turn it back on
-          <Button
-            onClick={(e) => updatePluginState(e, PLUGIN_START)}
-            customClass="bg-primary text-tertiary"
-            variant="toggle"
-          >
-            off
-          </Button>
+          <div className="flex w-full justify-between pl-4">
+            <div className="flex item-center justify-center w-fit min-h-full h-full pt-2">
+              {defaultContent}
+            </div>
+            {/* we use customClass because "disabled" doesn't let us click on the button to turn it back on */}
+            <Button
+              onClick={(e) => updatePluginState(e, PLUGIN_START)}
+              customClass="bg-primary text-tertiary"
+              variant="toggle"
+            >
+              off
+            </Button>
+          </div>
         ),
         content: [
-          ...defaultContent,
           <Button variant="icon" disabled>
             <FiArrowUpRight />
           </Button>,
@@ -119,17 +123,20 @@ export function StationPlugin({
       pluginArgs = {
         ...pluginArgs,
         topAction: (
-          <Button
-            disabled
-            onClick={(e) => updatePluginState(e, PLUGIN_START)}
-            customClass="bg-primary text-tertiary"
-            variant="toggle"
-          >
-            off
-          </Button>
+          <div className="flex w-full justify-between pl-4">
+            <div className="flex item-center justify-center w-fit min-h-full h-full pt-2">
+              {defaultContent}
+            </div>
+            <Button
+              onClick={(e) => updatePluginState(e, PLUGIN_START)}
+              customClass="bg-primary text-tertiary"
+              variant="toggle"
+            >
+              off
+            </Button>
+          </div>
         ),
         content: [
-          ...defaultContent,
           <Tooltip
             className="mas-tooltip"
             content={Intl.t('store.crashed-module')}
@@ -148,15 +155,19 @@ export function StationPlugin({
       pluginArgs = {
         ...pluginArgs,
         topAction: (
-          <Button
-            onClick={(e) => updatePluginState(e, PLUGIN_STOP)}
-            variant="toggle"
-          >
-            on
-          </Button>
+          <div className="flex w-full justify-between pl-4">
+            <div className="flex item-center justify-center w-fit min-h-full h-full pt-2">
+              {defaultContent}
+            </div>
+            <Button
+              onClick={(e) => updatePluginState(e, PLUGIN_STOP)}
+              variant="toggle"
+            >
+              on
+            </Button>
+          </div>
         ),
         content: [
-          ...defaultContent,
           updatable &&
             (isExecuteLoading ? (
               <UpdateLoading />
