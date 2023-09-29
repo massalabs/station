@@ -127,6 +127,9 @@ jobs:
       run:
         working-directory: ./installer
     runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -152,10 +155,30 @@ jobs:
         run: python windows/build_installer.py
         env:
           VERSION: ${{ env.VERSION }}
-      - name: Sign with EV cert on Azure
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Download Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Sign with EV cert on Google Cloud
         run: |
-          dotnet tool install --global AzureSignTool
-          AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v "massastation_${{ env.VERSION }}_amd64.msi"
+          curl -L -o jsign.jar https://github.com/ebourg/jsign/releases/download/5.0/jsign-5.0.jar
+          echo ${{ secrets.GCP_PEM_KEY }} | base64 -d > codesign-chain.pem
+          java -jar jsign.jar && \
+            --storetype GOOGLECLOUD && \
+            --storepass "$(gcloud auth print-access-token)" && \
+            --keystore "${{ secrets.GCP_KEYSTORE_ID }}" && \
+            --alias "${{ secrets.GCP_KEY_ALIAS }}" && \
+            --certfile "codesign-chain.pem" && \
+            --tsmode RFC3161 && \
+            --tsaurl http://timestamp.globalsign.com/tsa/r6advanced1 && \
+            "massastation_${{ env.VERSION }}_amd64.msi"
       - name: Upload Installer
         uses: actions/upload-artifact@v3
         with:
