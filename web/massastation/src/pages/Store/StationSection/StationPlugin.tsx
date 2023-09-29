@@ -6,6 +6,7 @@ import {
   Certificate,
   Plugin,
   PluginProps,
+  Tag,
   Tooltip,
 } from '@massalabs/react-ui-kit';
 import {
@@ -82,6 +83,13 @@ export function StationPlugin({
     version: version,
   } as PluginProps;
 
+  // Temporary display of beta tag for this specific plugin
+  // https://github.com/massalabs/station/issues/1206
+  let defaultContent =
+    name === 'Massa Node-manager'
+      ? [<Tag type="warning" content="beta" />]
+      : [];
+
   switch (status) {
     case PluginStatus.Down:
       pluginArgs = {
@@ -97,6 +105,7 @@ export function StationPlugin({
           </Button>
         ),
         content: [
+          ...defaultContent,
           <Button variant="icon" disabled>
             <FiArrowUpRight />
           </Button>,
@@ -120,6 +129,7 @@ export function StationPlugin({
           </Button>
         ),
         content: [
+          ...defaultContent,
           <Tooltip
             className="mas-tooltip"
             content={Intl.t('store.crashed-module')}
@@ -146,6 +156,7 @@ export function StationPlugin({
           </Button>
         ),
         content: [
+          ...defaultContent,
           updatable &&
             (isExecuteLoading ? (
               <UpdateLoading />
