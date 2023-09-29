@@ -18,6 +18,7 @@ jobs:
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          audience: ${{ secrets.GCP_AUDIENCE }}
       - name: Download Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
       - name: Get the access token
