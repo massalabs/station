@@ -20,6 +20,7 @@ import {
   PLUGIN_STOP,
   PLUGIN_UPDATE,
 } from '@/const';
+import Intl from '@/i18n/i18n';
 
 import { MassaPluginModel, PluginStatus } from '@/models';
 
@@ -121,7 +122,7 @@ export function StationPlugin({
         content: [
           <Tooltip
             className="mas-tooltip"
-            content="The module is not working. Please delete it and then  reinstall it."
+            content={Intl.t('store.crashed-module')}
             icon={<FiAlertCircle className="text-s-error" />}
           />,
           <Button variant="icon" disabled>
