@@ -5,6 +5,7 @@
     "store-banner": "Store",
     "loading": "Loading...",
     "massa-station-incompatible": "Available in Massa Station version: {version}",
+    "crashed-module": "The module is not working. Please delete it and then reinstall it.",
     "mystation": {
       "browse": "Browse the store below and manage plugins you've installed in this section"
     },

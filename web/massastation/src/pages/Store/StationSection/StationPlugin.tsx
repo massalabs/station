@@ -6,6 +6,7 @@ import {
   Certificate,
   Plugin,
   PluginProps,
+  Tag,
   Tooltip,
 } from '@massalabs/react-ui-kit';
 import {
@@ -20,6 +21,7 @@ import {
   PLUGIN_STOP,
   PLUGIN_UPDATE,
 } from '@/const';
+import Intl from '@/i18n/i18n';
 
 import { MassaPluginModel, PluginStatus } from '@/models';
 
@@ -81,19 +83,31 @@ export function StationPlugin({
     version: version,
   } as PluginProps;
 
+  // Temporary display of beta tag for this specific plugin
+  // https://github.com/massalabs/station/issues/1206
+  let defaultContent =
+    name === 'Massa Node-manager'
+      ? [<Tag type="warning" content="beta" />]
+      : [];
+
   switch (status) {
     case PluginStatus.Down:
       pluginArgs = {
         ...pluginArgs,
         topAction: (
-          // we use customClass because "disabled" doesn't let us click on the button to turn it back on
-          <Button
-            onClick={(e) => updatePluginState(e, PLUGIN_START)}
-            customClass="bg-primary text-tertiary"
-            variant="toggle"
-          >
-            off
-          </Button>
+          <div className="flex w-full justify-between pl-4">
+            <div className="flex item-center justify-center w-fit min-h-full h-full pt-2">
+              {defaultContent}
+            </div>
+            {/* we use customClass because "disabled" doesn't let us click on the button to turn it back on */}
+            <Button
+              onClick={(e) => updatePluginState(e, PLUGIN_START)}
+              customClass="bg-primary text-tertiary"
+              variant="toggle"
+            >
+              off
+            </Button>
+          </div>
         ),
         content: [
           <Button variant="icon" disabled>
@@ -109,19 +123,23 @@ export function StationPlugin({
       pluginArgs = {
         ...pluginArgs,
         topAction: (
-          <Button
-            disabled
-            onClick={(e) => updatePluginState(e, PLUGIN_START)}
-            customClass="bg-primary text-tertiary"
-            variant="toggle"
-          >
-            off
-          </Button>
+          <div className="flex w-full justify-between pl-4">
+            <div className="flex item-center justify-center w-fit min-h-full h-full pt-2">
+              {defaultContent}
+            </div>
+            <Button
+              onClick={(e) => updatePluginState(e, PLUGIN_START)}
+              customClass="bg-primary text-tertiary"
+              variant="toggle"
+            >
+              off
+            </Button>
+          </div>
         ),
         content: [
           <Tooltip
             className="mas-tooltip"
-            content="The module is not working. Please delete it and then  reinstall it."
+            content={Intl.t('store.crashed-module')}
             icon={<FiAlertCircle className="text-s-error" />}
           />,
           <Button variant="icon" disabled>
@@ -137,12 +155,17 @@ export function StationPlugin({
       pluginArgs = {
         ...pluginArgs,
         topAction: (
-          <Button
-            onClick={(e) => updatePluginState(e, PLUGIN_STOP)}
-            variant="toggle"
-          >
-            on
-          </Button>
+          <div className="flex w-full justify-between pl-4">
+            <div className="flex item-center justify-center w-fit min-h-full h-full pt-2">
+              {defaultContent}
+            </div>
+            <Button
+              onClick={(e) => updatePluginState(e, PLUGIN_STOP)}
+              variant="toggle"
+            >
+              on
+            </Button>
+          </div>
         ),
         content: [
           updatable &&
