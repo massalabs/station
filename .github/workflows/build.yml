@@ -169,7 +169,7 @@ jobs:
       - name: Sign with EV cert on Google Cloud
         run: |
           curl -L -o jsign.jar https://github.com/ebourg/jsign/releases/download/5.0/jsign-5.0.jar
-          echo ${{ secrets.GCP_PEM_KEY }} | base64 -d > codesign-chain.pem
+          echo ${{ env.GCP_PEM_KEY }} | base64 -d > codesign-chain.pem
           java -jar jsign.jar --storetype GOOGLECLOUD --storepass "$(gcloud auth print-access-token)" --keystore "${{ secrets.GCP_KEYSTORE_ID }}" --alias "${{ secrets.GCP_KEY_ALIAS }}" --certfile "codesign-chain.pem" --tsmode RFC3161 --tsaurl http://timestamp.globalsign.com/tsa/r6advanced1 "massastation_${{ env.VERSION }}_amd64.msi"
       - name: Upload Installer
         uses: actions/upload-artifact@v3
