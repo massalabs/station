@@ -100,7 +100,7 @@ func updateCheck(app *fyne.App, systrayMenu *fyne.Menu) {
 		return
 	}
 
-	currentVersion, err := version.NewVersion(config.Version.Version)
+	currentVersion, err := version.NewVersion(config.Version)
 	if err != nil {
 		logger.Errorf("Error getting current version:%s", err)
 
@@ -119,7 +119,7 @@ func updateCheck(app *fyne.App, systrayMenu *fyne.Menu) {
 // Starts a ticker that checks for updates every updateCheckInterval.
 func StartUpdateCheck(app *fyne.App, systrayMenu *fyne.Menu) {
 	// We don't want to check for updates in dev mode.
-	if strings.Contains(config.Version.Version, "dev") {
+	if strings.Contains(config.Version, "dev") {
 		return
 	}
 

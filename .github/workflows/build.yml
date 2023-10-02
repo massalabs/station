@@ -58,7 +58,7 @@ jobs:
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
         shell: bash
         run: |
-          go build -ldflags "-X github.com/massalabs/station/int/config.Version.Version=${{env.VERSION}}" -o massastation_${{ matrix.target }}_${{ matrix.arch }}${{ matrix.ext }} ./cmd/massastation/
+          go build -ldflags "-X github.com/massalabs/station/int/config.Version=${{env.VERSION}}" -o massastation_${{ matrix.target }}_${{ matrix.arch }}${{ matrix.ext }} ./cmd/massastation/
       - name: Package binary for ${{ matrix.target }} on ${{ matrix.arch}}
         # We don't need to package for windows since fyne package generates a similar .exe as go build.
         if: matrix.target != 'windows'
