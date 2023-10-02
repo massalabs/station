@@ -46,6 +46,10 @@ type Store struct {
 	mutex   sync.RWMutex
 }
 
+type Config struct {
+	Version string
+}
+
 const (
 	pluginListURL = "https://raw.githubusercontent.com/massalabs/station-store/main/plugins.json"
 )
@@ -186,14 +190,20 @@ func (s *Store) FindPluginByName(name string) *Plugin {
 	return nil
 }
 
+type VersionInfo struct {
+	Version string
+}
+
 func (plugin *Plugin) IsPluginCompatible() (bool, error) {
-	if config.Version == "dev" {
+	currentVersion := config.Version.Version
+
+	if currentVersion == "dev" {
 		return true, nil
 	}
 
-	config.Version = strings.TrimSuffix(config.Version, "-dev")
+	currentVersion = strings.TrimSuffix(currentVersion, "-dev")
 
-	massaStationVersion, err := version.NewVersion(config.Version)
+	massaStationVersion, err := version.NewVersion(currentVersion)
 	if err != nil {
 		return false, fmt.Errorf("while parsing MassaStation version: %w", err)
 	}

@@ -78,7 +78,7 @@ def build_massastation():
         "go",
         "build", 
         "-ldflags",
-        f"-X github.com/massalabs/station/int/config.Version={VERSION}",
+        f"-X github.com/massalabs/station/int/config.Version.Version={VERSION}",
         "-o",
         "massastation.exe",
         "../cmd/massastation/"

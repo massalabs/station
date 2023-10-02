@@ -28,7 +28,7 @@ func AssertUpdate(t *testing.T, testPluginUpdate testPluginUpdate) {
 	plugins[plgn.ID] = plgn
 	plgn.status = Up
 
-	config.Version = testPluginUpdate.massaStationVersion
+	config.Version.Version = testPluginUpdate.massaStationVersion
 
 	pluginCompatible, err := pluginInStore.IsPluginCompatible()
 	assert.NoError(t, err)

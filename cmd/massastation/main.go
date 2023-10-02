@@ -63,7 +63,7 @@ func main() {
 
 	if stationStartFlags.Version {
 		//nolint:forbidigo
-		fmt.Printf("Version:%s\n", config.Version)
+		fmt.Printf("Version:%s\n", config.Version.Version)
 		logger.Close()
 		//nolint:gocritic
 		os.Exit(0)
@@ -96,7 +96,7 @@ func main() {
 		server.Stop()
 	})
 	stationGUI.Lifecycle().SetOnStarted(func() {
-		server.Start(networkManager, pluginManager)
+		server.Start(networkManager, pluginManager, config.Version)
 		err := pluginManager.RunAll()
 		if err != nil {
 			logger.Fatalf("while running all plugins: %w", err)
