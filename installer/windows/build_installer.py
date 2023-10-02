@@ -463,13 +463,14 @@ def build_installer():
     except err:
         print(err)
         sys.exit(1)
+    print(f"Installer built successfully: massastation_{VERSION}_amd64.msi")
 
 
 def install_dependencies():
     """
     Install dependencies if they are not already installed.
 
-    This function installs WixToolset, Go Swagger, and Stringer.
+    This function installs WixToolset.
     """
 
     if not os.path.exists(WIX_DIR):
