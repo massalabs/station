@@ -7,13 +7,11 @@ import (
 	"github.com/massalabs/station/int/config"
 )
 
-func NewGetMassaStationVersion(version string) operations.GetMassaStationVersionHandler {
-	return &getMassaStationVersion{version: version}
+func NewGetMassaStationVersion() operations.GetMassaStationVersionHandler {
+	return &getMassaStationVersion{}
 }
 
-type getMassaStationVersion struct {
-	version string
-}
+type getMassaStationVersion struct{}
 
 func (h *getMassaStationVersion) Handle(_ operations.GetMassaStationVersionParams) middleware.Responder {
 	return operations.NewGetMassaStationVersionOK().
