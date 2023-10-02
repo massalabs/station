@@ -185,10 +185,17 @@ jobs:
         env:
           VERSION: ${{ env.VERSION }}
 
-      - name: Sign msi installer with EV cert on Google Cloud
-        run: |
-          java -jar jsign.jar --storetype GOOGLECLOUD --storepass "$(gcloud auth print-access-token)" --keystore "${{ secrets.GCP_KEYSTORE_ID }}" --alias "${{ secrets.GCP_KEY_ALIAS }}" --certfile "codesign-chain.pem" --tsmode RFC3161 --tsaurl http://timestamp.globalsign.com/tsa/r6advanced1 "massastation_${{ env.VERSION }}_amd64.msi"
-      
+      - name: Sign Windows binary
+        if: matrix.target == 'windows'
+        uses: ./.github/actions/sign-file
+        with:
+          file: massastation_${{ env.VERSION }}_amd64.msi
+          GCP_PEM_KEY: ${{ vars.GCP_PEM_KEY }}
+          GCP_KEYSTORE_ID: ${{ vars.GCP_KEYSTORE_ID }}
+          GCP_KEY_ALIAS: ${{ vars.GCP_KEY_ALIAS }}
+          GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          GCP_SERVICE_ACCOUNT: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
       - name: Upload Installer
         uses: actions/upload-artifact@v3
         with:
