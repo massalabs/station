@@ -165,7 +165,7 @@ jobs:
       - name: Sign Windows binary
         uses: ./.github/actions/sign-file
         with:
-          file: massastation_${{ env.VERSION }}_amd64.msi
+          file: installer/massastation_${{ env.VERSION }}_amd64.msi
           GCP_PEM_KEY: ${{ vars.GCP_PEM_KEY }}
           GCP_KEYSTORE_ID: ${{ vars.GCP_KEYSTORE_ID }}
           GCP_KEY_ALIAS: ${{ vars.GCP_KEY_ALIAS }}
