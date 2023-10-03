@@ -42,7 +42,7 @@ func initLocalAPI(
 	localAPI.MassaGetAddressesHandler = massa.NewGetAddressHandler(config)
 	localAPI.GetNodeHandler = massa.NewGetNodeHandler(config)
 
-	localAPI.GetMassaStationVersionHandler = massa.NewGetMassaStationVersion()
+	localAPI.GetMassaStationVersionHandler = operations.GetMassaStationVersionHandlerFunc(massa.GetMassaStationVersionFunc)
 
 	localAPI.CmdDeploySCHandler = cmd.NewDeploySCHandler(config)
 
