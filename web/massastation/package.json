@@ -51,7 +51,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^13.2.1",
     "miragejs": "^0.1.47",
-    "postcss": "^8.4.23",
+    "postcss": "^8.4.31",
     "postcss-loader": "^7.2.4",
     "prop-types": "^15.8.1",
     "react-icons": "^4.8.0",
