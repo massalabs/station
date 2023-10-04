@@ -22,17 +22,8 @@ interface NetworkRequest {
 export function LayoutStation({ ...props }) {
   const { children, navigator, onSetTheme, storedTheme } = props;
 
-  const {
-    data: massaStationVersion,
-    isSuccess: getMassaStationVersionSuccess,
-  } = useResource<string>('version');
-
-  const [currentStationVersion, setCurrentStationVersion] =
-    useState<string>('');
-
-  useEffect(() => {
-    if (massaStationVersion) setCurrentStationVersion(massaStationVersion);
-  }, [getMassaStationVersionSuccess, massaStationVersion]);
+  const { data: version, isSuccess: getVersionSuccess } =
+    useResource<string>('version');
 
   const [selectedTheme, setSelectedTheme] = useState(
     storedTheme || 'theme-dark',
@@ -102,7 +93,9 @@ export function LayoutStation({ ...props }) {
           <a href="/">
             <StationLogo theme={selectedTheme} />
           </a>
-          <p className="text-info ml-4 mas-body"> v{currentStationVersion} </p>
+          {version && getVersionSuccess ? (
+            <DisplayVersion version={version} />
+          ) : null}
         </div>
         <div className="flex justify-center items-center">
           {navigator && <div className="flex-row-reversed">{navigator}</div>}
@@ -121,4 +114,10 @@ export function LayoutStation({ ...props }) {
       {children}
     </div>
   );
+}
+
+function DisplayVersion({ ...props }) {
+  const { version } = props;
+
+  return <p className="text-info ml-4 mas-body">v{version}</p>;
 }
