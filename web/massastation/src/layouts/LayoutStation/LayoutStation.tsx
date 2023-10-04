@@ -89,6 +89,7 @@ export function LayoutStation({ ...props }) {
         <div className="flex justify-start items-center">
           <a href="/">
             <StationLogo theme={selectedTheme} />
+            {/* Where version goes */}
           </a>
         </div>
         <div className="flex justify-center items-center">
