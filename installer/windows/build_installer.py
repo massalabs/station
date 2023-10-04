@@ -158,6 +158,14 @@ def create_wxs_file():
             AllowSameVersionUpgrades="yes"
         />
 
+        <Condition Message="Oops! Massa Station cannot be installed on your current Windows version ([VersionNT]).\nWe require Windows 10 or a newer version for compatibility. Please consider updating your operating system to enjoy Massa Station.">
+            <!--
+                We require Windows 10 or a newer version for compatibility. Windows 10 and 11 are version 603.
+                We don't want to allow installation on Server versions of Windows.
+            -->
+            <![CDATA[Installed OR (VersionNT >= 603 AND MsiNTProductType = 1)]]>
+        </Condition>
+
         <MediaTemplate EmbedCab="yes"/>
         <!--
             We don't need a license agreement for now.
