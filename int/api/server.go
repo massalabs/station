@@ -12,6 +12,7 @@ import (
 	"github.com/massalabs/station/int/api/myplugin"
 	"github.com/massalabs/station/int/api/network"
 	"github.com/massalabs/station/int/api/pluginstore"
+	"github.com/massalabs/station/int/api/version"
 	"github.com/massalabs/station/int/api/websites"
 	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/pkg/logger"
@@ -42,7 +43,7 @@ func initLocalAPI(
 	localAPI.MassaGetAddressesHandler = massa.NewGetAddressHandler(config)
 	localAPI.GetNodeHandler = massa.NewGetNodeHandler(config)
 
-	localAPI.GetMassaStationVersionHandler = operations.GetMassaStationVersionHandlerFunc(massa.GetMassaStationVersionFunc)
+	localAPI.GetMassaStationVersionHandler = operations.GetMassaStationVersionHandlerFunc(version.Handle)
 
 	localAPI.CmdDeploySCHandler = cmd.NewDeploySCHandler(config)
 
