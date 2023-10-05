@@ -12,7 +12,7 @@ const (
 	updateWindowTitle = "MassaStation update available"
 
 	// downloadURL is the URL to the latest release on GitHub.
-	downloadURL = "https://github.com/massalabs/station/releases/latest"
+	downloadURL = "https://station.massa.net"
 )
 
 // Finds the update dialog window by its title.

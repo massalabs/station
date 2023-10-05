@@ -1,4 +1,5 @@
 name: build and upload artifacts
+
 on:
   workflow_dispatch:
   workflow_call:
@@ -33,7 +34,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Fetch all git tags
         run: git fetch --prune --unshallow --tags
       - name: Set Version
@@ -99,7 +100,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Fetch all git tags
         run: git fetch --prune --unshallow --tags
       - name: Download MassaStation Package
@@ -125,27 +126,52 @@ jobs:
     defaults:
       run:
         working-directory: ./installer
-
     runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Fetch all git tags
+        run: git fetch --prune --unshallow --tags
+
+      - name: Set Version
+        if: ${{ env.VERSION == '' }}
+        shell: bash
+        run: |
+          export VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
-      - name: Fetch all git tags
-        run: git fetch --prune --unshallow --tags
+
       - name: Download MassaStation
         uses: actions/download-artifact@v3
         with:
           name: massastation_windows_amd64_bin
+
       - name: Rename MassaStation binary
         run: mv ../massastation_windows_amd64.exe massastation.exe
+
       - name: Build Installer
         run: python windows/build_installer.py
         env:
           VERSION: ${{ env.VERSION }}
+
+      - name: Sign Windows binary
+        uses: ./.github/actions/sign-file
+        with:
+          file: installer/massastation_$(echo ${{ env.VERSION }} | sed 's/^v//')_amd64.msi
+          GCP_PEM_KEY: ${{ vars.GCP_PEM_KEY }}
+          GCP_KEYSTORE_ID: ${{ vars.GCP_KEYSTORE_ID }}
+          GCP_KEY_ALIAS: ${{ vars.GCP_KEY_ALIAS }}
+          GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          GCP_SERVICE_ACCOUNT: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
       - name: Upload Installer
         uses: actions/upload-artifact@v3
         with:
@@ -164,7 +190,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Fetch all git tags
         run: git fetch --prune --unshallow --tags
       - name: Download MassaStation Package
