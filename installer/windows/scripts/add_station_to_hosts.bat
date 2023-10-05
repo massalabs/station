@@ -9,7 +9,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 SET windows_hosts_file=%windir%\System32\drivers\etc\hosts
 
 @REM If station.massa is already in Windows hosts file, we can exit
-FINDSTR /c:"127.0.0.1 station.massa" "%windows_hosts_file%" >nul 2>&1
+FINDSTR /c:"station.massa" "%windows_hosts_file%" >nul 2>&1
 if %errorlevel%==0 (
     ECHO station.massa host already configured
     EXIT 0
