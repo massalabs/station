@@ -400,11 +400,12 @@ def create_wxs_file():
             Impersonate="no"
             Return="ignore"
         />
+
+        <!-- This Custom Action removes the line containing "station.massa" from the hosts file. -->
+        <!-- We can't directly overwrite the hosts file because it is protected by Windows. But creating a new file and moving it to the hosts file works. -->
         <CustomAction
             Id="RemoveStationFromHosts"
             Directory="INSTALLDIR"
-            <-- This command removes the line containing "station.massa" from the hosts file. -->
-            <-- We can't directly overwrite the hosts file because it is protected by Windows. But creating a new file and moving it to the hosts file works. -->
             ExeCommand="cmd /c findstr /v station.massa %windir%\System32\drivers\etc\hosts > %windir%\System32\drivers\etc\hosts.new &amp; move /y %windir%\System32\drivers\etc\hosts.new %windir%\System32\drivers\etc\hosts"
             Execute="deferred"
             Impersonate="no"
