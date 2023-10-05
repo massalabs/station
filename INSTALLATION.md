@@ -80,7 +80,7 @@ Congratulations! You have successfully installed **Massa Station** on your compu
 5. Proceed to GUI installation starting at step 2. 
 
 
-### Linux HTTPS workaround
+### Manually install the HTTPS certificate
 1. Open your browser "Manage Certificates" settings (e.g. chrome://settings/certificates or brave://settings/certificates) and switch to the "Authorities" tab.
 2. Click "Import", locate the Massastation certificate at **/etc/massastation/certs/rootCA.pem** and import it to the browser.
 
