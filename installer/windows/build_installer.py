@@ -171,9 +171,9 @@ def create_wxs_file():
         <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
 
         <UI>
-            <UIRef Id="WixUI_InstallDir" />
-            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg" Order="3">1</Publish>
-            <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="3">1</Publish>
+            <UIRef Id="WixUI_Mondo" />
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="SetupTypeDlg" Order="3">1</Publish>
+            <Publish Dialog="SetupTypeDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="3">1</Publish>
             <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchMassaStation">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1</Publish>
         </UI>
 
@@ -262,7 +262,7 @@ def create_wxs_file():
             </Directory>
         </Directory>
 
-        <Feature Id="MainApplication" Title="Main Application" Level="1">
+        <Feature Id="MassaStation" Title="Massa Station" Description="Your gateway to the decentralized web" Level="1" Absent="disallow" AllowAdvertise="no" ConfigurableDirectory="INSTALLDIR">
             <ComponentRef Id="MassaStationServer" />
             <ComponentRef Id="CreateCertsDir" />
             <ComponentRef Id="CreatePluginsDir" />
@@ -271,15 +271,15 @@ def create_wxs_file():
             <ComponentRef Id="CreateMartoolsDir" />
         </Feature>
 
-        <Feature Id="DesktopShortcut" Title="Desktop Shortcut" Level="1" Absent="allow">
+        <Feature Id="DesktopShortcut" Title="Desktop Shortcut" Level="1" Absent="disallow" AllowAdvertise="no">
             <ComponentRef Id="ApplicationShortcutDesktop" />
         </Feature>
 
-        <Feature Id="ProgramMenuShortcut" Title="Program Menu Shortcut" Level="1" Absent="allow">
+        <Feature Id="ProgramMenuShortcut" Title="Program Menu Shortcut" Level="1" Absent="disallow" AllowAdvertise="no">
             <ComponentRef Id="ApplicationShortcutProgramMenu" />
         </Feature>
 
-        <Feature Id="Acrylic" Title="Acrylic DNS Proxy" Level="1">
+        <Feature Id="AcrylicDNS" Title="DNS" Description="A DNS server that can be used to resolve .massa domains." Level="1" TypicalDefault="advertise">
             <ComponentRef Id="Acrylic" />
         </Feature>
 
@@ -413,15 +413,15 @@ def create_wxs_file():
         />
 
         <InstallExecuteSequence>
-            <Custom Action="ExtractMartools" Before="ExtractAcrylic">NOT Installed</Custom>
-            <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed</Custom>
-            <Custom Action="InstallAcrylic" Before="ConfigureAcrylic">NOT Installed</Custom>
-            <Custom Action="RollbackAcrylicInstall" Before="InstallAcrylic">NOT Installed</Custom>
-            <Custom Action="ConfigureAcrylic" Before="ConfigureNetworkInterface">NOT Installed</Custom>
-            <Custom Action="ConfigureNetworkInterface" Before="DeleteAcrylicZip">NOT Installed</Custom>
-            <Custom Action="RollbackNetworkInterface" Before="ConfigureNetworkInterface">NOT Installed</Custom>
+            <Custom Action="ExtractMartools" Before="DeleteMartoolsZip">NOT Installed</Custom>
+            <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed AND <![CDATA[&AcrylicDNS=3]]></Custom>
+            <Custom Action="InstallAcrylic" Before="ConfigureAcrylic">NOT Installed AND <![CDATA[&AcrylicDNS=3]]></Custom>
+            <Custom Action="RollbackAcrylicInstall" Before="InstallAcrylic">NOT Installed AND <![CDATA[&AcrylicDNS=3]]></Custom>
+            <Custom Action="ConfigureAcrylic" Before="ConfigureNetworkInterface">NOT Installed AND <![CDATA[&AcrylicDNS=3]]></Custom>
+            <Custom Action="ConfigureNetworkInterface" Before="DeleteAcrylicZip">NOT Installed AND <![CDATA[&AcrylicDNS=3]]></Custom>
+            <Custom Action="RollbackNetworkInterface" Before="ConfigureNetworkInterface">NOT Installed AND <![CDATA[&AcrylicDNS=3]]></Custom>
             <Custom Action="AddStationToHosts" Before="InstallFinalize">NOT Installed</Custom>
-            <Custom Action="DeleteAcrylicZip" Before="InstallFinalize">NOT Installed</Custom>
+            <Custom Action="DeleteAcrylicZip" Before="InstallFinalize">NOT Installed AND <![CDATA[&AcrylicDNS=3]]></Custom>
             <Custom Action="DeleteMartoolsZip" Before="InstallFinalize">NOT Installed</Custom>
 
             <Custom Action='UninstallAcrylic' Before='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
