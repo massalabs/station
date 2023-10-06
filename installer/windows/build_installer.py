@@ -27,6 +27,7 @@ MARTOOLS_ZIP = "martools.zip"
 WIXTOOLSET_ZIP = "wixtoolset.zip"
 
 # Scripts to be included in the installer
+ADD_STATION_TO_HOSTS_SCRIPT = "add_station_to_hosts.bat"
 ACRYLIC_CONFIG_SCRIPT = "configure_acrylic.bat"
 NIC_CONFIG_SCRIPT = "configure_network_interfaces.bat"
 NIC_RESET_SCRIPT = "reset_network_interfaces.bat"
@@ -104,6 +105,10 @@ def move_binaries():
     shutil.copy(MARTOOLS_ZIP, os.path.join(BUILD_DIR, MARTOOLS_ZIP))
 
     shutil.copy(
+        os.path.join("windows", "scripts", ADD_STATION_TO_HOSTS_SCRIPT),
+        os.path.join(BUILD_DIR, ADD_STATION_TO_HOSTS_SCRIPT),
+    )
+    shutil.copy(
         os.path.join("windows", "scripts", ACRYLIC_CONFIG_SCRIPT),
         os.path.join(BUILD_DIR, ACRYLIC_CONFIG_SCRIPT),
     )
@@ -177,6 +182,7 @@ def create_wxs_file():
                 <Directory Id="INSTALLDIR" Name="MassaStation">
                     <Component Id="MassaStationServer" Guid="bc60f0be-065b-4738-968f-ce0e9b32bd01">
                         <File Id="MassaStationAppEXE" Name="{MASSASTATION_BINARY}" Source="{BUILD_DIR}\\{MASSASTATION_BINARY}" />
+                        <File Id="AddStationToHostsScript" Name="{ADD_STATION_TO_HOSTS_SCRIPT}" Source="{BUILD_DIR}\\{ADD_STATION_TO_HOSTS_SCRIPT}" />
                         <File Id="AcrylicConfigScript" Name="{ACRYLIC_CONFIG_SCRIPT}" Source="{BUILD_DIR}\\{ACRYLIC_CONFIG_SCRIPT}" />
                         <File Id="NICConfigScript" Name="{NIC_CONFIG_SCRIPT}" Source="{BUILD_DIR}\\{NIC_CONFIG_SCRIPT}" />
                         <File Id="NICResetScript" Name="{NIC_RESET_SCRIPT}" Source="{BUILD_DIR}\\{NIC_RESET_SCRIPT}" />
@@ -330,6 +336,14 @@ def create_wxs_file():
             Return="ignore"
         />
         <CustomAction
+            Id="AddStationToHosts"
+            Directory="INSTALLDIR"
+            ExeCommand="cmd /c &quot;[INSTALLDIR]{ADD_STATION_TO_HOSTS_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
+            Execute="deferred"
+            Impersonate="no"
+            Return="check"
+        />
+        <CustomAction
             Id="ConfigureAcrylic"
             Directory="INSTALLDIR"
             ExeCommand="powershell.exe -Command &quot; &amp; '[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}' '[AcrylicDNSProxy]' &quot; >> $env:Temp/massastation_installer.log 2>&amp;1"
@@ -387,6 +401,17 @@ def create_wxs_file():
             Return="ignore"
         />
 
+        <!-- This Custom Action removes the line containing "station.massa" from the hosts file. -->
+        <!-- We can't directly overwrite the hosts file because it is protected by Windows. But creating a new file and moving it to the hosts file works. -->
+        <CustomAction
+            Id="RemoveStationFromHosts"
+            Directory="INSTALLDIR"
+            ExeCommand="cmd /c findstr /v station.massa %windir%\System32\drivers\etc\hosts > %windir%\System32\drivers\etc\hosts.new &amp; move /y %windir%\System32\drivers\etc\hosts.new %windir%\System32\drivers\etc\hosts"
+            Execute="deferred"
+            Impersonate="no"
+            Return="ignore"
+        />
+
         <InstallExecuteSequence>
             <Custom Action="ExtractMartools" Before="ExtractAcrylic">NOT Installed</Custom>
             <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed</Custom>
@@ -395,11 +420,13 @@ def create_wxs_file():
             <Custom Action="ConfigureAcrylic" Before="ConfigureNetworkInterface">NOT Installed</Custom>
             <Custom Action="ConfigureNetworkInterface" Before="DeleteAcrylicZip">NOT Installed</Custom>
             <Custom Action="RollbackNetworkInterface" Before="ConfigureNetworkInterface">NOT Installed</Custom>
+            <Custom Action="AddStationToHosts" Before="InstallFinalize">NOT Installed</Custom>
             <Custom Action="DeleteAcrylicZip" Before="InstallFinalize">NOT Installed</Custom>
             <Custom Action="DeleteMartoolsZip" Before="InstallFinalize">NOT Installed</Custom>
 
             <Custom Action='UninstallAcrylic' Before='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
             <Custom Action='ResetNetworkInterface' Before='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
+            <Custom Action='RemoveStationFromHosts' Before='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
             <Custom Action='RemoveInstallDir' After='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
             <Custom Action='RemoveAcrylicDir' After='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
         </InstallExecuteSequence>
