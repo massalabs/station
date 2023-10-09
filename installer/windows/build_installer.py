@@ -279,7 +279,7 @@ def create_wxs_file():
             <ComponentRef Id="ApplicationShortcutProgramMenu" />
         </Feature>
 
-        <Feature Id="AcrylicDNS" Title="DNS" Description="A DNS server that can be used to resolve .massa domains." Level="1" TypicalDefault="advertise">
+        <Feature Id="AcrylicDNS" Title="DNS" Description="A DNS server that can be used to resolve .massa domains." Level="10">
             <ComponentRef Id="Acrylic" />
         </Feature>
 
