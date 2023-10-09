@@ -158,6 +158,18 @@ def create_wxs_file():
             AllowSameVersionUpgrades="yes"
         />
 
+        <Property Id="WINDOWSEDITION" Secure="yes">
+            <RegistrySearch Id="WindowsEditionReg" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion" Name="CurrentBuildNumber" Type="raw" />
+        </Property>
+
+        <Condition Message="Oops! Massa Station cannot be installed on your current Windows version ([WINDOWSEDITION]).\nWe require Windows 10 or a newer version for compatibility. Please consider updating your operating system to enjoy Massa Station.">
+            <!--
+                We require Windows 10 or a newer version for compatibility. First version of Windows 10 is 10240.
+                We don't want to allow installation on Server versions of Windows.
+            -->
+            <![CDATA[Installed OR (WINDOWSEDITION >= 10240 AND MsiNTProductType = 1)]]>
+        </Condition>
+
         <MediaTemplate EmbedCab="yes"/>
         <!--
             We don't need a license agreement for now.
