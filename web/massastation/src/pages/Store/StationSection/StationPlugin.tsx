@@ -17,9 +17,11 @@ import {
 } from 'react-icons/fi';
 import {
   massalabsNomination,
+  NODE_MANAGER,
   PLUGIN_START,
   PLUGIN_STOP,
   PLUGIN_UPDATE,
+  pluginList,
 } from '@/const';
 import Intl from '@/i18n/i18n';
 
@@ -79,16 +81,13 @@ export function StationPlugin({
     preIcon: <img src={logoURL} alt="plugin-logo" />,
     title: name,
     subtitle: author,
+    tag:
+      pluginList.includes(name) && name === NODE_MANAGER ? (
+        <Tag type="warning" content="beta" />
+      ) : null,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
     version: version,
   } as PluginProps;
-
-  // Temporary display of beta tag for this specific plugin
-  // https://github.com/massalabs/station/issues/1206
-  let defaultContent =
-    name === 'Massa Node-manager'
-      ? [<Tag type="warning" content="beta" />]
-      : [];
 
   switch (status) {
     case PluginStatus.Down:
@@ -96,9 +95,6 @@ export function StationPlugin({
         ...pluginArgs,
         topAction: (
           <div className="flex w-full justify-between pl-4">
-            <div className="flex item-center justify-center w-fit min-h-full h-full pt-2">
-              {defaultContent}
-            </div>
             {/* we use customClass because "disabled" doesn't let us click on the button to turn it back on */}
             <Button
               onClick={(e) => updatePluginState(e, PLUGIN_START)}
@@ -124,9 +120,6 @@ export function StationPlugin({
         ...pluginArgs,
         topAction: (
           <div className="flex w-full justify-between pl-4">
-            <div className="flex item-center justify-center w-fit min-h-full h-full pt-2">
-              {defaultContent}
-            </div>
             <Button
               onClick={(e) => updatePluginState(e, PLUGIN_START)}
               customClass="bg-primary text-tertiary"
@@ -156,9 +149,6 @@ export function StationPlugin({
         ...pluginArgs,
         topAction: (
           <div className="flex w-full justify-between pl-4">
-            <div className="flex item-center justify-center w-fit min-h-full h-full pt-2">
-              {defaultContent}
-            </div>
             <Button
               onClick={(e) => updatePluginState(e, PLUGIN_STOP)}
               variant="toggle"
