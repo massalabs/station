@@ -42,8 +42,6 @@ WIXTOOLSET_URL = (
     "https://wixdl.blob.core.windows.net/releases/v3.14.0.6526/wix314-binaries.zip"
 )
 
-INSTALLER_LOGFILE = "%Temp%\\massastation_installer.log"
-
 def download_file(url, filename):
     """
     Download a given file from a given URL.
@@ -137,6 +135,8 @@ def create_wxs_file():
     This file contains the list of files to be included in the installer, as well as
     the UI configuration, and the custom actions to be executed.
     """
+    INSTALLER_LOGFILE = f"$env:Temp\\MASSASTATION_INSTALLER_{VERSION}.log"
+
     wxs_content = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
     <Product
@@ -334,7 +334,7 @@ def create_wxs_file():
         <CustomAction
             Id="InstallAcrylic"
             Directory="AcrylicDNSProxy"
-            ExeCommand="cmd /c &quot;[AcrylicDNSProxy]InstallAcrylicService.bat&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
+            ExeCommand="powershell.exe -Command &quot; &amp; '[AcrylicDNSProxy]InstallAcrylicService.bat'&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
@@ -350,7 +350,7 @@ def create_wxs_file():
         <CustomAction
             Id="AddStationToHosts"
             Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{ADD_STATION_TO_HOSTS_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
+            ExeCommand="powershell.exe -Command &quot; &amp; '[INSTALLDIR]{ADD_STATION_TO_HOSTS_SCRIPT}'&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
@@ -358,7 +358,7 @@ def create_wxs_file():
         <CustomAction
             Id="ConfigureAcrylic"
             Directory="INSTALLDIR"
-            ExeCommand="powershell.exe -Command &quot; &amp; '[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}' '[AcrylicDNSProxy]' &quot; >> $env:Temp/massastation_installer.log 2>&amp;1"
+            ExeCommand="powershell.exe -Command &quot; &amp; '[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}' '[AcrylicDNSProxy]' &quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
@@ -366,7 +366,7 @@ def create_wxs_file():
         <CustomAction
             Id="ConfigureNetworkInterface"
             Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_CONFIG_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
+            ExeCommand="powershell.exe -Command &quot; &amp; '[INSTALLDIR]{NIC_CONFIG_SCRIPT}'&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
@@ -391,7 +391,7 @@ def create_wxs_file():
         <CustomAction
             Id="ResetNetworkInterface"
             Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_RESET_SCRIPT}&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
+            ExeCommand="powershell.exe -Command &quot; &amp; '[INSTALLDIR]{NIC_RESET_SCRIPT}'&quot; >> {INSTALLER_LOGFILE} 2>&amp;1"
             Execute="deferred"
             Impersonate="no"
             Return="check"
