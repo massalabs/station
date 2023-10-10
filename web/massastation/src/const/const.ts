@@ -4,6 +4,7 @@ export const NODE_MANAGER = 'Massa Node-manager';
 export const pluginList = [MASSA_WALLET, NODE_MANAGER];
 
 export const massastationName = 'MassaStation';
+
 // We store each possible variation of the massas's name in the array
 export const massalabsNomination = ['Massa Labs'];
 // Constants to mimic server status
