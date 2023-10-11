@@ -303,111 +303,141 @@ def create_wxs_file():
             Return='ignore'
         />
 
-        <CustomAction Id="ExtractMartools"
-            Directory="INSTALLDIR"
-            ExeCommand="powershell.exe -Command &quot;Expand-Archive '[MassaStationMartools]{MARTOOLS_ZIP}' -d '[INSTALLDIR]'&quot;"
+        <SetProperty Id="ExtractMartools" Value="&quot;powershell.exe&quot; -Command &quot;Expand-Archive '[MassaStationMartools]{MARTOOLS_ZIP}' -d '[INSTALLDIR]'&quot;" Before="ExtractMartools" Sequence="execute" />
+        <CustomAction
+            Id="ExtractMartools"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="deferred"
             Impersonate="no"
             Return="check"
         />
-        <CustomAction Id="DeleteMartoolsZip"
-            Directory="MassaStationMartools"
-            ExeCommand="cmd /c del &quot;[MassaStationMartools]{MARTOOLS_ZIP}&quot;"
+
+        <SetProperty Id="DeleteMartoolsZip" Value="&quot;cmd.exe&quot; /c del &quot;[MassaStationMartools]{MARTOOLS_ZIP}&quot;" Before="DeleteMartoolsZip" Sequence="execute" />
+        <CustomAction
+            Id="DeleteMartoolsZip"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="deferred"
             Impersonate="no"
             Return="check"
         />
-        <CustomAction Id="ExtractAcrylic"
-            Directory="AcrylicDNSProxy"
-            ExeCommand="powershell.exe -Command &quot;Expand-Archive '[AcrylicDNSProxy]{ACRYLIC_ZIP}' -d '[AcrylicDNSProxy]'&quot;"
+
+        <SetProperty Id="ExtractAcrylic" Value="&quot;powershell.exe&quot; -Command &quot;Expand-Archive '[AcrylicDNSProxy]{ACRYLIC_ZIP}' -d '[AcrylicDNSProxy]'&quot;" Before="ExtractAcrylic" Sequence="execute" />
+        <CustomAction
+            Id="ExtractAcrylic"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="deferred"
             Impersonate="no"
             Return="check"
         />
-        <CustomAction Id="DeleteAcrylicZip"
-            Directory="AcrylicDNSProxy"
-            ExeCommand="cmd /c del &quot;[AcrylicDNSProxy]{ACRYLIC_ZIP}&quot;"
+
+        <SetProperty Id="DeleteAcrylicZip" Value="&quot;cmd.exe&quot; /c del &quot;[AcrylicDNSProxy]{ACRYLIC_ZIP}&quot;" Before="DeleteAcrylicZip" Sequence="execute" />
+        <CustomAction
+            Id="DeleteAcrylicZip"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="deferred"
             Impersonate="no"
             Return="check"
         />
+
+        <SetProperty Id="InstallAcrylic" Value="&quot;powershell.exe&quot; -Command &quot; Set-Location '[AcrylicDNSProxy]';  &amp; '[AcrylicDNSProxy]InstallAcrylicService.bat'&quot; >> {installer_logfile} 2>&amp;1" Before="InstallAcrylic" Sequence="execute" />
         <CustomAction
             Id="InstallAcrylic"
-            Directory="AcrylicDNSProxy"
-            ExeCommand="powershell.exe -Command &quot; &amp; '[AcrylicDNSProxy]InstallAcrylicService.bat'&quot; >> {installer_logfile} 2>&amp;1"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="deferred"
             Impersonate="no"
             Return="check"
         />
+
+        <SetProperty Id="RollbackAcrylicInstall" Value="&quot;powershell.exe&quot; -Command &quot; Set-Location '[AcrylicDNSProxy]'; &amp; '[AcrylicDNSProxy]UninstallAcrylicService.bat'&quot; >> {installer_logfile} 2>&amp;1" Before="RollbackAcrylicInstall" Sequence="execute" />
         <CustomAction
             Id="RollbackAcrylicInstall"
-            Directory="AcrylicDNSProxy"
-            ExeCommand="cmd /c &quot;[AcrylicDNSProxy]UninstallAcrylicService.bat&quot;"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="rollback"
             Impersonate="no"
             Return="ignore"
         />
+
+        <SetProperty Id="AddStationToHosts" Value="&quot;powershell.exe&quot; -Command &quot; &amp; '[INSTALLDIR]{ADD_STATION_TO_HOSTS_SCRIPT}'&quot; >> {installer_logfile} 2>&amp;1" Before="AddStationToHosts" Sequence="execute" />
         <CustomAction
             Id="AddStationToHosts"
-            Directory="INSTALLDIR"
-            ExeCommand="powershell.exe -Command &quot; &amp; '[INSTALLDIR]{ADD_STATION_TO_HOSTS_SCRIPT}'&quot; >> {installer_logfile} 2>&amp;1"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="deferred"
             Impersonate="no"
             Return="check"
         />
+
+        <SetProperty Id="ConfigureAcrylic" Value="&quot;powershell.exe&quot; -Command &quot; &amp; '[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}' '[AcrylicDNSProxy]' &quot; >> {installer_logfile} 2>&amp;1" Before="ConfigureAcrylic" Sequence="execute" />
         <CustomAction
             Id="ConfigureAcrylic"
-            Directory="INSTALLDIR"
-            ExeCommand="powershell.exe -Command &quot; &amp; '[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}' '[AcrylicDNSProxy]' &quot; >> {installer_logfile} 2>&amp;1"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="deferred"
             Impersonate="no"
             Return="check"
         />
+
+        <SetProperty Id="ConfigureNetworkInterface" Value="&quot;powershell.exe&quot; -Command &quot; &amp; '[INSTALLDIR]{NIC_CONFIG_SCRIPT}'&quot; >> {installer_logfile} 2>&amp;1" Before="ConfigureNetworkInterface" Sequence="execute" />
         <CustomAction
             Id="ConfigureNetworkInterface"
-            Directory="INSTALLDIR"
-            ExeCommand="powershell.exe -Command &quot; &amp; '[INSTALLDIR]{NIC_CONFIG_SCRIPT}'&quot; >> {installer_logfile} 2>&amp;1"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="deferred"
             Impersonate="no"
             Return="check"
         />
+
+        <SetProperty Id="RollbackNetworkInterface" Value="&quot;powershell.exe&quot; -Command &quot; &amp; '[INSTALLDIR]{NIC_RESET_SCRIPT}'&quot; >> {installer_logfile} 2>&amp;1" Before="ResetNetworkInterface" Sequence="execute" />
         <CustomAction
             Id="RollbackNetworkInterface"
-            Directory="INSTALLDIR"
-            ExeCommand="cmd /c &quot;[INSTALLDIR]{NIC_RESET_SCRIPT}&quot;"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="rollback"
             Impersonate="no"
             Return="ignore"
         />
-        
+
+        <SetProperty Id="UninstallAcrylic" Value="&quot;powershell.exe&quot; -Command &quot; Set-Location '[AcrylicDNSProxy]'; &amp; '[AcrylicDNSProxy]UninstallAcrylicService.bat'&quot; >> {installer_logfile} 2>&amp;1" Before="UninstallAcrylic" Sequence="execute" />
         <CustomAction
             Id="UninstallAcrylic"
-            Directory="AcrylicDNSProxy"
-            ExeCommand="cmd /c &quot;[AcrylicDNSProxy]UninstallAcrylicService.bat&quot;"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="deferred"
             Impersonate="no"
             Return="ignore"
         />
+
+        <SetProperty Id="ResetNetworkInterface" Value="&quot;powershell.exe&quot; -Command &quot; &amp; '[INSTALLDIR]{NIC_RESET_SCRIPT}'&quot; >> {installer_logfile} 2>&amp;1" Before="ResetNetworkInterface" Sequence="execute" />
         <CustomAction
             Id="ResetNetworkInterface"
-            Directory="INSTALLDIR"
-            ExeCommand="powershell.exe -Command &quot; &amp; '[INSTALLDIR]{NIC_RESET_SCRIPT}'&quot; >> {installer_logfile} 2>&amp;1"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="deferred"
             Impersonate="no"
             Return="check"
         />
+
+        <SetProperty Id="RemoveInstallDir" Value="&quot;cmd.exe&quot; /c rmdir /s /q &quot;[INSTALLDIR]&quot;" Before="RemoveInstallDir" Sequence="execute" />
         <CustomAction
             Id="RemoveInstallDir"
-            Directory="ProgramFilesFolder"
-            ExeCommand="cmd /c rmdir /s /q &quot;[INSTALLDIR]&quot;"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="deferred"
             Impersonate="no"
             Return="ignore"
         />
+
+        <SetProperty Id="RemoveAcrylicDir" Value="&quot;cmd.exe&quot; /c rmdir /s /q &quot;[AcrylicDNSProxy]&quot;" Before="RemoveAcrylicDir" Sequence="execute" />
         <CustomAction
             Id="RemoveAcrylicDir"
-            Directory="ProgramFilesFolder"
-            ExeCommand="cmd /c rmdir /s /q &quot;[AcrylicDNSProxy]&quot;"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="deferred"
             Impersonate="no"
             Return="ignore"
@@ -415,10 +445,11 @@ def create_wxs_file():
 
         <!-- This Custom Action removes the line containing "station.massa" from the hosts file. -->
         <!-- We can't directly overwrite the hosts file because it is protected by Windows. But creating a new file and moving it to the hosts file works. -->
+        <SetProperty Id="RemoveStationFromHosts" Value="&quot;cmd.exe&quot; /c findstr /v station.massa %windir%\System32\drivers\etc\hosts > %windir%\System32\drivers\etc\hosts.new &amp; move /y %windir%\System32\drivers\etc\hosts.new %windir%\System32\drivers\etc\hosts" Before="RemoveStationFromHosts" Sequence="execute" />
         <CustomAction
             Id="RemoveStationFromHosts"
-            Directory="INSTALLDIR"
-            ExeCommand="cmd /c findstr /v station.massa %windir%\System32\drivers\etc\hosts > %windir%\System32\drivers\etc\hosts.new &amp; move /y %windir%\System32\drivers\etc\hosts.new %windir%\System32\drivers\etc\hosts"
+            BinaryKey="WixCA"
+            DllEntry="CAQuietExec"
             Execute="deferred"
             Impersonate="no"
             Return="ignore"
