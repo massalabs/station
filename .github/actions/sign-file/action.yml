@@ -4,6 +4,9 @@ inputs:
   file:
     required: true
     description: The file to sign
+  name:
+    required: true
+    description: The name of the application to sign
   GCP_PEM_KEY:
     required: true
     description: The PEM key to use for signing
@@ -47,4 +50,4 @@ runs:
     - name: Sign massastation with EV cert on Google Cloud
       shell: bash
       run: |
-        java -jar jsign.jar --storetype GOOGLECLOUD --storepass "$(gcloud auth print-access-token)" --keystore "${{ inputs.GCP_KEYSTORE_ID }}" --alias "${{ inputs.GCP_KEY_ALIAS }}" --certfile "codesign-chain.pem" --tsmode RFC3161 --tsaurl http://timestamp.globalsign.com/tsa/r6advanced1 ${{ inputs.file }}
+        java -jar jsign.jar --storetype GOOGLECLOUD --storepass "$(gcloud auth print-access-token)" --keystore "${{ inputs.GCP_KEYSTORE_ID }}" --alias "${{ inputs.GCP_KEY_ALIAS }}" --certfile "codesign-chain.pem" --tsmode RFC3161 --tsaurl http://timestamp.globalsign.com/tsa/r6advanced1 ${{ inputs.file }} -name "${{ inputs.name }}"
