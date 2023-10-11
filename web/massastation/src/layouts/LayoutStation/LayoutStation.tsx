@@ -119,5 +119,5 @@ export function LayoutStation({ ...props }) {
 function DisplayVersion({ ...props }) {
   const { version } = props;
 
-  return <p className="text-info ml-4 mas-body">v{version}</p>;
+  return <p className="text-info ml-4 mas-body">{version}</p>;
 }
