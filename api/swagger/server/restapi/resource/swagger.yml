@@ -74,8 +74,8 @@ paths:
                 default: 700000000 # DefaultGasLimit
               coins:
                 #$ref: "#/definitions/Amount"
-                description: Set the coin amount that will be transfered to the smartContract.
-                type: number # This is kept for backward compatibilty
+                description: Set the coin amount that will be transferred to the smartContract.
+                type: number # This is kept for backward compatibility
                 default: 0 # DefaultGasLimit
               expiry:
                 description: Set the expiry duration (in number of slots) of the transaction.
@@ -553,7 +553,7 @@ paths:
           description: Plugin identifier.
       responses:
         "204":
-          description: Plugin successfuly remove from the system.
+          description: Plugin successfully remove from the system.
         "400":
           description: Bad request.
           schema:
@@ -596,7 +596,7 @@ paths:
                   x-nullable: false
       responses:
         "204":
-          description: Command successfuly executed.
+          description: Command successfully executed.
         "400":
           description: Bad request.
           schema:
