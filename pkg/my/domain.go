@@ -24,7 +24,7 @@ type Domain struct {
 This function fetch the list of domain names owned by a user from the DNS smart contract
 and returns it as an array of strings.
 */
-func Domains(config config.AppConfig, client *node.Client, nickname string) ([]string, error) {
+func Domains(config config.NetworkInfos, client *node.Client, nickname string) ([]string, error) {
 	const ownedPrefix = "owned"
 
 	wallet, err := wallet.Fetch(nickname)
@@ -57,7 +57,7 @@ func Domains(config config.AppConfig, client *node.Client, nickname string) ([]s
 // GetWebsites retrieves information about websites given a DNSAddress, and domain names.
 // It queries the DNS entries for the specified domain names, retrieves relevant data, checks chunk integrity,
 // and returns a list of website information including contract address, name, description, and broken chunks.
-func GetWebsites(config config.AppConfig, client *node.Client, domainNames []string) ([]*models.Websites, error) {
+func GetWebsites(config config.NetworkInfos, client *node.Client, domainNames []string) ([]*models.Websites, error) {
 	keys := make([][]byte, len(domainNames))
 
 	for i, domain := range domainNames {

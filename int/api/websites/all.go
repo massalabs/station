@@ -23,12 +23,12 @@ const (
 	blackListKey = "blackList"
 )
 
-func NewRegistryHandler(config *config.AppConfig) operations.AllDomainsGetterHandler {
+func NewRegistryHandler(config *config.NetworkInfos) operations.AllDomainsGetterHandler {
 	return &registryHandler{config: config}
 }
 
 type registryHandler struct {
-	config *config.AppConfig
+	config *config.NetworkInfos
 }
 
 func (h *registryHandler) Handle(_ operations.AllDomainsGetterParams) middleware.Responder {
@@ -51,8 +51,8 @@ smart contract Massa Station is connected to. Once this data has been fetched fr
 the various website storer contracts, the function builds an array of Registry objects
 and returns it to the frontend for display on the Registry page.
 */
-// Registry fetches the registry data for the given AppConfig.
-func Registry(config *config.AppConfig) ([]*models.Registry, error) {
+// Registry fetches the registry data for the given NetworkInfos.
+func Registry(config *config.NetworkInfos) ([]*models.Registry, error) {
 	client := node.NewClient(config.NodeURL)
 
 	websiteNames, err := filterEntriesToDisplay(*config, client)
@@ -106,7 +106,7 @@ The dns SC has 4 different kinds of key:
 -a owner key
 we only want to keep the website names keys.
 */
-func filterEntriesToDisplay(config config.AppConfig, client *node.Client) ([][]byte, error) {
+func filterEntriesToDisplay(config config.NetworkInfos, client *node.Client) ([][]byte, error) {
 	// we first remove the owned type keys
 	keyList, err := node.FilterSCKeysByPrefix(client, config.DNSAddress, ownedPrefix, false)
 	if err != nil {

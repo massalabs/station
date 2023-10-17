@@ -21,12 +21,12 @@ const UploadMaxSize = "UPLOAD_MAX_SIZE"
 
 const defaultMaxArchiveSize = 1500000
 
-func NewWebsitePrepareHandler(config *config.AppConfig) operations.WebsiteUploaderPrepareHandler {
+func NewWebsitePrepareHandler(config *config.NetworkInfos) operations.WebsiteUploaderPrepareHandler {
 	return &websitePrepare{config: config}
 }
 
 type websitePrepare struct {
-	config *config.AppConfig
+	config *config.NetworkInfos
 }
 
 func listFileName(zipReader *zip.Reader) []string {

@@ -14,12 +14,12 @@ import (
 	"github.com/massalabs/station/pkg/onchain"
 )
 
-func NewExecuteFunctionHandler(config *config.AppConfig) operations.CmdExecuteFunctionHandler {
+func NewExecuteFunctionHandler(config *config.NetworkInfos) operations.CmdExecuteFunctionHandler {
 	return &executeFunction{config: config}
 }
 
 type executeFunction struct {
-	config *config.AppConfig
+	config *config.NetworkInfos
 }
 
 //nolint:funlen

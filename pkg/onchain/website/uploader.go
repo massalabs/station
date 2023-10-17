@@ -23,7 +23,7 @@ const blockLength = 260000
 
 //nolint:funlen
 func PrepareForUpload(
-	config config.AppConfig,
+	config config.NetworkInfos,
 	url string,
 	description string,
 	nickname string,
@@ -94,7 +94,7 @@ func PrepareForUpload(
 }
 
 func Upload(
-	config config.AppConfig,
+	config config.NetworkInfos,
 	atAddress string,
 	content []byte,
 	nickname string,
@@ -169,7 +169,7 @@ func upload(
 }
 
 func UploadMissedChunks(
-	config config.AppConfig,
+	config config.NetworkInfos,
 	atAddress string,
 	content []byte,
 	nickname string,

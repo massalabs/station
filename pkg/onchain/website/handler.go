@@ -17,7 +17,7 @@ func handleMassaDomainRequest(
 	writer http.ResponseWriter,
 	reader *http.Request,
 	index int,
-	config config.AppConfig,
+	config config.NetworkInfos,
 	configDir string,
 ) error {
 	name := reader.Host[:index]
@@ -42,7 +42,7 @@ func handleMassaDomainRequest(
 // MassaTLDInterceptor intercepts request for web on-chain.
 func MassaTLDInterceptor(
 	req *interceptor.Interceptor,
-	appConfig config.AppConfig,
+	appConfig config.NetworkInfos,
 	configDir string,
 ) *interceptor.Interceptor {
 	if req == nil {
