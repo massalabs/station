@@ -14,12 +14,12 @@ import (
 	"github.com/massalabs/station/pkg/onchain"
 )
 
-func NewDeploySCHandler(config *config.AppConfig) operations.CmdDeploySCHandler {
+func NewDeploySCHandler(config *config.NetworkInfos) operations.CmdDeploySCHandler {
 	return &deploySC{config: config}
 }
 
 type deploySC struct {
-	config *config.AppConfig
+	config *config.NetworkInfos
 }
 
 func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Responder {

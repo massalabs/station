@@ -7,12 +7,12 @@ import (
 	"github.com/massalabs/station/int/config"
 )
 
-func NewGetNodeHandler(config *config.AppConfig) operations.GetNodeHandler {
+func NewGetNodeHandler(config *config.NetworkInfos) operations.GetNodeHandler {
 	return &getNodeHandler{config: config}
 }
 
 type getNodeHandler struct {
-	config *config.AppConfig
+	config *config.NetworkInfos
 }
 
 func (h *getNodeHandler) Handle(_ operations.GetNodeParams) middleware.Responder {

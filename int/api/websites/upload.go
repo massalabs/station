@@ -9,12 +9,12 @@ import (
 	"github.com/massalabs/station/pkg/onchain/website"
 )
 
-func NewWebsiteUploadHandler(config *config.AppConfig) operations.WebsiteUploaderUploadHandler {
+func NewWebsiteUploadHandler(config *config.NetworkInfos) operations.WebsiteUploaderUploadHandler {
 	return &websiteUploadHandler{config: config}
 }
 
 type websiteUploadHandler struct {
-	config *config.AppConfig
+	config *config.NetworkInfos
 }
 
 func (h *websiteUploadHandler) Handle(params operations.WebsiteUploaderUploadParams) middleware.Responder {

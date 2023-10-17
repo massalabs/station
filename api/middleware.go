@@ -19,7 +19,7 @@ var configDir string
 // - MassaTLDInterceptor to handle *.massa websites
 // - Plugin interceptor to handle call to registered plugins
 // - Default resource interceptor to handle browser call (needed for mobile?) and web resources not yet pluginized.
-func TopMiddleware(handler http.Handler, cfg config.AppConfig) http.Handler {
+func TopMiddleware(handler http.Handler, cfg config.NetworkInfos) http.Handler {
 	//nolint:varnamelen
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logger.Infof("[%s %s]", r.Method, r.URL.Path)

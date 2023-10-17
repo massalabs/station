@@ -9,12 +9,12 @@ import (
 	"github.com/massalabs/station/pkg/node"
 )
 
-func NewDomainsHandler(config *config.AppConfig) operations.MyDomainsGetterHandler {
+func NewDomainsHandler(config *config.NetworkInfos) operations.MyDomainsGetterHandler {
 	return &domainsHandler{config: config}
 }
 
 type domainsHandler struct {
-	config *config.AppConfig
+	config *config.NetworkInfos
 }
 
 func (h *domainsHandler) Handle(params operations.MyDomainsGetterParams) middleware.Responder {

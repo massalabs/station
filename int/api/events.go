@@ -11,12 +11,12 @@ import (
 	"github.com/massalabs/station/pkg/node"
 )
 
-func NewEventListenerHandler(config *config.AppConfig) operations.EventsGetterHandler {
+func NewEventListenerHandler(config *config.NetworkInfos) operations.EventsGetterHandler {
 	return &eventListener{config: config}
 }
 
 type eventListener struct {
-	config *config.AppConfig
+	config *config.NetworkInfos
 }
 
 const timeoutSec = 60

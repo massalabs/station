@@ -17,7 +17,7 @@ import (
 This function fetch the address of the website storer associated with the name given in parameter
 from the DNS smart contract and returns it.
 */
-func Resolve(config config.AppConfig, client *node.Client, name string) (string, error) {
+func Resolve(config config.NetworkInfos, client *node.Client, name string) (string, error) {
 	entry, err := node.FetchDatastoreEntry(client, config.DNSAddress, convert.ToBytesWithPrefixLength(name))
 	if err != nil {
 		return "", fmt.Errorf("calling node.DatastoreEntry with '%s' at '%s': %w", config.DNSAddress, name, err)
@@ -31,7 +31,7 @@ func Resolve(config config.AppConfig, client *node.Client, name string) (string,
 }
 
 func SetRecord(
-	config config.AppConfig,
+	config config.NetworkInfos,
 	client *node.Client,
 	nickname string,
 	url string,

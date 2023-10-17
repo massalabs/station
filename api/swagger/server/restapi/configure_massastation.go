@@ -30,13 +30,13 @@ func configureAPI(api *operations.MassastationAPI) http.Handler {
 	return nil
 }
 
-func (s *Server) ConfigureMassaStationAPI(config config.AppConfig, shutdown chan struct{}) {
+func (s *Server) ConfigureMassaStationAPI(config config.NetworkInfos, shutdown chan struct{}) {
 	if s.api != nil {
 		s.handler = configureMassaStationAPI(s.api, config, shutdown)
 	}
 }
 
-func configureMassaStationAPI(api *operations.MassastationAPI, config config.AppConfig, shutdown chan struct{}) http.Handler {
+func configureMassaStationAPI(api *operations.MassastationAPI, config config.NetworkInfos, shutdown chan struct{}) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 
@@ -124,7 +124,7 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json
 // document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics.
-func setupGlobalMiddleware(handler http.Handler, config config.AppConfig) http.Handler {
+func setupGlobalMiddleware(handler http.Handler, config config.NetworkInfos) http.Handler {
 	handleCORS := cors.Default().Handler
 
 	return api.TopMiddleware(handleCORS(handler), config)

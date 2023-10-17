@@ -10,12 +10,12 @@ import (
 	"github.com/massalabs/station/pkg/node"
 )
 
-func NewGetAddressHandler(config *config.AppConfig) operations.MassaGetAddressesHandler {
+func NewGetAddressHandler(config *config.NetworkInfos) operations.MassaGetAddressesHandler {
 	return &getAddress{config: config}
 }
 
 type getAddress struct {
-	config *config.AppConfig
+	config *config.NetworkInfos
 }
 
 func (g *getAddress) Handle(params operations.MassaGetAddressesParams) middleware.Responder {

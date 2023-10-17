@@ -3,9 +3,11 @@ package config
 import (
 	"embed"
 	"fmt"
+	"regexp"
 	"sync"
 
 	"github.com/massalabs/station/pkg/logger"
+	"github.com/massalabs/station/pkg/node"
 	"gopkg.in/yaml.v2"
 )
 
@@ -13,10 +15,11 @@ const (
 	MassaStationURL = "station.massa"
 )
 
-type AppConfig struct {
+type NetworkInfos struct {
 	Network    string
 	NodeURL    string
 	DNSAddress string
+	Version    string
 }
 
 // NetworkConfig represents the configuration of a network.
@@ -30,7 +33,7 @@ type NetworkConfig struct {
 
 // NetworkManager represents a manager for network configurations.
 type NetworkManager struct {
-	appConfig     AppConfig                // Current network configuration
+	networkInfos  NetworkInfos             // Current network configuration
 	knownNetworks map[string]NetworkConfig // Known network configurations
 	networkMutex  sync.RWMutex             // Mutex for concurrent access to network configuration
 }
@@ -41,7 +44,7 @@ type NetworkManager struct {
 func NewNetworkManager() (*NetworkManager, error) {
 	//nolint: exhaustruct
 	networkManager := &NetworkManager{
-		appConfig:     AppConfig{},
+		networkInfos:  NetworkInfos{},
 		knownNetworks: make(map[string]NetworkConfig),
 	}
 
@@ -67,21 +70,31 @@ func NewNetworkManager() (*NetworkManager, error) {
 		return nil, fmt.Errorf("default network not found")
 	}
 
-	// Get AppConfig for the selected network
-	initConfig, ok := networkManager.knownNetworks[defaultNetwork]
-	if !ok {
-		return nil, fmt.Errorf("selected network '%s' not found", defaultNetwork)
+	err = networkManager.SwitchNetwork(defaultNetwork)
+	if err != nil {
+		return nil, fmt.Errorf("set default network %s: %w", defaultNetwork, err)
 	}
-
-	appConfig := AppConfig{
-		NodeURL:    initConfig.URLs[0],
-		DNSAddress: initConfig.DNS,
-		Network:    defaultNetwork,
-	}
-
-	networkManager.SetNetwork(appConfig)
 
 	return networkManager, nil
+}
+
+func (n *NetworkManager) Version(nodeUrl string) (*string, error) {
+	client := node.NewClient(nodeUrl)
+	status, err := node.Status(client)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrive node status: %w", err)
+	}
+
+	pattern := `.+\.(\d+\.\d+)`
+
+	re := regexp.MustCompile(pattern)
+	matches := re.FindStringSubmatch(*status.Version)
+
+	if len(matches) != 2 {
+		return nil, fmt.Errorf("failed to parse node version from: %s", *status.Version)
+	}
+
+	return &matches[1], nil
 }
 
 // SetNetworks sets the known networks for the NetworkManager.
@@ -103,9 +116,9 @@ func (n *NetworkManager) Networks() *[]string {
 }
 
 // NetworkFromString retrieves the network configuration corresponding to the given network name.
-// It returns the network configuration represented by an AppConfig struct.
+// It returns the network configuration represented by an NetworkInfos struct.
 // An error is returned if the network configuration is not found or if the provided network name is invalid.
-func (n *NetworkManager) NetworkFromString(networkName string) (*AppConfig, error) {
+func (n *NetworkManager) NetworkFromString(networkName string) (*NetworkInfos, error) {
 	knownNetworks := *n.Networks()
 
 	for _, name := range knownNetworks {
@@ -115,31 +128,31 @@ func (n *NetworkManager) NetworkFromString(networkName string) (*AppConfig, erro
 				return nil, fmt.Errorf("failed to find configuration for network '%s'", networkName)
 			}
 
-			appConfig := &AppConfig{
+			networkInfos := &NetworkInfos{
 				NodeURL:    config.URLs[0],
 				DNSAddress: config.DNS,
 				Network:    networkName,
 			}
 
-			return appConfig, nil
+			return networkInfos, nil
 		}
 	}
 
 	return nil, fmt.Errorf("invalid network option: '%s'", networkName)
 }
 
-// SetNetwork sets the current network configuration for the NetworkManager.
-func (n *NetworkManager) SetNetwork(config AppConfig) {
+// SetCurrentNetwork sets the current network configuration for the NetworkManager.
+func (n *NetworkManager) SetCurrentNetwork(config NetworkInfos) {
 	n.networkMutex.Lock()
 	defer n.networkMutex.Unlock()
 
-	n.appConfig = config
+	n.networkInfos = config
 }
 
 // Network returns the current network configuration.
-// It returns the network configuration represented by an AppConfig struct.
-func (n *NetworkManager) Network() *AppConfig {
-	return &n.appConfig
+// It returns the network configuration represented by an NetworkInfos struct.
+func (n *NetworkManager) Network() *NetworkInfos {
+	return &n.networkInfos
 }
 
 // SwitchNetwork switches the current network configuration to the specified network.
@@ -151,14 +164,20 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 		return fmt.Errorf("unknown network option: %s", selectedNetworkStr)
 	}
 
-	n.SetNetwork(AppConfig{
+	version, err := n.Version(cfg.URLs[0])
+	if err != nil {
+		return fmt.Errorf("getting network version: %w", err)
+	}
+
+	n.SetCurrentNetwork(NetworkInfos{
 		NodeURL:    cfg.URLs[0],
 		DNSAddress: cfg.DNS,
 		Network:    selectedNetworkStr,
+		Version:    *version,
 	})
 
-	logger.Debugf("Switched to network: %s\n", selectedNetworkStr)
-	logger.Debugf("Current config: %+v\n", n.Network())
+	logger.Debugf("Set current network: %s (version %s)\n", selectedNetworkStr, *version)
+	logger.Debugf("Network config: %+v\n", n.Network())
 
 	return nil
 }

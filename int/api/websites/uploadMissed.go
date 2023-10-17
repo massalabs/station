@@ -9,12 +9,12 @@ import (
 	"github.com/massalabs/station/pkg/onchain/website"
 )
 
-func NewWebsiteUploadMissedChunkHandler(config *config.AppConfig) operations.WebsiteUploadMissingChunksHandler {
+func NewWebsiteUploadMissedChunkHandler(config *config.NetworkInfos) operations.WebsiteUploadMissingChunksHandler {
 	return &uploadMissedChunkHandler{config: config}
 }
 
 type uploadMissedChunkHandler struct {
-	config *config.AppConfig
+	config *config.NetworkInfos
 }
 
 func (h *uploadMissedChunkHandler) Handle(params operations.WebsiteUploadMissingChunksParams) middleware.Responder {
