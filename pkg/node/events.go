@@ -115,7 +115,7 @@ func ListenEvents(
 		events, err := Events(client, start, end, emitter, caller, operationID)
 		if err != nil {
 			return nil,
-				fmt.Errorf("fetching events for: opId %s, caller %s, emitter %s: %w", *operationID, *caller, *emitter, err)
+				fmt.Errorf("fetching events %w", err)
 		}
 
 		for _, event := range events {
@@ -131,27 +131,5 @@ func ListenEvents(
 	}
 
 	// Handle the case where one or more pointers are nil
-	return nil, listenEventError(operationID, caller, emitter)
-}
-
-func listenEventError(operationID *string, caller *string, emitter *string) error {
-	if operationID == nil || caller == nil || emitter == nil {
-		err := "timeout while listening events for: "
-		if operationID == nil {
-			err += "operationID is nil, "
-		}
-
-		if caller == nil {
-			err += "caller is nil, "
-		}
-
-		if emitter == nil {
-			err += "emitter is nil, "
-		}
-
-		return fmt.Errorf(err)
-	}
-
-	return fmt.Errorf(
-		"timeout while listening events for: opId %s, caller %s, emitter %s", *operationID, *caller, *emitter)
+	return nil, fmt.Errorf("no events found in the given time interval (%d seconds)", maxWaitingTimeInSeconds)
 }
