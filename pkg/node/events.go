@@ -130,6 +130,28 @@ func ListenEvents(
 		}
 	}
 
-	return nil,
-		fmt.Errorf("listening events for: opId %s, caller %s, emitter %s: Timeout", *operationID, *caller, *emitter)
+	// Handle the case where one or more pointers are nil
+	return nil, listenEventError(operationID, caller, emitter)
+}
+
+func listenEventError(operationID *string, caller *string, emitter *string) error {
+	if operationID == nil || caller == nil || emitter == nil {
+		err := "timeout while listening events for: "
+		if operationID == nil {
+			err += "operationID is nil, "
+		}
+
+		if caller == nil {
+			err += "caller is nil, "
+		}
+
+		if emitter == nil {
+			err += "emitter is nil, "
+		}
+
+		return fmt.Errorf(err)
+	}
+
+	return fmt.Errorf(
+		"timeout while listening events for: opId %s, caller %s, emitter %s", *operationID, *caller, *emitter)
 }
