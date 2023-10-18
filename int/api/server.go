@@ -98,7 +98,6 @@ func NewServer(flags StartServerFlags) *Server {
 // Starts the server.
 // This function starts the server in a new goroutine to avoid blocking the main thread.
 func (server *Server) Start(networkManager *config.NetworkManager, pluginManager *plugin.Manager) {
-
 	initLocalAPI(server.localAPI, networkManager, pluginManager)
 	server.api.ConfigureMassaStationAPI(*networkManager.Network(), server.shutdown)
 

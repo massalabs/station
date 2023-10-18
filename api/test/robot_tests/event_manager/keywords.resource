@@ -13,7 +13,9 @@ Suite Setup
 
 Deploy testSC
     ${sc}=    Get File For Streaming Upload    ${CURDIR}/../../testSC/build/main-testSC.wasm
-    ${data}=    Create Dictionary    walletNickname=${WALLET_NICKNAME}
+    ${data}=    Create Dictionary
+    ...    walletNickname=${WALLET_NICKNAME}
+    ...    coins=3000000000
     ${file}=    Create Dictionary    smartContract=${sc}
     ${response}=    POST    ${API_URL}/cmd/deploySC    data=${data}    files=${file}    expected_status=${STATUS_OK}
     Should Contain    ${response.json()['firstEvent']['data']}    TestSC is deployed at :

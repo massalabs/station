@@ -7,7 +7,10 @@ import (
 	"unicode/utf16"
 )
 
-const BytesPerUint64 = 8
+const (
+	BytesPerUint64 = 8
+	BytesPerUint32 = 4
+)
 
 // Encode uint64 to byte array.
 func U64ToBytes(nb int) (bytes []byte) {
@@ -17,8 +20,6 @@ func U64ToBytes(nb int) (bytes []byte) {
 
 	return
 }
-
-const BytesPerUint32 = 4
 
 // Encode uint32 to byte array.
 func U32ToBytes(nb int) (bytes []byte) {
