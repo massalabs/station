@@ -19,34 +19,64 @@ import (
 //go:embed sc
 var content embed.FS
 
-const blockLength = 260000
+const (
+	blockLength = 260000
+	nbChunkKey  = "NB_CHUNKS"
+	ownerKey    = "OWNER"
+)
 
-//nolint:funlen
+//nolint:funlen,cyclop
 func PrepareForUpload(
-	config config.NetworkInfos,
+	network config.NetworkInfos,
 	url string,
 	description string,
 	nickname string,
 ) (string, string, error) {
-	client := node.NewClient(config.NodeURL)
+	client := node.NewClient(network.NodeURL)
+
+	versionFloat, err := strconv.ParseFloat(network.Version, 64)
+	if err != nil {
+		return "", "", fmt.Errorf("failed to parse nodeversion %s: %w", network.Version, err)
+	}
+
+	scSuffix := ".wasm"
+
+	//nolint:gomnd
+	if versionFloat >= 26 {
+		// current version is higher than 26.0
+		scSuffix = "_v26.wasm"
+	}
 
 	basePath := "sc/"
 
-	websiteDeployer, err := content.ReadFile(basePath + "websiteDeployer.wasm")
+	websiteDeployer, err := content.ReadFile(basePath + "websiteDeployer" + scSuffix)
 	if err != nil {
 		return "", "", fmt.Errorf("websiteDeployer contract not found: %w", err)
 	}
 
-	websiteStorer, err := content.ReadFile(basePath + "websiteStorer.wasm")
+	websiteStorer, err := content.ReadFile(basePath + "websiteStorer" + scSuffix)
 	if err != nil {
 		return "", "", fmt.Errorf("websiteStorer contract not found: %w", err)
 	}
 
 	// webSiteInitCost correspond to the cost of owner initialization
 	//nolint:lll,gomnd
-	webSiteInitCost := sendOperation.StorageKeyCreationCost + 53 /*owner Addr max byteLenght*/ *sendOperation.StorageCostPerByte
-	deployCost := sendOperation.AccountCreationStorageCost + (len(websiteStorer) * sendOperation.StorageCostPerByte)
-	totalStorageCost := webSiteInitCost + deployCost
+	webSiteInitCost, err := sendOperation.StorageCostForEntry(network.Version, len([]byte(ownerKey)), 53 /*owner Addr max byteLenght*/)
+	if err != nil {
+		return "", "", fmt.Errorf("unable to compute storage cost for website init: %w", err)
+	}
+
+	deployCost, err := sendOperation.StorageCostForEntry(network.Version, 0, len(websiteStorer))
+	if err != nil {
+		return "", "", fmt.Errorf("unable to compute storage cost for website deployment: %w", err)
+	}
+
+	accountCreationCost, err := sendOperation.AccountCreationStorageCost(network.Version)
+	if err != nil {
+		return "", "", fmt.Errorf("unable to compute storage cost for account creation: %w", err)
+	}
+
+	totalStorageCost := webSiteInitCost + deployCost + accountCreationCost
 
 	logger.Debug("Website deployment cost estimation: ", totalStorageCost)
 
@@ -75,7 +105,7 @@ func PrepareForUpload(
 
 	// Set DNS.
 	_, err = dns.SetRecord(
-		config,
+		network,
 		client,
 		nickname,
 		url,
@@ -94,17 +124,15 @@ func PrepareForUpload(
 }
 
 func Upload(
-	config config.NetworkInfos,
+	network config.NetworkInfos,
 	atAddress string,
 	content []byte,
 	nickname string,
 	operationBatch sendOperation.OperationBatch,
 ) ([]string, error) {
-	client := node.NewClient(config.NodeURL)
-
 	blocks := chunk(content, blockLength)
 
-	operations, err := upload(client, atAddress, blocks, nickname, operationBatch)
+	operations, err := upload(network, atAddress, blocks, nickname, operationBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -112,8 +140,9 @@ func Upload(
 	return operations, nil
 }
 
+//nolint:funlen
 func upload(
-	client *node.Client,
+	network config.NetworkInfos,
 	addr string,
 	chunks [][]byte,
 	nickname string,
@@ -121,6 +150,8 @@ func upload(
 ) ([]string, error) {
 	nbChunks := len(chunks)
 	operations := make([]string, nbChunks)
+
+	client := node.NewClient(network.NodeURL)
 
 	for chunkIndex := 0; chunkIndex < nbChunks; chunkIndex++ {
 		chunkSize := len(chunks[chunkIndex])
@@ -133,12 +164,21 @@ func upload(
 		// Chunk data encoding
 		params = append(params, chunks[chunkIndex]...)
 
-		// Total cost is the cost for storage bytes plus a fixed cost for key creation
-		uploadCost := sendOperation.StorageKeyCreationCost + sendOperation.StorageCostPerByte*chunkSize
+		uploadCost, err := sendOperation.StorageCostForEntry(network.Version, convert.BytesPerUint32, chunkSize)
+		if err != nil {
+			return nil, fmt.Errorf("unable to compute storage cost chunk upload: %w", err)
+		}
 
 		if chunkIndex == 0 {
 			// if chunkID == 0, we need to add the cost of the key creation for the NB_CHUNKS key
-			chunkKeyCost := sendOperation.StorageKeyCreationCost + sendOperation.StorageCostPerByte*convert.BytesPerUint32
+			chunkKeyCost, err := sendOperation.StorageCostForEntry(
+				network.Version,
+				len([]byte(nbChunkKey)),
+				convert.BytesPerUint32)
+			if err != nil {
+				return nil, fmt.Errorf("unable to compute storage cost for chunk key creation: %w", err)
+			}
+
 			uploadCost += chunkKeyCost
 		}
 
@@ -176,12 +216,10 @@ func UploadMissedChunks(
 	missedChunks string,
 	operationBatch sendOperation.OperationBatch,
 ) ([]string, error) {
-	client := node.NewClient(config.NodeURL)
-
 	blocks := chunk(content, blockLength)
 
 	operations, err := uploadMissedChunks(
-		client,
+		config,
 		atAddress,
 		blocks,
 		missedChunks,
@@ -195,14 +233,17 @@ func UploadMissedChunks(
 	return operations, nil
 }
 
+//nolint:funlen
 func uploadMissedChunks(
-	client *node.Client,
+	network config.NetworkInfos,
 	addr string,
 	chunks [][]byte,
 	missedChunks string,
 	nickname string,
 	operationBatch sendOperation.OperationBatch,
 ) ([]string, error) {
+	client := node.NewClient(network.NodeURL)
+
 	operations := make([]string, len(chunks)+1)
 	arrMissedChunks := strings.Split(missedChunks, ",")
 
@@ -223,12 +264,21 @@ func uploadMissedChunks(
 		//nolint:ineffassign,nolintlint
 		params = append(params, chunks[chunkID]...)
 
-		// Total cost is the cost for storage bytes plus a fixed cost for key creation
-		uploadCost := sendOperation.StorageKeyCreationCost + sendOperation.StorageCostPerByte*chunkSize
+		uploadCost, err := sendOperation.StorageCostForEntry(network.Version, convert.BytesPerUint32, chunkSize)
+		if err != nil {
+			return nil, fmt.Errorf("unable to compute storage cost for chunk upload: %w", err)
+		}
 
 		if chunkID == 0 {
 			// if chunkID == 0, we may need to add the cost of the key creation for the NB_CHUNKS key
-			chunkKeyCost := sendOperation.StorageKeyCreationCost + sendOperation.StorageCostPerByte*convert.BytesPerUint32
+			chunkKeyCost, err := sendOperation.StorageCostForEntry(
+				network.Version,
+				len([]byte(nbChunkKey)),
+				convert.BytesPerUint32)
+			if err != nil {
+				return nil, fmt.Errorf("unable to compute storage cost for chunk key creation: %w", err)
+			}
+
 			uploadCost += chunkKeyCost
 		}
 

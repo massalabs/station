@@ -78,25 +78,6 @@ func NewNetworkManager() (*NetworkManager, error) {
 	return networkManager, nil
 }
 
-func (n *NetworkManager) Version(nodeUrl string) (*string, error) {
-	client := node.NewClient(nodeUrl)
-	status, err := node.Status(client)
-	if err != nil {
-		return nil, fmt.Errorf("failed to retrive node status: %w", err)
-	}
-
-	pattern := `.+\.(\d+\.\d+)`
-
-	re := regexp.MustCompile(pattern)
-	matches := re.FindStringSubmatch(*status.Version)
-
-	if len(matches) != 2 {
-		return nil, fmt.Errorf("failed to parse node version from: %s", *status.Version)
-	}
-
-	return &matches[1], nil
-}
-
 // SetNetworks sets the known networks for the NetworkManager.
 func (n *NetworkManager) SetNetworks(networks map[string]NetworkConfig) {
 	n.knownNetworks = networks
@@ -155,6 +136,27 @@ func (n *NetworkManager) Network() *NetworkInfos {
 	return &n.networkInfos
 }
 
+func (n *NetworkManager) version(nodeURL string) (string, error) {
+	client := node.NewClient(nodeURL)
+
+	status, err := node.Status(client)
+	if err != nil {
+		return "", fmt.Errorf("failed to retrieve node status: %w", err)
+	}
+
+	pattern := `.+\.(\d+\.\d+)`
+
+	re := regexp.MustCompile(pattern)
+	matches := re.FindStringSubmatch(*status.Version)
+
+	//nolint:gomnd
+	if len(matches) != 2 {
+		return "", fmt.Errorf("failed to parse node version from: %s", *status.Version)
+	}
+
+	return matches[1], nil
+}
+
 // SwitchNetwork switches the current network configuration to the specified network.
 // selectedNetworkStr: The name of the network configuration to switch to.
 // Returns any error encountered during the switch operation.
@@ -164,7 +166,7 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 		return fmt.Errorf("unknown network option: %s", selectedNetworkStr)
 	}
 
-	version, err := n.Version(cfg.URLs[0])
+	version, err := n.version(cfg.URLs[0])
 	if err != nil {
 		return fmt.Errorf("getting network version: %w", err)
 	}
@@ -173,10 +175,10 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 		NodeURL:    cfg.URLs[0],
 		DNSAddress: cfg.DNS,
 		Network:    selectedNetworkStr,
-		Version:    *version,
+		Version:    version,
 	})
 
-	logger.Debugf("Set current network: %s (version %s)\n", selectedNetworkStr, *version)
+	logger.Debugf("Set current network: %s (version %s)\n", selectedNetworkStr, version)
 	logger.Debugf("Network config: %+v\n", n.Network())
 
 	return nil

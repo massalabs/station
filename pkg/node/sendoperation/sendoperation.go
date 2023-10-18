@@ -6,6 +6,7 @@ import (
 	b64 "encoding/base64"
 	"encoding/binary"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/massalabs/station/pkg/node"
@@ -14,17 +15,13 @@ import (
 )
 
 const (
-	DefaultGasLimit     = 700_000_000
-	DefaultExpiryInSlot = 3
-	DefaultFee          = 0
-	// To be updated when storage costs reduction will be deployed (testnet 26?)
-	AccountCreationStorageCost = 10_000_000
-	StorageCostPerByte         = 1_000_000
-	// Today, the cost of storage to create a new storagekey is fixed to 10*StorageCostPerByte
-	// This should be updated when key creation cost will be charged for actual size.
-	chargedBytesForKey     = 10
-	StorageKeyCreationCost = chargedBytesForKey * StorageCostPerByte
-	OneMassa               = 1_000_000_000
+	DefaultGasLimit            = 700_000_000
+	DefaultExpiryInSlot        = 3
+	DefaultFee                 = 0
+	accountCreationStorageCost = 1_000_000
+	StorageCostPerByte         = 100_000
+	StorageEntryBaseBytes      = 4
+	OneMassa                   = 1_000_000_000
 )
 
 //nolint:tagliatelle
@@ -222,4 +219,38 @@ func DecodeOperationID(data []byte) (uint64, error) {
 	}
 
 	return opID, nil
+}
+
+func StorageCostForEntry(nodeVersion string, keyByteLengh, valueByteLenght int) (int, error) {
+	versionFloat, err := strconv.ParseFloat(nodeVersion, 64)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse nodeversion %s: %w", nodeVersion, err)
+	}
+
+	//nolint:gomnd
+	if versionFloat < 26 {
+		lecagyStorageCost := 1_000_000
+		// key bytes are charged at the fixed price of 10 bytes
+		//nolint:gomnd
+		return (valueByteLenght + 10) * lecagyStorageCost, nil
+	}
+
+	return (valueByteLenght + keyByteLengh + StorageEntryBaseBytes) * StorageCostPerByte, nil
+}
+
+func AccountCreationStorageCost(nodeVersion string) (int, error) {
+	versionFloat, err := strconv.ParseFloat(nodeVersion, 64)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse nodeversion %s: %w", nodeVersion, err)
+	}
+
+	//nolint:gomnd
+	if versionFloat < 26 {
+		// current version is lower than 0.26.0
+		lecacyAccountCreationStorageCost := 10_000_000
+
+		return lecacyAccountCreationStorageCost, nil
+	}
+
+	return accountCreationStorageCost, nil
 }
