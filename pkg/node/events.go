@@ -130,6 +130,5 @@ func ListenEvents(
 		}
 	}
 
-	// Handle the case where one or more pointers are nil
 	return nil, fmt.Errorf("no events found in the given time interval (%d seconds)", maxWaitingTimeInSeconds)
 }
