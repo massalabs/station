@@ -4,6 +4,7 @@ wixtoolset/
 buildpkg/
 builddeb/
 tmpdeb/
+macos/resources/
 
 # Temporary files
 *.zip
