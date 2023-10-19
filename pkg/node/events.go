@@ -115,7 +115,7 @@ func ListenEvents(
 		events, err := Events(client, start, end, emitter, caller, operationID)
 		if err != nil {
 			return nil,
-				fmt.Errorf("fetching events for: opId %s, caller %s, emitter %s: %w", *operationID, *caller, *emitter, err)
+				fmt.Errorf("fetching events %w", err)
 		}
 
 		for _, event := range events {
@@ -130,6 +130,5 @@ func ListenEvents(
 		}
 	}
 
-	return nil,
-		fmt.Errorf("listening events for: opId %s, caller %s, emitter %s: Timeout", *operationID, *caller, *emitter)
+	return nil, fmt.Errorf("no events found in the given time interval (%d seconds)", maxWaitingTimeInSeconds)
 }
