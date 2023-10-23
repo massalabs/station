@@ -12,6 +12,8 @@ MASSASTATION_BINARY_NAME=massastation
 
 HOMEBREW_INSTALL_SCRIPT_URL=https://raw.githubusercontent.com/massalabs/homebrew.sh/master/homebrew-3.3.sh
 
+LICENSE_FILE_NAME=MassaStation_ToS.rtf
+
 # Print the usage to stderr and exit with code 1.
 display_usage() {
     echo "Usage: $0 <arch>" >&2
@@ -47,7 +49,9 @@ build_massastation() {
 # Build the package using pkgbuild.
 package() {
     pkgbuild --component $MASSASTATION_INSTALLER_NAME --identifier com.massalabs.massastation --version $PKGVERSION \
-        --scripts macos/scripts --install-location /Applications massastation_$PKGVERSION\_$ARCH.pkg || fatal "failed to create package"
+        --scripts macos/scripts --install-location /Applications MassaStation.pkg || fatal "failed to create package"
+    
+    productbuild --distribution macos/Distribution.dist --resources macos/resources --package-path . massastation_$PKGVERSION\_$ARCH.pkg || fatal "failed to create installer"
 }
 
 # Download homebrew installation script and put it in script directory.
@@ -60,6 +64,14 @@ main() {
     test -d $MASSASTATION_INSTALLER_NAME || build_massastation
 
     download_homebrew_install_script
+
+    if [ ! -d macos/resources ]; then
+        mkdir macos/resources || fatal "failed to create resources directory"
+    fi
+
+    if [ ! -f macos/resources/$LICENSE_FILE_NAME ]; then
+        cp common/$LICENSE_FILE_NAME macos/resources/$LICENSE_FILE_NAME || fatal "failed to copy license file"
+    fi
 
     # Check if the binary isn't named massastation. If it isn't, rename it to massastation.
     if [ ! -f $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME ]; then

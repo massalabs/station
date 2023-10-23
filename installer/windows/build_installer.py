@@ -42,6 +42,8 @@ WIXTOOLSET_URL = (
     "https://wixdl.blob.core.windows.net/releases/v3.14.0.6526/wix314-binaries.zip"
 )
 
+LICENSE_FILEPATH = "common\\MassaStation_ToS.rtf"
+
 def download_file(url, filename):
     """
     Download a given file from a given URL.
@@ -171,7 +173,7 @@ def create_wxs_file():
         </Condition>
 
         <MediaTemplate EmbedCab="yes"/>
-        <WixVariable Id="WixUILicenseRtf" Value="windows\\MassaStation_ToS.rtf" />
+        <WixVariable Id="WixUILicenseRtf" Value="{LICENSE_FILEPATH}" />
         <Property Id="MsiLogging" Value="voicewarmup!" />
 
         <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />

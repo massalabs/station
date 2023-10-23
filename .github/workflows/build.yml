@@ -116,7 +116,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: massastation_installer_darwin_${{ matrix.arch }}
-          path: "installer/*.pkg"
+          path: "installer/massastation_*.pkg"
           if-no-files-found: error
           retention-days: 7
 

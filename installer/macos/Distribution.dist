@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<installer-gui-script minSpecVersion="1">
+    <title>Massa Station</title>
+    <license file="MassaStation_ToS.rtf" />
+
+    <options customize="never" hostArchitectures="x86_64,arm64" />
+    <choices-outline>
+        <line choice="install-massa-station"/>
+    </choices-outline>
+    <choice id="install-massa-station" title="Massa Station">
+        <pkg-ref id="com.massalabs.massastation"/>
+    </choice>
+
+    <pkg-ref id="com.massalabs.massastation" version="1.0" onConclusion="none">MassaStation.pkg</pkg-ref>
+</installer-gui-script>
