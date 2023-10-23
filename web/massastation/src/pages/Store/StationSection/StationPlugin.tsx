@@ -94,16 +94,13 @@ export function StationPlugin({
       pluginArgs = {
         ...pluginArgs,
         topAction: (
-          <div className="flex w-full justify-between pl-4">
-            {/* we use customClass because "disabled" doesn't let us click on the button to turn it back on */}
-            <Button
-              onClick={(e) => updatePluginState(e, PLUGIN_START)}
-              customClass="bg-primary text-tertiary"
-              variant="toggle"
-            >
-              off
-            </Button>
-          </div>
+          <Button
+            onClick={(e) => updatePluginState(e, PLUGIN_START)}
+            customClass="bg-primary text-tertiary"
+            variant="toggle"
+          >
+            off
+          </Button>
         ),
         content: [
           <Button variant="icon" disabled>
@@ -119,15 +116,13 @@ export function StationPlugin({
       pluginArgs = {
         ...pluginArgs,
         topAction: (
-          <div className="flex w-full justify-between pl-4">
-            <Button
-              onClick={(e) => updatePluginState(e, PLUGIN_START)}
-              customClass="bg-primary text-tertiary"
-              variant="toggle"
-            >
-              off
-            </Button>
-          </div>
+          <Button
+            onClick={(e) => updatePluginState(e, PLUGIN_START)}
+            customClass="bg-primary text-tertiary"
+            variant="toggle"
+          >
+            off
+          </Button>
         ),
         content: [
           <Tooltip
@@ -148,14 +143,12 @@ export function StationPlugin({
       pluginArgs = {
         ...pluginArgs,
         topAction: (
-          <div className="flex w-full justify-between pl-4">
-            <Button
-              onClick={(e) => updatePluginState(e, PLUGIN_STOP)}
-              variant="toggle"
-            >
-              on
-            </Button>
-          </div>
+          <Button
+            onClick={(e) => updatePluginState(e, PLUGIN_STOP)}
+            variant="toggle"
+          >
+            on
+          </Button>
         ),
         content: [
           updatable &&
