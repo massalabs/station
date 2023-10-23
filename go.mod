@@ -14,17 +14,17 @@ require (
 	github.com/go-openapi/validate v0.21.0
 	github.com/gosimple/slug v1.13.1
 	github.com/hashicorp/go-version v1.6.0
-	github.com/jessevdk/go-flags v1.5.0
 	github.com/rs/cors v1.8.2
 	github.com/shopspring/decimal v1.3.1
-	golang.org/x/net v0.7.0
+	golang.org/x/net v0.17.0
 )
 
 require (
+	github.com/jessevdk/go-flags v1.4.0
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/mock v0.2.0
 	go.uber.org/zap v1.24.0
-	golang.org/x/sys v0.5.0
+	golang.org/x/sys v0.13.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	howett.net/plist v1.0.0
 )
@@ -81,6 +81,6 @@ require (
 	github.com/ybbus/jsonrpc/v3 v3.1.0
 	go.mongodb.org/mongo-driver v1.8.3 // indirect
 	golang.org/x/exp v0.0.0-20221114191408-850992195362
-	golang.org/x/text v0.7.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )
