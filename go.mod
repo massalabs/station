@@ -8,18 +8,19 @@ require (
 	github.com/go-openapi/errors v0.20.2
 	github.com/go-openapi/loads v0.21.1
 	github.com/go-openapi/runtime v0.24.1
-	github.com/go-openapi/spec v0.20.4 // indirect
-	github.com/go-openapi/strfmt v0.21.2 // indirect
-	github.com/go-openapi/swag v0.21.1 // indirect
-	github.com/go-openapi/validate v0.21.0 // indirect
+	github.com/go-openapi/spec v0.20.4
+	github.com/go-openapi/strfmt v0.21.2
+	github.com/go-openapi/swag v0.21.1
+	github.com/go-openapi/validate v0.21.0
 	github.com/gosimple/slug v1.13.1
 	github.com/hashicorp/go-version v1.6.0
 	github.com/rs/cors v1.8.2
 	github.com/shopspring/decimal v1.3.1
-	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/net v0.17.0
 )
 
 require (
+	github.com/jessevdk/go-flags v1.4.0
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/mock v0.2.0
 	go.uber.org/zap v1.24.0
@@ -31,6 +32,7 @@ require (
 require (
 	fyne.io/systray v1.10.1-0.20230403195833-7dc3c09283d6 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/docker/go-units v0.4.0 // indirect
 	github.com/fredbi/uri v0.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/fyne-io/gl-js v0.0.0-20220119005834-d2da28d9ccfe // indirect
