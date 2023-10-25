@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Preinstall script for Massa Station installer on Linux.
+# Checks if we need to display the terms and conditions.
+
+# `set -e` causes the script to exit if any command fails.
+set -e
+
+# Source debconf library
+. /usr/share/debconf/confmodule
+
+MASSASTATION_DIR=/usr/local/share/massastation
+TERMS_AND_CONDITIONS_AGREED_FILE=$MASSASTATION_DIR/agreed_to_terms_and_conditions
+
+display_terms_and_condition_agreement() {
+    db_fset massastation/terms-and-conditions seen false
+
+    db_input critical massastation/terms-and-conditions || true
+    db_go || true
+
+    db_get massastation/terms-and-conditions
+    # $RET corresponds to the value of the last db_get.
+    TERMS_SELECTION=$RET
+
+    if [ "$TERMS_SELECTION" = "true" ]; then
+    mkdir -p $MASSASTATION_DIR
+        touch $TERMS_AND_CONDITIONS_AGREED_FILE
+        exit 0
+    else
+        echo "You must agree to the terms and conditions to install MassaStation."
+        exit 1
+    fi
+}
+
+
+case "$1" in
+install)
+    # If we find the binary, it means that Massa Station is already installed.
+    if [ -f $(which massastation) ]; then
+        # We need to check if the user has already agreed to the terms and conditions.
+        if [ -f $TERMS_AND_CONDITIONS_AGREED_FILE ]; then
+            # If the user has already agreed to the terms and conditions, we don't need to display them again.
+            exit 0
+        fi
+    fi
+
+    display_terms_and_condition_agreement
+    exit 0
+    ;;
+abort-upgrade|upgrade)
+    exit 0
+    ;;
+*)
+    echo "preinst called with unknown argument \`$1'" >&2
+    exit 1
+    ;;
+esac
