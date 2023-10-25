@@ -1,0 +1,6 @@
+Template: massastation/terms-and-conditions
+Type: boolean
+Description: |
+  Please read and agree to the terms and conditions.
+  // TODO: Add terms and conditions here.
+  Do you accept the terms and conditions?
