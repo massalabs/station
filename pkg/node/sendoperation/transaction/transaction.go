@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	TransactionOpType = uint64(0)
-	versionByte       = byte(0)
+	OpType      = uint64(0)
+	versionByte = byte(0)
 )
 
 type OperationDetails struct {
@@ -62,7 +62,7 @@ func (t *Transaction) Message() []byte {
 	buf := make([]byte, binary.MaxVarintLen64)
 
 	// operationId
-	nbBytes := binary.PutUvarint(buf, TransactionOpType)
+	nbBytes := binary.PutUvarint(buf, OpType)
 	msg = append(msg, buf[:nbBytes]...)
 
 	// recipient address

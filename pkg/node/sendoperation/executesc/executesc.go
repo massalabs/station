@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-const ExecuteSCOpID = 3
+const OpType = 3
 
 type OperationDetails struct {
 	Data     []byte `json:"data"`
@@ -69,7 +69,7 @@ func (e *ExecuteSC) Message() []byte {
 	buf := make([]byte, binary.MaxVarintLen64)
 
 	// operationId
-	nbBytes := binary.PutUvarint(buf, ExecuteSCOpID)
+	nbBytes := binary.PutUvarint(buf, OpType)
 	msg = append(msg, buf[:nbBytes]...)
 
 	// maxGas
