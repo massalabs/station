@@ -7,17 +7,17 @@ import (
 )
 
 type RollMessageContent struct {
-	OperationID uint64 `json:"operation_id"`
-	RollCount   uint64 `json:"roll_count"`
+	OperationType uint64 `json:"operation_type"`
+	RollCount     uint64 `json:"roll_count"`
 }
 
 func RollDecodeMessage(data []byte) (*RollMessageContent, error) {
 	buf := bytes.NewReader(data)
 
-	// Read operationId
-	opID, err := binary.ReadUvarint(buf)
+	// Read operation type
+	opType, err := binary.ReadUvarint(buf)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read Operation ID: %w", err)
+		return nil, fmt.Errorf("failed to read operation type: %w", err)
 	}
 
 	// Read count rolls
@@ -27,8 +27,8 @@ func RollDecodeMessage(data []byte) (*RollMessageContent, error) {
 	}
 
 	operationDetails := &RollMessageContent{
-		OperationID: opID,
-		RollCount:   countRoll,
+		OperationType: opType,
+		RollCount:     countRoll,
 	}
 
 	return operationDetails, nil

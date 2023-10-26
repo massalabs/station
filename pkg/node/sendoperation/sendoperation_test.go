@@ -13,11 +13,11 @@ import (
 )
 
 const (
-	TransactionOpID = uint64(0)
-	BuyRollOpID     = uint64(1)
-	SellRollOpID    = uint64(2)
-	ExecuteSCOpID   = uint64(3)
-	CallSCOpID      = uint64(4)
+	TransactionOpType = uint64(0)
+	BuyRollOpType     = uint64(1)
+	SellRollOpType    = uint64(2)
+	ExecuteSCOpType   = uint64(3)
+	CallSCOpType      = uint64(4)
 )
 
 func TestSerializeDeserializeCallSCMessage(t *testing.T) {
@@ -65,7 +65,7 @@ func TestSerializeDeserializeCallSCMessage(t *testing.T) {
 		assert.NoError(err, "Error decoding CallSC")
 
 		// Verify the fields
-		assert.Equal(CallSCOpID, callSC.OperationID, "OperationID mismatch")
+		assert.Equal(CallSCOpType, callSC.OperationType, "Operation type mismatch")
 		assert.Equal(testcase.address, callSC.Address, "Address mismatch")
 		assert.Equal(testcase.function, callSC.Function, "Function mismatch")
 		assert.Equal(testcase.parameters, callSC.Parameters, "Parameters mismatch")
@@ -111,7 +111,7 @@ func TestSerializeDeserializeExecuteSCMessage(t *testing.T) {
 		assert.NoError(err, "Error decoding ExecuteSC")
 
 		// Verify the fields
-		assert.Equal(ExecuteSCOpID, executeSC.OperationID, "OperationID mismatch")
+		assert.Equal(ExecuteSCOpType, executeSC.OperationType, "Operation type mismatch")
 		assert.Equal(testCase.maxGas, executeSC.MaxGas, "MaxGas mismatch")
 		assert.Equal(testCase.maxCoins, executeSC.MaxCoins, "MaxCoins mismatch")
 	}
@@ -137,7 +137,7 @@ func TestSerializeDeserializeBuyRollsMessage(t *testing.T) {
 		assert.NoError(err, "Error decoding BuyRolls")
 
 		// Verify the countRolls field
-		assert.Equal(BuyRollOpID, buyRolls.OperationID, "OperationID mismatch")
+		assert.Equal(BuyRollOpType, buyRolls.OperationType, "Operation type mismatch")
 		assert.Equal(testcase.countRolls, buyRolls.RollCount, "CountRolls mismatch")
 	}
 }
@@ -162,7 +162,7 @@ func TestSerializeDeserializeSellRollsMessage(t *testing.T) {
 		assert.NoError(err, "Error decoding SellRolls")
 
 		// Verify the countRolls field
-		assert.Equal(SellRollOpID, sellRolls.OperationID, "OperationID mismatch")
+		assert.Equal(SellRollOpType, sellRolls.OperationType, "Operation type mismatch")
 		assert.Equal(testcase.countRolls, sellRolls.RollCount, "CountRolls mismatch")
 	}
 }
@@ -185,7 +185,7 @@ func TestSerializeDeserializeTransactionMessage(t *testing.T) {
 		myTx, err := transaction.New(testCase.recipientAddress, testCase.amount)
 		assert.NoError(err, "Failed to create Transaction")
 
-		decodedID, err := DecodeOperationID(myTx.Message())
+		decodedOpType, err := DecodeOperationType(myTx.Message())
 		assert.NoError(err, "Failed to retrieve operationID")
 
 		// Simulate decoding and deserialization
@@ -193,7 +193,7 @@ func TestSerializeDeserializeTransactionMessage(t *testing.T) {
 		assert.NoError(err, "Error decoding message")
 
 		// Verify the fields
-		assert.Equal(TransactionOpID, decodedID, "OperationID mismatch")
+		assert.Equal(TransactionOpType, decodedOpType, "Operation type mismatch")
 		assert.Equal(testCase.recipientAddress, decodedTransaction.RecipientAddress, "RecipientAddress mismatch")
 		assert.Equal(testCase.amount, decodedTransaction.Amount, "Amount mismatch")
 	}
@@ -225,7 +225,7 @@ func TestDecodeOperationID(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
-		decodedID, err := DecodeOperationID(testCase.msg)
+		decodedID, err := DecodeOperationType(testCase.msg)
 		if testCase.expectedErr {
 			assert.Error(err, "Expected error")
 		} else {

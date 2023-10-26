@@ -26,12 +26,12 @@ type Operation struct {
 }
 
 type MessageContent struct {
-	OperationID uint64
-	MaxGas      uint64
-	Coins       uint64
-	Address     string
-	Function    string
-	Parameters  []byte
+	OperationType uint64
+	MaxGas        uint64
+	Coins         uint64
+	Address       string
+	Function      string
+	Parameters    []byte
 }
 
 type CallSC struct {
@@ -120,13 +120,13 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 	callSCContent := &MessageContent{}
 	buf := bytes.NewReader(data)
 
-	// Read operationId
-	callSCOpID, err := binary.ReadUvarint(buf)
+	// Read operation type
+	callSCOpType, err := binary.ReadUvarint(buf)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read CallSCOpID: %w", err)
+		return nil, fmt.Errorf("failed to read operation type: %w", err)
 	}
 
-	callSCContent.OperationID = callSCOpID
+	callSCContent.OperationType = callSCOpType
 
 	// Read maxGas
 	maxGas, err := binary.ReadUvarint(buf)

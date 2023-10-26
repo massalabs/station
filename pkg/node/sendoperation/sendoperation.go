@@ -208,17 +208,17 @@ func DecodeMessage64(msgB64 string) ([]byte, uint64, uint64, error) {
 	return decodedMsg, fee, expiry, nil
 }
 
-// DecodeOperationID decodes a byte slice to retrieve the operation ID.
-func DecodeOperationID(data []byte) (uint64, error) {
+// DecodeOperationType decodes a byte slice to retrieve the operation ID.
+func DecodeOperationType(data []byte) (uint64, error) {
 	buf := bytes.NewReader(data)
 
-	// Read operationId
-	opID, err := binary.ReadUvarint(buf)
+	// Read operation type
+	opType, err := binary.ReadUvarint(buf)
 	if err != nil {
-		return 0, fmt.Errorf("failed to read operation ID: %w", err)
+		return 0, fmt.Errorf("failed to read operation type: %w", err)
 	}
 
-	return opID, nil
+	return opType, nil
 }
 
 func StorageCostForEntry(nodeVersion string, keyByteLengh, valueByteLenght int) (int, error) {
