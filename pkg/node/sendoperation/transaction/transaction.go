@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	TransactionOpID = uint64(0)
-	versionByte     = byte(0)
+	TransactionOpType = uint64(0)
+	versionByte       = byte(0)
 )
 
 type OperationDetails struct {
@@ -26,7 +26,7 @@ type Operation struct {
 
 // MessageContent stores essential fields extracted from the message during the sign operation.
 type MessageContent struct {
-	OperationID      uint64
+	OperationType    uint64
 	RecipientAddress string
 	Amount           uint64
 }
@@ -62,7 +62,7 @@ func (t *Transaction) Message() []byte {
 	buf := make([]byte, binary.MaxVarintLen64)
 
 	// operationId
-	nbBytes := binary.PutUvarint(buf, TransactionOpID)
+	nbBytes := binary.PutUvarint(buf, TransactionOpType)
 	msg = append(msg, buf[:nbBytes]...)
 
 	// recipient address
@@ -81,13 +81,13 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 	transactionContent := &MessageContent{}
 	buf := bytes.NewReader(data)
 
-	// Read operationId
-	opID, err := binary.ReadUvarint(buf)
+	// Read operation type
+	opType, err := binary.ReadUvarint(buf)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read TransactionOpID: %w", err)
+		return nil, fmt.Errorf("failed to read operation type: %w", err)
 	}
 
-	transactionContent.OperationID = opID
+	transactionContent.OperationType = opType
 
 	// Read recipient address
 	addressString, err := serializeAddress.DecodeAddress(buf)
