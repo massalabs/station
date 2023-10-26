@@ -85,7 +85,7 @@ To enable Massa Station to function with HTTPS on an unsupported browser, you wi
 
 1. Locate the certificate authority file at the following path:
    **/etc/massastation/certs/rootCA.pem** on Linux and MacOS,
-   **C:\Program Files (x86)\MassaStation\certs** on Windows.
+   **C:\Program Files (x86)\MassaStation\certs** on Windows (might be different if you changed Massa Station location)
 2. Open your browser's settings or preferences.
 3. Search for the "Security" or "Privacy" section, and look for an option related to certificates.
 4. Find the option to import or add a certificate authority.
