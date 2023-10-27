@@ -1,0 +1,113 @@
+﻿MassaStation Client Terms and Conditions
+
+1. PREAMBLE 
+
+MassaLabs ("the Company") has developed the Massa Client (the "MassaStation Client"), which connects the user ("You" and "Your") to the Massa mainnet. The following Terms and Conditions (the "Terms") govern the use of the MassaStation Client. Prior to any use of and/or download of the MassaStation Client, You confirm that You understand and expressly agree to all of the Terms.
+
+All capitalized terms in this agreement shall have the meaning set out herein. The MassaStation Client is operated by MASSA LABS SAS.
+
+BY DOWNLOADING AND USING THE MASSASTATION CLIENT, YOU ACCEPT THE AFOREMENTIONED TERMS. BEFORE DOWNLOADING AND USING THE MASSASTATION CLIENT, PLEASE READ THE CONDITIONS CAREFULLY. IF YOU DO NOT AGREE TO THE TERMS, PLEASE REFRAIN FROM DOWNLOADING OR USING THE MASSASTATION CLIENT. YOUR ACCESS TO AND UTILIZATION OF THE MASSASTATION CLIENT SIGNIFIES YOUR CONSENT TO BE BOUND BY THESE TERMS. IT IS ESSENTIAL TO REVIEW AND COMPREHEND THE PROVISIONS OUTLINED IN THE TERMS AS THEY FORM THE BASIS OF OUR CONTRACTUAL AGREEMENT FOR THE USE OF THE MASSASTATION CLIENT. SHOULD YOU HAVE ANY QUERIES OR CONCERNS ABOUT THE TERMS, PLEASE CONTACT US FOR CLARIFICATION. THANK YOU FOR CHOOSING MASSASTATION CLIENT!
+
+2. SECURITY WARNINGS 
+
+2.1. You are responsible for Your own computer security. If Your machine is compromised, You may lose Your MAS, access to any contracts, and transaction data. 
+
+2.2. You are responsible for Your own actions. If You make any mistakes or engage in any unlawful or illegal activities while using the Massa Station Client, this shall be Your responsibility alone.
+
+2.3. You must exercise extreme caution when interacting with the MassaStation Client and ensure the accuracy of all inputs and transactions to avoid any unintended outcomes. Massa Labs will not be held liable for any financial losses, damages, or liabilities arising from errors or omissions made by the user.
+
+2.4. It is crucial to maintain the utmost confidentiality of Your login credentials, private keys, or any other sensitive information related to the Massa Station Client. Sharing such information may lead to unauthorized access and potential loss of assets, for which You will be solely responsible.
+
+2.5. Lastly, please remain vigilant and be wary of potential phishing attempts, scams, or fraudulent activities related to the MassaStation Client. Massa Labs will never request sensitive information or private keys through unsolicited means. Please verify the authenticity of all communications and report any suspicious activities to our official channels for immediate investigation. Your continuous vigilance and strict adherence to these security warnings will significantly contribute to ensuring a safer and more secure user experience with MassaStation Client. 
+
+3. LICENSE 
+
+3.1. The MassaStation Client software ("the Software") operates within a closed-license framework. This means that the Software's source code is not accessible for reproduction, distribution, modification, or any form of reuse. Unauthorized attempts to reproduce, distribute, or modify the source code would constitute a violation of our intellectual property rights, potentially resulting in legal action.
+
+3.2. Under this closed-license approach:
+
+● Reproduction, distribution, modification, or reuse of the Software's source code is strictly prohibited. 
+
+● Creating derivative works based on the Software's code is not allowed.
+
+3.3. We value transparency and provide you with access to the Software's user documentation and relevant materials to facilitate a deeper understanding of its functionality.
+
+3.4. Please note that access to documentation is granted solely for the purpose of understanding the Software's operation. The source code itself remains off-limits for public distribution, modification, or reproduction.
+
+3.5. Your understanding of the implications of this closed-license agreement is greatly appreciated. If you have any inquiries regarding the Software's operation or features, please feel free to contact us.
+
+4. DISCLAIMER OF LIABILITIES AND WARRANTIES
+
+4.1. You acknowledge and agree that you are using the MassaStation Client at your sole risk. In particular, Massa Labs shall not be liable for any losses caused by viruses, Trojan horses, or other malicious code in the MassaStation Client and/or that infect your systems as a result of downloading or using the MassaStation Client.
+
+4.2. Massa Labs may allow you to download third-party modules and/or extensions (collectively called "Extensions") to the MassaStation Client. Such Extensions may contain harmful code. Massa Labs provides no warranties as to the suitability or safety of such Extensions and shall not be liable for any loss suffered by you as a result of downloading and/or using such Extensions. You acknowledge that you should only install any Extension after careful consideration and at your own risk.
+
+4.3. Massa Labs may provide modules (the "Modules") that will allow you to interact with decentralized applications (the "Applications") via scripts and code. Massa Labs provides no warranties as to the suitability or safety of any Module and/or Application and shall not be liable for any loss suffered by you as a result of downloading and/or using any Module and/or Application. Moreover, Massa Labs shall not be liable for any loss suffered by reason of an incorrect implementation of any Module or as a result of any bug in the decentralized code.
+
+4.4. You represent and warrant that you have an adequate understanding of the risks, usage, and intricacies of cryptographic tokens and blockchain-based open-source software, the MassaStation Client, and MAS.
+
+4.5. You acknowledge and agree that, to the fullest extent permitted by any applicable law, the disclaimers of liability contained herein apply to any and all damages or injuries whatsoever, including, without limitation, those caused by or related to the risks, use of, or inability to use MAS or the MassaStation Client, regardless of the cause of action or jurisdiction. This includes, but is not limited to, actions for breach of warranty, breach of contract, or tort (including negligence). Massa Labs shall not be liable for any indirect, incidental, special, exemplary, or consequential damages, including loss of profits, goodwill, or data.
+
+4.6. Some jurisdictions do not allow the exclusion of certain warranties or the limitation or exclusion of liability for certain types of damages. Therefore, some of the above limitations in this section may not apply to you. In particular, nothing in these terms shall affect the statutory rights of any user or exclude injury arising from any willful misconduct or fraud of Massa Labs. 
+
+5. RISKS 
+
+5.1. By using the MassaStation Client, you acknowledge the following serious risks inherent in its use, and you expressly agree not to hold Massa Labs liable for any loss or damage suffered by you for any reason, including without limitation, due to any of the following risks occurring:
+
+5.2. Risk of Regulatory Actions
+
+5.2.1. The MassaStation Client could be impacted by one or more regulatory inquiries or regulatory actions, which could impede or limit the ability of Massa Labs to continue developing and/or operating the MassaStation Client or your ability to use the MassaStation Client. 
+
+5.2.2. Without limiting the foregoing, we reserve the right to fully cooperate with any law enforcement authorities or court order requesting or directing the disclosure of the identity or other information of individuals posting any materials on or through the MassaStation Client. By choosing to use the MassaStation Client, you hereby waive and hold harmless Massa Labs, its affiliates, licensees, and service providers from any claims that may arise due to actions taken by the company or any of the aforementioned parties in response to investigations conducted by law enforcement authorities or other relevant entities. This proactive cooperation is undertaken to ensure compliance with legal obligations. By understanding the necessity of such cooperation within the framework of regulatory and legal requirements, you contribute to the maintenance of a secure and accountable environment for all Users.
+
+5.3. Risk of Alternative MASSA-Based Networks
+
+5.3.1. It is possible that alternative MASSA-based networks could be established, utilizing the same open-source code and protocol underlying the MassaStation Client. Such networks may compete with the MassaStation Client, potentially affecting its adoption and use.
+
+5.4. Risk of Insufficient Interest in the MassaStation Client
+
+5.4.1. There is a risk that the MassaStation Client will not be widely used by external businesses, individuals, and other organizations, leading to limited public interest in the creation and development of distributed applications on the platform. A lack of interest could impact the development and adoption of the MassaStation Client.
+
+5.5. Risk of the MassaStation Client Not Meeting Your Expectations
+
+5.5.1. You recognize that the MassaStation Client is currently under development and may undergo significant changes before release. As a result, any expectations you have regarding the form and functionality of the MassaStation Client may not be met upon release, due to changes in design and implementation plans.
+
+5.6. Risk of Security Weaknesses in the MassaStation Client
+
+5.6.1. The MassaStation Client is developed using open-source software, which poses a risk that unintentional weaknesses or bugs may be introduced into its core infrastructure, potentially leading to the loss of MAS stored in user accounts or other valued tokens issued on the MassaStation Client.
+
+5.7. Risk of Weaknesses or Breakthroughs in Cryptography
+
+5.7.1. Advancements in cryptography, including code cracking or technical breakthroughs like quantum computers, could present risks to cryptocurrencies and the MassaStation Client. These risks could result in the theft or loss of MAS tokens. Massa Labs intends to update the MassaStation Client's protocol to address any advances in cryptography, but the future of cryptography and the success of security updates cannot be predicted.
+
+5.8. Risk of Staking Attacks
+
+5.8.1. As with other staking-based systems, the MassaStation Client is susceptible to staking attacks, including but not limited to double-spending attacks, majority staking power attacks, and other potential exploits. Any successful attacks may present a risk to the proper execution of staking transactions and the integrity of the MassaStation Client.
+
+5.9. Risk of Rapid Adoption and Increased Demand
+
+5.9.1. If the MassaStation Client experiences rapid adoption, the demand for MAS could increase significantly, potentially exceeding the rate at which new MAS tokens are staked. This situation may destabilize the entire MassaStation Client, impacting the cost of running distributed applications and potentially dampening interest in the platform.
+
+5.10. Risk of Insufficient Computational Resources
+
+5.10.1. If the MassaStation Client experiences rapid adoption, the demand for transaction processing and distributed application computations could surge, exceeding the available computational resources. This could result in businesses being unable to acquire sufficient computational resources to run their distributed applications, leading to revenue losses or business disruptions.
+
+5.11. Please note that these risks are an integral part of using the MassaStation Client, and it is important to carefully consider these factors before utilizing the MassaStation Client.
+
+6. DISPUTE RESOLUTION AND CONCILIATION 
+
+6.1. All disputes or claims arising out of, relating to, or in connection with the Terms, the breach thereof, or use of the MassaStation Client shall be finally settled by the competent courts of France. In case of a dispute, the parties agree that the competent jurisdiction shall be that of the Tribunal Judiciaire of Paris.
+
+6.2. Before resorting to the competent courts, the parties agree to attempt a conciliation to resolve any potential dispute. The party that believes it has a dispute with the other party shall notify the other party in writing, specifying the nature of the dispute (the "Conciliation Request").
+
+6.3. Within thirty (30) days of receiving the Conciliation Request, the parties shall meet, in person or remotely, and attempt to amicably resolve the dispute. Each party agrees to actively and in good faith participate in the conciliation process.
+
+6.4. If the parties reach an agreement as a result of the conciliation, such agreement shall be drawn up in writing and signed by both parties to evidence their consent (the "Conciliation Agreement"). The Conciliation Agreement shall be binding on the parties and shall govern the settlement of the dispute.
+
+6.5. If the parties do not reach an agreement within thirty (30) days from the commencement of the conciliation, then each of the parties shall be free to resort to the competent courts in accordance with the "Dispute Resolution" clause mentioned above.
+
+6.6. Discussions, statements, and communications made during the conciliation process shall be confidential and may not be used or disclosed in any subsequent judicial proceeding, except as required to enforce the Conciliation Agreement or as required by law.
+
+
+
+

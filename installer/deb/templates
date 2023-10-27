@@ -1,0 +1,6 @@
+Template: massastation/terms-and-conditions
+Type: boolean
+Description: |
+  Please read and agree to Massa Station Terms and Conditions.
+  Terms and Conditions are available at https://github.com/massalabs/station/tree/main/installer/common/MassaStation_ToS.txt
+  Do you accept the terms and conditions?

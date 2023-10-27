@@ -77,22 +77,26 @@ main() {
     mkdir -p $BUILD_DIR/usr/share/pixmaps || fatal "failed to create $BUILD_DIR/usr/share/pixmaps"
     cp $TMP_DIR/usr/local/share/pixmaps/MassaStation.png $BUILD_DIR/usr/share/pixmaps || fatal "failed to copy MassaStation.png to $BUILD_DIR/usr/share/pixmaps"
 
+    mkdir -p $BUILD_DIR/usr/share/doc/massastation || fatal "failed to create $BUILD_DIR/usr/share/doc/massastation"
+    cp common/MassaStation_ToS.txt $BUILD_DIR/usr/share/doc/massastation/terms-and-conditions.txt || fatal "failed to copy MassaStation_ToS.txt to $BUILD_DIR/usr/share/doc/massastation/terms-and-conditions.txt"
+
     mkdir -p $BUILD_DIR/DEBIAN || fatal "failed to create $BUILD_DIR/DEBIAN"
     cat <<EOF >$BUILD_DIR/DEBIAN/control
 Package: massastation
 Version: $PKGVERSION
 Architecture: amd64
 Maintainer: Massa Labs <massa.net>
-Homepage: https://github.com/massalabs/station
+Homepage: https://station.massa.net
 Description: An entrance to the Massa blockchain.
     MassaStation is a secured gateway to the Massa blockchain. This application provides a user-friendly way to access, use and build on the Massa blockchain while keeping you safe from the dangers of the internet.
-Depends: curl, iproute2
+Depends: curl, iproute2, debconf (>= 0.5) | debconf-2.0
 Recommends: libnss3-tools
 EOF
 
-    cp deb/scripts/post* $BUILD_DIR/DEBIAN
-    DEB_NAME=massastation_$PKGVERSION\_amd64.deb
+    cp deb/scripts/* $BUILD_DIR/DEBIAN/ || fatal "failed to copy installer scripts to $BUILD_DIR/DEBIAN"
+    cp deb/templates $BUILD_DIR/DEBIAN/templates || fatal "failed to copy templates to $BUILD_DIR/DEBIAN"
 
+    DEB_NAME=massastation_$PKGVERSION\_amd64.deb
     dpkg-deb --build $BUILD_DIR $DEB_NAME || fatal "failed to build $DEB_NAME"
 }
 
