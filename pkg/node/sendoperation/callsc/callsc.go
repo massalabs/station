@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	CallSCOpID = uint64(4)
+	OpType = uint64(4)
 )
 
 type OperationDetails struct {
@@ -77,7 +77,7 @@ func (c *CallSC) Message() []byte {
 	buf := make([]byte, binary.MaxVarintLen64)
 
 	// operationId
-	nbBytes := binary.PutUvarint(buf, CallSCOpID)
+	nbBytes := binary.PutUvarint(buf, OpType)
 	msg = append(msg, buf[:nbBytes]...)
 
 	// maxGas
