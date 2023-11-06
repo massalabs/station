@@ -44,7 +44,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 	maxGas := uint64(sendOperation.DefaultGasLimit)
 
 	if string(params.Body.MaxGas) != "" {
-		parsedMmaxGas, err := strconv.ParseUint(string(params.Body.MaxGas), 10, 64)
+		parsedMaxGas, err := strconv.ParseUint(string(params.Body.MaxGas), 10, 64)
 		if err != nil {
 			return operations.NewCmdExecuteFunctionBadRequest().WithPayload(
 				&models.Error{
@@ -53,7 +53,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 				})
 		}
 
-		maxGas = parsedMmaxGas
+		maxGas = parsedMaxGas
 	}
 
 	expiry := uint64(sendOperation.DefaultExpiryInSlot)
