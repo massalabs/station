@@ -16,6 +16,7 @@ Deploy testSC
     ${data}=    Create Dictionary
     ...    walletNickname=${WALLET_NICKNAME}
     ...    coins=3000000000
+    ...    fee=1000
     ${file}=    Create Dictionary    smartContract=${sc}
     ${response}=    POST    ${API_URL}/cmd/deploySC    data=${data}    files=${file}    expected_status=${STATUS_OK}
     Should Contain    ${response.json()['firstEvent']['data']}    TestSC is deployed at :
@@ -40,6 +41,7 @@ Generate Event
     ...    at=${DEPLOYED_SC_ADDR}
     ...    args=${argument}
     ...    stream=${False}
+    ...    fee=1000
 
     ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction
