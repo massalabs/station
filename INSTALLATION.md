@@ -71,20 +71,33 @@ Congratulations! You have successfully installed **Massa Station** on your compu
 7. The installation will commence, and you will see a progress bar indicating the status.
 8. Once the installation is complete, you will receive a notification confirming the successful installation.
 
-#### GUI update:
+#### GUI update
 
 1. Download the latest version of **Massa Station** installer for Debian Linux (`.deb`) from [here](https://github.com/massalabs/station/releases/latest/).
 2. Open your file manager and navigate to the location where the `.deb` package is saved.
 3. The package manager will launch and display **Massa Station** installation page. 
 4. Review the package information and dependencies, if any, and click on the red "Delete" button.
-5. Proceed to GUI installation starting at step 2. 
-
+5. Proceed to GUI installation starting at step 2.
 
 ### Manually install the HTTPS certificate
-1. Open your browser "Manage Certificates" settings (e.g. chrome://settings/certificates or brave://settings/certificates) and switch to the "Authorities" tab.
-2. Click "Import", locate the Massastation certificate at **/etc/massastation/certs/rootCA.pem** and import it to the browser.
 
+To enable Massa Station to function with HTTPS on an unsupported browser, you will need to manually install the HTTPS certificate authority. Follow these steps to import the certificate authority into your browser:
 
+1. Locate the certificate authority file at the following path:
+   * on Macos
+      1. Copy this path: `/etc/massastation/certs/`
+      2. Open finder
+      3. Click on the "Go" button at the top of your screen
+      4. Click on the "Go to folder..." button at the bottom of the menu
+      5. Paste the path you copied previously
+      6. Press enter
+      7. The file is named `rootCA.pem`
+   * On Linux, the file is here: `/etc/massastation/certs/rootCA.pem`
+   * On Windows, the file is here: `C:\Program Files (x86)\MassaStation\certs`  (might be different if you changed Massa Station location)
+2. Open your browser's settings or preferences.
+3. Search for the "Security" or "Privacy" section, and look for an option related to certificates.
+4. Find the option to import or add a certificate authority.
+5. Choose the rootCA.pem file from the specified path.
 
 ## Uninstallation
 
@@ -138,6 +151,3 @@ To uninstall **Massa Station** from your Linux system, follow the steps below:
    This command will remove MassaStation and its associated files from your system.
 
 4. Once the uninstallation process is complete, you will receive a confirmation message indicating that **Massa Station** has been successfully uninstalled.
-
-
-
