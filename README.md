@@ -6,7 +6,7 @@
 
 ## Install MassaStation
 
-To install MassaStation, please follow the instructions available in the [Installation Guide](./INSTALLATION.md).
+To install MassaStation, please follow the instructions available in the [Installation Guide](https://docs.massa.net/docs/massastation/install).
 
 ## Contributing
 
