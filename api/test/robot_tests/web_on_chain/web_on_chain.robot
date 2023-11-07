@@ -59,6 +59,7 @@ POST /cmd/executeFunction To remove the dns entry
     ...    name=dns1_deleteEntryFromDNS
     ...    at=${DNS}
     ...    args=${argument}
+    ...    fee=1000
     ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction
     ...    json=${data}
