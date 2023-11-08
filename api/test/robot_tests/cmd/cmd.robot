@@ -39,8 +39,9 @@ POST /cmd/executeFunction sync
     ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction
     ...    json=${data}
-    ...    expected_status=${STATUS_OK}
+    ...    expected_status=any
     Log To Console    ${response.json()}
+    Should Be Equal As Integers    ${response.status_code}    ${STATUS_OK}    # Assert the status code is 200 OK
     Should Be Equal    ${response.json()['firstEvent']['data']}    I'm an event! My id is ${randomID}
 
 POST /cmd/executeFunction sync without arguments
