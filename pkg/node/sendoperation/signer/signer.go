@@ -38,7 +38,7 @@ func (s *WalletPlugin) Sign(nickname string, operation []byte) (*SignOperationRe
 		return nil, fmt.Errorf("calling executeHTTPRequest for call: %w, message: %s", err, res.Message)
 	}
 
-	res := SignOperationResponse{"", "", ""}
+	res := SignOperationResponse{"", "", "", ""}
 	err = json.Unmarshal(httpRawResponse, &res)
 
 	if err != nil {
