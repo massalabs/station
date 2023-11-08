@@ -22,7 +22,6 @@ export default function DomainModelItem(props: DomainModelItemProps) {
     const fetchFavicon = async () => {
       try {
         const response = await fetch(faviconURL);
-        console.log(website.name, response.status);
         if (response.status !== HttpStatusCode.Ok) {
           return;
         }
@@ -35,7 +34,10 @@ export default function DomainModelItem(props: DomainModelItemProps) {
         const dataURL = URL.createObjectURL(blob);
         setImageDataURL(dataURL);
       } catch (error) {
-        console.log(`error fetching favicon for ${website.name}.massa`, error);
+        console.error(
+          `error fetching favicon for ${website.name}.massa`,
+          error,
+        );
       }
     };
 
