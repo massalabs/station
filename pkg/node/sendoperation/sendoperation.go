@@ -103,6 +103,13 @@ func Call(client *node.Client,
 		return nil, fmt.Errorf("decoding '%s' B64: %w", res.Signature, err)
 	}
 
+	if res.Operation != "" {
+		msg, err = b64.StdEncoding.DecodeString(res.Operation)
+		if err != nil {
+			return nil, fmt.Errorf("decoding '%s' B64: %w", res.Operation, err)
+		}
+	}
+
 	resp, err := MakeRPCCall(msg, signature, res.PublicKey, client)
 	if err != nil {
 		return nil, err
