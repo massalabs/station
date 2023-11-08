@@ -23,7 +23,7 @@ display_terms_and_condition_agreement() {
     TERMS_SELECTION=$RET
 
     if [ "$TERMS_SELECTION" = "true" ]; then
-    mkdir -p $MASSASTATION_DIR
+        mkdir -m 777 -p $MASSASTATION_DIR
         touch $TERMS_AND_CONDITIONS_AGREED_FILE
         exit 0
     else
