@@ -9,5 +9,5 @@ type SignOperationResponse struct {
 }
 
 type Signer interface {
-	Sign(string, []byte) (*SignOperationResponse, error)
+	Sign(nickname string, operation []byte) (*SignOperationResponse, error)
 }

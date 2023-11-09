@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"strconv"
 
 	utils "github.com/massalabs/station/pkg/node/sendoperation/serializeaddress"
 )
@@ -64,7 +65,7 @@ func (c *CallSC) Content() (interface{}, error) {
 	return &Operation{
 		CallSC: OperationDetails{
 			MaxGas:     int64(c.maxGas),
-			Coins:      fmt.Sprint(c.coins),
+			Coins:      strconv.FormatUint(c.coins, 10),
 			TargetAddr: addressString,
 			TargetFunc: c.function,
 			Param:      c.parameters,

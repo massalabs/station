@@ -26,6 +26,10 @@ import (
 type Status int64
 
 const (
+	dotApp = ".app"
+)
+
+const (
 	Starting Status = iota
 	//nolint:varnamelen
 	Up
@@ -146,8 +150,8 @@ func (pw prefixWriter) Write(buf []byte) (n int, err error) {
 
 func getPluginName(archiveName string) string {
 	// if the archive name contains ".app", then it's a macOS app
-	if strings.Contains(archiveName, ".app") {
-		return strings.Split(archiveName, ".app")[0]
+	if strings.Contains(archiveName, dotApp) {
+		return strings.Split(archiveName, dotApp)[0]
 	}
 
 	return strings.Split(archiveName, "_")[0]
@@ -185,7 +189,7 @@ func prepareAppDirectory(binPath, pluginPath, pluginName string) error {
 		return fmt.Errorf("plugin binary not found at %s", binPath)
 	}
 
-	appPath := filepath.Join(pluginPath, pluginName+".app")
+	appPath := filepath.Join(pluginPath, pluginName+dotApp)
 
 	if _, err := os.Stat(appPath); err == nil {
 		if err := os.RemoveAll(appPath); err != nil {
@@ -220,13 +224,13 @@ func (p *Plugin) binPath() string {
 	pluginName := filepath.Base(p.Path)
 
 	// Check if the MacOS .app directory exists.
-	macOSAppDirPath := filepath.Join(p.Path, pluginName+".app")
+	macOSAppDirPath := filepath.Join(p.Path, pluginName+dotApp)
 	if _, err := os.Stat(macOSAppDirPath); os.IsNotExist(err) {
 		// Return the binary if not.
 		return utils.PluginPath(p.Path, pluginName)
 	}
 
-	return filepath.Join(p.Path, pluginName+".app", "Contents", "MacOS", pluginName)
+	return filepath.Join(p.Path, pluginName+dotApp, "Contents", "MacOS", pluginName)
 }
 
 func (p *Plugin) Start() error {
