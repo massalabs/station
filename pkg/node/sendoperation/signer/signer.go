@@ -28,7 +28,7 @@ var _ Signer = &WalletPlugin{}
 func (s *WalletPlugin) Sign(nickname string, operation []byte) (*SignOperationResponse, error) {
 	httpRawResponse, err := ExecuteHTTPRequest(
 		http.MethodPost,
-		WalletPluginURL+"accounts/"+nickname+"/sign",
+		WalletPluginURL+"accounts/"+nickname+"/sign?allow-fee-edition=true",
 		bytes.NewBuffer(operation),
 	)
 	if err != nil {
