@@ -20,7 +20,7 @@ import (
 var content embed.FS
 
 const (
-	blockLength = 260000
+	blockLength = 78000
 	nbChunkKey  = "NB_CHUNKS"
 	ownerKey    = "OWNER"
 )
