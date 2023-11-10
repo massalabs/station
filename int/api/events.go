@@ -44,7 +44,7 @@ func (h *eventListener) Handle(params operations.EventsGetterParams) middleware.
 	var event *node.Event
 
 	for {
-		events, err := node.ListenEvents(client, &slotStart, nil, &params.Caller, nil, nil, false)
+		events, err := node.ListenEvents(client, &slotStart, nil, nil, nil, &params.Caller, false)
 		if err != nil {
 			return operations.NewEventsGetterInternalServerError().
 				WithPayload(
