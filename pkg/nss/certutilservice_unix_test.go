@@ -29,15 +29,15 @@ func TestCertUtilService_AddCA(t *testing.T) {
 
 	// Adding the certificate.
 	err = service.AddCA(dbPath, certName, certPath)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 
 	// Verifying the certificate is present.
 	err = service.IsKnownCA(dbPath, certName)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 
 	// Removing the certificate.
 	err = service.DeleteCA(dbPath, certName)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 
 	// Verifying the certificate is no longer present.
 	err = service.IsKnownCA(dbPath, certName)

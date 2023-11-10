@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"strconv"
 
 	"github.com/massalabs/station/pkg/node/base58"
 	serializeAddress "github.com/massalabs/station/pkg/node/sendoperation/serializeaddress"
@@ -52,7 +53,7 @@ func (t *Transaction) Content() (interface{}, error) {
 	return &Operation{
 		Transaction: OperationDetails{
 			RecipientAddress: "AU" + base58.VersionedCheckEncode(t.recipientAddress, versionByte),
-			Amount:           fmt.Sprint(t.amount),
+			Amount:           strconv.FormatUint(t.amount, 10),
 		},
 	}, nil
 }
