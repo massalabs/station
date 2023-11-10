@@ -62,6 +62,7 @@ func SetRecord(
 		false,
 		operationBatch,
 		&signer.WalletPlugin{},
+		"Setting DNS record",
 	)
 	if err != nil {
 		return "", fmt.Errorf("calling setResolver with '%+v' at '%s': %w", rec, addr, err)

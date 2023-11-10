@@ -92,6 +92,7 @@ func PrepareForUpload(
 		nil,
 		sendOperation.OperationBatch{NewBatch: true, CorrelationID: ""},
 		&signer.WalletPlugin{},
+		"deploying website",
 	)
 	if err != nil {
 		return "", "", fmt.Errorf("deploying webstorage SC: %w", err)
@@ -197,6 +198,7 @@ func upload(
 			false,
 			operationBatch,
 			&signer.WalletPlugin{},
+			fmt.Sprintf("Uploading website chunk %d out of %d", chunkIndex+1, nbChunks),
 		)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
@@ -295,6 +297,7 @@ func uploadMissedChunks(
 			false,
 			operationBatch,
 			&signer.WalletPlugin{},
+			fmt.Sprintf("Repairing website chunk %d out of %d", chunkID+1, len(arrMissedChunks)),
 		)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
