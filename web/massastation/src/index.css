@@ -4,3 +4,14 @@
 
 @tailwind components;
 @tailwind utilities;
+
+body {
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
+
+body::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+  display: none; /* For Webkit browsers like Chrome and Safari */
+}
