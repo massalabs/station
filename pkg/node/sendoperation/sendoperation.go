@@ -15,7 +15,8 @@ import (
 )
 
 const (
-	DefaultGasLimit            = 700_000_000
+	DefaultGasLimitExecuteSC   = 3_980_167_295
+	DefaultGasLimitCallSC      = 4_294_167_295
 	DefaultExpiryInSlot        = 3
 	DefaultFee                 = 0
 	accountCreationStorageCost = 1_000_000
