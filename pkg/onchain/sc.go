@@ -39,7 +39,7 @@ func CallFunction(
 	if maxGas == sendOperation.DefaultGasLimit || maxGas == 0 {
 		estimatedGasCost, err := sendOperation.EstimateGasCostCallSC(nickname, addr, function, parameter, coins, fee, client)
 		if err != nil {
-			return nil, fmt.Errorf("calling EstimateGasCost for function '%s' at '%s': %w", function, addr, err)
+			return nil, fmt.Errorf("estimating Call SC gas cost for function '%s' at '%s': %w", function, addr, err)
 		}
 
 		logger.Debugf("Estimated gas cost for %s at %s: %d", function, addr, estimatedGasCost)
@@ -107,7 +107,7 @@ func CallFunctionSuccess(
 // The smart contract is deployed with the given account nickname.
 func DeploySC(client *node.Client,
 	nickname string,
-	gasLimit uint64,
+	maxGas uint64,
 	maxCoins uint64,
 	fee uint64,
 	expiry uint64,
@@ -116,9 +116,21 @@ func DeploySC(client *node.Client,
 	operationBatch sendOperation.OperationBatch,
 	signer signer.Signer,
 ) (*sendOperation.OperationResponse, []node.Event, error) {
+	// Calibrate max_gas
+	if maxGas == sendOperation.DefaultGasLimit || maxGas == 0 {
+		estimatedGasCost, err := sendOperation.EstimateGasCostExecuteSC(nickname, contract, datastore, maxCoins, fee, client)
+		if err != nil {
+			return nil, nil, fmt.Errorf("estimating Execute SC gas cost: %w", err)
+		}
+
+		logger.Debugf("Estimated gas cost for execute SC: %d", estimatedGasCost)
+
+		maxGas = estimatedGasCost
+	}
+
 	exeSC := executesc.New(
 		contract,
-		gasLimit,
+		maxGas,
 		maxCoins,
 		datastore)
 

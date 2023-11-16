@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// ReadOnlyCallParams is the struct used to send a read only callSC to the node.
 type ReadOnlyCallParams struct {
 	MaxGas         int           `json:"max_gas"`
 	Coins          int           `json:"coins"`
@@ -138,4 +139,14 @@ type BitVecHeadInfo struct {
 
 type DeferredCreditsInfo struct {
 	Credits map[string]interface{} `json:"credits"` // Empty in provided JSON, assumed to be a map
+}
+
+// ReadOnlyExecuteParams is the struct used to send a read only executeSC to the node.
+type ReadOnlyExecuteParams struct {
+	MaxGas             int           `json:"max_gas"`
+	Coins              int           `json:"coins"`
+	Fee                int           `json:"fee"`
+	Address            string        `json:"address"`
+	Bytecode           JSONableSlice `json:"bytecode"`
+	OperationDatastore JSONableSlice `json:"operation_datastore"`
 }
