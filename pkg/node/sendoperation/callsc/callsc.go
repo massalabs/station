@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	OpType = uint64(4)
+	OpType = 4
 )
 
 type OperationDetails struct {

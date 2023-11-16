@@ -15,7 +15,8 @@ import (
 )
 
 const (
-	DefaultGasLimit            = 700_000_000
+	DefaultGasLimitExecuteSC   = 3_980_167_295
+	DefaultGasLimitCallSC      = 4_294_167_295
 	DefaultExpiryInSlot        = 3
 	DefaultFee                 = 0
 	accountCreationStorageCost = 1_000_000
@@ -228,35 +229,35 @@ func DecodeOperationType(data []byte) (uint64, error) {
 	return opType, nil
 }
 
-func StorageCostForEntry(nodeVersion string, keyByteLengh, valueByteLenght int) (int, error) {
+func StorageCostForEntry(nodeVersion string, keyByteLength, valueByteLength int) (int, error) {
 	versionFloat, err := strconv.ParseFloat(nodeVersion, 64)
 	if err != nil {
-		return 0, fmt.Errorf("failed to parse nodeversion %s: %w", nodeVersion, err)
+		return 0, fmt.Errorf("failed to parse node version %s: %w", nodeVersion, err)
 	}
 
 	//nolint:gomnd
 	if versionFloat < 26 {
-		lecagyStorageCost := 1_000_000
+		legacyStorageCost := 1_000_000
 		// key bytes are charged at the fixed price of 10 bytes
 		//nolint:gomnd
-		return (valueByteLenght + 10) * lecagyStorageCost, nil
+		return (valueByteLength + 10) * legacyStorageCost, nil
 	}
 
-	return (valueByteLenght + keyByteLengh + StorageEntryBaseBytes) * StorageCostPerByte, nil
+	return (valueByteLength + keyByteLength + StorageEntryBaseBytes) * StorageCostPerByte, nil
 }
 
 func AccountCreationStorageCost(nodeVersion string) (int, error) {
 	versionFloat, err := strconv.ParseFloat(nodeVersion, 64)
 	if err != nil {
-		return 0, fmt.Errorf("failed to parse nodeversion %s: %w", nodeVersion, err)
+		return 0, fmt.Errorf("failed to parse node version %s: %w", nodeVersion, err)
 	}
 
 	//nolint:gomnd
 	if versionFloat < 26 {
 		// current version is lower than 0.26.0
-		lecacyAccountCreationStorageCost := 10_000_000
+		legacyAccountCreationStorageCost := 10_000_000
 
-		return lecacyAccountCreationStorageCost, nil
+		return legacyAccountCreationStorageCost, nil
 	}
 
 	return accountCreationStorageCost, nil

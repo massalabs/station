@@ -56,7 +56,7 @@ func SetRecord(
 		"dns1_setResolver",
 		rec,
 		sendoperation.DefaultFee,
-		sendoperation.DefaultGasLimit,
+		sendoperation.DefaultGasLimitCallSC,
 		sendoperation.OneMassa,
 		sendoperation.DefaultExpiryInSlot,
 		false,

@@ -50,7 +50,7 @@ const (
  * All these criterion are optional.
  */
 func Events(client *Client, start *Slot, end *Slot,
-	emitter *string, originaCaller *string,
+	emitter *string, originalCaller *string,
 	operationID *string,
 ) ([]Event, error) {
 	rawResponse, err := client.RPCClient.Call(
@@ -61,7 +61,7 @@ func Events(client *Client, start *Slot, end *Slot,
 				Start:                 start,
 				End:                   end,
 				EmitterAddress:        emitter,
-				OriginalCallerAddress: originaCaller,
+				OriginalCallerAddress: originalCaller,
 				OriginalOperationID:   operationID,
 			},
 		},
@@ -73,7 +73,7 @@ func Events(client *Client, start *Slot, end *Slot,
 					Start:                 start,
 					End:                   end,
 					EmitterAddress:        emitter,
-					OriginalCallerAddress: originaCaller,
+					OriginalCallerAddress: originalCaller,
 					OriginalOperationID:   operationID,
 				},
 			}, err)
