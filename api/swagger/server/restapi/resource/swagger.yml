@@ -71,7 +71,7 @@ paths:
               maxGas:
                 $ref: "#/definitions/Amount"
                 description: Maximum number of gas unit that a operation will be able consume.
-                default: 3980167295 # DefaultGasLimit
+                default: 700000000 # DefaultGasLimit
               coins:
                 #$ref: "#/definitions/Amount"
                 description: Set the coin amount that will be transferred to the smartContract.
@@ -143,7 +143,7 @@ paths:
           format: uint64
           minimum: 0
           description: Maximum number of gas unit that a node will be able to consume.
-          default: 3980167295
+          default: 700000000  # DefaultGasLimit
         - in: formData
           name : coins
           type: integer
