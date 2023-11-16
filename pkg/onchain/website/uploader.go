@@ -20,9 +20,9 @@ import (
 var content embed.FS
 
 const (
-	chunkSize = 260000
-	nbChunkKey  = "NB_CHUNKS"
-	ownerKey    = "OWNER"
+	chunkSize  = 260000
+	nbChunkKey = "NB_CHUNKS"
+	ownerKey   = "OWNER"
 )
 
 //nolint:funlen,cyclop

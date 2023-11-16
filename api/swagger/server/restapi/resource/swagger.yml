@@ -143,7 +143,7 @@ paths:
           format: uint64
           minimum: 0
           description: Maximum number of gas unit that a node will be able to consume.
-          default: 700000000  # DefaultGasLimit
+          default: 1000000000  # DefaultGasLimit
         - in: formData
           name : coins
           type: integer
