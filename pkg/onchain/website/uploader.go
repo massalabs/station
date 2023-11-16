@@ -20,7 +20,7 @@ import (
 var content embed.FS
 
 const (
-	blockLength = 78000
+	chunkSize = 260000
 	nbChunkKey  = "NB_CHUNKS"
 	ownerKey    = "OWNER"
 )
@@ -131,7 +131,7 @@ func Upload(
 	nickname string,
 	operationBatch sendOperation.OperationBatch,
 ) ([]string, error) {
-	blocks := chunk(content, blockLength)
+	blocks := chunk(content, chunkSize)
 
 	operations, err := upload(network, atAddress, blocks, nickname, operationBatch)
 	if err != nil {
@@ -218,7 +218,7 @@ func UploadMissedChunks(
 	missedChunks string,
 	operationBatch sendOperation.OperationBatch,
 ) ([]string, error) {
-	blocks := chunk(content, blockLength)
+	blocks := chunk(content, chunkSize)
 
 	operations, err := uploadMissedChunks(
 		config,
