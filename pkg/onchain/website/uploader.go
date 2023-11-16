@@ -78,8 +78,6 @@ func PrepareForUpload(
 
 	totalStorageCost := webSiteInitCost + deployCost + accountCreationCost
 
-	logger.Debug("Website deployment cost estimation: ", totalStorageCost)
-
 	// Prepare address to webstorage.
 	operationResponse, events, err := onchain.DeploySC(
 		client,
