@@ -45,6 +45,12 @@ type Account struct {
 	// account's nickname.
 	// Required: true
 	Nickname string `json:"nickname"`
+
+	// account's balance.
+	CandidateBalance string `json:"candidateBalance"`
+
+	// account's status: ok or corrupted.
+	Status string `json:"status,omitempty"`
 }
 
 func Fetch(nickname string) (*Account, error) {
