@@ -18,6 +18,7 @@ const (
 	MaxGasAllowedExecuteSC     = 3_980_167_295
 	MaxGasAllowedCallSC        = 4_294_167_295
 	DefaultGasLimitCallSC      = 700_000_000
+	DefaultInstalCreationCost  = 2_100_000
 	DefaultExpiryInSlot        = 3
 	DefaultFee                 = 0
 	accountCreationStorageCost = 1_000_000

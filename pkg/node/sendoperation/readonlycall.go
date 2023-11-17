@@ -36,7 +36,7 @@ func EstimateGasCostCallSC(
 
 	estimatedGasCost := uint64(result.GasCost)
 
-	return estimatedGasCost, nil
+	return estimatedGasCost + DefaultInstalCreationCost, nil
 }
 
 func ReadOnlyCallSC(
@@ -129,7 +129,7 @@ func EstimateGasCostExecuteSC(
 
 	estimatedGasCost := uint64(result.GasCost)
 
-	return estimatedGasCost, nil
+	return estimatedGasCost + DefaultInstalCreationCost, nil
 }
 
 func ReadOnlyExecuteSC(
