@@ -60,18 +60,18 @@ func PrepareForUpload(
 	}
 
 	// webSiteInitCost correspond to the cost of owner initialization
-	//nolint:lll,gomnd
-	webSiteInitCost, err := sendOperation.StorageCostForEntry(network.Version, len([]byte(ownerKey)), 53 /*owner Addr max byteLenght*/)
+	//nolint:gomnd
+	webSiteInitCost, err := sendOperation.StorageCostForEntry(len([]byte(ownerKey)), 53 /*owner Addr max byteLenght*/)
 	if err != nil {
 		return "", "", fmt.Errorf("unable to compute storage cost for website init: %w", err)
 	}
 
-	deployCost, err := sendOperation.StorageCostForEntry(network.Version, 0, len(websiteStorer))
+	deployCost, err := sendOperation.StorageCostForEntry(0, len(websiteStorer))
 	if err != nil {
 		return "", "", fmt.Errorf("unable to compute storage cost for website deployment: %w", err)
 	}
 
-	accountCreationCost, err := sendOperation.AccountCreationStorageCost(network.Version)
+	accountCreationCost, err := sendOperation.AccountCreationStorageCost()
 	if err != nil {
 		return "", "", fmt.Errorf("unable to compute storage cost for account creation: %w", err)
 	}
@@ -165,7 +165,7 @@ func upload(
 		// Chunk data encoding
 		params = append(params, chunks[chunkIndex]...)
 
-		uploadCost, err := sendOperation.StorageCostForEntry(network.Version, convert.BytesPerUint32, chunkSize)
+		uploadCost, err := sendOperation.StorageCostForEntry(convert.BytesPerUint32, chunkSize)
 		if err != nil {
 			return nil, fmt.Errorf("unable to compute storage cost chunk upload: %w", err)
 		}
@@ -173,7 +173,6 @@ func upload(
 		if chunkIndex == 0 {
 			// if chunkID == 0, we need to add the cost of the key creation for the NB_CHUNKS key
 			chunkKeyCost, err := sendOperation.StorageCostForEntry(
-				network.Version,
 				len([]byte(nbChunkKey)),
 				convert.BytesPerUint32)
 			if err != nil {
@@ -266,7 +265,7 @@ func uploadMissedChunks(
 		//nolint:ineffassign,nolintlint
 		params = append(params, chunks[chunkID]...)
 
-		uploadCost, err := sendOperation.StorageCostForEntry(network.Version, convert.BytesPerUint32, chunkSize)
+		uploadCost, err := sendOperation.StorageCostForEntry(convert.BytesPerUint32, chunkSize)
 		if err != nil {
 			return nil, fmt.Errorf("unable to compute storage cost for chunk upload: %w", err)
 		}
@@ -274,7 +273,6 @@ func uploadMissedChunks(
 		if chunkID == 0 {
 			// if chunkID == 0, we may need to add the cost of the key creation for the NB_CHUNKS key
 			chunkKeyCost, err := sendOperation.StorageCostForEntry(
-				network.Version,
 				len([]byte(nbChunkKey)),
 				convert.BytesPerUint32)
 			if err != nil {

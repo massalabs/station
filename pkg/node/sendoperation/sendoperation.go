@@ -6,7 +6,6 @@ import (
 	b64 "encoding/base64"
 	"encoding/binary"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/massalabs/station/pkg/node"
@@ -233,36 +232,10 @@ func DecodeOperationType(data []byte) (uint64, error) {
 	return opType, nil
 }
 
-func StorageCostForEntry(nodeVersion string, keyByteLength, valueByteLength int) (int, error) {
-	versionFloat, err := strconv.ParseFloat(nodeVersion, 64)
-	if err != nil {
-		return 0, fmt.Errorf("failed to parse node version %s: %w", nodeVersion, err)
-	}
-
-	//nolint:gomnd
-	if versionFloat < 26 {
-		legacyStorageCost := 1_000_000
-		// key bytes are charged at the fixed price of 10 bytes
-		//nolint:gomnd
-		return (valueByteLength + 10) * legacyStorageCost, nil
-	}
-
+func StorageCostForEntry(keyByteLength, valueByteLength int) (int, error) {
 	return (valueByteLength + keyByteLength + StorageEntryBaseBytes) * StorageCostPerByte, nil
 }
 
-func AccountCreationStorageCost(nodeVersion string) (int, error) {
-	versionFloat, err := strconv.ParseFloat(nodeVersion, 64)
-	if err != nil {
-		return 0, fmt.Errorf("failed to parse node version %s: %w", nodeVersion, err)
-	}
-
-	//nolint:gomnd
-	if versionFloat < 26 {
-		// current version is lower than 0.26.0
-		legacyAccountCreationStorageCost := 10_000_000
-
-		return legacyAccountCreationStorageCost, nil
-	}
-
+func AccountCreationStorageCost() (int, error) {
 	return accountCreationStorageCost, nil
 }
