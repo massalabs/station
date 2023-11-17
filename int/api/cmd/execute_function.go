@@ -93,6 +93,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 		asyncReq,
 		sendOperation.OperationBatch{NewBatch: false, CorrelationID: ""},
 		&signer.WalletPlugin{},
+		"",
 	)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(

@@ -20,9 +20,9 @@ import (
 var content embed.FS
 
 const (
-	blockLength = 260000
-	nbChunkKey  = "NB_CHUNKS"
-	ownerKey    = "OWNER"
+	chunkSize  = 260000
+	nbChunkKey = "NB_CHUNKS"
+	ownerKey   = "OWNER"
 )
 
 //nolint:funlen,cyclop
@@ -92,6 +92,7 @@ func PrepareForUpload(
 		nil,
 		sendOperation.OperationBatch{NewBatch: true, CorrelationID: ""},
 		&signer.WalletPlugin{},
+		"deploying website",
 	)
 	if err != nil {
 		return "", "", fmt.Errorf("deploying webstorage SC: %w", err)
@@ -130,7 +131,7 @@ func Upload(
 	nickname string,
 	operationBatch sendOperation.OperationBatch,
 ) ([]string, error) {
-	blocks := chunk(content, blockLength)
+	blocks := chunk(content, chunkSize)
 
 	operations, err := upload(network, atAddress, blocks, nickname, operationBatch)
 	if err != nil {
@@ -197,6 +198,7 @@ func upload(
 			false,
 			operationBatch,
 			&signer.WalletPlugin{},
+			fmt.Sprintf("Uploading website chunk %d out of %d", chunkIndex+1, nbChunks),
 		)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
@@ -216,7 +218,7 @@ func UploadMissedChunks(
 	missedChunks string,
 	operationBatch sendOperation.OperationBatch,
 ) ([]string, error) {
-	blocks := chunk(content, blockLength)
+	blocks := chunk(content, chunkSize)
 
 	operations, err := uploadMissedChunks(
 		config,
@@ -295,6 +297,7 @@ func uploadMissedChunks(
 			false,
 			operationBatch,
 			&signer.WalletPlugin{},
+			fmt.Sprintf("Repairing website chunk %d out of %d", chunkID+1, len(arrMissedChunks)),
 		)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)

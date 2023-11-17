@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	DefaultGasLimitExecuteSC   = 3_980_167_295
-	DefaultGasLimitCallSC      = 4_294_167_295
+	DefaultGasLimitExecuteSC   = 1_000_000_000
+	DefaultGasLimitCallSC      = 700_000_000
 	DefaultExpiryInSlot        = 3
 	DefaultFee                 = 0
 	accountCreationStorageCost = 1_000_000
@@ -69,6 +69,7 @@ func Call(client *node.Client,
 	nickname string,
 	operationBatch OperationBatch,
 	signer signer.Signer,
+	description string,
 ) (*OperationResponse, error) {
 	msg, msgB64, err := MakeOperation(client, expiry, fee, operation)
 	if err != nil {
@@ -80,16 +81,19 @@ func Call(client *node.Client,
 	switch {
 	case operationBatch.NewBatch:
 		content = `{
+			"description": "` + description + `",
 			"operation": "` + msgB64 + `",
 			"batch": true
 		}`
 	case operationBatch.CorrelationID != "":
 		content = `{
+			"description": "` + description + `",
 			"operation": "` + msgB64 + `",
 			"correlationId": "` + operationBatch.CorrelationID + `"
 		}`
 	default:
 		content = `{
+			"description": "` + description + `",
 			"operation": "` + msgB64 + `"
 		}`
 	}

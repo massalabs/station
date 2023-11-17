@@ -62,6 +62,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		decodedDatastore,
 		sendoperation.OperationBatch{NewBatch: false, CorrelationID: ""},
 		&signer.WalletPlugin{},
+		"",
 	)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().

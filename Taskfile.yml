@@ -41,7 +41,7 @@ tasks:
       - cmd: gofumpt -l -w .
       - cmd: gci write .
       - task: fmt-web
-      - cmd: golangci-lint run
+      - cmd: golangci-lint run --fix
 
   fmt-web:
     dir: web/massastation
