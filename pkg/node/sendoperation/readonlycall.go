@@ -23,14 +23,14 @@ func EstimateGasCostCallSC(
 		return 0, fmt.Errorf("loading wallet '%s': %w", nickname, err)
 	}
 
-	result, err := ReadOnlyCallSC(targetAddr, function, parameter, coins, DefaultGasLimit, fee, acc.Address, client)
+	result, err := ReadOnlyCallSC(targetAddr, function, parameter, coins, DefaultGasLimitCallSC, fee, acc.Address, client)
 	if err != nil {
 		logger.Warnf("calling ReadOnlyCall: %s", err)
 
 		// Don't return error, just return default gas limit,
 		// because execute_read_only_call v27 execute_read_only_call may not work (Invalid params)
 		// and because execute_read_only_call v24.1 may fail because ignore the coins parameter.
-		return DefaultGasLimit, nil
+		return DefaultGasLimitCallSC, nil
 	}
 
 	estimatedGasCost := uint64(result.GasCost)
@@ -107,13 +107,13 @@ func EstimateGasCostExecuteSC(
 		return 0, fmt.Errorf("loading wallet '%s': %w", nickname, err)
 	}
 
-	result, err := ReadOnlyExecuteSC(contract, datastore, maxCoins, DefaultGasLimit, fee, acc.Address, client)
+	result, err := ReadOnlyExecuteSC(contract, datastore, maxCoins, MaxGasAllowedExecuteSC, fee, acc.Address, client)
 	if err != nil {
 		logger.Warnf("ReadOnlyExecuteSC error: %s, caller address is %s", err, acc.Address)
 
 		// Do not return an error because execute_read_only_bytecode v24.1 fail with Internal error
 		// and on v27 fails with Invalid params
-		return DefaultGasLimit, nil
+		return DefaultGasLimitExecuteSC, nil
 	}
 
 	estimatedGasCost := uint64(result.GasCost)

@@ -37,7 +37,7 @@ func CallFunction(
 	description string,
 ) (*OperationWithEventResponse, error) {
 	// Calibrate max_gas
-	if maxGas == sendOperation.DefaultGasLimit || maxGas == 0 {
+	if maxGas == sendOperation.DefaultGasLimitCallSC || maxGas == 0 {
 		estimatedGasCost, err := sendOperation.EstimateGasCostCallSC(nickname, addr, function, parameter, coins, fee, client)
 		if err != nil {
 			return nil, fmt.Errorf("estimating Call SC gas cost for function '%s' at '%s': %w", function, addr, err)
@@ -120,7 +120,7 @@ func DeploySC(client *node.Client,
 	description string,
 ) (*sendOperation.OperationResponse, []node.Event, error) {
 	// Calibrate max_gas
-	if maxGas == sendOperation.DefaultGasLimit || maxGas == 0 {
+	if maxGas == sendOperation.DefaultGasLimitExecuteSC || maxGas == 0 {
 		estimatedGasCost, err := sendOperation.EstimateGasCostExecuteSC(nickname, contract, datastore, maxCoins, fee, client)
 		if err != nil {
 			return nil, nil, fmt.Errorf("estimating Execute SC gas cost: %w", err)
