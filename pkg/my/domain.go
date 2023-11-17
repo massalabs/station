@@ -29,7 +29,7 @@ func Domains(config config.NetworkInfos, client *node.Client, nickname string) (
 
 	acc, err := wallet.Fetch(nickname)
 	if err != nil {
-		return nil, fmt.Errorf("loading wallet '%s': %w", nickname, err)
+		return nil, fmt.Errorf("loading account '%s': %w", nickname, err)
 	}
 
 	names := []string{}
