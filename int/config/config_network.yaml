@@ -1,5 +1,5 @@
 buildnet:
-  DNS: AS1pzpVk79cubdM7Zk9pNdg1JR4qKooVa6usyquiCEQhPeRWD9k7
+  DNS: AS12HwmDTbTp6JTzfAjqTfVvYqYEAPUsP42v3ivgtWJtmVb6F4g8d
   URLs:
-    - https://buildnet.massa.net/api/v2
+    - https://test.massa.net/api/v2
   Default: true
