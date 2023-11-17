@@ -64,7 +64,7 @@ func SetRecord(
 		&signer.WalletPlugin{},
 	)
 	if err != nil {
-		return "", fmt.Errorf("calling setResolver with '%+v' at '%s': %w", rec, addr, err)
+		return "", fmt.Errorf("calling setResolver at '%s': %w", addr, err)
 	}
 
 	event := operationWithEventResponse.Event

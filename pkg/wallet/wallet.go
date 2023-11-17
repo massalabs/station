@@ -9,7 +9,7 @@ import (
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 )
 
-// WalletKeyPair wallet's key pair.
+// AccountKeyPair account's key pair.
 //
 //nolint:tagliatelle
 type KeyPair struct {
@@ -30,11 +30,11 @@ type KeyPair struct {
 	Salt string `json:"salt"`
 }
 
-// Wallet object (V0).
+// Account object (V0).
 //
 //nolint:tagliatelle
-type Wallet struct {
-	// wallet's address.
+type Account struct {
+	// account's address.
 	// Required: true
 	Address string `json:"address"`
 
@@ -42,12 +42,18 @@ type Wallet struct {
 	// Required: true
 	KeyPair KeyPair `json:"keyPair"`
 
-	// wallet's nickname.
+	// account's nickname.
 	// Required: true
 	Nickname string `json:"nickname"`
+
+	// account's balance.
+	CandidateBalance string `json:"candidateBalance"`
+
+	// account's status: ok or corrupted.
+	Status string `json:"status,omitempty"`
 }
 
-func Fetch(nickname string) (*Wallet, error) {
+func Fetch(nickname string) (*Account, error) {
 	httpRawResponse, err := signer.ExecuteHTTPRequest(
 		http.MethodGet,
 		signer.WalletPluginURL+"accounts/"+nickname,
@@ -60,12 +66,12 @@ func Fetch(nickname string) (*Wallet, error) {
 		return nil, fmt.Errorf("calling executeHTTPRequest: %w, message: %s", err, res.Message)
 	}
 
-	wallet := Wallet{} //nolint:exhaustruct
+	account := Account{} //nolint:exhaustruct
 
-	err = json.Unmarshal(httpRawResponse, &wallet)
+	err = json.Unmarshal(httpRawResponse, &account)
 	if err != nil {
 		return nil, fmt.Errorf("unmarshaling file 'wallet_%s.json': %w", nickname, err)
 	}
 
-	return &wallet, nil
+	return &account, nil
 }
