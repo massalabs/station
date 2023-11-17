@@ -8,8 +8,8 @@ import (
 // ReadOnlyCallParams is the struct used to send a read only callSC to the node.
 type ReadOnlyCallParams struct {
 	MaxGas         int           `json:"max_gas"`
-	Coins          int           `json:"coins"`
-	Fee            int           `json:"fee"`
+	Coins          string        `json:"coins"`
+	Fee            string        `json:"fee"`
 	TargetAddress  string        `json:"target_address"`
 	TargetFunction string        `json:"target_function"`
 	Parameter      JSONableSlice `json:"parameter"`
@@ -98,7 +98,7 @@ type StateChange struct {
 	PosChanges                   PosChanges                   `json:"pos_changes"`
 	ExecutedOpsChanges           map[string]interface{}       `json:"executed_ops_changes"`
 	ExecutedDenunciationsChanges []interface{}                `json:"executed_denunciations_changes"` // Empty array in provided JSON
-	ExecutionTrailHashChange     ChangeSet                    `json:"execution_trail_hash_change"`
+	ExecutionTrailHashChange     interface{}                  `json:"execution_trail_hash_change"`
 }
 
 //nolint:tagliatelle
@@ -144,8 +144,8 @@ type DeferredCreditsInfo struct {
 // ReadOnlyExecuteParams is the struct used to send a read only executeSC to the node.
 type ReadOnlyExecuteParams struct {
 	MaxGas             int           `json:"max_gas"`
-	Coins              int           `json:"coins"`
-	Fee                int           `json:"fee"`
+	Coins              string        `json:"coins"`
+	Fee                string        `json:"fee"`
 	Address            string        `json:"address"`
 	Bytecode           JSONableSlice `json:"bytecode"`
 	OperationDatastore JSONableSlice `json:"operation_datastore"`

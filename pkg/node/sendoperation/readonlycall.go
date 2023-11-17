@@ -3,6 +3,7 @@ package sendoperation
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
@@ -48,12 +49,22 @@ func ReadOnlyCallSC(
 	callerAddr string,
 	client *node.Client,
 ) (*ReadOnlyCallResult, error) {
+	coinsString, err := NanoToMas(coins)
+	if err != nil {
+		return nil, fmt.Errorf("converting maxCoins to mas: %w", err)
+	}
+
+	feeString, err := NanoToMas(fee)
+	if err != nil {
+		return nil, fmt.Errorf("converting fee to mas: %w", err)
+	}
+
 	readOnlyCallParams := [][]ReadOnlyCallParams{
 		{
 			ReadOnlyCallParams{
 				MaxGas:         int(maxGas),
-				Coins:          int(coins),
-				Fee:            int(fee),
+				Coins:          coinsString,
+				Fee:            feeString,
 				TargetAddress:  targetAddr,
 				TargetFunction: function,
 				Parameter:      parameter,
@@ -130,12 +141,21 @@ func ReadOnlyExecuteSC(
 	callerAddr string,
 	client *node.Client,
 ) (*ReadOnlyCallResult, error) {
+	if datastore == nil {
+		datastore = []byte{0}
+	}
+
+	coins, err := NanoToMas(maxCoins)
+	if err != nil {
+		return nil, fmt.Errorf("converting maxCoins to mas: %w", err)
+	}
+
 	readOnlyExecuteParams := [][]ReadOnlyExecuteParams{
 		{
 			ReadOnlyExecuteParams{
-				Coins:              int(maxCoins),
+				Coins:              coins,
 				MaxGas:             int(maxGas),
-				Fee:                int(fee),
+				Fee:                strconv.FormatUint(fee, 10),
 				Address:            callerAddr,
 				Bytecode:           contract,
 				OperationDatastore: datastore,
@@ -149,14 +169,14 @@ func ReadOnlyExecuteSC(
 		readOnlyExecuteParams,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("calling execute_read_only_bytecode jsonrpc with '%+v': %w", readOnlyExecuteParams, err)
+		return nil, fmt.Errorf("calling execute_read_only_bytecode jsonrpc: %w", err)
 	}
 
 	if rawResponse.Error != nil {
 		return nil, fmt.Errorf(
-			"receiving execute_read_only_bytecode with '%+v': response: %w",
-			readOnlyExecuteParams,
+			"receiving execute_read_only_bytecode  response: %w, %v",
 			rawResponse.Error,
+			fmt.Sprint(rawResponse.Error.Data),
 		)
 	}
 
