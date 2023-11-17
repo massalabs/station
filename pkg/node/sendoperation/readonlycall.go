@@ -23,7 +23,17 @@ func EstimateGasCostCallSC(
 		return 0, fmt.Errorf("loading wallet '%s': %w", nickname, err)
 	}
 
-	result, err := ReadOnlyCallSC(targetAddr, function, parameter, coins, fee, acc.Address, client)
+	coinsString, err := NanoToMas(coins)
+	if err != nil {
+		return 0, fmt.Errorf("converting maxCoins to mas: %w", err)
+	}
+
+	feeString, err := NanoToMas(fee)
+	if err != nil {
+		return 0, fmt.Errorf("converting fee to mas: %w", err)
+	}
+
+	result, err := ReadOnlyCallSC(targetAddr, function, parameter, coinsString, feeString, acc.Address, client)
 	if err != nil {
 		logger.Warnf("calling ReadOnlyCall: %s", err)
 
@@ -37,21 +47,23 @@ func EstimateGasCostCallSC(
 	return estimatedGasCost, nil
 }
 
+// ReadOnlyCallSC calls execute_read_only_call jsonrpc method.
+// coins and fee must be in MAS.
 func ReadOnlyCallSC(
 	targetAddr string,
 	function string,
 	parameter []byte,
-	coins uint64,
-	fee uint64,
+	coins string,
+	fee string,
 	callerAddr string,
 	client *node.Client,
 ) (*ReadOnlyCallResult, error) {
 	readOnlyCallParams := [][]ReadOnlyCallParams{
 		{
 			ReadOnlyCallParams{
-				MaxGas:         DefaultGasLimitCallSC,
-				Coins:          int(coins),
-				Fee:            int(fee),
+				MaxGas:         MaxGasAllowedCallSC,
+				Coins:          coins,
+				Fee:            fee,
 				TargetAddress:  targetAddr,
 				TargetFunction: function,
 				Parameter:      parameter,
@@ -85,7 +97,7 @@ func ReadOnlyCallSC(
 	}
 
 	if resp[0].Result.Error != "" {
-		return nil, fmt.Errorf("ReadOnlyCall error: %s, caller address is %s and coins are %d",
+		return nil, fmt.Errorf("ReadOnlyCall error: %s, caller address is %s and coins are %s",
 			resp[0].Result.Error, callerAddr, coins)
 	}
 
