@@ -27,18 +27,18 @@ and returns it as an array of strings.
 func Domains(config config.NetworkInfos, client *node.Client, nickname string) ([]string, error) {
 	const ownedPrefix = "owned"
 
-	wallet, err := wallet.Fetch(nickname)
+	acc, err := wallet.Fetch(nickname)
 	if err != nil {
-		return nil, fmt.Errorf("loading wallet '%s': %w", nickname, err)
+		return nil, fmt.Errorf("loading account '%s': %w", nickname, err)
 	}
 
 	names := []string{}
 
-	ownerKey := convert.ToBytesWithPrefixLength(ownedPrefix + wallet.Address)
+	ownerKey := convert.ToBytesWithPrefixLength(ownedPrefix + acc.Address)
 
 	rawNames, err := node.FetchDatastoreEntry(client, config.DNSAddress, ownerKey)
 	if err != nil {
-		return nil, fmt.Errorf("reading entry '%s' at '%s': %w", config.DNSAddress, ownedPrefix+wallet.Address, err)
+		return nil, fmt.Errorf("reading entry '%s' at '%s': %w", config.DNSAddress, ownedPrefix+acc.Address, err)
 	}
 
 	if len(rawNames.CandidateValue) == 0 {
