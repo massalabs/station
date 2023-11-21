@@ -9,6 +9,14 @@ import (
 	"github.com/massalabs/station/pkg/wallet"
 )
 
+const (
+	PercentageGasLimit = 10
+)
+
+func addXPercentage(x, y uint64) uint64 {
+	return x + x*y/100
+}
+
 func EstimateGasCostCallSC(
 	nickname string,
 	targetAddr string,
@@ -44,7 +52,7 @@ func EstimateGasCostCallSC(
 
 	estimatedGasCost := uint64(result.GasCost)
 
-	return estimatedGasCost, nil
+	return addXPercentage(estimatedGasCost, PercentageGasLimit), nil
 }
 
 // ReadOnlyCallSC calls execute_read_only_call jsonrpc method.
