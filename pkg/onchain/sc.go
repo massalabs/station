@@ -37,7 +37,7 @@ func CallFunction(
 	description string,
 ) (*OperationWithEventResponse, error) {
 	// Calibrate max_gas
-	if maxGas == sendOperation.DefaultGasLimit || maxGas == 0 {
+	if maxGas == sendOperation.DefaultGasLimitCallSC || maxGas == 0 {
 		estimatedGasCost, err := sendOperation.EstimateGasCostCallSC(nickname, addr, function, parameter, coins, fee, client)
 		if err != nil {
 			return nil, fmt.Errorf("calling EstimateGasCost for function '%s' at '%s': %w", function, addr, err)
