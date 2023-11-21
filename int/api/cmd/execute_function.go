@@ -41,7 +41,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 	}
 
 	// convert maxGas to uint64
-	maxGas := uint64(sendOperation.DefaultGasLimit)
+	maxGas := uint64(sendOperation.DefaultGasLimitCallSC)
 
 	if string(params.Body.MaxGas) != "" {
 		parsedMaxGas, err := strconv.ParseUint(string(params.Body.MaxGas), 10, 64)
@@ -93,6 +93,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 		asyncReq,
 		sendOperation.OperationBatch{NewBatch: false, CorrelationID: ""},
 		&signer.WalletPlugin{},
+		"",
 	)
 	if err != nil {
 		return operations.NewCmdExecuteFunctionInternalServerError().WithPayload(

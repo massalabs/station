@@ -20,9 +20,9 @@ import (
 var content embed.FS
 
 const (
-	blockLength = 260000
-	nbChunkKey  = "NB_CHUNKS"
-	ownerKey    = "OWNER"
+	chunkSize  = 260000
+	nbChunkKey = "NB_CHUNKS"
+	ownerKey   = "OWNER"
 )
 
 //nolint:funlen,cyclop
@@ -60,18 +60,18 @@ func PrepareForUpload(
 	}
 
 	// webSiteInitCost correspond to the cost of owner initialization
-	//nolint:lll,gomnd
-	webSiteInitCost, err := sendOperation.StorageCostForEntry(network.Version, len([]byte(ownerKey)), 53 /*owner Addr max byteLenght*/)
+	//nolint:gomnd
+	webSiteInitCost, err := sendOperation.StorageCostForEntry(len([]byte(ownerKey)), 53 /*owner Addr max byteLenght*/)
 	if err != nil {
 		return "", "", fmt.Errorf("unable to compute storage cost for website init: %w", err)
 	}
 
-	deployCost, err := sendOperation.StorageCostForEntry(network.Version, 0, len(websiteStorer))
+	deployCost, err := sendOperation.StorageCostForEntry(0, len(websiteStorer))
 	if err != nil {
 		return "", "", fmt.Errorf("unable to compute storage cost for website deployment: %w", err)
 	}
 
-	accountCreationCost, err := sendOperation.AccountCreationStorageCost(network.Version)
+	accountCreationCost, err := sendOperation.AccountCreationStorageCost()
 	if err != nil {
 		return "", "", fmt.Errorf("unable to compute storage cost for account creation: %w", err)
 	}
@@ -82,7 +82,7 @@ func PrepareForUpload(
 	operationResponse, events, err := onchain.DeploySC(
 		client,
 		nickname,
-		sendOperation.DefaultGasLimit,
+		sendOperation.DefaultGasLimitExecuteSC,
 		uint64(totalStorageCost),
 		sendOperation.DefaultFee,
 		sendOperation.DefaultExpiryInSlot,
@@ -90,6 +90,7 @@ func PrepareForUpload(
 		nil,
 		sendOperation.OperationBatch{NewBatch: true, CorrelationID: ""},
 		&signer.WalletPlugin{},
+		"deploying website",
 	)
 	if err != nil {
 		return "", "", fmt.Errorf("deploying webstorage SC: %w", err)
@@ -128,7 +129,7 @@ func Upload(
 	nickname string,
 	operationBatch sendOperation.OperationBatch,
 ) ([]string, error) {
-	blocks := chunk(content, blockLength)
+	blocks := chunk(content, chunkSize)
 
 	operations, err := upload(network, atAddress, blocks, nickname, operationBatch)
 	if err != nil {
@@ -162,7 +163,7 @@ func upload(
 		// Chunk data encoding
 		params = append(params, chunks[chunkIndex]...)
 
-		uploadCost, err := sendOperation.StorageCostForEntry(network.Version, convert.BytesPerUint32, chunkSize)
+		uploadCost, err := sendOperation.StorageCostForEntry(convert.BytesPerUint32, chunkSize)
 		if err != nil {
 			return nil, fmt.Errorf("unable to compute storage cost chunk upload: %w", err)
 		}
@@ -170,7 +171,6 @@ func upload(
 		if chunkIndex == 0 {
 			// if chunkID == 0, we need to add the cost of the key creation for the NB_CHUNKS key
 			chunkKeyCost, err := sendOperation.StorageCostForEntry(
-				network.Version,
 				len([]byte(nbChunkKey)),
 				convert.BytesPerUint32)
 			if err != nil {
@@ -189,12 +189,13 @@ func upload(
 			"appendBytesToWebsite",
 			params,
 			sendOperation.DefaultFee,
-			sendOperation.DefaultGasLimit,
+			sendOperation.DefaultGasLimitCallSC,
 			uint64(uploadCost),
 			sendOperation.DefaultExpiryInSlot,
 			false,
 			operationBatch,
 			&signer.WalletPlugin{},
+			fmt.Sprintf("Uploading website chunk %d out of %d", chunkIndex+1, nbChunks),
 		)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)
@@ -214,7 +215,7 @@ func UploadMissedChunks(
 	missedChunks string,
 	operationBatch sendOperation.OperationBatch,
 ) ([]string, error) {
-	blocks := chunk(content, blockLength)
+	blocks := chunk(content, chunkSize)
 
 	operations, err := uploadMissedChunks(
 		config,
@@ -262,7 +263,7 @@ func uploadMissedChunks(
 		//nolint:ineffassign,nolintlint
 		params = append(params, chunks[chunkID]...)
 
-		uploadCost, err := sendOperation.StorageCostForEntry(network.Version, convert.BytesPerUint32, chunkSize)
+		uploadCost, err := sendOperation.StorageCostForEntry(convert.BytesPerUint32, chunkSize)
 		if err != nil {
 			return nil, fmt.Errorf("unable to compute storage cost for chunk upload: %w", err)
 		}
@@ -270,7 +271,6 @@ func uploadMissedChunks(
 		if chunkID == 0 {
 			// if chunkID == 0, we may need to add the cost of the key creation for the NB_CHUNKS key
 			chunkKeyCost, err := sendOperation.StorageCostForEntry(
-				network.Version,
 				len([]byte(nbChunkKey)),
 				convert.BytesPerUint32)
 			if err != nil {
@@ -287,12 +287,13 @@ func uploadMissedChunks(
 			"appendBytesToWebsite",
 			params,
 			sendOperation.DefaultFee,
-			sendOperation.DefaultGasLimit,
+			sendOperation.DefaultGasLimitCallSC,
 			uint64(uploadCost),
 			sendOperation.DefaultExpiryInSlot,
 			false,
 			operationBatch,
 			&signer.WalletPlugin{},
+			fmt.Sprintf("Repairing website chunk %d out of %d", chunkID+1, len(arrMissedChunks)),
 		)
 		if err != nil {
 			return nil, fmt.Errorf("calling appendBytesToWebsite at '%s': %w", addr, err)

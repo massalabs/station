@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	OpType      = uint64(0)
+	OpType      = 0
 	versionByte = byte(0)
 )
 

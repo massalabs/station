@@ -32,6 +32,7 @@ func CallFunction(client *node.Client,
 	async bool,
 	operationBatch sendOperation.OperationBatch,
 	signer signer.Signer,
+	description string,
 ) (*OperationWithEventResponse, error) {
 	callSC, err := callsc.New(addr, function, parameter,
 		maxGas,
@@ -48,6 +49,7 @@ func CallFunction(client *node.Client,
 		nickname,
 		operationBatch,
 		signer,
+		description,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("calling function '%s' at '%s' with '%+v': %w", function, addr, parameter, err)
@@ -92,6 +94,7 @@ func DeploySC(client *node.Client,
 	datastore []byte,
 	operationBatch sendOperation.OperationBatch,
 	signer signer.Signer,
+	description string,
 ) (*sendOperation.OperationResponse, []node.Event, error) {
 	exeSC := executesc.New(
 		contract,
@@ -107,6 +110,7 @@ func DeploySC(client *node.Client,
 		nickname,
 		operationBatch,
 		signer,
+		"Deploying smart contract: "+description,
 	)
 	if err != nil {
 		return nil, nil, fmt.Errorf("calling executeSC: %w", err)

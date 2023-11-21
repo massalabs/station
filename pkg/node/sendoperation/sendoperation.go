@@ -6,7 +6,6 @@ import (
 	b64 "encoding/base64"
 	"encoding/binary"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/massalabs/station/pkg/node"
@@ -15,7 +14,8 @@ import (
 )
 
 const (
-	DefaultGasLimit            = 700_000_000
+	DefaultGasLimitExecuteSC   = 1_000_000_000
+	DefaultGasLimitCallSC      = 700_000_000
 	DefaultExpiryInSlot        = 3
 	DefaultFee                 = 0
 	accountCreationStorageCost = 1_000_000
@@ -68,6 +68,7 @@ func Call(client *node.Client,
 	nickname string,
 	operationBatch OperationBatch,
 	signer signer.Signer,
+	description string,
 ) (*OperationResponse, error) {
 	msg, msgB64, err := MakeOperation(client, expiry, fee, operation)
 	if err != nil {
@@ -79,16 +80,19 @@ func Call(client *node.Client,
 	switch {
 	case operationBatch.NewBatch:
 		content = `{
+			"description": "` + description + `",
 			"operation": "` + msgB64 + `",
 			"batch": true
 		}`
 	case operationBatch.CorrelationID != "":
 		content = `{
+			"description": "` + description + `",
 			"operation": "` + msgB64 + `",
 			"correlationId": "` + operationBatch.CorrelationID + `"
 		}`
 	default:
 		content = `{
+			"description": "` + description + `",
 			"operation": "` + msgB64 + `"
 		}`
 	}
@@ -228,36 +232,10 @@ func DecodeOperationType(data []byte) (uint64, error) {
 	return opType, nil
 }
 
-func StorageCostForEntry(nodeVersion string, keyByteLengh, valueByteLenght int) (int, error) {
-	versionFloat, err := strconv.ParseFloat(nodeVersion, 64)
-	if err != nil {
-		return 0, fmt.Errorf("failed to parse nodeversion %s: %w", nodeVersion, err)
-	}
-
-	//nolint:gomnd
-	if versionFloat < 26 {
-		lecagyStorageCost := 1_000_000
-		// key bytes are charged at the fixed price of 10 bytes
-		//nolint:gomnd
-		return (valueByteLenght + 10) * lecagyStorageCost, nil
-	}
-
-	return (valueByteLenght + keyByteLengh + StorageEntryBaseBytes) * StorageCostPerByte, nil
+func StorageCostForEntry(keyByteLength, valueByteLength int) (int, error) {
+	return (valueByteLength + keyByteLength + StorageEntryBaseBytes) * StorageCostPerByte, nil
 }
 
-func AccountCreationStorageCost(nodeVersion string) (int, error) {
-	versionFloat, err := strconv.ParseFloat(nodeVersion, 64)
-	if err != nil {
-		return 0, fmt.Errorf("failed to parse nodeversion %s: %w", nodeVersion, err)
-	}
-
-	//nolint:gomnd
-	if versionFloat < 26 {
-		// current version is lower than 0.26.0
-		lecacyAccountCreationStorageCost := 10_000_000
-
-		return lecacyAccountCreationStorageCost, nil
-	}
-
+func AccountCreationStorageCost() (int, error) {
 	return accountCreationStorageCost, nil
 }

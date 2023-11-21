@@ -56,12 +56,13 @@ func SetRecord(
 		"dns1_setResolver",
 		rec,
 		sendoperation.DefaultFee,
-		sendoperation.DefaultGasLimit,
+		sendoperation.DefaultGasLimitCallSC,
 		sendoperation.OneMassa,
 		sendoperation.DefaultExpiryInSlot,
 		false,
 		operationBatch,
 		&signer.WalletPlugin{},
+		"Setting DNS record",
 	)
 	if err != nil {
 		return "", fmt.Errorf("calling setResolver at '%s': %w", addr, err)
