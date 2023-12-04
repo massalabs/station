@@ -4,11 +4,12 @@ on:
   push:
 
 jobs:
-  build-release:
+  build:
     uses: ./.github/workflows/build.yml
+    secrets: inherit
 
   test-api-robot:
-    needs: build-release
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: installing Linux dependencies (workaround for wallet plugin)

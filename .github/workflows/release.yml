@@ -26,6 +26,7 @@ on:
 jobs:
   build-release:
     uses: ./.github/workflows/build.yml
+    secrets: inherit
     with:
       tag_name: ${{ github.event.inputs.release-version }}
 

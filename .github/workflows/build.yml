@@ -103,15 +103,29 @@ jobs:
         uses: actions/checkout@v4
       - name: Fetch all git tags
         run: git fetch --prune --unshallow --tags
+      - name: Set Version
+        if: ${{ env.VERSION == '' }}
+        run: |
+          export VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')-dev
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Download MassaStation Package
         uses: actions/download-artifact@v3
         with:
           name: massastation_darwin_${{ matrix.arch }}_package
           path: installer
-      - name: Build Package
-        run: sh macos/create_pkg.sh ${{ matrix.arch }}
+      - name: Import Code Signing Certificates
+        uses: apple-actions/import-codesign-certs@v2
+        with:
+          p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_P12_BASE64 }}
+          p12-password: ${{ secrets.APPLE_CERTIFICATE_P12_PASSWORD }}
+      - name: Build and sign Package
+        run: sh macos/create_pkg.sh ${{ matrix.arch }} "${{ vars.APPLE_DEVELOPER_ID_APPLICATION }}" "${{ vars.APPLE_DEVELOPER_ID_INSTALLER }}"
         env:
           VERSION: ${{ env.VERSION }}
+      - name: Notarise installer
+        run: |
+          xcrun notarytool submit massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg --wait --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.APPLE_APP_PASSWORD }} --team-id ${{ secrets.APPLE_TEAM_ID }}
+          xcrun stapler staple massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg
       - name: Upload Package
         uses: actions/upload-artifact@v3
         with:

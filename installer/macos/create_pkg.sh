@@ -2,13 +2,21 @@
 
 # This script generates a .pkg file for the installation of MassaStation on Mac OS.
 
+# This script can be used in two contexts:
+# - in the CI,
+# - in local,
+# that's why there are some if/else statements.
+
 set -e
 
 PKGVERSION=dev
 ARCH=$1
 
-MASSASTATION_INSTALLER_NAME=MassaStation.app
+MASSASTATION_APPLICATION_NAME=MassaStation.app
 MASSASTATION_BINARY_NAME=massastation
+
+APPLE_DEVELOPER_ID_APPLICATION=$2
+APPLE_DEVELOPER_ID_INSTALLER=$3
 
 HOMEBREW_INSTALL_SCRIPT_URL=https://raw.githubusercontent.com/massalabs/homebrew.sh/master/homebrew-3.3.sh
 
@@ -16,8 +24,10 @@ LICENSE_FILE_NAME=MassaStation_ToS.rtf
 
 # Print the usage to stderr and exit with code 1.
 display_usage() {
-    echo "Usage: $0 <arch>" >&2
+    echo "Usage: $0 <arch> <APPLE_DEVELOPER_ID_APPLICATION> <APPLE_DEVELOPER_ID_INSTALLER>" >&2
     echo "  arch: amd64 or arm64" >&2
+    echo "  APPLE_DEVELOPER_ID_APPLICATION: optional, to sign the .app" >&2
+    echo "  APPLE_DEVELOPER_ID_INSTALLER: optional, to sign the .pkg" >&2
     exit 1
 }
 
@@ -38,20 +48,31 @@ install_massastation_build_dependencies() {
 build_massastation() {
     install_massastation_build_dependencies
 
-    go generate ../... || fatal "go generate failed for $MASSASTATION_INSTALLER_NAME"
+    go generate ../... || fatal "go generate failed for $MASSASTATION_APPLICATION_NAME"
     export GOARCH=$ARCH
     export CGO_ENABLED=1
     # -icon is based on the path of the -src flag.
-    fyne package -icon ../../int/systray/embedded/logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_INSTALLER_NAME"
-    chmod +x $MASSASTATION_INSTALLER_NAME || fatal "failed to chmod $MASSASTATION_INSTALLER_NAME"
+    fyne package -icon ../../int/systray/embedded/logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_APPLICATION_NAME"
+    chmod +x $MASSASTATION_APPLICATION_NAME || fatal "failed to chmod $MASSASTATION_APPLICATION_NAME"
 }
 
 # Build the package using pkgbuild.
 package() {
-    pkgbuild --component $MASSASTATION_INSTALLER_NAME --identifier com.massalabs.massastation --version $PKGVERSION \
+    # sign the application if we have a developer id
+    if [[ -n "$APPLE_DEVELOPER_ID_APPLICATION" ]]; then
+        codesign --force --options runtime --sign "$APPLE_DEVELOPER_ID_APPLICATION" $MASSASTATION_APPLICATION_NAME
+    fi
+
+    pkgbuild --component $MASSASTATION_APPLICATION_NAME --identifier com.massalabs.massastation --version $PKGVERSION \
         --scripts macos/scripts --install-location /Applications MassaStation.pkg || fatal "failed to create package"
-    
-    productbuild --distribution macos/Distribution.dist --resources macos/resources --package-path . massastation_$PKGVERSION\_$ARCH.pkg || fatal "failed to create installer"
+
+    if [[ -n "$APPLE_DEVELOPER_ID_INSTALLER" ]]; then
+        productbuild --distribution macos/Distribution.dist --resources macos/resources --package-path . \
+            --sign "$APPLE_DEVELOPER_ID_INSTALLER" massastation_$PKGVERSION\_$ARCH.pkg || fatal "failed to create installer"
+    else
+        productbuild --distribution macos/Distribution.dist --resources macos/resources --package-path . \
+            massastation_$PKGVERSION\_$ARCH.pkg || fatal "failed to create installer"
+    fi
 }
 
 # Download homebrew installation script and put it in script directory.
@@ -61,7 +82,8 @@ download_homebrew_install_script() {
 }
 
 main() {
-    test -d $MASSASTATION_INSTALLER_NAME || build_massastation
+    # build massastation only if the .app is not present
+    test -d $MASSASTATION_APPLICATION_NAME || build_massastation
 
     download_homebrew_install_script
 
@@ -74,11 +96,11 @@ main() {
     fi
 
     # Check if the binary isn't named massastation. If it isn't, rename it to massastation.
-    if [ ! -f $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME ]; then
-        mv $MASSASTATION_INSTALLER_NAME/Contents/MacOS/massastation_* $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME || fatal "failed to rename $MASSASTATION_INSTALLER_NAME to $MASSASTATION_BINARY_NAME"
+    if [ ! -f $MASSASTATION_APPLICATION_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME ]; then
+        mv $MASSASTATION_APPLICATION_NAME/Contents/MacOS/massastation_* $MASSASTATION_APPLICATION_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME || fatal "failed to rename $MASSASTATION_APPLICATION_NAME to $MASSASTATION_BINARY_NAME"
     fi
 
-    chmod +x $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME || fatal "failed to chmod $MASSASTATION_INSTALLER_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME"
+    chmod +x $MASSASTATION_APPLICATION_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME || fatal "failed to chmod $MASSASTATION_APPLICATION_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME"
 
     package
 }
