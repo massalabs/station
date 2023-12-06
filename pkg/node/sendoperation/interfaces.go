@@ -93,7 +93,7 @@ type EventContext struct {
 //nolint:lll
 type StateChange struct {
 	LedgerChanges                map[string]LedgerEntryChange `json:"ledger_changes"`
-	AsyncPoolChanges             map[string]interface{}       `json:"async_pool_changes"` // Empty in provided JSON, assumed to be a map
+	AsyncPoolChanges             []interface{}                `json:"async_pool_changes"` // Empty in provided JSON, assumed to be a map
 	PosChanges                   PosChanges                   `json:"pos_changes"`
 	ExecutedOpsChanges           map[string]interface{}       `json:"executed_ops_changes"`
 	ExecutedDenunciationsChanges []interface{}                `json:"executed_denunciations_changes"` // Empty array in provided JSON
