@@ -45,9 +45,7 @@ func EstimateGasCostCallSC(
 	if err != nil {
 		logger.Warnf("calling ReadOnlyCall: %s", err)
 
-		// Don't return error, just return default gas limit,
-		// because execute_read_only_call v27 execute_read_only_call may not work (Invalid params).
-		return DefaultGasLimitCallSC, nil
+		return 0, err
 	}
 
 	estimatedGasCost := uint64(result.GasCost)
