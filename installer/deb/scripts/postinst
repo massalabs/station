@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Postinstall script for MassaStation installer on Linux
-# It configures dnsmasq to resolve .massa domains to localhost and generates a certificate for MassaStation.
+# It configures dnsmasq to resolve .massa domains to localhost and other configuration (create folders, allow bind port 80...).
 
 # `set -e` causes the script to exit if any command fails.
 set -e

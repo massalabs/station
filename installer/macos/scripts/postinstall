@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Postinstall script for MassaStation installer on MacOS
-# It configures dnsmasq to resolve .massa domains to localhost and generates a certificate for MassaStation.
+# It configures dnsmasq to resolve .massa domains to localhost and other configuration (create folders, install dependencies...)
 
 set -e
 
