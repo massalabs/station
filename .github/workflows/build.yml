@@ -108,6 +108,8 @@ jobs:
         run: |
           export VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')-dev
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Sync clock
+        run: sudo sntp -sS time.windows.com # https://github.com/actions/runner/issues/2996#issuecomment-1833103110
       - name: Download MassaStation Package
         uses: actions/download-artifact@v3
         with:
