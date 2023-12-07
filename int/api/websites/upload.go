@@ -4,6 +4,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/int/api/utils"
 	"github.com/massalabs/station/int/config"
 	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
 	"github.com/massalabs/station/pkg/onchain/website"
@@ -18,6 +19,9 @@ type websiteUploadHandler struct {
 }
 
 func (h *websiteUploadHandler) Handle(params operations.WebsiteUploaderUploadParams) middleware.Responder {
+	//nolint:revive
+	return utils.NewGoneResponder()
+
 	archive, errorResponse := readAndCheckArchive(params.Zipfile)
 	if errorResponse != nil {
 		return errorResponse

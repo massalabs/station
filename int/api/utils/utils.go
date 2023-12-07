@@ -84,3 +84,10 @@ func NewInternalServerErrorResponder(err error) *CustomResponder {
 		map[string]string{"Content-Type": "text/html"},
 		http.StatusInternalServerError)
 }
+
+func NewGoneResponder() *CustomResponder {
+	return NewCustomResponder(
+		[]byte("410 Gone"),
+		map[string]string{"Content-Type": "text/html"},
+		http.StatusGone)
+}
