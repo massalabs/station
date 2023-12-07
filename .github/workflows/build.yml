@@ -108,6 +108,11 @@ jobs:
         run: |
           export VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')-dev
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Set Version
+        if: ${{ env.VERSION != '' }}
+        run: |
+          VERSION=$(echo "${{ env.VERSION }}" | sed 's/^v//')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Sync clock
         run: sudo sntp -sS time.windows.com # https://github.com/actions/runner/issues/2996#issuecomment-1833103110
       - name: Download MassaStation Package
@@ -126,8 +131,7 @@ jobs:
           VERSION: ${{ env.VERSION }}
       - name: Notarise installer
         run: |
-          export PKGVERSION=$(echo ${{ env.VERSION }} | sed 's/^v//')
-          xcrun notarytool submit massastation_$PKGVERSION_${{ matrix.arch }}.pkg --wait --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.APPLE_APP_PASSWORD }} --team-id ${{ secrets.APPLE_TEAM_ID }}
+          xcrun notarytool submit massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg --wait --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.APPLE_APP_PASSWORD }} --team-id ${{ secrets.APPLE_TEAM_ID }}
           xcrun stapler staple massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg
       - name: Upload Package
         uses: actions/upload-artifact@v3
