@@ -26,24 +26,6 @@ HOMEBREW_PATH=$(brew --prefix)
 # nss contains certutil which is used to generate a certificate.
 su - $USER -c "$HOMEBREW_PATH/bin/brew install nss" || fatal "failed to install nss using homebrew"
 
-# Configure dnsmasq to resolve .massa domains to localhost.
-configure_dnsmasq() {
-    echo "address=/.massa/127.0.0.1" >$(brew --prefix)/etc/dnsmasq.d/massa.conf || fatal "failed to set dnsmasq to resolve .massa to localhost."
-
-    mkdir -p /etc/resolver || fatal "/etc/resolver directory creation failed."
-    bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/massa' || fatal "failed to set resolver to resolve .massa to localhost."
-
-    brew services restart dnsmasq || fatal "dnsmasq service failed to start."
-}
-
-# Install dnsmasq if it's not installed, otherwise configure it.
-set_local_dns() {
-    case $(sudo lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//') in
-        "") (su - $USER -c "$HOMEBREW_PATH/bin/brew install dnsmasq" || fatal "failed to install dnsmasq using homebrew") && configure_dnsmasq || exit -1 ;;
-        dnsmasq) configure_dnsmasq || exit -1 ;;
-        *) fatal "Unsupported DNS server" ;;
-    esac
-}
 
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR || fatal "config directory creation failed."
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/plugins || fatal "plugins directory creation failed."
