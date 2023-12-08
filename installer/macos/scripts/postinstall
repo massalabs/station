@@ -50,7 +50,8 @@ mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/plugins || fatal "plugins directory cre
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/logs || fatal "logs directory creation failed."
 mkdir -m 777 -p $MASSASTATION_CERT_DIR || fatal "certs directory creation failed."
 
-ping -c 1 -t 1 test.massa >/dev/null 2>&1 || set_local_dns
+# If station.massa is not resolved, we add its redirection to /etc/hosts.
+ping -c 1 -t 1 station.massa >/dev/null 2>&1 || echo "127.0.0.1 station.massa" >>/etc/hosts || fatal "failed to set station.massa redirection to localhost."
 
 mv ./uninstall.sh $MASSASTATION_CONFIG_DIR || fatal "uninstall script move failed."
 
