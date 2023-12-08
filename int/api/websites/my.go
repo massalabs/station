@@ -4,6 +4,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/int/api/utils"
 	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/pkg/my"
 	"github.com/massalabs/station/pkg/node"
@@ -18,6 +19,9 @@ type domainsHandler struct {
 }
 
 func (h *domainsHandler) Handle(params operations.MyDomainsGetterParams) middleware.Responder {
+	//nolint:revive
+	return utils.NewGoneResponder()
+
 	client := node.NewClient(h.config.NodeURL)
 
 	myDomainNames, err := my.Domains(*h.config, client, params.Nickname)

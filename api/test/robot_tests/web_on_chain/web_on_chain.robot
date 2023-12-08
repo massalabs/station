@@ -14,6 +14,7 @@ Suite Teardown      Close All Browsers
 
 *** Test Cases ***
 PUT /websiteUploader/prepare
+    Pass Execution    Web On Chain is disabled temporary
     [Documentation]    Prepare a website for creation.
 
     ${zip}=    Get File For Streaming Upload    ${CURDIR}/${TEST_ZIP_FILE}
@@ -33,6 +34,7 @@ PUT /websiteUploader/prepare
     Set Global Variable    ${WEBSITE_ADDRESS}    ${response.json()['address']}
 
 POST /websiteUploader/upload
+    Pass Execution    Web On Chain is disabled temporary
     [Documentation]    Upload the content of the website to the blockchain.
 
     ${zip}=    Get File For Streaming Upload    ${CURDIR}/${TEST_ZIP_FILE}
@@ -47,12 +49,14 @@ POST /websiteUploader/upload
     Should Be Equal As Strings    ${response.json()['address']}    ${WEBSITE_ADDRESS}
 
 GET /my/domains/{nickname}
+    Pass Execution    Web On Chain is disabled temporary
     ${response}=    GET
     ...    ${API_URL}/my/domains/${WALLET_NICKNAME}
     ...    expected_status=${STATUS_OK}
     Should Contain    ${response.text}    ${website_url}
         
 POST /cmd/executeFunction To remove the dns entry
+    Pass Execution    Web On Chain is disabled temporary
     ${argument}=    keywords.String To Arg    ${website_url}
     ${data}=    Create Dictionary
     ...    nickname=${WALLET_NICKNAME}
@@ -65,7 +69,8 @@ POST /cmd/executeFunction To remove the dns entry
     ...    json=${data}
     ...    expected_status=${STATUS_OK}
     
-GET /all/domains 
+GET /all/domains
+    Pass Execution    Web On Chain is disabled temporary
     ${response}=    GET
     ...    ${API_URL}/all/domains
     ...    expected_status=${STATUS_OK}

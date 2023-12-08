@@ -9,6 +9,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
+	"github.com/massalabs/station/int/api/utils"
 	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/pkg/convert"
 	"github.com/massalabs/station/pkg/dnshelper"
@@ -32,6 +33,9 @@ type registryHandler struct {
 }
 
 func (h *registryHandler) Handle(_ operations.AllDomainsGetterParams) middleware.Responder {
+	//nolint:revive
+	return utils.NewGoneResponder()
+
 	results, err := Registry(h.config)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().
