@@ -159,6 +159,10 @@ For the Go back-end code, we use `golangci-lint` to perform linting and ensure c
 
 Following these linting and formatting guidelines will ensure a consistent code style and maintain the overall code quality of MassaStation.
 
+### Installers
+
+If you want to contribute to the installers, please refer to the [MassaStation Installer Contributing Guide](installer/CONTRIBUTING.md) file.
+
 ### Developer guide
 
 If you want to change the network to which Massa Station will connect and the DNS contract address you can change the file
