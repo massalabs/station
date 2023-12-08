@@ -3,10 +3,10 @@
 # This script is used to uninstall MassaStation from MacOS.
 # It will remove the following files:
 # - MassaStation App.
-# - DNSMasq configuration files.
 # - Certificates generated for MassaStation.
 # - MassaStation configuration directory.
 # - MassaStation plugins.
+# And the redirection of station.massa to localhost in /etc/hosts.
 
 set -e
 
@@ -25,30 +25,22 @@ warn() {
     echo -e "\033[1;33m$1\033[0m"
 }
 
-# Remove DNSMasq configuration files.
-remove_dnsmasq_configuration() {
-    sudo rm -f $(brew --prefix)/etc/dnsmasq.d/massa.conf || fatal "failed to remove DNSMasq configuration files."
-    sudo rm -f /etc/resolver/massa || fatal "failed to remove resolver configuration file."
-
-    # If dnsmasq is installed, restart it.
-    if brew list dnsmasq > /dev/null 2>&1; then
-        echo "Restarting DNSMasq service..."
-        sudo brew services restart dnsmasq > /dev/null 2>&1 || fatal "failed to restart DNSMasq service."
-    fi
+remove_station_redirection() {
+    echo "Removing station.massa redirection from /etc/hosts..."
+    sudo sed -i '' '/station.massa/d' /etc/hosts || fatal "failed to remove station.massa redirection from /etc/hosts."
 }
 
 remove_massastation() {
     echo "Removing MassaStation App..."
     sudo rm -rf /Applications/MassaStation.app || fatal "failed to remove MassaStation App."
 
-    echo "Removing DNSMasq configuration files..."
-    remove_dnsmasq_configuration
-
     echo "Removing MassaStation configuration directory..."
     sudo rm -rf $MASSASTATION_CONFIG_DIR || fatal "failed to remove MassaStation configuration directory."
 
     echo "Removing MassaStation certificates..."
     sudo rm -rf $MASSASTATION_CERT_DIR || fatal "failed to remove MassaStation certificates."
+
+    remove_station_redirection
 
     echo "MassaStation was successfully uninstalled. We're sorry to see you go."
 }
