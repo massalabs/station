@@ -13,7 +13,14 @@ import '@massalabs/react-ui-kit/src/global.css';
 import './index.css';
 
 import { ENV } from './const/env/env';
-import { Error, NotFound, Index, Base, Store, Search } from './pages/index';
+import {
+  Error,
+  NotFound,
+  Index,
+  Base,
+  Store,
+  SearchComingSoon,
+} from './pages/index';
 import { mockServer } from './mirage';
 import { PAGES } from './const/pages/pages';
 
@@ -38,7 +45,7 @@ const router = createBrowserRouter(
 
       {/* routes for pages */}
       <Route path={PAGES.STORE} element={<Store />} />
-      <Route path={PAGES.SEARCH} element={<Search />} />
+      <Route path={PAGES.SEARCH} element={<SearchComingSoon />} />
 
       {/* routes for errors */}
       <Route path="error" element={<Error />} />

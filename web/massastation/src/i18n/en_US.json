@@ -69,5 +69,9 @@
       "search": "Search Massa ecosystem",
       "explore": "Explore module store"
     }
+  },
+  "placeholder": {
+    "teaser-banner": "Web-On-Chain Evolution Incoming!",
+    "teaser-web-on-chain": "Crafting a new era for web interactions..."
   }
 }
