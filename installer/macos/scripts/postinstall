@@ -23,7 +23,7 @@ fatal() {
 
 HOMEBREW_PATH=$(brew --prefix)
 
-# Install git using homebrew if it's not installed.
+# Install git using homebrew if it's not installed. git is required to install nss without xcode.
 if ! command -v git >/dev/null 2>&1; then
     su - $USER -c "$HOMEBREW_PATH/bin/brew install git" || fatal "failed to install git using homebrew"
 fi
