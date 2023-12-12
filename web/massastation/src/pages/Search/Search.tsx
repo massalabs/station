@@ -11,6 +11,19 @@ import { FAVORITES_WEBSITES } from '@/const';
 import { Loading } from './Loading';
 import DomainModelItem from './DomainModelItem/DomainModelItem';
 import { UploadPlaceholder } from '@/components/SidePanels/Upload/UploadPlaceHolder';
+import Placeholder from '@/layouts/Placeholder/Placeholder';
+import { FiGlobe } from 'react-icons/fi';
+
+export function SearchComingSoon() {
+  return (
+    <div className="flex justify-center pt-24 text-f-primary">
+      <Placeholder
+        message={Intl.t('placeholder.teaser-web-on-chain')}
+        icon={<FiGlobe size={114} />}
+      />
+    </div>
+  );
+}
 
 export function Search() {
   const navigate = useNavigate();

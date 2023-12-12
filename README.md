@@ -34,4 +34,4 @@ If you are working on a module, you can install it manually to test it using Mas
 2. Paste the URL in the `Install a plugin` field of the [module manager page](https://station.massa/web/store).
 3. Click on the `Install` button.
 
-> **Note:** A complete guide on how to create a module will be available soon.
+> **Note:** A complete guide on how to create a module is available [here](https://docs.massa.net/docs/massaStation/guidelines)

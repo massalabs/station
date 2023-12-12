@@ -69,5 +69,9 @@
       "search": "Search Massa ecosystem",
       "explore": "Explore module store"
     }
+  },
+  "placeholder": {
+    "teaser-banner": "A new way to use web is coming",
+    "teaser-web-on-chain": "We are crafting a new era for our web on-chain feature..."
   }
 }
