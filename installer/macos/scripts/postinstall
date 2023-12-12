@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Postinstall script for MassaStation installer on MacOS
-# It configures dnsmasq to resolve .massa domains to localhost and other configuration (create folders, install dependencies...)
+# It configures /etc/hosts to resolve station.massa to localhost, create required folders, install dependencies...
 
 set -e
 
@@ -23,34 +23,24 @@ fatal() {
 
 HOMEBREW_PATH=$(brew --prefix)
 
-# nss contains certutil which is used to generate a certificate.
-su - $USER -c "$HOMEBREW_PATH/bin/brew install nss" || fatal "failed to install nss using homebrew"
+# Install git using homebrew if it's not installed. git is required to install nss without xcode.
+if ! command -v git >/dev/null 2>&1; then
+    su - $USER -c "$HOMEBREW_PATH/bin/brew install git" || fatal "failed to install git using homebrew"
+fi
 
-# Configure dnsmasq to resolve .massa domains to localhost.
-configure_dnsmasq() {
-    echo "address=/.massa/127.0.0.1" >$(brew --prefix)/etc/dnsmasq.d/massa.conf || fatal "failed to set dnsmasq to resolve .massa to localhost."
-
-    mkdir -p /etc/resolver || fatal "/etc/resolver directory creation failed."
-    bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/massa' || fatal "failed to set resolver to resolve .massa to localhost."
-
-    brew services restart dnsmasq || fatal "dnsmasq service failed to start."
-}
-
-# Install dnsmasq if it's not installed, otherwise configure it.
-set_local_dns() {
-    case $(sudo lsof -i :53 | sed -n 2p | sed 's/[[:space:]].*$//') in
-        "") (su - $USER -c "$HOMEBREW_PATH/bin/brew install dnsmasq" || fatal "failed to install dnsmasq using homebrew") && configure_dnsmasq || exit -1 ;;
-        dnsmasq) configure_dnsmasq || exit -1 ;;
-        *) fatal "Unsupported DNS server" ;;
-    esac
-}
+# Install nss using homebrew if it's not installed.
+if ! command -v certutil >/dev/null 2>&1; then
+    # nss contains certutil which is used to generate a certificate.
+    su - $USER -c "$HOMEBREW_PATH/bin/brew install nss" || fatal "failed to install nss using homebrew"
+fi
 
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR || fatal "config directory creation failed."
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/plugins || fatal "plugins directory creation failed."
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/logs || fatal "logs directory creation failed."
 mkdir -m 777 -p $MASSASTATION_CERT_DIR || fatal "certs directory creation failed."
 
-ping -c 1 -t 1 test.massa >/dev/null 2>&1 || set_local_dns
+# If station.massa is not resolved, we add its redirection to /etc/hosts.
+ping -c 1 -t 1 station.massa >/dev/null 2>&1 || echo "127.0.0.1 station.massa" >>/etc/hosts || fatal "failed to set station.massa redirection to localhost."
 
 mv ./uninstall.sh $MASSASTATION_CONFIG_DIR || fatal "uninstall script move failed."
 
