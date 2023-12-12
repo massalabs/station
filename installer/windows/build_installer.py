@@ -22,21 +22,16 @@ VERSION = "0.0.0"
 
 # Binaries to be included in the installer
 MASSASTATION_BINARY = "massastation.exe"
-ACRYLIC_ZIP = "acrylic.zip"
 MARTOOLS_ZIP = "martools.zip"
 WIXTOOLSET_ZIP = "wixtoolset.zip"
 
 # Scripts to be included in the installer
 ADD_STATION_TO_HOSTS_SCRIPT = "add_station_to_hosts.bat"
-ACRYLIC_CONFIG_SCRIPT = "configure_acrylic.bat"
-NIC_CONFIG_SCRIPT = "configure_network_interfaces.bat"
-NIC_RESET_SCRIPT = "reset_network_interfaces.bat"
 RUN_VBS = "run.vbs"
 LOGO = "logo.ico"
 WIX_DIR = "wixtoolset"
 
-# URLs to download Acrylic DNS Proxy and the WiX Toolset
-ACRYLIC_URL = "https://sourceforge.net/projects/acrylic/files/Acrylic/2.1.1/Acrylic-Portable.zip/download"
+# URLs to download Mar Tools and the WiX Toolset
 MARTOOLS_URL = "https://archive.torproject.org/tor-package-archive/torbrowser/12.5.1/mar-tools-win64.zip"
 WIXTOOLSET_URL = (
     "https://wixdl.blob.core.windows.net/releases/v3.14.0.6526/wix314-binaries.zip"
@@ -101,24 +96,11 @@ def move_binaries():
         os.path.join(MASSASTATION_BINARY),
         os.path.join(BUILD_DIR, MASSASTATION_BINARY),
     )
-    shutil.copy(ACRYLIC_ZIP, os.path.join(BUILD_DIR, ACRYLIC_ZIP))
     shutil.copy(MARTOOLS_ZIP, os.path.join(BUILD_DIR, MARTOOLS_ZIP))
 
     shutil.copy(
         os.path.join("windows", "scripts", ADD_STATION_TO_HOSTS_SCRIPT),
         os.path.join(BUILD_DIR, ADD_STATION_TO_HOSTS_SCRIPT),
-    )
-    shutil.copy(
-        os.path.join("windows", "scripts", ACRYLIC_CONFIG_SCRIPT),
-        os.path.join(BUILD_DIR, ACRYLIC_CONFIG_SCRIPT),
-    )
-    shutil.copy(
-        os.path.join("windows", "scripts", NIC_CONFIG_SCRIPT),
-        os.path.join(BUILD_DIR, NIC_CONFIG_SCRIPT),
-    )
-    shutil.copy(
-        os.path.join("windows", "scripts", NIC_RESET_SCRIPT),
-        os.path.join(BUILD_DIR, NIC_RESET_SCRIPT),
     )
     shutil.copy(
         os.path.join("windows", "scripts", RUN_VBS),
@@ -182,7 +164,7 @@ def create_wxs_file():
         <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
 
         <UI>
-            <UIRef Id="WixUI_Mondo" />
+            <UIRef Id="WixUI_InstallDir" />
             <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchMassaStation">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1</Publish>
         </UI>
 
@@ -192,9 +174,6 @@ def create_wxs_file():
                     <Component Id="MassaStationServer" Guid="bc60f0be-065b-4738-968f-ce0e9b32bd01">
                         <File Id="MassaStationAppEXE" Name="{MASSASTATION_BINARY}" Source="{BUILD_DIR}\\{MASSASTATION_BINARY}" />
                         <File Id="AddStationToHostsScript" Name="{ADD_STATION_TO_HOSTS_SCRIPT}" Source="{BUILD_DIR}\\{ADD_STATION_TO_HOSTS_SCRIPT}" />
-                        <File Id="AcrylicConfigScript" Name="{ACRYLIC_CONFIG_SCRIPT}" Source="{BUILD_DIR}\\{ACRYLIC_CONFIG_SCRIPT}" />
-                        <File Id="NICConfigScript" Name="{NIC_CONFIG_SCRIPT}" Source="{BUILD_DIR}\\{NIC_CONFIG_SCRIPT}" />
-                        <File Id="NICResetScript" Name="{NIC_RESET_SCRIPT}" Source="{BUILD_DIR}\\{NIC_RESET_SCRIPT}" />
                         <File Id="MassaStationRunScript" Name="{RUN_VBS}" Source="{BUILD_DIR}\\{RUN_VBS}" />
                     </Component>
                     <Directory Id="MassaStationCerts" Name="certs">
@@ -230,12 +209,6 @@ def create_wxs_file():
                             </CreateFolder>
                         </Component>
                     </Directory>
-                </Directory>
-                <Directory Id="AcrylicDNSProxy" Name="Acrylic DNS Proxy">
-                    <Component Id="Acrylic" Guid="563952aa-5f05-4c00-b3e0-6c004c36dc77">
-                        <File Id="AcrylicZIP" Name="{ACRYLIC_ZIP}" Source="{BUILD_DIR}\\{ACRYLIC_ZIP}" />
-                        <Condition><![CDATA[NOT Installed]]></Condition>
-                    </Component>
                 </Directory>
             </Directory>
 
@@ -288,10 +261,6 @@ def create_wxs_file():
             <ComponentRef Id="ApplicationShortcutProgramMenu" />
         </Feature>
 
-        <Feature Id="AcrylicDNS" Title="DNS" Description="A DNS server that can be used to resolve .massa domains." Level="10">
-            <ComponentRef Id="Acrylic" />
-        </Feature>
-
         <CustomAction
             Id='LaunchMassaStation'
             Directory="INSTALLDIR"
@@ -320,46 +289,6 @@ def create_wxs_file():
             Return="check"
         />
 
-        <SetProperty Id="ExtractAcrylic" Value="&quot;powershell.exe&quot; -Command &quot;Expand-Archive '[AcrylicDNSProxy]{ACRYLIC_ZIP}' -d '[AcrylicDNSProxy]'&quot;" Before="ExtractAcrylic" Sequence="execute" />
-        <CustomAction
-            Id="ExtractAcrylic"
-            BinaryKey="WixCA"
-            DllEntry="CAQuietExec"
-            Execute="deferred"
-            Impersonate="no"
-            Return="check"
-        />
-
-        <SetProperty Id="DeleteAcrylicZip" Value="&quot;cmd.exe&quot; /c del &quot;[AcrylicDNSProxy]{ACRYLIC_ZIP}&quot;" Before="DeleteAcrylicZip" Sequence="execute" />
-        <CustomAction
-            Id="DeleteAcrylicZip"
-            BinaryKey="WixCA"
-            DllEntry="CAQuietExec"
-            Execute="deferred"
-            Impersonate="no"
-            Return="check"
-        />
-
-        <SetProperty Id="InstallAcrylic" Value="&quot;powershell.exe&quot; -Command &quot; Set-Location '[AcrylicDNSProxy]';  &amp; '[AcrylicDNSProxy]InstallAcrylicService.bat'&quot; >> {installer_logfile} 2>&amp;1" Before="InstallAcrylic" Sequence="execute" />
-        <CustomAction
-            Id="InstallAcrylic"
-            BinaryKey="WixCA"
-            DllEntry="CAQuietExec"
-            Execute="deferred"
-            Impersonate="no"
-            Return="check"
-        />
-
-        <SetProperty Id="RollbackAcrylicInstall" Value="&quot;powershell.exe&quot; -Command &quot; Set-Location '[AcrylicDNSProxy]'; &amp; '[AcrylicDNSProxy]UninstallAcrylicService.bat'&quot; >> {installer_logfile} 2>&amp;1" Before="RollbackAcrylicInstall" Sequence="execute" />
-        <CustomAction
-            Id="RollbackAcrylicInstall"
-            BinaryKey="WixCA"
-            DllEntry="CAQuietExec"
-            Execute="rollback"
-            Impersonate="no"
-            Return="ignore"
-        />
-
         <SetProperty Id="AddStationToHosts" Value="&quot;powershell.exe&quot; -Command &quot; &amp; '[INSTALLDIR]{ADD_STATION_TO_HOSTS_SCRIPT}'&quot; >> {installer_logfile} 2>&amp;1" Before="AddStationToHosts" Sequence="execute" />
         <CustomAction
             Id="AddStationToHosts"
@@ -370,69 +299,9 @@ def create_wxs_file():
             Return="check"
         />
 
-        <SetProperty Id="ConfigureAcrylic" Value="&quot;powershell.exe&quot; -Command &quot; &amp; '[INSTALLDIR]{ACRYLIC_CONFIG_SCRIPT}' '[AcrylicDNSProxy]' &quot; >> {installer_logfile} 2>&amp;1" Before="ConfigureAcrylic" Sequence="execute" />
-        <CustomAction
-            Id="ConfigureAcrylic"
-            BinaryKey="WixCA"
-            DllEntry="CAQuietExec"
-            Execute="deferred"
-            Impersonate="no"
-            Return="check"
-        />
-
-        <SetProperty Id="ConfigureNetworkInterface" Value="&quot;powershell.exe&quot; -Command &quot; &amp; '[INSTALLDIR]{NIC_CONFIG_SCRIPT}'&quot; >> {installer_logfile} 2>&amp;1" Before="ConfigureNetworkInterface" Sequence="execute" />
-        <CustomAction
-            Id="ConfigureNetworkInterface"
-            BinaryKey="WixCA"
-            DllEntry="CAQuietExec"
-            Execute="deferred"
-            Impersonate="no"
-            Return="check"
-        />
-
-        <SetProperty Id="RollbackNetworkInterface" Value="&quot;powershell.exe&quot; -Command &quot; &amp; '[INSTALLDIR]{NIC_RESET_SCRIPT}'&quot; >> {installer_logfile} 2>&amp;1" Before="ResetNetworkInterface" Sequence="execute" />
-        <CustomAction
-            Id="RollbackNetworkInterface"
-            BinaryKey="WixCA"
-            DllEntry="CAQuietExec"
-            Execute="rollback"
-            Impersonate="no"
-            Return="ignore"
-        />
-
-        <SetProperty Id="UninstallAcrylic" Value="&quot;powershell.exe&quot; -Command &quot; Set-Location '[AcrylicDNSProxy]'; &amp; '[AcrylicDNSProxy]UninstallAcrylicService.bat'&quot; >> {installer_logfile} 2>&amp;1" Before="UninstallAcrylic" Sequence="execute" />
-        <CustomAction
-            Id="UninstallAcrylic"
-            BinaryKey="WixCA"
-            DllEntry="CAQuietExec"
-            Execute="deferred"
-            Impersonate="no"
-            Return="ignore"
-        />
-
-        <SetProperty Id="ResetNetworkInterface" Value="&quot;powershell.exe&quot; -Command &quot; &amp; '[INSTALLDIR]{NIC_RESET_SCRIPT}'&quot; >> {installer_logfile} 2>&amp;1" Before="ResetNetworkInterface" Sequence="execute" />
-        <CustomAction
-            Id="ResetNetworkInterface"
-            BinaryKey="WixCA"
-            DllEntry="CAQuietExec"
-            Execute="deferred"
-            Impersonate="no"
-            Return="check"
-        />
-
         <SetProperty Id="RemoveInstallDir" Value="&quot;cmd.exe&quot; /c rmdir /s /q &quot;[INSTALLDIR]&quot;" Before="RemoveInstallDir" Sequence="execute" />
         <CustomAction
             Id="RemoveInstallDir"
-            BinaryKey="WixCA"
-            DllEntry="CAQuietExec"
-            Execute="deferred"
-            Impersonate="no"
-            Return="ignore"
-        />
-
-        <SetProperty Id="RemoveAcrylicDir" Value="&quot;cmd.exe&quot; /c rmdir /s /q &quot;[AcrylicDNSProxy]&quot;" Before="RemoveAcrylicDir" Sequence="execute" />
-        <CustomAction
-            Id="RemoveAcrylicDir"
             BinaryKey="WixCA"
             DllEntry="CAQuietExec"
             Execute="deferred"
@@ -454,23 +323,12 @@ def create_wxs_file():
 
         <InstallExecuteSequence>
             <Custom Action="ExtractMartools" Before="DeleteMartoolsZip">NOT Installed</Custom>
-            <Custom Action="ExtractAcrylic" Before="InstallAcrylic">NOT Installed AND <![CDATA[&AcrylicDNS=3]]></Custom>
-            <Custom Action="InstallAcrylic" Before="ConfigureAcrylic">NOT Installed AND <![CDATA[&AcrylicDNS=3]]></Custom>
-            <Custom Action="RollbackAcrylicInstall" Before="InstallAcrylic">NOT Installed AND <![CDATA[&AcrylicDNS=3]]></Custom>
-            <Custom Action="ConfigureAcrylic" Before="ConfigureNetworkInterface">NOT Installed AND <![CDATA[&AcrylicDNS=3]]></Custom>
-            <Custom Action="ConfigureNetworkInterface" Before="DeleteAcrylicZip">NOT Installed AND <![CDATA[&AcrylicDNS=3]]></Custom>
-            <Custom Action="RollbackNetworkInterface" Before="ConfigureNetworkInterface">NOT Installed AND <![CDATA[&AcrylicDNS=3]]></Custom>
             <Custom Action="AddStationToHosts" Before="InstallFinalize">NOT Installed</Custom>
-            <Custom Action="DeleteAcrylicZip" Before="InstallFinalize">NOT Installed AND <![CDATA[&AcrylicDNS=3]]></Custom>
             <Custom Action="DeleteMartoolsZip" Before="InstallFinalize">NOT Installed</Custom>
 
-            <Custom Action='UninstallAcrylic' Before='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE AND <![CDATA[&AcrylicDNS=2]]></Custom>
-            <Custom Action='ResetNetworkInterface' Before='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE AND <![CDATA[&AcrylicDNS=2]]></Custom>
             <Custom Action='RemoveStationFromHosts' Before='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
             <Custom Action='RemoveInstallDir' After='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
-            <Custom Action='RemoveAcrylicDir' After='RemoveFiles'>REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE AND <![CDATA[&AcrylicDNS=2]]></Custom>
         </InstallExecuteSequence>
-
     </Product>
 </Wix>
 """
@@ -485,7 +343,6 @@ def build_installer():
     It downloads the binaries and builds the installer.
     """
 
-    download_file(ACRYLIC_URL, ACRYLIC_ZIP)
     download_file(MARTOOLS_URL, MARTOOLS_ZIP)
 
     if not os.path.exists(MASSASTATION_BINARY):
