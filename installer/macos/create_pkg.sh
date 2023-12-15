@@ -18,8 +18,6 @@ MASSASTATION_BINARY_NAME=massastation
 APPLE_DEVELOPER_ID_APPLICATION=$2
 APPLE_DEVELOPER_ID_INSTALLER=$3
 
-HOMEBREW_INSTALL_SCRIPT_URL=https://raw.githubusercontent.com/massalabs/homebrew.sh/master/homebrew-3.3.sh
-
 LICENSE_FILE_NAME=MassaStation_ToS.rtf
 
 # Print the usage to stderr and exit with code 1.
@@ -75,17 +73,9 @@ package() {
     fi
 }
 
-# Download homebrew installation script and put it in script directory.
-download_homebrew_install_script() {
-    curl -sL $HOMEBREW_INSTALL_SCRIPT_URL -o macos/scripts/install_homebrew.sh || fatal "failed to download homebrew installation script"
-    chmod +x macos/scripts/install_homebrew.sh || fatal "failed to chmod homebrew installation script"
-}
-
 main() {
     # build massastation only if the .app is not present
     test -d $MASSASTATION_APPLICATION_NAME || build_massastation
-
-    download_homebrew_install_script
 
     if [ ! -d macos/resources ]; then
         mkdir macos/resources || fatal "failed to create resources directory"

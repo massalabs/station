@@ -5,9 +5,6 @@
 
 set -e
 
-# `brew` isn't in $PATH by default in the `.pkg` installer environment.
-export PATH=/usr/local/bin:/opt/homebrew/bin:$PATH
-
 # Set MassaStation configuration directory.
 export MASSASTATION_CONFIG_DIR=/usr/local/share/massastation
 export MASSASTATION_CERT_DIR=/etc/massastation/certs
@@ -17,22 +14,6 @@ fatal() {
     echo "FATAL: $1" >&2
     exit 1
 }
-
-# ./install_homebrew.sh is a script that installs homebrew if it's not installed. Otherwise it performs a brew update.
-./install_homebrew.sh || fatal "failed to install brew"
-
-HOMEBREW_PATH=$(brew --prefix)
-
-# Install git using homebrew if it's not installed. git is required to install nss without xcode.
-if ! command -v git >/dev/null 2>&1; then
-    su - $USER -c "$HOMEBREW_PATH/bin/brew install git" || fatal "failed to install git using homebrew"
-fi
-
-# Install nss using homebrew if it's not installed.
-if ! command -v certutil >/dev/null 2>&1; then
-    # nss contains certutil which is used to generate a certificate.
-    su - $USER -c "$HOMEBREW_PATH/bin/brew install nss" || fatal "failed to install nss using homebrew"
-fi
 
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR || fatal "config directory creation failed."
 mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/plugins || fatal "plugins directory creation failed."
