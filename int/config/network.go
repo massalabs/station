@@ -20,6 +20,7 @@ type NetworkInfos struct {
 	NodeURL    string
 	DNSAddress string
 	Version    string
+	ChainID    uint64
 }
 
 // NetworkConfig represents the configuration of a network.
@@ -29,6 +30,7 @@ type NetworkConfig struct {
 	DNS     string   `yaml:"DNS"`
 	URLs    []string `yaml:"URLs"`
 	Default bool     `yaml:"Default"`
+	ChainID uint64   `yaml:"ChainID"`
 }
 
 // NetworkManager represents a manager for network configurations.
@@ -113,6 +115,7 @@ func (n *NetworkManager) NetworkFromString(networkName string) (*NetworkInfos, e
 				NodeURL:    config.URLs[0],
 				DNSAddress: config.DNS,
 				Network:    networkName,
+				ChainID:    config.ChainID,
 			}
 
 			return networkInfos, nil
@@ -176,6 +179,7 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 		DNSAddress: cfg.DNS,
 		Network:    selectedNetworkStr,
 		Version:    version,
+		ChainID:    cfg.ChainID,
 	})
 
 	logger.Debugf("Set current network: %s (version %s)\n", selectedNetworkStr, version)

@@ -8,18 +8,17 @@ import (
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/int/config"
-	"github.com/massalabs/station/pkg/node"
 	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 	"github.com/massalabs/station/pkg/onchain"
 )
 
 func NewExecuteFunctionHandler(config *config.NetworkInfos) operations.CmdExecuteFunctionHandler {
-	return &executeFunction{config: config}
+	return &executeFunction{networkInfos: config}
 }
 
 type executeFunction struct {
-	config *config.NetworkInfos
+	networkInfos *config.NetworkInfos
 }
 
 //nolint:funlen
@@ -77,10 +76,8 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 				})
 	}
 
-	c := node.NewClient(e.config.NodeURL)
-
 	operationWithEventResponse, err := onchain.CallFunction(
-		c,
+		e.networkInfos,
 		params.Body.Nickname,
 		params.Body.At,
 		params.Body.Name,

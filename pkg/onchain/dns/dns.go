@@ -31,15 +31,14 @@ func Resolve(config config.NetworkInfos, client *node.Client, name string) (stri
 }
 
 func SetRecord(
-	config config.NetworkInfos,
-	client *node.Client,
+	networkInfos *config.NetworkInfos,
 	nickname string,
 	url string,
 	description string,
 	smartContract string,
 	operationBatch sendoperation.OperationBatch,
 ) (string, error) {
-	addr := config.DNSAddress
+	addr := networkInfos.DNSAddress
 
 	// Set Resolver prepare data
 	rec := convert.U32ToBytes(len(url))
@@ -50,7 +49,7 @@ func SetRecord(
 	rec = append(rec, []byte(description)...)
 
 	operationWithEventResponse, err := onchain.CallFunction(
-		client,
+		networkInfos,
 		nickname,
 		addr,
 		"dns1_setResolver",

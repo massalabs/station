@@ -23,11 +23,11 @@ const UploadMaxSize = "UPLOAD_MAX_SIZE"
 const defaultMaxArchiveSize = 1500000
 
 func NewWebsitePrepareHandler(config *config.NetworkInfos) operations.WebsiteUploaderPrepareHandler {
-	return &websitePrepare{config: config}
+	return &websitePrepare{networkInfos: config}
 }
 
 type websitePrepare struct {
-	config *config.NetworkInfos
+	networkInfos *config.NetworkInfos
 }
 
 func listFileName(zipReader *zip.Reader) []string {
@@ -48,13 +48,18 @@ func (h *websitePrepare) Handle(params operations.WebsiteUploaderPrepareParams) 
 		return errorResponse
 	}
 
-	address, correlationID, err := website.PrepareForUpload(*h.config, params.URL, params.Description, params.Nickname)
+	address, correlationID, err := website.PrepareForUpload(
+		h.networkInfos,
+		params.URL,
+		params.Description,
+		params.Nickname,
+	)
 	if err != nil {
 		return createInternalServerError(errorCodeWebCreatorPrepare, err.Error())
 	}
 
 	_, err = website.Upload(
-		*h.config,
+		h.networkInfos,
 		address,
 		archive,
 		params.Nickname,

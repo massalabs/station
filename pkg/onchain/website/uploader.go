@@ -9,7 +9,6 @@ import (
 	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/pkg/convert"
 	"github.com/massalabs/station/pkg/logger"
-	"github.com/massalabs/station/pkg/node"
 	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 	"github.com/massalabs/station/pkg/onchain"
@@ -27,16 +26,14 @@ const (
 
 //nolint:funlen,cyclop
 func PrepareForUpload(
-	network config.NetworkInfos,
+	networkInfos *config.NetworkInfos,
 	url string,
 	description string,
 	nickname string,
 ) (string, string, error) {
-	client := node.NewClient(network.NodeURL)
-
-	versionFloat, err := strconv.ParseFloat(network.Version, 64)
+	versionFloat, err := strconv.ParseFloat(networkInfos.Version, 64)
 	if err != nil {
-		return "", "", fmt.Errorf("failed to parse nodeversion %s: %w", network.Version, err)
+		return "", "", fmt.Errorf("failed to parse nodeversion %s: %w", networkInfos.Version, err)
 	}
 
 	scSuffix := ".wasm"
@@ -80,7 +77,7 @@ func PrepareForUpload(
 
 	// Prepare address to webstorage.
 	operationResponse, events, err := onchain.DeploySC(
-		client,
+		networkInfos,
 		nickname,
 		0,
 		uint64(totalStorageCost),
@@ -104,8 +101,7 @@ func PrepareForUpload(
 
 	// Set DNS.
 	_, err = dns.SetRecord(
-		network,
-		client,
+		networkInfos,
 		nickname,
 		url,
 		description,
@@ -123,7 +119,7 @@ func PrepareForUpload(
 }
 
 func Upload(
-	network config.NetworkInfos,
+	networkInfos *config.NetworkInfos,
 	atAddress string,
 	content []byte,
 	nickname string,
@@ -131,7 +127,7 @@ func Upload(
 ) ([]string, error) {
 	blocks := chunk(content, chunkSize)
 
-	operations, err := upload(network, atAddress, blocks, nickname, operationBatch)
+	operations, err := upload(networkInfos, atAddress, blocks, nickname, operationBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +137,7 @@ func Upload(
 
 //nolint:funlen
 func upload(
-	network config.NetworkInfos,
+	networkInfos *config.NetworkInfos,
 	addr string,
 	chunks [][]byte,
 	nickname string,
@@ -149,8 +145,6 @@ func upload(
 ) ([]string, error) {
 	nbChunks := len(chunks)
 	operations := make([]string, nbChunks)
-
-	client := node.NewClient(network.NodeURL)
 
 	for chunkIndex := 0; chunkIndex < nbChunks; chunkIndex++ {
 		chunkSize := len(chunks[chunkIndex])
@@ -183,7 +177,7 @@ func upload(
 		logger.Debug("Website chunk upload cost estimation: ", uploadCost)
 
 		operationResponse, err := onchain.CallFunction(
-			client,
+			networkInfos,
 			nickname,
 			addr,
 			"appendBytesToWebsite",
@@ -208,7 +202,7 @@ func upload(
 }
 
 func UploadMissedChunks(
-	config config.NetworkInfos,
+	networkInfos *config.NetworkInfos,
 	atAddress string,
 	content []byte,
 	nickname string,
@@ -218,7 +212,7 @@ func UploadMissedChunks(
 	blocks := chunk(content, chunkSize)
 
 	operations, err := uploadMissedChunks(
-		config,
+		networkInfos,
 		atAddress,
 		blocks,
 		missedChunks,
@@ -234,15 +228,13 @@ func UploadMissedChunks(
 
 //nolint:funlen
 func uploadMissedChunks(
-	network config.NetworkInfos,
+	networkInfos *config.NetworkInfos,
 	addr string,
 	chunks [][]byte,
 	missedChunks string,
 	nickname string,
 	operationBatch sendOperation.OperationBatch,
 ) ([]string, error) {
-	client := node.NewClient(network.NodeURL)
-
 	operations := make([]string, len(chunks)+1)
 	arrMissedChunks := strings.Split(missedChunks, ",")
 
@@ -281,7 +273,7 @@ func uploadMissedChunks(
 		}
 
 		operationResponse, err := onchain.CallFunction(
-			client,
+			networkInfos,
 			nickname,
 			addr,
 			"appendBytesToWebsite",

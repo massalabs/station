@@ -6,6 +6,7 @@ import (
 	b64 "encoding/base64"
 	"encoding/binary"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/massalabs/station/pkg/node"
@@ -61,7 +62,9 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 }
 
 // Call uses the plugin wallet to sign an operation, then send the call to blockchain.
-func Call(client *node.Client,
+func Call(
+	client *node.Client,
+	chainID uint64,
 	expiry uint64,
 	fee uint64,
 	operation Operation,
@@ -80,21 +83,16 @@ func Call(client *node.Client,
 	switch {
 	case operationBatch.NewBatch:
 		content = `{
-			"description": "` + description + `",
-			"operation": "` + msgB64 + `",
-			"batch": true
-		}`
+			"description": "` + description + `", "operation": "` + msgB64 + `",
+			"batch": true, "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
 	case operationBatch.CorrelationID != "":
 		content = `{
-			"description": "` + description + `",
-			"operation": "` + msgB64 + `",
-			"correlationId": "` + operationBatch.CorrelationID + `"
-		}`
+			"description": "` + description + `", "operation": "` + msgB64 + `",
+			"correlationId": "` + operationBatch.CorrelationID + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
 	default:
 		content = `{
 			"description": "` + description + `",
-			"operation": "` + msgB64 + `"
-		}`
+			"operation": "` + msgB64 + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
 	}
 
 	res, err := signer.Sign(nickname, []byte(content))
