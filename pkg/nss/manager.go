@@ -41,15 +41,15 @@ func NewManager(dbPath []string, certutil CertUtilServicer, logger Logger) *Mana
 
 // executeOnPaths executes the given operation on each NSS database path.
 func (m *Manager) executeOnPaths(operation func(path string) error) error {
-	var totalErr error
+	var chainedErr error
 
 	for _, path := range m.dbPath {
 		if err := operation(path); err != nil {
-			totalErr = fmt.Errorf("%w\n%w", totalErr, err)
+			chainedErr = fmt.Errorf("%w\n%w", chainedErr, err)
 		}
 	}
 
-	return totalErr
+	return chainedErr
 }
 
 // AddCA adds the certificate to the NSS databases.
