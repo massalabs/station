@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
 	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
 	"github.com/massalabs/station/pkg/node/sendoperation/callsc"
@@ -42,8 +41,6 @@ func CallFunction(
 		if err != nil {
 			return nil, fmt.Errorf("estimating Call SC gas cost for function '%s' at '%s': %w", function, addr, err)
 		}
-
-		logger.Debugf("Estimated gas cost for %s at %s: %d", function, addr, estimatedGasCost)
 
 		maxGas = estimatedGasCost
 	}
@@ -125,8 +122,6 @@ func DeploySC(client *node.Client,
 		if err != nil {
 			return nil, nil, fmt.Errorf("estimating Execute SC gas cost: %w", err)
 		}
-
-		logger.Debugf("Estimated gas cost for execute SC: %d", estimatedGasCost)
 
 		maxGas = estimatedGasCost
 	}
