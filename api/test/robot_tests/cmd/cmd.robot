@@ -105,9 +105,15 @@ POST /cmd/executeFunction with invalid address
     ...    json=${data}
     ...    expected_status=${STATUS_INTERNAL_SERVER_ERROR}
     Should Be Equal    ${response.json()["code"]}    Execute-0001
-    Should Be Equal
+    Should Contain
     ...    ${response.json()["message"]}
-    ...    Error: callSC failed: creating callSC with 'event' at 'invalid': failed to prepare address: decoding address: invalid format: version and/or checksum bytes missing
+    ...    Error: callSC failed: calling EstimateGasCost for function 
+    Should Contain
+    ...    ${response.json()["message"]}
+    ...    receiving execute_read_only_call with
+    Should Contain
+    ...    ${response.json()["message"]}
+    ...    Invalid params
 
 POST /cmd/executeFunction with invalid arguments
     ${data}=    Create Dictionary
@@ -139,7 +145,7 @@ POST /cmd/executeFunction with invalid function name
     ...    Error: callSC failed
     Should Contain
     ...    ${response.json()["message"]}
-    ...    "massa_execution_error":"Runtime error: runtime error when executing operation
+    ...    ReadOnlyCall error: readonly call failed
     Should Contain
     ...    ${response.json()["message"]}
-    ...    VM Error in CallSC context: VM execution error: Missing export invalid
+    ...    VM execution error: Missing export invalid

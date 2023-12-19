@@ -15,6 +15,7 @@ import (
 
 const (
 	DefaultGasLimitExecuteSC   = 1_000_000_000
+	MaxGasAllowedCallSC        = 4_294_167_295
 	DefaultGasLimitCallSC      = 700_000_000
 	DefaultExpiryInSlot        = 3
 	DefaultFee                 = 0
