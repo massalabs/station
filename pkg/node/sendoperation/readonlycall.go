@@ -63,7 +63,7 @@ func ReadOnlyCallSC(
 	fee string,
 	callerAddr string,
 	client *node.Client,
-) (*ReadOnlyCallResult, error) {
+) (*ReadOnlyResult, error) {
 	readOnlyCallParams := [][]ReadOnlyCallParams{
 		{
 			ReadOnlyCallParams{
@@ -95,7 +95,7 @@ func ReadOnlyCallSC(
 		)
 	}
 
-	var resp []ReadOnlyCallResult
+	var resp []ReadOnlyResult
 
 	err = rawResponse.GetObject(&resp)
 	if err != nil {
@@ -105,6 +105,97 @@ func ReadOnlyCallSC(
 	if resp[0].Result.Error != "" {
 		return nil, fmt.Errorf("ReadOnlyCall error: %s, caller address is %s and coins are %s",
 			resp[0].Result.Error, callerAddr, coins)
+	}
+
+	return &resp[0], nil
+}
+
+func EstimateGasCostExecuteSC(
+	nickname string,
+	contract []byte,
+	datastore []byte,
+	maxCoins uint64,
+	fee uint64,
+	client *node.Client,
+) (uint64, error) {
+	acc, err := wallet.Fetch(nickname)
+	if err != nil {
+		return 0, fmt.Errorf("loading wallet '%s': %w", nickname, err)
+	}
+
+	coinsString, err := NanoToMas(maxCoins)
+	if err != nil {
+		return 0, fmt.Errorf("converting maxCoins to mas: %w", err)
+	}
+
+	feeString, err := NanoToMas(fee)
+	if err != nil {
+		return 0, fmt.Errorf("converting fee to mas: %w", err)
+	}
+
+	result, err := ReadOnlyExecuteSC(contract, datastore, coinsString, feeString, acc.Address, client)
+	if err != nil {
+		return 0, fmt.Errorf("ReadOnlyExecuteSC error: %w, caller address is %s", err, acc.Address)
+	}
+
+	estimatedGasCost := uint64(result.GasCost)
+
+	return addXPercentage(estimatedGasCost, PercentageGasLimit), nil
+}
+
+// ReadOnlyExecuteSC calls execute_read_only_bytecode jsonrpc method.
+// coins and fee must be in MAS.
+func ReadOnlyExecuteSC(
+	contract []byte,
+	datastore []byte,
+	coins string,
+	fee string,
+	callerAddr string,
+	client *node.Client,
+) (*ReadOnlyResult, error) {
+	if datastore == nil {
+		datastore = []byte{0}
+	}
+
+	readOnlyExecuteParams := [][]ReadOnlyExecuteParams{
+		{
+			ReadOnlyExecuteParams{
+				Coins:              coins,
+				MaxGas:             MaxGasAllowedExecuteSC,
+				Fee:                fee,
+				Address:            callerAddr,
+				Bytecode:           contract,
+				OperationDatastore: datastore,
+			},
+		},
+	}
+
+	rawResponse, err := client.RPCClient.Call(
+		context.Background(),
+		"execute_read_only_bytecode",
+		readOnlyExecuteParams,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("calling execute_read_only_bytecode jsonrpc: %w", err)
+	}
+
+	if rawResponse.Error != nil {
+		return nil, fmt.Errorf(
+			"receiving execute_read_only_bytecode  response: %w, %v",
+			rawResponse.Error,
+			fmt.Sprint(rawResponse.Error.Data),
+		)
+	}
+
+	var resp []ReadOnlyResult
+
+	err = rawResponse.GetObject(&resp)
+	if err != nil {
+		return nil, fmt.Errorf("parsing execute_read_only_bytecode jsonrpc response '%+v': %w", rawResponse, err)
+	}
+
+	if resp[0].Result.Error != "" {
+		return nil, fmt.Errorf("ReadOnlyExecuteSC error: %s, caller address is %s", resp[0].Result.Error, callerAddr)
 	}
 
 	return &resp[0], nil

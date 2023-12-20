@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// ReadOnlyCallParams is the struct used to send a read only callSC to the node.
 type ReadOnlyCallParams struct {
 	MaxGas         int           `json:"max_gas"`
 	Coins          string        `json:"coins"`
@@ -15,13 +16,17 @@ type ReadOnlyCallParams struct {
 	CallerAddress  string        `json:"caller_address"`
 }
 
-// Read only call response (chatgpt4 generated).
-type ReadOnlyCallResponse struct {
-	JSONRPC string               `json:"jsonrpc"`
-	Result  []ReadOnlyCallResult `json:"result"`
+// ReadOnlyExecuteParams is the struct used to send a read only executeSC to the node.
+type ReadOnlyExecuteParams struct {
+	MaxGas             int           `json:"max_gas"`
+	Coins              string        `json:"coins"`
+	Fee                string        `json:"fee"`
+	Address            string        `json:"address"`
+	Bytecode           JSONableSlice `json:"bytecode"`
+	OperationDatastore JSONableSlice `json:"operation_datastore"`
 }
 
-type ReadOnlyCallResult struct {
+type ReadOnlyResult struct {
 	ExecutedAt   Timestamp   `json:"executed_at"`
 	Result       Result      `json:"result"`
 	OutputEvents []Event     `json:"output_events"`
@@ -66,7 +71,7 @@ func (r *Result) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	return nil // Or return an error if neither key is present
+	return nil
 }
 
 type Timestamp struct {

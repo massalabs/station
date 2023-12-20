@@ -107,7 +107,7 @@ POST /cmd/executeFunction with invalid address
     Should Be Equal    ${response.json()["code"]}    Execute-0001
     Should Contain
     ...    ${response.json()["message"]}
-    ...    Error: callSC failed: calling EstimateGasCost for function 
+    ...    Error: callSC failed: estimating Call SC gas cost for function
     Should Contain
     ...    ${response.json()["message"]}
     ...    receiving execute_read_only_call with

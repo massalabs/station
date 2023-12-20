@@ -40,8 +40,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 		fee = parsedFee
 	}
 
-	// convert maxGas to uint64
-	maxGas := uint64(sendOperation.DefaultGasLimitCallSC)
+	maxGas := uint64(0)
 
 	if string(params.Body.MaxGas) != "" {
 		parsedMaxGas, err := strconv.ParseUint(string(params.Body.MaxGas), 10, 64)
@@ -49,7 +48,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 			return operations.NewCmdExecuteFunctionBadRequest().WithPayload(
 				&models.Error{
 					Code:    errorInvalidMaxGas,
-					Message: "Error during amount conversion: " + err.Error(),
+					Message: "Error during max gas conversion: " + err.Error(),
 				})
 		}
 
