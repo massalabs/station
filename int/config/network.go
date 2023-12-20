@@ -152,7 +152,6 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 	nodeChainID := uint64(*status.ChainID)
 	if nodeChainID != cfg.ChainID {
 		logger.Errorf("chain id mismatch: %d != %d", nodeChainID, cfg.ChainID)
-		// logger.Fatalf("chain id mismatch: %d != %d", nodeChainID, cfg.ChainID) // TODO: should we exit here?
 
 		return fmt.Errorf("chain id mismatch: %d != %d", nodeChainID, cfg.ChainID)
 	}
