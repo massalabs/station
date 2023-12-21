@@ -1,5 +1,6 @@
 import { SyntheticEvent, useEffect } from 'react';
 import { useDelete, usePost } from '@/custom/api';
+import { BrowserOpenURL } from '../../../../wailsjs/runtime';
 
 import {
   Button,
@@ -164,7 +165,12 @@ export function StationPlugin({
               </Button>
             )),
           <Button variant="icon">
-            <FiArrowUpRight onClick={() => window.open(home, '_blank')} />
+            <FiArrowUpRight
+              onClick={() => {
+                /* Using 'http://station.massa' probably isn't the cleanest thing to do */
+                BrowserOpenURL(`http://station.massa${home}`); // eslint-disable-line new-cap
+              }}
+            />
           </Button>,
           <Button variant="icon" onClick={() => deletePlugin({})}>
             <FiTrash2 />

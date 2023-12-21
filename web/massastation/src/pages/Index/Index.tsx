@@ -26,6 +26,7 @@ import { useConfigStore } from '@/store/store';
 import { usePost, useResource } from '../../custom/api';
 import { UseQueryResult } from '@tanstack/react-query';
 import { MASSA_WALLET } from '@/const';
+import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime';
 
 export function Index() {
   const plugins = useResource<MassaPluginModel[]>('plugin-manager');
@@ -157,9 +158,9 @@ function NestedIndex({
                   iconActive={<WalletActive />}
                   iconInactive={<WalletInactive />}
                   onClickActive={() =>
-                    window.open(
-                      '/plugin/massa-labs/massa-wallet/web-app/index',
-                      '_blank',
+                    // eslint-disable-next-line new-cap
+                    BrowserOpenURL(
+                      'http://station.massa/plugin/massa-labs/massa-wallet/web-app/index',
                     )
                   }
                   onClickInactive={() =>
