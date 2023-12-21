@@ -1,6 +1,5 @@
 import { SyntheticEvent, useEffect } from 'react';
 import { useDelete, usePost } from '@/custom/api';
-import { BrowserOpenURL } from '../../../../wailsjs/runtime';
 
 import {
   Button,
@@ -27,6 +26,7 @@ import {
 import Intl from '@/i18n/i18n';
 
 import { MassaPluginModel, PluginStatus } from '@/models';
+import { openInWebBrowser } from '@/custom/openInWebBrowser';
 
 interface PluginExecuteRequest {
   command: string;
@@ -167,8 +167,7 @@ export function StationPlugin({
           <Button variant="icon">
             <FiArrowUpRight
               onClick={() => {
-                /* Using 'http://station.massa' probably isn't the cleanest thing to do */
-                BrowserOpenURL(`http://station.massa${home}`); // eslint-disable-line new-cap
+                openInWebBrowser(home);
               }}
             />
           </Button>,
