@@ -12,16 +12,15 @@ export default ({ mode }) => {
     plugins: [react(), svgr()],
     base: process.env.VITE_BASE_APP,
     build: {
-      outDir: '../../int/api/dist/massastation',
       emptyOutDir: true,
       manifest: true,
       sourcemap: true,
-      assetsDir: './', // put the assets next to the index.html file
     },
     resolve: {
       alias: [
         { find: '@', replacement: path.resolve(__dirname, 'src') },
         { find: '@/shared', replacement: path.resolve(__dirname, '../shared') },
+        { find: '@wailsjs', replacement: path.resolve(__dirname, 'wailsjs') },
       ],
     },
   });
