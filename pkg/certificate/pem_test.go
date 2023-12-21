@@ -3,7 +3,6 @@ package certificate
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -154,7 +153,7 @@ func TestPemTypeIsValid(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.want, tt.p.IsValid())
+			require.Equal(t, tt.want, tt.p.IsValid())
 		})
 	}
 }
@@ -199,7 +198,7 @@ func TestPemTypeString(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.want, tt.p.String())
+			require.Equal(t, tt.want, tt.p.String())
 		})
 	}
 }
@@ -256,7 +255,7 @@ func TestNewPemType(t *testing.T) {
 				require.NoError(t, err)
 			}
 
-			assert.Equal(t, test.want, got)
+			require.Equal(t, test.want, got)
 		})
 	}
 }

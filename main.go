@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"embed"
-
 	"flag"
 	"fmt"
 	"log"
@@ -21,6 +20,7 @@ import (
 )
 
 //go:embed all:web/massastation/dist
+//nolint:nolintlint,typecheck
 var assets embed.FS
 
 type StartFlags struct {
@@ -97,13 +97,13 @@ func main() {
 	// Create application with options
 	err = wails.Run(&options.App{
 		Title:  "Massa Station",
-		Width:  1280,
-		Height: 720,
+		Width:  1280, //nolint:gomnd
+		Height: 720,  //nolint:gomnd
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
 		OnStartup: func(ctx context.Context) {
-			server.Start(networkManager, pluginManager)
+			server.Start(networkManager, pluginManager) //nolint:contextcheck
 			err := pluginManager.RunAll()
 			if err != nil {
 				logger.Fatalf("while running all plugins: %w", err)
@@ -116,6 +116,6 @@ func main() {
 	})
 
 	if err != nil {
-		println("Error:", err.Error())
+		logger.Errorf("error while running wails: %s", err.Error())
 	}
 }
