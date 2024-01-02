@@ -11,11 +11,11 @@ import (
 )
 
 func NewWebsiteUploadMissedChunkHandler(config *config.NetworkInfos) operations.WebsiteUploadMissingChunksHandler {
-	return &uploadMissedChunkHandler{config: config}
+	return &uploadMissedChunkHandler{networkInfos: config}
 }
 
 type uploadMissedChunkHandler struct {
-	config *config.NetworkInfos
+	networkInfos *config.NetworkInfos
 }
 
 func (h *uploadMissedChunkHandler) Handle(params operations.WebsiteUploadMissingChunksParams) middleware.Responder {
@@ -28,7 +28,7 @@ func (h *uploadMissedChunkHandler) Handle(params operations.WebsiteUploadMissing
 	}
 
 	_, err := website.UploadMissedChunks(
-		*h.config,
+		h.networkInfos,
 		params.Address,
 		archive,
 		params.Nickname,

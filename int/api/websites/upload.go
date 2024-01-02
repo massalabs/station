@@ -11,11 +11,11 @@ import (
 )
 
 func NewWebsiteUploadHandler(config *config.NetworkInfos) operations.WebsiteUploaderUploadHandler {
-	return &websiteUploadHandler{config: config}
+	return &websiteUploadHandler{networkInfos: config}
 }
 
 type websiteUploadHandler struct {
-	config *config.NetworkInfos
+	networkInfos *config.NetworkInfos
 }
 
 func (h *websiteUploadHandler) Handle(params operations.WebsiteUploaderUploadParams) middleware.Responder {
@@ -28,7 +28,7 @@ func (h *websiteUploadHandler) Handle(params operations.WebsiteUploaderUploadPar
 	}
 
 	_, err := website.Upload(
-		*h.config,
+		h.networkInfos,
 		params.Address,
 		archive,
 		params.Nickname,

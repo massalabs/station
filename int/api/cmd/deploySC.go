@@ -8,23 +8,20 @@ import (
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/int/config"
-	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/node/sendoperation"
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 	"github.com/massalabs/station/pkg/onchain"
 )
 
 func NewDeploySCHandler(config *config.NetworkInfos) operations.CmdDeploySCHandler {
-	return &deploySC{config: config}
+	return &deploySC{networkInfos: config}
 }
 
 type deploySC struct {
-	config *config.NetworkInfos
+	networkInfos *config.NetworkInfos
 }
 
 func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Responder {
-	client := node.NewClient(d.config.NodeURL)
-
 	file, err := io.ReadAll(params.SmartContract)
 	if err != nil {
 		return operations.NewCmdDeploySCBadRequest().
@@ -52,7 +49,8 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		decodedDatastore = nil
 	}
 
-	operationResponse, events, err := onchain.DeploySC(client,
+	operationResponse, events, err := onchain.DeploySC(
+		d.networkInfos,
 		params.WalletNickname,
 		*params.GasLimit,
 		*params.Coins,

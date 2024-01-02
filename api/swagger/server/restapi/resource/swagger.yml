@@ -1051,6 +1051,8 @@ definitions:
         type: string
       dns:
         type: string
+      chainId: 
+        type: integer
     required:
       - network
       - url

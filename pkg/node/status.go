@@ -17,6 +17,7 @@ type State struct {
 	NodeIP         *string         `json:"node_ip"`
 	PoolStats      *[]uint         `json:"pool_stats"`
 	Version        *string         `json:"version"`
+	ChainID        *uint           `json:"chain_id"`
 }
 
 //nolint:tagliatelle

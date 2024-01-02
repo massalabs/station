@@ -20,6 +20,7 @@ type NetworkInfos struct {
 	NodeURL    string
 	DNSAddress string
 	Version    string
+	ChainID    uint64
 }
 
 // NetworkConfig represents the configuration of a network.
@@ -29,6 +30,7 @@ type NetworkConfig struct {
 	DNS     string   `yaml:"DNS"`
 	URLs    []string `yaml:"URLs"`
 	Default bool     `yaml:"Default"`
+	ChainID uint64   `yaml:"ChainID"`
 }
 
 // NetworkManager represents a manager for network configurations.
@@ -96,32 +98,6 @@ func (n *NetworkManager) Networks() *[]string {
 	return &options
 }
 
-// NetworkFromString retrieves the network configuration corresponding to the given network name.
-// It returns the network configuration represented by an NetworkInfos struct.
-// An error is returned if the network configuration is not found or if the provided network name is invalid.
-func (n *NetworkManager) NetworkFromString(networkName string) (*NetworkInfos, error) {
-	knownNetworks := *n.Networks()
-
-	for _, name := range knownNetworks {
-		if name == networkName {
-			config, ok := n.knownNetworks[networkName]
-			if !ok {
-				return nil, fmt.Errorf("failed to find configuration for network '%s'", networkName)
-			}
-
-			networkInfos := &NetworkInfos{
-				NodeURL:    config.URLs[0],
-				DNSAddress: config.DNS,
-				Network:    networkName,
-			}
-
-			return networkInfos, nil
-		}
-	}
-
-	return nil, fmt.Errorf("invalid network option: '%s'", networkName)
-}
-
 // SetCurrentNetwork sets the current network configuration for the NetworkManager.
 func (n *NetworkManager) SetCurrentNetwork(config NetworkInfos) {
 	n.networkMutex.Lock()
@@ -136,14 +112,7 @@ func (n *NetworkManager) Network() *NetworkInfos {
 	return &n.networkInfos
 }
 
-func (n *NetworkManager) version(nodeURL string) (string, error) {
-	client := node.NewClient(nodeURL)
-
-	status, err := node.Status(client)
-	if err != nil {
-		return "", fmt.Errorf("failed to retrieve node status: %w", err)
-	}
-
+func versionFromStatus(status *node.State) (string, error) {
 	pattern := `.+\.(\d+\.\d+)`
 
 	re := regexp.MustCompile(pattern)
@@ -166,16 +135,33 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 		return fmt.Errorf("unknown network option: %s", selectedNetworkStr)
 	}
 
-	version, err := n.version(cfg.URLs[0])
+	url := cfg.URLs[0]
+	client := node.NewClient(url)
+
+	status, err := node.Status(client)
+	if err != nil {
+		return fmt.Errorf("failed to retrieve node status: %w", err)
+	}
+
+	version, err := versionFromStatus(status)
 	if err != nil {
 		return fmt.Errorf("getting network version: %w", err)
 	}
 
+	// compare chain id from node status with chain id from config
+	nodeChainID := uint64(*status.ChainID)
+	if nodeChainID != cfg.ChainID {
+		logger.Errorf("chain id mismatch: %d != %d", nodeChainID, cfg.ChainID)
+
+		return fmt.Errorf("chain id mismatch: %d != %d", nodeChainID, cfg.ChainID)
+	}
+
 	n.SetCurrentNetwork(NetworkInfos{
-		NodeURL:    cfg.URLs[0],
+		NodeURL:    url,
 		DNSAddress: cfg.DNS,
 		Network:    selectedNetworkStr,
 		Version:    version,
+		ChainID:    cfg.ChainID,
 	})
 
 	logger.Debugf("Set current network: %s (version %s)\n", selectedNetworkStr, version)
