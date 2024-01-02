@@ -24,6 +24,10 @@ class I18n {
     // we are using pick in order to make life easier when the day for plurals and copy with params arrives
     const result = dot.pick(key, copy);
 
+    if (!result) {
+      console.warn(`I18n::t:: No translation found for key ${key}`);
+    }
+
     return interpolations
       ? this._interpolateKeys(result, interpolations)
       : result ?? key;

@@ -27,7 +27,7 @@ func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 		//nolint:varnamelen
 		pluginURL, os, checksum, err := plugin.GetDLChecksumAndOs()
 		if err != nil {
-			return operations.NewPluginManagerListInternalServerError().WithPayload(
+			return operations.NewGetPluginStoreInternalServerError().WithPayload(
 				&models.Error{Code: errorCodeFetchStore, Message: fmt.Sprintf("Error getting OS info: %s", err.Error())})
 		}
 
