@@ -129,10 +129,10 @@ jobs:
         run: sh macos/create_pkg.sh ${{ matrix.arch }} "${{ vars.APPLE_DEVELOPER_ID_APPLICATION }}" "${{ vars.APPLE_DEVELOPER_ID_INSTALLER }}"
         env:
           VERSION: ${{ env.VERSION }}
-      # - name: Notarise installer
-      #   run: |
-      #     xcrun notarytool submit massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg --wait --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.APPLE_APP_PASSWORD }} --team-id ${{ secrets.APPLE_TEAM_ID }}
-      #     xcrun stapler staple massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg
+      - name: Notarise installer
+        run: |
+          xcrun notarytool submit massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg --wait --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.APPLE_APP_PASSWORD }} --team-id ${{ secrets.APPLE_TEAM_ID }}
+          xcrun stapler staple massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg
       - name: Upload Package
         uses: actions/upload-artifact@v3
         with:
