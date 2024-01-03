@@ -13,7 +13,7 @@ GET /plugin-store
     ${actual}=    GET    ${API_URL}/plugin-store
     ${actual}=    Set Variable    ${actual.json()}
 
-    ${expected}=    GET     https://raw.githubusercontent.com/massalabs/station-store/main/plugins.json
+    ${expected}=    GET     https://massa-station-assets.s3.eu-west-3.amazonaws.com/plugins/plugins.json
     ${expected}=    Set Variable    ${expected.json()}
 
     Should Be Equal As Strings    ${actual[0]['name']}    ${expected[0]['name']}
