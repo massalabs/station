@@ -83,7 +83,6 @@ paths:
               fee:
                 $ref: "#/definitions/Amount"
                 description: Set the fee amount that will be given to the block creator.
-                default: 0 # DefaultFee
       produces:
         - application/json
       responses:
@@ -98,6 +97,63 @@ paths:
               firstEvent:
                 description: first event emitted by the called smart contract. Kept for backward compatibility.
                 $ref: "#/definitions/Events"
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+  /cmd/read-only/callsc:
+    post:
+      description: Read-only calls the given function from the given smart contract.
+      operationId: cmdReadOnlyCallSC
+      parameters:
+        - in: body
+          name: body
+          required: true
+          x-nullable: false
+          schema:
+            type: object
+            required:
+              - nickname
+              - name
+              - at
+            properties:
+              nickname:
+                description: Account nickname used to sign the operation.
+                type: string
+                x-nullable: false
+              name:
+                description: Function name to call.
+                type: string
+                x-nullable: false
+              at:
+                description: Smart contract address exporting the function to call.
+                type: string
+                x-nullable: false
+              args:
+                description: Arguments to pass to the function.
+                type: string
+                default: ""
+              coins:
+                $ref: "#/definitions/Amount"
+                description: Set the coin amount that will be transferred to the smartContract.
+              fee:
+                $ref: "#/definitions/Amount"
+                description: Set the fee amount that will be given to the block creator.
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK.
+          schema:
+            $ref: "#/definitions/ReadOnlyResult"
         "400":
           description: Bad request.
           schema:
@@ -926,6 +982,7 @@ definitions:
     description: Amount in nanoMassa.
     type: string
     x-nullable: false
+    default: ""
   Error:
     type: object
     description: Error object.
@@ -1094,3 +1151,148 @@ definitions:
       updatable:
         description: Whether the plugin can be updated.
         type: boolean
+  ReadOnlyResult:
+    type: object
+    properties:
+      executed_at:
+        $ref: '#/definitions/Timestamp'
+      result:
+        $ref: '#/definitions/Result'
+      output_events:
+        type: array
+        items:
+          $ref: '#/definitions/Event'
+      gas_cost:
+        type: integer
+      state_changes:
+        $ref: '#/definitions/StateChange'
+  Timestamp:
+    type: object
+    properties:
+      period:
+        type: integer
+      thread:
+        type: integer
+  Result:
+    type: object
+    properties:
+      Ok:
+        type: array
+        items:
+          type: object
+      Error:
+        type: string
+  Event:
+    type: object
+    properties:
+      context:
+        $ref: '#/definitions/EventContext'
+      data:
+        type: string
+  EventContext:
+    type: object
+    properties:
+      slot:
+        $ref: '#/definitions/Timestamp'
+      block:
+        type: object
+      read_only:
+        type: boolean
+      index_in_slot:
+        type: integer
+      call_stack:
+        type: array
+        items:
+          type: string
+      origin_operation_id:
+        type: object
+      is_final:
+        type: boolean
+      is_error:
+        type: boolean
+  StateChange:
+    type: object
+    properties:
+      ledger_changes:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/LedgerEntryChange'
+      async_pool_changes:
+        type: array
+        items:
+          type: object
+      pos_changes:
+        $ref: '#/definitions/PosChanges'
+      executed_ops_changes:
+        type: object
+        additionalProperties:
+          type: object
+      executed_denunciations_changes:
+        type: array
+        items:
+          type: object
+      execution_trail_hash_change:
+        type: object
+  LedgerEntryChange:
+    type: object
+    properties:
+      Update:
+        $ref: '#/definitions/LedgerUpdate'
+  LedgerUpdate:
+    type: object
+    properties:
+      balance:
+        $ref: '#/definitions/ChangeSet'
+      bytecode:
+        type: string
+      datastore:
+        type: array
+        items:
+          type: object
+  ChangeSet:
+    type: object
+    properties:
+      Set:
+        type: object
+  PosChanges:
+    type: object
+    properties:
+      seed_bits:
+        $ref: '#/definitions/SeedBitsInfo'
+      roll_changes:
+        type: object
+        additionalProperties:
+          type: object
+      production_stats:
+        type: object
+        additionalProperties:
+          type: object
+      deferred_credits:
+        $ref: '#/definitions/DeferredCreditsInfo'
+  SeedBitsInfo:
+    type: object
+    properties:
+      order:
+        type: string
+      head:
+        $ref: '#/definitions/BitVecHeadInfo'
+      bits:
+        type: integer
+      data:
+        type: array
+        items:
+          type: object
+  BitVecHeadInfo:
+    type: object
+    properties:
+      width:
+        type: integer
+      index:
+        type: integer
+  DeferredCreditsInfo:
+    type: object
+    properties:
+      credits:
+        type: object
+        additionalProperties:
+          type: object

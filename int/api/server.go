@@ -37,6 +37,7 @@ func initLocalAPI(
 	config := networkManager.Network()
 
 	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunctionHandler(config)
+	localAPI.CmdReadOnlyCallSCHandler = cmd.NewReadOnlyCallSCHandler(config)
 
 	localAPI.MassaGetAddressesHandler = massa.NewGetAddressHandler(config)
 	localAPI.GetNodeHandler = massa.NewGetNodeHandler(config)

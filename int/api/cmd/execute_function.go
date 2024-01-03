@@ -23,20 +23,9 @@ type executeFunction struct {
 
 //nolint:funlen
 func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) middleware.Responder {
-	// convert fee to uint64
-	fee := uint64(sendOperation.DefaultFee)
-
-	if string(params.Body.Fee) != "" {
-		parsedFee, err := strconv.ParseUint(string(params.Body.Fee), 10, 64)
-		if err != nil {
-			return operations.NewCmdExecuteFunctionBadRequest().WithPayload(
-				&models.Error{
-					Code:    errorInvalidFee,
-					Message: "Error during amount conversion: " + err.Error(),
-				})
-		}
-
-		fee = parsedFee
+	fee, errResponse := amountToUint64(params.Body.Fee, uint64(sendOperation.DefaultFee))
+	if errResponse != nil {
+		return errResponse
 	}
 
 	maxGas := uint64(0)
