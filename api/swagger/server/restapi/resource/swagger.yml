@@ -145,6 +145,59 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /cmd/read-only/executesc:
+    post:
+      description: Read-only execute smart contract
+      operationId: cmdReadOnlyExecuteSC
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: nickname
+          type: string
+          required: true
+          x-nullable: false
+          description: Nickname of the account used to execute the byte code.
+        - in: formData
+          name: bytecode
+          type: file
+          required: true
+          x-nullable: false
+          description: Smart contract file in a Wasm format.
+        - in: formData
+          name : coins
+          type: string
+          description: Set the number of coins that will be sent along the deployment call. (NanoMassa)
+          default: "0"
+        - in: formData
+          name : fee
+          type : string
+          description: Set the fee amount (in massa) that will be given to the block creator.
+          default: "0"
+        - in: formData
+          name: datastore
+          type: string
+          default: ""
+          description: base64 encoded datastore that will be sent along the smart contract.
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK.
+          schema:
+            $ref: "#/definitions/ReadOnlyResult"
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
   /cmd/deploySC:
     post:
       description: Deploys the given smart contract to the blockchain network.
@@ -164,13 +217,6 @@ paths:
           required: true
           x-nullable: false
           description: Smart contract file in a Wasm format.
-        - in : formData
-          name : gasPrice
-          type: integer 
-          format: uint64
-          minimum: 0
-          description : Price of a gas unit.
-          default : 0
         - in : formData
           name : gasLimit
           type : integer

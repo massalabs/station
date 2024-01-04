@@ -44,6 +44,7 @@ func initLocalAPI(
 	localAPI.GetMassaStationVersionHandler = operations.GetMassaStationVersionHandlerFunc(version.Handle)
 
 	localAPI.CmdDeploySCHandler = cmd.NewDeploySCHandler(config)
+	localAPI.CmdReadOnlyExecuteSCHandler = cmd.NewReadOnlyExecuteSCHandler(config)
 
 	localAPI.EventsGetterHandler = NewEventListenerHandler(config)
 	localAPI.MassaStationWebAppHandler = operations.MassaStationWebAppHandlerFunc(MassaStationWebAppHandler)

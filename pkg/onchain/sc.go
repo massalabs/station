@@ -104,7 +104,7 @@ func CallFunctionSuccess(
 	}, nil
 }
 
-// DeploySC deploys a smart contract on the blockchain. It returns the address of the smart contract and an Error.
+// DeploySC deploys a smart contract on the blockchain.
 // The smart contract is deployed with the given account nickname.
 func DeploySC(
 	networkInfos *config.NetworkInfos,

@@ -11,6 +11,18 @@ Suite Setup         Suite Setup
 
 
 *** Test Cases ***
+POST /cmd/read-only/executesc
+    ${sc}=    Get File For Streaming Upload    ${CURDIR}/../../testSC/build/main-testSC.wasm
+    ${data}=    Create Dictionary
+    ...    nickname=${WALLET_NICKNAME}
+    ...    coins=3000000000
+    ...    fee=1000
+    ${file}=    Create Dictionary    bytecode=${sc}
+    ${response}=    POST    ${API_URL}/cmd/read-only/executesc    data=${data}    files=${file}    expected_status=any
+    Log To Console    json response: ${response.json()}    # Print the response content to the test log for debugging
+    Should Be Equal As Integers    ${response.status_code}    ${STATUS_OK}    # Assert the status code is 200 OK
+    Should Contain    string(${response.json()})    TestSC is deployed at
+
 POST a Smart Contract
     ${sc}=    Get File For Streaming Upload    ${CURDIR}/../../testSC/build/main-testSC.wasm
     ${data}=    Create Dictionary
