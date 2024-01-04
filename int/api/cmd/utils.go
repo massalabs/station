@@ -49,7 +49,7 @@ func CreateReadOnlyResult(result sendOperation.ReadOnlyResult) models.ReadOnlyRe
 			ExecutedDenunciationsChanges: result.StateChanges.ExecutedDenunciationsChanges,
 			ExecutedOpsChanges:           result.StateChanges.ExecutedOpsChanges,
 			ExecutionTrailHashChange:     result.StateChanges.ExecutionTrailHashChange,
-			// LedgerChanges:                {},
+			LedgerChanges:                make(map[string]models.LedgerEntryChange),
 			PosChanges: &models.PosChanges{
 				DeferredCredits: &models.DeferredCreditsInfo{
 					Credits: result.StateChanges.PosChanges.DeferredCredits.Credits,

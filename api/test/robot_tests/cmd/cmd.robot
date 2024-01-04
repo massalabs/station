@@ -27,6 +27,23 @@ POST a Smart Contract
     ${sc_address}=    Get SC address    ${response.json()['firstEvent']['data']}
     Set Global Variable    ${DEPLOYED_SC_ADDR}    ${sc_address}
 
+POST /cmd/read-only/callsc
+    ${randomID}=    Generate Random String    10
+    ${argument}=    keywords.String To Arg    ${randomID}
+    ${data}=    Create Dictionary
+    ...    nickname=${WALLET_NICKNAME}
+    ...    name=event
+    ...    at=${DEPLOYED_SC_ADDR}
+    ...    args=${argument}
+    ${response}=    POST
+    ...    ${API_URL}/cmd/read-only/callsc
+    ...    json=${data}
+    ...    expected_status=any
+    Log To Console    json response: ${response.json()}
+    Should Be Equal As Integers    ${response.status_code}    ${STATUS_OK}    # Assert the status code is 200 OK
+    Should Contain    string(${response.json()})    'read_only': True, 'slot': {'period':
+    Should Contain    string(${response.json()})    I'm an event! My id is ${randomID}
+
 POST /cmd/executeFunction sync
     ${randomID}=    Generate Random String    10
     ${argument}=    keywords.String To Arg    ${randomID}
@@ -40,7 +57,7 @@ POST /cmd/executeFunction sync
     ...    ${API_URL}/cmd/executeFunction
     ...    json=${data}
     ...    expected_status=any
-    Log To Console    ${response.json()}
+    Log To Console    json response: ${response.json()}
     Should Be Equal As Integers    ${response.status_code}    ${STATUS_OK}    # Assert the status code is 200 OK
     Should Be Equal    ${response.json()['firstEvent']['data']}    I'm an event! My id is ${randomID}
 
