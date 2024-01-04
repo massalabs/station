@@ -44,25 +44,16 @@ func (e *ReadOnlyCallSC) Handle(params operations.CmdReadOnlyCallSCParams) middl
 		params.Body.Fee = "0"
 	}
 
-	coins, errResponse := amountToUint64(params.Body.Coins, uint64(sendOperation.DefaultFee))
+	coins, errResponse := amountToString(params.Body.Coins, uint64(0))
 	if errResponse != nil {
 		return errResponse
-	}
-
-	coinsString, err := sendOperation.NanoToMas(coins)
-	if err != nil {
-		return operations.NewCmdReadOnlyCallSCBadRequest().WithPayload(
-			&models.Error{
-				Code:    errorInvalidFee,
-				Message: "Error during coins amount conversion: " + err.Error(),
-			})
 	}
 
 	result, err := sendOperation.ReadOnlyCallSC(
 		params.Body.At,
 		params.Body.Name,
 		args,
-		coinsString,
+		coins,
 		string(params.Body.Fee),
 		acc.Address,
 		node.NewClient(e.networkInfos.NodeURL),

@@ -9,24 +9,42 @@ import (
 	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
 )
 
-// amountToUint64 converts fee to uint64
-func amountToUint64(requestFee models.Amount, defaultValue uint64) (uint64, middleware.Responder) {
+// amountToUint64 converts fee to uint64.
+func amountToUint64(amount models.Amount, defaultValue uint64) (uint64, middleware.Responder) {
 	result := defaultValue
 
-	if string(requestFee) != "" {
-		parsedFee, err := strconv.ParseUint(string(requestFee), 10, 64)
+	if string(amount) != "" {
+		parsedAmount, err := strconv.ParseUint(string(amount), 10, 64)
 		if err != nil {
 			return 0, operations.NewCmdReadOnlyCallSCBadRequest().WithPayload(
 				&models.Error{
-					Code:    errorInvalidFee,
+					Code:    errorInvalidArgs,
 					Message: "Error during amount conversion: " + err.Error(),
 				})
 		}
 
-		result = parsedFee
+		result = parsedAmount
 	}
 
 	return result, nil
+}
+
+func amountToString(amount models.Amount, defaultValue uint64) (string, middleware.Responder) {
+	amountUint64, errResponse := amountToUint64(amount, defaultValue)
+	if errResponse != nil {
+		return "", errResponse
+	}
+
+	amountString, err := sendOperation.NanoToMas(amountUint64)
+	if err != nil {
+		return "", operations.NewCmdReadOnlyExecuteSCBadRequest().WithPayload(
+			&models.Error{
+				Code:    errorInvalidArgs,
+				Message: "Error during amount conversion: " + err.Error(),
+			})
+	}
+
+	return amountString, nil
 }
 
 // CreateReadOnlyResult Converts an instance of sendOperation.ReadOnlyResult struct to  models.ReadOnlyResult struct
