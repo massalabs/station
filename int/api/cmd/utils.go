@@ -37,7 +37,7 @@ func amountToString(amount models.Amount, defaultValue uint64) (string, middlewa
 
 	amountString, err := sendOperation.NanoToMas(amountUint64)
 	if err != nil {
-		return "", operations.NewCmdReadOnlyExecuteSCBadRequest().WithPayload(
+		return "", operations.NewCmdReadOnlyCallSCBadRequest().WithPayload(
 			&models.Error{
 				Code:    errorInvalidArgs,
 				Message: "Error during amount conversion: " + err.Error(),
