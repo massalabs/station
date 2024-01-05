@@ -393,9 +393,9 @@ paths:
         - in: path
           name: network
           type: string
-          enum: ["testnet", "buildnet", "labnet"]
+          enum: ["mainnet", "buildnet"]
           required: true
-          description: The network to switch to (e.g., testnet, buildnet, labnet, mynet).
+          description: The network to switch to.
       responses:
         "200":
           description: Network successfully switched.
@@ -1046,7 +1046,7 @@ definitions:
     description: Massa node infos.
     properties:
       network:
-        enum: ["testnet", "labnet", "localhost", "buildnet"]
+        enum: ["mainnet", "buildnet"]
       url:
         type: string
       dns:
