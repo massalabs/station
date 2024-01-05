@@ -3,7 +3,7 @@
 # This script is used to uninstall MassaStation from a Debian-based system.
 # It will remove the following files:
 # - MassaStation App.
-# - DNSMasq configuration files.
+# - entry in /etc/hosts.
 # - Certificates generated for MassaStation.
 # - MassaStation configuration directory.
 # - MassaStation plugins.

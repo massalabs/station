@@ -165,5 +165,5 @@ If you want to contribute to the installers, please refer to the [MassaStation I
 
 ### Developer guide
 
-If you want to change the network to which Massa Station will connect and the DNS contract address you can change the file
+If you want to change the network to which Massa Station will connect you can change the file
 `int/config/config_network.yaml` and compile Massa Station again with `task build`.

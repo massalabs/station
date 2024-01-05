@@ -11,7 +11,6 @@ export function mockServer(environment = ENV.DEV) {
     factories,
     seeds(server) {
       server.createList('plugin', 8);
-      server.createList('domain', 50);
       server.createList('store', 7);
       server.createList('account', 5);
       server.create('network');

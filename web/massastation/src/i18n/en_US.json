@@ -20,44 +20,6 @@
       "button": "Install"
     }
   },
-  "search": {
-    "title-banner": "Massa ecosystem",
-    "fav-websites": "Massa's favorites",
-    "all-websites": "All websites",
-    "sidebar": {
-      "title": "I want upload my own website",
-      "how-to": "How to do it:",
-      "your-website": "Your website",
-      "your-website-description": "Define your website name and description.",
-      "placeholder-title": " Upload website on-chain is coming soon",
-      "placeholder-description": "If you're here, it's because you wanted to upload your website! The feature will be available soon!"
-    },
-    "buttons": {
-      "upload": "Upload",
-      "install-wallet": "Install Wallet",
-      "create-account": "Create Account"
-    },
-    "inputs": {
-      "website-name": "Name",
-      "website-description": "Description",
-      "file": "Drag and drop your .zip file"
-    },
-    "loading": "Uploading your website to the blockchain, this may take a while...",
-    "errors": {
-      "no-nickname": "Account is missing.",
-      "no-website-name": "Website's name is missing.",
-      "invalid-website-name": "The website's name can only consist of lowercase letters, numbers, and the characters _.-~, and must be between 3 and 50 characters in length.",
-      "description-too-long": "Description max length is 280 characters.",
-      "invalid-description": "Description must contains UTF-8 characters only.",
-      "no-file": "File is missing.",
-      "no-description": "Description is missing.",
-      "invalid-file-extension": "File format must be a \".zip\".",
-      "invalid-file-content": "Website file must contain index.html at the source.",
-      "upload-error": "Failed to upload website.",
-      "website-name-already-exists": "Website name already taken.",
-      "file-too-big": "Website zip file is too big. Maximum size allowed is 1.5 MB."
-    }
-  },
   "unexpected-error": {
     "title": "Oops!",
     "description": "An unexpected error has occurred",
