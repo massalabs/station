@@ -14,6 +14,7 @@ import {
   Button,
   DashboardStation,
   PluginWallet,
+  Theme,
 } from '@massalabs/react-ui-kit';
 import { FiCodepen, FiGlobe } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -126,7 +127,7 @@ function NestedIndex({
             </div>
             <DashboardStation
               key={refreshPlugins}
-              theme={theme}
+              theme={theme as Theme}
               imagesDark={[
                 <Image1Dark />,
                 <Image2Dark />,
