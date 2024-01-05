@@ -4,6 +4,7 @@ tasks:
   install:
     cmds:
       - echo "Installing dependencies"
+      - cmd: go install github.com/wailsapp/wails/v2/cmd/wails@latest
       - cmd: go install github.com/go-swagger/go-swagger/cmd/swagger@latest
       - cmd: go install golang.org/x/tools/cmd/stringer@latest
       - cmd: go install go.uber.org/mock/mockgen@v0.2.0
@@ -58,14 +59,14 @@ tasks:
     platforms: [linux]
     cmds:
       - cmd: mkdir -p build/massastation
-      - cmd: go build -o build/massastation/massastation cmd/massastation/main.go
+      - cmd: go build -o build/massastation/massastation ./main.go
       - cmd: sudo setcap CAP_NET_BIND_SERVICE=+eip build/massastation/massastation
 
   build-macos:
     platforms: [darwin]
     cmds:
       - cmd: mkdir -p build/massastation
-      - cmd: go build -o build/massastation/massastation cmd/massastation/main.go
+      - cmd: wails build -s -skipbindings
 
   build-windows:
     platforms: [windows]
@@ -73,7 +74,7 @@ tasks:
       - cmd: mkdir -p build/massastation
       - cmd: mkdir -p build/massastation/logs
       - cmd: mkdir -p build/massastation/certs
-      - cmd: go build -o build/massastation/massastation.exe cmd/massastation/main.go
+      - cmd: go build -o build/massastation/massastation.exe ./main.go
 
   run:
     env:
