@@ -9,7 +9,7 @@ import (
 	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
 )
 
-// amountToUint64 converts fee to uint64.
+// amountToUint64 converts the given amount to uint64.
 func amountToUint64(amount models.Amount, defaultValue uint64) (uint64, middleware.Responder) {
 	result := defaultValue
 
