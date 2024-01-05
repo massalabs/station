@@ -31,10 +31,12 @@ jobs:
             arch: amd64
             target: darwin
             compiler: wails
+            build-options: -s -skipbindings
           - os: macos-latest
             arch: arm64
             target: darwin
             compiler: wails
+            build-options: -s -skipbindings
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -61,15 +63,10 @@ jobs:
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch }}
         shell: bash
         run: |
-          ${{ matrix.compiler }} build -ldflags "-X github.com/massalabs/station/int/config.Version=${{ env.VERSION }}" -o massastation_${{ matrix.target }}_${{ matrix.arch }}${{ matrix.ext }}
+          ${{ matrix.compiler }} build ${{ matrix.build-options }} \
+            -tags desktop,production -ldflags "-X github.com/massalabs/station/int/config.Version=${{ env.VERSION }}" \
+            -o massastation_${{ matrix.target }}_${{ matrix.arch }}${{ matrix.ext }}
 
-      - name: Package binary for ${{ matrix.target }} on ${{ matrix.arch }}
-        # We don't need to package for windows since fyne package generates a similar .exe as go build.
-        if: matrix.target != 'windows'
-        shell: bash
-        run: |
-          cp massastation_${{ matrix.target }}_${{ matrix.arch }} massastation
-          fyne package -name MassaStation -icon ./int/systray/embedded/logo.png -appID net.massalabs.massastation -exe massastation
       - name: Upload MassaStation Binary
         uses: actions/upload-artifact@v3
         with:
