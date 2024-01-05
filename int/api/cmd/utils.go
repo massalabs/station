@@ -47,7 +47,7 @@ func amountToString(amount models.Amount, defaultValue uint64) (string, middlewa
 	return amountString, nil
 }
 
-// CreateReadOnlyResult Converts an instance of sendOperation.ReadOnlyResult struct to  models.ReadOnlyResult struct
+// CreateReadOnlyResult Converts an instance of sendOperation.ReadOnlyResult struct to models.ReadOnlyResult struct
 //
 //nolint:funlen
 func CreateReadOnlyResult(result sendOperation.ReadOnlyResult) models.ReadOnlyResult {
