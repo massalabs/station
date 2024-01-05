@@ -8,6 +8,9 @@ tasks:
       - cmd: go install github.com/go-swagger/go-swagger/cmd/swagger@latest
       - cmd: go install golang.org/x/tools/cmd/stringer@latest
       - cmd: go install go.uber.org/mock/mockgen@v0.2.0
+      - cmd: sudo apt update && sudo apt install -y libgtk-3-0 libwebkit2gtk-4.0-dev
+        platforms: [linux]
+        ignore_error: true
 
   install-dev:
     cmds:
