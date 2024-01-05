@@ -21,7 +21,7 @@ function StorePlugin(props: StorePluginProps) {
     description,
     file: { url },
     version,
-    iscompatible: isCompatible,
+    isCompatible: isCompatible,
     massastationMinVersion,
   } = plugin;
 

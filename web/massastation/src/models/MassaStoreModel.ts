@@ -7,11 +7,11 @@ export interface MassaStoreModel {
   logo: string;
   file: pluginStoreItemFile;
   os: string;
-  iscompatible: boolean;
+  isCompatible: boolean;
   massastationMinVersion: string;
 }
 
-export interface pluginStoreItemFile {
+interface pluginStoreItemFile {
   url: string;
   checksum: string;
 }

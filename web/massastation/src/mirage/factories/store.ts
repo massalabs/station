@@ -28,7 +28,7 @@ export const storeFactory = Factory.extend<MassaStoreModel>({
   os() {
     return 'Linux';
   },
-  iscompatible() {
+  isCompatible() {
     return Math.random() < 0.3 ? false : true;
   },
   massastationMinVersion() {
