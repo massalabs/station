@@ -763,30 +763,6 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-  /web/{resource}:
-    get:
-      description: Frontend router for the MassaStation.
-      operationId: MassaStationWebApp
-      produces:
-        - application/json
-        - text/javascript
-        - text/html
-        - text/css
-        - text/webp
-        - image/png
-      parameters:
-        - in: path
-          name: resource
-          required : true
-          type: string
-          description: Website resource.
-      responses:
-        "200":
-          description: Page found
-        "404":
-          description: Resource not found.
-          schema:
-            $ref: "#/definitions/Error"
   /plugin/{author-name}/{plugin-name}:
     get:
       operationId: pluginRouter

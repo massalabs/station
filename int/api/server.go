@@ -47,7 +47,6 @@ func initLocalAPI(
 	localAPI.CmdReadOnlyExecuteSCHandler = cmd.NewReadOnlyExecuteSCHandler(config)
 
 	localAPI.EventsGetterHandler = NewEventListenerHandler(config)
-	localAPI.MassaStationWebAppHandler = operations.MassaStationWebAppHandlerFunc(MassaStationWebAppHandler)
 
 	localAPI.SwitchNetworkHandler = network.NewSwitchNetworkHandler(networkManager)
 	localAPI.GetNetworkConfigHandler = network.NewGetNetworkConfigHandler(networkManager)
