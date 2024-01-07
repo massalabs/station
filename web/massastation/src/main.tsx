@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import '@massalabs/react-ui-kit/src/global.css';
 import './index.css';
+import { IconContext } from 'react-icons/lib';
 
 import { ENV } from './const/env/env';
 import {
@@ -56,8 +57,10 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} fallbackElement={<Error />} />
-    </QueryClientProvider>
+    <IconContext.Provider value={{ size: '32' }}>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} fallbackElement={<Error />} />
+      </QueryClientProvider>
+    </IconContext.Provider>
   </React.StrictMode>,
 );
