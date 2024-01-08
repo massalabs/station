@@ -1,14 +1,14 @@
 // EXTERNALS
 import { persist } from 'zustand/middleware';
 
-export interface NetworktoreState {
+export interface NetworkStoreState {
   currentNetwork: string | null;
   availableNetworks: string[];
   setCurrentNetwork: (nickname: string | null) => void;
   setAvailableNetworks: (networks: string[]) => void;
 }
 
-const networkStore = persist<NetworktoreState>(
+const networkStore = persist<NetworkStoreState>(
   (set) => ({
     currentNetwork: null,
     availableNetworks: [],

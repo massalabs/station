@@ -3,7 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useLocalStorage } from '@/custom/useLocalStorage';
 import { useConfigStore } from '@/store/store';
 
-import { Navigator, Toast } from '@massalabs/react-ui-kit';
+import { Navigator, Theme, Toast } from '@massalabs/react-ui-kit';
 import { FiCodepen, FiGlobe, FiHome, FiSun, FiMoon } from 'react-icons/fi';
 import { LayoutStation } from '@/layouts/LayoutStation/LayoutStation';
 
@@ -15,13 +15,6 @@ type ThemeSettings = {
     label: string;
   };
 };
-
-export interface IOutletContextType {
-  themeIcon: JSX.Element;
-  themeLabel: string;
-  theme: string;
-  handleSetTheme: () => void;
-}
 
 export const themeSettings: ThemeSettings = {
   'theme-dark': {
@@ -55,7 +48,7 @@ const navigatorSteps: INavigatorSteps = {
 
 export function Base() {
   // Hooks
-  const [theme, setThemeStorage] = useLocalStorage<string>(
+  const [theme, setThemeStorage] = useLocalStorage<Theme>(
     'massa-station-theme',
     'theme-dark',
   );
@@ -112,7 +105,8 @@ export function Base() {
   }
 
   function handleSetTheme() {
-    let toggledTheme = theme === 'theme-dark' ? 'theme-light' : 'theme-dark';
+    let toggledTheme: Theme =
+      theme === 'theme-dark' ? 'theme-light' : 'theme-dark';
 
     setThemeStorage(toggledTheme);
     setThemeStore(toggledTheme);

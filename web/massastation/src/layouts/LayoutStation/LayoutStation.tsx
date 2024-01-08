@@ -5,31 +5,36 @@ import { URL } from '../../const/url/url';
 import { NetworkModel } from '../../models';
 import { useNetworkStore } from '../../store/store';
 
-import { ThemeMode, StationLogo, Dropdown } from '@massalabs/react-ui-kit';
+import {
+  ThemeMode,
+  StationLogo,
+  Dropdown,
+  Theme,
+} from '@massalabs/react-ui-kit';
 import { useNavigate } from 'react-router-dom';
 
-export interface LayoutStationProps {
+interface LayoutStationProps {
   children?: ReactNode;
-  navigator?: Navigator;
-  onSetTheme?: () => void;
-  storedTheme?: string;
+  navigator?: ReactNode;
+  onSetTheme?: (theme: Theme) => void;
+  storedTheme?: Theme | undefined;
 }
 
 interface NetworkRequest {
   network: string;
 }
 
-export function LayoutStation({ ...props }) {
+export function LayoutStation(props: LayoutStationProps) {
   const { children, navigator, onSetTheme, storedTheme } = props;
 
   const { data: version, isSuccess: getVersionSuccess } =
     useResource<string>('version');
 
-  const [selectedTheme, setSelectedTheme] = useState(
+  const [selectedTheme, setSelectedTheme] = useState<Theme>(
     storedTheme || 'theme-dark',
   );
 
-  function handleSetTheme(theme: string) {
+  function handleSetTheme(theme: Theme) {
     setSelectedTheme(theme);
 
     onSetTheme?.(theme);
