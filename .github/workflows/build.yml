@@ -130,6 +130,7 @@ jobs:
         env:
           VERSION: ${{ env.VERSION }}
       - name: Notarise installer
+        continue-on-error: true
         run: |
           xcrun notarytool submit massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg --wait --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.APPLE_APP_PASSWORD }} --team-id ${{ secrets.APPLE_TEAM_ID }}
           xcrun stapler staple massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg
