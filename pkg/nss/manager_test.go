@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 // MockCertUtilServicer is a mock of CertUtilServicer.
@@ -58,7 +59,7 @@ func TestManager_AddCA(t *testing.T) {
 
 	err := m.AddCA("testCert", "/path/to/cert")
 
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	mockCertUtilServicer.AssertExpectations(t)
 	mockLogger.AssertExpectations(t)
 }
@@ -73,7 +74,7 @@ func TestManager_DeleteCA(t *testing.T) {
 
 	err := m.DeleteCA("testCert")
 
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	mockCertUtilServicer.AssertExpectations(t)
 	mockLogger.AssertExpectations(t)
 }
@@ -103,7 +104,7 @@ func TestManager_AddCA_Error(t *testing.T) {
 
 	err := m.AddCA("testCert", "/path/to/cert")
 
-	assert.Error(t, err)
+	require.Error(t, err)
 	mockCertUtilServicer.AssertExpectations(t)
 	mockLogger.AssertExpectations(t)
 }
@@ -118,7 +119,7 @@ func TestManager_DeleteCA_Error(t *testing.T) {
 
 	err := m.DeleteCA("testCert")
 
-	assert.Error(t, err)
+	require.Error(t, err)
 	mockCertUtilServicer.AssertExpectations(t)
 	mockLogger.AssertExpectations(t)
 }

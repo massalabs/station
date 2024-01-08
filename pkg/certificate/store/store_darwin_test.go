@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/massalabs/station/pkg/certificate"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestManualCheck(t *testing.T) {
@@ -25,5 +25,5 @@ func TestManualCheck(t *testing.T) {
 	}
 
 	err = Add(cert)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }

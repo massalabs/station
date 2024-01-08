@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestCertUtilService_AddCA tests the AddCA method of CertUtilService.
@@ -29,17 +29,17 @@ func TestCertUtilService_AddCA(t *testing.T) {
 
 	// Adding the certificate.
 	err = service.AddCA(dbPath, certName, certPath)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Verifying the certificate is present.
 	err = service.IsKnownCA(dbPath, certName)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Removing the certificate.
 	err = service.DeleteCA(dbPath, certName)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Verifying the certificate is no longer present.
 	err = service.IsKnownCA(dbPath, certName)
-	assert.Error(t, err)
+	require.Error(t, err)
 }

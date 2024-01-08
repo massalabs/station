@@ -43,6 +43,7 @@ func (h *websitePrepare) Handle(params operations.WebsiteUploaderPrepareParams) 
 	//nolint:revive
 	return utils.NewGoneResponder()
 
+	//nolint:govet
 	archive, errorResponse := readAndCheckArchive(params.Zipfile)
 	if errorResponse != nil {
 		return errorResponse

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPath_MASSAHOME(t *testing.T) {
@@ -12,6 +13,6 @@ func TestPath_MASSAHOME(t *testing.T) {
 	t.Setenv("MASSA_HOME", wantedPath)
 
 	path, err := Path()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, wantedPath, path)
 }

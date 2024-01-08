@@ -3,7 +3,7 @@ package certificate
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestReadFile(t *testing.T) {
@@ -21,9 +21,9 @@ func TestReadFile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := readFile(tt.filepath)
 			if tt.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -45,9 +45,9 @@ func TestLoadCertificate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := LoadCertificate(tt.filepath)
 			if tt.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -69,9 +69,9 @@ func TestLoadPrivateKey(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := LoadPrivateKey(tt.filepath)
 			if tt.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 		})
 	}

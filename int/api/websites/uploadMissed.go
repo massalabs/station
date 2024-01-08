@@ -22,6 +22,7 @@ func (h *uploadMissedChunkHandler) Handle(params operations.WebsiteUploadMissing
 	//nolint:revive
 	return utils.NewGoneResponder()
 
+	//nolint:govet
 	archive, errorResponse := readAndCheckArchive(params.Zipfile)
 	if errorResponse != nil {
 		return errorResponse

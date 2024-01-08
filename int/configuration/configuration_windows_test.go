@@ -18,6 +18,6 @@ func TestPath_Windows(t *testing.T) {
 	expectedPath = filepath.Dir(expectedPath)
 
 	path, err := Path()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, expectedPath, path)
 }
