@@ -14,6 +14,7 @@ Suite Setup
     Set Suite Variables
 
 Zip Test Website
+    Pass Execution    Web On Chain is disabled temporary
     [Documentation]    Zip the test website in ./test_website and save it to the "${TEST_ZIP_FILE}" file
 
     Log To Console    Zipping test website
@@ -22,6 +23,7 @@ Zip Test Website
     Archive Should Contain File    ${CURDIR}/${TEST_ZIP_FILE}    index.html
 
 Set Suite Variables
+    Pass Execution    Web On Chain is disabled temporary
     ${random_string}=    Generate Random String    8    [LOWER][NUMBERS]
     ${website_url}=    Set Variable    test${random_string}
     ${website_description}=    Set Variable    description${random_string}

@@ -12,6 +12,7 @@ ${WALLET_PLUGIN_VERSION}       v0.3.0
 *** Keywords ***
 Suite Setup
     Basic Suite Setup
+    Switch To Buildnet
     Init SC build environment
     ${GITHUB_ACTIONS}    Get Environment Variable    GITHUB_ACTIONS    false
     IF    "${GITHUB_ACTIONS}" == "true"

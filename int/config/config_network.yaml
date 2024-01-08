@@ -1,6 +1,9 @@
+mainnet:
+  URLs:
+    - https://mainnet.massa.net/api/v2
+  ChainID: 77658377
+  Default: true
 buildnet:
-  DNS: AS1pzpVk79cubdM7Zk9pNdg1JR4qKooVa6usyquiCEQhPeRWD9k7
   URLs:
     - https://buildnet.massa.net/api/v2
   ChainID: 77658366
-  Default: true

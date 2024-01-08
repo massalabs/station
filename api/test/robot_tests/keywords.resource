@@ -62,3 +62,9 @@ Get SC address
     ${words}=    Split String    ${string}    :
     ${sc_address}=    Get From List    ${words}    1
     RETURN    ${sc_address}
+
+Switch To Buildnet
+    ${response}=    POST
+    ...    ${API_URL}/network/buildnet
+    ...    expected_status=${STATUS_OK}
+    Should Be Equal    ${response.json()['currentNetwork']}    buildnet
