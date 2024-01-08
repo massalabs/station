@@ -36,6 +36,7 @@ func (h *registryHandler) Handle(_ operations.AllDomainsGetterParams) middleware
 	//nolint:revive
 	return utils.NewGoneResponder()
 
+	//nolint:govet
 	results, err := Registry(h.config)
 	if err != nil {
 		return operations.NewMyDomainsGetterInternalServerError().

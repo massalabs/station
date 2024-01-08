@@ -6,6 +6,7 @@ import (
 	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/pkg/store"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type testPluginUpdate struct {
@@ -31,14 +32,14 @@ func AssertUpdate(t *testing.T, testPluginUpdate testPluginUpdate) {
 	config.Version = testPluginUpdate.massaStationVersion
 
 	pluginCompatible, err := pluginInStore.IsPluginCompatible()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	pluginInStore.IsCompatible = pluginCompatible
 	assert.Equal(t, pluginCompatible, testPluginUpdate.compatible)
 
 	storeMS.Plugins[0].IsCompatible = pluginCompatible
 	isUpdatable, err := storeMS.CheckForPluginUpdates(plgn.info.Name, plgn.info.Version)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, isUpdatable, testPluginUpdate.updatable)
 }
 

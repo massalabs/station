@@ -112,10 +112,10 @@ func TestCertStore_AddCertificate(t *testing.T) {
 			err := store.AddCertificate(cert)
 
 			if tt.wantErr != nil {
-				assert.Error(t, err)
-				assert.ErrorIs(t, err, tt.wantErr)
+				require.Error(t, err)
+				require.ErrorIs(t, err, tt.wantErr)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -190,10 +190,10 @@ func TestCertStore_RemoveCertificate(t *testing.T) {
 			err := store.RemoveCertificate(cert)
 
 			if tt.wantErr != nil {
-				assert.Error(t, err)
-				assert.ErrorIs(t, err, tt.wantErr)
+				require.Error(t, err)
+				require.ErrorIs(t, err, tt.wantErr)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -281,10 +281,10 @@ func TestCertStore_FetchCertificates(t *testing.T) {
 			certPool, err := store.FetchCertificates()
 
 			if tt.wantErr != nil {
-				assert.Error(t, err)
-				assert.ErrorIs(t, err, tt.wantErr)
+				require.Error(t, err)
+				require.ErrorIs(t, err, tt.wantErr)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Len(t, certPool.Subjects(), tt.poolLength)
 			}
 		})
@@ -304,7 +304,7 @@ func TestCertStore_Close(t *testing.T) {
 		}
 
 		err := store.Close(false)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("checkNonFreedCtx is true", func(t *testing.T) {
@@ -316,7 +316,7 @@ func TestCertStore_Close(t *testing.T) {
 		mockAPI.EXPECT().CertCloseStore(windows.Handle(1), uint32(windows.CERT_CLOSE_STORE_CHECK_FLAG)).Return(nil)
 
 		err := store.Close(true)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("checkNonFreedCtx is false", func(t *testing.T) {
@@ -328,7 +328,7 @@ func TestCertStore_Close(t *testing.T) {
 		mockAPI.EXPECT().CertCloseStore(windows.Handle(1), uint32(0)).Return(nil)
 
 		err := store.Close(false)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }
 
@@ -342,7 +342,7 @@ func TestNewCertStore(t *testing.T) {
 		mockAPI.EXPECT().UTF16PtrFromString("testStore").Return(nil, errors.New("conversion error"))
 
 		_, err := NewCertStore(mockAPI, "testStore")
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "unable to convert store name to UTF16")
 	})
 
@@ -351,7 +351,7 @@ func TestNewCertStore(t *testing.T) {
 		mockAPI.EXPECT().CertOpenSystemStore(windows.Handle(0), gomock.Any()).Return(windows.Handle(0), errors.New("store opening error"))
 
 		_, err := NewCertStore(mockAPI, "testStore")
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "unable to open system certificate store")
 	})
 
@@ -360,7 +360,7 @@ func TestNewCertStore(t *testing.T) {
 		mockAPI.EXPECT().CertOpenSystemStore(windows.Handle(0), gomock.Any()).Return(windows.Handle(1), nil)
 
 		store, err := NewCertStore(mockAPI, "testStore")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, store)
 		assert.Equal(t, windows.Handle(1), store.handler)
 	})
@@ -417,13 +417,13 @@ func TestInterpretError(t *testing.T) {
 			if tc.expected != nil {
 				// shall match
 				// the expected error
-				assert.ErrorIs(t, actual, tc.expected)
+				require.ErrorIs(t, actual, tc.expected)
 				// the initial error
-				assert.ErrorAs(t, actual, &tc.err)
+				require.ErrorAs(t, actual, &tc.err)
 				// the expected error string
 				assert.EqualError(t, actual, tc.errStr)
 			} else {
-				assert.NoError(t, actual)
+				require.NoError(t, actual)
 			}
 		})
 	}
@@ -436,32 +436,32 @@ func TestManualCheck(t *testing.T) {
 
 	// Initialize the certificate store.
 	store, err := NewCertStore(NewWindowsImpl(), RootStore)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Add the certificate to the store.
 	err = store.AddCertificate(cert)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Check that the added certificate is in the list.
 	pool, err := store.FetchCertificates()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.True(t, certInPool(cert, pool))
 
 	// Delete the added certificate.
 	err = store.RemoveCertificate(cert)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Check that the deleted certificate is no longer in the list.
 	pool, err = store.FetchCertificates()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.False(t, certInPool(cert, pool))
 
 	// Delete a non existing certificate and verify that there is an error.
 	err = store.RemoveCertificate(cert)
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	// Close the store checking for non freed context.
 	// This is needed to avoid memory leaks.
 	err = store.Close(true)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }

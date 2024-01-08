@@ -22,6 +22,7 @@ func (h *domainsHandler) Handle(params operations.MyDomainsGetterParams) middlew
 	//nolint:revive
 	return utils.NewGoneResponder()
 
+	//nolint:govet
 	client := node.NewClient(h.config.NodeURL)
 
 	myDomainNames, err := my.Domains(*h.config, client, params.Nickname)

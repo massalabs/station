@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -48,9 +49,9 @@ func TestDecodePEM(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := DecodePEM([]byte(tt.data))
 			if tt.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -105,9 +106,9 @@ func TestDecodeExpectedPEM(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := DecodeExpectedPEM([]byte(tt.data), tt.expected)
 			if tt.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -250,9 +251,9 @@ func TestNewPemType(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			got, err := NewPemType(test.args.str)
 			if test.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 
 			assert.Equal(t, test.want, got)

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSerializeAddress(t *testing.T) {
@@ -84,7 +85,7 @@ func TestDeserializeAddress(t *testing.T) {
 	for _, testCase := range testCases {
 		address, err := DeserializeAddress(testCase.versionedAddress)
 
-		assert.NoError(t, err, "Received an unexpected error for versioned address %v", testCase.versionedAddress)
+		require.NoError(t, err, "Received an unexpected error for versioned address %v", testCase.versionedAddress)
 		assert.Equal(t, testCase.expectedAddress, address, "Address mismatch for versioned address %v",
 			testCase.versionedAddress)
 	}

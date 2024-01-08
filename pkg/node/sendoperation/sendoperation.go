@@ -80,6 +80,7 @@ func Call(
 
 	var content string
 
+	//nolint:goconst
 	switch {
 	case operationBatch.NewBatch:
 		content = `{

@@ -2,6 +2,7 @@ package sendoperation
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/shopspring/decimal"
 )
@@ -9,7 +10,7 @@ import (
 const MasDecimals = 9
 
 func NanoToMas(nanoMasAmount uint64) (string, error) {
-	dec, err := decimal.NewFromString(fmt.Sprint(nanoMasAmount))
+	dec, err := decimal.NewFromString(strconv.FormatUint(nanoMasAmount, 10))
 	if err != nil {
 		return "", fmt.Errorf("converting '%d' to decimal: %w", nanoMasAmount, err)
 	}
