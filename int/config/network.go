@@ -16,18 +16,16 @@ const (
 )
 
 type NetworkInfos struct {
-	Network    string
-	NodeURL    string
-	DNSAddress string
-	Version    string
-	ChainID    uint64
+	Network string
+	NodeURL string
+	Version string
+	ChainID uint64
 }
 
 // NetworkConfig represents the configuration of a network.
 //
 //nolint:tagliatelle
 type NetworkConfig struct {
-	DNS     string   `yaml:"DNS"`
 	URLs    []string `yaml:"URLs"`
 	Default bool     `yaml:"Default"`
 	ChainID uint64   `yaml:"ChainID"`
@@ -157,11 +155,10 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 	}
 
 	n.SetCurrentNetwork(NetworkInfos{
-		NodeURL:    url,
-		DNSAddress: cfg.DNS,
-		Network:    selectedNetworkStr,
-		Version:    version,
-		ChainID:    cfg.ChainID,
+		NodeURL: url,
+		Network: selectedNetworkStr,
+		Version: version,
+		ChainID: cfg.ChainID,
 	})
 
 	logger.Debugf("Set current network: %s (version %s)\n", selectedNetworkStr, version)

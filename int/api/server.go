@@ -12,7 +12,6 @@ import (
 	"github.com/massalabs/station/int/api/network"
 	"github.com/massalabs/station/int/api/pluginstore"
 	"github.com/massalabs/station/int/api/version"
-	"github.com/massalabs/station/int/api/websites"
 	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/plugin"
@@ -44,13 +43,6 @@ func initLocalAPI(
 	localAPI.GetMassaStationVersionHandler = operations.GetMassaStationVersionHandlerFunc(version.Handle)
 
 	localAPI.CmdDeploySCHandler = cmd.NewDeploySCHandler(config)
-
-	localAPI.WebsiteUploaderPrepareHandler = websites.NewWebsitePrepareHandler(config)
-	localAPI.WebsiteUploaderUploadHandler = websites.NewWebsiteUploadHandler(config)
-	localAPI.WebsiteUploadMissingChunksHandler = websites.NewWebsiteUploadMissedChunkHandler(config)
-
-	localAPI.MyDomainsGetterHandler = websites.NewDomainsHandler(config)
-	localAPI.AllDomainsGetterHandler = websites.NewRegistryHandler(config)
 
 	localAPI.EventsGetterHandler = NewEventListenerHandler(config)
 	localAPI.MassaStationWebAppHandler = operations.MassaStationWebAppHandlerFunc(MassaStationWebAppHandler)
@@ -99,7 +91,7 @@ func NewServer(flags StartServerFlags) *Server {
 // This function starts the server in a new goroutine to avoid blocking the main thread.
 func (server *Server) Start(networkManager *config.NetworkManager, pluginManager *plugin.Manager) {
 	initLocalAPI(server.localAPI, networkManager, pluginManager)
-	server.api.ConfigureMassaStationAPI(*networkManager.Network(), server.shutdown)
+	server.api.ConfigureMassaStationAPI(server.shutdown)
 
 	go func() {
 		if err := server.api.Serve(); err != nil {

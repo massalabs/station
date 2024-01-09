@@ -20,7 +20,6 @@ func (h *getNodeHandler) Handle(_ operations.GetNodeParams) middleware.Responder
 		WithPayload(&models.MassaNodeItem{
 			Network: h.config.Network,
 			URL:     &h.config.NodeURL,
-			DNS:     h.config.DNSAddress,
 			ChainID: int64(h.config.ChainID),
 		})
 }

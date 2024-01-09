@@ -11,27 +11,6 @@ schemes:
   - https
 swagger: "2.0"
 paths:
-  /all/domains:
-    get:
-      description: Returns all domains registered in the blockchain network MassaServer is connected to.
-      operationId: allDomainsGetter
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: All domains returned.
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Registry"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
   /cmd/executeFunction:
     post:
       description: Calls the given function from the given smart contract.
@@ -331,33 +310,6 @@ paths:
             $ref: '#/definitions/MassaNodeItem'
         "404":
           description: Not found.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-  /my/domains/{nickname}:
-    get:
-      description: Retrieves the list of domains owned by the given wallet.
-      operationId: myDomainsGetter
-      parameters:
-        - in: path
-          name: nickname
-          type: string
-          required : true
-          description: Wallet's short name.
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Domains returned. May be empty.
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Websites"
-        "400":
-          description: Bad request.
           schema:
             $ref: "#/definitions/Error"
         "500":
@@ -752,155 +704,6 @@ paths:
       responses:
         "200":
           description: Dumb response. All content and HTTP code are possible for this endpoint.
-  /websiteUploader/prepare:
-    put:
-      summary: Deploys the given website on the blockchain. 
-      description: The given URL will first be added to the DNS if available and then the website will be deployed.
-      operationId: websiteUploaderPrepare
-      consumes:
-        - multipart/form-data
-      parameters:
-        - in: formData
-          name: url
-          type: string
-          pattern: "^[a-z0-9_\\-]{3,50}$"
-          required: true
-          x-nullable: false
-          description: URL using lowercase letters (a-z), numbers (0-9), hyphen (-), and underscore (_).
-        - in: formData
-          name: description
-          type: string
-          maxLength: 280
-          required: true
-          x-nullable: false
-          description: Website description with a maximum length of 280 characters.
-        - in: formData
-          name: nickname
-          type: string
-          required: true
-          x-nullable: false
-          description: Name of the Wallet in which the website will be deployed.
-        - in: formData
-          name: zipfile
-          type: file
-          required: true
-          x-nullable: false
-          description: Website contents in a ZIP file.
-
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: New website created.
-          schema:
-            $ref: "#/definitions/Websites"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-  /websiteUploader/upload:
-    post:
-      summary: Uploads the given website on the blockchain.
-      description: The website must have been deployed before using the prepare endpoint. This endpoint is usually used to edit an existing website.
-      operationId: websiteUploaderUpload
-      consumes:
-        - multipart/form-data
-      parameters:
-        - in: formData
-          name: address
-          type: string
-          required: true
-          x-nullable: false
-          description: Address where to deploy website. The account must have been prepare to receive a website.
-        - in: formData
-          name: nickname
-          type: string
-          required: true
-          x-nullable: false
-          description: Wallet's nickname to be used for receiving the website
-        - in: formData
-          name: zipfile
-          type: file
-          required: true
-          x-nullable: false
-          description: Website contents in a ZIP file.
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Website's chunk deployed.
-          schema:
-            $ref: "#/definitions/Websites"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
-  /websiteUploader/uploadMissingChunks:
-    post:
-      description: Re-upload missing chunks of a website on the blockchain. This allows to fix a website that has been partially uploaded as a lower cost than re-uploading the whole website.
-      operationId: websiteUploadMissingChunks
-      consumes:
-        - multipart/form-data
-      parameters:
-        - in: formData
-          name: address
-          type: string
-          required: true
-          x-nullable: false
-          description: Address where to deploy website. The account must have been prepare to receive a website.
-        - in: formData
-          name: nickname
-          type: string
-          required: true
-          x-nullable: false
-          description: Wallet's nickname to be used for receiving the website
-        - in: formData
-          name: zipfile
-          type: file
-          required: true
-          x-nullable: false
-          description: Website contents in a ZIP file.
-        - in: formData
-          name: missedChunks
-          type: string
-          required: true
-          x-nullable: false
-          description: Website missing chunks
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Website's chunk deployed.
-          schema:
-            $ref: "#/definitions/Websites"
-        "400":
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/Error"
-        "422":
-          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
-          schema:
-            $ref: "#/definitions/Error"
-        "500":
-          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
-          schema:
-            $ref: "#/definitions/Error"
   /version:
     get:
       description: "Get current massastation version"
@@ -941,24 +744,6 @@ definitions:
         description: error message.
         type: string
         x-nullable: false
-  Websites:
-    type: object
-    description: Websites object (V0).
-    properties:
-      name:
-        description: Website's name.
-        type: string
-      description:
-        description: Website's description.
-        type: string
-      address:
-        description: Website's address.
-        type: string
-      brokenChunks:
-        description: Array of empty chunks if website contains preventing the website to load.
-        type: array
-        items:
-          type: string
   Events:
     type: object
     description: Events object (V0)
@@ -984,23 +769,6 @@ definitions:
     required:
       - currentNetwork
       - availableNetworks
-  Registry:
-    type: object
-    description: Registry object (V0).
-    properties:
-      name:
-        description: Website's name.
-        type: string
-      address:
-        description: Website's address.
-        type: string
-      description:
-        description: Website's description.
-        type: string
-      favicon:
-        description: Website's favicon host and path
-        example: flappy.massa/favicon.ico
-        type: string
   PluginStoreItem:
     type: object
     description: Plugin item from store.
@@ -1048,8 +816,6 @@ definitions:
       network:
         enum: ["mainnet", "buildnet"]
       url:
-        type: string
-      dns:
         type: string
       chainId: 
         type: integer

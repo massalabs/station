@@ -11,10 +11,9 @@ import (
 func TestNodeStatus(t *testing.T) {
 	t.Run("should return node status", func(t *testing.T) {
 		config := &config.NetworkInfos{
-			Network:    "testnet",
-			NodeURL:    "http://localhost:8080",
-			DNSAddress: "AU123",
-			ChainID:    1,
+			Network: "testnet",
+			NodeURL: "http://localhost:8080",
+			ChainID: 1,
 		}
 		getNodeHandler := &getNodeHandler{config: config}
 		response := getNodeHandler.Handle(operations.NewGetNodeParams())
@@ -22,7 +21,6 @@ func TestNodeStatus(t *testing.T) {
 		assert.True(t, ok, "responsePayload is not of type *operations.GetNodeOK")
 		responsePayload := responseTypes.Payload
 		assert.Equal(t, config.Network, responsePayload.Network)
-		assert.Equal(t, config.DNSAddress, responsePayload.DNS)
 		assert.Equal(t, config.ChainID, uint64(responsePayload.ChainID))
 		assert.Equal(t, config.NodeURL, *responsePayload.URL)
 	})

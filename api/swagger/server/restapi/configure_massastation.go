@@ -12,7 +12,6 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
-	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/int/sni"
 	"github.com/massalabs/station/pkg/logger"
@@ -30,13 +29,13 @@ func configureAPI(api *operations.MassastationAPI) http.Handler {
 	return nil
 }
 
-func (s *Server) ConfigureMassaStationAPI(config config.NetworkInfos, shutdown chan struct{}) {
+func (s *Server) ConfigureMassaStationAPI(shutdown chan struct{}) {
 	if s.api != nil {
-		s.handler = configureMassaStationAPI(s.api, config, shutdown)
+		s.handler = configureMassaStationAPI(s.api, shutdown)
 	}
 }
 
-func configureMassaStationAPI(api *operations.MassastationAPI, config config.NetworkInfos, shutdown chan struct{}) http.Handler {
+func configureMassaStationAPI(api *operations.MassastationAPI, shutdown chan struct{}) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 
@@ -84,7 +83,7 @@ func configureMassaStationAPI(api *operations.MassastationAPI, config config.Net
 		logger.Infof(msg, args...)
 	}
 
-	return setupGlobalMiddleware(api.Serve(setupMiddlewares), config)
+	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
 }
 
 // The TLS configuration before HTTPS server starts.
@@ -124,8 +123,8 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json
 // document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics.
-func setupGlobalMiddleware(handler http.Handler, config config.NetworkInfos) http.Handler {
+func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	handleCORS := cors.Default().Handler
 
-	return api.TopMiddleware(handleCORS(handler), config)
+	return api.TopMiddleware(handleCORS(handler))
 }
