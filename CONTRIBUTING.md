@@ -162,8 +162,3 @@ Following these linting and formatting guidelines will ensure a consistent code 
 ### Installers
 
 If you want to contribute to the installers, please refer to the [MassaStation Installer Contributing Guide](installer/CONTRIBUTING.md) file.
-
-### Developer guide
-
-If you want to change the network to which Massa Station will connect you can change the file
-`int/config/config_network.yaml` and compile Massa Station again with `task build`.

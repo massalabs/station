@@ -1,9 +1,0 @@
-mainnet:
-  URLs:
-    - https://mainnet.massa.net/api/v2
-  ChainID: 77658377
-  Default: true
-buildnet:
-  URLs:
-    - https://buildnet.massa.net/api/v2
-  ChainID: 77658366
