@@ -81,7 +81,7 @@ func main() {
 
 	networkManager, err := config.NewNetworkManager(configDir)
 	if err != nil {
-		logger.Fatalf("Failed to create NetworkManager:%s", err.Error())
+		logger.Fatalf("Failed to create NetworkManager: %s", err.Error())
 	}
 
 	pluginManager := plugin.NewManager(configDir)

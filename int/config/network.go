@@ -178,8 +178,12 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 // Returns the loaded network configurations and any error encountered during loading.
 func LoadConfig(configDir string) (map[string]NetworkConfig, error) {
 	networkConfigPath := path.Join(configDir, networkConfigFile)
-	if _, err := os.Stat(networkConfigPath); os.IsNotExist(err) {
+
+	_, err := os.Stat(networkConfigPath)
+	if os.IsNotExist(err) {
 		createDefaultConfig(networkConfigPath)
+	} else if err != nil {
+		return nil, fmt.Errorf("failed to stat network config file: %w", err)
 	}
 
 	yamlFile, err := os.ReadFile(networkConfigPath)
