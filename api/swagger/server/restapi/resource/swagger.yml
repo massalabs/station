@@ -447,7 +447,6 @@ paths:
         - in: path
           name: network
           type: string
-          enum: ["mainnet", "buildnet"]
           required: true
           description: The network to switch to.
       responses:
@@ -917,7 +916,7 @@ definitions:
     description: Massa node infos.
     properties:
       network:
-        enum: ["mainnet", "buildnet"]
+        type: string
       url:
         type: string
       chainId: 
