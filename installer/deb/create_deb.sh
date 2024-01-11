@@ -89,8 +89,7 @@ Maintainer: Massa Labs <massa.net>
 Homepage: https://station.massa.net
 Description: An entrance to the Massa blockchain.
     MassaStation is a secured gateway to the Massa blockchain. This application provides a user-friendly way to access, use and build on the Massa blockchain while keeping you safe from the dangers of the internet.
-Depends: curl, iproute2, debconf (>= 0.5) | debconf-2.0
-Recommends: libnss3-tools
+Depends: curl, iproute2, libnss3-tools, debconf (>= 0.5) | debconf-2.0
 EOF
 
     cp deb/scripts/* $BUILD_DIR/DEBIAN/ || fatal "failed to copy installer scripts to $BUILD_DIR/DEBIAN"
