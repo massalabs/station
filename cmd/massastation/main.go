@@ -79,7 +79,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	networkManager, err := config.NewNetworkManager(configDir)
+	networkManager, err := config.NewNetworkManager()
 	if err != nil {
 		logger.Fatalf("Failed to create NetworkManager: %s", err.Error())
 	}

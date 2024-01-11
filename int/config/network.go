@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"sync"
 
@@ -20,6 +21,7 @@ const (
 	buildnetRPC       = "https://buildnet.massa.net/api/v2"
 	buildnetChainID   = 77658366
 	permissionUrwGrOr = 0o644
+	configDirName     = "massa-station"
 )
 
 type NetworkInfos struct {
@@ -48,7 +50,7 @@ type NetworkManager struct {
 // NewNetworkManager creates a new instance of NetworkManager.
 // It loads the initial network configurations from the specified file and sets the default network configuration.
 // Returns the initialized NetworkManager and any error encountered during initialization.
-func NewNetworkManager(configDir string) (*NetworkManager, error) {
+func NewNetworkManager() (*NetworkManager, error) {
 	//nolint: exhaustruct
 	networkManager := &NetworkManager{
 		networkInfos:  NetworkInfos{},
@@ -56,7 +58,7 @@ func NewNetworkManager(configDir string) (*NetworkManager, error) {
 	}
 
 	// Load network configuration
-	initNetworksData, err := LoadConfig(configDir)
+	initNetworksData, err := LoadConfig()
 	if err != nil {
 		return nil, fmt.Errorf("failed to load configuration: %w", err)
 	}
@@ -176,10 +178,15 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 
 // LoadConfig loads network configurations from YAML file.
 // Returns the loaded network configurations and any error encountered during loading.
-func LoadConfig(configDir string) (map[string]NetworkConfig, error) {
+func LoadConfig() (map[string]NetworkConfig, error) {
+	configDir, err := configDirPath()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user config dir: %w", err)
+	}
+
 	networkConfigPath := path.Join(configDir, networkConfigFile)
 
-	_, err := os.Stat(networkConfigPath)
+	_, err = os.Stat(networkConfigPath)
 	if os.IsNotExist(err) {
 		createDefaultConfig(networkConfigPath)
 	} else if err != nil {
@@ -225,4 +232,24 @@ func createDefaultConfig(networkConfigPath string) {
 	if err != nil {
 		logger.Fatalf("failed to write default networks to file: %v", err)
 	}
+}
+
+// configDirPath returns the path where the network config yaml file is stored.
+func configDirPath() (string, error) {
+	configDir, err := os.UserConfigDir()
+	if err != nil {
+		return "", fmt.Errorf("getting user config directory: %w", err)
+	}
+
+	path := filepath.Join(configDir, configDirName)
+
+	// create the directory if it doesn't exist
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		err = os.MkdirAll(path, os.ModePerm)
+		if err != nil {
+			return "", fmt.Errorf("creating account directory '%s': %w", path, err)
+		}
+	}
+
+	return path, nil
 }
