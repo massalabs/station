@@ -18,7 +18,7 @@ type getNodeHandler struct {
 func (h *getNodeHandler) Handle(_ operations.GetNodeParams) middleware.Responder {
 	return operations.NewGetNodeOK().
 		WithPayload(&models.MassaNodeItem{
-			Network: h.config.Network,
+			Network: &h.config.Network,
 			URL:     &h.config.NodeURL,
 			ChainID: int64(h.config.ChainID),
 		})

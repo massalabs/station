@@ -1,8 +1,9 @@
 package config
 
 import (
-	"embed"
 	"fmt"
+	"os"
+	"path"
 	"regexp"
 	"sync"
 
@@ -12,7 +13,13 @@ import (
 )
 
 const (
-	MassaStationURL = "station.massa"
+	MassaStationURL   = "station.massa"
+	networkConfigFile = "config_network.yaml"
+	mainnetRPC        = "https://mainnet.massa.net/api/v2"
+	mainnetChainID    = 77658377
+	buildnetRPC       = "https://buildnet.massa.net/api/v2"
+	buildnetChainID   = 77658366
+	permissionUrwGrOr = 0o644
 )
 
 type NetworkInfos struct {
@@ -41,7 +48,7 @@ type NetworkManager struct {
 // NewNetworkManager creates a new instance of NetworkManager.
 // It loads the initial network configurations from the specified file and sets the default network configuration.
 // Returns the initialized NetworkManager and any error encountered during initialization.
-func NewNetworkManager() (*NetworkManager, error) {
+func NewNetworkManager(configDir string) (*NetworkManager, error) {
 	//nolint: exhaustruct
 	networkManager := &NetworkManager{
 		networkInfos:  NetworkInfos{},
@@ -49,7 +56,7 @@ func NewNetworkManager() (*NetworkManager, error) {
 	}
 
 	// Load network configuration
-	initNetworksData, err := LoadConfig()
+	initNetworksData, err := LoadConfig(configDir)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load configuration: %w", err)
 	}
@@ -167,20 +174,24 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 	return nil
 }
 
-//nolint:typecheck,nolintlint
-//go:embed config_network.yaml
-var configData embed.FS
-
-// LoadConfig loads network configurations from an embedded YAML file.
+// LoadConfig loads network configurations from YAML file.
 // Returns the loaded network configurations and any error encountered during loading.
-func LoadConfig() (map[string]NetworkConfig, error) {
-	var networksData map[string]NetworkConfig
+func LoadConfig(configDir string) (map[string]NetworkConfig, error) {
+	networkConfigPath := path.Join(configDir, networkConfigFile)
 
-	// Read the embedded YAML file
-	yamlFile, err := configData.ReadFile("config_network.yaml")
+	_, err := os.Stat(networkConfigPath)
+	if os.IsNotExist(err) {
+		createDefaultConfig(networkConfigPath)
+	} else if err != nil {
+		return nil, fmt.Errorf("failed to stat network config file: %w", err)
+	}
+
+	yamlFile, err := os.ReadFile(networkConfigPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read YAML file: %w", err)
 	}
+
+	var networksData map[string]NetworkConfig
 
 	// Unmarshal the YAML data into the networksData variable
 	err = yaml.Unmarshal(yamlFile, &networksData)
@@ -189,4 +200,29 @@ func LoadConfig() (map[string]NetworkConfig, error) {
 	}
 
 	return networksData, nil
+}
+
+func createDefaultConfig(networkConfigPath string) {
+	defaultNetworks := map[string]NetworkConfig{
+		"mainnet": {
+			URLs:    []string{mainnetRPC},
+			Default: true,
+			ChainID: mainnetChainID,
+		},
+		"buildnet": {
+			URLs:    []string{buildnetRPC},
+			Default: false,
+			ChainID: buildnetChainID,
+		},
+	}
+
+	defaultNetworksYaml, err := yaml.Marshal(defaultNetworks)
+	if err != nil {
+		logger.Fatalf("failed to marshal default networks: %v", err)
+	}
+
+	err = os.WriteFile(networkConfigPath, defaultNetworksYaml, permissionUrwGrOr)
+	if err != nil {
+		logger.Fatalf("failed to write default networks to file: %v", err)
+	}
 }

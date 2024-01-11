@@ -10,8 +10,10 @@ import {
   StationLogo,
   Dropdown,
   Theme,
+  toast,
 } from '@massalabs/react-ui-kit';
 import { useNavigate } from 'react-router-dom';
+import Intl from '@/i18n/i18n';
 
 interface LayoutStationProps {
   children?: ReactNode;
@@ -24,11 +26,16 @@ interface NetworkRequest {
   network: string;
 }
 
+interface NetworkResponse {
+  currentNetwork: string;
+}
+
 export function LayoutStation(props: LayoutStationProps) {
   const { children, navigator, onSetTheme, storedTheme } = props;
 
-  const { data: version, isSuccess: getVersionSuccess } =
-    useResource<string>('version');
+  const { data: version, isSuccess: getVersionSuccess } = useResource<string>(
+    URL.VERSION,
+  );
 
   const [selectedTheme, setSelectedTheme] = useState<Theme>(
     storedTheme || 'theme-dark',
@@ -71,8 +78,17 @@ export function LayoutStation(props: LayoutStationProps) {
     ) || '0',
   );
 
-  const { mutate: mutateUpdateNetwork, isSuccess: isSuccessUpdateNetwork } =
-    usePost<NetworkRequest>(`${URL.PATH_NETWORKS}/${currentNetwork}`);
+  const {
+    mutate: mutateUpdateNetwork,
+    isSuccess: isSuccessUpdateNetwork,
+    isError,
+  } = usePost<NetworkRequest, NetworkResponse>(
+    `${URL.PATH_NETWORKS}/${currentNetwork}`,
+  );
+
+  if (isError) {
+    toast.error(Intl.t('unexpected-error.description'));
+  }
 
   useEffect(() => {
     if (isSuccessUpdateNetwork) {
