@@ -78,7 +78,13 @@ func configureMassaStationAPI(api *operations.MassastationAPI, shutdown chan str
 	}
 
 	api.ServerShutdown = func() {
-		close(shutdown)
+		// We check if the shutdown channel is closed to avoid closing it twice.
+		select {
+		case <-shutdown:
+			return
+		default:
+			close(shutdown)
+		}
 	}
 	api.Logger = func(msg string, args ...interface{}) {
 		logger.Infof(msg, args...)
