@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"embed"
 	"flag"
 	"fmt"
@@ -11,12 +10,10 @@ import (
 	"github.com/massalabs/station/int/api"
 	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/int/configuration"
+	"github.com/massalabs/station/int/gui"
 	"github.com/massalabs/station/int/initialize"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/plugin"
-	"github.com/wailsapp/wails/v2"
-	"github.com/wailsapp/wails/v2/pkg/options"
-	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 )
 
 //go:embed all:web/massastation/dist
@@ -47,7 +44,6 @@ func ParseFlags() (api.StartServerFlags, StartFlags) {
 	return serverFlags, startFlags
 }
 
-//nolint:funlen
 func main() {
 	serverFlags, stationStartFlags := ParseFlags()
 
@@ -94,28 +90,8 @@ func main() {
 
 	server := api.NewServer(serverFlags)
 
-	// Create application with options
-	err = wails.Run(&options.App{
-		Title:  "Massa Station",
-		Width:  1280, //nolint:gomnd
-		Height: 720,  //nolint:gomnd
-		AssetServer: &assetserver.Options{
-			Assets: assets,
-		},
-		OnStartup: func(ctx context.Context) {
-			server.Start(networkManager, pluginManager) //nolint:contextcheck
-			err := pluginManager.RunAll()
-			if err != nil {
-				logger.Fatalf("while running all plugins: %w", err)
-			}
-		},
-		OnShutdown: func(ctx context.Context) {
-			pluginManager.StopAll()
-			server.Stop()
-		},
-	})
-
-	if err != nil {
-		logger.Errorf("error while running wails: %s", err.Error())
+	app := gui.NewApp(server, networkManager, pluginManager, assets)
+	if app.Run() != nil {
+		logger.Fatalf("Failed to run app:%s", err.Error())
 	}
 }
