@@ -12,7 +12,6 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
-	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/int/configuration"
 	"github.com/massalabs/station/int/sni"
 	"github.com/massalabs/station/pkg/logger"
@@ -130,7 +129,7 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json
 // document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics.
-func setupGlobalMiddleware(handler http.Handler, config config.NetworkInfos) http.Handler {
+func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	// Maybe we should use a more restrictive CORS policy?
 	handleCORS := cors.AllowAll().Handler
 
