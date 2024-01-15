@@ -22,21 +22,15 @@ jobs:
             target: windows
             cc: x86_64-w64-mingw32-gcc
             ext: .exe
-            compiler: go
-          - os: ubuntu-20.04
+          - os: ubuntu-22.04
             arch: amd64
             target: linux
-            compiler: go
           - os: macos-latest
             arch: amd64
             target: darwin
-            compiler: wails
-            build-options: -s -skipbindings
           - os: macos-latest
             arch: arm64
             target: darwin
-            compiler: wails
-            build-options: -s -skipbindings
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -63,7 +57,7 @@ jobs:
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch }}
         shell: bash
         run: |
-          ${{ matrix.compiler }} build ${{ matrix.build-options }} \
+          go build ${{ matrix.build-options }} \
             -tags desktop,production -ldflags "-X github.com/massalabs/station/int/config.Version=${{ env.VERSION }}" \
             -o massastation_${{ matrix.target }}_${{ matrix.arch }}${{ matrix.ext }}
 
