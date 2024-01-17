@@ -30,7 +30,8 @@
     "buttons": {
       "search": "Search Massa ecosystem",
       "explore": "Explore module store"
-    }
+    },
+    "docs": "Docs"
   },
   "placeholder": {
     "teaser-banner": "A new way to use web is coming",

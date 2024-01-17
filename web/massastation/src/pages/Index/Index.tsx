@@ -1,11 +1,9 @@
 import { ReactComponent as WalletActive } from '../../assets/wallet/walletActive.svg';
 import { ReactComponent as WalletInactive } from '../../assets/wallet/walletInactive.svg';
-import { ReactComponent as Image1Dark } from '../../assets/subduedImages/dark/1.svg';
 import { ReactComponent as Image2Dark } from '../../assets/subduedImages/dark/2.svg';
 import { ReactComponent as Image3Dark } from '../../assets/subduedImages/dark/3.svg';
 import { ReactComponent as Image4Dark } from '../../assets/subduedImages/dark/4.svg';
 import { ReactComponent as Image5Dark } from '../../assets/subduedImages/dark/5.svg';
-import { ReactComponent as Image1Light } from '../../assets/subduedImages/light/1.svg';
 import { ReactComponent as Image2Light } from '../../assets/subduedImages/light/2.svg';
 import { ReactComponent as Image3Light } from '../../assets/subduedImages/light/3.svg';
 import { ReactComponent as Image4Light } from '../../assets/subduedImages/light/4.svg';
@@ -26,6 +24,7 @@ import { useConfigStore } from '@/store/store';
 import { usePost, useResource } from '../../custom/api';
 import { UseQueryResult } from '@tanstack/react-query';
 import { MASSA_WALLET } from '@/const';
+import { Documentation } from './ecosystem/Documentation';
 
 export function Index() {
   const plugins = useResource<MassaPluginModel[]>('plugin-manager');
@@ -129,14 +128,14 @@ function NestedIndex({
               key={refreshPlugins}
               theme={theme as Theme}
               imagesDark={[
-                <Image1Dark />,
+                <Documentation />,
                 <Image2Dark />,
                 <Image3Dark />,
                 <Image4Dark />,
                 <Image5Dark />,
               ]}
               imagesLight={[
-                <Image1Light />,
+                <Documentation />,
                 <Image2Light />,
                 <Image3Light />,
                 <Image4Light />,

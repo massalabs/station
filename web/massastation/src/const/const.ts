@@ -15,3 +15,5 @@ export const PLUGIN_STOP = 'stop';
 export const PLUGIN_UPDATE = 'update';
 
 export const isZipFile = /^(http)[^\s]*\.zip$/i;
+
+export const docUrl = 'https://docs.massa.net/';
