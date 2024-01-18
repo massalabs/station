@@ -2,6 +2,9 @@ package gui
 
 import (
 	"embed"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/massalabs/station/int/api"
 	"github.com/massalabs/station/int/config"
@@ -27,6 +30,33 @@ type App struct {
 	updateButton *application.MenuItem
 }
 
+// Waiting for v3-alpha-signal-handling to be merged: https://github.com/wailsapp/wails/tree/v3-alpha-signal-handling
+func interceptInterruptSignals(app *application.App) {
+	maxSignal := 4
+	ctrlC := make(chan os.Signal, maxSignal)
+	signal.Notify(ctrlC, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		//nolint:varnamelen
+		for i := 1; i <= maxSignal; i++ {
+			sig := <-ctrlC
+
+			logger.Infof("Received signal: %v.", sig)
+
+			switch i {
+			case 1:
+				logger.Infof("Quitting...\n")
+
+				go app.Quit()
+			case maxSignal:
+				logger.Fatalf("Force quitting...\n")
+			default:
+				logger.Warnf("Use Ctrl+C %d more times to force quit.\n", maxSignal-i)
+			}
+		}
+	}()
+}
+
 // NewApp creates a new App.
 func NewApp(
 	server *api.Server,
@@ -41,8 +71,7 @@ func NewApp(
 			FS: assets,
 		},
 		Icon: embedded.Logo,
-		PanicHandler: func(any) {
-			logger.Error("Wails Panicked - Please check the logs for more information")
+		OnShutdown: func() {
 			quitApp(nil, server, pluginManager)
 		},
 	})
@@ -53,6 +82,8 @@ func NewApp(
 	}
 
 	app.On(events.Common.ApplicationStarted, func(event *application.Event) {
+		interceptInterruptSignals(app)
+
 		server.Start(networkManager, pluginManager)
 
 		err := pluginManager.RunAll()
