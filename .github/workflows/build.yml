@@ -22,6 +22,7 @@ jobs:
             target: windows
             cc: x86_64-w64-mingw32-gcc
             ext: .exe
+            ldflags: "-H windowsgui"
           - os: ubuntu-22.04
             arch: amd64
             target: linux
@@ -57,8 +58,8 @@ jobs:
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch }}
         shell: bash
         run: |
-          go build ${{ matrix.build-options }} \
-            -tags desktop,production -ldflags "-X github.com/massalabs/station/int/config.Version=${{ env.VERSION }}" \
+          go build \
+            -tags desktop,production -ldflags "-w -s -X github.com/massalabs/station/int/config.Version=${{ env.VERSION }} ${{ matrix.ldflags }}" \
             -o massastation_${{ matrix.target }}_${{ matrix.arch }}${{ matrix.ext }}
 
       - name: Upload MassaStation Binary
