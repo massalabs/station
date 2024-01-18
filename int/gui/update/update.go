@@ -16,10 +16,8 @@ const (
 	updateCheckInterval = 1 * time.Hour
 	downloadURL         = "https://station.massa.net"
 
-	systrayAvailableUpdateLabel = "An update is available for Massa Station"
-
 	updateDialogTitle   = "An update is available for Massa Station. Do you want to update it now ?"
-	updateDialogMessage = "If you choose to updae, Massa Station will be closed and every running tasks will be stopped."
+	updateDialogMessage = "If you choose to update, Massa Station will be closed and every running tasks will be stopped."
 )
 
 // Checks for updates.
@@ -31,7 +29,6 @@ func Check(systray *application.SystemTray, updateButton *application.MenuItem) 
 	}
 
 	systray.SetIcon(embedded.NotificationLogo)
-	systray.SetLabel(systrayAvailableUpdateLabel)
 	updateButton.SetHidden(false)
 	updateButton.SetEnabled(true)
 }
