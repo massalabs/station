@@ -5,7 +5,7 @@ go 1.21.1
 toolchain go1.21.5
 
 // The following line can be used to change the wails version to a specific commit
-// replace github.com/wailsapp/wails/v3 => github.com/wailsapp/wails/v3 ???
+replace github.com/wailsapp/wails/v3 => github.com/wailsapp/wails/v3 v3.0.0-alpha.3.0.20240117183351-23c1a7d1d852
 
 require (
 	github.com/cavaliergopher/grab/v3 v3.0.1

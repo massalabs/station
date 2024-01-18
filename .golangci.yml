@@ -51,3 +51,6 @@ linters-settings:
         # Any struct tag type can be used.
         # Support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
         json: snake
+  gomoddirectives:
+    replace-allow-list:
+      - github.com/wailsapp/wails/v3

@@ -18,6 +18,7 @@ const (
 	menuLabelCheckUpdates = "Check for updates"
 )
 
+// makeSystray creates the system tray.
 func makeSystray(
 	app *application.App,
 	server *api.Server,
@@ -27,14 +28,22 @@ func makeSystray(
 	systray := app.NewSystemTray()
 	systray.SetIcon(embedded.Logo)
 
-	menu, updateButton := makeMenu(app, systray, server, networkManager, pluginManager)
+	menu, updateButton, networkSubMenu := makeMenu(app, systray, server, networkManager, pluginManager)
+	systray.OnClick(func() {
+		app.GetWindowByName(WindowName).Focus()
+	})
+
+	systray.OnRightClick(func() {
+		networkSubMenu.Update()
+		systray.OpenMenu()
+	})
 
 	systray.SetMenu(menu)
 
 	return systray, menu, updateButton
 }
 
-// makeMenu creates the system tray menu
+// makeMenu creates the system tray menu.
 // NOTE: The menu items are created in the order they are added to the menu.
 func makeMenu(
 	app *application.App,
@@ -42,7 +51,7 @@ func makeMenu(
 	server *api.Server,
 	networkManager *config.NetworkManager,
 	pluginManager *plugin.Manager,
-) (*application.Menu, *application.MenuItem) {
+) (*application.Menu, *application.MenuItem, *NetworkSubMenu) {
 	trayMenu := app.NewMenu()
 
 	addMenuItem(trayMenu, "Open Massa Station", true, func(ctx *application.Context) {
@@ -51,7 +60,7 @@ func makeMenu(
 
 	trayMenu.AddSeparator()
 
-	makeNetworkSubMenu(trayMenu, networkManager)
+	networkSubMenu := makeNetworkSubMenu(trayMenu, networkManager)
 
 	trayMenu.AddSeparator()
 	updateButton := addMenuItem(trayMenu, menuLabelUpdate, true, func(ctx *application.Context) {
@@ -71,7 +80,7 @@ func makeMenu(
 		quitApp(app, server, pluginManager)
 	})
 
-	return trayMenu, updateButton
+	return trayMenu, updateButton, networkSubMenu
 }
 
 func addMenuItem(
@@ -89,25 +98,6 @@ func addMenuItem(
 	}
 
 	return item
-}
-
-// makeNetworkSubMenu creates the network submenu
-// NOTE: This is a mockup, the network submenu isn't ready yet.
-func makeNetworkSubMenu(trayMenu *application.Menu, _ *config.NetworkManager) {
-	subMenu := trayMenu.AddSubmenu("Network")
-	addMenuItem(subMenu, "Available nodes", false, nil)
-	subMenu.AddSeparator()
-
-	radioCallback := func(ctx *application.Context) {
-		menuItem := ctx.ClickedMenuItem()
-		menuItem.SetChecked(true)
-		subMenu.Update()
-		logger.Debug("MOCKUP: Network changed to ", menuItem.Label())
-	}
-
-	subMenu.AddRadio("My node", true).OnClick(radioCallback)
-	subMenu.AddRadio("Mainnet Node", false).OnClick(radioCallback)
-	subMenu.AddRadio("Buildnet Node", false).OnClick(radioCallback)
 }
 
 // quitApp quits the app gracefully, after stopping the API server and all plugins.

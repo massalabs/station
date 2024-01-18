@@ -1,4 +1,4 @@
-import { ReactNode, useState, useEffect } from 'react';
+import { ReactNode, useState, useEffect, useRef } from 'react';
 
 import { useResource, usePost } from '../../custom/api';
 import { URL } from '../../const/url/url';
@@ -49,8 +49,11 @@ export function LayoutStation(props: LayoutStationProps) {
 
   const navigate = useNavigate();
 
-  const { data: network, isSuccess: isSuccessNetwork } =
-    useResource<NetworkModel>(URL.PATH_NETWORKS);
+  const {
+    data: network,
+    isSuccess: isSuccessNetwork,
+    refetch,
+  } = useResource<NetworkModel>(URL.PATH_NETWORKS);
 
   const [
     currentNetwork,
@@ -64,13 +67,32 @@ export function LayoutStation(props: LayoutStationProps) {
     state.setAvailableNetworks,
   ]);
 
+  const refetchRef = useRef(refetch);
+
+  // Update refetchRef.current if refetch changes.
+  useEffect(() => {
+    refetchRef.current = refetch;
+  }, [refetch]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      refetchRef.current();
+    }, 5000);
+
+    // Clear interval on component unmount
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
   useEffect(() => {
     if (isSuccessNetwork) {
+      console.log('Successfully fetched network data: ', network);
       if (network.currentNetwork) setCurrentNetwork(network.currentNetwork);
       if (network.availableNetworks)
         setAvailableNetworks(network.availableNetworks);
     }
-  }, [isSuccessNetwork]);
+  }, [isSuccessNetwork, network]);
 
   const selectedNetworkKey: number = parseInt(
     Object.keys(availableNetworks).find(
