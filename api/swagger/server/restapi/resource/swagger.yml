@@ -889,7 +889,7 @@ definitions:
         type: string
       massastationMinVersion:
         type: string
-      iscompatible:
+      isCompatible:
         type: boolean
       file:
         $ref: '#/definitions/File'

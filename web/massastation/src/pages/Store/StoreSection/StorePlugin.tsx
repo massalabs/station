@@ -21,7 +21,7 @@ function StorePlugin(props: StorePluginProps) {
     description,
     file: { url },
     version,
-    isCompatible: isCompatible,
+    isCompatible,
     massastationMinVersion,
   } = plugin;
 
@@ -32,7 +32,7 @@ function StorePlugin(props: StorePluginProps) {
     mutate,
     isSuccess: isInstallSuccess,
     isLoading: isInstallLoading,
-  } = usePost(`plugin-manager`);
+  } = usePost('plugin-manager');
 
   const params = { source: url };
 

@@ -51,7 +51,7 @@ func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 				Checksum: &checksum,
 			},
 			Os:           os,
-			Iscompatible: plugin.IsCompatible,
+			IsCompatible: plugin.IsCompatible,
 		}
 	}
 
