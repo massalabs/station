@@ -1,4 +1,16 @@
-version: '3'
+version: "3"
+
+vars:
+  APP_NAME: "massastation"
+  BIN_DIR: "./build/{{.APP_NAME}}"
+
+includes:
+  darwin: tasks/Taskfile_darwin.yml
+  linux: tasks/Taskfile_linux.yml
+  windows: tasks/Taskfile_windows.yml
+  internal: 
+    taskfile: tasks/Taskfile_internal.yml
+    internal: true
 
 tasks:
   install:
@@ -23,7 +35,7 @@ tasks:
 
   generate: go generate ./...
 
-  test: 
+  test:
     cmds:
       - cmd: go test -v -timeout 60s ./...
 
@@ -31,7 +43,7 @@ tasks:
     cmds:
       - cmd: scripts/test-e2e.sh
 
-  test-coverage: 
+  test-coverage:
     cmds:
       - cmd: go test -timeout 60s ./... -coverprofile=coverage.coverprofile
 
@@ -48,41 +60,14 @@ tasks:
     cmds:
       - cmd: npm run fmt
 
-  build:
-    cmds:
-      - task: build-linux
-      - task: build-macos
-      - task: build-windows
-
-  build-linux:
-    platforms: [linux]
-    cmds:
-      - cmd: mkdir -p build/massastation
-      - cmd: go build -o build/massastation/massastation cmd/massastation/main.go
-      - cmd: sudo setcap CAP_NET_BIND_SERVICE=+eip build/massastation/massastation
-
-  build-macos:
-    platforms: [darwin]
-    cmds:
-      - cmd: mkdir -p build/massastation
-      - cmd: go build -o build/massastation/massastation cmd/massastation/main.go
-
-  build-windows:
-    platforms: [windows]
-    cmds:
-      - cmd: mkdir -p build/massastation
-      - cmd: mkdir -p build/massastation/logs
-      - cmd: mkdir -p build/massastation/certs
-      - cmd: go build -o build/massastation/massastation.exe cmd/massastation/main.go
-
   run:
+    summary: Runs MassaStation in DEBUG mode
+    cmds:
+      - cmd: "{{.BIN_DIR}}/{{.APP_NAME}}{{.BIN_EXT}}"
+    vars:
+      BIN_EXT: '{{if eq .OS "windows"}}.exe{{end}}'
     env:
       LOG_LEVEL: DEBUG
-    cmds:
-      - cmd: ./build/massastation/massastation
-        platforms: [linux, darwin]
-      - cmd: ./build/massastation/massastation.exe
-        platforms: [windows]
 
   build-run:
     cmds:
@@ -94,3 +79,16 @@ tasks:
       - task: install
       - task: generate
       - task: build-run
+
+  build:
+    summary: Builds MassaStation
+    cmds:
+      - task: linux:int-build
+      - task: darwin:int-build
+      - task: windows:int-build
+
+  package:
+    summary: Packages MassaStation using fyne
+    platforms: [linux, darwin]
+    cmds:
+      - cmd: fyne package -name MassaStation -icon ./int/systray/embedded/logo.png -appID net.massalabs.massastation -exe massastation
