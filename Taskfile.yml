@@ -69,7 +69,9 @@ tasks:
     platforms: [darwin]
     cmds:
       - cmd: mkdir -p build/massastation
-      - cmd: wails build -s -skipbindings
+      - cmd: go build -o build/massastation/massastation ./main.go
+    env:
+      MACOSX_DEPLOYMENT_TARGET: 11.0
 
   build-windows:
     platforms: [windows]
