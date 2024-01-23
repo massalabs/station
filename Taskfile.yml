@@ -33,7 +33,10 @@ tasks:
       - cmd: mkdir -p build/massastation
       - cmd: curl -o build/massastation/mar-tools-win64.zip https://archive.torproject.org/tor-package-archive/torbrowser/12.5.1/mar-tools-win64.zip
 
-  generate: go generate ./...
+  generate: 
+    cmds:
+     - task: generate-dirs
+     - cmd: go generate ./...
 
   test:
     cmds:
@@ -69,17 +72,6 @@ tasks:
     env:
       LOG_LEVEL: DEBUG
 
-  build-run:
-    cmds:
-      - task: build
-      - task: run
-
-  all:
-    cmds:
-      - task: install
-      - task: generate
-      - task: build-run
-
   build:
     summary: Builds MassaStation
     cmds:
@@ -87,8 +79,33 @@ tasks:
       - task: darwin:int-build
       - task: windows:int-build
 
+  build-run:
+    cmds:
+      - task: build
+      - task: run
+
   package:
     summary: Packages MassaStation using fyne
     platforms: [linux, darwin]
     cmds:
       - cmd: fyne package -name MassaStation -icon ./int/systray/embedded/logo.png -appID net.massalabs.massastation -exe massastation
+
+  generate-dirs:
+    summary: Generates required directories for MassaStation
+    cmds:
+      - cmd: "{{.SUDO}} mkdir -p {{.CONFIG_DIR}}"
+      - cmd: "{{.SUDO}} mkdir -p {{.CONFIG_DIR}}/logs"
+      - cmd: "{{.SUDO}} mkdir -p {{.CONFIG_DIR}}/plugins"
+    status:
+      - test -d "{{.CONFIG_DIR}}"
+      - test -d "{{.CONFIG_DIR}}/logs"
+      - test -d "{{.CONFIG_DIR}}/plugins"
+    vars:
+      CONFIG_DIR: '{{if eq OS "windows"}}{{.BIN_DIR}}{{else}}/usr/local/share/massastation{{end}}'
+      SUDO: '{{if ne OS "windows"}}sudo{{end}}'
+
+  all:
+    cmds:
+      - task: install
+      - task: generate
+      - task: build-run
