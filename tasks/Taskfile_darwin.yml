@@ -4,6 +4,7 @@ includes:
   internal: 
     taskfile: ./Taskfile_internal.yml
     internal: true
+    dir: ..
 
 tasks:
   int-build:
