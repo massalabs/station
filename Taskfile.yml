@@ -14,13 +14,14 @@ includes:
 
 tasks:
   install:
+    desc: Installs build dependencies
     cmds:
-      - echo "Installing dependencies"
       - cmd: go install github.com/go-swagger/go-swagger/cmd/swagger@latest
       - cmd: go install golang.org/x/tools/cmd/stringer@latest
       - cmd: go install go.uber.org/mock/mockgen@v0.2.0
 
   install-dev:
+    desc: Installs development dependencies (fmt, lint, etc.)
     cmds:
       - cmd: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3
       - cmd: go install github.com/daixiang0/gci@latest
@@ -28,6 +29,7 @@ tasks:
       - task: install-dev-win
 
   install-dev-win:
+    desc: Installs Windows development dependencies
     platforms: [windows]
     cmds:
       - cmd: mkdir -p build/massastation
@@ -51,6 +53,7 @@ tasks:
       - cmd: go test -timeout 60s ./... -coverprofile=coverage.coverprofile
 
   fmt:
+    desc: Formats all files
     cmds:
       - cmd: go mod tidy
       - cmd: gofumpt -l -w .
@@ -59,12 +62,13 @@ tasks:
       - cmd: golangci-lint run --fix
 
   fmt-web:
+    desc: Formats web files
     dir: web/massastation
     cmds:
       - cmd: npm run fmt
 
   run:
-    summary: Runs MassaStation in DEBUG mode
+    desc: Runs MassaStation in DEBUG mode
     cmds:
       - cmd: "{{.BIN_DIR}}/{{.APP_NAME}}{{.BIN_EXT}}"
     vars:
@@ -73,25 +77,26 @@ tasks:
       LOG_LEVEL: DEBUG
 
   build:
-    summary: Builds MassaStation
+    desc: Builds MassaStation
     cmds:
       - task: linux:int-build
       - task: darwin:int-build
       - task: windows:int-build
 
   build-run:
+    desc: Builds and runs MassaStation
     cmds:
       - task: build
       - task: run
 
   package:
-    summary: Packages MassaStation using fyne
+    desc: Packages MassaStation using fyne
     platforms: [linux, darwin]
     cmds:
       - cmd: fyne package -name MassaStation -icon ./int/systray/embedded/logo.png -appID net.massalabs.massastation -exe massastation
 
   generate-dirs:
-    summary: Generates required directories for MassaStation
+    desc: Generates required directories for MassaStation
     cmds:
       - cmd: "{{.SUDO}} mkdir -p {{.CONFIG_DIR}}"
       - cmd: "{{.SUDO}} mkdir -p {{.CONFIG_DIR}}/logs"
@@ -105,6 +110,7 @@ tasks:
       SUDO: '{{if ne OS "windows"}}sudo{{end}}'
 
   all:
+    desc: Runs install, generate, build-run
     cmds:
       - task: install
       - task: generate

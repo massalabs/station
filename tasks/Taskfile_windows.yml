@@ -1,25 +1,27 @@
 version: "3"
 
 includes:
-  internal: ./Taskfile_internal.yml
+  internal: 
+    taskfile: ./Taskfile_internal.yml
+    internal: true
 
 tasks:
   int-build:
-    summary: Internal build task for Windows
+    desc: Internal build task for Windows
     platforms: [windows]
     internal: true
     cmds:
       - task: build
 
   build:
-    summary: Builds MassaStation for Windows
+    desc: Builds MassaStation for Windows
     cmds:
       - task: internal:build
         vars:
           OS: windows
 
   build-prod:
-    summary: Builds MassaStation for Windows (production)
+    desc: Builds MassaStation for Windows (production)
     cmds:
       - task: internal:build-prod
         vars:

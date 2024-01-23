@@ -2,7 +2,7 @@ version: "3"
 
 tasks:
   build:
-    summary: Internal build task
+    desc: Internal build task
     internal: true
     cmds:
       - cmd: echo Building MassaStation for {{.OS | default OS}}/{{.ARCH | default ARCH}}
@@ -19,7 +19,7 @@ tasks:
       VERSION: "{{.VERSION | default nil}}"
 
   build-prod:
-    summary: Builds MassaStation (production)
+    desc: Builds MassaStation (production)
     preconditions:
       - sh: test -n "{{.VERSION}}"
         msg: "VERSION is required"
