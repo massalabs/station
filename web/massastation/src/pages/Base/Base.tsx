@@ -8,6 +8,7 @@ import { FiCodepen, FiGlobe, FiHome, FiSun, FiMoon } from 'react-icons/fi';
 import { LayoutStation } from '@/layouts/LayoutStation/LayoutStation';
 
 import { PAGES } from '@/const/pages/pages';
+import { THEME_STORAGE_KEY } from '@/const';
 
 type ThemeSettings = {
   [key: string]: {
@@ -47,25 +48,22 @@ const navigatorSteps: INavigatorSteps = {
 };
 
 export function Base() {
-  // Hooks
   const [theme, setThemeStorage] = useLocalStorage<Theme>(
-    'massa-station-theme',
+    THEME_STORAGE_KEY,
     'theme-dark',
   );
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setActivePage(currentPage);
-  }, [pathname]);
-
-  // State
   const currentPage = pathname.split('/').pop() || 'index';
   const [activePage, setActivePage] = useState(currentPage);
 
-  // Store
   const setThemeStore = useConfigStore((s) => s.setTheme);
+
+  useEffect(() => {
+    setActivePage(currentPage);
+  }, [setActivePage, pathname, currentPage]);
 
   const navigator = (
     <Navigator
@@ -121,7 +119,7 @@ export function Base() {
         storedTheme={theme}
       >
         <Outlet />
-        <Toast />
+        <Toast storageKey={THEME_STORAGE_KEY} />
       </LayoutStation>
     </div>
   );

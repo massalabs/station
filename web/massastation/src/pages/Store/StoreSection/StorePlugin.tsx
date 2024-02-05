@@ -40,14 +40,13 @@ function StorePlugin(props: StorePluginProps) {
     if (isInstallSuccess) {
       refetch();
     }
-  }, [isInstallSuccess]);
+  }, [isInstallSuccess, refetch]);
 
   const incompatibleActions = [
     <div className="relative whitespace-nowrap">
-      <Tooltip
-        content={warningMessage}
-        icon={<FiAlertTriangle className="text-s-warning" size={24} />}
-      />
+      <Tooltip content={warningMessage}>
+        <FiAlertTriangle className="text-s-warning" size={24} />
+      </Tooltip>
     </div>,
     <FiDownload className="w-6 h-10 text-tertiary" />,
   ];

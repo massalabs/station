@@ -58,13 +58,13 @@ export function StationPlugin({
     if (isExecuteSuccess) {
       refetch();
     }
-  }, [isExecuteSuccess]);
+  }, [isExecuteSuccess, refetch]);
 
   useEffect(() => {
     if (deleteSuccess) {
       refetch();
     }
-  }, [deleteSuccess]);
+  }, [deleteSuccess, refetch]);
 
   function updatePluginState(e: SyntheticEvent, command: string) {
     e.preventDefault();
@@ -83,7 +83,7 @@ export function StationPlugin({
     subtitle: author,
     tag:
       pluginList.includes(name) && name === NODE_MANAGER ? (
-        <Tag type="warning" content="beta" />
+        <Tag type="warning">beta</Tag>
       ) : null,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
     version: version,
@@ -128,8 +128,9 @@ export function StationPlugin({
           <Tooltip
             className="mas-tooltip"
             content={Intl.t('store.crashed-module')}
-            icon={<FiAlertCircle className="text-s-error" />}
-          />,
+          >
+            <FiAlertCircle className="text-s-error" />
+          </Tooltip>,
           <Button variant="icon" disabled>
             <FiArrowUpRight />
           </Button>,

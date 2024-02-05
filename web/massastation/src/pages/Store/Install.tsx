@@ -56,7 +56,7 @@ function Install({
     if (isSuccess) {
       refetchPlugins();
     }
-  }, [isSuccess]);
+  }, [isSuccess, refetchPlugins]);
 
   return (
     <SidePanel customClass="border-l border-c-default">

@@ -10,12 +10,7 @@ import { ReactComponent as Image2Light } from '../../assets/subduedImages/light/
 import { ReactComponent as Image3Light } from '../../assets/subduedImages/light/3.svg';
 import { ReactComponent as Image4Light } from '../../assets/subduedImages/light/4.svg';
 import { ReactComponent as Image5Light } from '../../assets/subduedImages/light/5.svg';
-import {
-  Button,
-  DashboardStation,
-  PluginWallet,
-  Theme,
-} from '@massalabs/react-ui-kit';
+import { Button, PluginWallet } from '@massalabs/react-ui-kit';
 import { FiCodepen, FiGlobe } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -26,6 +21,7 @@ import { useConfigStore } from '@/store/store';
 import { usePost, useResource } from '../../custom/api';
 import { UseQueryResult } from '@tanstack/react-query';
 import { MASSA_WALLET } from '@/const';
+import { DashboardStation } from './DashboardStation';
 
 export function Index() {
   const plugins = useResource<MassaPluginModel[]>('plugin-manager');
@@ -50,14 +46,11 @@ function NestedIndex({
   const navigate = useNavigate();
   const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
   const [urlPlugin, setUrlPlugin] = useState<string | undefined>(undefined);
-  const [refreshPlugins, setRefreshPlugins] = useState(0);
   const theme = useConfigStore((s) => s.theme);
 
   const { data: massaPlugins } = plugins;
 
-  const { data: availablePlugins } =
-    useResource<MassaStoreModel[]>('plugin-store');
-
+  const availablePlugins = store.data;
   const {
     mutate: installPlugin,
     isSuccess: installSuccess,
@@ -77,7 +70,7 @@ function NestedIndex({
       );
       setUrlPlugin(storeWalletPlugin?.file.url);
     }
-  }, [plugins, store]);
+  }, [plugins, availablePlugins, massaPlugins]);
 
   useEffect(() => {
     // we should check that installed plugin is actually the wallet
@@ -88,10 +81,6 @@ function NestedIndex({
       setPluginWalletIsInstalled(false);
     }
   }, [installSuccess, installError]);
-
-  useEffect(() => {
-    setRefreshPlugins(refreshPlugins + 1);
-  }, [pluginWalletIsInstalled, isLoading]);
 
   function handleInstallPlugin(url: string) {
     const params = { source: url };
@@ -126,8 +115,7 @@ function NestedIndex({
               </Button>
             </div>
             <DashboardStation
-              key={refreshPlugins}
-              theme={theme as Theme}
+              theme={theme}
               imagesDark={[
                 <Image1Dark />,
                 <Image2Dark />,
