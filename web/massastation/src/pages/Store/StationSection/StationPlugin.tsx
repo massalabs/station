@@ -127,7 +127,7 @@ export function StationPlugin({
         content: [
           <Tooltip
             className="mas-tooltip"
-            content={Intl.t('store.crashed-module')}
+            body={Intl.t('store.crashed-module')}
           >
             <FiAlertCircle className="text-s-error" />
           </Tooltip>,

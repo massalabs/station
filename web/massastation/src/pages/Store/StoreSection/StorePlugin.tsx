@@ -44,7 +44,7 @@ function StorePlugin(props: StorePluginProps) {
 
   const incompatibleActions = [
     <div className="relative whitespace-nowrap">
-      <Tooltip content={warningMessage}>
+      <Tooltip body={warningMessage}>
         <FiAlertTriangle className="text-s-warning" size={24} />
       </Tooltip>
     </div>,
