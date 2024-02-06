@@ -83,7 +83,7 @@ export function StationPlugin({
     subtitle: author,
     tag:
       pluginList.includes(name) && name === NODE_MANAGER ? (
-        <Tag type="warning">beta</Tag>
+        <Tag type="warning">{Intl.t('store.beta')}</Tag>
       ) : null,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
     version: version,
