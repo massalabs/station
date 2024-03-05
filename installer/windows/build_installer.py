@@ -34,7 +34,7 @@ WIX_DIR = "wixtoolset"
 # URLs to download Mar Tools and the WiX Toolset
 MARTOOLS_URL = "https://archive.torproject.org/tor-package-archive/torbrowser/12.5.1/mar-tools-win64.zip"
 WIXTOOLSET_URL = (
-    "https://wixdl.blob.core.windows.net/releases/v3.14.0.6526/wix314-binaries.zip"
+    "https://github.com/wixtoolset/wix3/releases/download/wix314rtm/wix314-binaries.zip"
 )
 
 LICENSE_FILEPATH = "common\\MassaStation_ToS.rtf"

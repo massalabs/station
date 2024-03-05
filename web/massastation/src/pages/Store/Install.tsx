@@ -93,7 +93,7 @@ function Install({
                 />
 
                 <Button type="submit" customClass="mt-3" disabled={isLoading}>
-                  {isLoading && <Spinner variant="button" />}
+                  {isLoading && <Spinner />}
                   {Intl.t('store.sidepanel.button')}
                 </Button>
               </>
