@@ -119,7 +119,7 @@ export function Base() {
         storedTheme={theme}
       >
         <Outlet />
-        <Toast storageKey={THEME_STORAGE_KEY} />
+        <Toast />
       </LayoutStation>
     </div>
   );
