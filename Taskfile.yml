@@ -1,14 +1,27 @@
-version: '3'
+version: "3"
+
+vars:
+  APP_NAME: "massastation"
+  BIN_DIR: "./build/{{.APP_NAME}}"
+
+includes:
+  darwin: tasks/Taskfile_darwin.yml
+  linux: tasks/Taskfile_linux.yml
+  windows: tasks/Taskfile_windows.yml
+  internal: 
+    taskfile: tasks/Taskfile_internal.yml
+    internal: true
 
 tasks:
   install:
+    desc: Installs build dependencies
     cmds:
-      - echo "Installing dependencies"
       - cmd: go install github.com/go-swagger/go-swagger/cmd/swagger@latest
       - cmd: go install golang.org/x/tools/cmd/stringer@latest
       - cmd: go install go.uber.org/mock/mockgen@v0.2.0
 
   install-dev:
+    desc: Installs development dependencies (fmt, lint, etc.)
     cmds:
       - cmd: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3
       - cmd: go install github.com/daixiang0/gci@latest
@@ -16,14 +29,18 @@ tasks:
       - task: install-dev-win
 
   install-dev-win:
+    desc: Installs Windows development dependencies
     platforms: [windows]
     cmds:
       - cmd: mkdir -p build/massastation
       - cmd: curl -o build/massastation/mar-tools-win64.zip https://archive.torproject.org/tor-package-archive/torbrowser/12.5.1/mar-tools-win64.zip
 
-  generate: go generate ./...
+  generate: 
+    cmds:
+     - task: generate-dirs
+     - cmd: go generate ./...
 
-  test: 
+  test:
     cmds:
       - cmd: go test -v -timeout 60s ./...
 
@@ -31,11 +48,12 @@ tasks:
     cmds:
       - cmd: scripts/test-e2e.sh
 
-  test-coverage: 
+  test-coverage:
     cmds:
       - cmd: go test -timeout 60s ./... -coverprofile=coverage.coverprofile
 
   fmt:
+    desc: Formats all files
     cmds:
       - cmd: go mod tidy
       - cmd: gofumpt -l -w .
@@ -44,52 +62,55 @@ tasks:
       - cmd: golangci-lint run --fix
 
   fmt-web:
+    desc: Formats web files
     dir: web/massastation
     cmds:
       - cmd: npm run fmt
 
-  build:
-    cmds:
-      - task: build-linux
-      - task: build-macos
-      - task: build-windows
-
-  build-linux:
-    platforms: [linux]
-    cmds:
-      - cmd: mkdir -p build/massastation
-      - cmd: go build -o build/massastation/massastation cmd/massastation/main.go
-      - cmd: sudo setcap CAP_NET_BIND_SERVICE=+eip build/massastation/massastation
-
-  build-macos:
-    platforms: [darwin]
-    cmds:
-      - cmd: mkdir -p build/massastation
-      - cmd: go build -o build/massastation/massastation cmd/massastation/main.go
-
-  build-windows:
-    platforms: [windows]
-    cmds:
-      - cmd: mkdir -p build/massastation
-      - cmd: mkdir -p build/massastation/logs
-      - cmd: mkdir -p build/massastation/certs
-      - cmd: go build -o build/massastation/massastation.exe cmd/massastation/main.go
-
   run:
+    desc: Runs MassaStation in DEBUG mode
+    cmds:
+      - cmd: "{{.BIN_DIR}}/{{.APP_NAME}}{{.BIN_EXT}}"
+    vars:
+      BIN_EXT: '{{if eq .OS "windows"}}.exe{{end}}'
     env:
       LOG_LEVEL: DEBUG
+
+  build:
+    desc: Builds MassaStation
     cmds:
-      - cmd: ./build/massastation/massastation
-        platforms: [linux, darwin]
-      - cmd: ./build/massastation/massastation.exe
-        platforms: [windows]
+      - task: linux:int-build
+      - task: darwin:int-build
+      - task: windows:int-build
 
   build-run:
+    desc: Builds and runs MassaStation
     cmds:
       - task: build
       - task: run
 
+  package:
+    desc: Packages MassaStation using fyne
+    platforms: [linux, darwin]
+    cmds:
+      - cmd: fyne package -name MassaStation -icon ./int/systray/embedded/logo.png -appID net.massalabs.massastation -exe massastation
+
+  generate-dirs:
+    desc: Generates required directories for MassaStation
+    cmds:
+      - cmd: "{{.SUDO}} mkdir -p {{.CONFIG_DIR}}"
+      - cmd: "{{.SUDO}} mkdir -p {{.CONFIG_DIR}}/logs"
+      - cmd: "{{.SUDO}} mkdir -p {{.CONFIG_DIR}}/plugins"
+    status:
+      - test -d "{{.CONFIG_DIR}}"
+      - test -d "{{.CONFIG_DIR}}/logs"
+      - test -d "{{.CONFIG_DIR}}/plugins"
+    vars:
+      CONFIG_DIR: '{{if eq OS "windows"}}{{.BIN_DIR}}{{else}}/usr/local/share/massastation{{end}}'
+      SUDO: '{{if ne OS "windows"}}sudo{{end}}'
+
   all:
+    desc: Runs install, generate, build-run
     cmds:
       - task: install
       - task: generate

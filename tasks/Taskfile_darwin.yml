@@ -1,0 +1,32 @@
+version: "3"
+
+includes:
+  internal: 
+    taskfile: ./Taskfile_internal.yml
+    internal: true
+    dir: ..
+
+tasks:
+  int-build:
+    desc: Internal build task for macOS
+    platforms: [darwin]
+    internal: true
+    cmds:
+      - cmd: echo BUILDING FOR macOS $GOARCH
+      - task: build
+
+  build:
+    desc: Builds MassaStation for macOS
+    cmds:
+      - task: internal:build
+        vars:
+          OS: darwin
+          ARCH: '{{.ARCH | default ""}}'
+
+  build-prod:
+    desc: Builds MassaStation for macOS (production)
+    cmds:
+      - task: internal:build-prod
+        vars:
+          OS: darwin
+          ARCH: '{{.ARCH | default ""}}'

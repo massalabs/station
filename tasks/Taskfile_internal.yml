@@ -1,0 +1,32 @@
+version: "3"
+
+tasks:
+  build:
+    desc: Internal build task
+    internal: true
+    cmds:
+      - cmd: echo Building MassaStation for {{.OS | default OS}}/{{.ARCH | default ARCH}}
+      - cmd: go build {{.BUILD_FLAGS}} -o {{.BIN_DIR}}/{{.APP_NAME}}{{.BIN_EXT}} ./cmd/massastation/main.go
+    vars:
+      # We need this check for nil and empty string because a simple check for empty string doesn't work as expected
+      VERSION_FLAG: '{{if ne .VERSION nil}}{{if ne .VERSION ""}}-X github.com/massalabs/station/int/config.Version={{.VERSION}}{{end}}{{end}}'
+      BUILD_FLAGS: '{{if eq .PRODUCTION "true"}}-tags production {{end}}-ldflags="{{.VERSION_FLAG}}{{if eq .PRODUCTION "true"}} -w -s{{end}}"'
+      BIN_EXT: '{{if eq .OS "windows"}}.exe{{end}}'
+    env:
+      GOOS: "{{.OS | default OS}}"
+      GOARCH: "{{.ARCH | default ARCH}}"
+      PRODUCTION: '{{.PRODUCTION | default "false"}}'
+      VERSION: "{{.VERSION | default nil}}"
+
+  build-prod:
+    desc: Builds MassaStation (production)
+    preconditions:
+      - sh: test -n "{{.VERSION}}"
+        msg: "VERSION is required"
+    cmds:
+      - task: build
+        vars:
+          OS: "{{.OS | default OS}}"
+          ARCH: "{{.ARCH | default ARCH}}"
+          PRODUCTION: true
+          VERSION: '{{.VERSION | default ""}}'

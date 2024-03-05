@@ -1,0 +1,30 @@
+version: "3"
+
+includes:
+  internal: 
+    taskfile: ./Taskfile_internal.yml
+    internal: true
+    dir: ..
+
+tasks:
+  int-build:
+    desc: Internal build task for Linux
+    platforms: [linux]
+    internal: true
+    cmds:
+      - task: build
+
+  build:
+    desc: Builds MassaStation for Linux
+    cmds:
+      - task: internal:build
+        vars:
+          OS: linux
+      - cmd: sudo setcap CAP_NET_BIND_SERVICE=+eip {{.BIN_DIR}}/{{.APP_NAME}} || true
+
+  build-prod:
+    desc: Builds MassaStation for Linux (production)
+    cmds:
+      - task: internal:build-prod
+        vars:
+          OS: linux
