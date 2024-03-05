@@ -18,7 +18,8 @@
       "fe-error": "Please enter a valid url",
       "be-error": "Failed to install plugin",
       "button": "Install"
-    }
+    },
+    "beta": "beta"
   },
   "unexpected-error": {
     "title": "Oops!",

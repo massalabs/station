@@ -14,6 +14,7 @@ import {
 } from '@massalabs/react-ui-kit';
 import { useNavigate } from 'react-router-dom';
 import Intl from '@/i18n/i18n';
+import { THEME_STORAGE_KEY } from '@/const';
 
 interface LayoutStationProps {
   children?: ReactNode;
@@ -70,7 +71,7 @@ export function LayoutStation(props: LayoutStationProps) {
       if (network.availableNetworks)
         setAvailableNetworks(network.availableNetworks);
     }
-  }, [isSuccessNetwork]);
+  }, [isSuccessNetwork, network, setCurrentNetwork, setAvailableNetworks]);
 
   const selectedNetworkKey: number = parseInt(
     Object.keys(availableNetworks).find(
@@ -94,7 +95,7 @@ export function LayoutStation(props: LayoutStationProps) {
     if (isSuccessUpdateNetwork) {
       navigate(0);
     }
-  }, [isSuccessUpdateNetwork]);
+  }, [isSuccessUpdateNetwork, navigate]);
 
   const availableNetworksItems = availableNetworks.map((network) => ({
     item: network,
@@ -129,7 +130,10 @@ export function LayoutStation(props: LayoutStationProps) {
               select={selectedNetworkKey}
             />
           </div>
-          <ThemeMode onSetTheme={handleSetTheme} />
+          <ThemeMode
+            onSetTheme={handleSetTheme}
+            storageKey={THEME_STORAGE_KEY}
+          />
         </div>
       </div>
       {children}
