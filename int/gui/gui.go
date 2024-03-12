@@ -68,7 +68,7 @@ func NewApp(
 		Name:        "Massa Station",
 		Description: "Your gateway to the decentralized web",
 		Assets: application.AssetOptions{
-			FS: assets,
+			Handler: application.AssetFileServerFS(assets),
 		},
 		Icon: embedded.Logo,
 		OnShutdown: func() {
