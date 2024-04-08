@@ -58,7 +58,7 @@ func CallFunction(
 
 	operationResponse, err := sendOperation.Call(
 		client,
-		networkInfos.ChainID,
+		networkInfos,
 		expiryDelta,
 		fee,
 		callSC,
@@ -139,7 +139,7 @@ func DeploySC(
 
 	operationResponse, err := sendOperation.Call(
 		client,
-		networkInfos.ChainID,
+		networkInfos,
 		expiry,
 		fee,
 		exeSC,

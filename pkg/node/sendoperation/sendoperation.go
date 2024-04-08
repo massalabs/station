@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/massalabs/station/int/config"
+	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/node/base58"
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
@@ -64,7 +66,7 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 // Call uses the plugin wallet to sign an operation, then send the call to blockchain.
 func Call(
 	client *node.Client,
-	chainID uint64,
+	networkInfos *config.NetworkInfos,
 	expiry uint64,
 	fee uint64,
 	operation Operation,
@@ -73,6 +75,13 @@ func Call(
 	signer signer.Signer,
 	description string,
 ) (*OperationResponse, error) {
+	chainID := networkInfos.ChainID
+
+	fee, err := checkMinimalFees(networkInfos, fee)
+	if err != nil {
+		return nil, fmt.Errorf("checking minimal fees: %w", err)
+	}
+
 	msg, msgB64, err := MakeOperation(client, expiry, fee, operation)
 	if err != nil {
 		return nil, err
@@ -103,6 +112,21 @@ func Call(
 	}
 
 	return &OperationResponse{CorrelationID: res.CorrelationID, OperationID: resp[0]}, nil
+}
+
+func checkMinimalFees(networkInfos *config.NetworkInfos, fee uint64) (uint64, error) {
+	minimalFee, err := MasToNano(networkInfos.MinimalFees)
+	if err != nil {
+		return 0, fmt.Errorf("converting fee to nano: %w", err)
+	}
+
+	if fee < minimalFee {
+		logger.Debug("fee below minimal fee, setting to minimal fee")
+
+		fee = minimalFee
+	}
+
+	return fee, nil
 }
 
 func createOperationContent(operationBatch OperationBatch, description string, msgB64 string, chainID uint64) string {
