@@ -25,10 +25,11 @@ const (
 )
 
 type NetworkInfos struct {
-	Network string
-	NodeURL string
-	Version string
-	ChainID uint64
+	Network     string
+	NodeURL     string
+	Version     string
+	ChainID     uint64
+	MinimalFees string
 }
 
 // NetworkConfig represents the configuration of a network.
@@ -155,6 +156,11 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 		return fmt.Errorf("getting network version: %w", err)
 	}
 
+	minimalFees := "0"
+	if (status.MinimalFees != nil) && (*status.MinimalFees != "") {
+		minimalFees = *status.MinimalFees
+	}
+
 	// compare chain id from node status with chain id from config
 	nodeChainID := uint64(*status.ChainID)
 	if nodeChainID != cfg.ChainID {
@@ -164,10 +170,11 @@ func (n *NetworkManager) SwitchNetwork(selectedNetworkStr string) error {
 	}
 
 	n.SetCurrentNetwork(NetworkInfos{
-		NodeURL: url,
-		Network: selectedNetworkStr,
-		Version: version,
-		ChainID: cfg.ChainID,
+		NodeURL:     url,
+		Network:     selectedNetworkStr,
+		Version:     version,
+		ChainID:     cfg.ChainID,
+		MinimalFees: minimalFees,
 	})
 
 	logger.Debugf("Set current network: %s (version %s)\n", selectedNetworkStr, version)
