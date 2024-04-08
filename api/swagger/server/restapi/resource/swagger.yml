@@ -243,7 +243,7 @@ paths:
           type : integer
           minimum: 0
           format: uint64
-          description: Set the fee amount (in massa) that will be given to the block creator.
+          description: Set the fee amount (in nanoMassa) that will be given to the block creator.
           default : 0
         - in: formData
           name: datastore
