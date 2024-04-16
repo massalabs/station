@@ -18,6 +18,7 @@ type State struct {
 	PoolStats      *[]uint         `json:"pool_stats"`
 	Version        *string         `json:"version"`
 	ChainID        *uint           `json:"chain_id"`
+	MinimalFees    *string         `json:"minimal_fees"`
 }
 
 //nolint:tagliatelle
