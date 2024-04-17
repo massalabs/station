@@ -78,23 +78,7 @@ func Call(
 		return nil, err
 	}
 
-	var content string
-
-	//nolint:goconst
-	switch {
-	case operationBatch.NewBatch:
-		content = `{
-			"description": "` + description + `", "operation": "` + msgB64 + `",
-			"batch": true, "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
-	case operationBatch.CorrelationID != "":
-		content = `{
-			"description": "` + description + `", "operation": "` + msgB64 + `",
-			"correlationId": "` + operationBatch.CorrelationID + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
-	default:
-		content = `{
-			"description": "` + description + `",
-			"operation": "` + msgB64 + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
-	}
+	content := createOperationContent(operationBatch, description, msgB64, chainID)
 
 	res, err := signer.Sign(nickname, []byte(content))
 	if err != nil {
@@ -119,6 +103,28 @@ func Call(
 	}
 
 	return &OperationResponse{CorrelationID: res.CorrelationID, OperationID: resp[0]}, nil
+}
+
+func createOperationContent(operationBatch OperationBatch, description string, msgB64 string, chainID uint64) string {
+	var content string
+
+	//nolint:goconst
+	switch {
+	case operationBatch.NewBatch:
+		content = `{
+			"description": "` + description + `", "operation": "` + msgB64 + `",
+			"batch": true, "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
+	case operationBatch.CorrelationID != "":
+		content = `{
+			"description": "` + description + `", "operation": "` + msgB64 + `",
+			"correlationId": "` + operationBatch.CorrelationID + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
+	default:
+		content = `{
+			"description": "` + description + `",
+			"operation": "` + msgB64 + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
+	}
+
+	return content
 }
 
 func MakeRPCCall(msg []byte, signature []byte, publicKey string, client *node.Client) ([]string, error) {
