@@ -36,5 +36,13 @@
   "placeholder": {
     "teaser-banner": "A new way to use web is coming",
     "teaser-web-on-chain": "We are crafting a new era for our web on-chain feature..."
+  },
+  "dashboard": {
+    "bridge-desc": "Transfer your tokens from one chain to another.",
+    "explorer-desc": "Search through real-time and historical records on Massa blockchain.",
+    "foundation-desc": "Learn about Massa ecosystem and initiatives.",
+    "massalabs-desc": "All about Massa and its blockchain.",
+    "purrfect-desc": "Essential to manage tokens and use blockchain.",
+    "dusa-desc": "Fully decentralized DEX."
   }
 }

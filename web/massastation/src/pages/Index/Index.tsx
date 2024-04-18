@@ -92,8 +92,8 @@ function NestedIndex({
       <div className="bg-primary text-f-primary pt-24">
         <h1 className="mas-banner mb-10"> {Intl.t('index.title-banner')}</h1>
         <div className="overflow-auto">
-          <div className="w-[70vw]">
-            <div className="flex space-x-8 pb-10">
+          <div className="w-fit ">
+            <div className="flex gap-8 pb-10">
               <Button
                 preIcon={<FiGlobe />}
                 customClass="w-96"
