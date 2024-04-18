@@ -1,38 +1,32 @@
-import { Theme } from '@massalabs/react-ui-kit';
-import { ReactNode, useEffect, useState } from 'react';
-
+import { PluginWallet, Theme } from '@massalabs/react-ui-kit';
+import { ReactComponent as WalletActive } from '../../assets/wallet/walletActive.svg';
+import { ReactComponent as WalletInactive } from '../../assets/wallet/walletInactive.svg';
 import { Foundation } from './Dashboard/Foundation';
 import { Bridge } from './Dashboard/Bridge';
 import { MassaLabs } from './Dashboard/Massalabs';
 import { Explorer } from './Dashboard/Explorer';
 import { Purrfect } from './Dashboard/Purrfect';
 import { Dusa } from './Dashboard/Dusa';
+import { MASSA_WALLET } from '@/const';
+import { MassaPluginModel } from '@/models';
 
 export interface IDashboardStationProps {
-  imagesDark: ReactNode[];
-  imagesLight: ReactNode[];
-  components: ReactNode[];
+  massaPlugins?: MassaPluginModel[] | undefined;
+  pluginWalletIsInstalled: boolean;
+  urlPlugin?: string | undefined;
+  isLoading: boolean;
+  handleInstallPlugin: (url: string) => void;
   theme?: Theme | undefined;
 }
 
 export function DashboardStation(props: IDashboardStationProps) {
-  let { imagesDark, imagesLight, components, theme } = props;
-
-  const [images, setImages] = useState<ReactNode[]>([]);
-  const sizeClass = 'h-full w-full';
-
-  useEffect(() => {
-    let imageList: ReactNode[] = [...components];
-
-    const diff = imagesDark.length - components.length;
-    for (let i = 0; i < diff; i++) {
-      const imageToAdd =
-        theme === 'theme-dark' ? imagesDark[i] : imagesLight[i];
-      imageList.push(imageToAdd);
-    }
-
-    setImages(imageList);
-  }, [theme, components, imagesDark, imagesLight]);
+  let {
+    pluginWalletIsInstalled,
+    urlPlugin,
+    isLoading,
+    handleInstallPlugin,
+    massaPlugins,
+  } = props;
 
   return (
     <div
@@ -40,7 +34,28 @@ export function DashboardStation(props: IDashboardStationProps) {
       data-testid="dashboard-station"
     >
       <div className="col-start-1 col-span-2 row-span-3 ">
-        <div className={`${sizeClass}`}>{images[0]}</div>
+        <PluginWallet
+          key="wallet"
+          isActive={pluginWalletIsInstalled}
+          status={
+            massaPlugins?.find(
+              (plugin: MassaPluginModel) => plugin.name === MASSA_WALLET,
+            )?.status
+          }
+          isLoading={isLoading}
+          title="Massa Wallet"
+          iconActive={<WalletActive />}
+          iconInactive={<WalletInactive />}
+          onClickActive={() =>
+            window.open(
+              '/plugin/massa-labs/massa-wallet/web-app/index',
+              '_blank',
+            )
+          }
+          onClickInactive={() =>
+            urlPlugin ? handleInstallPlugin(urlPlugin) : null
+          }
+        />
       </div>
       <div className="col-start-3 col-span-2 row-start-1 row-span-2">
         <Foundation />
