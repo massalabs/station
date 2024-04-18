@@ -38,11 +38,11 @@
     "teaser-web-on-chain": "We are crafting a new era for our web on-chain feature..."
   },
   "dashboard": {
-    "bridge-desc": "Transfer your tokens from one chain to another.",
+    "bridge-desc": "Bridge ERC-20 tokens from EVM chains to Massa and vice versa!",
     "explorer-desc": "Search through real-time and historical records on Massa blockchain.",
     "foundation-desc": "Learn about Massa ecosystem and initiatives.",
-    "massalabs-desc": "All about Massa and its blockchain.",
-    "purrfect-desc": "Essential to manage tokens and use blockchain.",
+    "massalabs-desc": "Unique Lab supporting Massa ecosystem and creating innovative solutions.",
+    "purrfect-desc": "Create, buy & sell NFTs on the Massa blockchain.",
     "dusa-desc": "Fully decentralized DEX."
   }
 }
