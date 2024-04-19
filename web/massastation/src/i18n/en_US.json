@@ -44,5 +44,13 @@
     "massalabs-desc": "Unique Lab supporting Massa ecosystem and creating innovative solutions.",
     "purrfect-desc": "Create, buy & sell NFTs on the Massa blockchain.",
     "dusa-desc": "Fully decentralized DEX."
+  },
+  "modules": {
+    "bridge": "Massa Bridge",
+    "explorer": "Massa Explorer",
+    "foundation": "Massa Foundation",
+    "massalabs": "Massa Labs",
+    "purrfect": "Purrfect Universe",
+    "dusa": "Dusa"
   }
 }

@@ -14,7 +14,7 @@ export function Explorer() {
         <div className="flex flex-col justify-end h-full">
           <div className="flex items-center gap-2 p-4 ml-4 h-8 bg-secondary w-48 rounded-t-md">
             <img width={20} height={20} src={explorer} alt="Massa Explorer" />
-            <p className="mas-body2">Massa Explorer</p>
+            <p className="mas-body2">{Intl.t('modules.explorer')}</p>
           </div>
           <div className="bg-secondary h-[50%] w-full rounded-b-md p-4">
             <div className="flex items-center justify-around p-2 bg-primary h-full rounded-md">

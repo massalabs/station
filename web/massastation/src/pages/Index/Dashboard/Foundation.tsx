@@ -10,7 +10,7 @@ export function Foundation() {
         className="bg-neutral text-primary rounded-md p-0 hover:bg-c-hover hover:cursor-pointer h-full"
       >
         <div className="h-full flex flex-col gap-4 p-4">
-          <p className="mas-subtitle">Massa Foundation</p>
+          <p className="mas-subtitle">{Intl.t('modules.foundation')}</p>
           <p>{Intl.t('dashboard.foundation-desc')}</p>
         </div>
         <div className="relative flex justify-end">

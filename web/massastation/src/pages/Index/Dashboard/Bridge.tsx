@@ -17,7 +17,7 @@ export function Bridge() {
         }}
       >
         <div className="relative top-10 pl-2 h-fit flex flex-col gap-4 justify-between">
-          <p className="mas-subtitle">Massa Bridge</p>
+          <p className="mas-subtitle">{Intl.t('modules.bridge')}</p>
           <p>{Intl.t('dashboard.bridge-desc')}</p>
         </div>
       </RedirectTile>

@@ -21,7 +21,7 @@ export function Purrfect() {
           }}
           className="h-full flex flex-col gap-4 p-4"
         >
-          <p className="mas-subtitle">Purrfect Universe</p>
+          <p className="mas-subtitle">{Intl.t('modules.purrfect')}</p>
           <p>{Intl.t('dashboard.purrfect-desc')}</p>
         </div>
       </RedirectTile>
