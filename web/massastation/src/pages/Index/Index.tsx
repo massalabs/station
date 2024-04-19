@@ -79,38 +79,36 @@ function NestedIndex({
     <>
       <div className="bg-primary text-f-primary pt-24">
         <h1 className="mas-banner mb-10"> {Intl.t('index.title-banner')}</h1>
-        <div className="overflow-auto">
-          <div className="w-fit ">
-            <div className="flex gap-8 pb-10">
-              <Button
-                preIcon={<FiGlobe />}
-                customClass="w-96"
-                onClick={() => navigate(routeFor('search'))}
-              >
-                <div className="flex items-center mas-buttons">
-                  {Intl.t('index.buttons.search')}
-                </div>
-              </Button>
-              <Button
-                variant="secondary"
-                preIcon={<FiCodepen />}
-                customClass="w-96"
-                onClick={() => navigate(routeFor('store'))}
-              >
-                <div className="flex items-center mas-buttons">
-                  {Intl.t('index.buttons.explore')}
-                </div>
-              </Button>
-            </div>
-            <DashboardStation
-              massaPlugins={massaPlugins}
-              pluginWalletIsInstalled={pluginWalletIsInstalled}
-              urlPlugin={urlPlugin}
-              isLoading={isLoading}
-              handleInstallPlugin={handleInstallPlugin}
-              theme={theme}
-            />
+        <div className="w-fit max-w-[1760px] ">
+          <div className="flex gap-8 pb-10">
+            <Button
+              preIcon={<FiGlobe />}
+              customClass="w-96"
+              onClick={() => navigate(routeFor('search'))}
+            >
+              <div className="flex items-center mas-buttons">
+                {Intl.t('index.buttons.search')}
+              </div>
+            </Button>
+            <Button
+              variant="secondary"
+              preIcon={<FiCodepen />}
+              customClass="w-96"
+              onClick={() => navigate(routeFor('store'))}
+            >
+              <div className="flex items-center mas-buttons">
+                {Intl.t('index.buttons.explore')}
+              </div>
+            </Button>
           </div>
+          <DashboardStation
+            massaPlugins={massaPlugins}
+            pluginWalletIsInstalled={pluginWalletIsInstalled}
+            urlPlugin={urlPlugin}
+            isLoading={isLoading}
+            handleInstallPlugin={handleInstallPlugin}
+            theme={theme}
+          />
         </div>
       </div>
     </>

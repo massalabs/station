@@ -6,7 +6,7 @@ import Intl from '@/i18n/i18n';
 
 export function MassaLabs() {
   return (
-    <motion.div className="h-full" whileHover={{ scale: 1.05 }}>
+    <motion.div className="h-full" whileHover={{ scale: 1.03 }}>
       <RedirectTile
         style={{
           backgroundImage: `url(${massaNodes})`,

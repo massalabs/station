@@ -7,7 +7,7 @@ export function Foundation() {
     <motion.div whileHover={{ scale: 1.05 }}>
       <RedirectTile
         url="https://massa.foundation/"
-        className="bg-neutral text-primary rounded-md p-0 hover:bg-c-hover hover:cursor-pointer h-fit"
+        className="bg-neutral text-primary rounded-md p-0 hover:bg-c-hover hover:cursor-pointer h-full"
       >
         <div className="h-full flex flex-col gap-4 p-4">
           <p className="mas-subtitle">Massa Foundation</p>

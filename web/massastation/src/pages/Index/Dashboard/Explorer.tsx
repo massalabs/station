@@ -6,9 +6,8 @@ import Intl from '@/i18n/i18n';
 
 export function Explorer() {
   return (
-    <motion.div className="h-full" whileHover={{ scale: 1.05 }}>
+    <motion.div className="h-full" whileHover={{ scale: 1.03 }}>
       <RedirectTile
-        size="cs"
         url="https://explorer.massa.net/"
         className="bg-brand rounded-md p-0 hover:bg-[#2EB688] hover:cursor-pointer h-full"
       >
