@@ -1,0 +1,161 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { Button, Spinner } from '@massalabs/react-ui-kit';
+
+import { ReactNode } from 'react';
+import { FiArrowUpRight } from 'react-icons/fi';
+
+export interface PluginWalletProps {
+  isActive: boolean;
+  isLoading: boolean;
+  title: string;
+  status?: string;
+  isUpdatable: boolean | undefined;
+  iconActive: ReactNode;
+  iconInactive: ReactNode;
+  onClickActive: () => void;
+  onClickInactive: () => void;
+  onUpdateClick: () => void;
+}
+
+export interface MSPluginProps {
+  title: string;
+  iconActive?: ReactNode;
+  onClickActive?: () => void;
+  iconInactive?: ReactNode;
+  onClickInactive?: () => void;
+}
+
+export function ActivePlugin(props: MSPluginProps) {
+  const { title, iconActive, onClickActive } = props;
+
+  return (
+    <>
+      <div>{iconActive}</div>
+      <div className="w-full py-6 text-f-primary bg-secondary flex flex-col items-center">
+        <div className="px-4 py-2 lg:h-14 mas-title text-center">
+          <p className="text-xl sm:text-4xl lg:text-2xl 2xl:text-4xl">
+            {title}
+          </p>
+        </div>
+        <div className="w-4/5 px-4 py-2">
+          <Button onClick={onClickActive} preIcon={<FiArrowUpRight />}>
+            Launch
+          </Button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export function InactivePlugin(props: MSPluginProps) {
+  const { title, iconInactive, onClickInactive } = props;
+
+  return (
+    <>
+      <div>{iconInactive}</div>
+      <div className="w-full h-full text-f-primary bg-secondary flex flex-col justify-center items-center rounded-b-md">
+        <div className="w-4/5 px-4 py-2 mas-buttons lg:h-14 flex items-center justify-center">
+          <p className="text-center">{`${title} is not installed in your station`}</p>
+        </div>
+        <div className="w-4/5 px-4 py-2">
+          <Button onClick={onClickInactive}>Install</Button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export function CrashedPlugin(props: MSPluginProps) {
+  const { title, iconActive } = props;
+
+  return (
+    <>
+      {iconActive}
+      <div className="w-full py-6 text-f-primary bg-secondary flex flex-col items-center">
+        <div className="w-4/5 px-4 py-2 mas-buttons lg:h-14 flex items-center justify-center">
+          <p className="text-center">{`${title} can’t be opened. Reinstall it from the Module store.`}</p>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export function LoadingPlugin(props: MSPluginProps) {
+  const { title, iconInactive } = props;
+
+  return (
+    <>
+      {iconInactive}
+      <div className="w-full py-6 text-f-primary bg-secondary flex flex-col items-center">
+        <div className="w-4/5 px-4 py-2 mas-buttons lg:h-14 flex items-center justify-center">
+          <p className="text-center">{`${title} installation`}</p>
+        </div>
+        <div className="w-4/5 px-4 py-2">
+          <Button disabled={true}>
+            <Spinner />
+          </Button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export function MassaWallet(props: PluginWalletProps) {
+  const {
+    isActive,
+    isLoading,
+    status,
+    isUpdatable,
+    title,
+    iconActive,
+    iconInactive,
+    onClickActive,
+    onClickInactive,
+    onUpdateClick,
+  } = props;
+
+  const displayPlugin = () => {
+    if (isLoading) {
+      return <LoadingPlugin title={title} iconInactive={iconInactive} />;
+    }
+    if (isUpdatable) {
+      console.log('plugin is updatable (MW)');
+      return (
+        <ActivePlugin
+          title={title}
+          iconActive={iconActive}
+          onClickActive={onUpdateClick}
+        />
+      );
+    }
+    if (!isActive) {
+      return (
+        <InactivePlugin
+          title={title}
+          iconInactive={iconInactive}
+          onClickInactive={onClickInactive}
+        />
+      );
+    }
+    if (status && status === 'Crashed') {
+      return <CrashedPlugin title={title} iconActive={iconActive} />;
+    }
+    return (
+      <ActivePlugin
+        title={title}
+        iconActive={iconActive}
+        onClickActive={onClickActive}
+      />
+    );
+  };
+
+  return (
+    <div
+      data-testid="plugin-wallet"
+      className="w-full h-full rounded-md flex flex-col"
+    >
+      {displayPlugin()}
+    </div>
+  );
+}

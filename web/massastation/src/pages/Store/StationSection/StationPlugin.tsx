@@ -27,7 +27,7 @@ import Intl from '@/i18n/i18n';
 
 import { MassaPluginModel, PluginStatus } from '@/models';
 
-interface PluginExecuteRequest {
+export interface PluginExecuteRequest {
   command: string;
 }
 
