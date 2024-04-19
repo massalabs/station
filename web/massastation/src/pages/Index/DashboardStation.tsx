@@ -33,7 +33,7 @@ export function DashboardStation(props: IDashboardStationProps) {
       className="grid lg:grid-cols-10  grid-rows-3 gap-4 h-fit p-4"
       data-testid="dashboard-station"
     >
-      <div className="col-start-1 col-span-2 row-span-3 ">
+      <div className="col-start-1 col-span-2  row-span-3">
         <PluginWallet
           key="wallet"
           isActive={pluginWalletIsInstalled}

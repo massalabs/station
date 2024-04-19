@@ -1,9 +1,9 @@
 <svg width="255" height="275" viewBox="0 0 255 275" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_7992_18236)">
-<path d="M116.789 163.614C-26.6955 142.673 -87.5217 203.146 -99.9992 236L51.5 389.5L343.14 320.546L412.093 -40.859C373.444 36.0242 260.274 184.555 116.789 163.614Z" fill="url(#paint0_linear_7992_18236)" stroke="#4AB2FF" stroke-width="3"/>
+<path d="M95.599 113.308C3.61266 196.217 -68.2652 182.105 -92.7058 164.685L-57.8806 -16.1789L181.963 -105.485L402.302 118.523C338.395 82.2396 187.585 30.3995 95.599 113.308Z" fill="url(#paint0_linear_7992_18236)" stroke="#4AB2FF" stroke-width="3"/>
 </g>
 <defs>
-<linearGradient id="paint0_linear_7992_18236" x1="145" y1="64" x2="152.411" y2="360.565" gradientUnits="userSpaceOnUse">
+<linearGradient id="paint0_linear_7992_18236" x1="162.869" y1="170.687" x2="27.5149" y2="-43.4745" gradientUnits="userSpaceOnUse">
 <stop offset="0.0001" stop-color="#4AB2FF"/>
 <stop offset="1" stop-color="#4AB2FF" stop-opacity="0"/>
 </linearGradient>

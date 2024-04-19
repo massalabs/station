@@ -16,7 +16,7 @@ export function Dusa() {
           backgroundRepeat: 'no-repeat',
         }}
       >
-        <div className="h-full flex flex-col gap-4 p-4">
+        <div className="h-full flex flex-col justify-end gap-4">
           <p className="mas-subtitle">Dusa</p>
           <p>{Intl.t('dashboard.dusa-desc')}</p>
         </div>

@@ -10,7 +10,7 @@ export function Explorer() {
       <RedirectTile
         size="cs"
         url="https://explorer.massa.net/"
-        className="bg-brand rounded-md p-0 hover:bg-c-hover hover:cursor-pointer h-full"
+        className="bg-brand rounded-md p-0 hover:bg-[#2EB688] hover:cursor-pointer h-full"
       >
         <div className="flex flex-col justify-end h-full">
           <div className="flex items-center gap-2 p-4 ml-4 h-8 bg-secondary w-48 rounded-t-md">
