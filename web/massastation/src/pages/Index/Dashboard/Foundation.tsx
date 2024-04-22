@@ -15,10 +15,10 @@ export function Foundation() {
         </div>
         <div className="relative flex justify-end">
           <img
-            width={120}
-            height={120}
+            width={140}
+            height={140}
             src={foundation}
-            alt="Massa Foundation"
+            alt={Intl.t('modules.foundation')}
           />
         </div>
       </RedirectTile>

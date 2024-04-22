@@ -19,7 +19,12 @@ export function MassaLabs() {
       >
         <div className="h-fit flex items-center gap-4">
           <div className="flex items-center gap-4 min-w-fit">
-            <img src={massa} alt="massa" width={30} height={30} />
+            <img
+              src={massa}
+              alt={Intl.t('modules.massalabs')}
+              width={30}
+              height={30}
+            />
             <p className="mas-subtitle">{Intl.t('modules.massalabs')}</p>
           </div>
           <p className="mas-body2">{Intl.t('dashboard.massalabs-desc')}</p>

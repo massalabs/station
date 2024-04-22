@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { MassaPluginModel, MassaStoreModel } from '@/models';
 import Intl from '@/i18n/i18n';
 import { routeFor } from '@/utils/utils';
-import { useConfigStore } from '@/store/store';
 import { usePost, useResource } from '../../custom/api';
 import { UseQueryResult } from '@tanstack/react-query';
 import { MASSA_WALLET } from '@/const';
@@ -34,7 +33,6 @@ function NestedIndex({
   const navigate = useNavigate();
   const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
   const [urlPlugin, setUrlPlugin] = useState<string | undefined>(undefined);
-  const theme = useConfigStore((s) => s.theme);
 
   const { data: massaPlugins } = plugins;
 
@@ -107,7 +105,6 @@ function NestedIndex({
             urlPlugin={urlPlugin}
             isLoading={isLoading}
             handleInstallPlugin={handleInstallPlugin}
-            theme={theme}
           />
         </div>
       </div>

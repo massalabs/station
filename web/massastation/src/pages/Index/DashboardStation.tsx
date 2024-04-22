@@ -1,4 +1,4 @@
-import { PluginWallet, Theme } from '@massalabs/react-ui-kit';
+import { PluginWallet } from '@massalabs/react-ui-kit';
 import { ReactComponent as WalletActive } from '../../assets/wallet/walletActive.svg';
 import { ReactComponent as WalletInactive } from '../../assets/wallet/walletInactive.svg';
 import { Foundation } from './Dashboard/Foundation';
@@ -16,7 +16,6 @@ export interface IDashboardStationProps {
   urlPlugin?: string | undefined;
   isLoading: boolean;
   handleInstallPlugin: (url: string) => void;
-  theme?: Theme | undefined;
 }
 
 export function DashboardStation(props: IDashboardStationProps) {
