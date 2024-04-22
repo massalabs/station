@@ -34,7 +34,7 @@ export function ActivePlugin(props: MSPluginProps) {
   return (
     <>
       <div>{iconActive}</div>
-      <div className="w-full py-6 text-f-primary bg-secondary flex flex-col items-center">
+      <div className="w-full h-full py-6 text-f-primary bg-secondary flex flex-col items-center">
         <div className="px-4 py-2 lg:h-14 mas-title text-center">
           <p className="text-xl sm:text-4xl lg:text-2xl 2xl:text-4xl">
             {title}
@@ -56,7 +56,7 @@ export function Updateplugin(props: MSPluginProps) {
   return (
     <>
       <div>{iconActive}</div>
-      <div className="w-full py-6 text-f-primary bg-secondary flex flex-col items-center">
+      <div className="w-full h-full py-6 text-f-primary bg-secondary flex flex-col items-center">
         <div className="px-4 py-2 lg:h-14 mas-title text-center">
           <p className="text-xl sm:text-4xl lg:text-2xl 2xl:text-4xl">
             {title}
@@ -112,7 +112,7 @@ export function CrashedPlugin(props: MSPluginProps) {
   return (
     <>
       {iconActive}
-      <div className="w-full py-6 text-f-primary bg-secondary flex flex-col items-center">
+      <div className="w-full h-full py-6 text-f-primary bg-secondary flex flex-col items-center">
         <div className="w-4/5 px-4 py-2 mas-buttons lg:h-14 flex items-center justify-center">
           <p className="text-center">{`${title} can’t be opened. Reinstall it from the Module store.`}</p>
         </div>

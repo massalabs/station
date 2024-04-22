@@ -1,4 +1,3 @@
-import { PluginWallet } from '@massalabs/react-ui-kit';
 import { ReactComponent as WalletActive } from '../../assets/wallet/walletActive.svg';
 import { ReactComponent as WalletInactive } from '../../assets/wallet/walletInactive.svg';
 import { Foundation } from './Dashboard/Foundation';
@@ -10,9 +9,8 @@ import { Dusa } from './Dashboard/Dusa';
 import { MASSA_WALLET, PLUGIN_UPDATE } from '@/const';
 import { MassaPluginModel } from '@/models';
 import { MassaWallet } from './Dashboard/MassaWallet';
-import { PluginExecuteRequest } from '../Store/StationSection/StationPlugin';
-import { usePost } from '@/custom/api';
 import { useEffect, useState } from 'react';
+import { useUpdatePlugin } from '@/custom/hooks/useUpdatePlugin';
 
 export interface IDashboardStationProps {
   massaPlugins?: MassaPluginModel[] | undefined;
@@ -47,11 +45,8 @@ export function DashboardStation(props: IDashboardStationProps) {
 
   const [walletState, setWalletState] = useState<WalletStates>();
 
-  const {
-    mutate: mutateExecute,
-    isSuccess: isExecuteSuccess,
-    isLoading: isExecuteLoading,
-  } = usePost<PluginExecuteRequest>(`plugin-manager/${id}/execute`);
+  const { isExecuteSuccess, isExecuteLoading, updatePluginState } =
+    useUpdatePlugin(id);
 
   useEffect(() => {
     if (pluginWalletIsInstalled && !isUpdatable) {
@@ -69,18 +64,12 @@ export function DashboardStation(props: IDashboardStationProps) {
     }
   }, [isExecuteSuccess]);
 
-  function updatePluginState(command: string) {
-    if (isExecuteLoading) return;
-    const payload = { command } as PluginExecuteRequest;
-    mutateExecute({ payload });
-  }
-
   return (
     <div
       className="grid lg:grid-cols-10  grid-rows-3 gap-4 h-fit"
       data-testid="dashboard-station"
     >
-      <div className="col-start-1 col-span-2  row-span-3">
+      <div className="col-start-1 col-span-2 row-span-3">
         <MassaWallet
           key="wallet"
           state={walletState}
