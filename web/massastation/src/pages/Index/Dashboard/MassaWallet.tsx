@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { Button, Spinner } from '@massalabs/react-ui-kit';
-
+import Intl from '@/i18n/i18n';
 import { ReactNode } from 'react';
 import { FiArrowUpRight, FiRefreshCw } from 'react-icons/fi';
 import { WalletStates } from '../DashboardStation';
@@ -42,7 +42,7 @@ export function ActivePlugin(props: MSPluginProps) {
         </div>
         <div className="w-4/5 px-4 py-2">
           <Button onClick={onClickActive} preIcon={<FiArrowUpRight />}>
-            Launch
+            {Intl.t('modules.massa-wallet.launch')}
           </Button>
         </div>
       </div>
@@ -69,7 +69,9 @@ export function Updateplugin(props: MSPluginProps) {
               <div className={isUpdating ? 'animate-spin' : 'none'}>
                 <FiRefreshCw color={'black'} size={20} />
               </div>
-              {isUpdating ? 'Updating...' : 'Update'}
+              {isUpdating
+                ? Intl.t('modules.massa-wallet.updating')
+                : Intl.t('modules.massa-wallet.update')}
             </div>
           </Button>
           <div className="text-s-warning px-4 mas-caption">
@@ -78,9 +80,9 @@ export function Updateplugin(props: MSPluginProps) {
               href="/plugin/massa-labs/massa-wallet/web-app/index"
               target="_blank"
             >
-              Click here
+              {Intl.t('modules.massa-wallet.click')}
             </a>{' '}
-            to launch it without update
+            {Intl.t('modules.massa-wallet.no-update')}
           </div>
         </div>
       </div>
@@ -99,7 +101,9 @@ export function InactivePlugin(props: MSPluginProps) {
           <p className="text-center">{`${title} is not installed in your station`}</p>
         </div>
         <div className="w-4/5 px-4 py-2">
-          <Button onClick={onClickInactive}>Install</Button>
+          <Button onClick={onClickInactive}>
+            {Intl.t('modules.massa-wallet.install')}
+          </Button>
         </div>
       </div>
     </>

@@ -51,6 +51,14 @@
     "foundation": "Massa Foundation",
     "massalabs": "Massa Labs",
     "purrfect": "Purrfect Universe",
-    "dusa": "Dusa"
+    "dusa": "Dusa",
+    "massa-wallet": {
+      "launch": "Launch",
+      "install": "Install",
+      "update": "Update",
+      "updating": "Updating...",
+      "click": "Click here",
+      "no-update": " to launch it without update"
+    }
   }
 }
