@@ -14,12 +14,12 @@ Suite Teardown      Close All Browsers
 *** Test Cases ***
 GET /
     Open Massa Station Page    ${API_URL}/
-    Wait Until Page Contains    Decentralization made easy    10
+    Wait Until Page Contains    Securely explore Massa's blockchain universe    10
 
 GET /web/
     Open Massa Station Page    ${API_URL}/web/
-    Wait Until Page Contains    Decentralization made easy    10
+    Wait Until Page Contains    Securely explore Massa's blockchain universe    10
 
 GET /web/index
     Open Massa Station Page    ${API_URL}/web/index
-    Wait Until Page Contains    Decentralization made easy    10
+    Wait Until Page Contains    Securely explore Massa's blockchain universe    10

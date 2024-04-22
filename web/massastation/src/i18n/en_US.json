@@ -27,7 +27,7 @@
     "link": "Go back to the Welcome page!"
   },
   "index": {
-    "title-banner": "Decentralization made easy",
+    "title-banner": "Securely explore Massa's blockchain universe",
     "buttons": {
       "search": "Search Massa ecosystem",
       "explore": "Explore module store"
@@ -36,5 +36,21 @@
   "placeholder": {
     "teaser-banner": "A new way to use web is coming",
     "teaser-web-on-chain": "We are crafting a new era for our web on-chain feature..."
+  },
+  "dashboard": {
+    "bridge-desc": "Bridge ERC-20 tokens from EVM chains to Massa and vice versa!",
+    "explorer-desc": "Search through real-time and historical records on Massa blockchain.",
+    "foundation-desc": "Learn about Massa ecosystem and initiatives.",
+    "massalabs-desc": "Unique Lab supporting Massa ecosystem and creating innovative solutions.",
+    "purrfect-desc": "Create, buy & sell NFTs on the Massa blockchain.",
+    "dusa-desc": "Fully decentralized exchange protocol."
+  },
+  "modules": {
+    "bridge": "Massa Bridge",
+    "explorer": "Massa Explorer",
+    "foundation": "Massa Foundation",
+    "massalabs": "Massa Labs",
+    "purrfect": "Purrfect Universe",
+    "dusa": "Dusa"
   }
 }
