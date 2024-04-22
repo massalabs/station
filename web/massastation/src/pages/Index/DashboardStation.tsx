@@ -12,7 +12,7 @@ import { MassaPluginModel } from '@/models';
 import { MassaWallet } from './Dashboard/MassaWallet';
 import { PluginExecuteRequest } from '../Store/StationSection/StationPlugin';
 import { usePost } from '@/custom/api';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export interface IDashboardStationProps {
   massaPlugins?: MassaPluginModel[] | undefined;
@@ -20,6 +20,12 @@ export interface IDashboardStationProps {
   urlPlugin?: string | undefined;
   isLoading: boolean;
   handleInstallPlugin: (url: string) => void;
+}
+
+export enum WalletStates {
+  Active = 'Active',
+  Inactive = 'Inactive',
+  Updateable = 'Updateable',
 }
 
 export function DashboardStation(props: IDashboardStationProps) {
@@ -39,6 +45,8 @@ export function DashboardStation(props: IDashboardStationProps) {
     (plugin: MassaPluginModel) => plugin.name === MASSA_WALLET,
   )?.updatable;
 
+  const [walletState, setWalletState] = useState<WalletStates>();
+
   const {
     mutate: mutateExecute,
     isSuccess: isExecuteSuccess,
@@ -46,15 +54,20 @@ export function DashboardStation(props: IDashboardStationProps) {
   } = usePost<PluginExecuteRequest>(`plugin-manager/${id}/execute`);
 
   useEffect(() => {
-    if (isUpdatable) {
-      console.log('plugin is updatable');
+    if (pluginWalletIsInstalled && !isUpdatable) {
+      setWalletState(WalletStates.Active);
+    } else if (pluginWalletIsInstalled && isUpdatable) {
+      setWalletState(WalletStates.Updateable);
     } else {
-      console.log('plugin is not updatable');
+      setWalletState(WalletStates.Inactive);
     }
+  }, [isUpdatable, pluginWalletIsInstalled]);
+
+  useEffect(() => {
     if (isExecuteSuccess) {
-      console.log('plugin updated');
+      setWalletState(WalletStates.Active);
     }
-  }, [isUpdatable, isExecuteLoading, isExecuteSuccess]);
+  }, [isExecuteSuccess]);
 
   function updatePluginState(command: string) {
     if (isExecuteLoading) return;
@@ -70,13 +83,13 @@ export function DashboardStation(props: IDashboardStationProps) {
       <div className="col-start-1 col-span-2  row-span-3">
         <MassaWallet
           key="wallet"
-          isActive={pluginWalletIsInstalled}
+          state={walletState}
           status={
             massaPlugins?.find(
               (plugin: MassaPluginModel) => plugin.name === MASSA_WALLET,
             )?.status
           }
-          isUpdatable={isUpdatable}
+          isUpdating={isExecuteLoading}
           isLoading={isLoading}
           title="Massa Wallet"
           iconActive={<WalletActive />}
