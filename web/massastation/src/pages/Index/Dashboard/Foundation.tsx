@@ -15,8 +15,8 @@ export function Foundation() {
         </div>
         <div className="relative flex justify-end">
           <img
-            width={140}
-            height={140}
+            width={160}
+            height={160}
             src={foundation}
             alt={Intl.t('modules.foundation')}
           />
