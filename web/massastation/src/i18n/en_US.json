@@ -4,6 +4,7 @@
     "mystation-banner": "My Station",
     "store-banner": "Store",
     "loading": "Loading...",
+    "update": "Update",
     "massa-station-incompatible": "Available in Massa Station version: {version}",
     "crashed-module": "The module is not working. Please delete it and then reinstall it.",
     "mystation": {

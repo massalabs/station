@@ -158,6 +158,7 @@ export function StationPlugin({
             ) : (
               <Button
                 variant="icon"
+                hoverText={Intl.t('store.update')}
                 onClick={(e) => updatePluginState(e, PLUGIN_UPDATE)}
                 disabled={isExecuteLoading}
               >
