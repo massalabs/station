@@ -2,9 +2,11 @@
 // @ts-ignore
 import { Button, Spinner } from '@massalabs/react-ui-kit';
 import Intl from '@/i18n/i18n';
-import { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { FiArrowUpRight, FiRefreshCw } from 'react-icons/fi';
 import { WalletStates } from '../DashboardStation';
+import { motion } from 'framer-motion';
+import massaWallet from '../../../assets/dashboard/MassaWallet.svg';
 
 export interface PluginWalletProps {
   state?: string;
@@ -12,8 +14,6 @@ export interface PluginWalletProps {
   title: string;
   status?: string;
   isUpdating: boolean;
-  iconActive: ReactNode;
-  iconInactive: ReactNode;
   onClickActive: () => void;
   onClickInactive: () => void;
   onUpdateClick: () => void;
@@ -21,26 +21,37 @@ export interface PluginWalletProps {
 
 export interface MSPluginProps {
   title: string;
-  iconActive?: ReactNode;
   onClickActive?: () => void;
-  iconInactive?: ReactNode;
   onClickInactive?: () => void;
   isUpdating?: boolean;
+  isHovered?: boolean;
 }
 
 export function ActivePlugin(props: MSPluginProps) {
-  const { title, iconActive, onClickActive } = props;
+  const { title, onClickActive, isHovered } = props;
+
+  useEffect(() => {
+    console.log('isHovered', isHovered);
+  }, [isHovered]);
 
   return (
     <>
-      <div>{iconActive}</div>
-      <div className="w-full h-full py-6 text-f-primary bg-secondary flex flex-col items-center">
-        <div className="px-4 py-2 lg:h-14 mas-title text-center">
-          <p className="text-xl sm:text-4xl lg:text-2xl 2xl:text-4xl">
-            {title}
-          </p>
-        </div>
-        <div className="w-4/5 px-4 py-2">
+      <div className={`w-full h-full rounded-t-md bg-brand`}>
+        <motion.img
+          initial={false}
+          animate={{
+            rotate: isHovered ? 180 : 0,
+            transition: { duration: 0.36 },
+          }}
+          src={massaWallet}
+          alt="Massa Wallet"
+          className="w-full h-full p-4"
+        />
+      </div>
+      <div className="w-full h-full text-f-primary bg-secondary flex flex-col gap-1 justify-evenly items-center pb-4">
+        <div className="mas-subtitle text-center">{title}</div>
+        <div className="mas-body2">{Intl.t('modules.massa-wallet.desc')}</div>
+        <div className="w-3/5">
           <Button onClick={onClickActive} preIcon={<FiArrowUpRight />}>
             {Intl.t('modules.massa-wallet.launch')}
           </Button>
@@ -51,23 +62,29 @@ export function ActivePlugin(props: MSPluginProps) {
 }
 
 export function Updateplugin(props: MSPluginProps) {
-  const { title, iconActive, onClickActive, isUpdating } = props;
+  const { title, onClickActive, isUpdating, isHovered } = props;
 
   return (
     <>
-      <div>{iconActive}</div>
-      <div className="w-full h-full py-6 text-f-primary bg-secondary flex flex-col items-center">
-        <div className="px-4 py-2 lg:h-14 mas-title text-center">
-          <p className="text-xl sm:text-4xl lg:text-2xl 2xl:text-4xl">
-            {title}
-          </p>
-        </div>
-        <div className="flex flex-col gap-2 px-4 py-2">
+      <div className={`w-full h-full rounded-t-md bg-brand`}>
+        <motion.img
+          initial={false}
+          animate={{
+            rotate: isHovered ? 180 : 0,
+            transition: { duration: 0.36 },
+          }}
+          src={massaWallet}
+          alt="Massa Wallet"
+          className="w-full h-full p-4"
+        />
+      </div>
+      <div className="w-full h-full text-f-primary bg-secondary flex flex-col gap-1 pb-4 justify-evenly items-center">
+        <div className="mas-subtitle text-center">{title}</div>
+        <div className="flex flex-col gap-2">
           <Button onClick={onClickActive}>
-            <div className="flex gap-2">
-              {' '}
+            <div className="flex items-center gap-2">
               <div className={isUpdating ? 'animate-spin' : 'none'}>
-                <FiRefreshCw color={'black'} size={20} />
+                <FiRefreshCw className="text-primary" size={18} />
               </div>
               {isUpdating
                 ? Intl.t('modules.massa-wallet.updating')
@@ -91,11 +108,22 @@ export function Updateplugin(props: MSPluginProps) {
 }
 
 export function InactivePlugin(props: MSPluginProps) {
-  const { title, iconInactive, onClickInactive } = props;
+  const { title, onClickInactive, isHovered } = props;
 
   return (
     <>
-      <div>{iconInactive}</div>
+      <div className={`w-full h-full rounded-t-md bg-tertiary`}>
+        <motion.img
+          initial={false}
+          animate={{
+            rotate: isHovered ? 180 : 0,
+            transition: { duration: 0.36 },
+          }}
+          src={massaWallet}
+          alt="Massa Wallet"
+          className="w-full h-full p-4"
+        />
+      </div>
       <div className="w-full h-full text-f-primary bg-secondary flex flex-col justify-center items-center rounded-b-md">
         <div className="w-4/5 px-4 py-2 mas-buttons lg:h-14 flex items-center justify-center">
           <p className="text-center">{`${title} is not installed in your station`}</p>
@@ -111,11 +139,22 @@ export function InactivePlugin(props: MSPluginProps) {
 }
 
 export function CrashedPlugin(props: MSPluginProps) {
-  const { title, iconActive } = props;
+  const { title, isHovered } = props;
 
   return (
     <>
-      {iconActive}
+      <div className={`w-full h-full rounded-t-md bg-brand`}>
+        <motion.img
+          initial={false}
+          animate={{
+            rotate: isHovered ? 180 : 0,
+            transition: { duration: 0.36 },
+          }}
+          src={massaWallet}
+          alt="Massa Wallet"
+          className="w-full h-full p-4"
+        />
+      </div>
       <div className="w-full h-full py-6 text-f-primary bg-secondary flex flex-col items-center">
         <div className="w-4/5 px-4 py-2 mas-buttons lg:h-14 flex items-center justify-center">
           <p className="text-center">{`${title} can’t be opened. Reinstall it from the Module store.`}</p>
@@ -126,16 +165,27 @@ export function CrashedPlugin(props: MSPluginProps) {
 }
 
 export function LoadingPlugin(props: MSPluginProps) {
-  const { title, iconInactive } = props;
+  const { title, isHovered } = props;
 
   return (
     <>
-      {iconInactive}
-      <div className="w-full py-6 text-f-primary bg-secondary flex flex-col items-center">
-        <div className="w-4/5 px-4 py-2 mas-buttons lg:h-14 flex items-center justify-center">
+      <div className={`w-full h-full rounded-t-md bg-brand`}>
+        <motion.img
+          initial={false}
+          animate={{
+            rotate: isHovered ? 180 : 0,
+            transition: { duration: 0.36 },
+          }}
+          src={massaWallet}
+          alt="Massa Wallet"
+          className="w-full h-full p-4"
+        />
+      </div>
+      <div className="w-full text-f-primary bg-secondary flex flex-col items-center gap-4 py-4">
+        <div className="w-4/5 mas-buttons flex items-center justify-center">
           <p className="text-center">{`${title} installation`}</p>
         </div>
-        <div className="w-4/5 px-4 py-2">
+        <div className="w-3/5">
           <Button disabled={true}>
             <Spinner />
           </Button>
@@ -151,25 +201,25 @@ export function MassaWallet(props: PluginWalletProps) {
     isLoading,
     status,
     title,
-    iconActive,
-    iconInactive,
     onClickActive,
     onClickInactive,
     onUpdateClick,
     isUpdating,
   } = props;
 
+  const [isHovered, setIsHovered] = useState(false);
+
   const displayPlugin = () => {
     if (isLoading) {
-      return <LoadingPlugin title={title} iconInactive={iconInactive} />;
+      return <LoadingPlugin title={title} isHovered={isHovered} />;
     }
     if (state === WalletStates.Updateable) {
       return (
         <Updateplugin
           title={title}
-          iconActive={iconActive}
           onClickActive={onUpdateClick}
           isUpdating={isUpdating}
+          isHovered={isHovered}
         />
       );
     }
@@ -177,29 +227,36 @@ export function MassaWallet(props: PluginWalletProps) {
       return (
         <InactivePlugin
           title={title}
-          iconInactive={iconInactive}
           onClickInactive={onClickInactive}
+          isHovered={isHovered}
         />
       );
     }
     if (status && status === 'Crashed') {
-      return <CrashedPlugin title={title} iconActive={iconActive} />;
+      return <CrashedPlugin title={title} isHovered={isHovered} />;
     }
     return (
       <ActivePlugin
         title={title}
-        iconActive={iconActive}
         onClickActive={onClickActive}
+        isHovered={isHovered}
       />
     );
   };
 
   return (
-    <div
+    <motion.div
+      onHoverStart={() => {
+        setIsHovered(true);
+      }}
+      onHoverEnd={() => {
+        setIsHovered(false);
+      }}
+      whileHover={{ scale: 1.03 }}
       data-testid="plugin-wallet"
       className="w-full h-full rounded-md flex flex-col"
     >
       {displayPlugin()}
-    </div>
+    </motion.div>
   );
 }

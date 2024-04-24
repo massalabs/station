@@ -1,5 +1,3 @@
-import { ReactComponent as WalletActive } from '../../assets/wallet/walletActive.svg';
-import { ReactComponent as WalletInactive } from '../../assets/wallet/walletInactive.svg';
 import { Foundation } from './Dashboard/Foundation';
 import { Bridge } from './Dashboard/Bridge';
 import { MassaLabs } from './Dashboard/Massalabs';
@@ -81,8 +79,6 @@ export function DashboardStation(props: IDashboardStationProps) {
           isUpdating={isExecuteLoading}
           isLoading={isLoading}
           title="Massa Wallet"
-          iconActive={<WalletActive />}
-          iconInactive={<WalletInactive />}
           onClickActive={() =>
             window.open(
               '/plugin/massa-labs/massa-wallet/web-app/index',

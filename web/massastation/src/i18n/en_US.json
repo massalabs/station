@@ -54,6 +54,7 @@
     "purrfect": "Purrfect Universe",
     "dusa": "Dusa",
     "massa-wallet": {
+      "desc": "Official Massa Wallet",
       "launch": "Launch",
       "install": "Install",
       "update": "Update",

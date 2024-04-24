@@ -4,3 +4,4 @@ export * from './BridgeOutline.svg';
 export * from './MassaLabs.svg';
 export * from './DusaWave.svg';
 export * from './Explorer.svg';
+export * from './MassaWallet.svg';
