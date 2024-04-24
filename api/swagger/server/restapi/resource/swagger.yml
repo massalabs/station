@@ -124,8 +124,9 @@ paths:
                 $ref: "#/definitions/Amount"
                 description: Set the coin amount that will be transferred to the smartContract.
               fee:
-                $ref: "#/definitions/Amount"
-                description: Set the fee amount that will be given to the block creator.
+                type : string
+                description: Set the fee amount (in massa) that will be given to the block creator.
+                default: "0"
       produces:
         - application/json
       responses:

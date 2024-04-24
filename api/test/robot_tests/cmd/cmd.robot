@@ -16,7 +16,7 @@ POST /cmd/read-only/executesc
     ${data}=    Create Dictionary
     ...    nickname=${WALLET_NICKNAME}
     ...    coins=3000000000
-    ...    fee=1000
+    ...    fee=0.01
     ${file}=    Create Dictionary    bytecode=${sc}
     ${response}=    POST    ${API_URL}/cmd/read-only/executesc    data=${data}    files=${file}    expected_status=any
     Log To Console    json response: ${response.json()}    # Print the response content to the test log for debugging
@@ -28,7 +28,7 @@ POST a Smart Contract
     ${data}=    Create Dictionary
     ...    walletNickname=${WALLET_NICKNAME}
     ...    coins=3000000000
-    ...    fee=1000
+    ...    fee=10000000
     ${file}=    Create Dictionary    smartContract=${sc}
     ${response}=    POST    ${API_URL}/cmd/deploySC    data=${data}    files=${file}    expected_status=any
     Log To Console    json response: ${response.json()}    # Print the response content to the test log for debugging
@@ -47,6 +47,7 @@ POST /cmd/read-only/callsc
     ...    name=event
     ...    at=${DEPLOYED_SC_ADDR}
     ...    args=${argument}
+    ...    fee=0.01
     ${response}=    POST
     ...    ${API_URL}/cmd/read-only/callsc
     ...    json=${data}
@@ -64,7 +65,7 @@ POST /cmd/executeFunction sync
     ...    name=event
     ...    at=${DEPLOYED_SC_ADDR}
     ...    args=${argument}
-    ...    fee=1000
+    ...    fee=10000000
     ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction
     ...    json=${data}
@@ -79,7 +80,7 @@ POST /cmd/executeFunction sync without arguments
     ...    name=test
     ...    at=${DEPLOYED_SC_ADDR}
     ...    args=
-    ...    fee=1000
+    ...    fee=10000000
     ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction
     ...    json=${data}
@@ -96,7 +97,7 @@ POST /cmd/executeFunction async
     ...    at=${DEPLOYED_SC_ADDR}
     ...    args=${argument}
     ...    async=${True}
-     ...    fee=1000
+    ...    fee=10000000
   ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction
     ...    json=${data}
@@ -111,7 +112,7 @@ POST /cmd/executeFunction async
 
 POST /cmd/deploySC with invalid datastore
     ${sc}=    Get File For Streaming Upload    ${CURDIR}/../../testSC/build/main-testSC.wasm
-    ${data}=    Create Dictionary    walletNickname=${WALLET_NICKNAME}    datastore=invalid    fee=1000
+    ${data}=    Create Dictionary    walletNickname=${WALLET_NICKNAME}    datastore=invalid    fee=10000000
     ${file}=    Create Dictionary    smartContract=${sc}
     ${response}=    POST
     ...    ${API_URL}/cmd/deploySC
@@ -128,7 +129,7 @@ POST /cmd/executeFunction with invalid address
     ...    name=event
     ...    at=invalid
     ...    args=${argument}
-    ...    fee=1000
+    ...    fee=10000000
     ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction
     ...    json=${data}
@@ -150,7 +151,7 @@ POST /cmd/executeFunction with invalid arguments
     ...    name=event
     ...    at=AS12YBWcNcmN8wugh8xTZiyt48JjHqrNtem96jiCoGEZFGZPUyei6
     ...    args=invalid
-    ...    fee=1000
+    ...    fee=10000000
     ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction
     ...    json=${data}
@@ -163,7 +164,7 @@ POST /cmd/executeFunction with invalid function name
     ...    nickname=${WALLET_NICKNAME}
     ...    name=invalid
     ...    at=${DEPLOYED_SC_ADDR}
-    ...    fee=1000
+    ...    fee=10000000
     ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction
     ...    json=${data}

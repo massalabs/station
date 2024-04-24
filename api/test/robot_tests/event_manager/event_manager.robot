@@ -26,11 +26,13 @@ GET /events/{str}/{caller} from called function
     # we need to make this request before the event is generated.
     ${handle}=    Async Run    GET
     ...    ${API_URL}/events/${expected_event}/${WALLET_ADDR}
-    ...    expected_status=${STATUS_OK}
+    ...    expected_status=any
 
     Generate Event    ${randomID}
 
     ${response}=    Async Get    ${handle}
+    Log To Console    json response: ${response.json()}    # Print the response content to the test log for debugging
+    Should Be Equal As Integers    ${response.status_code}    ${STATUS_OK}    # Assert the status code is 200 OK
 
     Should Contain    ${response.json()['address']}    ${WALLET_ADDR}
     Should Contain    ${response.json()['data']}    ${expected_event}

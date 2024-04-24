@@ -40,8 +40,10 @@ func (e *ReadOnlyCallSC) Handle(params operations.CmdReadOnlyCallSCParams) middl
 			})
 	}
 
-	if params.Body.Fee == "" {
-		params.Body.Fee = "0"
+	fee := *params.Body.Fee
+
+	if fee == "" {
+		fee = "0"
 	}
 
 	coins, errResponse := amountToString(params.Body.Coins, uint64(0))
@@ -54,7 +56,7 @@ func (e *ReadOnlyCallSC) Handle(params operations.CmdReadOnlyCallSCParams) middl
 		params.Body.Name,
 		args,
 		coins,
-		string(params.Body.Fee),
+		fee,
 		acc.Address,
 		node.NewClient(e.networkInfos.NodeURL),
 	)

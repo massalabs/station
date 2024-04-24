@@ -41,7 +41,7 @@ Generate Event
     ...    at=${DEPLOYED_SC_ADDR}
     ...    args=${argument}
     ...    stream=${False}
-    ...    fee=1000
+    ...    fee=10000000
 
     ${response}=    POST
     ...    ${API_URL}/cmd/executeFunction
