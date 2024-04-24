@@ -4,6 +4,7 @@
     "mystation-banner": "My Station",
     "store-banner": "Store",
     "loading": "Loading...",
+    "update": "Update",
     "massa-station-incompatible": "Available in Massa Station version: {version}",
     "crashed-module": "The module is not working. Please delete it and then reinstall it.",
     "mystation": {
@@ -43,7 +44,7 @@
     "foundation-desc": "Learn about Massa ecosystem and initiatives.",
     "massalabs-desc": "Unique Lab supporting Massa ecosystem and creating innovative solutions.",
     "purrfect-desc": "Create, buy & sell NFTs on the Massa blockchain.",
-    "dusa-desc": "Fully decentralized exchange protocol."
+    "dusa-desc": "Advanced, customizable and fully decentralized trading protocol."
   },
   "modules": {
     "bridge": "Massa Bridge",
@@ -51,6 +52,18 @@
     "foundation": "Massa Foundation",
     "massalabs": "Massa Labs",
     "purrfect": "Purrfect Universe",
-    "dusa": "Dusa"
+    "dusa": "Dusa",
+    "massa-wallet": {
+      "title": "Massa Wallet",
+      "desc": "Official Massa Wallet",
+      "crash": "{title} can’t be opened. Reinstall it from the Module store.",
+      "installing": "{title} installation",
+      "launch": "Launch",
+      "install": "Install",
+      "update": "Update",
+      "updating": "Updating...",
+      "click": "Click here",
+      "no-update": " to launch it without update"
+    }
   }
 }

@@ -27,7 +27,7 @@ import Intl from '@/i18n/i18n';
 
 import { MassaPluginModel, PluginStatus } from '@/models';
 
-interface PluginExecuteRequest {
+export interface PluginExecuteRequest {
   command: string;
 }
 
@@ -158,6 +158,7 @@ export function StationPlugin({
             ) : (
               <Button
                 variant="icon"
+                hoverText={Intl.t('store.update')}
                 onClick={(e) => updatePluginState(e, PLUGIN_UPDATE)}
                 disabled={isExecuteLoading}
               >

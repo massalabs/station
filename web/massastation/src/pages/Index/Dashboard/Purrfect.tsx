@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 export function Purrfect() {
   return (
-    <motion.div className="h-full" whileHover={{ scale: 1.05 }}>
+    <motion.div className="h-full" whileHover={{ scale: 1.03 }}>
       <RedirectTile
         size="cs"
         customSize="h-full"
