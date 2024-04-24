@@ -2,7 +2,7 @@
 // @ts-ignore
 import { Button, Spinner } from '@massalabs/react-ui-kit';
 import Intl from '@/i18n/i18n';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FiArrowUpRight, FiRefreshCw } from 'react-icons/fi';
 import { WalletStates } from '../DashboardStation';
 import { motion } from 'framer-motion';
@@ -30,10 +30,6 @@ export interface MSPluginProps {
 export function ActivePlugin(props: MSPluginProps) {
   const { title, onClickActive, isHovered } = props;
 
-  useEffect(() => {
-    console.log('isHovered', isHovered);
-  }, [isHovered]);
-
   return (
     <>
       <div className={`w-full h-full rounded-t-md bg-brand`}>
@@ -44,7 +40,7 @@ export function ActivePlugin(props: MSPluginProps) {
             transition: { duration: 0.36 },
           }}
           src={massaWallet}
-          alt="Massa Wallet"
+          alt={Intl.t('modules.massa-wallet.title')}
           className="w-full h-full p-4"
         />
       </div>
@@ -74,7 +70,7 @@ export function Updateplugin(props: MSPluginProps) {
             transition: { duration: 0.36 },
           }}
           src={massaWallet}
-          alt="Massa Wallet"
+          alt={Intl.t('modules.massa-wallet.title')}
           className="w-full h-full p-4"
         />
       </div>
@@ -120,7 +116,7 @@ export function InactivePlugin(props: MSPluginProps) {
             transition: { duration: 0.36 },
           }}
           src={massaWallet}
-          alt="Massa Wallet"
+          alt={Intl.t('modules.massa-wallet.title')}
           className="w-full h-full p-4"
         />
       </div>
@@ -151,13 +147,18 @@ export function CrashedPlugin(props: MSPluginProps) {
             transition: { duration: 0.36 },
           }}
           src={massaWallet}
-          alt="Massa Wallet"
+          alt={Intl.t('modules.massa-wallet.title')}
           className="w-full h-full p-4"
         />
       </div>
       <div className="w-full h-full py-6 text-f-primary bg-secondary flex flex-col items-center">
         <div className="w-4/5 px-4 py-2 mas-buttons lg:h-14 flex items-center justify-center">
-          <p className="text-center">{`${title} can’t be opened. Reinstall it from the Module store.`}</p>
+          <p className="text-center">
+            {' '}
+            {Intl.t('modules.massa-wallet.crash', {
+              title: title,
+            })}
+          </p>
         </div>
       </div>
     </>
@@ -177,13 +178,17 @@ export function LoadingPlugin(props: MSPluginProps) {
             transition: { duration: 0.36 },
           }}
           src={massaWallet}
-          alt="Massa Wallet"
+          alt={Intl.t('modules.massa-wallet.title')}
           className="w-full h-full p-4"
         />
       </div>
       <div className="w-full text-f-primary bg-secondary flex flex-col items-center gap-4 py-4">
         <div className="w-4/5 mas-buttons flex items-center justify-center">
-          <p className="text-center">{`${title} installation`}</p>
+          <p className="text-center">
+            {Intl.t('modules.massa-wallet.installing', {
+              title: title,
+            })}
+          </p>
         </div>
         <div className="w-3/5">
           <Button disabled={true}>
