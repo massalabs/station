@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Intl from '@/i18n/i18n';
 export function Foundation() {
   return (
-    <motion.div whileHover={{ scale: 1.05 }}>
+    <motion.div whileHover={{ scale: 1.03 }}>
       <RedirectTile
         url="https://massa.foundation/"
         className="bg-neutral text-primary rounded-md p-0 hover:bg-c-hover hover:cursor-pointer h-full"

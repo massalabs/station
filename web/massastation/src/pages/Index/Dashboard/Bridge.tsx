@@ -5,7 +5,7 @@ import Intl from '@/i18n/i18n';
 
 export function Bridge() {
   return (
-    <motion.div className="h-full" whileHover={{ scale: 1.05 }}>
+    <motion.div className="h-full" whileHover={{ scale: 1.03 }}>
       <RedirectTile
         url="https://bridge.massa.net"
         size="cs"
