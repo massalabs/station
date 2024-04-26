@@ -44,7 +44,10 @@ export function ActivePlugin(props: MSPluginProps) {
           className="w-full h-full p-4"
         />
       </div>
-      <div className="w-full h-full text-f-primary bg-secondary flex flex-col gap-1 justify-evenly items-center pb-4">
+      <div
+        className="w-full h-full text-f-primary bg-secondary flex flex-col 
+        gap-1 justify-evenly items-center pb-4 rounded-b-md"
+      >
         <div className="mas-subtitle text-center">{title}</div>
         <div className="mas-body2">{Intl.t('modules.massa-wallet.desc')}</div>
         <div className="w-3/5">
@@ -74,7 +77,10 @@ export function Updateplugin(props: MSPluginProps) {
           className="w-full h-full p-4"
         />
       </div>
-      <div className="w-full h-full text-f-primary bg-secondary flex flex-col gap-1 pb-4 justify-evenly items-center">
+      <div
+        className="w-full h-full text-f-primary bg-secondary flex flex-col gap-1 pb-4 
+      justify-evenly items-center rounded-b-md"
+      >
         <div className="mas-subtitle text-center">{title}</div>
         <div className="flex flex-col gap-2">
           <Button onClick={onClickActive}>
@@ -151,7 +157,7 @@ export function CrashedPlugin(props: MSPluginProps) {
           className="w-full h-full p-4"
         />
       </div>
-      <div className="w-full h-full py-6 text-f-primary bg-secondary flex flex-col items-center">
+      <div className="w-full h-full py-6 text-f-primary bg-secondary flex flex-col items-center rounded-b-md">
         <div className="w-4/5 px-4 py-2 mas-buttons lg:h-14 flex items-center justify-center">
           <p className="text-center">
             {' '}
@@ -182,7 +188,7 @@ export function LoadingPlugin(props: MSPluginProps) {
           className="w-full h-full p-4"
         />
       </div>
-      <div className="w-full text-f-primary bg-secondary flex flex-col items-center gap-4 py-4">
+      <div className="w-full text-f-primary bg-secondary flex flex-col items-center gap-4 py-4 rounded-b-md">
         <div className="w-4/5 mas-buttons flex items-center justify-center">
           <p className="text-center">
             {Intl.t('modules.massa-wallet.installing', {

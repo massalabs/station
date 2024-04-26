@@ -16,7 +16,9 @@ export function Purrfect() {
         <div
           style={{
             backgroundImage: `url(${purrfectCat})`,
-            backgroundSize: 'cover',
+            backgroundSize: 'contain',
+            backgroundPositionY: 'bottom',
+            backgroundPositionX: 'center',
             backgroundRepeat: 'no-repeat',
           }}
           className="h-full flex flex-col gap-4 p-4"

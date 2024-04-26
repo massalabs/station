@@ -55,7 +55,7 @@
     "dusa": "Dusa",
     "massa-wallet": {
       "title": "Massa Wallet",
-      "desc": "Official Massa Wallet",
+      "desc": "Official Massa Wallet.",
       "crash": "{title} can’t be opened. Reinstall it from the Module store.",
       "installing": "{title} installation",
       "launch": "Launch",
@@ -63,7 +63,7 @@
       "update": "Update",
       "updating": "Updating...",
       "click": "Click here",
-      "no-update": " to launch it without update"
+      "no-update": " to launch it without updating."
     }
   }
 }
