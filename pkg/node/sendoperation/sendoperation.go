@@ -108,7 +108,6 @@ func Call(
 func createOperationContent(operationBatch OperationBatch, description string, msgB64 string, chainID uint64) string {
 	var content string
 
-	
 	switch {
 	case operationBatch.NewBatch:
 		content = `{
