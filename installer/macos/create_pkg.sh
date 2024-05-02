@@ -58,7 +58,7 @@ build_massastation() {
 package() {
     # sign the application if we have a developer id
     if [[ -n "$APPLE_DEVELOPER_ID_APPLICATION" ]]; then
-        codesign --force --options runtime --sign "$APPLE_DEVELOPER_ID_APPLICATION" $MASSASTATION_APPLICATION_NAME
+        codesign --force --options runtime --sign "$APPLE_DEVELOPER_ID_APPLICATION" $MASSASTATION_APPLICATION_NAME || fatal "failed to sign"
     fi
 
     pkgbuild --component $MASSASTATION_APPLICATION_NAME --identifier com.massalabs.massastation --version $PKGVERSION \

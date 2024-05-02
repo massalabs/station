@@ -112,7 +112,7 @@ export function Base() {
 
   // Template
   return (
-    <div className={`${theme}`}>
+    <div className={theme}>
       <LayoutStation
         navigator={navigator}
         onSetTheme={handleSetTheme}
