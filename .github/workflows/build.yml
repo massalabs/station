@@ -24,10 +24,10 @@ jobs:
           - os: ubuntu-20.04
             arch: amd64
             target: linux
-          - os: macos-latest
+          - os: macos-13
             arch: amd64
             target: darwin
-          - os: macos-latest
+          - os: macos-13
             arch: arm64
             target: darwin
 
@@ -98,7 +98,7 @@ jobs:
       matrix:
         arch: [amd64, arm64]
 
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
