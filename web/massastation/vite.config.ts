@@ -24,5 +24,11 @@ export default ({ mode }) => {
         { find: '@/shared', replacement: path.resolve(__dirname, '../shared') },
       ],
     },
+    server: {
+      fs: {
+        // to allow server ui kit asset like font files
+        allow: ['../../..'],
+      },
+    },
   });
 };

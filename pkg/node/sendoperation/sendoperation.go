@@ -108,19 +108,17 @@ func Call(
 func createOperationContent(operationBatch OperationBatch, description string, msgB64 string, chainID uint64) string {
 	var content string
 
-	//nolint:goconst
+	const descriptionLabel = `{"description": "`
+
 	switch {
 	case operationBatch.NewBatch:
-		content = `{
-			"description": "` + description + `", "operation": "` + msgB64 + `",
+		content = descriptionLabel + description + `", "operation": "` + msgB64 + `",
 			"batch": true, "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
 	case operationBatch.CorrelationID != "":
-		content = `{
-			"description": "` + description + `", "operation": "` + msgB64 + `",
+		content = descriptionLabel + description + `", "operation": "` + msgB64 + `",
 			"correlationId": "` + operationBatch.CorrelationID + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
 	default:
-		content = `{
-			"description": "` + description + `",
+		content = descriptionLabel + description + `",
 			"operation": "` + msgB64 + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
 	}
 
