@@ -37,8 +37,8 @@ tasks:
 
   generate: 
     cmds:
-     - task: generate-dirs
-     - cmd: go generate ./...
+      - task: generate-dirs
+      - cmd: go generate ./...
 
   test:
     cmds:
