@@ -12,17 +12,6 @@ env:
   VERSION: ${{ inputs.tag_name }}
 
 jobs:
-  validate-input:
-    name: if tag_name is provided it must not start with "v"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check if tag_name starts with "v"
-        run: |
-          if [[ "${{ inputs.tag_name }}" == v* ]]; then
-            echo "tag_name starts with v"
-            exit 1
-          fi
-    
   build:
     name: build and upload artifacts
     strategy:

@@ -24,7 +24,19 @@ on:
         default: true
 
 jobs:
+  validate-input:
+    name: if tag_name is provided it must not start with "v"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if tag_name starts with "v"
+        run: |
+          if [[ "${{ github.event.inputs.release-version }}" == v* ]]; then
+            echo "tag_name starts with v"
+            exit 1
+          fi
+
   build-release:
+    needs: validate-input
     uses: ./.github/workflows/build.yml
     secrets: inherit
     with:
