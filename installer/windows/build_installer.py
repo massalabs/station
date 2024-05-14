@@ -6,7 +6,6 @@ This script generates a .msi file for the installation of MassaStation on Window
 
 import argparse
 import os
-import re
 import shutil
 import subprocess
 import sys
