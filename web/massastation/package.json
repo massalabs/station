@@ -15,8 +15,8 @@
     "prepare": "cd ../.. && husky install web/massastation/.husky"
   },
   "dependencies": {
-    "@massalabs/massa-web3": "^1.16.1",
-    "@massalabs/react-ui-kit": "^0.0.4-dev",
+    "@massalabs/massa-web3": "^4.0.2-dev",
+    "@massalabs/react-ui-kit": "^0.0.5-dev",
     "@tanstack/react-query": "^4.29.5",
     "axios": "^1.4.0",
     "dot-object": "^2.1.4",

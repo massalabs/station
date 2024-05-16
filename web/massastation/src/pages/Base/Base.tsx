@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useLocalStorage } from '@/custom/useLocalStorage';
 import { useConfigStore } from '@/store/store';
 
 import { Navigator, Theme, Toast } from '@massalabs/react-ui-kit';
+import { useLocalStorage } from '@massalabs/react-ui-kit/src/lib/util/hooks/useLocalStorage';
 import { FiCodepen, FiGlobe, FiHome, FiSun, FiMoon } from 'react-icons/fi';
 import { LayoutStation } from '@/layouts/LayoutStation/LayoutStation';
 
