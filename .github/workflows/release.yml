@@ -3,7 +3,7 @@ name: Release workflow
 on:
   workflow_dispatch:
     inputs:
-      release-version:
+      tag_name:
         description: "Version to produce"
         required: true
         type: string
@@ -24,11 +24,23 @@ on:
         default: true
 
 jobs:
+  validate-input:
+    name: if tag_name is provided it must not start with "v"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if tag_name starts with "v"
+        run: |
+          if [[ "${{ github.event.inputs.tag_name }}" == v* ]]; then
+            echo "tag_name starts with v"
+            exit 1
+          fi
+
   build-release:
+    needs: validate-input
     uses: ./.github/workflows/build.yml
     secrets: inherit
     with:
-      tag_name: ${{ github.event.inputs.release-version }}
+      tag_name: ${{ github.event.inputs.tag_name }}
 
   create-release:
     name: Release
@@ -40,7 +52,7 @@ jobs:
       - name: Create release and upload binaries
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ inputs.release-version }}
+          tag_name: v${{ inputs.tag_name }}
           draft: ${{ inputs.release-as-draft }}
           prerelease: ${{ inputs.release-as-prerelease }}
           generate_release_notes: ${{ inputs.generate-release-notes }}

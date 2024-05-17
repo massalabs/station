@@ -6,7 +6,6 @@ This script generates a .msi file for the installation of MassaStation on Window
 
 import argparse
 import os
-import re
 import shutil
 import subprocess
 import sys
@@ -74,7 +73,7 @@ def build_massastation():
         "go",
         "build", 
         "-ldflags",
-        f"-X github.com/massalabs/station/int/config.Version={VERSION}",
+        f"-X github.com/massalabs/station/int/config.Version=v{VERSION}",
         "-o",
         "massastation.exe",
         "../cmd/massastation/"
@@ -439,16 +438,12 @@ if __name__ == "__main__":
                 capture_output=True,
                 text=True,
             ).stdout.strip()
-            VERSION = re.sub(r"^v", "", VERSION)
         except subprocess.CalledProcessError as processErr:
             print("Error getting version: ", processErr)
             sys.exit(1)
         except Exception as gitErr:
             print("Error getting version: ", gitErr)
             sys.exit(1)
-    else:
-        # Remove the "v" from the version if it exists
-        VERSION = re.sub(r"^v", "", VERSION)
 
     if not sys.platform.startswith("win"):
         if not args.force_build:
