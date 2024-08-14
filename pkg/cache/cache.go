@@ -87,6 +87,10 @@ func (c *Cache) Delete(fileName string) error {
 
 	err = os.Remove(fullPath)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+
 		return fmt.Errorf("while deleting from cache: %w", err)
 	}
 
