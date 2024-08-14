@@ -77,3 +77,22 @@ func (c *Cache) Save(fileName string, content []byte) error {
 
 	return nil
 }
+
+// Delete removes a file from the cache.
+func (c *Cache) Delete(fileName string) error {
+	fullPath, err := fullPath(fileName, c.ConfigDir)
+	if err != nil {
+		return fmt.Errorf("while reading cached file %s: %w", fileName, err)
+	}
+
+	err = os.Remove(fullPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+
+		return fmt.Errorf("while deleting from cache: %w", err)
+	}
+
+	return nil
+}
