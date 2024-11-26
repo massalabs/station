@@ -45,7 +45,6 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 	}
 
 	err = wantedPlugin.SetInformation(urlPlugin)
-
 	if err != nil {
 		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
 			&models.Error{Code: errorCodePluginRegisterInvalidData, Message: fmt.Sprintf("parsing Plugin URL: %s", err.Error())},
@@ -57,7 +56,6 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 	// Add alias for http requests.
 
 	err = r.manager.SetAlias(alias, param.Body.ID)
-
 	if err != nil {
 		logger.Debugf("setting plugin alias: %s", err)
 

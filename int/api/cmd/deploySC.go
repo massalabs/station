@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"bytes"
+	"embed"
 	"encoding/base64"
 	"io"
 
@@ -13,6 +15,9 @@ import (
 	"github.com/massalabs/station/pkg/onchain"
 )
 
+//go:embed sc
+var content embed.FS
+
 func NewDeploySCHandler(config *config.NetworkInfos) operations.CmdDeploySCHandler {
 	return &deploySC{networkInfos: config}
 }
@@ -22,20 +27,13 @@ type deploySC struct {
 }
 
 func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Responder {
-	file, err := io.ReadAll(params.SmartContract)
-	if err != nil {
-		return operations.NewCmdDeploySCBadRequest().
-			WithPayload(
-				&models.Error{
-					Code:    err.Error(),
-					Message: err.Error(),
-				})
-	}
-	/* All the pointers below cannot be null as the swagger hydrate
-	each one with their default value defined in swagger.yml,
-	if no values are provided for these parameters.
-	*/
-	decodedDatastore, err := base64.StdEncoding.DecodeString(*params.Datastore)
+	// smart contract deployer bytes code
+	deployerByteCode, err := content.ReadFile("./sc/deployer.wasm")
+
+	// smart contract bytes code
+	_smartContractBytes, err := base64.StdEncoding.DecodeString(params.Body.SmartContract)
+	smartContractReader := bytes.NewReader(_smartContractBytes)
+	smartContractByteCode, err := io.ReadAll(smartContractReader)
 	if err != nil {
 		return operations.NewCmdDeploySCBadRequest().
 			WithPayload(
@@ -45,22 +43,32 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 				})
 	}
 
-	if len(decodedDatastore) == 0 {
-		decodedDatastore = nil
+	// smartr contract dataStore parameters
+	_parameters, err := base64.StdEncoding.DecodeString(params.Body.Parameters)
+	parametersReader := bytes.NewReader(_parameters)
+	parameters, err := io.ReadAll(parametersReader)
+	if err != nil {
+		return operations.NewCmdDeploySCBadRequest().
+			WithPayload(
+				&models.Error{
+					Code:    err.Error(),
+					Message: err.Error(),
+				})
 	}
 
 	operationResponse, events, err := onchain.DeploySC(
 		d.networkInfos,
-		params.WalletNickname,
-		*params.GasLimit,
-		*params.Coins,
-		*params.Fee,
-		*params.Expiry,
-		file,
-		decodedDatastore,
+		params.Body.Nickname,
+		sendoperation.MaxGasAllowedExecuteSC,
+		*params.Body.MaxCoins, // maxCoins
+		*params.Body.Coins,    // smart contract deployment cost
+		sendoperation.DefaultExpiryInSlot,
+		parameters,
+		smartContractByteCode,
+		deployerByteCode,
 		sendoperation.OperationBatch{NewBatch: false, CorrelationID: ""},
 		&signer.WalletPlugin{},
-		"",
+		"Deploying website",
 	)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().

@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/node/base58"
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
@@ -79,6 +80,7 @@ func Call(
 	}
 
 	content := createOperationContent(operationBatch, description, msgB64, chainID)
+	logger.Infof("Operation content: %s", content)
 
 	res, err := signer.Sign(nickname, []byte(content))
 	if err != nil {

@@ -1,6 +1,7 @@
 package onchain
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strings"
@@ -106,48 +107,56 @@ func CallFunctionSuccess(
 
 // DeploySC deploys a smart contract on the blockchain.
 // The smart contract is deployed with the given account nickname.
+
 func DeploySC(
 	networkInfos *config.NetworkInfos,
 	nickname string,
 	maxGas uint64,
 	maxCoins uint64,
-	fee uint64,
+	coins uint64,
 	expiry uint64,
-	contract []byte,
-	datastore []byte,
+	parameters []byte,
+	smartContractByteCode []byte,
+	deployerByteCode []byte,
 	operationBatch sendOperation.OperationBatch,
 	signer signer.Signer,
 	description string,
 ) (*sendOperation.OperationResponse, []node.Event, error) {
 	client := node.NewClient(networkInfos.NodeURL)
 
-	// Calibrate max_gas
-	if maxGas == 0 {
-		estimatedGasCost, err := sendOperation.EstimateGasCostExecuteSC(nickname, contract, datastore, maxCoins, fee, client)
-		if err != nil {
-			return nil, nil, fmt.Errorf("estimating Execute SC gas cost: %w", err)
-		}
-
-		maxGas = estimatedGasCost
+	// TODO implement populate datastore function
+	contracts := []DatastoreContract{
+		{
+			Data:  smartContractByteCode,
+			Args:  parameters,
+			Coins: coins,
+		},
 	}
 
+	dataStore, err := populateDatastore(contracts)
+	if err != nil {
+		return nil, nil, fmt.Errorf("populating datastore: %w", err)
+	}
+	marshaledDataStore, err := json.Marshal(dataStore)
+
 	exeSC := executesc.New(
-		contract,
+		deployerByteCode,
 		maxGas,
 		maxCoins,
-		datastore)
+		marshaledDataStore)
 
+	// probably add the SC deployer wasm here
 	operationResponse, err := sendOperation.Call(
 		client,
 		networkInfos.ChainID,
 		expiry,
-		fee,
+		coins,
 		exeSC,
 		nickname,
 		operationBatch,
 		signer,
 		"Deploying smart contract: "+description,
-	)
+	) // Number of smartContracts to deploy
 	if err != nil {
 		return nil, nil, fmt.Errorf("calling executeSC: %w", err)
 	}

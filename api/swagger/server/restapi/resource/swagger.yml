@@ -207,54 +207,50 @@ paths:
     post:
       description: Deploys the given smart contract to the blockchain network.
       operationId: cmdDeploySC
-      consumes:
-        - multipart/form-data
       parameters:
-        - in: formData
-          name: walletNickname
-          type: string
+        - in: body
+          name: body
           required: true
           x-nullable: false
-          description: Name of the wallet used to deploy the smart contract.
-        - in: formData
-          name: smartContract
-          type: file
-          required: true
-          x-nullable: false
-          description: Smart contract file in a Wasm format.
-        - in : formData
-          name : gasLimit
-          type : integer
-          format: uint64
-          minimum: 0
-          description: Maximum number of gas unit that a node will be able to consume.
-          default: 1000000000  # DefaultGasLimit
-        - in: formData
-          name : coins
-          type: integer
-          format: uint64
-          minimum: 0
-          description: Set the number of coins that will be sent along the deployment call.
-          default: 0
-        - in: formData
-          name : expiry
-          type : integer
-          format: uint64
-          minimum: 0
-          description: Set the expiry duration (in number of slots) of the transaction.
-          default: 2
-        - in: formData
-          name : fee
-          type : integer
-          minimum: 0
-          format: uint64
-          description: Set the fee amount (in nanoMassa) that will be given to the block creator.
-          default : 0
-        - in: formData
-          name: datastore
-          type: string
-          default: ""
-          description: b64 encoded datastore that will be sent along the smart contract.
+          schema:
+            type: object
+            required:
+              - nickname
+              - smartContract
+            properties:
+              nickname:
+                description: Account nickname used to sign the operation.
+                type: string
+                x-nullable: false
+              smartContract:  
+                description: Base64 encoded smart contract bytecode.
+                type: string
+                x-nullable: false
+              maxCoins:
+                description: Set the number of coins that will be sent along the deployment call.
+                type : integer
+                format: uint64
+                minimum: 0
+              coins:
+                description: Set the number of coins that will be sent along the deployment call.
+                type : integer
+                format: uint64
+                minimum: 0
+                default: 0
+              fee:
+                description: Set the fee amount (in nanoMassa) that will be given to the block creator.
+                type : integer
+                minimum: 0
+                format: uint64
+                default : 0
+              parameters:
+                description: Base64 encoded parameters that will be sent along the smart contract.
+                type: string
+                default: ""
+              datastore:
+                description: b64 encoded datastore that will be sent along the smart contract.
+                type: string
+                default: ""
       produces:
         - application/json
       responses:
