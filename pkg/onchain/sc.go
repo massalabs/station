@@ -126,23 +126,23 @@ func DeploySC(
 	client := node.NewClient(networkInfos.NodeURL)
 
 	// TODO implement populate datastore function
-	contracts := []DatastoreContract{
-		{
+	contract := DatastoreContract{
 			Data:  smartContractByteCode,
 			Args:  parameters,
 			Coins: coins,
-		},
 	}
 
-	dataStore, err := populateDatastore(contracts)
+	dataStore, err := populateDatastore(contract)
 	if err != nil {
 		return nil, nil, fmt.Errorf("populating datastore: %w", err)
 	}
 
-	logger.Infof("Datastore: %+v", dataStore)
+	// logger.Infof("Datastore: %+v", dataStore)
 
 
 	marshaledDataStore, err := json.Marshal(dataStore)
+
+	logger.Infof("Datastore: %s", marshaledDataStore)
 
 	exeSC := executesc.New(
 		deployerByteCode,

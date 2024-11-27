@@ -7,20 +7,31 @@ import (
 	"github.com/massalabs/station/pkg/convert"
 )
 
+/**
+------------------------------------------------------------------------------------------------------------------------
+TYPES
+------------------------------------------------------------------------------------------------------------------------
+*/
 type DatastoreContract struct {
 	Data  []byte
 	Args  []byte
 	Coins uint64
 }
 
-type JSONableSlice []byte
+type JSONableSliceMap []byte
+
 
 type DatastoreSCEntry struct {
-	Entry JSONableSlice `json:"entry"`
-	Bytes JSONableSlice `json:"bytes"`
+	Entry DatastoreData `json:"entry"`
+	Bytes DatastoreData `json:"bytes"`
 }
 
-func (u JSONableSlice) MarshalJSON() ([]byte, error) {
+type DatastoreData struct {
+	Entry JSONableSliceMap `json:"entry"`
+	Bytes JSONableSliceMap `json:"bytes"`
+}
+
+func (u JSONableSliceMap) MarshalJSON() ([]byte, error) {
 	var result string
 	if u == nil {
 		result = "null"
@@ -31,13 +42,37 @@ func (u JSONableSlice) MarshalJSON() ([]byte, error) {
 	return []byte(result), nil
 }
 
+/**
+------------------------------------------------------------------------------------------------------------------------
+UTILITY FUNCTIONS 
+------------------------------------------------------------------------------------------------------------------------
+*/
 
-func NewDeployScDatastoreEntry(entry []byte, bytes []byte) DatastoreSCEntry {
+/**
+* Used to create a new datastore entry object.
+*/
+func NewDeployScDatastoreData(entry []byte, bytes []byte) DatastoreData {
+	return DatastoreData{
+		Entry: entry,
+		Bytes: bytes,
+	}
+}
+
+/**
+use to create a map of each datastore entry
+*/
+func NewDeployScDatastoreEntry(entry DatastoreData, bytes DatastoreData) DatastoreSCEntry {
 	return DatastoreSCEntry{
 		Entry: entry,
 		Bytes: bytes,
 	}
 }
+
+/**
+------------------------------------------------------------------------------------------------------------------------
+KEY GENERATION FUNCTIONS
+------------------------------------------------------------------------------------------------------------------------
+*/
 
 /**
  * Generates a key for coin data in the datastore.
@@ -46,10 +81,7 @@ func NewDeployScDatastoreEntry(entry []byte, bytes []byte) DatastoreSCEntry {
  * @returns A Uint8Array representing the key.
  */
 func coinsKey(offset int) []byte {
-	byteArray := []byte{}
-	byteArray = append(byteArray, convert.U64ToBytes(offset+1)...)
-	byteArray = append(byteArray, []byte{1}...)
-	return byteArray
+	return convert.U64ToBytes(offset+1)
 }
 
 /**
@@ -59,10 +91,7 @@ func coinsKey(offset int) []byte {
  * @returns A Uint8Array representing the key.
  */
 func argsKey(offset int) []byte {
-	byteArray := []byte{}
-	byteArray = append(byteArray, convert.U64ToBytes(offset+1)...)
-	byteArray = append(byteArray, []byte{0}...)
-	return byteArray
+	return convert.U64ToBytes(offset+1)
 }
 
 /**
@@ -72,11 +101,30 @@ func argsKey(offset int) []byte {
  * @returns A Uint8Array representing the key.
  */
 func contractKey(offset int) []byte {
-	byteArray := []byte{}
-	return append(byteArray, convert.U64ToBytes(offset+1)...)
+	return convert.U64ToBytes(offset+1)
 }
 
-// TODO implement correct datastore structure
+
+/**
+------------------------------------------------------------------------------------------------------------------------
+POPULATE DATASTORE FUNCTION
+------------------------------------------------------------------------------------------------------------------------
+
+--- Datastore Format ---
+	[[key],[value]] 
+
+	=== 
+
+	[
+		[
+			[KEY_BYTE_ARRAY_LENGTH], [KEY_BYTE_ARRAY_DATA]]
+		], 
+		[
+			[VALUE_BYTE_ARRAY_LENGTH], [VALUE_BYTE_ARRAY_DATA]
+		]
+	]
+
+*/
 
 /**
  * Populates the datastore with the contracts.
@@ -90,41 +138,70 @@ func contractKey(offset int) []byte {
  *
  * @returns The populated datastore.
  */
-func populateDatastore(contracts []DatastoreContract) ([]DatastoreSCEntry, error) {
-	if len(contracts) == 0 {
-		return nil, fmt.Errorf("contracts slice is empty with a length of: %v", len(contracts))
-	}
+func populateDatastore(contract DatastoreContract) ([]DatastoreSCEntry, error) {
+	//TODO bug -> four empty datastore entries
+
+	// IMPORTANT we assume ATM that there is only one contract to deploy
 
 	// number of entries in the datastore: number of contracts, and the contract data, args, and coins
-	datastore := make([]DatastoreSCEntry, 4)
+	datastore := []DatastoreSCEntry{} 
 	
-	contractsNumberKey := []byte{0}
-	/**
-	// data store entry
-	[[key],[value]] 
+	// contractsNumberKey := []byte{0}
+	contractlength := convert.U64ToBytes(1) // assuming there is one contract to deploy
 
-	=== 
+	//number of contracts to deploy
+	numberOfContracts  := NewDeployScDatastoreEntry(
+		NewDeployScDatastoreData(
+			convert.U64ToBytes(len(convert.U64ToBytes(1))),  // length of the key
+			convert.U64ToBytes(1)), // value in bytes
+		NewDeployScDatastoreData(
+			convert.U64ToBytes(len(contractlength)), 
+			convert.U64ToBytes(1),
+		))
 
-	[
-		[
-			[KEY_BYTE_ARRAY_LENGTH], [KEY_BYTE_ARRAY_DATA]]
-		], 
-		[
-			[VALUE_BYTE_ARRAY_LENGTH], [VALUE_BYTE_ARRAY_DATA]
-		]
-	]
-	*/
+	_dataStore := append(datastore, numberOfContracts)	
 
-	// length of the byte array | byte array data 
-	// length of the byte array | byte array data 
-	datastore[0] = NewDeployScDatastoreEntry(convert.U64ToBytes(len(contractsNumberKey)), contractsNumberKey)
+	//byteCode of the smartContract to be appended to the deployer 
+	contractData := NewDeployScDatastoreEntry(
+			NewDeployScDatastoreData(
+				convert.U64ToBytes(len(contractKey(0))),
+				contractKey(0),
+			),
+			NewDeployScDatastoreData(
+				convert.U64ToBytes(len(contract.Data)),
+				contract.Data,
+			),
+		)
 
-	for i, contract := range contracts {
-		datastore[1] = NewDeployScDatastoreEntry(contractKey(i), contract.Data)
-		datastore[2] = NewDeployScDatastoreEntry(argsKey(i), contract.Args)
-		datastore[3] = NewDeployScDatastoreEntry(coinsKey(i), convert.U64ToBytes(int(contract.Coins)))
-	}
+	_dataStore = append(_dataStore, contractData)
 
-	return datastore, nil
+
+	contractArgs := NewDeployScDatastoreEntry(
+			NewDeployScDatastoreData(
+				convert.U64ToBytes(len(argsKey(0))),
+				argsKey(0),
+			),
+			NewDeployScDatastoreData(
+				convert.U64ToBytes(len(contract.Args)),
+				contract.Args,
+			),
+		)
+
+	_dataStore = append(_dataStore, contractArgs)
+
+	contractCoins := NewDeployScDatastoreEntry(
+			NewDeployScDatastoreData(
+				convert.U64ToBytes(len(coinsKey(0))),
+				coinsKey(0),
+			),
+			NewDeployScDatastoreData(
+				convert.U64ToBytes(len(convert.U64ToBytes(int(contract.Coins)))),
+				convert.U64ToBytes(int(contract.Coins)),
+			),
+		)
+
+	_dataStore = append(_dataStore, contractCoins)
+
+	return _dataStore, nil
 }
 
