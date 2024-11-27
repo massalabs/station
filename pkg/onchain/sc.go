@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/massalabs/station/int/config"
+	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
 	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
 	"github.com/massalabs/station/pkg/node/sendoperation/callsc"
@@ -137,6 +138,10 @@ func DeploySC(
 	if err != nil {
 		return nil, nil, fmt.Errorf("populating datastore: %w", err)
 	}
+
+	logger.Infof("Datastore: %+v", dataStore)
+
+
 	marshaledDataStore, err := json.Marshal(dataStore)
 
 	exeSC := executesc.New(
@@ -145,7 +150,7 @@ func DeploySC(
 		maxCoins,
 		marshaledDataStore)
 
-	// probably add the SC deployer wasm here
+
 	operationResponse, err := sendOperation.Call(
 		client,
 		networkInfos.ChainID,
@@ -156,7 +161,7 @@ func DeploySC(
 		operationBatch,
 		signer,
 		"Deploying smart contract: "+description,
-	) // Number of smartContracts to deploy
+	) 
 	if err != nil {
 		return nil, nil, fmt.Errorf("calling executeSC: %w", err)
 	}

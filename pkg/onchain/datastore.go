@@ -2,6 +2,7 @@ package onchain
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/massalabs/station/pkg/convert"
 )
@@ -12,7 +13,31 @@ type DatastoreContract struct {
 	Coins uint64
 }
 
-// smartContractNumberKey := []bytes(0)
+type JSONableSlice []byte
+
+type DatastoreSCEntry struct {
+	Entry JSONableSlice `json:"entry"`
+	Bytes JSONableSlice `json:"bytes"`
+}
+
+func (u JSONableSlice) MarshalJSON() ([]byte, error) {
+	var result string
+	if u == nil {
+		result = "null"
+	} else {
+		result = strings.Join(strings.Fields(fmt.Sprintf("%d", u)), ",")
+	}
+
+	return []byte(result), nil
+}
+
+
+func NewDeployScDatastoreEntry(entry []byte, bytes []byte) DatastoreSCEntry {
+	return DatastoreSCEntry{
+		Entry: entry,
+		Bytes: bytes,
+	}
+}
 
 /**
  * Generates a key for coin data in the datastore.
@@ -51,6 +76,8 @@ func contractKey(offset int) []byte {
 	return append(byteArray, convert.U64ToBytes(offset+1)...)
 }
 
+// TODO implement correct datastore structure
+
 /**
  * Populates the datastore with the contracts.
  *
@@ -63,23 +90,41 @@ func contractKey(offset int) []byte {
  *
  * @returns The populated datastore.
  */
-
-func populateDatastore(contracts []DatastoreContract) (map[string][]byte, error) {
+func populateDatastore(contracts []DatastoreContract) ([]DatastoreSCEntry, error) {
 	if len(contracts) == 0 {
 		return nil, fmt.Errorf("contracts slice is empty with a length of: %v", len(contracts))
 	}
 
-	datastore := make(map[string][]byte)
-	contractNumberKey := []byte{0}
+	// number of entries in the datastore: number of contracts, and the contract data, args, and coins
+	datastore := make([]DatastoreSCEntry, 4)
+	
+	contractsNumberKey := []byte{0}
+	/**
+	// data store entry
+	[[key],[value]] 
 
-	// Set the number of contracts in the first key of the datastore
-	datastore[string(convert.ToString(contractNumberKey))] = convert.U64ToBytes(len(contracts))
-	// TODO something is bugged here
+	=== 
+
+	[
+		[
+			[KEY_BYTE_ARRAY_LENGTH], [KEY_BYTE_ARRAY_DATA]]
+		], 
+		[
+			[VALUE_BYTE_ARRAY_LENGTH], [VALUE_BYTE_ARRAY_DATA]
+		]
+	]
+	*/
+
+	// length of the byte array | byte array data 
+	// length of the byte array | byte array data 
+	datastore[0] = NewDeployScDatastoreEntry(convert.U64ToBytes(len(contractsNumberKey)), contractsNumberKey)
+
 	for i, contract := range contracts {
-		datastore[convert.ToString(contractKey(i))] = contract.Data
-		datastore[convert.ToString(argsKey(i))] = contract.Args
-		datastore[convert.ToString(coinsKey(i))] = convert.U64ToBytes(int(contract.Coins))
+		datastore[1] = NewDeployScDatastoreEntry(contractKey(i), contract.Data)
+		datastore[2] = NewDeployScDatastoreEntry(argsKey(i), contract.Args)
+		datastore[3] = NewDeployScDatastoreEntry(coinsKey(i), convert.U64ToBytes(int(contract.Coins)))
 	}
 
 	return datastore, nil
 }
+
