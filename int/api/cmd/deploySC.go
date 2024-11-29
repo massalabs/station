@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"bytes"
-	"embed"
+	_ "embed"
 	"encoding/base64"
 	"io"
 
@@ -15,8 +15,8 @@ import (
 	"github.com/massalabs/station/pkg/onchain"
 )
 
-//go:embed sc
-var content embed.FS
+//go:embed sc/deployer.wasm
+var deployerSCByteCode []byte
 
 func NewDeploySCHandler(config *config.NetworkInfos) operations.CmdDeploySCHandler {
 	return &deploySC{networkInfos: config}
@@ -28,7 +28,7 @@ type deploySC struct {
 
 func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Responder {
 	// smart contract deployer bytes code
-	deployerByteCode, err := content.ReadFile("./sc/deployer.wasm")
+	
 
 	// smart contract bytes code
 	_smartContractBytes, err := base64.StdEncoding.DecodeString(params.Body.SmartContract)
@@ -51,7 +51,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		sendoperation.DefaultExpiryInSlot,
 		[]byte{}, // TODO add smart contract parameters
 		smartContractByteCode,
-		deployerByteCode,
+		deployerSCByteCode,
 		sendoperation.OperationBatch{NewBatch: false, CorrelationID: ""},
 		&signer.WalletPlugin{},
 		"Deploying website",

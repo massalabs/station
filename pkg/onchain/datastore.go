@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 
 	"github.com/massalabs/station/pkg/convert"
+	"github.com/massalabs/station/pkg/logger"
 )
 
 type DatastoreContract struct {
@@ -21,8 +22,9 @@ type datastoreEntry struct {
 // populateDatastore creates and serializes a datastore for the given contract.
 func populateDatastore(contract DatastoreContract) ([]byte, error) {
 	var datastore []datastoreEntry
-	numberOfContracts := convert.U64ToBytes(1)
-	datastore = append(datastore, datastoreEntry{Key: []byte{0}, Value: numberOfContracts})
+	numberOfContracts := convert.U64ToBytes(0) // 0 is the first contract in list
+	numberOfContractsKey := []byte{0}
+	datastore = append(datastore, datastoreEntry{Key: numberOfContractsKey, Value: numberOfContracts})
 
 	contractKey := []byte{1}
 	datastore = append(datastore, datastoreEntry{Key: contractKey, Value: contract.Data})
@@ -63,7 +65,9 @@ func SerializeDatastore(datastore []datastoreEntry) ([]byte, error) {
 
 		// Encode value
 		valueLength := uint64(len(entry.Value))
+		// logger.Infof("valueLength: %v", valueLength)
 		uValueLength := binary.PutUvarint(buf, valueLength)
+		logger.Infof("uValueLength: %v", uValueLength)
 		buffer.Write(buf[:uValueLength])
 		buffer.Write(entry.Value)
 	}

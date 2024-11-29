@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/massalabs/station/int/config"
+	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
 	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
 	"github.com/massalabs/station/pkg/node/sendoperation/callsc"
@@ -123,7 +124,7 @@ func DeploySC(
 ) (*sendOperation.OperationResponse, []node.Event, error) {
 	client := node.NewClient(networkInfos.NodeURL)
 
-	// TODO implement populate datastore function
+	logger.Infof("smartContractBytecode length %v", len(smartContractByteCode))
 	contract := DatastoreContract{
 			Data:  smartContractByteCode,
 			Args:  parameters,
