@@ -121,9 +121,9 @@ func DeploySC(
 	client := node.NewClient(networkInfos.NodeURL)
 
 	contract := DatastoreContract{
-			Data:  smartContractByteCode,
-			Args:  parameters,
-			Coins: fees,
+		Data:  smartContractByteCode,
+		Args:  parameters,
+		Coins: fees,
 	}
 
 	dataStore, err := populateDatastore(contract)
@@ -131,13 +131,12 @@ func DeploySC(
 		return nil, nil, fmt.Errorf("populating datastore: %w", err)
 	}
 
-
 	exeSCOperation := executesc.New(
 		deployerByteCode,
 		maxGas,
 		maxCoins,
 		dataStore)
- 		
+
 	operationResponse, err := sendOperation.Call(
 		client,
 		networkInfos.ChainID,
@@ -147,7 +146,7 @@ func DeploySC(
 		nickname,
 		signer,
 		"Deploying smart contract: "+description,
-	) 
+	)
 	if err != nil {
 		return nil, nil, fmt.Errorf("calling executeSC: %w", err)
 	}

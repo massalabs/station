@@ -52,7 +52,7 @@ func SerializeDatastore(datastore []datastoreEntry) ([]byte, error) {
 	// Encode the number of key-value pairs
 	datastoreSize := uint64(len(datastore))
 	uDatastoreSize := binary.PutUvarint(buf, datastoreSize)
-	
+
 	buffer.Write(buf[:uDatastoreSize])
 
 	// Encode each key-value pair

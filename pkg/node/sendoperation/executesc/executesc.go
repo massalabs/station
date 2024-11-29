@@ -60,7 +60,6 @@ func (e *ExecuteSC) Content() (interface{}, error) {
 	}, nil
 }
 
-
 func (e *ExecuteSC) Message() []byte {
 	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
@@ -81,9 +80,7 @@ func (e *ExecuteSC) Message() []byte {
 	msg = append(msg, buf[:nbBytes]...)
 	msg = append(msg, e.data...)
 
-
 	msg = append(msg, e.dataStore...)
-
 
 	return msg
 }

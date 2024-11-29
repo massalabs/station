@@ -42,7 +42,6 @@ type OperationResponse struct {
 	CorrelationID string
 }
 
-
 type JSONableSlice []uint8
 
 func (u JSONableSlice) MarshalJSON() ([]byte, error) {
@@ -73,7 +72,7 @@ func Call(
 		return nil, err
 	}
 
-	content := createOperationContent( description, msgB64, chainID)
+	content := createOperationContent(description, msgB64, chainID)
 
 	res, err := signer.Sign(nickname, []byte(content))
 	if err != nil {
@@ -107,7 +106,6 @@ func createOperationContent(description string, msgB64 string, chainID uint64) s
 
 	content = descriptionLabel + description + `",
 		"operation": "` + msgB64 + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
-
 
 	return content
 }
