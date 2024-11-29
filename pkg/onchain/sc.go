@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/massalabs/station/int/config"
-	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
 	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
 	"github.com/massalabs/station/pkg/node/sendoperation/callsc"
@@ -33,7 +32,6 @@ func CallFunction(
 	coins uint64,
 	expiryDelta uint64,
 	async bool,
-	operationBatch sendOperation.OperationBatch,
 	signer signer.Signer,
 	description string,
 ) (*OperationWithEventResponse, error) {
@@ -64,7 +62,6 @@ func CallFunction(
 		fee,
 		callSC,
 		nickname,
-		operationBatch,
 		signer,
 		description,
 	)
@@ -118,13 +115,11 @@ func DeploySC(
 	parameters []byte,
 	smartContractByteCode []byte,
 	deployerByteCode []byte,
-	operationBatch sendOperation.OperationBatch,
 	signer signer.Signer,
 	description string,
 ) (*sendOperation.OperationResponse, []node.Event, error) {
 	client := node.NewClient(networkInfos.NodeURL)
 
-	logger.Infof("smartContractBytecode length %v", len(smartContractByteCode))
 	contract := DatastoreContract{
 			Data:  smartContractByteCode,
 			Args:  parameters,
@@ -150,7 +145,6 @@ func DeploySC(
 		fees,
 		exeSCOperation,
 		nickname,
-		operationBatch,
 		signer,
 		"Deploying smart contract: "+description,
 	) 

@@ -42,10 +42,6 @@ type OperationResponse struct {
 	CorrelationID string
 }
 
-type OperationBatch struct {
-	NewBatch      bool
-	CorrelationID string
-}
 
 type JSONableSlice []uint8
 
@@ -69,7 +65,6 @@ func Call(
 	fee uint64,
 	operation Operation,
 	nickname string,
-	operationBatch OperationBatch,
 	signer signer.Signer,
 	description string,
 ) (*OperationResponse, error) {
@@ -78,7 +73,7 @@ func Call(
 		return nil, err
 	}
 
-	content := createOperationContent(operationBatch, description, msgB64, chainID)
+	content := createOperationContent( description, msgB64, chainID)
 
 	res, err := signer.Sign(nickname, []byte(content))
 	if err != nil {
@@ -105,22 +100,14 @@ func Call(
 	return &OperationResponse{CorrelationID: res.CorrelationID, OperationID: resp[0]}, nil
 }
 
-func createOperationContent(operationBatch OperationBatch, description string, msgB64 string, chainID uint64) string {
+func createOperationContent(description string, msgB64 string, chainID uint64) string {
 	var content string
 
 	const descriptionLabel = `{"description": "`
 
-	switch {
-	case operationBatch.NewBatch:
-		content = descriptionLabel + description + `", "operation": "` + msgB64 + `",
-			"batch": true, "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
-	case operationBatch.CorrelationID != "":
-		content = descriptionLabel + description + `", "operation": "` + msgB64 + `",
-			"correlationId": "` + operationBatch.CorrelationID + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
-	default:
-		content = descriptionLabel + description + `",
-			"operation": "` + msgB64 + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
-	}
+	content = descriptionLabel + description + `",
+		"operation": "` + msgB64 + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
+
 
 	return content
 }

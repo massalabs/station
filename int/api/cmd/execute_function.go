@@ -76,7 +76,6 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 		uint64(params.Body.Coins),
 		expiry,
 		asyncReq,
-		sendOperation.OperationBatch{NewBatch: false, CorrelationID: ""},
 		&signer.WalletPlugin{},
 		params.Body.Description,
 	)

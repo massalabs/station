@@ -27,10 +27,7 @@ type deploySC struct {
 }
 
 func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Responder {
-	// smart contract deployer bytes code
-	
 
-	// smart contract bytes code
 	_smartContractBytes, err := base64.StdEncoding.DecodeString(params.Body.SmartContract)
 	smartContractReader := bytes.NewReader(_smartContractBytes)
 	smartContractByteCode, err := io.ReadAll(smartContractReader)
@@ -42,6 +39,19 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 					Message: err.Error(),
 				})
 	}
+
+	_parameters, err := base64.StdEncoding.DecodeString(params.Body.Parameters)
+	parameterReader := bytes.NewReader(_parameters)
+	parameters, err := io.ReadAll(parameterReader)
+	if err != nil {
+		return operations.NewCmdDeploySCBadRequest().
+			WithPayload(
+				&models.Error{
+					Code:    err.Error(),
+					Message: err.Error(),
+				})
+	}
+	
 	operationResponse, events, err := onchain.DeploySC(
 		d.networkInfos,
 		params.Body.Nickname,
@@ -49,10 +59,9 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		*params.Body.MaxCoins, // maxCoins
 		*params.Body.Coins,    // smart contract deployment cost
 		sendoperation.DefaultExpiryInSlot,
-		[]byte{}, // TODO add smart contract parameters
+		parameters, 
 		smartContractByteCode,
 		deployerSCByteCode,
-		sendoperation.OperationBatch{NewBatch: false, CorrelationID: ""},
 		&signer.WalletPlugin{},
 		"Deploying website",
 	)
