@@ -13,7 +13,7 @@ const (
 )
 
 // Encode uint64 to byte array.
-func U64ToBytes(nb int) (bytes []byte) {
+func U64ToBytes(nb uint64) (bytes []byte) {
 	u64 := uint64(nb)
 	bytes = make([]byte, BytesPerUint64)
 	binary.LittleEndian.PutUint64(bytes, u64)

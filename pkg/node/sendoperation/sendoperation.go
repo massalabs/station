@@ -79,7 +79,6 @@ func Call(
 	}
 
 	content := createOperationContent(operationBatch, description, msgB64, chainID)
-	// logger.Infof("Operation content: %s", content)
 
 	res, err := signer.Sign(nickname, []byte(content))
 	if err != nil {

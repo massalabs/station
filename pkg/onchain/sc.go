@@ -1,13 +1,11 @@
 package onchain
 
 import (
-	"encoding/json"
 	"fmt"
 	"regexp"
 	"strings"
 
 	"github.com/massalabs/station/int/config"
-	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
 	sendOperation "github.com/massalabs/station/pkg/node/sendoperation"
 	"github.com/massalabs/station/pkg/node/sendoperation/callsc"
@@ -114,7 +112,7 @@ func DeploySC(
 	nickname string,
 	maxGas uint64,
 	maxCoins uint64,
-	coins uint64,
+	fees uint64,
 	expiry uint64,
 	parameters []byte,
 	smartContractByteCode []byte,
@@ -129,7 +127,7 @@ func DeploySC(
 	contract := DatastoreContract{
 			Data:  smartContractByteCode,
 			Args:  parameters,
-			Coins: coins,
+			Coins: fees,
 	}
 
 	dataStore, err := populateDatastore(contract)
@@ -137,26 +135,19 @@ func DeploySC(
 		return nil, nil, fmt.Errorf("populating datastore: %w", err)
 	}
 
-	// logger.Infof("Datastore: %+v", dataStore)
 
-
-	marshaledDataStore, err := json.Marshal(dataStore)
-
-	logger.Infof("Datastore: %s", marshaledDataStore)
-
-	exeSC := executesc.New(
+	exeSCOperation := executesc.New(
 		deployerByteCode,
 		maxGas,
 		maxCoins,
-		marshaledDataStore)
-
-
+		dataStore)
+ 		
 	operationResponse, err := sendOperation.Call(
 		client,
 		networkInfos.ChainID,
 		expiry,
-		coins,
-		exeSC,
+		fees,
+		exeSCOperation,
 		nickname,
 		operationBatch,
 		signer,

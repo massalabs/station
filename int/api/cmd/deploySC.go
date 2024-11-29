@@ -42,20 +42,6 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 					Message: err.Error(),
 				})
 	}
-
-	// smartr contract dataStore parameters
-	_parameters, err := base64.StdEncoding.DecodeString(params.Body.Parameters)
-	parametersReader := bytes.NewReader(_parameters)
-	parameters, err := io.ReadAll(parametersReader)
-	if err != nil {
-		return operations.NewCmdDeploySCBadRequest().
-			WithPayload(
-				&models.Error{
-					Code:    err.Error(),
-					Message: err.Error(),
-				})
-	}
-
 	operationResponse, events, err := onchain.DeploySC(
 		d.networkInfos,
 		params.Body.Nickname,
@@ -63,7 +49,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		*params.Body.MaxCoins, // maxCoins
 		*params.Body.Coins,    // smart contract deployment cost
 		sendoperation.DefaultExpiryInSlot,
-		parameters,
+		[]byte{}, // TODO add smart contract parameters
 		smartContractByteCode,
 		deployerByteCode,
 		sendoperation.OperationBatch{NewBatch: false, CorrelationID: ""},
