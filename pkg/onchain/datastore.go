@@ -18,40 +18,6 @@ type datastoreEntry struct {
 	Value []byte
 }
 
-func argsKey(offset int) ([]byte, error) {
-	// Create a buffer to serialize data
-	var buf bytes.Buffer
-
-	// Add U64 (64-bit unsigned integer)
-	err := binary.Write(&buf, binary.LittleEndian, uint64(offset+1))
-	if err != nil {
-		return nil, err
-	}
-
-	// Add Uint8Array equivalent (assuming a single byte array with a 0 value)
-	buf.Write([]byte{0})
-
-	// Return the serialized data
-	return buf.Bytes(), nil
-}
-
-func coinsKey(offset int) ([]byte, error) {
-	// Create a buffer to serialize data
-	var buf bytes.Buffer
-
-	// Add U64 (64-bit unsigned integer)
-	err := binary.Write(&buf, binary.LittleEndian, uint64(offset+1))
-	if err != nil {
-		return nil, err
-	}
-
-	// Add Uint8Array equivalent (assuming a single byte array with a 0 value)
-	buf.Write([]byte{1})
-
-	// Return the serialized data
-	return buf.Bytes(), nil
-}
-
 func argsValue(args []byte) []byte {
 	
 	if len(args) == 0 {
@@ -76,18 +42,12 @@ func populateDatastore(contract DatastoreContract) ([]byte, error) {
 	contractKey := convert.U64ToBytes(1) 
 	datastore = append(datastore, datastoreEntry{Key: contractKey, Value: contract.Data})
 
-	// args data
-	argsKey,err:= argsKey(1)  // TODO verify this key values
-	if err != nil {
-		return nil, err
-	}
+	// args data 
+	argsKey := []byte{1,0,0,0,0,0,0,0,1,0,0,0,0} // hardcoding as implementation in go of a dynamic key is necessary on if we choose to support multiple SC uploads
 	datastore = append(datastore, datastoreEntry{Key: argsKey, Value: contract.Args})
 
 	// coins data
-	coinsKey,err := coinsKey(1)// TODO verify this key values
-	if err != nil {
-		return nil, err
-	}
+	coinsKey := []byte{1,0,0,0,0,0,0,0,1,0,0,0,1} // hardcoding as implementation in go of a dynamic key is necessary on if we choose to support multiple SC uploads
 	datastore = append(datastore, datastoreEntry{Key: coinsKey, Value: convert.U64ToBytes(contract.Coins)})
 
 	// Serialize the datastore
