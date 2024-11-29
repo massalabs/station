@@ -39,7 +39,7 @@ func I32ToBytes(nb int) (bytes []byte) {
 	return
 }
 
-func ToBytes(str string) []byte {
+func StrToBytes(str string) []byte {
 	return []byte(str)
 }
 

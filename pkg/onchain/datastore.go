@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 
 	"github.com/massalabs/station/pkg/convert"
-	"github.com/massalabs/station/pkg/logger"
 )
 
 type DatastoreContract struct {
@@ -19,20 +18,76 @@ type datastoreEntry struct {
 	Value []byte
 }
 
-// populateDatastore creates and serializes a datastore for the given contract.
+func argsKey(offset int) ([]byte, error) {
+	// Create a buffer to serialize data
+	var buf bytes.Buffer
+
+	// Add U64 (64-bit unsigned integer)
+	err := binary.Write(&buf, binary.LittleEndian, uint64(offset+1))
+	if err != nil {
+		return nil, err
+	}
+
+	// Add Uint8Array equivalent (assuming a single byte array with a 0 value)
+	buf.Write([]byte{0})
+
+	// Return the serialized data
+	return buf.Bytes(), nil
+}
+
+func coinsKey(offset int) ([]byte, error) {
+	// Create a buffer to serialize data
+	var buf bytes.Buffer
+
+	// Add U64 (64-bit unsigned integer)
+	err := binary.Write(&buf, binary.LittleEndian, uint64(offset+1))
+	if err != nil {
+		return nil, err
+	}
+
+	// Add Uint8Array equivalent (assuming a single byte array with a 0 value)
+	buf.Write([]byte{1})
+
+	// Return the serialized data
+	return buf.Bytes(), nil
+}
+
+func argsValue(args []byte) []byte {
+	
+	if len(args) == 0 {
+		return convert.StrToBytes("")
+	}
+
+	return args
+}
+
+/** 
+populateDatastore creates and serializes a datastore for the given contract.
+*/
 func populateDatastore(contract DatastoreContract) ([]byte, error) {
 	var datastore []datastoreEntry
-	numberOfContracts := convert.U64ToBytes(0) // 0 is the first contract in list
+
+	// nomber of contracts to deploy
 	numberOfContractsKey := []byte{0}
+	numberOfContracts := convert.U64ToBytes(1) 
 	datastore = append(datastore, datastoreEntry{Key: numberOfContractsKey, Value: numberOfContracts})
 
-	contractKey := []byte{1}
+	// contract data
+	contractKey := convert.U64ToBytes(1) 
 	datastore = append(datastore, datastoreEntry{Key: contractKey, Value: contract.Data})
 
-	argsKey := []byte{2}
+	// args data
+	argsKey,err:= argsKey(1)  // TODO verify this key values
+	if err != nil {
+		return nil, err
+	}
 	datastore = append(datastore, datastoreEntry{Key: argsKey, Value: contract.Args})
 
-	coinsKey := []byte{3}
+	// coins data
+	coinsKey,err := coinsKey(1)// TODO verify this key values
+	if err != nil {
+		return nil, err
+	}
 	datastore = append(datastore, datastoreEntry{Key: coinsKey, Value: convert.U64ToBytes(contract.Coins)})
 
 	// Serialize the datastore
@@ -60,15 +115,15 @@ func SerializeDatastore(datastore []datastoreEntry) ([]byte, error) {
 		// Encode key
 		keyLength := uint64(len(entry.Key))
 		uKeyLength := binary.PutUvarint(buf, keyLength)
-		buffer.Write(buf[:uKeyLength])
+		keyLengthInBytes := buf[:uKeyLength]
+		buffer.Write(keyLengthInBytes)
 		buffer.Write(entry.Key)
 
 		// Encode value
 		valueLength := uint64(len(entry.Value))
-		// logger.Infof("valueLength: %v", valueLength)
 		uValueLength := binary.PutUvarint(buf, valueLength)
-		logger.Infof("uValueLength: %v", uValueLength)
-		buffer.Write(buf[:uValueLength])
+		valueLengthInBytes := buf[:uValueLength]
+		buffer.Write(valueLengthInBytes)
 		buffer.Write(entry.Value)
 	}
 
