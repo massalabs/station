@@ -62,7 +62,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		smartContractByteCode,
 		deployerSCByteCode,
 		&signer.WalletPlugin{},
-		"Deploying website",
+		"Deploying contract "+params.Body.Description,
 	)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().

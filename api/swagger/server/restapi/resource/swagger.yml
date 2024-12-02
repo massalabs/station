@@ -247,8 +247,8 @@ paths:
                 description: Base64 encoded parameters that will be sent along the smart contract.
                 type: string
                 default: ""
-              datastore:
-                description: b64 encoded datastore that will be sent along the smart contract.
+              description:
+                description: "Description of the operation"
                 type: string
                 default: ""
       produces:

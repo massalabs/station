@@ -7,7 +7,7 @@ import (
 	"github.com/massalabs/station/pkg/convert"
 )
 
-type DatastoreContract struct {
+type ContractDatastore struct {
 	Data  []byte
 	Args  []byte
 	Coins uint64
@@ -18,22 +18,16 @@ type datastoreEntry struct {
 	Value []byte
 }
 
-func argsValue(args []byte) []byte {
-	if len(args) == 0 {
-		return convert.StrToBytes("")
-	}
-
-	return args
-}
 
 /*
 *
 populateDatastore creates and serializes a datastore for the given contract.
+
 */
-func populateDatastore(contract DatastoreContract) ([]byte, error) {
+func populateDatastore(contract ContractDatastore) ([]byte, error) {
 	var datastore []datastoreEntry
 
-	// nomber of contracts to deploy
+	// nmber of contracts to deploy
 	numberOfContractsKey := []byte{0}
 	numberOfContracts := convert.U64ToBytes(1)
 	datastore = append(datastore, datastoreEntry{Key: numberOfContractsKey, Value: numberOfContracts})
@@ -43,11 +37,11 @@ func populateDatastore(contract DatastoreContract) ([]byte, error) {
 	datastore = append(datastore, datastoreEntry{Key: contractKey, Value: contract.Data})
 
 	// args data
-	argsKey := []byte{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0} // hardcoding as implementation in go of a dynamic key is necessary on if we choose to support multiple SC uploads
+	argsKey := []byte{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0} // hardcoded for now, could be dynamix see: https://github.com/massalabs/massa-web3/blob/main/src/dataStore.ts
 	datastore = append(datastore, datastoreEntry{Key: argsKey, Value: contract.Args})
 
 	// coins data
-	coinsKey := []byte{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1} // hardcoding as implementation in go of a dynamic key is necessary on if we choose to support multiple SC uploads
+	coinsKey := []byte{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1} // 12/02/2024 single contract deployement is supported. Multiple not planned. see https://github.com/massalabs/station/issues/1364 
 	datastore = append(datastore, datastoreEntry{Key: coinsKey, Value: convert.U64ToBytes(contract.Coins)})
 
 	// Serialize the datastore

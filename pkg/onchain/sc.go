@@ -120,7 +120,7 @@ func DeploySC(
 ) (*sendOperation.OperationResponse, []node.Event, error) {
 	client := node.NewClient(networkInfos.NodeURL)
 
-	contract := DatastoreContract{
+	contract := ContractDatastore{
 		Data:  smartContractByteCode,
 		Args:  parameters,
 		Coins: fees,
@@ -145,7 +145,7 @@ func DeploySC(
 		exeSCOperation,
 		nickname,
 		signer,
-		"Deploying smart contract: "+description,
+		description,
 	)
 	if err != nil {
 		return nil, nil, fmt.Errorf("calling executeSC: %w", err)

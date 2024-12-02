@@ -5,10 +5,14 @@ import (
 	"context"
 	b64 "encoding/base64"
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 
+	"github.com/massalabs/station/pkg/convert"
+	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/node/base58"
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
@@ -73,6 +77,7 @@ func Call(
 	}
 
 	content := createOperationContent(description, msgB64, chainID)
+	logger.Infof("json content: %v",content)
 
 	res, err := signer.Sign(nickname, []byte(content))
 	if err != nil {
@@ -100,14 +105,18 @@ func Call(
 }
 
 func createOperationContent(description string, msgB64 string, chainID uint64) string {
-	var content string
+	data := map[string]interface{}{
+		"description": description,
+		"operation":   msgB64,
+		"chainId":     strconv.FormatUint(chainID, 10),
+	}
 
-	const descriptionLabel = `{"description": "`
+	content, err := json.Marshal(data)
+	if err != nil {
+		log.Fatalf("Error marshaling JSON: %v", err)
+	}
 
-	content = descriptionLabel + description + `",
-		"operation": "` + msgB64 + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
-
-	return content
+	return convert.ToString(content)
 }
 
 func MakeRPCCall(msg []byte, signature []byte, publicKey string, client *node.Client) ([]string, error) {
