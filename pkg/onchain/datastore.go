@@ -19,7 +19,6 @@ type datastoreEntry struct {
 }
 
 func argsValue(args []byte) []byte {
-	
 	if len(args) == 0 {
 		return convert.StrToBytes("")
 	}
@@ -27,7 +26,8 @@ func argsValue(args []byte) []byte {
 	return args
 }
 
-/** 
+/*
+*
 populateDatastore creates and serializes a datastore for the given contract.
 */
 func populateDatastore(contract DatastoreContract) ([]byte, error) {
@@ -35,19 +35,19 @@ func populateDatastore(contract DatastoreContract) ([]byte, error) {
 
 	// nomber of contracts to deploy
 	numberOfContractsKey := []byte{0}
-	numberOfContracts := convert.U64ToBytes(1) 
+	numberOfContracts := convert.U64ToBytes(1)
 	datastore = append(datastore, datastoreEntry{Key: numberOfContractsKey, Value: numberOfContracts})
 
 	// contract data
-	contractKey := convert.U64ToBytes(1) 
+	contractKey := convert.U64ToBytes(1)
 	datastore = append(datastore, datastoreEntry{Key: contractKey, Value: contract.Data})
 
-	// args data 
-	argsKey := []byte{1,0,0,0,0,0,0,0,1,0,0,0,0} // hardcoding as implementation in go of a dynamic key is necessary on if we choose to support multiple SC uploads
+	// args data
+	argsKey := []byte{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0} // hardcoding as implementation in go of a dynamic key is necessary on if we choose to support multiple SC uploads
 	datastore = append(datastore, datastoreEntry{Key: argsKey, Value: contract.Args})
 
 	// coins data
-	coinsKey := []byte{1,0,0,0,0,0,0,0,1,0,0,0,1} // hardcoding as implementation in go of a dynamic key is necessary on if we choose to support multiple SC uploads
+	coinsKey := []byte{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1} // hardcoding as implementation in go of a dynamic key is necessary on if we choose to support multiple SC uploads
 	datastore = append(datastore, datastoreEntry{Key: coinsKey, Value: convert.U64ToBytes(contract.Coins)})
 
 	// Serialize the datastore

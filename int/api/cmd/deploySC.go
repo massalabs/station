@@ -27,7 +27,6 @@ type deploySC struct {
 }
 
 func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Responder {
-
 	_smartContractBytes, err := base64.StdEncoding.DecodeString(params.Body.SmartContract)
 	smartContractReader := bytes.NewReader(_smartContractBytes)
 	smartContractByteCode, err := io.ReadAll(smartContractReader)
@@ -56,10 +55,10 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		d.networkInfos,
 		params.Body.Nickname,
 		sendoperation.MaxGasAllowedExecuteSC, // default
-		*params.Body.MaxCoins, // maxCoins 
-		*params.Body.Coins,    // smart contract deployment "fee"
+		*params.Body.MaxCoins,                // maxCoins
+		*params.Body.Coins,                   // smart contract deployment "fee"
 		sendoperation.DefaultExpiryInSlot,
-		parameters, 
+		parameters,
 		smartContractByteCode,
 		deployerSCByteCode,
 		&signer.WalletPlugin{},
