@@ -12,7 +12,6 @@ import (
 	"strings"
 
 	"github.com/massalabs/station/pkg/convert"
-	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/node/base58"
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
@@ -77,7 +76,6 @@ func Call(
 	}
 
 	content := createOperationContent(description, msgB64, chainID)
-	logger.Infof("json content: %v",content)
 
 	res, err := signer.Sign(nickname, []byte(content))
 	if err != nil {

@@ -30,7 +30,6 @@ func Addresses(client *Client, addr []string) ([]Address, error) {
 
 	var content []Address
 	err = response.GetObject(&content)
-
 	if err != nil {
 		return nil, fmt.Errorf("parsing get_addresses jsonrpc response '%+v': %w", response, err)
 	}

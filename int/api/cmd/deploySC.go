@@ -66,13 +66,12 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 				})
 	}
 
-
 	operationResponse, events, err := onchain.DeploySC(
 		d.networkInfos,
 		params.Body.Nickname,
 		sendoperation.MaxGasAllowedExecuteSC, // default
-		maxCoins,                // maxCoins
-		fees,                   // smart contract deployment "fee"
+		maxCoins,                             // maxCoins
+		fees,                                 // smart contract deployment "fee"
 		sendoperation.DefaultExpiryInSlot,
 		parameters,
 		smartContractByteCode,

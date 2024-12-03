@@ -162,7 +162,6 @@ func (s *CertStore) AddCertificate(cert *x509.Certificate) error {
 		windows.CERT_STORE_ADD_NEW,
 		nil,
 	)
-
 	if err != nil {
 		return interpretError(err)
 	}

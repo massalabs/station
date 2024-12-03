@@ -40,7 +40,6 @@ func (s *WalletPlugin) Sign(nickname string, operation []byte) (*SignOperationRe
 
 	res := SignOperationResponse{"", "", "", ""}
 	err = json.Unmarshal(httpRawResponse, &res)
-
 	if err != nil {
 		return nil, fmt.Errorf("unmarshalling '%s' JSON: %w", res, err)
 	}

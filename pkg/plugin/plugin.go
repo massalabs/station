@@ -77,7 +77,6 @@ func (p *Plugin) getInformation() (*Information, error) {
 	var info *Information
 
 	err = json.Unmarshal(jsonObj, &info)
-
 	if err != nil {
 		return nil, fmt.Errorf("parsing manifest file '%s': %w", manifestPath, err)
 	}
@@ -136,7 +135,6 @@ type prefixWriter struct {
 func (pw prefixWriter) Write(buf []byte) (n int, err error) {
 	data := []byte(pw.prefix + string(buf))
 	n, err = pw.w.Write(data)
-
 	if err != nil {
 		return n, fmt.Errorf("writing logs with prefix: %w", err)
 	}
