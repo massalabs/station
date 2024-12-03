@@ -5,10 +5,14 @@ import (
 	"context"
 	b64 "encoding/base64"
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 
+	"github.com/massalabs/station/pkg/convert"
+	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/node/base58"
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
@@ -42,11 +46,6 @@ type OperationResponse struct {
 	CorrelationID string
 }
 
-type OperationBatch struct {
-	NewBatch      bool
-	CorrelationID string
-}
-
 type JSONableSlice []uint8
 
 func (u JSONableSlice) MarshalJSON() ([]byte, error) {
@@ -69,7 +68,6 @@ func Call(
 	fee uint64,
 	operation Operation,
 	nickname string,
-	operationBatch OperationBatch,
 	signer signer.Signer,
 	description string,
 ) (*OperationResponse, error) {
@@ -78,7 +76,8 @@ func Call(
 		return nil, err
 	}
 
-	content := createOperationContent(operationBatch, description, msgB64, chainID)
+	content := createOperationContent(description, msgB64, chainID)
+	logger.Infof("json content: %v",content)
 
 	res, err := signer.Sign(nickname, []byte(content))
 	if err != nil {
@@ -105,24 +104,19 @@ func Call(
 	return &OperationResponse{CorrelationID: res.CorrelationID, OperationID: resp[0]}, nil
 }
 
-func createOperationContent(operationBatch OperationBatch, description string, msgB64 string, chainID uint64) string {
-	var content string
-
-	const descriptionLabel = `{"description": "`
-
-	switch {
-	case operationBatch.NewBatch:
-		content = descriptionLabel + description + `", "operation": "` + msgB64 + `",
-			"batch": true, "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
-	case operationBatch.CorrelationID != "":
-		content = descriptionLabel + description + `", "operation": "` + msgB64 + `",
-			"correlationId": "` + operationBatch.CorrelationID + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
-	default:
-		content = descriptionLabel + description + `",
-			"operation": "` + msgB64 + `", "chainId": ` + strconv.FormatUint(chainID, 10) + `}`
+func createOperationContent(description string, msgB64 string, chainID uint64) string {
+	data := map[string]interface{}{
+		"description": description,
+		"operation":   msgB64,
+		"chainId":     strconv.FormatUint(chainID, 10),
 	}
 
-	return content
+	content, err := json.Marshal(data)
+	if err != nil {
+		log.Fatalf("Error marshaling JSON: %v", err)
+	}
+
+	return convert.ToString(content)
 }
 
 func MakeRPCCall(msg []byte, signature []byte, publicKey string, client *node.Client) ([]string, error) {
