@@ -32,7 +32,6 @@ func CallFunction(
 	coins uint64,
 	expiryDelta uint64,
 	async bool,
-	operationBatch sendOperation.OperationBatch,
 	signer signer.Signer,
 	description string,
 ) (*OperationWithEventResponse, error) {
@@ -63,7 +62,6 @@ func CallFunction(
 		fee,
 		callSC,
 		nickname,
-		operationBatch,
 		signer,
 		description,
 	)
@@ -115,7 +113,6 @@ func DeploySC(
 	expiry uint64,
 	contract []byte,
 	datastore []byte,
-	operationBatch sendOperation.OperationBatch,
 	signer signer.Signer,
 	description string,
 ) (*sendOperation.OperationResponse, []node.Event, error) {
@@ -144,7 +141,6 @@ func DeploySC(
 		fee,
 		exeSC,
 		nickname,
-		operationBatch,
 		signer,
 		"Deploying smart contract: "+description,
 	)
