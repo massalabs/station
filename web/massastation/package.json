@@ -23,7 +23,7 @@
     "esbuild": "0.17.19",
     "framer-motion": "^11.1.5",
     "jszip": "^3.10.1",
-    "prettier": "^3.4.1",
+    "prettier": "^2.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.10.0",
