@@ -19,8 +19,7 @@ type datastoreEntry struct {
 }
 
 /*
-*
-populateDatastore creates and serializes a datastore for the given contract.
+creates and serializes a datastore for the given contract.
 */
 func populateDatastore(contract ContractDatastore) ([]byte, error) {
 	var datastore []datastoreEntry
@@ -35,7 +34,7 @@ func populateDatastore(contract ContractDatastore) ([]byte, error) {
 	datastore = append(datastore, datastoreEntry{Key: contractKey, Value: contract.Data})
 
 	// args data
-	
+
 	// hardcoded for now, could be dynamix see: https://github.com/massalabs/massa-web3/blob/main/src/dataStore.ts
 	argsKey := []byte{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}
 	datastore = append(datastore, datastoreEntry{Key: argsKey, Value: contract.Args})

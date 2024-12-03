@@ -97,6 +97,7 @@ func main() {
 	})
 	stationGUI.Lifecycle().SetOnStarted(func() {
 		server.Start(networkManager, pluginManager)
+
 		err := pluginManager.RunAll()
 		if err != nil {
 			logger.Fatalf("while running all plugins: %w", err)

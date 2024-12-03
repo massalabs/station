@@ -134,6 +134,7 @@ type prefixWriter struct {
 
 func (pw prefixWriter) Write(buf []byte) (n int, err error) {
 	data := []byte(pw.prefix + string(buf))
+
 	n, err = pw.w.Write(data)
 	if err != nil {
 		return n, fmt.Errorf("writing logs with prefix: %w", err)
@@ -223,6 +224,7 @@ func (p *Plugin) binPath() string {
 
 	// Check if the MacOS .app directory exists.
 	macOSAppDirPath := filepath.Join(p.Path, pluginName+dotApp)
+
 	if _, err := os.Stat(macOSAppDirPath); os.IsNotExist(err) {
 		// Return the binary if not.
 		return utils.PluginPath(p.Path, pluginName)
@@ -269,6 +271,7 @@ func (p *Plugin) Start() error {
 			logger.Infof("plugin '%s' exit message: %s\n", pluginName, err.Error())
 
 			var exitErr *exec.ExitError
+
 			if errors.As(err, &exitErr) {
 				exitCode := exitErr.ExitCode()
 
@@ -294,6 +297,7 @@ func (p *Plugin) Stop() error {
 	logger.Infof("Stopping plugin %s.\n", p.ID)
 
 	status := p.Status()
+
 	if status != Up && status != Crashed {
 		return fmt.Errorf("plugin is not running")
 	}

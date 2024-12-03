@@ -37,6 +37,7 @@ func createUpdateDialog(window fyne.Window, app *fyne.App) dialog.Dialog {
 		widget.NewLabel("If you choose to update, MassaStation will be closed and every running task will be stopped."),
 		func(b bool) {
 			window.Close()
+
 			if b {
 				utils.OpenURL(app, downloadURL)
 				(*app).Quit()

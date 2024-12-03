@@ -25,6 +25,7 @@ func MassaStationWebAppHandler(params operations.MassaStationWebAppParams) middl
 	resourceContent, err := contentReact.ReadFile(basePathReact + "massastation/" + resourceName)
 	if err != nil {
 		resourceName = "index.html"
+
 		resourceContent, err = contentReact.ReadFile(basePathReact + "massastation/" + resourceName)
 		if err != nil {
 			return operations.NewMassaStationWebAppNotFound()
