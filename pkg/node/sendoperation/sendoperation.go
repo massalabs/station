@@ -46,9 +46,8 @@ type OperationContent struct {
 	Description string `json:"description"`
 	Operation   string `json:"operation"`
 	//nolint:tagliatelle
-	ChainID     uint64 `json:"chainId"`
+	ChainID uint64 `json:"chainId"`
 }
-
 
 type JSONableSlice []uint8
 

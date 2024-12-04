@@ -35,7 +35,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 					Message: err.Error(),
 				})
 	}
-	
+
 	parameters, err := base64.StdEncoding.DecodeString(params.Body.Parameters)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().
@@ -65,7 +65,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 					Message: err.Error(),
 				})
 	}
-	
+
 	operationResponse, events, err := onchain.DeploySC(
 		d.networkInfos,
 		params.Body.Nickname,
@@ -77,7 +77,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		smartContractByteCode,
 		deployerSCByteCode,
 		&signer.WalletPlugin{},
-		"Deploying contract" + params.Body.Description,
+		"Deploying contract"+params.Body.Description,
 	)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().
