@@ -35,7 +35,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 					Message: err.Error(),
 				})
 	}
-
+	
 	parameters, err := base64.StdEncoding.DecodeString(params.Body.Parameters)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().
@@ -56,7 +56,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 				})
 	}
 
-	fees, err := strconv.ParseUint(*params.Body.Coins, 10, 64)
+	coins, err := strconv.ParseUint(*params.Body.Coins, 10, 64)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().
 			WithPayload(
@@ -65,19 +65,19 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 					Message: err.Error(),
 				})
 	}
-
+	
 	operationResponse, events, err := onchain.DeploySC(
 		d.networkInfos,
 		params.Body.Nickname,
 		sendoperation.MaxGasAllowedExecuteSC, // default
 		maxCoins,                             // maxCoins
-		fees,                                 // smart contract deployment "fee"
+		coins,                                // smart contract deployment "fee"
 		sendoperation.DefaultExpiryInSlot,
 		parameters,
 		smartContractByteCode,
 		deployerSCByteCode,
 		&signer.WalletPlugin{},
-		"Deploying contract "+params.Body.Description,
+		"Deploying contract" + *params.Body.Description,
 	)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().

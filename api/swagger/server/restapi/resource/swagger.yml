@@ -241,7 +241,6 @@ paths:
               parameters:
                 description: Base64 encoded parameters that will be sent along the smart contract.
                 type: string
-                default: ""
               description:
                 description: "Description of the operation"
                 type: string

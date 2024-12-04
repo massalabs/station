@@ -7,11 +7,8 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"log"
-	"strconv"
 	"strings"
 
-	"github.com/massalabs/station/pkg/convert"
 	"github.com/massalabs/station/pkg/node"
 	"github.com/massalabs/station/pkg/node/base58"
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
@@ -45,6 +42,13 @@ type OperationResponse struct {
 	CorrelationID string
 }
 
+type OperationContent struct {
+	Description string `json:"description"`
+	Operation   string `json:"operation"`
+	ChainID     uint64 `json:"chainId"`
+}
+
+
 type JSONableSlice []uint8
 
 func (u JSONableSlice) MarshalJSON() ([]byte, error) {
@@ -75,7 +79,10 @@ func Call(
 		return nil, err
 	}
 
-	content := createOperationContent(description, msgB64, chainID)
+	content, err := createOperationContent(description, msgB64, chainID)
+	if err != nil {
+		return nil, fmt.Errorf("creating operation content: %w", err)
+	}
 
 	res, err := signer.Sign(nickname, []byte(content))
 	if err != nil {
@@ -102,19 +109,19 @@ func Call(
 	return &OperationResponse{CorrelationID: res.CorrelationID, OperationID: resp[0]}, nil
 }
 
-func createOperationContent(description string, msgB64 string, chainID uint64) string {
-	data := map[string]interface{}{
-		"description": description,
-		"operation":   msgB64,
-		"chainId":     strconv.FormatUint(chainID, 10),
+func createOperationContent(description string, msgB64 string, chainID uint64) (string, error) {
+	operationContent := OperationContent{
+		Description: description,
+		Operation:   msgB64,
+		ChainID:     chainID,
 	}
 
-	content, err := json.Marshal(data)
+	jsonContent, err := json.Marshal(operationContent)
 	if err != nil {
-		log.Fatalf("Error marshaling JSON: %v", err)
+		return "", fmt.Errorf("marshalling operation content: %w", err)
 	}
 
-	return convert.ToString(content)
+	return string(jsonContent), nil
 }
 
 func MakeRPCCall(msg []byte, signature []byte, publicKey string, client *node.Client) ([]string, error) {
