@@ -24,6 +24,7 @@ POST /cmd/read-only/executesc
     Should Contain    string(${response.json()})    TestSC is deployed at
 
 POST a Smart Contract
+    ${base64encodedSc}=    Get File For DeploySc    ${CURDIR}/smart_contract_base64.txt
     ${data}=    Create Dictionary
     ...    smartContract=${base64encodedSc}
     ...    maxCoins="3000000000000"
