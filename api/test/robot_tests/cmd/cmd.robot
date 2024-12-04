@@ -27,8 +27,12 @@ POST a Smart Contract
     ${sc}=    Get File For Streaming Upload    ${CURDIR}/../../testSC/build/main-testSC.wasm
     ${data}=    Create Dictionary
     ...    walletNickname=${WALLET_NICKNAME}
-    ...    coins="3000000000"
-    ...    fee="10000000"
+    ...    smartContract=${base64encodedSc}
+    ...    maxCoins="3000000000000"
+    ...    coins="300000000000"
+    ...    fee="1000000000"
+    ...    parameters=""
+    ...    description=""
     ${file}=    Create Dictionary    smartContract=${sc}
     ${response}=    POST    ${API_URL}/cmd/deploySC    data=${data}    files=${file}    expected_status=any
     Log To Console    json response: ${response.json()}    # Print the response content to the test log for debugging
