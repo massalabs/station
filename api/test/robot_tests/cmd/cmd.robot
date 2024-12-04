@@ -24,12 +24,14 @@ POST /cmd/read-only/executesc
     Should Contain    string(${response.json()})    TestSC is deployed at
 
 POST a Smart Contract
-    ${sc}=    Get File For Streaming Upload    ${CURDIR}/../../testSC/build/main-testSC.wasm
     ${data}=    Create Dictionary
-    ...    walletNickname=${WALLET_NICKNAME}
-    ...    coins="3000000000"
-    ...    fee="10000000"
-    ${file}=    Create Dictionary    smartContract=${sc}
+    ...    smartContract=${base64encodedSc}
+    ...    maxCoins="3000000000000"
+    ...    coins="300000000000"
+    ...    fee="1000000000"
+    ...    parameters=""
+    ...    description=""
+    ${file}=    Create Dictionary 
     ${response}=    POST    ${API_URL}/cmd/deploySC    data=${data}    files=${file}    expected_status=any
     Log To Console    json response: ${response.json()}    # Print the response content to the test log for debugging
 
