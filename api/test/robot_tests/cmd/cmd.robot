@@ -28,8 +28,8 @@ POST a Smart Contract
     ...    nickname=${WALLET_NICKNAME}
     ...    smartContract=${SMART_CONTRACT_BYTECODE}
     ...    maxCoins=3000000000000
-    ...    coins=18500000000
-    ...    fee=1000000
+    ...    coins=8500000
+    ...    fee=10000000
     ${headers}=    Create Dictionary    Content-Type=application/json
     ${response}=    POST    ${API_URL}/cmd/deploySC    json=${data}    headers=${headers}    expected_status=any
     Log To Console    json response: ${response.json()}    # Print the response content to the test log for debugging
