@@ -82,7 +82,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		sendoperation.MaxGasAllowedExecuteSC, // default
 		maxCoins,                             // maxCoins
 		coins,                                // Coins to send for storage
-		fee, 								  // operation fee
+		fee,                                  // operation fee
 		sendoperation.DefaultExpiryInSlot,
 		parameters,
 		smartContractByteCode,

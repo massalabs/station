@@ -142,7 +142,7 @@ func DeploySC(
 		client,
 		networkInfos.ChainID,
 		expiry,
-		fees + coins,
+		fees+coins,
 		exeSCOperation,
 		nickname,
 		signer,

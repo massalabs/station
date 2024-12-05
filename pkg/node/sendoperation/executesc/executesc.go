@@ -92,8 +92,6 @@ This function serialize the content of the datastore in a byte array and should 
 		compactAndAppendBytes(&byteArray, key)
 		compactAndAppendBytes(&byteArray, value)
 	}
-
-	Function is unused right now
 */
 //nolint:unused
 func compactAndAppendBytes(msg *[]byte, value interface{}) {
