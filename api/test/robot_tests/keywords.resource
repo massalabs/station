@@ -60,7 +60,7 @@ Get SC address
     [Documentation]    Get the address of the SC from a string containing the address after ':' (colon)
     [Arguments]    ${string}
     ${words}=    Split String    ${string}    :
-    ${sc_address}=    Get From List    ${words}    1
+    ${sc_address}=    Get From List    ${words}    0
     RETURN    ${sc_address}
 
 Switch To Buildnet

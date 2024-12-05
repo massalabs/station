@@ -28,16 +28,16 @@ POST a Smart Contract
     ...    nickname=${WALLET_NICKNAME}
     ...    smartContract=${SMART_CONTRACT_BYTECODE}
     ...    maxCoins=3000000000000
-    ...    coins=300000000000
-    ...    fee=1000000000
+    ...    coins=18500000000
+    ...    fee=1000000
     ${headers}=    Create Dictionary    Content-Type=application/json
     ${response}=    POST    ${API_URL}/cmd/deploySC    json=${data}    headers=${headers}    expected_status=any
     Log To Console    json response: ${response.json()}    # Print the response content to the test log for debugging
 
     Should Be Equal As Integers    ${response.status_code}    ${STATUS_OK}    # Assert the status code is 200 OK
-    Should Contain    ${response.json()['firstEvent']['data']}    Contract deployed at address
+    Should Contain    ${response.json()['firstEvent']['data']}    TestSC Constructor called
 
-    ${sc_address}=    Get SC address    ${response.json()['firstEvent']['data']}
+    ${sc_address}=    Get SC address    ${response.json()['firstEvent']['address']}
     Set Global Variable    ${DEPLOYED_SC_ADDR}    ${sc_address}
 
 POST /cmd/read-only/callsc

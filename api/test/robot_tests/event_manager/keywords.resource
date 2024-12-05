@@ -12,16 +12,20 @@ Suite Setup
     Deploy testSC
 
 Deploy testSC
-    ${sc}=    Get File For Streaming Upload    ${CURDIR}/../../testSC/build/main-testSC.wasm
     ${data}=    Create Dictionary
-    ...    walletNickname=${WALLET_NICKNAME}
-    ...    coins=3000000000
-    ...    fee=1000
-    ${file}=    Create Dictionary    smartContract=${sc}
-    ${response}=    POST    ${API_URL}/cmd/deploySC    data=${data}    files=${file}    expected_status=${STATUS_OK}
-    Should Contain    ${response.json()['firstEvent']['data']}    TestSC is deployed at :
+    ...    nickname=${WALLET_NICKNAME}
+    ...    smartContract=${SMART_CONTRACT_BYTECODE}
+    ...    maxCoins=3000000000000
+    ...    coins=18500000000
+    ...    fee=1000000
+    ${headers}=    Create Dictionary    Content-Type=application/json
+    ${response}=    POST    ${API_URL}/cmd/deploySC    json=${data}    headers=${headers}    expected_status=any
+    Log To Console    json response: ${response.json()}    # Print the response content to the test log for debugging
 
-    ${sc_address}=    Get SC address    ${response.json()['firstEvent']['data']}
+    Should Be Equal As Integers    ${response.status_code}    ${STATUS_OK}    # Assert the status code is 200 OK
+    Should Contain    ${response.json()['firstEvent']['data']}    TestSC Constructor called
+
+    ${sc_address}=    Get SC address    ${response.json()['firstEvent']['address']}
     Set Global Variable    ${DEPLOYED_SC_ADDR}    ${sc_address}
 
 Get Wallet Address
