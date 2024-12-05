@@ -66,12 +66,23 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 				})
 	}
 
+	fee, err := strconv.ParseUint(*params.Body.Fee, 10, 64)
+	if err != nil {
+		return operations.NewCmdDeploySCInternalServerError().
+			WithPayload(
+				&models.Error{
+					Code:    err.Error(),
+					Message: err.Error(),
+				})
+	}
+
 	operationResponse, events, err := onchain.DeploySC(
 		d.networkInfos,
 		params.Body.Nickname,
 		sendoperation.MaxGasAllowedExecuteSC, // default
 		maxCoins,                             // maxCoins
-		coins,                                // smart contract deployment "fee"
+		coins,                                // Coins to send for storage
+		fee, 								  // operation fee
 		sendoperation.DefaultExpiryInSlot,
 		parameters,
 		smartContractByteCode,

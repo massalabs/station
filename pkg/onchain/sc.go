@@ -110,6 +110,7 @@ func DeploySC(
 	nickname string,
 	maxGas uint64,
 	maxCoins uint64,
+	coins uint64,
 	fees uint64,
 	expiry uint64,
 	parameters []byte,
@@ -123,7 +124,7 @@ func DeploySC(
 	contract := ContractDatastore{
 		Data:  smartContractByteCode,
 		Args:  parameters,
-		Coins: fees,
+		Coins: coins,
 	}
 
 	dataStore, err := populateDatastore(contract)
@@ -141,7 +142,7 @@ func DeploySC(
 		client,
 		networkInfos.ChainID,
 		expiry,
-		fees,
+		fees + coins,
 		exeSCOperation,
 		nickname,
 		signer,
