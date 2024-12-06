@@ -3,6 +3,8 @@ Documentation       This is a test suite for Massa Station /cmd endpoints.
 
 Library             RequestsLibrary
 Library             Collections
+Library             BuiltIn
+Library             ../libs/encode_base64.py
 Resource            keywords.resource
 Resource            ../keywords.resource
 Resource            ../variables.resource
@@ -24,9 +26,10 @@ POST /cmd/read-only/executesc
     Should Contain    string(${response.json()})    TestSC is deployed at
 
 POST a Smart Contract
+    ${smartContractB64}=  Encode File To Base64    ${CURDIR}/../../testSC/build/testSC.wasm
     ${data}=    Create Dictionary
     ...    nickname=${WALLET_NICKNAME}
-    ...    smartContract=${SMART_CONTRACT_BYTECODE}
+    ...    smartContract=${smartContractB64}
     ...    maxCoins=3000000000000
     ...    coins=8500000
     ...    fee=10000000
@@ -37,7 +40,7 @@ POST a Smart Contract
     Should Be Equal As Integers    ${response.status_code}    ${STATUS_OK}    # Assert the status code is 200 OK
     Should Contain    ${response.json()['firstEvent']['data']}    TestSC Constructor called
 
-    ${sc_address}=    Get SC address    ${response.json()['firstEvent']['address']}
+    ${sc_address}=   Set Variable  ${response.json()['firstEvent']['address']}
     Set Global Variable    ${DEPLOYED_SC_ADDR}    ${sc_address}
 
 POST /cmd/read-only/callsc
