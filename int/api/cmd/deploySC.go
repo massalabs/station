@@ -28,7 +28,7 @@ type deploySC struct {
 func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Responder {
 	smartContractByteCode, err := base64.StdEncoding.DecodeString(params.Body.SmartContract)
 	if err != nil {
-		return operations.NewCmdDeploySCInternalServerError().
+		return operations.NewCmdDeploySCBadRequest().
 			WithPayload(
 				&models.Error{
 					Code:    err.Error(),
@@ -38,7 +38,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 
 	parameters, err := base64.StdEncoding.DecodeString(params.Body.Parameters)
 	if err != nil {
-		return operations.NewCmdDeploySCInternalServerError().
+		return operations.NewCmdDeploySCBadRequest().
 			WithPayload(
 				&models.Error{
 					Code:    err.Error(),
@@ -48,7 +48,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 
 	maxCoins, err := strconv.ParseUint(*params.Body.MaxCoins, 10, 64)
 	if err != nil {
-		return operations.NewCmdDeploySCInternalServerError().
+		return operations.NewCmdDeploySCBadRequest().
 			WithPayload(
 				&models.Error{
 					Code:    err.Error(),
@@ -58,7 +58,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 
 	coins, err := strconv.ParseUint(*params.Body.Coins, 10, 64)
 	if err != nil {
-		return operations.NewCmdDeploySCInternalServerError().
+		return operations.NewCmdDeploySCBadRequest().
 			WithPayload(
 				&models.Error{
 					Code:    err.Error(),
@@ -68,7 +68,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 
 	fee, err := strconv.ParseUint(*params.Body.Fee, 10, 64)
 	if err != nil {
-		return operations.NewCmdDeploySCInternalServerError().
+		return operations.NewCmdDeploySCBadRequest().
 			WithPayload(
 				&models.Error{
 					Code:    err.Error(),
