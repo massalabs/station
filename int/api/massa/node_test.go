@@ -19,7 +19,9 @@ func TestNodeStatus(t *testing.T) {
 		response := getNodeHandler.Handle(operations.NewGetNodeParams())
 		responseTypes, ok := response.(*operations.GetNodeOK)
 		assert.True(t, ok, "responsePayload is not of type *operations.GetNodeOK")
+
 		responsePayload := responseTypes.Payload
+
 		assert.Equal(t, config.Network, *responsePayload.Network)
 		assert.Equal(t, config.ChainID, uint64(responsePayload.ChainID))
 		assert.Equal(t, config.NodeURL, *responsePayload.URL)

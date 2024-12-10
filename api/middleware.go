@@ -20,10 +20,11 @@ func TopMiddleware(handler http.Handler) http.Handler {
 	//nolint:varnamelen
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logger.Infof("[%s %s]", r.Method, r.URL.Path)
+
 		if configDir == "" {
 			var err error
-			configDir, err = configuration.Path()
 
+			configDir, err = configuration.Path()
 			if err != nil {
 				logger.Warnf("TLS: unable to get CA root path: %s", err)
 			}

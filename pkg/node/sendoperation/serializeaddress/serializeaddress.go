@@ -77,7 +77,6 @@ func DecodeAddress(buf *bytes.Reader) (string, error) {
 	addressBytes := make([]byte, publicKeyHashSize)
 
 	_, err = buf.Read(addressBytes)
-
 	if err != nil {
 		return "", fmt.Errorf("failed to read address portion: %w", err)
 	}

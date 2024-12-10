@@ -3,6 +3,8 @@ Documentation       This is a test suite for Massa Station /cmd endpoints.
 
 Library             RequestsLibrary
 Library             Collections
+Library             BuiltIn
+Library             ../libs/encode_base64.py
 Resource            keywords.resource
 Resource            ../keywords.resource
 Resource            ../variables.resource
@@ -24,19 +26,21 @@ POST /cmd/read-only/executesc
     Should Contain    string(${response.json()})    TestSC is deployed at
 
 POST a Smart Contract
-    ${sc}=    Get File For Streaming Upload    ${CURDIR}/../../testSC/build/main-testSC.wasm
+    ${smartContractB64}=  Encode File To Base64    ${CURDIR}/../../testSC/build/testSC.wasm
     ${data}=    Create Dictionary
-    ...    walletNickname=${WALLET_NICKNAME}
-    ...    coins=3000000000
+    ...    nickname=${WALLET_NICKNAME}
+    ...    smartContract=${smartContractB64}
+    ...    maxCoins=3000000000000
+    ...    coins=8500000
     ...    fee=10000000
-    ${file}=    Create Dictionary    smartContract=${sc}
-    ${response}=    POST    ${API_URL}/cmd/deploySC    data=${data}    files=${file}    expected_status=any
+    ${headers}=    Create Dictionary    Content-Type=application/json
+    ${response}=    POST    ${API_URL}/cmd/deploySC    json=${data}    headers=${headers}    expected_status=any
     Log To Console    json response: ${response.json()}    # Print the response content to the test log for debugging
 
     Should Be Equal As Integers    ${response.status_code}    ${STATUS_OK}    # Assert the status code is 200 OK
-    Should Contain    ${response.json()['firstEvent']['data']}    TestSC is deployed at
+    Should Contain    ${response.json()['firstEvent']['data']}    TestSC Constructor called
 
-    ${sc_address}=    Get SC address    ${response.json()['firstEvent']['data']}
+    ${sc_address}=   Set Variable  ${response.json()['firstEvent']['address']}
     Set Global Variable    ${DEPLOYED_SC_ADDR}    ${sc_address}
 
 POST /cmd/read-only/callsc
@@ -110,16 +114,6 @@ POST /cmd/executeFunction async
 
 # Error cases
 
-POST /cmd/deploySC with invalid datastore
-    ${sc}=    Get File For Streaming Upload    ${CURDIR}/../../testSC/build/main-testSC.wasm
-    ${data}=    Create Dictionary    walletNickname=${WALLET_NICKNAME}    datastore=invalid    fee=10000000
-    ${file}=    Create Dictionary    smartContract=${sc}
-    ${response}=    POST
-    ...    ${API_URL}/cmd/deploySC
-    ...    data=${data}
-    ...    files=${file}
-    ...    expected_status=${STATUS_BAD_REQUEST}
-    Should Be Equal    ${response.json()["message"]}    illegal base64 data at input byte 4
 
 POST /cmd/executeFunction with invalid address
     ${randomID}=    Generate Random String    10

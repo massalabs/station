@@ -92,7 +92,6 @@ func configureTLS(tlsConfig *tls.Config) {
 		if caPath == "" {
 			var err error
 			caPath, err = configuration.CertPath()
-
 			if err != nil {
 				logger.Warnf("TLS: unable to get CA root path: %s", err)
 			}

@@ -14,10 +14,10 @@ Suite Setup         Suite Setup
 *** Test Cases ***
 GET /events/{str}/{caller} from contract
     ${response}=    GET
-    ...    ${API_URL}/events/TestSC is deployed at/${WALLET_ADDR}
+    ...    ${API_URL}/events/TestSC Constructor called/${WALLET_ADDR}
     ...    expected_status=${STATUS_OK}
     Should Contain    ${response.json()['address']}    ${WALLET_ADDR}
-    Should Contain    ${response.json()['data']}    TestSC is deployed at
+    Should Contain    ${response.json()['data']}    TestSC Constructor called
 
 GET /events/{str}/{caller} from called function
     ${randomID}=    Generate Random String    10

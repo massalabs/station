@@ -1,8 +1,9 @@
 package cmd
 
 import (
+	_ "embed"
 	"encoding/base64"
-	"io"
+	"strconv"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
@@ -13,6 +14,9 @@ import (
 	"github.com/massalabs/station/pkg/onchain"
 )
 
+//go:embed sc/deployer.wasm
+var deployerSCByteCode []byte
+
 func NewDeploySCHandler(config *config.NetworkInfos) operations.CmdDeploySCHandler {
 	return &deploySC{networkInfos: config}
 }
@@ -22,20 +26,7 @@ type deploySC struct {
 }
 
 func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Responder {
-	file, err := io.ReadAll(params.SmartContract)
-	if err != nil {
-		return operations.NewCmdDeploySCBadRequest().
-			WithPayload(
-				&models.Error{
-					Code:    err.Error(),
-					Message: err.Error(),
-				})
-	}
-	/* All the pointers below cannot be null as the swagger hydrate
-	each one with their default value defined in swagger.yml,
-	if no values are provided for these parameters.
-	*/
-	decodedDatastore, err := base64.StdEncoding.DecodeString(*params.Datastore)
+	smartContractByteCode, err := base64.StdEncoding.DecodeString(params.Body.SmartContract)
 	if err != nil {
 		return operations.NewCmdDeploySCBadRequest().
 			WithPayload(
@@ -45,22 +36,59 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 				})
 	}
 
-	if len(decodedDatastore) == 0 {
-		decodedDatastore = nil
+	parameters, err := base64.StdEncoding.DecodeString(params.Body.Parameters)
+	if err != nil {
+		return operations.NewCmdDeploySCBadRequest().
+			WithPayload(
+				&models.Error{
+					Code:    err.Error(),
+					Message: err.Error(),
+				})
+	}
+
+	maxCoins, err := strconv.ParseUint(*params.Body.MaxCoins, 10, 64)
+	if err != nil {
+		return operations.NewCmdDeploySCBadRequest().
+			WithPayload(
+				&models.Error{
+					Code:    err.Error(),
+					Message: err.Error(),
+				})
+	}
+
+	coins, err := strconv.ParseUint(*params.Body.Coins, 10, 64)
+	if err != nil {
+		return operations.NewCmdDeploySCBadRequest().
+			WithPayload(
+				&models.Error{
+					Code:    err.Error(),
+					Message: err.Error(),
+				})
+	}
+
+	fee, err := strconv.ParseUint(*params.Body.Fee, 10, 64)
+	if err != nil {
+		return operations.NewCmdDeploySCBadRequest().
+			WithPayload(
+				&models.Error{
+					Code:    err.Error(),
+					Message: err.Error(),
+				})
 	}
 
 	operationResponse, events, err := onchain.DeploySC(
 		d.networkInfos,
-		params.WalletNickname,
-		*params.GasLimit,
-		*params.Coins,
-		*params.Fee,
-		*params.Expiry,
-		file,
-		decodedDatastore,
-		sendoperation.OperationBatch{NewBatch: false, CorrelationID: ""},
+		params.Body.Nickname,
+		sendoperation.MaxGasAllowedExecuteSC, // default
+		maxCoins,                             // maxCoins
+		coins,                                // Coins to send for storage
+		fee,                                  // operation fee
+		sendoperation.DefaultExpiryInSlot,
+		parameters,
+		smartContractByteCode,
+		deployerSCByteCode,
 		&signer.WalletPlugin{},
-		"",
+		"Deploying contract: "+params.Body.Description,
 	)
 	if err != nil {
 		return operations.NewCmdDeploySCInternalServerError().

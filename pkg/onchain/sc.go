@@ -32,7 +32,6 @@ func CallFunction(
 	coins uint64,
 	expiryDelta uint64,
 	async bool,
-	operationBatch sendOperation.OperationBatch,
 	signer signer.Signer,
 	description string,
 ) (*OperationWithEventResponse, error) {
@@ -63,7 +62,6 @@ func CallFunction(
 		fee,
 		callSC,
 		nickname,
-		operationBatch,
 		signer,
 		description,
 	)
@@ -106,47 +104,49 @@ func CallFunctionSuccess(
 
 // DeploySC deploys a smart contract on the blockchain.
 // The smart contract is deployed with the given account nickname.
+
 func DeploySC(
 	networkInfos *config.NetworkInfos,
 	nickname string,
 	maxGas uint64,
 	maxCoins uint64,
-	fee uint64,
+	coins uint64,
+	fees uint64,
 	expiry uint64,
-	contract []byte,
-	datastore []byte,
-	operationBatch sendOperation.OperationBatch,
+	parameters []byte,
+	smartContractByteCode []byte,
+	deployerByteCode []byte,
 	signer signer.Signer,
 	description string,
 ) (*sendOperation.OperationResponse, []node.Event, error) {
 	client := node.NewClient(networkInfos.NodeURL)
 
-	// Calibrate max_gas
-	if maxGas == 0 {
-		estimatedGasCost, err := sendOperation.EstimateGasCostExecuteSC(nickname, contract, datastore, maxCoins, fee, client)
-		if err != nil {
-			return nil, nil, fmt.Errorf("estimating Execute SC gas cost: %w", err)
-		}
-
-		maxGas = estimatedGasCost
+	contract := ContractDatastore{
+		Data:  smartContractByteCode,
+		Args:  parameters,
+		Coins: coins,
 	}
 
-	exeSC := executesc.New(
-		contract,
+	dataStore, err := populateDatastore(contract)
+	if err != nil {
+		return nil, nil, fmt.Errorf("populating datastore: %w", err)
+	}
+
+	exeSCOperation := executesc.New(
+		deployerByteCode,
 		maxGas,
 		maxCoins,
-		datastore)
+		dataStore)
 
 	operationResponse, err := sendOperation.Call(
 		client,
 		networkInfos.ChainID,
 		expiry,
-		fee,
-		exeSC,
+		fees,
+		exeSCOperation,
 		nickname,
-		operationBatch,
 		signer,
-		"Deploying smart contract: "+description,
+		description,
 	)
 	if err != nil {
 		return nil, nil, fmt.Errorf("calling executeSC: %w", err)

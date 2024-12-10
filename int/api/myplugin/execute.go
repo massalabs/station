@@ -53,7 +53,6 @@ func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) mi
 		}
 
 		err = plugin.Start()
-
 		if err != nil {
 			return executeFailed(cmd, status,
 				fmt.Sprintf("Error while restarting plugin %s: %s.\n", pluginName, err))

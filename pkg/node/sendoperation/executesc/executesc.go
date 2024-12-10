@@ -60,10 +60,6 @@ func (e *ExecuteSC) Content() (interface{}, error) {
 	}, nil
 }
 
-// To date the datastore sent by the deploySC endpoint is always serialized.
-// However the web on chain features make use of a non-serialized, nil datastore.
-// Hence here we check that if datastore is not nil (and it means it comes from the deploySC endpoint)
-// we do not encode it further but rather send it as is to the node.
 func (e *ExecuteSC) Message() []byte {
 	msg := make([]byte, 0)
 	buf := make([]byte, binary.MaxVarintLen64)
@@ -84,24 +80,7 @@ func (e *ExecuteSC) Message() []byte {
 	msg = append(msg, buf[:nbBytes]...)
 	msg = append(msg, e.data...)
 
-	// datastore
-	// If the datastore is not nil, no need to serialize it.
-	if e.dataStore != nil {
-		msg = append(msg, e.dataStore...)
-
-		return msg
-	}
-
-	// If the datastore is nil, we need to serialize it.
-	// Number of entries in the datastore.
-	nbBytes = binary.PutUvarint(buf, uint64(len(e.dataStore)))
-	msg = append(msg, buf[:nbBytes]...)
 	msg = append(msg, e.dataStore...)
-
-	for key, value := range e.dataStore {
-		compactAndAppendBytes(&msg, key)
-		compactAndAppendBytes(&msg, value)
-	}
 
 	return msg
 }
@@ -114,6 +93,7 @@ This function serialize the content of the datastore in a byte array and should 
 		compactAndAppendBytes(&byteArray, value)
 	}
 */
+//nolint:unused
 func compactAndAppendBytes(msg *[]byte, value interface{}) {
 	buf := make([]byte, binary.MaxVarintLen64)
 	bytesBuffer := new(bytes.Buffer)
