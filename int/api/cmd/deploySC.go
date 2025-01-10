@@ -41,7 +41,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		return operations.NewCmdDeploySCBadRequest().
 			WithPayload(
 				&models.Error{
-					Code:    err.Error(),
+					Code:    errorInvalidArgs,
 					Message: err.Error(),
 				})
 	}
@@ -51,19 +51,22 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		return operations.NewCmdDeploySCBadRequest().
 			WithPayload(
 				&models.Error{
-					Code:    err.Error(),
+					Code:    errorInvalidMaxGas,
 					Message: err.Error(),
 				})
 	}
 
-	coins, err := strconv.ParseUint(*params.Body.Coins, 10, 64)
-	if err != nil {
-		return operations.NewCmdDeploySCBadRequest().
-			WithPayload(
-				&models.Error{
-					Code:    err.Error(),
-					Message: err.Error(),
-				})
+	coins := uint64(0)
+	if params.Body.Coins != nil {
+		coins, err = strconv.ParseUint(*params.Body.Coins, 10, 64)
+		if err != nil {
+			return operations.NewCmdDeploySCBadRequest().
+				WithPayload(
+					&models.Error{
+						Code:    errorInvalidCoin,
+						Message: err.Error(),
+					})
+		}
 	}
 
 	fee, err := strconv.ParseUint(*params.Body.Fee, 10, 64)
@@ -71,7 +74,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		return operations.NewCmdDeploySCBadRequest().
 			WithPayload(
 				&models.Error{
-					Code:    err.Error(),
+					Code:    errorInvalidFee,
 					Message: err.Error(),
 				})
 	}
