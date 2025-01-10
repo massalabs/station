@@ -115,7 +115,7 @@ func CreateReadOnlyResult(result sendOperation.ReadOnlyResult) models.ReadOnlyRe
 				Balance: &models.ChangeSet{
 					Set: oldChange.Update.Balance.Set,
 				},
-				Bytecode:  oldChange.Update.Bytecode,
+				Bytecode:  oldChange.Update.Bytecode.(string),
 				Datastore: oldChange.Update.Datastore,
 			},
 		}

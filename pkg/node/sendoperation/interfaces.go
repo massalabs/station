@@ -112,7 +112,7 @@ type LedgerEntryChange struct {
 
 type LedgerUpdate struct {
 	Balance   ChangeSet     `json:"balance"`
-	Bytecode  string        `json:"bytecode"`
+	Bytecode  interface{}   `json:"bytecode"`
 	Datastore []interface{} `json:"datastore"`
 }
 
