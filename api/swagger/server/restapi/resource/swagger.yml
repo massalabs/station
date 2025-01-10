@@ -128,7 +128,7 @@ paths:
                 $ref: "#/definitions/Amount"
                 description: Set the coin amount that will be transferred to the smartContract.
               fee:
-                type : string
+                type: string
                 description: Set the fee amount (in massa) that will be given to the block creator.
                 default: "0"
       produces:
@@ -170,13 +170,13 @@ paths:
           x-nullable: false
           description: Smart contract file in a Wasm format.
         - in: formData
-          name : coins
+          name: coins
           type: string
           description: Set the number of coins that will be sent along the deployment call. (NanoMassa)
           default: "0"
         - in: formData
-          name : fee
-          type : string
+          name: fee
+          type: string
           description: Set the fee amount (in massa) that will be given to the block creator.
           default: "0"
         - in: formData
@@ -222,21 +222,21 @@ paths:
                 description: Account nickname used to sign the operation.
                 type: string
                 x-nullable: false
-              smartContract:  
+              smartContract:
                 description: Base64 encoded smart contract bytecode.
                 type: string
                 x-nullable: false
               maxCoins:
                 description: Set the number of coins that will be sent along the deployment call.
-                type : string
+                type: string
                 default: "0"
               coins:
                 description: Set the number of coins that will be sent along the deployment call.
-                type : string
+                type: string
                 default: "0"
               fee:
                 description: Set the fee amount (in nanoMassa) that will be given to the block creator.
-                type : string
+                type: string
                 default: "0"
               parameters:
                 description: Base64 encoded parameters that will be sent along the smart contract.
@@ -342,25 +342,25 @@ paths:
       parameters:
         - in: query
           name: attributes
-          type : array
+          type: array
           collectionFormat: multi
           description: |
-                     Specifies the attributes to return. If no attributes are provided, they are all returned.
-                     Possible values:
+            Specifies the attributes to return. If no attributes are provided, they are all returned.
+            Possible values:
 
-                     | Attribute | Content |
-                     | ----------- | -----------|
-                     | balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |
-          items : 
+            | Attribute | Content |
+            | ----------- | -----------|
+            | balance | the pending balances (takes into account pending/non-final operations) and the final balances (takes into account only final operations). |
+          items:
             type: string
             enum: [balance]
-        - in: query  
-          name : addresses
-          required : true
+        - in: query
+          name: addresses
+          required: true
           x-nullable: false
-          type : array
+          type: array
           collectionFormat: multi
-          description : list of wanted addresses
+          description: list of wanted addresses
           items:
             type: string
       produces:
@@ -369,12 +369,12 @@ paths:
         "200":
           description: Addresses' infos retrieved
           schema:
-            type : object
-            properties: 
-              addressesAttributes: 
-                type: object 
+            type: object
+            properties:
+              addressesAttributes:
+                type: object
                 additionalProperties:
-                  description : address key
+                  description: address key
                   type: object
                   properties:
                     balance:
@@ -384,7 +384,7 @@ paths:
                           type: string
                         final:
                           type: string
-            
+
         "400":
           description: Bad request.
           schema:
@@ -404,7 +404,7 @@ paths:
         "200":
           description: Massa node
           schema:
-            $ref: '#/definitions/MassaNodeItem'
+            $ref: "#/definitions/MassaNodeItem"
         "404":
           description: Not found.
           schema:
@@ -432,7 +432,6 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
-
 
   /network/{network}:
     post:
@@ -531,14 +530,14 @@ paths:
               - id
               - url
             properties:
-                id:
-                  description: Plugin identifier.
-                  type: string
-                  x-nullable: false
-                url:
-                  description: URL authority to use to connect to the plugin
-                  type: string
-                  x-nullable: false
+              id:
+                description: Plugin identifier.
+                type: string
+                x-nullable: false
+              url:
+                description: URL authority to use to connect to the plugin
+                type: string
+                x-nullable: false
       responses:
         "204":
           description: Plugin successfully installed
@@ -566,7 +565,7 @@ paths:
         - in: path
           name: id
           type: string
-          required : true
+          required: true
           description: Plugin identifier.
       responses:
         "200":
@@ -595,7 +594,7 @@ paths:
       parameters:
         - in: path
           name: id
-          required : true
+          required: true
           type: string
           description: Plugin identifier.
       responses:
@@ -625,7 +624,7 @@ paths:
         - in: path
           name: id
           type: string
-          required : true
+          required: true
           description: Plugin unique identifier.
         - in: body
           name: body
@@ -636,11 +635,11 @@ paths:
             required:
               - command
             properties:
-                command:
-                  description: Command to execute.
-                  type: string
-                  enum: ["update", "stop", "start", "restart"]
-                  x-nullable: false
+              command:
+                description: Command to execute.
+                type: string
+                enum: ["update", "stop", "start", "restart"]
+                x-nullable: false
       responses:
         "204":
           description: Command successfully executed.
@@ -672,12 +671,12 @@ paths:
         - in: path
           name: id
           type: string
-          required : true
+          required: true
           description: Plugin unique identifier.
       produces:
         - image/*
       responses:
-        '200':
+        "200":
           description: Plugin logo
           schema:
             type: file
@@ -711,7 +710,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/PluginStoreItem'
+              $ref: "#/definitions/PluginStoreItem"
         "400":
           description: Bad request.
           schema:
@@ -727,7 +726,7 @@ paths:
         "500":
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
-            $ref: "#/definitions/Error"        
+            $ref: "#/definitions/Error"
   /events/{str}/{caller}:
     get:
       description: Returns the event matching the given data content and caller.
@@ -736,13 +735,13 @@ paths:
         - application/json
       parameters:
         - in: path
-          required : true
+          required: true
           name: str
           type: string
           description: Data content of the event.
         - in: path
           name: caller
-          required : true
+          required: true
           type: string
           description: Creator of the transaction that triggered the event.
       responses:
@@ -772,7 +771,7 @@ paths:
       parameters:
         - in: path
           name: resource
-          required : true
+          required: true
           type: string
           description: Website resource.
       responses:
@@ -790,11 +789,11 @@ paths:
         - in: path
           name: author-name
           type: string
-          required : true
+          required: true
           description: Author of the plugin.
         - in: path
           name: plugin-name
-          required : true
+          required: true
           type: string
           description: Name of the plugin.
       responses:
@@ -811,13 +810,13 @@ paths:
           description: Massa Station version retreived.
           schema:
             $ref: "#/definitions/Version"
-        "400": 
+        "400":
           description: "Failed to retrieve Massa Station version"
           schema:
             $ref: "#/definitions/Version"
 
 definitions:
-  Version: 
+  Version:
     description: Current Massa Station version.
     type: string
     x-nullable: false
@@ -887,7 +886,7 @@ definitions:
       isCompatible:
         type: boolean
       file:
-        $ref: '#/definitions/File'
+        $ref: "#/definitions/File"
       os:
         type: string
     required:
@@ -914,7 +913,7 @@ definitions:
         type: string
       url:
         type: string
-      chainId: 
+      chainId:
         type: integer
     required:
       - network
@@ -961,17 +960,17 @@ definitions:
     type: object
     properties:
       executed_at:
-        $ref: '#/definitions/Timestamp'
+        $ref: "#/definitions/Timestamp"
       result:
-        $ref: '#/definitions/Result'
+        $ref: "#/definitions/Result"
       output_events:
         type: array
         items:
-          $ref: '#/definitions/Event'
+          $ref: "#/definitions/Event"
       gas_cost:
         type: integer
       state_changes:
-        $ref: '#/definitions/StateChange'
+        $ref: "#/definitions/StateChange"
   Timestamp:
     type: object
     properties:
@@ -992,14 +991,14 @@ definitions:
     type: object
     properties:
       context:
-        $ref: '#/definitions/EventContext'
+        $ref: "#/definitions/EventContext"
       data:
         type: string
   EventContext:
     type: object
     properties:
       slot:
-        $ref: '#/definitions/Timestamp'
+        $ref: "#/definitions/Timestamp"
       block:
         type: object
       read_only:
@@ -1022,13 +1021,13 @@ definitions:
       ledger_changes:
         type: object
         additionalProperties:
-          $ref: '#/definitions/LedgerEntryChange'
+          $ref: "#/definitions/LedgerEntryChange"
       async_pool_changes:
         type: array
         items:
           type: object
       pos_changes:
-        $ref: '#/definitions/PosChanges'
+        $ref: "#/definitions/PosChanges"
       executed_ops_changes:
         type: object
         additionalProperties:
@@ -1043,14 +1042,14 @@ definitions:
     type: object
     properties:
       Update:
-        $ref: '#/definitions/LedgerUpdate'
+        $ref: "#/definitions/LedgerUpdate"
   LedgerUpdate:
     type: object
     properties:
       balance:
-        $ref: '#/definitions/ChangeSet'
+        $ref: "#/definitions/ChangeSet"
       bytecode:
-        type: string
+        type: object
       datastore:
         type: array
         items:
@@ -1064,7 +1063,7 @@ definitions:
     type: object
     properties:
       seed_bits:
-        $ref: '#/definitions/SeedBitsInfo'
+        $ref: "#/definitions/SeedBitsInfo"
       roll_changes:
         type: object
         additionalProperties:
@@ -1074,14 +1073,14 @@ definitions:
         additionalProperties:
           type: object
       deferred_credits:
-        $ref: '#/definitions/DeferredCreditsInfo'
+        $ref: "#/definitions/DeferredCreditsInfo"
   SeedBitsInfo:
     type: object
     properties:
       order:
         type: string
       head:
-        $ref: '#/definitions/BitVecHeadInfo'
+        $ref: "#/definitions/BitVecHeadInfo"
       bits:
         type: integer
       data:
