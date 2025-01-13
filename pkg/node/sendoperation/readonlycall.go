@@ -49,8 +49,8 @@ func EstimateGasCostCallSC(
 	}
 
 	estimatedGasCost := uint64(result.GasCost)
-	fmt.Printf("estimatedGasCost: %+v\n\n\n", estimatedGasCost)
-	fmt.Printf("addXPercentage(estimatedGasCost, PercentageGasLimit): %+v\n\n\n", addXPercentage(estimatedGasCost, PercentageGasLimit))
+	logger.Warn("estimatedGasCost: %+v\n\n\n", estimatedGasCost)
+	logger.Warn("addXPercentage(estimatedGasCost, PercentageGasLimit): %+v\n\n\n", addXPercentage(estimatedGasCost, PercentageGasLimit))
 	return addXPercentage(estimatedGasCost, PercentageGasLimit), nil
 }
 
