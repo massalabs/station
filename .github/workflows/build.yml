@@ -17,20 +17,20 @@ jobs:
     strategy:
       matrix:
         include:
-          # - os: ubuntu-latest
-          #   arch: amd64
-          #   target: windows
-          #   cc: x86_64-w64-mingw32-gcc
-          #   ext: .exe
+          - os: ubuntu-latest
+            arch: amd64
+            target: windows
+            cc: x86_64-w64-mingw32-gcc
+            ext: .exe
           - os: ubuntu-20.04
             arch: amd64
             target: linux
-          # - os: macos-13
-          #   arch: amd64
-          #   target: darwin
-          # - os: macos-13
-          #   arch: arm64
-          #   target: darwin
+          - os: macos-13
+            arch: amd64
+            target: darwin
+          - os: macos-13
+            arch: arm64
+            target: darwin
 
     runs-on: ${{ matrix.os }}
     steps:
