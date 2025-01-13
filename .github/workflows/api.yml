@@ -10,7 +10,7 @@ jobs:
 
   test-api-robot:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: installing Linux dependencies (workaround for wallet plugin)
         run: |
