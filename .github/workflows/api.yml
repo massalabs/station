@@ -10,11 +10,12 @@ jobs:
 
   test-api-robot:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: installing Linux dependencies (workaround for wallet plugin)
         run: |
           sudo apt update
+          sudo apt install libwebkit2gtk-4.0-dev
       - name: Checkout project directory
         uses: actions/checkout@v4
       - name: Install RobotFramework tests dependencies
