@@ -13,8 +13,8 @@ const (
 	PercentageGasLimit = 10
 )
 
-func addXPercentage(x, y uint64) uint64 {
-	return min(x+x*y/100, MaxGasAllowedCallSC)
+func addXPercentage(x uint64) uint64 {
+	return min(x+x*PercentageGasLimit/100, MaxGasAllowedCallSC)
 }
 
 func EstimateGasCostCallSC(
@@ -50,7 +50,7 @@ func EstimateGasCostCallSC(
 
 	estimatedGasCost := uint64(result.GasCost)
 
-	return addXPercentage(estimatedGasCost, PercentageGasLimit), nil
+	return addXPercentage(estimatedGasCost), nil
 }
 
 // ReadOnlyCallSC calls execute_read_only_call jsonrpc method.
@@ -140,7 +140,7 @@ func EstimateGasCostExecuteSC(
 
 	estimatedGasCost := uint64(result.GasCost)
 
-	return addXPercentage(estimatedGasCost, PercentageGasLimit), nil
+	return addXPercentage(estimatedGasCost), nil
 }
 
 // ReadOnlyExecuteSC calls execute_read_only_bytecode jsonrpc method.
