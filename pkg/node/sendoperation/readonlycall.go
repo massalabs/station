@@ -49,8 +49,9 @@ func EstimateGasCostCallSC(
 	}
 
 	estimatedGasCost := uint64(result.GasCost)
+	addxpercentage := addXPercentage(estimatedGasCost, PercentageGasLimit)
 	logger.Warn("estimatedGasCost: %+v\n\n\n", estimatedGasCost)
-	logger.Warn("addXPercentage(estimatedGasCost, PercentageGasLimit): %+v\n\n\n", addXPercentage(estimatedGasCost, PercentageGasLimit))
+	logger.Warn("addXPercentage: %d\n\n\n", addxpercentage)
 	return addXPercentage(estimatedGasCost, PercentageGasLimit), nil
 }
 
