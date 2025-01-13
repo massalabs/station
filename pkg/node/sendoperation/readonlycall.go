@@ -14,7 +14,7 @@ const (
 )
 
 func addXPercentage(x, y uint64) uint64 {
-	return x + x*y/100
+	return min(x+x*y/100, MaxGasAllowedCallSC)
 }
 
 func EstimateGasCostCallSC(
