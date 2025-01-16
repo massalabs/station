@@ -10,7 +10,7 @@ import (
 const OpType = 3
 
 type OperationDetails struct {
-	Data     []byte `json:"data"`
+	ByteCode []byte `json:"data"`
 	MaxGas   uint64 `json:"max_gas"`
 	MaxCoins uint64 `json:"max_coins"`
 	//nolint:tagliatelle
@@ -23,7 +23,7 @@ type Operation struct {
 }
 
 type ExecuteSC struct {
-	data      []byte
+	byteCode  []byte
 	maxGas    uint64
 	maxCoins  uint64
 	dataStore []byte
@@ -34,15 +34,17 @@ type MessageContent struct {
 	OperationType uint64
 	MaxGas        uint64
 	MaxCoins      uint64
+	ByteCode      []byte
+	DataStore     []byte
 }
 
 /*
 The dataStore parameter represents a storage that is accessible by the SC in the constructor
 function when it gets deployed.
 */
-func New(data []byte, maxGas uint64, maxCoins uint64, dataStore []byte) *ExecuteSC {
+func New(byteCode []byte, maxGas uint64, maxCoins uint64, dataStore []byte) *ExecuteSC {
 	return &ExecuteSC{
-		data:      data,
+		byteCode:  byteCode,
 		maxGas:    maxGas,
 		maxCoins:  maxCoins,
 		dataStore: dataStore,
@@ -52,7 +54,7 @@ func New(data []byte, maxGas uint64, maxCoins uint64, dataStore []byte) *Execute
 func (e *ExecuteSC) Content() (interface{}, error) {
 	return &Operation{
 		ExecuteSC: OperationDetails{
-			Data:      e.data,
+			ByteCode:  e.byteCode,
 			MaxGas:    e.maxGas,
 			MaxCoins:  e.maxCoins,
 			DataStore: e.dataStore,
@@ -72,14 +74,16 @@ func (e *ExecuteSC) Message() []byte {
 	nbBytes = binary.PutUvarint(buf, e.maxGas)
 	msg = append(msg, buf[:nbBytes]...)
 
+	// maxCoins
 	nbBytes = binary.PutUvarint(buf, e.maxCoins)
 	msg = append(msg, buf[:nbBytes]...)
 
-	// data
-	nbBytes = binary.PutUvarint(buf, uint64(len(e.data)))
+	// bytecode
+	nbBytes = binary.PutUvarint(buf, uint64(len(e.byteCode)))
 	msg = append(msg, buf[:nbBytes]...)
-	msg = append(msg, e.data...)
+	msg = append(msg, e.byteCode...)
 
+	// dataStore
 	msg = append(msg, e.dataStore...)
 
 	return msg
@@ -140,6 +144,36 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 	}
 
 	operationContent.MaxCoins = maxCoins
+
+	// Read data
+	dataLength, err := binary.ReadUvarint(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read bytecode length: %w", err)
+	}
+
+	functionBytes := make([]byte, dataLength)
+
+	_, err = buf.Read(functionBytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read bytecode: %w", err)
+	}
+
+	operationContent.ByteCode = functionBytes
+
+	// Read dataStore
+	remainingBytesLen := buf.Len()
+
+	if remainingBytesLen == 0 {
+		return operationContent, nil
+	}
+
+	dataStoreBytes := make([]byte, remainingBytesLen)
+	_, err = buf.Read(dataStoreBytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read dataStore: %w", err)
+	}
+
+	operationContent.DataStore = dataStoreBytes
 
 	return operationContent, nil
 }

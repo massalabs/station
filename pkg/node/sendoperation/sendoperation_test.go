@@ -79,22 +79,37 @@ func TestSerializeDeserializeExecuteSCMessage(t *testing.T) {
 	assert := assert.New(t)
 
 	testCases := []struct {
-		expiry   uint64
-		fee      uint64
-		maxGas   uint64
-		maxCoins uint64
+		expiry    uint64
+		fee       uint64
+		maxGas    uint64
+		maxCoins  uint64
+		byteCode  []byte
+		dataStore []byte
 	}{
-		{
+		{ // no dataStore
 			expiry:   uint64(123456),
 			fee:      uint64(789),
 			maxGas:   uint64(100000),
 			maxCoins: uint64(50000),
+			byteCode: []byte("exampleByteCode"),
+		},
+		{ // with dataStore
+			expiry:    uint64(123456),
+			fee:       uint64(789),
+			maxGas:    uint64(100000),
+			maxCoins:  uint64(50000),
+			byteCode:  []byte(" exampleByteCode "),
+			dataStore: []byte(" exampleDataStore "),
+		},
+		{ // expiry, fees, maxGas and maxCoins are 0
+			byteCode:  []byte("exampleByteCode"),
+			dataStore: []byte("exampleDataStore"),
 		},
 	}
 
 	for _, testCase := range testCases {
 		// Create a new ExecuteSC operation
-		operation := executesc.New(nil, testCase.maxGas, testCase.maxCoins, nil)
+		operation := executesc.New(testCase.byteCode, testCase.maxGas, testCase.maxCoins, testCase.dataStore)
 
 		// Serialize the operation
 		msg := message(testCase.expiry, testCase.fee, operation)
@@ -115,6 +130,8 @@ func TestSerializeDeserializeExecuteSCMessage(t *testing.T) {
 		assert.Equal(ExecuteSCOpType, executeSC.OperationType, "Operation type mismatch")
 		assert.Equal(testCase.maxGas, executeSC.MaxGas, "MaxGas mismatch")
 		assert.Equal(testCase.maxCoins, executeSC.MaxCoins, "MaxCoins mismatch")
+		assert.Equal(testCase.byteCode, executeSC.ByteCode, "ByteCode mismatch")
+		assert.Equal(testCase.dataStore, executeSC.DataStore, "DataStore mismatch")
 	}
 }
 
