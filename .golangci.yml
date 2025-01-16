@@ -40,6 +40,12 @@ run:
     - api/swagger/server
     - resource
 
+issues:
+  exclude-rules:
+    - path: '(.+)_test\.go'
+      linters:
+        - funlen
+
 linters-settings:
   tagliatelle:
     # Check the struck tag name case.

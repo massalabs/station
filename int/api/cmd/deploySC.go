@@ -32,7 +32,6 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 				&models.Error{
 					Message: "Smart contract bytecode is required",
 				})
-
 	}
 
 	smartContractByteCode, err := base64.StdEncoding.DecodeString(params.Body.SmartContract)

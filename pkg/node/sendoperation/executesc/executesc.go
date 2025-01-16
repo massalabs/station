@@ -10,7 +10,7 @@ import (
 const OpType = 3
 
 type OperationDetails struct {
-	ByteCode []byte `json:"data"`
+	ByteCode []byte `json:"byte_code"`
 	MaxGas   uint64 `json:"max_gas"`
 	MaxCoins uint64 `json:"max_coins"`
 	//nolint:tagliatelle
@@ -168,6 +168,7 @@ func DecodeMessage(data []byte) (*MessageContent, error) {
 	}
 
 	dataStoreBytes := make([]byte, remainingBytesLen)
+
 	_, err = buf.Read(dataStoreBytes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read dataStore: %w", err)

@@ -43,7 +43,6 @@ func AssertUpdate(t *testing.T, testPluginUpdate testPluginUpdate) {
 	assert.Equal(t, isUpdatable, testPluginUpdate.updatable)
 }
 
-//nolint:funlen
 func TestPlugin_Update(t *testing.T) {
 	//nolint:exhaustruct
 	pluginNonUpdatable := Plugin{

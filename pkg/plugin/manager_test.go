@@ -6,7 +6,6 @@ import (
 	"testing"
 )
 
-//nolint:funlen
 func Test_removePlugin(t *testing.T) {
 	testCases := []struct {
 		name        string
