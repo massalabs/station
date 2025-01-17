@@ -73,8 +73,8 @@ func getArgsKey() []byte {
 // getCoinsKey returns the key in the datastore for the amount of MAS to be sent to the deployed contract.
 func getCoinsKey() []byte {
 	lengthPrefix := convert.U32ToBytes(byteArrayLengthPrefix)
-
 	coinsKeySuffix := []byte{1}
+
 	tempKey := append(getContractByteCodeKey(), lengthPrefix...)
 
 	return append(tempKey, coinsKeySuffix...)
