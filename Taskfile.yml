@@ -23,7 +23,7 @@ tasks:
   install-dev:
     desc: Installs development dependencies (fmt, lint, etc.)
     cmds:
-      - cmd: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3
+      - cmd: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0
       - cmd: go install github.com/daixiang0/gci@latest
       - cmd: go install mvdan.cc/gofumpt@latest
       - task: install-dev-win
