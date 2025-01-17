@@ -48,7 +48,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
       - name: Create release and upload binaries
         uses: softprops/action-gh-release@v1
         with:
