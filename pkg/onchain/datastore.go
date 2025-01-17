@@ -73,6 +73,7 @@ func getArgsKey() []byte {
 // getCoinsKey returns the key in the datastore for the amount of MAS to be sent to the deployed contract.
 func getCoinsKey() []byte {
 	lengthPrefix := convert.U32ToBytes(byteArrayLengthPrefix)
+
 	coinsKeySuffix := []byte{1}
 	tempKey := append(getContractByteCodeKey(), lengthPrefix...)
 
@@ -164,12 +165,12 @@ func DeSerializeDatastore(datastore []byte) ([]DatastoreEntry, error) {
 	}
 
 	// Decode each key-value pair
-	for i := uint64(0); i < datastoreSize; i++ {
+	for dataStoreIndex := uint64(0); dataStoreIndex < datastoreSize; dataStoreIndex++ {
 		/* Decode key*/
 		// get the key length
 		keyLength, err := binary.ReadUvarint(reader)
 		if err != nil {
-			return nil, fmt.Errorf("couldn't deserialize the length of the %dth datastore key: %w", i+1, err)
+			return nil, fmt.Errorf("couldn't deserialize the length of the %dth datastore key: %w", dataStoreIndex+1, err)
 		}
 
 		// get the key
@@ -177,14 +178,14 @@ func DeSerializeDatastore(datastore []byte) ([]DatastoreEntry, error) {
 
 		_, err = reader.Read(key)
 		if err != nil {
-			return nil, fmt.Errorf("couldn't deserialize the %dth datastore key: %w", i+1, err)
+			return nil, fmt.Errorf("couldn't deserialize the %dth datastore key: %w", dataStoreIndex+1, err)
 		}
 
 		/* Decode value*/
 		// get value length
 		valueLength, err := binary.ReadUvarint(reader)
 		if err != nil {
-			return nil, fmt.Errorf("couldn't deserialize the length of the %dth datastore value: %w", i+1, err)
+			return nil, fmt.Errorf("couldn't deserialize the length of the %dth datastore value: %w", dataStoreIndex+1, err)
 		}
 
 		// get the value
@@ -192,7 +193,7 @@ func DeSerializeDatastore(datastore []byte) ([]DatastoreEntry, error) {
 
 		_, err = reader.Read(value)
 		if err != nil {
-			return nil, fmt.Errorf("couldn't deserialize the %dth datastore value: %w", i+1, err)
+			return nil, fmt.Errorf("couldn't deserialize the %dth datastore value: %w", dataStoreIndex+1, err)
 		}
 
 		entries = append(entries, DatastoreEntry{Key: key, Value: value})

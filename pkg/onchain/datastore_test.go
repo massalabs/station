@@ -95,6 +95,7 @@ func TestDeSerializeDatastore(t *testing.T) {
 					{Key: []byte{1}, Value: []byte{2, 3}},
 				}
 				serialized, _ := SerializeDatastore(datastore)
+
 				return serialized
 			}(),
 			expected: []DatastoreEntry{
@@ -151,7 +152,7 @@ func equalDatastoreEntries(entries1, entries2 []DatastoreEntry) bool {
 	}
 
 	for i := range entries1 {
-		if !bytes.Equal(entries1[i].Key, entries1[i].Key) || !bytes.Equal(entries1[i].Value, entries1[i].Value) {
+		if !bytes.Equal(entries1[i].Key, entries2[i].Key) || !bytes.Equal(entries1[i].Value, entries2[i].Value) {
 			return false
 		}
 	}
