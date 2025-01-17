@@ -84,9 +84,12 @@ func getCoinsKey() []byte {
 DatastoreToDeployedContract If the datastore is a valid datastore for a deployed contract,
 it will return the contract's bytecode, args and coins
 If the datastore is not a valid datastore for a deployed contract,
-it will return an empty ContractDatastore and success = false.
+it will return an empty ContractDatastore and isDeployDatastore = false.
 */
-func DatastoreToDeployedContract(datastore []DatastoreEntry) (contractDatastore ContractDatastore, success bool) {
+func DatastoreToDeployedContract(datastore []DatastoreEntry) (
+	contractDatastore ContractDatastore,
+	isDeployDatastore bool,
+) {
 	if !isContractDeployDatastore(datastore) {
 		return ContractDatastore{}, false
 	}
