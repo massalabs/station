@@ -24,7 +24,7 @@ jobs:
           pip install -r requirements.txt
           sudo apt install xvfb
       - name: Download MassaStation binary
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: massastation_linux_amd64_bin
       - name: Prepare MassaStation binary

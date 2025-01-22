@@ -222,6 +222,8 @@ func DecodeMessage64(msgB64 string) ([]byte, uint64, uint64, error) {
 }
 
 // DecodeOperationType decodes a byte slice to retrieve the operation ID.
+// Can only be used on operation specific data i.e. after fee and expiry have been removed
+// i.e. The parameter should be the result of DecodeMessage64.
 func DecodeOperationType(data []byte) (uint64, error) {
 	buf := bytes.NewReader(data)
 

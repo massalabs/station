@@ -69,7 +69,7 @@ jobs:
         run: |
           mv ./massastation${{ matrix.ext }} massastation_${{ matrix.target }}_${{ matrix.arch }}${{ matrix.ext }}
       - name: Upload MassaStation Binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: massastation_${{ matrix.target }}_${{ matrix.arch }}_bin
           path: |
@@ -80,7 +80,7 @@ jobs:
       - name: Upload Package
         # We don't need to upload package for windows since we do not package for windows.
         if: matrix.target != 'windows'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: massastation_${{ matrix.target }}_${{ matrix.arch }}_package
           path: |
@@ -113,7 +113,7 @@ jobs:
       - name: Sync clock
         run: sudo sntp -sS time.windows.com # https://github.com/actions/runner/issues/2996#issuecomment-1833103110
       - name: Download MassaStation Package
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: massastation_darwin_${{ matrix.arch }}_package
           path: installer
@@ -132,7 +132,7 @@ jobs:
           xcrun notarytool submit massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg --wait --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.APPLE_APP_PASSWORD }} --team-id ${{ secrets.APPLE_TEAM_ID }}
           xcrun stapler staple massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg
       - name: Upload Package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: massastation_installer_darwin_${{ matrix.arch }}
           path: "installer/massastation_*.pkg"
@@ -165,7 +165,7 @@ jobs:
         with:
           python-version: 3.11
       - name: Download MassaStation
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: massastation_windows_amd64_bin
       - name: Rename MassaStation binary
@@ -185,7 +185,7 @@ jobs:
           GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           GCP_SERVICE_ACCOUNT: ${{ vars.GCP_SERVICE_ACCOUNT }}
       - name: Upload Installer
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: massastation_installer_windows_amd64
           path: "installer/*.msi"
@@ -206,7 +206,7 @@ jobs:
       - name: Fetch all git tags
         run: git fetch --prune --unshallow --tags
       - name: Download MassaStation Package
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: massastation_linux_amd64_package
           path: installer
@@ -215,7 +215,7 @@ jobs:
         env:
           VERSION: ${{ env.VERSION }}
       - name: Upload Package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: massastation_installer_deb_amd64
           path: "installer/*.deb"

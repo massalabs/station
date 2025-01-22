@@ -7,4 +7,5 @@ const (
 	errorInvalidMaxGas   = "Execute-0004"
 	errorInvalidCoin     = "Execute-0005"
 	errorInvalidNickname = "Execute-0006"
+	errorInvalidMaxCoins = "Execute-0007"
 )

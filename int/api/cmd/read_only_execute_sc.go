@@ -24,7 +24,7 @@ type ReadOnlyExecuteSC struct {
 func (e *ReadOnlyExecuteSC) Handle(params operations.CmdReadOnlyExecuteSCParams) middleware.Responder {
 	file, err := io.ReadAll(params.Bytecode)
 	if err != nil {
-		return operations.NewCmdDeploySCBadRequest().
+		return operations.NewCmdReadOnlyExecuteSCBadRequest().
 			WithPayload(
 				&models.Error{
 					Code:    err.Error(),

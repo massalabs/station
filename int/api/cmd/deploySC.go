@@ -26,6 +26,14 @@ type deploySC struct {
 }
 
 func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Responder {
+	if params.Body.SmartContract == "" {
+		return operations.NewCmdDeploySCUnprocessableEntity().
+			WithPayload(
+				&models.Error{
+					Message: "Smart contract bytecode is required",
+				})
+	}
+
 	smartContractByteCode, err := base64.StdEncoding.DecodeString(params.Body.SmartContract)
 	if err != nil {
 		return operations.NewCmdDeploySCBadRequest().
@@ -51,7 +59,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		return operations.NewCmdDeploySCBadRequest().
 			WithPayload(
 				&models.Error{
-					Code:    errorInvalidMaxGas,
+					Code:    errorInvalidMaxCoins,
 					Message: err.Error(),
 				})
 	}

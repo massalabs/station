@@ -122,9 +122,9 @@ func DeploySC(
 	client := node.NewClient(networkInfos.NodeURL)
 
 	contract := ContractDatastore{
-		Data:  smartContractByteCode,
-		Args:  parameters,
-		Coins: coins,
+		ByteCode: smartContractByteCode,
+		Args:     parameters,
+		Coins:    coins,
 	}
 
 	dataStore, err := populateDatastore(contract)
@@ -136,7 +136,8 @@ func DeploySC(
 		deployerByteCode,
 		maxGas,
 		maxCoins,
-		dataStore)
+		dataStore,
+	)
 
 	operationResponse, err := sendOperation.Call(
 		client,
