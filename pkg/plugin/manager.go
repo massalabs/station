@@ -9,12 +9,9 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/cavaliergopher/grab/v3"
-	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/plugin/utils"
 	"github.com/massalabs/station/pkg/store"
-	"github.com/xyproto/unzip"
 )
 
 // Directory returns the plugin directory.
@@ -265,61 +262,6 @@ func (m *Manager) StopPlugin(plugin *Plugin, unregister bool) error {
 	}
 
 	return nil
-}
-
-// downloadPlugin downloads a plugin from a given URL.
-// Pass isNew to false to update the plugin.
-// Returns the plugin path.
-func (m *Manager) downloadPlugin(url string, isNew bool) (string, error) {
-	pluginsDir := Directory(m.configDir)
-
-	req, err := grab.NewRequest(pluginsDir, url)
-	if err != nil {
-		return "", fmt.Errorf("creating a new request for %s: %w", url, err)
-	}
-
-	req.HTTPRequest.Header.Set("User-Agent", fmt.Sprintf("MassaStation/%s", config.Version))
-
-	resp := grab.DefaultClient.Do(req)
-	if err := resp.Err(); err != nil {
-		return "", fmt.Errorf("downloading plugin at %s: %w", url, err)
-	}
-
-	archivePath := resp.Filename
-
-	defer func() {
-		err = os.Remove(archivePath)
-		if err != nil {
-			logger.Errorf("deleting archive %s: %s", archivePath, err)
-		}
-	}()
-
-	archiveName := filepath.Base(archivePath)
-	pluginFilename := utils.PluginFileName(archiveName)
-	pluginName := getPluginName(archiveName)
-	pluginPath := filepath.Join(pluginsDir, pluginName)
-
-	if isNew {
-		_, err = os.Stat(pluginPath)
-		if os.IsNotExist(err) {
-			err := os.MkdirAll(pluginPath, os.ModePerm)
-			if err != nil {
-				return "", fmt.Errorf("creating plugin directory %s: %w", pluginPath, err)
-			}
-		}
-	}
-
-	err = unzip.Extract(archivePath, pluginPath)
-	if err != nil {
-		return "", fmt.Errorf("extracting the plugin at %s: %w", archivePath, err)
-	}
-
-	err = prepareBinary(pluginFilename, pluginPath)
-	if err != nil {
-		return "", fmt.Errorf("preparing plugin binary %s: %w", pluginName, err)
-	}
-
-	return pluginPath, nil
 }
 
 // Install grabs a remote plugin from the given url and install it locally.

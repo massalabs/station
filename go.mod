@@ -4,7 +4,6 @@ go 1.21
 
 require (
 	fyne.io/fyne/v2 v2.3.4
-	github.com/cavaliergopher/grab/v3 v3.0.1
 	github.com/go-openapi/errors v0.20.2
 	github.com/go-openapi/loads v0.21.1
 	github.com/go-openapi/runtime v0.24.1
