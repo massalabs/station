@@ -36,8 +36,10 @@ function Install({
 
   function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
-    if (!validate(url)) return;
-    const params = { source: url };
+    const trimmedUrl = url.trim();
+    if (!validate(trimmedUrl)) return;
+    const encodedUrl = encodeURIComponent(trimmedUrl);
+    const params = { source: encodedUrl };
     mutate({ params });
   }
 

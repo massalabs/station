@@ -25,6 +25,7 @@ type deploySC struct {
 	networkInfos *config.NetworkInfos
 }
 
+//nolint:funlen
 func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Responder {
 	if params.Body.SmartContract == "" {
 		return operations.NewCmdDeploySCUnprocessableEntity().
