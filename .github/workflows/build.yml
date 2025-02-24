@@ -6,7 +6,7 @@ on:
     inputs:
       tag_name:
         type: string
-        description: 'The tag name of the release without v prefix'
+        description: "The tag name of the release without v prefix"
 
 env:
   VERSION: ${{ inputs.tag_name }}
