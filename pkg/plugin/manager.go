@@ -202,7 +202,7 @@ func (m *Manager) InitPlugin(pluginPath string) error {
 	return nil
 }
 
-// RunALL runs all the installed plugins.
+// RunAll runs all the installed plugins.
 func (m *Manager) RunAll() error {
 	pluginDir := Directory(m.configDir)
 

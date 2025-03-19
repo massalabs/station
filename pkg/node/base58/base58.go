@@ -48,7 +48,7 @@ func CheckDecode(input string) (result []byte, err error) {
 	return
 }
 
-// CheckEncode encodes a byte array  and a version to base58 with a checksum.
+// VersionedCheckEncode encodes a byte array  and a version to base58 with a checksum.
 func VersionedCheckEncode(input []byte, version byte) string {
 	return base58.CheckEncode(input, version)
 }
