@@ -17,12 +17,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             arch: amd64
             target: windows
             cc: x86_64-w64-mingw32-gcc
             ext: .exe
-          - os: ubuntu-20.04
+          - os: ubuntu-24.04
             arch: amd64
             target: linux
           - os: macos-13
@@ -199,7 +199,7 @@ jobs:
       run:
         working-directory: installer
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
