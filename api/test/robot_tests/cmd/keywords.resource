@@ -7,7 +7,7 @@ Resource            ../keywords.resource
 Resource            ../variables.resource
 
 *** Variables ***
-${WALLET_PLUGIN_VERSION}       v0.3.5
+${WALLET_PLUGIN_VERSION}       v0.5.0
 
 *** Keywords ***
 Suite Setup
@@ -33,7 +33,7 @@ Delete Wallet Plugin
 Install Wallet Plugin
     Log To Console    Installing Massa Wallet Plugin
     ${source}=    Set Variable
-    ...    https://github.com/massalabs/station-massa-wallet/releases/download/${WALLET_PLUGIN_VERSION}/wallet-plugin_${OS}-${ARCH}.zip
+    ...    https://massa-station-assets.s3.eu-west-3.amazonaws.com/plugins/wallet/qa/wallet-plugin_${OS}-${ARCH}.zip
     ${response}=    POST
     ...    ${API_URL}/plugin-manager
     ...    params=source=${source}
