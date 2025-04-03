@@ -12,10 +12,10 @@ jobs:
     needs: build
     runs-on: ubuntu-24.04
     steps:
-      - name: installing Linux dependencies (workaround for wallet plugin)
+      - name: installing Linux dependencies
         run: |
           sudo apt update
-          sudo apt install libwebkit2gtk-4.1-dev
+          sudo apt install -y libwebkit2gtk-4.1-0
       - name: Checkout project directory
         uses: actions/checkout@v4
       - name: Install RobotFramework tests dependencies
@@ -34,12 +34,8 @@ jobs:
           sudo setcap CAP_NET_BIND_SERVICE=+eip ./massastation
       - name: Create wallet from secret
         run: |
-          sudo mkdir -p /usr/local/share/massastation/
-          sudo chmod 777 /usr/local/share/massastation/
-          sudo mkdir -p /usr/local/share/massastation/logs/
-          sudo chmod 777 /usr/local/share/massastation/logs/
-          sudo mkdir -p /etc/massastation/certs
-          sudo chmod 777 /etc/massastation/
+          sudo mkdir -p /usr/local/share/massastation/logs /etc/massastation/certs
+          sudo chmod -R 777 /usr/local/share/massastation /etc/massastation
           mkdir -p $HOME/.config/massa-station-wallet/
           echo "$WALLET_TEST_WALLET" > $HOME/.config/massa-station-wallet/wallet_fullpower.yaml
         env:
