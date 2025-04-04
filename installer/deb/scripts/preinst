@@ -35,13 +35,10 @@ display_terms_and_condition_agreement() {
 
 case "$1" in
 install)
-    # If we find the binary, it means that Massa Station is already installed.
-    if [ -f $(which massastation) ]; then
-        # We need to check if the user has already agreed to the terms and conditions.
-        if [ -f $TERMS_AND_CONDITIONS_AGREED_FILE ]; then
-            # If the user has already agreed to the terms and conditions, we don't need to display them again.
-            exit 0
-        fi
+    # We need to check if the user has already agreed to the terms and conditions.
+    if [ -f $TERMS_AND_CONDITIONS_AGREED_FILE ]; then
+        # If the user has already agreed to the terms and conditions, we don't need to display them again.
+        exit 0
     fi
 
     display_terms_and_condition_agreement
