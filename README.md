@@ -35,3 +35,6 @@ If you are working on a module, you can install it manually to test it using Mas
 3. Click on the `Install` button.
 
 > **Note:** A complete guide on how to create a module is available [here](https://docs.massa.net/docs/massaStation/guidelines)
+
+## License
+Please make sure to read our [Software License](./LICENSE.md)
