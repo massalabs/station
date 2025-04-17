@@ -74,7 +74,7 @@ function Install({
             </div>
             <div className="mas-body2 text-neutral mb-6">
               {Intl.t('store.sidepanel.description', {
-                url: 'https://massa_make_plugin.com',
+                url: 'https://docs.massa.net/docs/massaStation/guidelines',
               })}
             </div>
             <div className="bg-secondary p-4">
