@@ -31,8 +31,8 @@ type Context struct {
 }
 
 const (
-	maxWaitingTimeInSeconds = 45
-	pollIntervalSec         = 1
+	eventPollingTimeoutSec = 60
+	pollIntervalSec        = 1
 )
 
 /**
@@ -101,34 +101,32 @@ func ListenEvents(
 	caller *string,
 	failOnExecError bool,
 ) ([]Event, error) {
-	counter := 0
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(eventPollingTimeoutSec))
+	defer cancel()
 
 	ticker := time.NewTicker(time.Second * pollIntervalSec)
+	defer ticker.Stop()
 
-	for ; true; <-ticker.C {
-		counter++
+	for {
+		select {
+		case <-ctx.Done():
+			return nil, fmt.Errorf("no events found in the given time interval (%d seconds)", eventPollingTimeoutSec)
+		case <-ticker.C:
+			events, err := Events(client, start, end, emitter, caller, operationID)
+			if err != nil {
+				return nil, fmt.Errorf("fetching events: %w", err)
+			}
 
-		if counter > maxWaitingTimeInSeconds/pollIntervalSec {
-			break
-		}
+			for _, event := range events {
+				if failOnExecError && strings.Contains(event.Data, "massa_execution_error") {
+					// return the event containing the error
+					return nil, errors.New(event.Data)
+				}
+			}
 
-		events, err := Events(client, start, end, emitter, caller, operationID)
-		if err != nil {
-			return nil,
-				fmt.Errorf("fetching events %w", err)
-		}
-
-		for _, event := range events {
-			if failOnExecError && strings.Contains(event.Data, "massa_execution_error") {
-				// return the event containing the error
-				return nil, errors.New(event.Data)
+			if len(events) > 0 {
+				return events, nil
 			}
 		}
-
-		if len(events) > 0 {
-			return events, nil
-		}
 	}
-
-	return nil, fmt.Errorf("no events found in the given time interval (%d seconds)", maxWaitingTimeInSeconds)
 }
