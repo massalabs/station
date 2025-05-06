@@ -14,6 +14,8 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"syscall"
+	"time"
 
 	"github.com/gosimple/slug"
 	"github.com/massalabs/station/pkg/logger"
@@ -26,7 +28,9 @@ import (
 type Status int64
 
 const (
-	dotApp = ".app"
+	dotApp         = ".app"
+	stopRetryCount = 3
+	stopRetryWait  = 5
 )
 
 const (
@@ -244,7 +248,7 @@ func (p *Plugin) Start() error {
 	status := p.Status()
 
 	if status != Down && status != Starting {
-		return fmt.Errorf("plugin is not ready to start")
+		return errors.New("plugin is not ready to start")
 	}
 
 	p.command = exec.Command(p.binPath(), p.ID) // #nosec G204
@@ -292,15 +296,56 @@ func (p *Plugin) Start() error {
 	return nil
 }
 
-// Kills a plugin.
+// Stop attempts to stop a plugin gracefully with multiple retries before force killing.
 func (p *Plugin) Stop() error {
-	logger.Infof("Stopping plugin %s.\n", p.ID)
+	logger.Infof("Attempting to stop plugin %s.\n", p.ID)
 
 	status := p.Status()
 
 	if status != Up && status != Crashed {
-		return fmt.Errorf("plugin is not running")
+		return errors.New("plugin is not running")
 	}
+
+	p.mutex.Lock()
+	p.status = ShuttingDown
+	p.mutex.Unlock()
+
+	for retry := 0; retry < stopRetryCount; retry++ {
+		// Send a SIGTERM signal for graceful shutdown
+		if p.command != nil && p.command.Process != nil {
+			// Try to send SIGTERM
+			err := p.command.Process.Signal(syscall.SIGTERM)
+			if err != nil {
+				logger.Warnf("Failed to send SIGTERM to plugin %s: %s\n", p.ID, err)
+			} else {
+				logger.Infof("Sent SIGTERM to plugin %s.\n", p.ID)
+			}
+
+			// Check if the process has exited
+			select {
+			case <-p.quitChan:
+				// Process has exited
+				logger.Infof("Plugin %s stopped gracefully after SIGTERM.\n", p.ID)
+				p.mutex.Lock()
+				p.status = Down
+				p.mutex.Unlock()
+
+				return nil
+			case <-time.After(time.Duration(stopRetryWait) * time.Second):
+				// Timed out waiting for process to exit
+				logger.Warnf("Plugin %s didn't stop yet after SIGTERM (attempt %d/%d).\n",
+					p.ID, retry+1, stopRetryCount)
+			}
+
+			// If this is the last retry, don't wait again
+			if retry == stopRetryCount-1 {
+				break
+			}
+		}
+	}
+
+	logger.Warnf("Graceful shutdown of plugin %s failed after %d attempts. Forcing termination with SIGKILL...\n",
+		p.ID, stopRetryCount)
 
 	return p.Kill()
 }
