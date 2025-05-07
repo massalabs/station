@@ -14,7 +14,6 @@ import (
 	"runtime"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/gosimple/slug"
@@ -253,6 +252,9 @@ func (p *Plugin) Start() error {
 
 	p.command = exec.Command(p.binPath(), p.ID) // #nosec G204
 
+	// Configure platform-specific process attributes
+	setupProcess(p.command)
+
 	stdOutWriter := &prefixWriter{w: os.Stdout, prefix: fmt.Sprintf("[%s] - ", pluginName)}
 	stdErrWriter := &prefixWriter{w: os.Stderr, prefix: fmt.Sprintf("[%s] Error: ", pluginName)}
 
@@ -311,21 +313,19 @@ func (p *Plugin) Stop() error {
 	p.mutex.Unlock()
 
 	for retry := 0; retry < stopRetryCount; retry++ {
-		// Send a SIGTERM signal for graceful shutdown
+		// Send a signal for graceful shutdown
 		if p.command != nil && p.command.Process != nil {
-			// Try to send SIGTERM
-			err := p.command.Process.Signal(syscall.SIGTERM)
+			// Use platform-specific method to send termination signal
+			err := p.sendStopSignal() // ignore errors as we'll retry or fallback to Kill()
 			if err != nil {
-				logger.Warnf("Failed to send SIGTERM to plugin %s: %s\n", p.ID, err)
-			} else {
-				logger.Infof("Sent SIGTERM to plugin %s.\n", p.ID)
+				logger.Warnf("Failed to send stop signal to plugin %s: %s\n", p.ID, err)
 			}
 
 			// Check if the process has exited
 			select {
 			case <-p.quitChan:
 				// Process has exited
-				logger.Infof("Plugin %s stopped gracefully after SIGTERM.\n", p.ID)
+				logger.Infof("Plugin %s stopped gracefully.\n", p.ID)
 				p.mutex.Lock()
 				p.status = Down
 				p.mutex.Unlock()
@@ -333,7 +333,7 @@ func (p *Plugin) Stop() error {
 				return nil
 			case <-time.After(time.Duration(stopRetryWait) * time.Second):
 				// Timed out waiting for process to exit
-				logger.Warnf("Plugin %s didn't stop yet after SIGTERM (attempt %d/%d).\n",
+				logger.Warnf("Plugin %s didn't stop yet (attempt %d/%d).\n",
 					p.ID, retry+1, stopRetryCount)
 			}
 
