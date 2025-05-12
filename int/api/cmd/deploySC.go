@@ -88,13 +88,28 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 				})
 	}
 
+	maxGas := uint64(sendoperation.MaxGasAllowedExecuteSC)
+
+	if string(params.Body.MaxGas) != "" {
+		parsedMaxGas, err := strconv.ParseUint(string(params.Body.MaxGas), 10, 64)
+		if err != nil {
+			return operations.NewCmdDeploySCBadRequest().WithPayload(
+				&models.Error{
+					Code:    errorInvalidMaxGas,
+					Message: "Error during max gas conversion: " + err.Error(),
+				})
+		}
+
+		maxGas = parsedMaxGas
+	}
+
 	operationResponse, events, err := onchain.DeploySC(
 		d.networkInfos,
 		params.Body.Nickname,
-		sendoperation.MaxGasAllowedExecuteSC, // default
-		maxCoins,                             // maxCoins
-		coins,                                // Coins to send for storage
-		fee,                                  // operation fee
+		maxGas,
+		maxCoins,
+		coins,
+		fee,
 		sendoperation.DefaultExpiryInSlot,
 		parameters,
 		smartContractByteCode,
