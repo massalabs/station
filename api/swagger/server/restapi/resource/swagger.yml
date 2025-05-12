@@ -245,6 +245,9 @@ paths:
                 description: "Description of the operation"
                 type: string
                 default: ""
+              maxGas:
+                $ref: "#/definitions/Amount"
+                description: Maximum number of gas unit that a operation will be able consume.
       produces:
         - application/json
       responses:
