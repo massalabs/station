@@ -174,3 +174,46 @@ func FindDeployedAddress(events []node.Event) (string, bool) {
 
 	return "", false
 }
+
+func ExecuteSC(
+	networkInfos *config.NetworkInfos,
+	nickname string,
+	maxGas uint64,
+	maxCoins uint64,
+	fees uint64,
+	expiry uint64,
+	bytecode []byte,
+	datastore []DatastoreEntry,
+	signer signer.Signer,
+	description string,
+) (*sendOperation.OperationResponse, error) {
+	client := node.NewClient(networkInfos.NodeURL)
+
+	serializedDatastore, err := SerializeDatastore(datastore)
+	if err != nil {
+		return nil, err
+	}
+
+	exeSCOperation := executesc.New(
+		bytecode,
+		maxGas,
+		maxCoins,
+		serializedDatastore,
+	)
+
+	operationResponse, err := sendOperation.Call(
+		client,
+		networkInfos.ChainID,
+		expiry,
+		fees,
+		exeSCOperation,
+		nickname,
+		signer,
+		description,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("calling executeSC: %w", err)
+	}
+
+	return operationResponse, nil
+}

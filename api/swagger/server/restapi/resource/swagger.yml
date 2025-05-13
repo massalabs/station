@@ -247,7 +247,7 @@ paths:
                 default: ""
               maxGas:
                 $ref: "#/definitions/Amount"
-                description: Maximum number of gas unit that a operation will be able consume.
+                description: Maximum number of gas unit the operation will be able to consume.
       produces:
         - application/json
       responses:
@@ -274,6 +274,72 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+
+  /cmd/executeSC:
+    post:
+      description: Execute a smart contract bytecode.
+      operationId: cmdExecuteSC
+      parameters:
+        - in: body
+          name: body
+          required: true
+          x-nullable: false
+          schema:
+            type: object
+            required:
+              - nickname
+              - bytecode
+            properties:
+              nickname:
+                description: Account nickname used to sign the operation.
+                type: string
+                x-nullable: false
+              bytecode:
+                description: Base64 encoded smart contract bytecode.
+                type: string
+                x-nullable: false
+              maxCoins:
+                $ref: "#/definitions/Amount"
+                description: Max spendable coins by the execution.
+                default: "0"
+              fee:
+                $ref: "#/definitions/Amount"
+                description: Set the fee amount (in nanoMassa) that will be given to the block creator.
+                default: "0"
+              description:
+                description: "Description of the operation"
+                type: string
+                default: ""
+              maxGas:
+                $ref: "#/definitions/Amount"
+                description: Maximum number of gas unit the operation will be able to consume.
+              datastore:
+                $ref: "#/definitions/Datastore"
+                  
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK.
+          schema:
+            type: object
+            properties:
+              operationId:
+                description: Operation id.
+                type: string
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+
   /kpi:
     get:
       operationId: kpi
@@ -824,7 +890,7 @@ definitions:
     type: string
     x-nullable: false
   Amount:
-    description: Amount in nanoMassa.
+    description: Amount in integer string.
     type: string
     x-nullable: false
     default: ""
@@ -1104,3 +1170,33 @@ definitions:
         type: object
         additionalProperties:
           type: object
+  Base64Bytes:
+      title: "Base64Bytes"
+      description: "Bytes in base64 string"
+      type: string
+
+  DataStoreEntry:
+    title: "Datastore entry"
+    description: "A tuple which contains (key, value) in b64 string"
+    type: array
+    maxItems: 2
+    items:
+      $ref: "#/definitions/Base64Bytes"
+    example: [
+        [
+            abcdef
+        ],
+        [
+            ghjklm
+        ]
+    ]
+
+  Datastore:
+    title: "Datastore"
+    description: "Contract datastore"
+    type: array
+    items:
+      $ref: "#/definitions/DataStoreEntry"
+
+
+    

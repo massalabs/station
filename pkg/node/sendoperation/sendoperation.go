@@ -38,8 +38,7 @@ type Operation interface {
 }
 
 type OperationResponse struct {
-	OperationID   string
-	CorrelationID string
+	OperationID string
 }
 
 type OperationContent struct {
@@ -106,7 +105,7 @@ func Call(
 		return nil, err
 	}
 
-	return &OperationResponse{CorrelationID: res.CorrelationID, OperationID: resp[0]}, nil
+	return &OperationResponse{OperationID: resp[0]}, nil
 }
 
 func createOperationContent(description string, msgB64 string, chainID uint64) (string, error) {
