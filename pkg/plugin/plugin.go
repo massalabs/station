@@ -27,9 +27,8 @@ import (
 type Status int64
 
 const (
-	dotApp         = ".app"
-	stopRetryCount = 3
-	stopRetryWait  = 5
+	dotApp      = ".app"
+	stopTimeout = 15 * time.Second
 )
 
 const (
@@ -298,7 +297,7 @@ func (p *Plugin) Start() error {
 	return nil
 }
 
-// Stop attempts to stop a plugin gracefully with multiple retries before force killing.
+// Stop attempts to stop a plugin gracefully with a timeout before force killing.
 func (p *Plugin) Stop() error {
 	logger.Infof("Attempting to stop plugin %s.\n", p.ID)
 
@@ -312,40 +311,30 @@ func (p *Plugin) Stop() error {
 	p.status = ShuttingDown
 	p.mutex.Unlock()
 
-	for retry := 0; retry < stopRetryCount; retry++ {
-		// Send a signal for graceful shutdown
-		if p.command != nil && p.command.Process != nil {
-			// Use platform-specific method to send termination signal
-			err := p.sendStopSignal() // ignore errors as we'll retry or fallback to Kill()
-			if err != nil {
-				logger.Warnf("Failed to send stop signal to plugin %s: %s\n", p.ID, err)
-			}
+	// Send a signal for graceful shutdown
+	if p.command != nil && p.command.Process != nil {
+		// Use platform-specific method to send termination signal
+		err := p.sendStopSignal()
+		if err != nil {
+			logger.Warnf("Failed to send stop signal to plugin %s: %s\n", p.ID, err)
+		}
 
-			// Check if the process has exited
-			select {
-			case <-p.quitChan:
-				// Process has exited
-				logger.Infof("Plugin %s stopped gracefully.\n", p.ID)
-				p.mutex.Lock()
-				p.status = Down
-				p.mutex.Unlock()
+		// Wait for process to exit with timeout
+		select {
+		case <-p.quitChan:
+			// Process has exited
+			logger.Infof("Plugin %s stopped gracefully.\n", p.ID)
+			p.mutex.Lock()
+			p.status = Down
+			p.mutex.Unlock()
 
-				return nil
-			case <-time.After(time.Duration(stopRetryWait) * time.Second):
-				// Timed out waiting for process to exit
-				logger.Warnf("Plugin %s didn't stop yet (attempt %d/%d).\n",
-					p.ID, retry+1, stopRetryCount)
-			}
-
-			// If this is the last retry, don't wait again
-			if retry == stopRetryCount-1 {
-				break
-			}
+			return nil
+		case <-time.After(stopTimeout):
+			// Timed out waiting for process to exit
+			logger.Warnf("Shutdown of plugin %s timed out after %d seconds. Forcing termination with SIGKILL...\n",
+				p.ID, stopTimeout.Seconds())
 		}
 	}
-
-	logger.Warnf("Graceful shutdown of plugin %s failed after %d attempts. Forcing termination with SIGKILL...\n",
-		p.ID, stopRetryCount)
 
 	return p.Kill()
 }
