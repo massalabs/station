@@ -33,7 +33,7 @@ func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 
 		folderLogo := slug.Make(plugin.Name)
 		plugin.Logo = fmt.Sprintf(
-			"https://raw.githubusercontent.com/massalabs/station-store/main/assets/%s/%s",
+			"https://massa-station-assets.s3.eu-west-3.amazonaws.com/plugins/icons/%s/%s",
 			folderLogo,
 			plugin.Logo,
 		)
