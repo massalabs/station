@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 
 	"github.com/massalabs/station/int/api"
 	"github.com/massalabs/station/int/config"
@@ -104,6 +105,15 @@ func main() {
 		}
 		utils.OpenURL(&stationGUI, fmt.Sprintf("https://%s", config.MassaStationURL))
 	})
+
+	if runtime.GOOS == "darwin" {
+		stationGUI.Lifecycle().SetOnEnteredForeground(func() {
+			fmt.Println(">>>>>>>YOOYO>>>>>>MassaStation is in the foreground")
+			logger.Debugf(">>>>>>>>>>>>>Dock icon clicked211111112")
+
+			utils.OpenURL(&stationGUI, fmt.Sprintf("https://%s", config.MassaStationURL))
+		})
+	}
 
 	stationGUI.Run()
 }
