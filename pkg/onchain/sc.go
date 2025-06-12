@@ -88,7 +88,7 @@ func CallFunctionSuccess(
 	if err != nil {
 		if strings.Contains(err.Error(), "Timeout") {
 			return &OperationWithEventResponse{
-				Event:             "Operation submited successfully but no event generated. The operation may have been rejected",
+				Event:             "Operation submitted successfully but no event generated. The operation may have been rejected",
 				OperationResponse: *operationResponse,
 			}, nil
 		}

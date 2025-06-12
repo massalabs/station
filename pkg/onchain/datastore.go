@@ -43,7 +43,7 @@ func populateDatastore(contract ContractDatastore) ([]byte, error) {
 
 	// coins data
 	//nolint: lll
-	// 12/02/2024 single contract deployement is supported. Multiple not planned. see https://github.com/massalabs/station/issues/1364
+	// 12/02/2024 single contract deployment is supported. Multiple not planned. see https://github.com/massalabs/station/issues/1364
 	datastore = append(datastore, DatastoreEntry{Key: getCoinsKey(), Value: convert.U64ToBytes(contract.Coins)})
 
 	// Serialize the datastore

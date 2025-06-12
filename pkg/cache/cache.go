@@ -1,6 +1,6 @@
 package cache
 
-// The cache mecanism use the filesystem to read and store file in the websitesCache
+// The cache mechanism use the filesystem to read and store file in the websitesCache
 // inside the Config dir.
 
 import (
