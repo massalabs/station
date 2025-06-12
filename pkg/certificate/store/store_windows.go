@@ -11,7 +11,7 @@ const (
 	CRYPT_E_NOT_FOUND = 0x80092004
 )
 
-// The functions bellow return an error even though they succeed.
+// The functions below return an error even though they succeed.
 // They return a pointer, if the pointer is 0, then the error is relevant.
 var (
 	modcrypt32                           = syscall.NewLazyDLL("crypt32.dll")
