@@ -65,6 +65,9 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 				})
 	}
 
+	origin := params.HTTPRequest.Header.Get("Origin")
+	referer := params.HTTPRequest.Header.Get("Referer")
+
 	operationWithEventResponse, err := onchain.CallFunction(
 		e.networkInfos,
 		params.Body.Nickname,
@@ -76,7 +79,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 		uint64(params.Body.Coins),
 		expiry,
 		asyncReq,
-		&signer.WalletPlugin{},
+		signer.NewWalletPlugin(origin, referer),
 		params.Body.Description,
 	)
 	if err != nil {

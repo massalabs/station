@@ -103,6 +103,9 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		maxGas = parsedMaxGas
 	}
 
+	origin := params.HTTPRequest.Header.Get("Origin")
+	referer := params.HTTPRequest.Header.Get("Referer")
+
 	operationResponse, events, err := onchain.DeploySC(
 		d.networkInfos,
 		params.Body.Nickname,
@@ -114,7 +117,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		parameters,
 		smartContractByteCode,
 		deployerSCByteCode,
-		&signer.WalletPlugin{},
+		signer.NewWalletPlugin(origin, referer),
 		"Deploying contract: "+params.Body.Description,
 	)
 	if err != nil {

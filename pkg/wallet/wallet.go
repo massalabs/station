@@ -58,6 +58,7 @@ func Fetch(nickname string) (*Account, error) {
 		http.MethodGet,
 		signer.WalletPluginURL+"accounts/"+nickname,
 		bytes.NewReader([]byte("")),
+		"",
 	)
 	if err != nil {
 		res := signer.RespError{Code: "", Message: ""}
