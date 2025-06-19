@@ -106,8 +106,10 @@ func (d *executeSC) Handle(params operations.CmdExecuteSCParams) middleware.Resp
 		}
 	}
 
-	origin := params.HTTPRequest.Header.Get("Origin")
-	referer := params.HTTPRequest.Header.Get("Referer")
+	headers := signer.CustomHeader{
+		Origin: params.HTTPRequest.Header.Get("Origin"),
+		Referer: params.HTTPRequest.Header.Get("Referer"),
+	}
 
 	operationResponse, err := onchain.ExecuteSC(
 		d.networkInfos,
@@ -118,7 +120,7 @@ func (d *executeSC) Handle(params operations.CmdExecuteSCParams) middleware.Resp
 		sendoperation.DefaultExpiryInSlot,
 		smartContractByteCode,
 		datastore,
-		signer.NewWalletPlugin(origin, referer),
+		signer.NewWalletPlugin(headers),
 		"Executing contract bytecode: "+params.Body.Description,
 	)
 	if err != nil {
