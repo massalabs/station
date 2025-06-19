@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -76,7 +77,7 @@ func NewNetworkManager() (*NetworkManager, error) {
 	}
 
 	if defaultNetwork == "" {
-		return nil, fmt.Errorf("default network not found")
+		return nil, errors.New("default network not found")
 	}
 
 	err = networkManager.SwitchNetwork(defaultNetwork)

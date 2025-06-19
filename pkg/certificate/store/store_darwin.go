@@ -8,6 +8,7 @@ import (
 	_ "embed"
 	"encoding/asn1"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"io/fs"
 	"os"
@@ -76,7 +77,7 @@ func Add(cert *x509.Certificate) error {
 }
 
 func Delete(_ *x509.Certificate) error {
-	return fmt.Errorf("not implemented")
+	return errors.New("not implemented")
 }
 
 // addTrustedCert adds the certificate to the system keychain.
@@ -145,7 +146,7 @@ func importTrustSettings(plistRoot map[string]interface{}, security *SecurityRun
 
 	err = security.Run("trust-settings-import", "-d", trustSettingsFile)
 	if err != nil {
-		return fmt.Errorf("failed to re-import settings")
+		return errors.New("failed to re-import settings")
 	}
 
 	return nil
@@ -169,7 +170,7 @@ func updateTrustSettings(plistRoot map[string]interface{}, cert *x509.Certificat
 
 	trustList, ok := plistRoot["trustList"].(map[string]interface{})
 	if !ok {
-		return fmt.Errorf("failed to get trust list")
+		return errors.New("failed to get trust list")
 	}
 
 	incorporateTrustList(trustList, rootSubjectASN1, trustSettings)

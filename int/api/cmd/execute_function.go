@@ -66,7 +66,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 	}
 
 	headers := signer.CustomHeader{
-		Origin: params.HTTPRequest.Header.Get("Origin"),
+		Origin:  params.HTTPRequest.Header.Get("Origin"),
 		Referer: params.HTTPRequest.Header.Get("Referer"),
 	}
 

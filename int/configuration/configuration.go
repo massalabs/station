@@ -1,6 +1,7 @@
 package configuration
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -41,7 +42,7 @@ func Path() (string, error) {
 		return path.Join("/", "usr", "local", "share", "massastation"), nil
 
 	default:
-		return "", fmt.Errorf(errMsgPath)
+		return "", errors.New(errMsgPath)
 	}
 }
 

@@ -103,9 +103,8 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		maxGas = parsedMaxGas
 	}
 
-
 	headers := signer.CustomHeader{
-		Origin: params.HTTPRequest.Header.Get("Origin"),
+		Origin:  params.HTTPRequest.Header.Get("Origin"),
 		Referer: params.HTTPRequest.Header.Get("Referer"),
 	}
 

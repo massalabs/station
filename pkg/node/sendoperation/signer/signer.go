@@ -13,7 +13,7 @@ import (
 )
 
 type CustomHeader struct {
-	Origin string
+	Origin  string
 	Referer string
 }
 
@@ -41,7 +41,7 @@ func (s *WalletPlugin) Sign(nickname string, operation []byte) (*SignOperationRe
 		http.MethodPost,
 		WalletPluginURL+"accounts/"+nickname+"/sign?allow-fee-edition=true",
 		bytes.NewBuffer(operation),
-		&s.headers,	
+		&s.headers,
 	)
 	if err != nil {
 		res := RespError{"", ""}
@@ -61,7 +61,6 @@ func (s *WalletPlugin) Sign(nickname string, operation []byte) (*SignOperationRe
 }
 
 func ExecuteHTTPRequest(methodType string, url string, reader io.Reader, headers *CustomHeader) ([]byte, error) {
-
 	request, err := http.NewRequestWithContext(
 		context.Background(),
 		methodType,

@@ -50,7 +50,7 @@ func (l *logo) Handle(param operations.PluginManagerGetLogoParams) middleware.Re
 		logger.Errorf("Error reading logo file: %s", err)
 
 		return operations.NewPluginManagerGetLogoInternalServerError().WithPayload(
-			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin logo error: %s", err.Error())})
+			&models.Error{Code: errorCodePluginUnknown, Message: "get plugin logo error: " + err.Error()})
 	}
 
 	return utils.NewCustomResponder(logoData, utils.ContentType(logoPath), http.StatusOK)

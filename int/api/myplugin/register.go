@@ -1,7 +1,6 @@
 package myplugin
 
 import (
-	"fmt"
 	"net/url"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -23,7 +22,7 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 	wantedPlugin, err := r.manager.Plugin(param.Body.ID)
 	if err != nil {
 		return operations.NewPluginManagerRegisterNotFound().WithPayload(
-			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
+			&models.Error{Code: errorCodePluginUnknown, Message: "get plugin error: " + err.Error()})
 	}
 
 	alias := plugin.Alias(wantedPlugin.Information().Author, wantedPlugin.Information().Name)
@@ -33,21 +32,21 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
 			&models.Error{
 				Code:    errorCodePluginRegisterAlreadyRegistered,
-				Message: fmt.Sprintf("plugin already registered: %s", alias),
+				Message: "plugin already registered: " + alias,
 			})
 	}
 
 	urlPlugin, err := url.Parse(param.Body.URL)
 	if err != nil {
 		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
-			&models.Error{Code: errorCodePluginRegisterInvalidData, Message: fmt.Sprintf("parsing Plugin URL: %s", err.Error())},
+			&models.Error{Code: errorCodePluginRegisterInvalidData, Message: "parsing Plugin URL: " + err.Error()},
 		)
 	}
 
 	err = wantedPlugin.SetInformation(urlPlugin)
 	if err != nil {
 		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
-			&models.Error{Code: errorCodePluginRegisterInvalidData, Message: fmt.Sprintf("parsing Plugin URL: %s", err.Error())},
+			&models.Error{Code: errorCodePluginRegisterInvalidData, Message: "parsing Plugin URL: " + err.Error()},
 		)
 	}
 
@@ -60,7 +59,7 @@ func (r *register) Handle(param operations.PluginManagerRegisterParams) middlewa
 		logger.Debugf("setting plugin alias: %s", err)
 
 		return operations.NewPluginManagerRegisterBadRequest().WithPayload(
-			&models.Error{Code: errorCodePluginRegisterUnknown, Message: fmt.Sprintf("setting alias: %s", err.Error())},
+			&models.Error{Code: errorCodePluginRegisterUnknown, Message: "setting alias: " + err.Error()},
 		)
 	}
 

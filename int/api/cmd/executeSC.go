@@ -76,10 +76,11 @@ func (d *executeSC) Handle(params operations.CmdExecuteSCParams) middleware.Resp
 		maxGas = parsedMaxGas
 	}
 
-	var datastore []onchain.DatastoreEntry = []onchain.DatastoreEntry{}
+	datastore := []onchain.DatastoreEntry{}
 
 	if len(params.Body.Datastore) > 0 {
 		datastore = make([]onchain.DatastoreEntry, len(params.Body.Datastore))
+
 		for i, entry := range params.Body.Datastore {
 			key, err := base64.StdEncoding.DecodeString(string(entry[0]))
 			if err != nil {
@@ -90,6 +91,7 @@ func (d *executeSC) Handle(params operations.CmdExecuteSCParams) middleware.Resp
 							Message: err.Error(),
 						})
 			}
+
 			value, err := base64.StdEncoding.DecodeString(string(entry[1]))
 			if err != nil {
 				return operations.NewCmdExecuteSCBadRequest().
@@ -99,6 +101,7 @@ func (d *executeSC) Handle(params operations.CmdExecuteSCParams) middleware.Resp
 							Message: err.Error(),
 						})
 			}
+
 			datastore[i] = onchain.DatastoreEntry{
 				Key:   key,
 				Value: value,
@@ -107,7 +110,7 @@ func (d *executeSC) Handle(params operations.CmdExecuteSCParams) middleware.Resp
 	}
 
 	headers := signer.CustomHeader{
-		Origin: params.HTTPRequest.Header.Get("Origin"),
+		Origin:  params.HTTPRequest.Header.Get("Origin"),
 		Referer: params.HTTPRequest.Header.Get("Referer"),
 	}
 

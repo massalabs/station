@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"crypto/rand"
+	"errors"
 	"fmt"
 	"math/big"
 	"os"
@@ -246,7 +247,7 @@ func (m *Manager) StopPlugin(plugin *Plugin, unregister bool) error {
 		if unregister {
 			logger.Info(msg)
 		} else {
-			return fmt.Errorf(msg)
+			return errors.New(msg)
 		}
 	}
 

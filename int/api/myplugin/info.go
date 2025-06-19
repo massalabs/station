@@ -24,7 +24,7 @@ func (i *info) Handle(param operations.PluginManagerGetInformationParams) middle
 	plgn, err := i.manager.Plugin(param.ID)
 	if err != nil {
 		return operations.NewPluginManagerGetInformationNotFound().WithPayload(
-			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
+			&models.Error{Code: errorCodePluginUnknown, Message: "get plugin error: " + err.Error()})
 	}
 
 	info := plgn.Information()

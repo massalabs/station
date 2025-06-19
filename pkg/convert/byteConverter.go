@@ -2,7 +2,7 @@ package convert
 
 import (
 	"encoding/binary"
-	"fmt"
+	"errors"
 	"math/big"
 	"unicode/utf16"
 )
@@ -102,7 +102,7 @@ func StringArrayToArrayOfByteArray(stringArray []string) [][]byte {
 
 func BytesToI32(byteArray []byte) (int32, error) {
 	if len(byteArray) < BytesPerUint32 {
-		return 0, fmt.Errorf("invalid buffer size to decode int32")
+		return 0, errors.New("invalid buffer size to decode int32")
 	}
 
 	return int32(binary.LittleEndian.Uint32(byteArray)), nil
@@ -110,7 +110,7 @@ func BytesToI32(byteArray []byte) (int32, error) {
 
 func BytesToU64(byteArray []byte) (uint64, error) {
 	if len(byteArray) < BytesPerUint64 {
-		return 0, fmt.Errorf("invalid buffer size to decode uint64")
+		return 0, errors.New("invalid buffer size to decode uint64")
 	}
 
 	return binary.LittleEndian.Uint64(byteArray), nil

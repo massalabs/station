@@ -28,7 +28,7 @@ func (l *list) Handle(_ operations.GetPluginStoreParams) middleware.Responder {
 		pluginURL, os, checksum, err := plugin.GetDLChecksumAndOs()
 		if err != nil {
 			return operations.NewGetPluginStoreInternalServerError().WithPayload(
-				&models.Error{Code: errorCodeFetchStore, Message: fmt.Sprintf("Error getting OS info: %s", err.Error())})
+				&models.Error{Code: errorCodeFetchStore, Message: "Error getting OS info: " + err.Error()})
 		}
 
 		folderLogo := slug.Make(plugin.Name)

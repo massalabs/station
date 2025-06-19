@@ -9,6 +9,7 @@ import (
 	"crypto/x509/pkix"
 	"encoding/asn1"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"io/fs"
 	"math/big"
@@ -47,7 +48,7 @@ func generatePrivateKey() (crypto.PrivateKey, error) {
 func derivePublicKey(privateKey crypto.PrivateKey) (crypto.PublicKey, error) {
 	signer, ok := privateKey.(crypto.Signer)
 	if !ok {
-		return nil, fmt.Errorf("privateKey does not implement crypto.Signer interface")
+		return nil, errors.New("privateKey does not implement crypto.Signer interface")
 	}
 
 	publicKey := signer.Public()
