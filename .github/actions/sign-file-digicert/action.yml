@@ -1,6 +1,6 @@
 name: Sign a given file with DigiCert KeyLocker
 
-description: Uses DigiCert official GitHub Action to sign a file.
+description: Uses DigiCert KeyLocker tools manually (no buggy GitHub action) to sign a file.
 
 inputs:
   file:
@@ -28,23 +28,32 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install DigiCert Client tools
-      uses: digicert/ssm-code-signing@v1.0.0
-
     - name: Decode and save client certificate
-      shell: bash
+      shell: pwsh
       run: |
-        echo "${{ inputs.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > /d/client_cert.p12
+        [System.IO.File]::WriteAllBytes("client_cert.p12", [System.Convert]::FromBase64String("${{ inputs.SM_CLIENT_CERT_FILE_B64 }}"))
 
-    - name: Set environment variables
-      shell: bash
+    - name: Download smctl CLI
+      shell: pwsh
       run: |
-        echo "SM_API_KEY=${{ inputs.SM_API_KEY }}" >> "$GITHUB_ENV"
-        echo "SM_CLIENT_CERT_PASSWORD=${{ inputs.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV"
-        echo "SM_CLIENT_CERT_FILE=D:\\client_cert.p12" >> "$GITHUB_ENV"
-        echo "SM_HOST=${{ inputs.SM_HOST }}" >> "$GITHUB_ENV"
+        Invoke-WebRequest -Uri "https://one.digicert.com/smctl/releases/latest/windows/smctl-windows-x64.zip" -OutFile "smctl.zip"
+        Expand-Archive -Path "smctl.zip" -DestinationPath "smtools"
+        Add-Content $env:GITHUB_PATH "$PWD\smtools"
 
-    - name: Sign file
-      shell: cmd
+    - name: Authenticate to DigiCert
+      shell: pwsh
       run: |
-        smctl sign --fingerprint ${{ inputs.SM_CERT_FINGERPRINT }} --input ${{ inputs.file }}
+        smctl auth login `
+          --api-key "${{ inputs.SM_API_KEY }}" `
+          --client-cert "client_cert.p12" `
+          --cert-password "${{ inputs.SM_CLIENT_CERT_PASSWORD }}" `
+          --host "${{ inputs.SM_HOST }}"
+
+    - name: Sign the file
+      shell: pwsh
+      run: |
+        smctl sign code-signing `
+          --file "${{ inputs.file }}" `
+          --name "${{ inputs.name }}" `
+          --fingerprint "${{ inputs.SM_CERT_FINGERPRINT }}" `
+          --ts-url "http://timestamp.globalsign.com/tsa/r6advanced1"
