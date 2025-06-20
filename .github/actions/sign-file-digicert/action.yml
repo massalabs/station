@@ -1,4 +1,6 @@
-name: Sign a given file (DigiCert KeyLocker)
+name: Sign a given file with DigiCert KeyLocker
+
+description: Uses DigiCert KeyLocker (via smctl) to sign a file.
 
 inputs:
   file:
@@ -7,77 +9,48 @@ inputs:
   name:
     required: true
     description: The name of the application to sign
+  SM_API_KEY:
+    required: true
+    description: DigiCert API key
+  SM_CLIENT_CERT_FILE_B64:
+    required: true
+    description: Base64-encoded authentication certificate (.p12)
+  SM_CLIENT_CERT_PASSWORD:
+    required: true
+    description: Password for the client cert
+  SM_CERT_FINGERPRINT:
+    required: true
+    description: Certificate fingerprint for signing
 
 runs:
   using: "composite"
   steps:
-    - name: Install DigiCert client tools
+    - name: Download smctl
       shell: bash
       run: |
-        curl -L -o smctl.zip "https://example.com/path/to/smctl-linux.zip"
+        curl -L -o smctl.zip "https://[TON_URL]/smctl-windows.zip"
         unzip smctl.zip -d smtools
         chmod +x smtools/smctl
-        echo "$PWD/smtools" >> $GITHUB_PATH
+        echo "$GITHUB_WORKSPACE/smtools" >> $GITHUB_PATH
 
     - name: Decode and install client certificate
       shell: bash
       run: |
-        echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 -d > client_cert.p12
+        echo "${{ inputs.SM_CLIENT_CERT_FILE_B64 }}" | base64 -d > client_cert.p12
 
     - name: Authenticate with DigiCert KeyLocker
       shell: bash
       run: |
         smctl auth login \
-          --api-key "${{ secrets.SM_API_KEY }}" \
+          --api-key "${{ inputs.SM_API_KEY }}" \
           --client-cert client_cert.p12 \
-          --cert-password "${{ secrets.SM_CLIENT_CERT_PASSWORD }}"
+          --cert-password "${{ inputs.SM_CLIENT_CERT_PASSWORD }}"
 
     - name: Sign file using DigiCert KeyLocker
       shell: bash
       run: |
         smctl sign code-signing \
-          --fingerprint "${{ secrets.SM_CERT_FINGERPRINT }}" \
-          --file "${{ inputs.file }}" \
-          --name "${{ inputs.name }}" \
-          --ts-url "http://timestamp.globalsign.com/tsa/r6advanced1"name: Sign a given file (DigiCert KeyLocker)
-
-inputs:
-  file:
-    required: true
-    description: The file to sign
-  name:
-    required: true
-    description: The name of the application to sign
-
-runs:
-  using: "composite"
-  steps:
-    - name: Install DigiCert client tools
-      shell: bash
-      run: |
-        curl -L -o smctl.zip "https://example.com/path/to/smctl-linux.zip"
-        unzip smctl.zip -d smtools
-        chmod +x smtools/smctl
-        echo "$PWD/smtools" >> $GITHUB_PATH
-
-    - name: Decode and install client certificate
-      shell: bash
-      run: |
-        echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 -d > client_cert.p12
-
-    - name: Authenticate with DigiCert KeyLocker
-      shell: bash
-      run: |
-        smctl auth login \
-          --api-key "${{ secrets.SM_API_KEY }}" \
-          --client-cert client_cert.p12 \
-          --cert-password "${{ secrets.SM_CLIENT_CERT_PASSWORD }}"
-
-    - name: Sign file using DigiCert KeyLocker
-      shell: bash
-      run: |
-        smctl sign code-signing \
-          --fingerprint "${{ secrets.SM_CERT_FINGERPRINT }}" \
+          --fingerprint "${{ inputs.SM_CERT_FINGERPRINT }}" \
           --file "${{ inputs.file }}" \
           --name "${{ inputs.name }}" \
           --ts-url "http://timestamp.globalsign.com/tsa/r6advanced1"
