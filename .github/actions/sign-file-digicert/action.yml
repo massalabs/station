@@ -45,16 +45,34 @@ runs:
         echo "SM_HOST=${{ inputs.SM_HOST }}" >> "$GITHUB_ENV"
         echo "C:\\Program Files\\DigiCert\\DigiCert Keylocker Tools" >> $GITHUB_PATH
         echo "C:\\Program Files (x86)\\Windows Kits\\10\\App Certification Kit" >> $GITHUB_PATH
+        echo "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools" >> $GITHUB_PATH
 
     - name: Sync certificates with local store
       shell: cmd
       run: smctl windows certsync
 
+    - name: Debug – List certificates from KSP
+      shell: cmd
+      run: certutil.exe -csp "DigiCert Signing Manager KSP" -key -user
+
+    - name: Debug – List keypairs via smctl
+      shell: cmd
+      run: smctl.exe keypair ls
+
+    - name: Debug – Print fingerprint expected
+      shell: bash
+      run: echo "Expecting fingerprint: ${{ inputs.SM_CERT_FINGERPRINT }}"
+
     - name: Sign file with signtool
       shell: cmd
       run: |
+        echo "Signing file ${{ inputs.file }} with fingerprint ${{ inputs.SM_CERT_FINGERPRINT }}"
         signtool.exe sign /sha1 ${{ inputs.SM_CERT_FINGERPRINT }} ^
           /tr http://timestamp.digicert.com ^
           /td SHA256 ^
           /fd SHA256 ^
           "${{ inputs.file }}"
+
+    - name: Verify signature
+      shell: cmd
+      run: signtool verify /pa /v "${{ inputs.file }}"
