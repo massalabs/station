@@ -1,6 +1,7 @@
 name: build and upload artifacts
 
 on:
+  push:
   workflow_dispatch:
   workflow_call:
     inputs:
@@ -22,15 +23,15 @@ jobs:
             target: windows
             cc: x86_64-w64-mingw32-gcc
             ext: .exe
-          - os: ubuntu-24.04
-            arch: amd64
-            target: linux
-          - os: macos-13
-            arch: amd64
-            target: darwin
-          - os: macos-13
-            arch: arm64
-            target: darwin
+          # - os: ubuntu-24.04
+          #   arch: amd64
+          #   target: linux
+          # - os: macos-13
+          #   arch: amd64
+          #   target: darwin
+          # - os: macos-13
+          #   arch: arm64
+          #   target: darwin
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -89,55 +90,55 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  build-macos-installer:
-    name: Build .pkg installer for MacOS ${{ matrix.arch }}
-    needs: build
-    defaults:
-      run:
-        working-directory: installer
-    strategy:
-      matrix:
-        arch: [amd64, arm64]
+  # build-macos-installer:
+  #   name: Build .pkg installer for MacOS ${{ matrix.arch }}
+  #   needs: build
+  #   defaults:
+  #     run:
+  #       working-directory: installer
+  #   strategy:
+  #     matrix:
+  #       arch: [amd64, arm64]
 
-    runs-on: macos-13
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Fetch all git tags
-        run: git fetch --prune --unshallow --tags
-      - name: Set Version
-        if: ${{ env.VERSION == '' }}
-        run: |
-          export VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')-dev
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Sync clock
-        run: sudo sntp -sS time.windows.com # https://github.com/actions/runner/issues/2996#issuecomment-1833103110
-      - name: Download MassaStation Package
-        uses: actions/download-artifact@v4
-        with:
-          name: massastation_darwin_${{ matrix.arch }}_package
-          path: installer
-      - name: Import Code Signing Certificates
-        uses: apple-actions/import-codesign-certs@v2
-        with:
-          p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_P12_BASE64 }}
-          p12-password: ${{ secrets.APPLE_CERTIFICATE_P12_PASSWORD }}
-      - name: Build and sign Package
-        run: sh macos/create_pkg.sh ${{ matrix.arch }} "${{ vars.APPLE_DEVELOPER_ID_APPLICATION }}" "${{ vars.APPLE_DEVELOPER_ID_INSTALLER }}"
-        env:
-          VERSION: ${{ env.VERSION }}
-      - name: Notarise installer
-        continue-on-error: true
-        run: |
-          xcrun notarytool submit massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg --wait --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.APPLE_APP_PASSWORD }} --team-id ${{ secrets.APPLE_TEAM_ID }}
-          xcrun stapler staple massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg
-      - name: Upload Package
-        uses: actions/upload-artifact@v4
-        with:
-          name: massastation_installer_darwin_${{ matrix.arch }}
-          path: "installer/massastation_*.pkg"
-          if-no-files-found: error
-          retention-days: 7
+  #   runs-on: macos-13
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+  #     - name: Fetch all git tags
+  #       run: git fetch --prune --unshallow --tags
+  #     - name: Set Version
+  #       if: ${{ env.VERSION == '' }}
+  #       run: |
+  #         export VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')-dev
+  #         echo "VERSION=$VERSION" >> $GITHUB_ENV
+  #     - name: Sync clock
+  #       run: sudo sntp -sS time.windows.com # https://github.com/actions/runner/issues/2996#issuecomment-1833103110
+  #     - name: Download MassaStation Package
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: massastation_darwin_${{ matrix.arch }}_package
+  #         path: installer
+  #     - name: Import Code Signing Certificates
+  #       uses: apple-actions/import-codesign-certs@v2
+  #       with:
+  #         p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_P12_BASE64 }}
+  #         p12-password: ${{ secrets.APPLE_CERTIFICATE_P12_PASSWORD }}
+  #     - name: Build and sign Package
+  #       run: sh macos/create_pkg.sh ${{ matrix.arch }} "${{ vars.APPLE_DEVELOPER_ID_APPLICATION }}" "${{ vars.APPLE_DEVELOPER_ID_INSTALLER }}"
+  #       env:
+  #         VERSION: ${{ env.VERSION }}
+  #     - name: Notarise installer
+  #       continue-on-error: true
+  #       run: |
+  #         xcrun notarytool submit massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg --wait --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.APPLE_APP_PASSWORD }} --team-id ${{ secrets.APPLE_TEAM_ID }}
+  #         xcrun stapler staple massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg
+  #     - name: Upload Package
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: massastation_installer_darwin_${{ matrix.arch }}
+  #         path: "installer/massastation_*.pkg"
+  #         if-no-files-found: error
+  #         retention-days: 7
 
   build-packages-windows:
     name: Build .msi installer for amd64
@@ -192,32 +193,32 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  build-deb-installer:
-    name: Build .deb installer for Linux amd64
-    needs: build
-    defaults:
-      run:
-        working-directory: installer
+  # build-deb-installer:
+  #   name: Build .deb installer for Linux amd64
+  #   needs: build
+  #   defaults:
+  #     run:
+  #       working-directory: installer
 
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Fetch all git tags
-        run: git fetch --prune --unshallow --tags
-      - name: Download MassaStation Package
-        uses: actions/download-artifact@v4
-        with:
-          name: massastation_linux_amd64_package
-          path: installer
-      - name: Build Package
-        run: sh deb/create_deb.sh
-        env:
-          VERSION: ${{ env.VERSION }}
-      - name: Upload Package
-        uses: actions/upload-artifact@v4
-        with:
-          name: massastation_installer_deb_amd64
-          path: "installer/*.deb"
-          if-no-files-found: error
-          retention-days: 7
+  #   runs-on: ubuntu-24.04
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+  #     - name: Fetch all git tags
+  #       run: git fetch --prune --unshallow --tags
+  #     - name: Download MassaStation Package
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: massastation_linux_amd64_package
+  #         path: installer
+  #     - name: Build Package
+  #       run: sh deb/create_deb.sh
+  #       env:
+  #         VERSION: ${{ env.VERSION }}
+  #     - name: Upload Package
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: massastation_installer_deb_amd64
+  #         path: "installer/*.deb"
+  #         if-no-files-found: error
+  #         retention-days: 7

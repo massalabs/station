@@ -1,7 +1,7 @@
 name: e2e Tests
 
 on:
-  push:
+  # push:
 
 jobs:
   build:
