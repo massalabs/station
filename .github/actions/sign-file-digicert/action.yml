@@ -1,6 +1,6 @@
 name: Sign a given file with DigiCert KeyLocker
 
-description: Uses DigiCert KeyLocker (via smctl) to sign a file.
+description: Uses DigiCert official GitHub Action to sign a file.
 
 inputs:
   file:
@@ -18,6 +18,9 @@ inputs:
   SM_CLIENT_CERT_PASSWORD:
     required: true
     description: Password for the client cert
+  SM_HOST:
+    required: true
+    description: DigiCert ONE host URL
   SM_CERT_FINGERPRINT:
     required: true
     description: Certificate fingerprint for signing
@@ -25,32 +28,23 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Download smctl
-      shell: bash
-      run: |
-        curl -L -o smctl.zip "https://[TON_URL]/smctl-windows.zip"
-        unzip smctl.zip -d smtools
-        chmod +x smtools/smctl
-        echo "$GITHUB_WORKSPACE/smtools" >> $GITHUB_PATH
+    - name: Install DigiCert Client tools
+      uses: digicert/ssm-code-signing@v1.0.0
 
-    - name: Decode and install client certificate
+    - name: Decode and save client certificate
       shell: bash
       run: |
-        echo "${{ inputs.SM_CLIENT_CERT_FILE_B64 }}" | base64 -d > client_cert.p12
+        echo "${{ inputs.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > /d/client_cert.p12
 
-    - name: Authenticate with DigiCert KeyLocker
+    - name: Set environment variables
       shell: bash
       run: |
-        smctl auth login \
-          --api-key "${{ inputs.SM_API_KEY }}" \
-          --client-cert client_cert.p12 \
-          --cert-password "${{ inputs.SM_CLIENT_CERT_PASSWORD }}"
+        echo "SM_API_KEY=${{ inputs.SM_API_KEY }}" >> "$GITHUB_ENV"
+        echo "SM_CLIENT_CERT_PASSWORD=${{ inputs.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV"
+        echo "SM_CLIENT_CERT_FILE=D:\\client_cert.p12" >> "$GITHUB_ENV"
+        echo "SM_HOST=${{ inputs.SM_HOST }}" >> "$GITHUB_ENV"
 
-    - name: Sign file using DigiCert KeyLocker
-      shell: bash
+    - name: Sign file
+      shell: cmd
       run: |
-        smctl sign code-signing \
-          --fingerprint "${{ inputs.SM_CERT_FINGERPRINT }}" \
-          --file "${{ inputs.file }}" \
-          --name "${{ inputs.name }}" \
-          --ts-url "http://timestamp.globalsign.com/tsa/r6advanced1"
+        smctl sign --fingerprint ${{ inputs.SM_CERT_FINGERPRINT }} --input ${{ inputs.file }}
