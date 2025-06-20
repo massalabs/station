@@ -1,6 +1,6 @@
 name: Sign a given file with DigiCert KeyLocker
 
-description: Uses DigiCert official GitHub Action to sign a file.
+description: Uses DigiCert KeyLocker (KSP + signtool) to sign a file.
 
 inputs:
   file:
@@ -14,7 +14,7 @@ inputs:
     description: DigiCert API key
   SM_CLIENT_CERT_FILE_B64:
     required: true
-    description: Base64-encoded authentication certificate (.p12)
+    description: Base64-encoded client certificate (.p12)
   SM_CLIENT_CERT_PASSWORD:
     required: true
     description: Password for the client cert
@@ -43,8 +43,18 @@ runs:
         echo "SM_CLIENT_CERT_PASSWORD=${{ inputs.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV"
         echo "SM_CLIENT_CERT_FILE=D:\\client_cert.p12" >> "$GITHUB_ENV"
         echo "SM_HOST=${{ inputs.SM_HOST }}" >> "$GITHUB_ENV"
+        echo "C:\\Program Files\\DigiCert\\DigiCert Keylocker Tools" >> $GITHUB_PATH
+        echo "C:\\Program Files (x86)\\Windows Kits\\10\\App Certification Kit" >> $GITHUB_PATH
 
-    - name: Sign file
+    - name: Sync certificates with local store
+      shell: cmd
+      run: smctl windows certsync
+
+    - name: Sign file with signtool
       shell: cmd
       run: |
-        smctl sign --fingerprint ${{ inputs.SM_CERT_FINGERPRINT }} --input ${{ inputs.file }}
+        signtool.exe sign /sha1 ${{ inputs.SM_CERT_FINGERPRINT }} ^
+          /tr http://timestamp.digicert.com ^
+          /td SHA256 ^
+          /fd SHA256 ^
+          "${{ inputs.file }}"
