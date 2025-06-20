@@ -175,15 +175,10 @@ jobs:
         env:
           VERSION: ${{ env.VERSION }}
       - name: Sign Windows binary
-        uses: ./.github/actions/sign-file
+        uses: ./.github/actions/sign-file-digicert
         with:
           file: installer/massastation_${{ env.VERSION }}_amd64.msi
           name: "Massa Station"
-          GCP_PEM_KEY: ${{ vars.GCP_PEM_KEY }}
-          GCP_KEYSTORE_ID: ${{ vars.GCP_KEYSTORE_ID }}
-          GCP_KEY_ALIAS: ${{ vars.GCP_KEY_ALIAS }}
-          GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          GCP_SERVICE_ACCOUNT: ${{ vars.GCP_SERVICE_ACCOUNT }}
       - name: Upload Installer
         uses: actions/upload-artifact@v4
         with:

@@ -1,4 +1,4 @@
-name: Sign a given file
+name: Sign a given file (DigiCert KeyLocker)
 
 inputs:
   file:
@@ -7,47 +7,77 @@ inputs:
   name:
     required: true
     description: The name of the application to sign
-  GCP_PEM_KEY:
-    required: true
-    description: The PEM key to use for signing
-  GCP_KEYSTORE_ID:
-    required: true
-    description: The ID of the keystore to use for signing
-  GCP_KEY_ALIAS:
-    required: true
-    description: The alias of the key to use for signing
-  GCP_WORKLOAD_IDENTITY_PROVIDER:
-    required: true
-    description: The workload identity provider to use for signing
-  GCP_SERVICE_ACCOUNT:
-    required: true
-    description: The service account to use for signing
-
 
 runs:
   using: "composite"
   steps:
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v1
-      with:
-        workload_identity_provider: ${{ inputs.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-        service_account: ${{ inputs.GCP_SERVICE_ACCOUNT }}
-
-    - name: Download Google Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
-
-    - uses: actions/setup-java@v3
-      with:
-        distribution: "temurin"
-        java-version: "17"
-
-    - name: Prepapre environment for signature
+    - name: Install DigiCert client tools
       shell: bash
       run: |
-        curl -L -o jsign.jar https://github.com/ebourg/jsign/releases/download/5.0/jsign-5.0.jar
-        echo "${{ inputs.GCP_PEM_KEY }}" > codesign-chain.pem
+        curl -L -o smctl.zip "https://example.com/path/to/smctl-linux.zip"
+        unzip smctl.zip -d smtools
+        chmod +x smtools/smctl
+        echo "$PWD/smtools" >> $GITHUB_PATH
 
-    - name: Sign massastation with EV cert on Google Cloud
+    - name: Decode and install client certificate
       shell: bash
       run: |
-        java -jar jsign.jar --storetype GOOGLECLOUD --storepass "$(gcloud auth print-access-token)" --keystore "${{ inputs.GCP_KEYSTORE_ID }}" --alias "${{ inputs.GCP_KEY_ALIAS }}" --certfile "codesign-chain.pem" --tsmode RFC3161 --tsaurl http://timestamp.globalsign.com/tsa/r6advanced1 ${{ inputs.file }} -name "${{ inputs.name }}"
+        echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 -d > client_cert.p12
+
+    - name: Authenticate with DigiCert KeyLocker
+      shell: bash
+      run: |
+        smctl auth login \
+          --api-key "${{ secrets.SM_API_KEY }}" \
+          --client-cert client_cert.p12 \
+          --cert-password "${{ secrets.SM_CLIENT_CERT_PASSWORD }}"
+
+    - name: Sign file using DigiCert KeyLocker
+      shell: bash
+      run: |
+        smctl sign code-signing \
+          --fingerprint "${{ secrets.SM_CERT_FINGERPRINT }}" \
+          --file "${{ inputs.file }}" \
+          --name "${{ inputs.name }}" \
+          --ts-url "http://timestamp.globalsign.com/tsa/r6advanced1"name: Sign a given file (DigiCert KeyLocker)
+
+inputs:
+  file:
+    required: true
+    description: The file to sign
+  name:
+    required: true
+    description: The name of the application to sign
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install DigiCert client tools
+      shell: bash
+      run: |
+        curl -L -o smctl.zip "https://example.com/path/to/smctl-linux.zip"
+        unzip smctl.zip -d smtools
+        chmod +x smtools/smctl
+        echo "$PWD/smtools" >> $GITHUB_PATH
+
+    - name: Decode and install client certificate
+      shell: bash
+      run: |
+        echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 -d > client_cert.p12
+
+    - name: Authenticate with DigiCert KeyLocker
+      shell: bash
+      run: |
+        smctl auth login \
+          --api-key "${{ secrets.SM_API_KEY }}" \
+          --client-cert client_cert.p12 \
+          --cert-password "${{ secrets.SM_CLIENT_CERT_PASSWORD }}"
+
+    - name: Sign file using DigiCert KeyLocker
+      shell: bash
+      run: |
+        smctl sign code-signing \
+          --fingerprint "${{ secrets.SM_CERT_FINGERPRINT }}" \
+          --file "${{ inputs.file }}" \
+          --name "${{ inputs.name }}" \
+          --ts-url "http://timestamp.globalsign.com/tsa/r6advanced1"
