@@ -20,10 +20,10 @@ inputs:
     description: Password for the client cert
   SM_HOST:
     required: true
-    description: DigiCert ONE host URL
+    description: DigiCert ONE host URL (ex: https://clientauth.one.digicert.com)
   SM_CERT_FINGERPRINT:
     required: true
-    description: Certificate fingerprint for signing
+    description: Certificate fingerprint (SHA-1 thumbprint)
 
 runs:
   using: "composite"
@@ -47,27 +47,28 @@ runs:
         echo "C:\\Program Files (x86)\\Windows Kits\\10\\App Certification Kit" >> $GITHUB_PATH
         echo "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools" >> $GITHUB_PATH
 
-    - name: Sync certificates with local store
+    - name: Sync certs to local Windows store
       shell: cmd
       run: smctl windows certsync
 
-    - name: Debug – List certificates from KSP
-      shell: cmd
-      run: certutil.exe -csp "DigiCert Signing Manager KSP" -key -user
-
-    - name: Debug – List keypairs via smctl
+    - name: 🐛 Debug – List keypairs (smctl)
       shell: cmd
       run: smctl.exe keypair ls
 
-    - name: Debug – Print fingerprint expected
-      shell: bash
-      run: echo "Expecting fingerprint: ${{ inputs.SM_CERT_FINGERPRINT }}"
+    - name: 🐛 Debug – List KSP certs (certutil)
+      shell: cmd
+      run: certutil.exe -csp "DigiCert Signing Manager KSP" -key -user
 
-    - name: Sign file with signtool
+    - name: 🐛 Debug – Show fingerprint expected
+      shell: bash
+      run: echo "🔐 Expecting fingerprint: ${{ inputs.SM_CERT_FINGERPRINT }}"
+
+    - name: Sign file using signtool
       shell: cmd
       run: |
-        echo "Signing file ${{ inputs.file }} with fingerprint ${{ inputs.SM_CERT_FINGERPRINT }}"
-        signtool.exe sign /sha1 ${{ inputs.SM_CERT_FINGERPRINT }} ^
+        echo Signing file ${{ inputs.file }} with cert fingerprint ${{ inputs.SM_CERT_FINGERPRINT }}
+        signtool.exe sign ^
+          /sha1 ${{ inputs.SM_CERT_FINGERPRINT }} ^
           /tr http://timestamp.digicert.com ^
           /td SHA256 ^
           /fd SHA256 ^
@@ -75,4 +76,4 @@ runs:
 
     - name: Verify signature
       shell: cmd
-      run: signtool verify /pa /v "${{ inputs.file }}"
+      run: signtool verify /v /pa "${{ inputs.file }}"
