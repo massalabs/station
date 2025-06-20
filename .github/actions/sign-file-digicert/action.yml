@@ -1,6 +1,6 @@
 name: Sign a given file with DigiCert KeyLocker
 
-description: Uses DigiCert KeyLocker (KSP + signtool) to sign a file.
+description: Uses DigiCert KeyLocker to sign a file with signtool
 
 inputs:
   file:
@@ -20,7 +20,7 @@ inputs:
     description: Password for the client cert
   SM_HOST:
     required: true
-    description: DigiCert ONE host URL (ex: https://clientauth.one.digicert.com)
+    description: DigiCert ONE host URL
   SM_CERT_FINGERPRINT:
     required: true
     description: Certificate fingerprint (SHA-1 thumbprint)
@@ -43,30 +43,14 @@ runs:
         echo "SM_CLIENT_CERT_PASSWORD=${{ inputs.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV"
         echo "SM_CLIENT_CERT_FILE=D:\\client_cert.p12" >> "$GITHUB_ENV"
         echo "SM_HOST=${{ inputs.SM_HOST }}" >> "$GITHUB_ENV"
-        echo "C:\\Program Files\\DigiCert\\DigiCert Keylocker Tools" >> $GITHUB_PATH
-        echo "C:\\Program Files (x86)\\Windows Kits\\10\\App Certification Kit" >> $GITHUB_PATH
-        echo "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools" >> $GITHUB_PATH
 
-    - name: Sync certs to local Windows store
+    - name: Sync certs with DigiCert KeyLocker
       shell: cmd
       run: smctl windows certsync
 
-    - name: 🐛 Debug – List keypairs (smctl)
-      shell: cmd
-      run: smctl.exe keypair ls
-
-    - name: 🐛 Debug – List KSP certs (certutil)
-      shell: cmd
-      run: certutil.exe -csp "DigiCert Signing Manager KSP" -key -user
-
-    - name: 🐛 Debug – Show fingerprint expected
-      shell: bash
-      run: echo "🔐 Expecting fingerprint: ${{ inputs.SM_CERT_FINGERPRINT }}"
-
-    - name: Sign file using signtool
+    - name: Sign file with signtool
       shell: cmd
       run: |
-        echo Signing file ${{ inputs.file }} with cert fingerprint ${{ inputs.SM_CERT_FINGERPRINT }}
         signtool.exe sign ^
           /sha1 ${{ inputs.SM_CERT_FINGERPRINT }} ^
           /tr http://timestamp.digicert.com ^
@@ -76,4 +60,4 @@ runs:
 
     - name: Verify signature
       shell: cmd
-      run: signtool verify /v /pa "${{ inputs.file }}"
+      run: signtool verify /pa /v "${{ inputs.file }}"
