@@ -6,24 +6,6 @@ inputs:
   file:
     required: true
     description: The file to sign
-  name:
-    required: true
-    description: The name of the application to sign
-  SM_API_KEY:
-    required: true
-    description: DigiCert API key
-  SM_CLIENT_CERT_FILE_B64:
-    required: true
-    description: Base64-encoded client certificate (.p12)
-  SM_CLIENT_CERT_PASSWORD:
-    required: true
-    description: Password for the client cert
-  SM_HOST:
-    required: true
-    description: DigiCert ONE host URL
-  SM_CERT_FINGERPRINT:
-    required: true
-    description: Certificate fingerprint (SHA-1 thumbprint)
 
 runs:
   using: "composite"
@@ -31,32 +13,59 @@ runs:
     - name: Install DigiCert Client tools
       uses: digicert/ssm-code-signing@v1.0.0
 
+    - name: Verify environment variables
+      shell: bash
+      run: |
+        # Check if all required environment variables are set
+        if [ -z "${{ env.SM_API_KEY }}" ]; then
+          echo "Error: Required environment variable SM_API_KEY is not set"
+          exit 1
+        fi
+        if [ -z "${{ env.SM_CLIENT_CERT_FILE_B64 }}" ]; then
+          echo "Error: Required environment variable SM_CLIENT_CERT_FILE_B64 is not set"
+          exit 1
+        fi
+        if [ -z "${{ env.SM_CLIENT_CERT_PASSWORD }}" ]; then
+          echo "Error: Required environment variable SM_CLIENT_CERT_PASSWORD is not set"
+          exit 1
+        fi
+        if [ -z "${{ env.SM_HOST }}" ]; then
+          echo "Error: Required environment variable SM_HOST is not set"
+          exit 1
+        fi
+        if [ -z "${{ env.SM_CERT_FINGERPRINT }}" ]; then
+          echo "Error: Required environment variable SM_CERT_FINGERPRINT is not set"
+          exit 1
+        fi
+
     - name: Decode and save client certificate
       shell: bash
       run: |
-        echo "${{ inputs.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > /d/client_cert.p12
-
-    - name: Set environment variables
-      shell: bash
-      run: |
-        echo "SM_API_KEY=${{ inputs.SM_API_KEY }}" >> "$GITHUB_ENV"
-        echo "SM_CLIENT_CERT_PASSWORD=${{ inputs.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV"
-        echo "SM_CLIENT_CERT_FILE=D:\\client_cert.p12" >> "$GITHUB_ENV"
-        echo "SM_HOST=${{ inputs.SM_HOST }}" >> "$GITHUB_ENV"
+        echo "${{ env.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > /d/client_cert.p12
 
     - name: Sync certs with DigiCert KeyLocker
       shell: cmd
       run: smctl windows certsync
+      env:
+        SM_CLIENT_CERT_FILE: D:\client_cert.p12
+
+    # - name: DigiCert healthcheck
+    #   shell: cmd
+    #   run: smctl healthcheck
+    #   env:
+    #     SM_CLIENT_CERT_FILE: D:\client_cert.p12
 
     - name: Sign file with signtool
       shell: cmd
       run: |
         signtool.exe sign ^
-          /sha1 ${{ inputs.SM_CERT_FINGERPRINT }} ^
+          /sha1 ${{ env.SM_CERT_FINGERPRINT }} ^
           /tr http://timestamp.digicert.com ^
           /td SHA256 ^
           /fd SHA256 ^
           "${{ inputs.file }}"
+      env:
+        SM_CLIENT_CERT_FILE: D:\client_cert.p12
 
     - name: Verify signature
       shell: cmd

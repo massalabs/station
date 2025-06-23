@@ -1,7 +1,6 @@
 name: build and upload artifacts
 
 on:
-  push:
   workflow_dispatch:
   workflow_call:
     inputs:
@@ -179,7 +178,7 @@ jobs:
         uses: ./.github/actions/sign-file-digicert
         with:
           file: installer/massastation_${{ env.VERSION }}_amd64.msi
-          name: "Massa Station"
+        env:
           SM_API_KEY: ${{ secrets.SM_API_KEY }}
           SM_CLIENT_CERT_FILE_B64: ${{ secrets.SM_CLIENT_CERT_FILE_B64 }}
           SM_CLIENT_CERT_PASSWORD: ${{ secrets.SM_CLIENT_CERT_PASSWORD }}
