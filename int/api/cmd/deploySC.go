@@ -108,6 +108,9 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		Referer: params.HTTPRequest.Header.Get("Referer"),
 	}
 
+	walletPlugin := signer.NewWalletPlugin()
+	walletPlugin.SetCustomHeaders(headers)
+
 	operationResponse, events, err := onchain.DeploySC(
 		d.networkInfos,
 		params.Body.Nickname,
@@ -119,7 +122,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 		parameters,
 		smartContractByteCode,
 		deployerSCByteCode,
-		signer.NewWalletPlugin(headers),
+		walletPlugin,
 		"Deploying contract: "+params.Body.Description,
 	)
 	if err != nil {

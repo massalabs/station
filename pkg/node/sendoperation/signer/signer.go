@@ -32,8 +32,12 @@ const HTTPRequestTimeout = 60 * time.Second
 
 var _ Signer = &WalletPlugin{}
 
-func NewWalletPlugin(headers CustomHeader) *WalletPlugin {
-	return &WalletPlugin{headers: headers}
+func NewWalletPlugin() *WalletPlugin {
+	return &WalletPlugin{headers: CustomHeader{}}
+}
+
+func (s *WalletPlugin) SetCustomHeaders(headers CustomHeader) {
+	s.headers = headers
 }
 
 func (s *WalletPlugin) Sign(nickname string, operation []byte) (*SignOperationResponse, error) {
