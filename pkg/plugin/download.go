@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -23,7 +24,7 @@ func extractZipFilename(fileURL string) (string, error) {
 		return matches[1], nil
 	}
 
-	return "", fmt.Errorf("zip filename not found in URL")
+	return "", errors.New("zip filename not found in URL")
 }
 
 func downloadFile(url, filename string) error {
@@ -34,7 +35,7 @@ func downloadFile(url, filename string) error {
 		return err
 	}
 
-	req.Header.Set("User-Agent", fmt.Sprintf("MassaStation/%s", config.Version))
+	req.Header.Set("User-Agent", "MassaStation/"+config.Version)
 
 	client := &http.Client{}
 

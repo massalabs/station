@@ -27,7 +27,7 @@ func (e *execute) Handle(params operations.PluginManagerExecuteCommandParams) mi
 	plugin, err := e.manager.Plugin(params.ID)
 	if err != nil {
 		return operations.NewPluginManagerExecuteCommandNotFound().WithPayload(
-			&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
+			&models.Error{Code: errorCodePluginUnknown, Message: "get plugin error: " + err.Error()})
 	}
 
 	status := plugin.Status()

@@ -65,6 +65,14 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 				})
 	}
 
+	headers := signer.CustomHeader{
+		Origin:  params.HTTPRequest.Header.Get("Origin"),
+		Referer: params.HTTPRequest.Header.Get("Referer"),
+	}
+
+	walletPlugin := signer.NewWalletPlugin()
+	walletPlugin.SetCustomHeaders(headers)
+
 	operationWithEventResponse, err := onchain.CallFunction(
 		e.networkInfos,
 		params.Body.Nickname,
@@ -76,7 +84,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 		uint64(params.Body.Coins),
 		expiry,
 		asyncReq,
-		&signer.WalletPlugin{},
+		walletPlugin,
 		params.Body.Description,
 	)
 	if err != nil {

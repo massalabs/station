@@ -1,8 +1,6 @@
 package systray
 
 import (
-	"fmt"
-
 	"fyne.io/fyne/v2"
 	//nolint:goimports,nolintlint
 	"fyne.io/fyne/v2/app"
@@ -32,7 +30,7 @@ func MakeGUI() (fyne.App, *fyne.Menu) {
 		}
 
 		homeShortCutMenu.Action = func() {
-			utils.OpenURL(&stationGUI, fmt.Sprintf("https://%s", config.MassaStationURL))
+			utils.OpenURL(&stationGUI, "https://"+config.MassaStationURL)
 		}
 
 		menu.Items = append(menu.Items,

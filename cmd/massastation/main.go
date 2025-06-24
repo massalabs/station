@@ -102,7 +102,8 @@ func main() {
 		if err != nil {
 			logger.Fatalf("while running all plugins: %w", err)
 		}
-		utils.OpenURL(&stationGUI, fmt.Sprintf("https://%s", config.MassaStationURL))
+
+		utils.OpenURL(&stationGUI, "https://"+config.MassaStationURL)
 	})
 
 	stationGUI.Run()

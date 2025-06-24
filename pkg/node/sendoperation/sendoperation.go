@@ -6,6 +6,7 @@ import (
 	b64 "encoding/base64"
 	"encoding/binary"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -204,7 +205,7 @@ func DecodeMessage64(msgB64 string) ([]byte, uint64, uint64, error) {
 	// Read the encoded fee from the decoded message and move the buffer index
 	fee, bytesRead := binary.Uvarint(decodedMsg)
 	if bytesRead <= 0 {
-		return nil, 0, 0, fmt.Errorf("failed to read fee")
+		return nil, 0, 0, errors.New("failed to read fee")
 	}
 
 	decodedMsg = decodedMsg[bytesRead:]
@@ -212,7 +213,7 @@ func DecodeMessage64(msgB64 string) ([]byte, uint64, uint64, error) {
 	// Read the encoded expiry from the decoded message and move the buffer index
 	expiry, bytesRead := binary.Uvarint(decodedMsg)
 	if bytesRead <= 0 {
-		return nil, 0, 0, fmt.Errorf("failed to read expiry")
+		return nil, 0, 0, errors.New("failed to read expiry")
 	}
 
 	decodedMsg = decodedMsg[bytesRead:]

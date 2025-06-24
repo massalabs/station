@@ -1,8 +1,6 @@
 package network
 
 import (
-	"fmt"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
@@ -28,7 +26,7 @@ func (h *switchNetworkHandler) Handle(params operations.SwitchNetworkParams) mid
 		return operations.NewSwitchNetworkNotFound().WithPayload(
 			&models.Error{
 				Code:    errorCodeNetworkUnknown,
-				Message: fmt.Sprintf("Network not found: %s", err.Error()),
+				Message: "Network not found: " + err.Error(),
 			},
 		)
 	}

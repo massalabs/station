@@ -26,7 +26,7 @@ func (l *list) Handle(_ operations.PluginManagerListParams) middleware.Responder
 		plgn, err := l.manager.Plugin(correlationID)
 		if err != nil {
 			return operations.NewPluginManagerListNotFound().WithPayload(
-				&models.Error{Code: errorCodePluginUnknown, Message: fmt.Sprintf("get plugin error: %s", err.Error())})
+				&models.Error{Code: errorCodePluginUnknown, Message: "get plugin error: " + err.Error()})
 		}
 
 		info := plgn.Information()

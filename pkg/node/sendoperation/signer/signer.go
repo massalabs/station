@@ -12,7 +12,14 @@ import (
 	"github.com/massalabs/station/int/config"
 )
 
-type WalletPlugin struct{}
+type CustomHeader struct {
+	Origin  string
+	Referer string
+}
+
+type WalletPlugin struct {
+	headers CustomHeader
+}
 
 type RespError struct {
 	Code    string `json:"code"`
@@ -25,11 +32,20 @@ const HTTPRequestTimeout = 60 * time.Second
 
 var _ Signer = &WalletPlugin{}
 
+func NewWalletPlugin() *WalletPlugin {
+	return &WalletPlugin{headers: CustomHeader{}}
+}
+
+func (s *WalletPlugin) SetCustomHeaders(headers CustomHeader) {
+	s.headers = headers
+}
+
 func (s *WalletPlugin) Sign(nickname string, operation []byte) (*SignOperationResponse, error) {
 	httpRawResponse, err := ExecuteHTTPRequest(
 		http.MethodPost,
 		WalletPluginURL+"accounts/"+nickname+"/sign?allow-fee-edition=true",
 		bytes.NewBuffer(operation),
+		&s.headers,
 	)
 	if err != nil {
 		res := RespError{"", ""}
@@ -48,7 +64,7 @@ func (s *WalletPlugin) Sign(nickname string, operation []byte) (*SignOperationRe
 	return &res, nil
 }
 
-func ExecuteHTTPRequest(methodType string, url string, reader io.Reader) ([]byte, error) {
+func ExecuteHTTPRequest(methodType string, url string, reader io.Reader, headers *CustomHeader) ([]byte, error) {
 	request, err := http.NewRequestWithContext(
 		context.Background(),
 		methodType,
@@ -59,6 +75,14 @@ func ExecuteHTTPRequest(methodType string, url string, reader io.Reader) ([]byte
 	}
 
 	request.Header.Set("Content-Type", "application/json;")
+
+	if headers.Origin != "" {
+		request.Header.Set("Origin", headers.Origin)
+	}
+
+	if headers.Referer != "" {
+		request.Header.Set("Referer", headers.Referer)
+	}
 
 	HTTPClient := &http.Client{Timeout: HTTPRequestTimeout, Transport: nil, Jar: nil, CheckRedirect: nil}
 
