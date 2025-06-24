@@ -172,4 +172,4 @@ POST /cmd/executeFunction with invalid function name
     ...    ReadOnlyCall error: readonly call failed
     Should Contain
     ...    ${response.json()["message"]}
-    ...    VM execution error: Missing export invalid
+    ...    VM instance error: Missing export invalid
