@@ -6,63 +6,59 @@ inputs:
   file:
     required: true
     description: The file to sign
+  SM_API_KEY:
+    required: true
+    description: The API key for DigiCert KeyLocker
+  SM_CLIENT_CERT_FILE_B64:
+    required: true
+    description: Base64 encoded client certificate file
+  SM_CLIENT_CERT_PASSWORD:
+    required: true
+    description: Password for the client certificate
+  SM_HOST:
+    required: true
+    description: Host for DigiCert KeyLocker
+  SM_CERT_FINGERPRINT:
+    required: true
+    description: Fingerprint of the certificate to use for signing
 
 runs:
   using: "composite"
   steps:
-    - name: Check Windows runner
+    - name: Check Runner OS
+      if: ${{ runner.os != 'Windows' }}
       shell: bash
       run: |
-        if [[ "$RUNNER_OS" != "Windows" ]]; then
-          echo "Error: This action requires a Windows runner. Current OS: $RUNNER_OS"
-          echo "Please use 'runs-on: windows-latest' or 'runs-on: windows-2022' in your workflow."
-          exit 1
-        fi
+        echo "::error title=⛔ error hint::Support Windows only"
+        exit 1
 
     - name: Install DigiCert Client tools
       uses: digicert/ssm-code-signing@v1.0.0
 
-    - name: Verify environment variables
-      shell: bash
-      run: |
-        # Check if all required environment variables are set
-        if [ -z "${{ env.SM_API_KEY }}" ]; then
-          echo "Error: Required environment variable SM_API_KEY is not set"
-          exit 1
-        fi
-        if [ -z "${{ env.SM_CLIENT_CERT_FILE_B64 }}" ]; then
-          echo "Error: Required environment variable SM_CLIENT_CERT_FILE_B64 is not set"
-          exit 1
-        fi
-        if [ -z "${{ env.SM_CLIENT_CERT_PASSWORD }}" ]; then
-          echo "Error: Required environment variable SM_CLIENT_CERT_PASSWORD is not set"
-          exit 1
-        fi
-        if [ -z "${{ env.SM_HOST }}" ]; then
-          echo "Error: Required environment variable SM_HOST is not set"
-          exit 1
-        fi
-        if [ -z "${{ env.SM_CERT_FINGERPRINT }}" ]; then
-          echo "Error: Required environment variable SM_CERT_FINGERPRINT is not set"
-          exit 1
-        fi
-
     - name: Decode and save client certificate
       shell: bash
       run: |
-        echo "${{ env.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > /d/client_cert.p12
+        echo "${{ inputs.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > /d/client_cert.p12
 
     - name: Sync certs with DigiCert KeyLocker
       shell: cmd
       run: smctl windows certsync
       env:
         SM_CLIENT_CERT_FILE: D:\client_cert.p12
+        SM_API_KEY: ${{ inputs.SM_API_KEY }}
+        SM_HOST: ${{ inputs.SM_HOST }}
+        SM_CLIENT_CERT_PASSWORD: ${{ inputs.SM_CLIENT_CERT_PASSWORD }}
+        SM_CERT_FINGERPRINT: ${{ inputs.SM_CERT_FINGERPRINT }}
 
     # - name: DigiCert healthcheck
     #   shell: cmd
     #   run: smctl healthcheck
     #   env:
     #     SM_CLIENT_CERT_FILE: D:\client_cert.p12
+          # SM_API_KEY: ${{ inputs.SM_API_KEY }}
+          # SM_HOST: ${{ inputs.SM_HOST }}
+          # SM_CLIENT_CERT_PASSWORD: ${{ inputs.SM_CLIENT_CERT_PASSWORD }}
+          # SM_CERT_FINGERPRINT: ${{ inputs.SM_CERT_FINGERPRINT }}
 
     - name: Sign file with signtool
       shell: cmd
@@ -75,6 +71,10 @@ runs:
           "${{ inputs.file }}"
       env:
         SM_CLIENT_CERT_FILE: D:\client_cert.p12
+        SM_API_KEY: ${{ inputs.SM_API_KEY }}
+        SM_HOST: ${{ inputs.SM_HOST }}
+        SM_CLIENT_CERT_PASSWORD: ${{ inputs.SM_CLIENT_CERT_PASSWORD }}
+        SM_CERT_FINGERPRINT: ${{ inputs.SM_CERT_FINGERPRINT }}
 
     - name: Verify signature
       shell: cmd
