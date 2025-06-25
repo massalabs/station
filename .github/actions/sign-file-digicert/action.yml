@@ -10,6 +10,15 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Check Windows runner
+      shell: bash
+      run: |
+        if [[ "$RUNNER_OS" != "Windows" ]]; then
+          echo "Error: This action requires a Windows runner. Current OS: $RUNNER_OS"
+          echo "Please use 'runs-on: windows-latest' or 'runs-on: windows-2022' in your workflow."
+          exit 1
+        fi
+
     - name: Install DigiCert Client tools
       uses: digicert/ssm-code-signing@v1.0.0
 
