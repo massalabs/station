@@ -33,7 +33,7 @@ runs:
         exit 1
 
     - name: Install DigiCert Client tools
-      uses: digicert/ssm-code-signing@v1.0.0
+      uses: digicert/ssm-code-signing@v1.0.1
 
     - name: Decode and save client certificate
       shell: bash
