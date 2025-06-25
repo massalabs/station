@@ -1,0 +1,81 @@
+name: Sign a given file with DigiCert KeyLocker
+
+description: Uses DigiCert KeyLocker to sign a file with signtool
+
+inputs:
+  file:
+    required: true
+    description: The file to sign
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check Windows runner
+      shell: bash
+      run: |
+        if [[ "$RUNNER_OS" != "Windows" ]]; then
+          echo "Error: This action requires a Windows runner. Current OS: $RUNNER_OS"
+          echo "Please use 'runs-on: windows-latest' or 'runs-on: windows-2022' in your workflow."
+          exit 1
+        fi
+
+    - name: Install DigiCert Client tools
+      uses: digicert/ssm-code-signing@v1.0.0
+
+    - name: Verify environment variables
+      shell: bash
+      run: |
+        # Check if all required environment variables are set
+        if [ -z "${{ env.SM_API_KEY }}" ]; then
+          echo "Error: Required environment variable SM_API_KEY is not set"
+          exit 1
+        fi
+        if [ -z "${{ env.SM_CLIENT_CERT_FILE_B64 }}" ]; then
+          echo "Error: Required environment variable SM_CLIENT_CERT_FILE_B64 is not set"
+          exit 1
+        fi
+        if [ -z "${{ env.SM_CLIENT_CERT_PASSWORD }}" ]; then
+          echo "Error: Required environment variable SM_CLIENT_CERT_PASSWORD is not set"
+          exit 1
+        fi
+        if [ -z "${{ env.SM_HOST }}" ]; then
+          echo "Error: Required environment variable SM_HOST is not set"
+          exit 1
+        fi
+        if [ -z "${{ env.SM_CERT_FINGERPRINT }}" ]; then
+          echo "Error: Required environment variable SM_CERT_FINGERPRINT is not set"
+          exit 1
+        fi
+
+    - name: Decode and save client certificate
+      shell: bash
+      run: |
+        echo "${{ env.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > /d/client_cert.p12
+
+    - name: Sync certs with DigiCert KeyLocker
+      shell: cmd
+      run: smctl windows certsync
+      env:
+        SM_CLIENT_CERT_FILE: D:\client_cert.p12
+
+    # - name: DigiCert healthcheck
+    #   shell: cmd
+    #   run: smctl healthcheck
+    #   env:
+    #     SM_CLIENT_CERT_FILE: D:\client_cert.p12
+
+    - name: Sign file with signtool
+      shell: cmd
+      run: |
+        signtool.exe sign ^
+          /sha1 ${{ env.SM_CERT_FINGERPRINT }} ^
+          /tr http://timestamp.digicert.com ^
+          /td SHA256 ^
+          /fd SHA256 ^
+          "${{ inputs.file }}"
+      env:
+        SM_CLIENT_CERT_FILE: D:\client_cert.p12
+
+    - name: Verify signature
+      shell: cmd
+      run: signtool verify /pa /v "${{ inputs.file }}"
