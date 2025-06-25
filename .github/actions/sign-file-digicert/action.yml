@@ -3,9 +3,9 @@ name: Sign a given file with DigiCert KeyLocker
 description: Uses DigiCert KeyLocker to sign a file with signtool
 
 inputs:
-  file:
+  files:
     required: true
-    description: The file to sign
+    description: The files to sign (space-separated list or single file)
   SM_API_KEY:
     required: true
     description: The API key for DigiCert KeyLocker
@@ -60,15 +60,15 @@ runs:
           # SM_CLIENT_CERT_PASSWORD: ${{ inputs.SM_CLIENT_CERT_PASSWORD }}
           # SM_CERT_FINGERPRINT: ${{ inputs.SM_CERT_FINGERPRINT }}
 
-    - name: Sign file with signtool
+    - name: Sign files with signtool
       shell: cmd
       run: |
         signtool.exe sign ^
-          /sha1 ${{ env.SM_CERT_FINGERPRINT }} ^
+          /sha1 ${{ inputs.SM_CERT_FINGERPRINT }} ^
           /tr http://timestamp.digicert.com ^
           /td SHA256 ^
           /fd SHA256 ^
-          "${{ inputs.file }}"
+          ${{ inputs.files }}
       env:
         SM_CLIENT_CERT_FILE: D:\client_cert.p12
         SM_API_KEY: ${{ inputs.SM_API_KEY }}
@@ -76,6 +76,7 @@ runs:
         SM_CLIENT_CERT_PASSWORD: ${{ inputs.SM_CLIENT_CERT_PASSWORD }}
         SM_CERT_FINGERPRINT: ${{ inputs.SM_CERT_FINGERPRINT }}
 
-    - name: Verify signature
+    - name: Verify signatures
       shell: cmd
-      run: signtool verify /pa /v "${{ inputs.file }}"
+      run: |
+        signtool verify /pa /v ${{ inputs.files }}
