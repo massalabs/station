@@ -86,7 +86,9 @@ func addTrustedCert(cert *x509.Certificate, security *SecurityRunner) error {
 	if err != nil {
 		return fmt.Errorf("failed to create temporary file: %w", err)
 	}
-	defer trustedCertFile.Close()
+	defer func() {
+		_ = trustedCertFile.Close()
+	}()
 
 	err = os.WriteFile(trustedCertFile.Name(), pem.EncodeToMemory(
 		&pem.Block{Type: "CERTIFICATE", Bytes: cert.Raw}), fs.FileMode(permissionUrwGrOr))
@@ -110,7 +112,9 @@ func exportTrustSettingsContent(security *SecurityRunner) (map[string]interface{
 	if err != nil {
 		return nil, fmt.Errorf("failed to create temporary trust-settings file: %w", err)
 	}
-	defer plistFile.Close()
+	defer func() {
+		_ = plistFile.Close()
+	}()
 
 	err = security.Run("trust-settings-export", "-d", plistFile.Name())
 	if err != nil {

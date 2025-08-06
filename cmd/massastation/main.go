@@ -59,12 +59,12 @@ func main() {
 		log.Fatalf("while initializing logger: %s", err.Error())
 	}
 
-	defer logger.Close()
+	defer logger.Close() //nolint:errcheck
 
 	if stationStartFlags.Version {
 		//nolint:forbidigo
 		fmt.Printf("Version:%s\n", config.Version)
-		logger.Close()
+		_ = logger.Close()
 		//nolint:gocritic
 		os.Exit(0)
 	}
@@ -79,15 +79,15 @@ func main() {
 		os.Exit(0)
 	}
 
-	networkManager, err := config.NewNetworkManager()
-	if err != nil {
-		logger.Fatalf("Failed to create NetworkManager: %s", err.Error())
-	}
-
 	pluginManager := plugin.NewManager(configDir)
 
 	stationGUI, systrayMenu := systray.MakeGUI()
-	server := api.NewServer(serverFlags)
+	// Create shared config manager once and inject into server
+	configManager, err := config.GetConfigManager()
+	if err != nil {
+		logger.Fatalf("Failed to initialize config manager: %s", err.Error())
+	}
+	server := api.NewServer(serverFlags, configManager)
 
 	update.StartUpdateCheck(&stationGUI, systrayMenu)
 
@@ -96,7 +96,7 @@ func main() {
 		server.Stop()
 	})
 	stationGUI.Lifecycle().SetOnStarted(func() {
-		server.Start(networkManager, pluginManager)
+		server.Start(pluginManager)
 
 		err := pluginManager.RunAll()
 		if err != nil {

@@ -10,16 +10,17 @@ import (
 	"github.com/massalabs/station/pkg/node"
 )
 
-func NewGetAddressHandler(config *config.NetworkInfos) operations.MassaGetAddressesHandler {
-	return &getAddress{config: config}
+func NewGetAddressHandler(configManager *config.MSConfigManager) operations.MassaGetAddressesHandler {
+	return &getAddress{configManager: configManager}
 }
 
 type getAddress struct {
-	config *config.NetworkInfos
+	configManager *config.MSConfigManager
 }
 
 func (g *getAddress) Handle(params operations.MassaGetAddressesParams) middleware.Responder {
-	client := node.NewClient(g.config.NodeURL)
+	currentNetwork := g.configManager.CurrentNetwork()
+	client := node.NewClient(currentNetwork.NodeURL)
 
 	addressesDetails, err := node.Addresses(client, params.Addresses)
 	if err != nil {

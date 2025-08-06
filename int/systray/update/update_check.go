@@ -51,7 +51,9 @@ func getLatestVersion() (*version.Version, error) {
 		return nil, fmt.Errorf("error while performing GET request for latest version: %w", err)
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	var release release
 

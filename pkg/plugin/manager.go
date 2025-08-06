@@ -308,7 +308,7 @@ func (m *Manager) Update(correlationID string) error {
 
 	// Remove the old binary file.
 	pluginName := filepath.Base(plgn.Path)
-	os.Remove(utils.PluginPath(plgn.Path, pluginName))
+	_ = os.Remove(utils.PluginPath(plgn.Path, pluginName))
 
 	pluginPath, err := m.downloadPlugin(url, false)
 	if err != nil {

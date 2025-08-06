@@ -42,7 +42,7 @@ func (l *logo) Handle(param operations.PluginManagerGetLogoParams) middleware.Re
 				&models.Error{Code: errorCodePluginLogoNotFound, Message: fmt.Sprintf("plugin %s logo not found", param.ID)})
 		}
 	}
-	defer logoFile.Close()
+	defer logoFile.Close() //nolint:errcheck
 
 	// Read the logo file
 	logoData, err := io.ReadAll(logoFile)

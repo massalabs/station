@@ -45,7 +45,9 @@ func downloadFile(url, filename string) error {
 		return err
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("failed to download file: %s", resp.Status)
@@ -56,7 +58,9 @@ func downloadFile(url, filename string) error {
 		//nolint:wrapcheck
 		return err
 	}
-	defer out.Close()
+	defer func() {
+		_ = out.Close()
+	}()
 
 	_, err = io.Copy(out, resp.Body)
 

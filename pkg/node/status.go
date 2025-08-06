@@ -3,6 +3,7 @@ package node
 import (
 	"context"
 	"fmt"
+	"regexp"
 )
 
 type State struct {
@@ -76,4 +77,21 @@ func Status(client *Client) (*State, error) {
 	}
 
 	return &resp, nil
+}
+
+// GetVersionDigits extracts the version digits from the node version string.
+// Example: "DEVN.1.2" -> "1.2"
+// Example: "MAIN.6.6" -> "6.6"
+func GetVersionDigits(status *State) (string, error) {
+	pattern := `.+\.(\d+\.\d+)`
+
+	re := regexp.MustCompile(pattern)
+	matches := re.FindStringSubmatch(*status.Version)
+
+	//nolint:gomnd
+	if len(matches) != 2 {
+		return "", fmt.Errorf("failed to parse node version from: %s", *status.Version)
+	}
+
+	return matches[1], nil
 }

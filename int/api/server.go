@@ -30,41 +30,40 @@ func setAPIFlags(server *restapi.Server, startFlags StartServerFlags) {
 
 func initLocalAPI(
 	localAPI *operations.MassastationAPI,
-	networkManager *config.NetworkManager,
 	pluginManager *plugin.Manager,
+	configManager *config.MSConfigManager,
 ) {
-	config := networkManager.Network()
+	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunctionHandler(configManager)
+	localAPI.CmdReadOnlyCallSCHandler = cmd.NewReadOnlyCallSCHandler(configManager)
+	localAPI.CmdExecuteSCHandler = cmd.NewExecuteSCHandler(configManager)
 
-	localAPI.CmdExecuteFunctionHandler = cmd.NewExecuteFunctionHandler(config)
-	localAPI.CmdReadOnlyCallSCHandler = cmd.NewReadOnlyCallSCHandler(config)
-	localAPI.CmdExecuteSCHandler = cmd.NewExecuteSCHandler(config)
-
-	localAPI.MassaGetAddressesHandler = massa.NewGetAddressHandler(config)
-	localAPI.GetNodeHandler = massa.NewGetNodeHandler(config)
+	localAPI.MassaGetAddressesHandler = massa.NewGetAddressHandler(configManager)
+	localAPI.GetNodeHandler = massa.NewGetNodeHandler(configManager)
 
 	localAPI.GetMassaStationVersionHandler = operations.GetMassaStationVersionHandlerFunc(version.Handle)
 
-	localAPI.CmdDeploySCHandler = cmd.NewDeploySCHandler(config)
-	localAPI.CmdReadOnlyExecuteSCHandler = cmd.NewReadOnlyExecuteSCHandler(config)
+	localAPI.CmdDeploySCHandler = cmd.NewDeploySCHandler(configManager)
+	localAPI.CmdReadOnlyExecuteSCHandler = cmd.NewReadOnlyExecuteSCHandler(configManager)
 
-	localAPI.EventsGetterHandler = NewEventListenerHandler(config)
+	localAPI.EventsGetterHandler = NewEventListenerHandler(configManager)
 	localAPI.MassaStationWebAppHandler = operations.MassaStationWebAppHandlerFunc(MassaStationWebAppHandler)
 
-	localAPI.SwitchNetworkHandler = network.NewSwitchNetworkHandler(networkManager)
-	localAPI.GetNetworkConfigHandler = network.NewGetNetworkConfigHandler(networkManager)
+	localAPI.SwitchNetworkHandler = network.NewSwitchNetworkHandler(configManager)
+	localAPI.GetNetworkConfigHandler = network.NewGetNetworkConfigHandler(configManager)
 
 	pluginstore.InitializePluginStoreAPI(localAPI)
 	myplugin.InitializePluginAPI(localAPI, pluginManager)
 }
 
 type Server struct {
-	api      *restapi.Server
-	localAPI *operations.MassastationAPI
-	shutdown chan struct{}
+	api           *restapi.Server
+	localAPI      *operations.MassastationAPI
+	shutdown      chan struct{}
+	configManager *config.MSConfigManager
 }
 
 // Creates a new server instance and configures it with the given flags.
-func NewServer(flags StartServerFlags) *Server {
+func NewServer(flags StartServerFlags, configManager *config.MSConfigManager) *Server {
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
 		logger.Fatal(err.Error())
@@ -84,16 +83,17 @@ func NewServer(flags StartServerFlags) *Server {
 	}
 
 	return &Server{
-		api:      server,
-		localAPI: localAPI,
-		shutdown: make(chan struct{}),
+		api:           server,
+		localAPI:      localAPI,
+		shutdown:      make(chan struct{}),
+		configManager: configManager,
 	}
 }
 
 // Starts the server.
 // This function starts the server in a new goroutine to avoid blocking the main thread.
-func (server *Server) Start(networkManager *config.NetworkManager, pluginManager *plugin.Manager) {
-	initLocalAPI(server.localAPI, networkManager, pluginManager)
+func (server *Server) Start(pluginManager *plugin.Manager) {
+	initLocalAPI(server.localAPI, pluginManager, server.configManager)
 	server.api.ConfigureMassaStationAPI(server.shutdown)
 
 	go func() {

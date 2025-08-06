@@ -9,18 +9,16 @@ import (
 
 const errorCodeNetworkUnknown = "Network-0001"
 
-type switchNetworkHandler struct {
-	networkManager *config.NetworkManager
-}
+type switchNetworkHandler struct{ configManager *config.MSConfigManager }
 
 // NewSwitchNetworkHandler creates a new switchNetworkHandler instance.
-func NewSwitchNetworkHandler(networkManager *config.NetworkManager) operations.SwitchNetworkHandler {
-	return &switchNetworkHandler{networkManager: networkManager}
+func NewSwitchNetworkHandler(configManager *config.MSConfigManager) operations.SwitchNetworkHandler {
+	return &switchNetworkHandler{configManager: configManager}
 }
 
 // handles the request for switching the network.
 func (h *switchNetworkHandler) Handle(params operations.SwitchNetworkParams) middleware.Responder {
-	err := h.networkManager.SwitchNetwork(params.Network)
+	err := h.configManager.SwitchNetwork(params.Network)
 	if err != nil {
 		// If the network is not found, return a 404 response with an error message.
 		return operations.NewSwitchNetworkNotFound().WithPayload(
@@ -32,9 +30,10 @@ func (h *switchNetworkHandler) Handle(params operations.SwitchNetworkParams) mid
 	}
 
 	// Build the response with the current network information.
+	currentNetwork := h.configManager.CurrentNetwork()
 	response := &models.NetworkManagerItem{
-		CurrentNetwork:    &h.networkManager.Network().Network,
-		AvailableNetworks: *h.networkManager.Networks(),
+		CurrentNetwork:    &currentNetwork.Name,
+		AvailableNetworks: *h.configManager.Networks(),
 	}
 
 	return operations.NewSwitchNetworkOK().WithPayload(response)
