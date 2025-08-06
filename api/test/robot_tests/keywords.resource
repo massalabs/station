@@ -62,3 +62,4 @@ Switch To Buildnet
     ...    ${API_URL}/network/buildnet
     ...    expected_status=${STATUS_OK}
     Should Be Equal    ${response.json()['currentNetwork']}    buildnet
+    Log To Console    Switched to buildnet
