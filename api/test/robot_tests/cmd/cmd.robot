@@ -11,7 +11,6 @@ Resource            ../variables.resource
 
 Suite Setup         Suite Setup
 
-
 *** Test Cases ***
 POST /cmd/read-only/executesc
     ${sc}=    Get File For Streaming Upload    ${CURDIR}/../../testSC/build/main-testSC.wasm

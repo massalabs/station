@@ -1,6 +1,11 @@
-version: 2
+# Configuration for golangci-lint v2
+version: "2"
 
 linters:
+  # Use standard set of linters
+  default: standard
+  
+  # Disable specific linters
   disable:
     # unwanted
     - nonamedreturns
@@ -12,40 +17,42 @@ linters:
     - ireturn
     - depguard
 
-  presets:
-    - bugs
-    - comment
-    - complexity
-    - error
-    - format
-    - import
-    - metalinter
-    - module
-    - performance
-    - style
-    - unused
+  # Linter settings (moved from linters-settings in v1)
+  settings:
+    tagliatelle:
+      # Check the struck tag name case.
+      case:
+        # Use the struct field name to check the name of the struct tag.
+        # Default: false
+        use-field-name: true
+        rules:
+          # Any struct tag type can be used.
+          # Support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
+          json: snake
 
-run:
-  skip-dirs:
-    - pkg/front
-    - pkg/sc
-    - api/swagger/server
-    - resource
-
-issues:
-  exclude-rules:
-    - path: '(.+)_test\.go'
-      linters:
-        - funlen
-
-linters-settings:
-  tagliatelle:
-    # Check the struck tag name case.
-    case:
-      # Use the struct field name to check the name of the struct tag.
-      # Default: false
-      use-field-name: true
-      rules:
-        # Any struct tag type can be used.
-        # Support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
-        json: snake
+  # Exclusions (moved from issues and run in v1)
+  exclusions:
+    # Enable strict generated file detection
+    generated: strict
+    
+    # Exclude directories (moved from run.skip-dirs)
+    paths:
+      - pkg/front
+      - pkg/sc
+      - api/swagger
+      - resource
+      # Additional patterns to catch swagger files
+      - ".*swagger.*"
+      - ".*restapi.*"
+      - ".*operations.*"
+      - "api/swagger/.*"
+      - "api/swagger/server/.*"
+      - "api/swagger/server/restapi/.*"
+      - "api/swagger/server/restapi/operations/.*"
+      - "api/swagger/server/models/.*"
+    
+    # Exclude rules (moved from issues.exclude-rules)
+    rules:
+      - path: '(.+)_test\.go'
+        linters:
+          - funlen

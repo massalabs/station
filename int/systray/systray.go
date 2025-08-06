@@ -2,10 +2,8 @@ package systray
 
 import (
 	"fyne.io/fyne/v2"
-	//nolint:goimports,nolintlint
 	"fyne.io/fyne/v2/app"
-	//nolint:typecheck,nolintlint
-	"fyne.io/fyne/v2/driver/desktop"
+	fyneDesktop "fyne.io/fyne/v2/driver/desktop"
 	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/int/systray/embedded"
 	"github.com/massalabs/station/int/systray/utils"
@@ -15,7 +13,7 @@ func MakeGUI() (fyne.App, *fyne.Menu) {
 	stationGUI := app.New()
 	menu := fyne.NewMenu("MassaStation")
 
-	if desk, ok := stationGUI.(desktop.App); ok {
+	if desk, ok := stationGUI.(fyneDesktop.App); ok {
 		icon := fyne.NewStaticResource("logo", embedded.Logo)
 		titleMenu := fyne.NewMenuItem("MassaStation", nil)
 		homeShortCutMenu := fyne.NewMenuItem("Open MassaStation", nil)

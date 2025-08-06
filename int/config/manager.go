@@ -204,19 +204,19 @@ func LoadConfig() (*ConfigFile, error) {
 		return nil, fmt.Errorf("failed to read YAML file: %w", err)
 	}
 
-	var configData *ConfigFile
+	var configData ConfigFile
 
-	// Unmarshal the YAML data into the networksData variable
-	err = yaml.Unmarshal(yamlFile, configData)
+	// Unmarshal the YAML data into the configData variable
+	err = yaml.Unmarshal(yamlFile, &configData)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal YAML data: %w", err)
 	}
 
 	// Check for duplicate network names
-	err = checkDuplicateNames(configData)
+	err = checkDuplicateNames(&configData)
 	if err != nil {
 		return nil, fmt.Errorf("configuration validation failed: %w", err)
 	}
 
-	return configData, nil
+	return &configData, nil
 }
