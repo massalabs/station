@@ -68,7 +68,7 @@ func Test_removePlugin(t *testing.T) {
 			}
 
 			// Clean up the temporary directory.
-			os.RemoveAll(tempDir)
+			_ = os.RemoveAll(tempDir)
 		})
 	}
 }

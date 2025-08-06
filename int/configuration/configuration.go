@@ -29,8 +29,8 @@ func Path() (string, error) {
 		return massaHome, nil
 	}
 
-	switch {
-	case runtime.GOOS == "windows":
+	switch runtime.GOOS {
+	case "windows":
 		ex, err := os.Executable()
 		if err != nil {
 			return "", fmt.Errorf("getting executable path: %w", err)
@@ -38,7 +38,7 @@ func Path() (string, error) {
 
 		return filepath.Dir(ex), nil
 
-	case runtime.GOOS == "linux", runtime.GOOS == "darwin":
+	case "linux", "darwin":
 		return path.Join("/", "usr", "local", "share", "massastation"), nil
 
 	default:
@@ -47,8 +47,8 @@ func Path() (string, error) {
 }
 
 func CertPath() (string, error) {
-	switch {
-	case runtime.GOOS == "windows":
+	switch runtime.GOOS {
+	case "windows":
 		confDir, err := Path()
 		if err != nil {
 			return "", fmt.Errorf("getting config directory: %w", err)
@@ -58,7 +58,7 @@ func CertPath() (string, error) {
 
 		return certDir, nil
 
-	case runtime.GOOS == "linux", runtime.GOOS == "darwin":
+	case "linux", "darwin":
 		return path.Join("/", "etc", "massastation", "certs"), nil
 
 	default:

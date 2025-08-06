@@ -95,7 +95,9 @@ func ExecuteHTTPRequest(methodType string, url string, reader io.Reader, headers
 	if err != nil {
 		return nil, fmt.Errorf("reading request body: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return body, fmt.Errorf("request failed with status: %s", resp.Status)

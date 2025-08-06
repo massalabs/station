@@ -7,19 +7,18 @@ import (
 	"github.com/massalabs/station/int/config"
 )
 
-func NewGetNodeHandler(config *config.NetworkInfos) operations.GetNodeHandler {
-	return &getNodeHandler{config: config}
+func NewGetNodeHandler(configManager *config.MSConfigManager) operations.GetNodeHandler {
+	return &getNodeHandler{configManager: configManager}
 }
 
-type getNodeHandler struct {
-	config *config.NetworkInfos
-}
+type getNodeHandler struct{ configManager *config.MSConfigManager }
 
 func (h *getNodeHandler) Handle(_ operations.GetNodeParams) middleware.Responder {
+	currentNetwork := h.configManager.CurrentNetwork()
 	return operations.NewGetNodeOK().
 		WithPayload(&models.MassaNodeItem{
-			Network: &h.config.Network,
-			URL:     &h.config.NodeURL,
-			ChainID: int64(h.config.ChainID),
+			Network: &currentNetwork.Name,
+			URL:     &currentNetwork.NodeURL,
+			ChainID: int64(currentNetwork.ChainID),
 		})
 }

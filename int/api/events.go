@@ -11,18 +11,19 @@ import (
 	"github.com/massalabs/station/pkg/node"
 )
 
-func NewEventListenerHandler(config *config.NetworkInfos) operations.EventsGetterHandler {
-	return &eventListener{config: config}
+func NewEventListenerHandler(configManager *config.MSConfigManager) operations.EventsGetterHandler {
+	return &eventListener{configManager: configManager}
 }
 
 type eventListener struct {
-	config *config.NetworkInfos
+	configManager *config.MSConfigManager
 }
 
 const timeoutSec = 60
 
 func (h *eventListener) Handle(params operations.EventsGetterParams) middleware.Responder {
-	client := node.NewClient(h.config.NodeURL)
+	current := h.configManager.CurrentNetwork()
+	client := node.NewClient(current.NodeURL)
 
 	status, err := node.Status(client)
 	if err != nil {

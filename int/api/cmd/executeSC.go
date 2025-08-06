@@ -13,12 +13,12 @@ import (
 	"github.com/massalabs/station/pkg/onchain"
 )
 
-func NewExecuteSCHandler(config *config.NetworkInfos) operations.CmdExecuteSCHandler {
-	return &executeSC{networkInfos: config}
+func NewExecuteSCHandler(configManager *config.MSConfigManager) operations.CmdExecuteSCHandler {
+	return &executeSC{configManager: configManager}
 }
 
 type executeSC struct {
-	networkInfos *config.NetworkInfos
+	configManager *config.MSConfigManager
 }
 
 //nolint:funlen
@@ -118,7 +118,7 @@ func (d *executeSC) Handle(params operations.CmdExecuteSCParams) middleware.Resp
 	walletPlugin.SetCustomHeaders(headers)
 
 	operationResponse, err := onchain.ExecuteSC(
-		d.networkInfos,
+		d.configManager.CurrentNetwork(),
 		params.Body.Nickname,
 		maxGas,
 		maxCoins,

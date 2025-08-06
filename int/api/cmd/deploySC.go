@@ -17,16 +17,15 @@ import (
 //go:embed sc/deployer.wasm
 var deployerSCByteCode []byte
 
-func NewDeploySCHandler(config *config.NetworkInfos) operations.CmdDeploySCHandler {
-	return &deploySC{networkInfos: config}
+func NewDeploySCHandler(configManager *config.MSConfigManager) operations.CmdDeploySCHandler {
+	return &deploySC{configManager: configManager}
 }
 
-type deploySC struct {
-	networkInfos *config.NetworkInfos
-}
+type deploySC struct{ configManager *config.MSConfigManager }
 
 //nolint:funlen
 func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Responder {
+
 	if params.Body.SmartContract == "" {
 		return operations.NewCmdDeploySCUnprocessableEntity().
 			WithPayload(
@@ -112,7 +111,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 	walletPlugin.SetCustomHeaders(headers)
 
 	operationResponse, events, err := onchain.DeploySC(
-		d.networkInfos,
+		d.configManager.CurrentNetwork(),
 		params.Body.Nickname,
 		maxGas,
 		maxCoins,

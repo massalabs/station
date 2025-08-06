@@ -27,7 +27,7 @@ func (l *Logger) Close() error {
 		return nil
 	}
 
-	err := l.SugaredLogger.Sync()
+	err := l.Sync()
 	if err != nil {
 		return fmt.Errorf("sync logger: %w", err)
 	}

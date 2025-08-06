@@ -1,3 +1,5 @@
+version: 2
+
 linters:
   disable:
     # unwanted
@@ -5,18 +7,8 @@ linters:
     - paralleltest
     - testpackage
     - exhaustruct
-    # deprecated
-    - deadcode
-    - exhaustivestruct
-    - golint
-    - ifshort
-    - interfacer
-    - maligned
-    - nosnakecase
-    - scopelint
-    - structcheck
-    - varcheck
-    - goerr113 # we should decide first on how we would like to handle error internally
+    # We should decide first on how we would like to handle error internally
+    - err113
     - ireturn
     - depguard
 

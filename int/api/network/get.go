@@ -7,21 +7,20 @@ import (
 	"github.com/massalabs/station/int/config"
 )
 
-type getNetworkConfigHandler struct {
-	networkManager *config.NetworkManager
-}
+type getNetworkConfigHandler struct{ configManager *config.MSConfigManager }
 
 // NewGetNetworkConfigHandler creates a new getNetworkConfigHandler instance.
-func NewGetNetworkConfigHandler(networkManager *config.NetworkManager) operations.GetNetworkConfigHandler {
-	return &getNetworkConfigHandler{networkManager: networkManager}
+func NewGetNetworkConfigHandler(configManager *config.MSConfigManager) operations.GetNetworkConfigHandler {
+	return &getNetworkConfigHandler{configManager: configManager}
 }
 
 // handles the request for getting the network configuration.
 func (h *getNetworkConfigHandler) Handle(_ operations.GetNetworkConfigParams) middleware.Responder {
 	// Build the response with the current network information.
+	currentNetwork := h.configManager.CurrentNetwork()
 	response := &models.NetworkManagerItem{
-		CurrentNetwork:    &h.networkManager.Network().Network,
-		AvailableNetworks: *h.networkManager.Networks(),
+		CurrentNetwork:    &currentNetwork.Name,
+		AvailableNetworks: *h.configManager.Networks(),
 	}
 
 	return operations.NewGetNetworkConfigOK().WithPayload(response)

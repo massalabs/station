@@ -12,12 +12,12 @@ import (
 	"github.com/massalabs/station/pkg/wallet"
 )
 
-func NewReadOnlyCallSCHandler(config *config.NetworkInfos) operations.CmdReadOnlyCallSCHandler {
-	return &ReadOnlyCallSC{networkInfos: config}
+func NewReadOnlyCallSCHandler(configManager *config.MSConfigManager) operations.CmdReadOnlyCallSCHandler {
+	return &ReadOnlyCallSC{configManager: configManager}
 }
 
 type ReadOnlyCallSC struct {
-	networkInfos *config.NetworkInfos
+	configManager *config.MSConfigManager
 }
 
 func (e *ReadOnlyCallSC) Handle(params operations.CmdReadOnlyCallSCParams) middleware.Responder {
@@ -58,7 +58,7 @@ func (e *ReadOnlyCallSC) Handle(params operations.CmdReadOnlyCallSCParams) middl
 		coins,
 		fee,
 		acc.Address,
-		node.NewClient(e.networkInfos.NodeURL),
+		node.NewClient(e.configManager.CurrentNetwork().NodeURL),
 	)
 	if err != nil {
 		return operations.NewCmdReadOnlyCallSCInternalServerError().WithPayload(

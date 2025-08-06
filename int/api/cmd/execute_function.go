@@ -13,12 +13,12 @@ import (
 	"github.com/massalabs/station/pkg/onchain"
 )
 
-func NewExecuteFunctionHandler(config *config.NetworkInfos) operations.CmdExecuteFunctionHandler {
-	return &executeFunction{networkInfos: config}
+func NewExecuteFunctionHandler(configManager *config.MSConfigManager) operations.CmdExecuteFunctionHandler {
+	return &executeFunction{configManager: configManager}
 }
 
 type executeFunction struct {
-	networkInfos *config.NetworkInfos
+	configManager *config.MSConfigManager
 }
 
 //nolint:funlen
@@ -74,7 +74,7 @@ func (e *executeFunction) Handle(params operations.CmdExecuteFunctionParams) mid
 	walletPlugin.SetCustomHeaders(headers)
 
 	operationWithEventResponse, err := onchain.CallFunction(
-		e.networkInfos,
+		e.configManager.CurrentNetwork(),
 		params.Body.Nickname,
 		params.Body.At,
 		params.Body.Name,
