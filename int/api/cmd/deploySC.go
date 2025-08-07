@@ -9,6 +9,7 @@ import (
 	"github.com/massalabs/station/api/swagger/server/models"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/int/config"
+	"github.com/massalabs/station/pkg/logger"
 	"github.com/massalabs/station/pkg/node/sendoperation"
 	"github.com/massalabs/station/pkg/node/sendoperation/signer"
 	"github.com/massalabs/station/pkg/onchain"
@@ -25,6 +26,20 @@ type deploySC struct{ configManager *config.MSConfigManager }
 
 //nolint:funlen
 func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Responder {
+	// Get the singleton config manager instance
+	configManager, err := config.GetConfigManager()
+	if err != nil {
+		return operations.NewCmdDeploySCInternalServerError().
+			WithPayload(
+				&models.Error{
+					Code:    "CONFIG_ERROR",
+					Message: "Failed to get config manager: " + err.Error(),
+				})
+	}
+
+	// Get current network info
+	networkInfos := configManager.CurrentNetwork()
+	logger.Debugf("Deploying SC on network: %s", networkInfos.Name)
 
 	if params.Body.SmartContract == "" {
 		return operations.NewCmdDeploySCUnprocessableEntity().
