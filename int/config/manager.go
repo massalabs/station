@@ -68,6 +68,8 @@ func ResetConfigManager() {
 
 // newMSConfigManager creates a new instance (internal function)
 func newMSConfigManager() (*MSConfigManager, error) {
+	logger.Info("Loading Config...")
+
 	// Load network configuration
 	userConfig, err := LoadConfig()
 	if err != nil {

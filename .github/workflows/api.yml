@@ -43,15 +43,18 @@ jobs:
         env:
           WALLET_TEST_WALLET: ${{ secrets.WALLET_TEST_WALLET }}
       - name: Running Massastation
-        run:  xvfb-run LOG_LEVEL=DEBUG massastation > logs.txt &
+        run: xvfb-run massastation > logs.txt &
         env:
           WALLET_PASSWORD: ${{ secrets.WALLET_TEST_PASSWORD }}
+          LOG_LEVEL: DEBUG
       - name: Define station.massa
         run: sudo echo "127.0.0.1 station.massa" | sudo tee -a /etc/hosts
-      - name: Wait for server to be up
-        uses: juliangruber/sleep-action@v1
-        with:
-          time: 5s
+      - name: Wait for API to be ready on port 80
+        run: |
+          echo "Waiting for API to be ready on port 80..."
+          timeout 60 bash -c 'until nc -z 127.0.0.1 80; do sleep 1; done'
+          echo "API is ready!"
+
       - name: Run RobotFramework tests
         working-directory: api/test
         run: |
