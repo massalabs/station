@@ -2,7 +2,6 @@ package config
 
 import (
 	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -27,8 +26,16 @@ func setTempHome(t *testing.T) (restore func()) {
 }
 
 // newTestManagerFromDefaults builds an in-memory manager seeded from DefaultConfig without network calls
+// and ensures the persistent configuration is also initialized with DefaultConfig
 func newTestManagerFromDefaults(t *testing.T) *MSConfigManager {
 	t.Helper()
+
+	// Save DefaultConfig to persistent storage for consistency
+	err := saveConfig(&DefaultConfig)
+	if err != nil {
+		t.Fatalf("Failed to save default config: %v", err)
+	}
+
 	networks := make([]RPCInfos, 0, len(DefaultConfig.Networks))
 	var current RPCInfos
 	for name, item := range DefaultConfig.Networks {
@@ -168,13 +175,6 @@ func TestDeleteNetwork_RemovesAndSwitchesCurrent(t *testing.T) {
 
 	mgr := newTestManagerFromDefaults(t)
 
-	// Persisted config should exist at test location
-	cfgPath, err := getConfigFilePath()
-	require.NoError(t, err)
-	info, err := os.Stat(filepath.Dir(cfgPath))
-	require.NoError(t, err)
-	require.True(t, info.IsDir())
-
 	// Ensure we have at least 2 networks
 	require.GreaterOrEqual(t, len(mgr.Network.Networks), 2, "test requires at least 2 networks")
 	toDelete := mgr.Network.Networks[1].Name
@@ -182,7 +182,7 @@ func TestDeleteNetwork_RemovesAndSwitchesCurrent(t *testing.T) {
 	// Set current to the one we will delete to test switching
 	mgr.Network.currentNetwork = &mgr.Network.Networks[1]
 
-	err = mgr.DeleteNetwork(toDelete)
+	err := mgr.DeleteNetwork(toDelete)
 	require.NoError(t, err)
 
 	// In-memory: deleted, and current switched

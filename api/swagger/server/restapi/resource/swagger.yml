@@ -1042,14 +1042,29 @@ definitions:
       currentNetwork:
         description: actual network.
         type: string
-      availableNetworks:
-        description: available networks
+      availableNetworkInfos:
+        description: detailed available networks with status
         type: array
         items:
-          type: string
+          $ref: "#/definitions/NetworkInfoItem"
     required:
       - currentNetwork
-      - availableNetworks
+      - availableNetworkInfos
+  NetworkInfoItem:
+    type: object
+    description: Detailed network information
+    properties:
+      name:
+        type: string
+      url:
+        type: string
+      chainId:
+        type: integer
+      version:
+        type: string
+      status:
+        type: string
+        enum: [up, down]
   PluginStoreItem:
     type: object
     description: Plugin item from store.

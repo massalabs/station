@@ -4,7 +4,7 @@ import { useConfigStore } from '@/store/store';
 
 import { Navigator, Theme, Toast } from '@massalabs/react-ui-kit';
 import { useLocalStorage } from '@massalabs/react-ui-kit/src/lib/util/hooks/useLocalStorage';
-import { FiCodepen, FiGlobe, FiHome, FiSun, FiMoon } from 'react-icons/fi';
+import { FiCodepen, FiGlobe, FiHome, FiSun, FiMoon, FiSettings } from 'react-icons/fi';
 import { LayoutStation } from '@/layouts/LayoutStation/LayoutStation';
 
 import { PAGES } from '@/const/pages/pages';
@@ -39,10 +39,14 @@ const navigatorSteps: INavigatorSteps = {
   },
   store: {
     previous: PAGES.INDEX,
+    next: PAGES.CONFIG,
+  },
+  config: {
+    previous: PAGES.STORE,
     next: PAGES.SEARCH,
   },
   search: {
-    previous: PAGES.STORE,
+    previous: PAGES.CONFIG,
     next: null,
   },
 };
@@ -77,9 +81,14 @@ export function Base() {
           isActive: PAGES.STORE === activePage,
         },
         {
+          icon: <FiSettings />,
+          isActive: PAGES.CONFIG === activePage,
+        },
+        {
           icon: <FiGlobe />,
           isActive: PAGES.SEARCH === activePage,
         },
+
       ]}
       onClickNext={handleNext}
       onClickBack={handlePrevious}
