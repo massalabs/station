@@ -7,16 +7,12 @@ import (
 	"github.com/massalabs/station/int/config"
 )
 
-const errorCodeNetworkUnknown = "Network-0001"
-
 type switchNetworkHandler struct{ configManager *config.MSConfigManager }
 
-// NewSwitchNetworkHandler creates a new switchNetworkHandler instance.
 func NewSwitchNetworkHandler(configManager *config.MSConfigManager) operations.SwitchNetworkHandler {
 	return &switchNetworkHandler{configManager: configManager}
 }
 
-// handles the request for switching the network.
 func (h *switchNetworkHandler) Handle(params operations.SwitchNetworkParams) middleware.Responder {
 	err := h.configManager.SwitchNetwork(params.Network)
 	if err != nil {
@@ -29,11 +25,11 @@ func (h *switchNetworkHandler) Handle(params operations.SwitchNetworkParams) mid
 		)
 	}
 
-	// Build the response with the current network information.
 	currentNetwork := h.configManager.CurrentNetwork()
+	availableNetworks := buildAvailableNetworkInfos(h.configManager)
 	response := &models.NetworkManagerItem{
-		CurrentNetwork:    &currentNetwork.Name,
-		AvailableNetworks: *h.configManager.Networks(),
+		CurrentNetwork:        &currentNetwork.Name,
+		AvailableNetworkInfos: availableNetworks,
 	}
 
 	return operations.NewSwitchNetworkOK().WithPayload(response)

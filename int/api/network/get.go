@@ -9,18 +9,16 @@ import (
 
 type getNetworkConfigHandler struct{ configManager *config.MSConfigManager }
 
-// NewGetNetworkConfigHandler creates a new getNetworkConfigHandler instance.
 func NewGetNetworkConfigHandler(configManager *config.MSConfigManager) operations.GetNetworkConfigHandler {
 	return &getNetworkConfigHandler{configManager: configManager}
 }
 
-// handles the request for getting the network configuration.
 func (h *getNetworkConfigHandler) Handle(_ operations.GetNetworkConfigParams) middleware.Responder {
-	// Build the response with the current network information.
 	currentNetwork := h.configManager.CurrentNetwork()
+	availableNetworks := buildAvailableNetworkInfos(h.configManager)
 	response := &models.NetworkManagerItem{
-		CurrentNetwork:    &currentNetwork.Name,
-		AvailableNetworks: *h.configManager.Networks(),
+		CurrentNetwork:        &currentNetwork.Name,
+		AvailableNetworkInfos: availableNetworks,
 	}
 
 	return operations.NewGetNetworkConfigOK().WithPayload(response)

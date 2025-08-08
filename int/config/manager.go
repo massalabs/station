@@ -222,3 +222,287 @@ func LoadConfig() (*ConfigFile, error) {
 
 	return &configData, nil
 }
+
+// getConfigFilePath returns the full path to the user's config file
+func getConfigFilePath() (string, error) {
+	configDir, err := configDirPath()
+	if err != nil {
+		return "", fmt.Errorf("failed to get user config dir: %w", err)
+	}
+
+	filePath := path.Join(configDir, configFile)
+	return filePath, nil
+}
+
+// saveConfig writes the provided configuration to disk
+func saveConfig(cfg *ConfigFile) error {
+	if cfg == nil {
+		return fmt.Errorf("config is nil")
+	}
+
+	filePath, err := getConfigFilePath()
+	if err != nil {
+		return err
+	}
+
+	ymlFile, err := yaml.Marshal(cfg)
+	if err != nil {
+		return fmt.Errorf("failed to marshal config: %w", err)
+	}
+
+	if err := os.WriteFile(filePath, ymlFile, permissionUrwGrOr); err != nil {
+		return fmt.Errorf("failed to write config file: %w", err)
+	}
+
+	return nil
+}
+
+// AddNetwork adds a new network to both memory and persistent configuration
+func (n *MSConfigManager) AddNetwork(name, url string, makeDefault bool) error {
+	n.configMutex.Lock()
+	defer n.configMutex.Unlock()
+
+	if name == "" || url == "" {
+		return fmt.Errorf("name and url are required")
+	}
+
+	// Load current persisted configuration
+	cfg, err := LoadConfig()
+	if err != nil {
+		return fmt.Errorf("load config: %w", err)
+	}
+
+	if cfg.Networks == nil {
+		cfg.Networks = map[string]RPCConfigItem{}
+	}
+
+	if _, exists := cfg.Networks[name]; exists {
+		return fmt.Errorf("network already exists: %s", name)
+	}
+
+	// If default requested, clear defaults on others
+	if makeDefault {
+		for k, v := range cfg.Networks {
+			v.Default = nil
+			cfg.Networks[k] = v
+		}
+	}
+
+	cfg.Networks[name] = RPCConfigItem{URL: url}
+	if makeDefault {
+		cfg.Networks[name] = RPCConfigItem{URL: url, Default: boolPtr(true)}
+	}
+
+	if err := saveConfig(cfg); err != nil {
+		return err
+	}
+
+	// Update in-memory state
+	version, chainID, fetchErr := fetchRPCInfos(url)
+	status := NetworkStatusUp
+	if fetchErr != nil {
+		logger.Warnf("failed to fetch RPC status for network %s: %v", name, fetchErr)
+		status = NetworkStatusDown
+	}
+	newNet := RPCInfos{
+		Name:    name,
+		NodeURL: url,
+		Version: version,
+		ChainID: chainID,
+		status:  status,
+	}
+	n.Network.Networks = append(n.Network.Networks, newNet)
+
+	if makeDefault {
+		n.Network.currentNetwork = &n.Network.Networks[len(n.Network.Networks)-1]
+	}
+
+	return nil
+}
+
+// EditNetwork edits an existing network. If newName is provided, the network is renamed.
+// If makeDefault is provided and true, this network becomes the default in the persisted configuration
+// and the current network is switched in memory as well.
+func (n *MSConfigManager) EditNetwork(currentName string, newURL *string, makeDefault *bool, newName *string) error {
+	n.configMutex.Lock()
+	defer n.configMutex.Unlock()
+
+	if currentName == "" {
+		return fmt.Errorf("currentName is required")
+	}
+
+	cfg, err := LoadConfig()
+	if err != nil {
+		return fmt.Errorf("load config: %w", err)
+	}
+	if cfg.Networks == nil {
+		return fmt.Errorf("no networks configured")
+	}
+
+	item, exists := cfg.Networks[currentName]
+	if !exists {
+		return fmt.Errorf("unknown network: %s", currentName)
+	}
+
+	targetName := currentName
+	if newName != nil && *newName != "" && *newName != currentName {
+		if _, nameTaken := cfg.Networks[*newName]; nameTaken {
+			return fmt.Errorf("a network with the new name already exists: %s", *newName)
+		}
+		targetName = *newName
+	}
+
+	// Update URL if requested
+	if newURL != nil && *newURL != "" {
+		item.URL = *newURL
+	}
+
+	// Handle default flag
+	if makeDefault != nil {
+		if *makeDefault {
+			// Clear all defaults
+			for k, v := range cfg.Networks {
+				v.Default = nil
+				cfg.Networks[k] = v
+			}
+			item.Default = boolPtr(true)
+		} else {
+			item.Default = nil
+		}
+	}
+
+	// Apply rename if needed
+	if targetName != currentName {
+		delete(cfg.Networks, currentName)
+		cfg.Networks[targetName] = item
+	} else {
+		cfg.Networks[currentName] = item
+	}
+
+	if err := saveConfig(cfg); err != nil {
+		return err
+	}
+
+	// Update in-memory slice
+	targetIdx := -1
+	for i := range n.Network.Networks {
+		if n.Network.Networks[i].Name == currentName {
+			targetIdx = i
+			break
+		}
+	}
+	if targetIdx == -1 {
+		// If it's not loaded yet (unlikely), append it
+		version := n.Network.currentNetwork.Version
+		chainID := n.Network.currentNetwork.ChainID
+		url := item.URL
+		if newURL != nil && *newURL != "" {
+			url = *newURL
+		}
+		n.Network.Networks = append(n.Network.Networks, RPCInfos{
+			Name:    targetName,
+			NodeURL: url,
+			Version: version,
+			ChainID: chainID,
+			status:  NetworkStatusUp,
+		})
+		targetIdx = len(n.Network.Networks) - 1
+	} else {
+		// Update fields
+		n.Network.Networks[targetIdx].Name = targetName
+		if newURL != nil && *newURL != "" {
+			n.Network.Networks[targetIdx].NodeURL = *newURL
+			version, chainID, fetchErr := fetchRPCInfos(*newURL)
+			if fetchErr != nil {
+				logger.Warnf("failed to refresh edited network %s: %v", targetName, fetchErr)
+				n.Network.Networks[targetIdx].status = NetworkStatusDown
+			} else {
+				n.Network.Networks[targetIdx].Version = version
+				n.Network.Networks[targetIdx].ChainID = chainID
+				n.Network.Networks[targetIdx].status = NetworkStatusUp
+			}
+		}
+	}
+
+	// Switch current network if default requested or if current was renamed
+	if makeDefault != nil && *makeDefault {
+		n.Network.currentNetwork = &n.Network.Networks[targetIdx]
+	} else if n.Network.currentNetwork != nil && n.Network.currentNetwork.Name == currentName && targetName != currentName {
+		n.Network.currentNetwork = &n.Network.Networks[targetIdx]
+	}
+
+	return nil
+}
+
+// DeleteNetwork removes a network from both memory and persistent configuration
+func (n *MSConfigManager) DeleteNetwork(name string) error {
+	n.configMutex.Lock()
+	defer n.configMutex.Unlock()
+
+	if name == "" {
+		return fmt.Errorf("name is required")
+	}
+
+	cfg, err := LoadConfig()
+	if err != nil {
+		return fmt.Errorf("load config: %w", err)
+	}
+	if cfg.Networks == nil {
+		return fmt.Errorf("no networks configured")
+	}
+	if _, exists := cfg.Networks[name]; !exists {
+		return fmt.Errorf("unknown network: %s", name)
+	}
+	if len(cfg.Networks) == 1 {
+		return fmt.Errorf("cannot delete the last remaining network")
+	}
+
+	if len(n.Network.Networks) <= 1 {
+		return fmt.Errorf("cannot delete the last remaining network")
+	}
+
+	deletingCurrent := n.Network.currentNetwork != nil && n.Network.currentNetwork.Name == name
+
+	deletingDefault := false
+	if item, ok := cfg.Networks[name]; ok && item.Default != nil && *item.Default {
+		deletingDefault = true
+	}
+
+	// Delete from persisted config
+	delete(cfg.Networks, name)
+
+	// If we deleted the default network, pick an arbitrary remaining item as new default
+	if deletingDefault {
+		for k, v := range cfg.Networks {
+			v.Default = boolPtr(true)
+			cfg.Networks[k] = v
+			break
+		}
+	}
+
+	if err := saveConfig(cfg); err != nil {
+		return err
+	}
+
+	// Remove from in-memory slice
+	idx := -1
+	for i := range n.Network.Networks {
+		if n.Network.Networks[i].Name == name {
+			idx = i
+			break
+		}
+	}
+	if idx != -1 {
+		n.Network.Networks = append(n.Network.Networks[:idx], n.Network.Networks[idx+1:]...)
+	}
+
+	// If current was deleted, switch to the first remaining network
+	if deletingCurrent {
+		if len(n.Network.Networks) == 0 {
+			return fmt.Errorf("no remaining networks after deletion")
+		}
+		n.Network.currentNetwork = &n.Network.Networks[0]
+	}
+
+	return nil
+}
