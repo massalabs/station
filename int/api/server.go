@@ -50,6 +50,9 @@ func initLocalAPI(
 
 	localAPI.SwitchNetworkHandler = network.NewSwitchNetworkHandler(configManager)
 	localAPI.GetNetworkConfigHandler = network.NewGetNetworkConfigHandler(configManager)
+	localAPI.CreateNetworkHandler = network.NewCreateNetworkHandler(configManager)
+	localAPI.UpdateNetworkHandler = network.NewUpdateNetworkHandler(configManager)
+	localAPI.DeleteNetworkHandler = network.NewDeleteNetworkHandler(configManager)
 
 	pluginstore.InitializePluginStoreAPI(localAPI)
 	myplugin.InitializePluginAPI(localAPI, pluginManager)

@@ -76,7 +76,6 @@ func refreshNetworks(configManager *MSConfigManager) {
 
 // refreshNetworkInfo updates information for a single network
 func refreshNetworkInfo(network *RPCInfos) {
-	networkStatus := NetworkStatusUp
 	version, chainID, err := fetchRPCInfos(network.NodeURL)
 	if err != nil {
 		logger.Warnf("Failed to refresh network %s: %v", network.Name, err)
@@ -86,7 +85,7 @@ func refreshNetworkInfo(network *RPCInfos) {
 
 	network.Version = version
 	network.ChainID = chainID
-	network.status = networkStatus
+	network.status = NetworkStatusUp
 
 	logger.Debugf("Refreshed network %s: version=%s, chainID=%d, status=%s",
 		network.Name, version, chainID, network.status)
@@ -122,7 +121,7 @@ func checkDuplicateNames(config *ConfigFile) error {
 
 	for networkName := range config.Networks {
 		lowerName := strings.ToLower(networkName)
-		if existingName, exists := seenNames[lowerName]; exists && existingName != networkName {
+		if existingName, exists := seenNames[lowerName]; exists {
 			return fmt.Errorf("duplicate network names detected: '%s' and '%s' (case-insensitive conflict)", existingName, networkName)
 		}
 		seenNames[lowerName] = networkName
