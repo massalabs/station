@@ -21,6 +21,7 @@ import {
   Base,
   Store,
   SearchComingSoon,
+  NetworkConfig,
 } from './pages/index';
 import { mockServer } from './mirage';
 import { PAGES } from './const/pages/pages';
@@ -47,6 +48,7 @@ const router = createBrowserRouter(
       {/* routes for pages */}
       <Route path={PAGES.STORE} element={<Store />} />
       <Route path={PAGES.SEARCH} element={<SearchComingSoon />} />
+      <Route path={PAGES.CONFIG} element={<NetworkConfig />} />
 
       {/* routes for errors */}
       <Route path="error" element={<Error />} />

@@ -25,6 +25,7 @@ const (
 type MSConfigManager struct {
 	Network     NetworkConfig
 	configMutex sync.RWMutex
+	stopRefresh func()
 }
 
 // NetworkManager is an alias for backward compatibility
@@ -62,6 +63,9 @@ func GetConfigManager() (*MSConfigManager, error) {
 func ResetConfigManager() {
 	instanceMutex.Lock()
 	defer instanceMutex.Unlock()
+	if instance != nil && instance.stopRefresh != nil {
+		instance.stopRefresh()
+	}
 	instance = nil
 	instanceOnce = sync.Once{}
 }
@@ -109,8 +113,8 @@ func newMSConfigManager() (*MSConfigManager, error) {
 		},
 	}
 
-	// Start the background refresh routine
-	StartNetworkRefresh(manager)
+	// Start the background refresh routine and keep a stopper
+	manager.stopRefresh = StartNetworkRefresh(manager)
 
 	err = manager.SwitchNetwork(defaultNetwork.Name)
 	if err != nil {

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path"
@@ -36,6 +37,11 @@ type NetworkConfig struct {
 	Networks       []RPCInfos
 }
 
+// Status returns the current status of the network (up or down)
+func (r *RPCInfos) Status() NetworkStatus { // accessor for external packages
+	return r.status
+}
+
 func fetchRPCInfos(url string) (string, uint64, error) {
 	client := node.NewClient(url)
 
@@ -52,16 +58,26 @@ func fetchRPCInfos(url string) (string, uint64, error) {
 	return version, uint64(*status.ChainID), nil
 }
 
-// StartNetworkRefresh starts a background routine that refreshes network information every 10 minutes
-func StartNetworkRefresh(configManager *MSConfigManager) {
+// StartNetworkRefresh starts a background routine that refreshes network information.
+// It returns a function to stop the background routine gracefully.
+func StartNetworkRefresh(configManager *MSConfigManager) func() {
+	ctx, cancel := context.WithCancel(context.Background())
+
 	go func() {
 		ticker := time.NewTicker(networkRefreshInterval)
 		defer ticker.Stop()
 
-		for range ticker.C {
-			refreshNetworks(configManager)
+		for {
+			select {
+			case <-ticker.C:
+				refreshNetworks(configManager)
+			case <-ctx.Done():
+				return
+			}
 		}
 	}()
+
+	return cancel
 }
 
 // refreshNetworks updates information for all networks in the config manager

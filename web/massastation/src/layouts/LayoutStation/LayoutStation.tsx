@@ -5,13 +5,7 @@ import { URL } from '../../const/url/url';
 import { NetworkModel } from '../../models';
 import { useNetworkStore } from '../../store/store';
 
-import {
-  ThemeMode,
-  StationLogo,
-  Dropdown,
-  Theme,
-  toast,
-} from '@massalabs/react-ui-kit';
+import { ThemeMode, StationLogo, Dropdown, Theme, toast } from '@massalabs/react-ui-kit';
 import { useNavigate } from 'react-router-dom';
 import Intl from '@/i18n/i18n';
 import { THEME_STORAGE_KEY } from '@/const';
@@ -23,13 +17,9 @@ interface LayoutStationProps {
   storedTheme?: Theme | undefined;
 }
 
-interface NetworkRequest {
-  network: string;
-}
-
-interface NetworkResponse {
-  currentNetwork: string;
-}
+// Typings for switch network
+type SwitchNetworkResponse = NetworkModel; // server returns NetworkManagerItem shape
+type SwitchNetworkBody = Record<string, never>; // no body expected
 
 export function LayoutStation(props: LayoutStationProps) {
   const { children, navigator, onSetTheme, storedTheme } = props;
@@ -53,55 +43,56 @@ export function LayoutStation(props: LayoutStationProps) {
   const { data: network, isSuccess: isSuccessNetwork } =
     useResource<NetworkModel>(URL.PATH_NETWORKS);
 
-  const [
-    currentNetwork,
-    availableNetworks,
-    setCurrentNetwork,
-    setAvailableNetworks,
-  ] = useNetworkStore((state) => [
+  const [currentNetwork, setCurrentNetwork] = useNetworkStore((state) => [
     state.currentNetwork,
-    state.availableNetworks,
     state.setCurrentNetwork,
-    state.setAvailableNetworks,
   ]);
 
   useEffect(() => {
     if (isSuccessNetwork) {
       if (network.currentNetwork) setCurrentNetwork(network.currentNetwork);
-      if (network.availableNetworks)
-        setAvailableNetworks(network.availableNetworks);
     }
-  }, [isSuccessNetwork, network, setCurrentNetwork, setAvailableNetworks]);
+  }, [isSuccessNetwork, network, setCurrentNetwork]);
 
-  const selectedNetworkKey: number = parseInt(
-    Object.keys(availableNetworks).find(
-      (_, idx) => availableNetworks[idx] === currentNetwork,
-    ) || '0',
-  );
+  const infos = network?.availableNetworkInfos || [];
 
+  const [targetNetwork, setTargetNetwork] = useState<string | null>(null);
   const {
-    mutate: mutateUpdateNetwork,
-    isSuccess: isSuccessUpdateNetwork,
-    isError,
-  } = usePost<NetworkRequest, NetworkResponse>(
-    `${URL.PATH_NETWORKS}/${currentNetwork}`,
+    mutate: mutateSwitch,
+    isSuccess: isSuccessSwitch,
+    isError: isErrorSwitch,
+  } = usePost<SwitchNetworkBody, SwitchNetworkResponse>(
+    `${URL.PATH_NETWORKS}/${encodeURIComponent(targetNetwork ?? currentNetwork ?? '')}`,
   );
-
-  if (isError) {
-    toast.error(Intl.t('unexpected-error.description'));
-  }
 
   useEffect(() => {
-    if (isSuccessUpdateNetwork) {
+    if (isErrorSwitch) {
+      toast.error(Intl.t('unexpected-error.description'));
+    }
+  }, [isErrorSwitch]);
+
+  useEffect(() => {
+    if (targetNetwork) {
+      mutateSwitch({});
+    }
+  }, [targetNetwork, mutateSwitch]);
+
+  useEffect(() => {
+    if (isSuccessSwitch && targetNetwork) {
+      setCurrentNetwork(targetNetwork);
+      setTargetNetwork(null);
       navigate(0);
     }
-  }, [isSuccessUpdateNetwork, navigate]);
+  }, [isSuccessSwitch, targetNetwork, setCurrentNetwork, navigate]);
 
-  const availableNetworksItems = availableNetworks.map((network) => ({
-    item: network,
+  const availableNetworksItems = infos.map((nfo) => ({
+    item: nfo.status === 'down'
+      ? `${nfo.name} (Offline)`
+      : nfo.name,
     onClick: () => {
-      setCurrentNetwork(network);
-      mutateUpdateNetwork({});
+      if (nfo.status !== 'down') {
+        setTargetNetwork(nfo.name);
+      }
     },
   }));
 
@@ -123,11 +114,11 @@ export function LayoutStation(props: LayoutStationProps) {
           {navigator && <div className="flex-row-reversed">{navigator}</div>}
         </div>
         <div className="flex justify-end items-center gap-3">
-          <div className="w-44">
+          <div className="min-w-44 max-w-80 w-auto">
             <Dropdown
               size="xs"
               options={availableNetworksItems}
-              select={selectedNetworkKey}
+              select={currentNetwork ? infos.findIndex((n) => n.name === currentNetwork) : 0}
             />
           </div>
           <ThemeMode

@@ -22,6 +22,6 @@ func (h *deleteNetworkHandler) Handle(params operations.DeleteNetworkParams) mid
 	}
 
 	current := h.configManager.CurrentNetwork()
-	response := &models.NetworkManagerItem{CurrentNetwork: &current.Name, AvailableNetworks: *h.configManager.Networks()}
+	response := &models.NetworkManagerItem{CurrentNetwork: &current.Name, AvailableNetworkInfos: []*models.NetworkInfoItem{}}
 	return operations.NewDeleteNetworkOK().WithPayload(response)
 }
