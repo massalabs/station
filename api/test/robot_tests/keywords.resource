@@ -58,8 +58,10 @@ String To Arg
 
 
 Switch To Buildnet
+    ${headers}=    Create Dictionary    Origin=https://station.massa
     ${response}=    POST
     ...    ${API_URL}/network/buildnet
+    ...    headers=${headers}
     ...    expected_status=${STATUS_OK}
     Should Be Equal    ${response.json()['currentNetwork']}    buildnet
     Log To Console    Switched to buildnet
