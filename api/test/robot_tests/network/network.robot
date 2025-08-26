@@ -17,8 +17,10 @@ GET /massa/node
     Should Be Equal    ${response.json()['network']}    buildnet
 
 POST /network/mainnet
+    ${headers}=    Create Dictionary    Origin=https://station.massa
     ${response}=    POST
     ...    ${API_URL}/network/mainnet
+    ...    headers=${headers}
     ...    expected_status=${STATUS_OK}
     Should Be Equal    ${response.json()['currentNetwork']}    mainnet
 
