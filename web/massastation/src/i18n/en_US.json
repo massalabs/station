@@ -30,13 +30,111 @@
   "index": {
     "title-banner": "Securely explore Massa's blockchain universe",
     "buttons": {
-      "search": "Search Massa ecosystem",
+      "deweb": "DeWeb ecosystem",
       "explore": "Explore module store"
     }
   },
   "placeholder": {
     "teaser-banner": "A new way to use web is coming",
     "teaser-web-on-chain": "We are crafting a new era for our web on-chain feature..."
+  },
+  "deweb": {
+    "title": "Welcome to the DeWeb",
+    "subtitle": "Your gateway to a fully decentralized web",
+    "description": "The DeWeb is your gateway to a fully decentralized web. Our vision is to create an on-chain web ecosystem with no intermediaries, addressing security and reliability concerns associated with centralized servers.",
+    "vision": {
+      "title": "Our Vision",
+      "description": "The DeWeb aims to revolutionize the internet by enabling a fully decentralized web experience. By storing all websites on-chain, we eliminate the risks associated with centralized servers, such as single points of failure and vulnerability to hacks. This approach enhances security, ensuring that websites are resilient against censorship and attacks, and provides true freedom and accessibility to everyone."
+    },
+    "components": {
+      "title": "DeWeb Ecosystem",
+      "description": "Explore the different parts of the DeWeb ecosystem to understand how they work together to create a decentralized web experience.",
+      "mns": {
+        "title": "Massa Name System (MNS)",
+        "description": "Register and manage .massa domain names on the decentralized DNS. MNS allows you to create unique, recognizable web addresses that are on-chain, fully replicated, and immutable NFTs.",
+        "features": {
+          "feature1": "Ownership for Life - No rent or renewal fees",
+          "feature2": "Refundable Domain Release - Get 50% back when freeing domains",
+          "feature3": "Tradable NFTs - Trade domains on platforms like Purrfect Universe"
+        },
+        "button": "Access MNS",
+        "url": "https://mns.massa.network/"
+      },
+      "explorer": {
+        "title": "DeWeb Explorer",
+        "description": "Search and discover decentralized websites hosted on the Massa blockchain. Find projects, applications, and content in the on-chain web ecosystem.",
+        "button": "Explore DeWeb",
+        "url": "https://deweb.massa.network/explore"
+      },
+      "uploader": {
+        "title": "DeWeb Uploader",
+        "description": "Upload your websites and decentralized applications directly to the Massa blockchain. Host both front-end and back-end components on-chain using familiar web technologies.",
+        "features": {
+          "feature1": "HTML, CSS, JavaScript support",
+          "feature2": "Smart contract deployment",
+          "feature3": "One-time storage fees",
+          "feature4": "Censorship-resistant hosting"
+        },
+        "button": "Upload Website",
+        "url": "https://dws.massa.network/"
+      },
+      "documentation": {
+        "title": "DeWeb Documentation",
+        "description": "Learn how to build, deploy, and manage your decentralized web presence. Comprehensive guides for developers and users to get started with the DeWeb ecosystem.",
+        "topics": {
+          "topic1": "Getting Started with DeWeb",
+          "topic2": "MNS Domain Registration",
+          "topic3": "Website Upload & Hosting",
+          "topic4": "CLI Tools & Integration"
+        },
+        "button": "Read Documentation",
+        "url": "https://docs.massa.network/docs/deweb/home"
+      }
+    },
+    "benefits": {
+      "title": "Why Choose DeWeb?",
+      "items": {
+        "item0": {
+          "title": "Security & Reliability",
+          "description": "Eliminate single points of failure and vulnerability to hacks associated with centralized servers."
+        },
+        "item1": {
+          "title": "Censorship Resistance",
+          "description": "Websites are resilient against censorship and attacks, providing true freedom and accessibility."
+        },
+        "item2": {
+          "title": "No Intermediaries",
+          "description": "Direct interaction with the blockchain without third-party hosting services or centralized authorities."
+        },
+        "item3": {
+          "title": "Cost Effective",
+          "description": "One-time storage fees based on file size, no monthly hosting or bandwidth charges."
+        }
+      }
+    },
+    "get-started": {
+      "title": "Get Started with DeWeb",
+      "description": "Ready to explore the decentralized web? Choose your path below:",
+      "users": {
+        "title": "For Users",
+        "description": "Access decentralized websites and explore the on-chain web ecosystem.",
+        "options": {
+          "option0": "Run a local DeWeb server for complete privacy",
+          "option1": "Use DeWeb providers for universal access",
+          "option2": "Browse .massa domains and decentralized content"
+        }
+      },
+      "developers": {
+        "title": "For Developers",
+        "description": "Build and deploy your projects directly on the Massa blockchain.",
+        "options": {
+          "option0": "Register .massa domains using MNS",
+          "option1": "Upload websites using DeWeb CLI",
+          "option2": "Deploy smart contracts and DApps",
+          "option3": "Create immutable, censorship-resistant applications"
+        }
+      }
+    }
   },
   "dashboard": {
     "bridge-desc": "Bridge ERC-20 tokens from EVM chains to Massa and vice versa!",
@@ -56,7 +154,7 @@
     "massa-wallet": {
       "title": "Massa Wallet",
       "desc": "Official Massa Wallet.",
-      "crash": "{title} can’t be opened. Reinstall it from the Module store.",
+      "crash": "{title} can't be opened. Reinstall it from the Module store.",
       "installing": "{title} installation",
       "launch": "Launch",
       "install": "Install",

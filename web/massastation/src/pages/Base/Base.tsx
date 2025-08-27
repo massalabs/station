@@ -43,9 +43,9 @@ const navigatorSteps: INavigatorSteps = {
   },
   config: {
     previous: PAGES.STORE,
-    next: PAGES.SEARCH,
+    next: PAGES.DEWEB,
   },
-  search: {
+  deweb: {
     previous: PAGES.CONFIG,
     next: null,
   },
@@ -86,7 +86,7 @@ export function Base() {
         },
         {
           icon: <FiGlobe />,
-          isActive: PAGES.SEARCH === activePage,
+          isActive: PAGES.DEWEB === activePage,
         },
 
       ]}
