@@ -82,10 +82,10 @@ function NestedIndex({
             <Button
               preIcon={<FiGlobe />}
               customClass="w-96"
-              onClick={() => navigate(routeFor('search'))}
+              onClick={() => navigate(routeFor('deweb'))}
             >
               <div className="flex items-center mas-buttons">
-                {Intl.t('index.buttons.search')}
+                {Intl.t('index.buttons.deweb')}
               </div>
             </Button>
             <Button

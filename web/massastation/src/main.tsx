@@ -20,7 +20,7 @@ import {
   Index,
   Base,
   Store,
-  SearchComingSoon,
+  Deweb,
   NetworkConfig,
 } from './pages/index';
 import { mockServer } from './mirage';
@@ -47,7 +47,7 @@ const router = createBrowserRouter(
 
       {/* routes for pages */}
       <Route path={PAGES.STORE} element={<Store />} />
-      <Route path={PAGES.SEARCH} element={<SearchComingSoon />} />
+      <Route path={PAGES.DEWEB} element={<Deweb />} />
       <Route path={PAGES.CONFIG} element={<NetworkConfig />} />
 
       {/* routes for errors */}
