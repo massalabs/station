@@ -1,4 +1,5 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Button, Input } from '@massalabs/react-ui-kit';
 import {
   FiCheckCircle,
@@ -23,6 +24,7 @@ type UpdateNetworkBody = { url?: string; default?: boolean; newName?: string };
 
 export function NetworkConfig() {
   const { data, refetch } = useResource<NetworkModel>(URL.PATH_NETWORKS);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [selectedNetwork, setSelectedNetwork] = useState<string>('');
   const [showCreate, setShowCreate] = useState(false);
@@ -32,16 +34,7 @@ export function NetworkConfig() {
   const [newName, setNewName] = useState('');
   const [newURL, setNewURL] = useState('');
   const [makeDefault, setMakeDefault] = useState(false);
-
-  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement> | string) => {
-    const value = typeof e === 'string' ? e : e.target.value;
-    setNewName(value);
-  }, []);
-
-  const handleURLChange = useCallback((e: React.ChangeEvent<HTMLInputElement> | string) => {
-    const value = typeof e === 'string' ? e : e.target.value;
-    setNewURL(value);
-  }, []);
+  const [nameError, setNameError] = useState('');
 
   const createNetwork = usePost<CreateNetworkBody, NetworkModel>(
     URL.PATH_NETWORKS,
@@ -59,18 +52,58 @@ export function NetworkConfig() {
     [networks, data?.currentNetwork],
   );
 
+  // Validate network name uniqueness
+  const validateNetworkName = useCallback((name: string) => {
+    if (!name.trim()) {
+      return 'Network name is required';
+    }
+    
+    const normalizedName = name.trim().toLowerCase();
+    const existingNetwork = networks.find(network => 
+      network.name.toLowerCase() === normalizedName
+    );
+    
+    if (existingNetwork) {
+      return `Network name "${name}" already exists`;
+    }
+    
+    return '';
+  }, [networks]);
+
+  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement> | string) => {
+    const value = typeof e === 'string' ? e : e.target.value;
+    setNewName(value);
+    
+    // Validate name in real-time
+    const error = validateNetworkName(value);
+    setNameError(error);
+  }, [validateNetworkName]);
+
+  const handleURLChange = useCallback((e: React.ChangeEvent<HTMLInputElement> | string) => {
+    const value = typeof e === 'string' ? e : e.target.value;
+    setNewURL(value);
+  }, []);
+
   const resetForms = useCallback(() => {
     setNewName('');
     setNewURL('');
     setMakeDefault(false);
+    setNameError('');
   }, []);
 
   const onCreate = useCallback(async () => {
-    await createNetwork.mutateAsync({ payload: { name: newName, url: newURL, default: makeDefault } });
+    // Validate before creating
+    const nameValidationError = validateNetworkName(newName);
+    if (nameValidationError) {
+      setNameError(nameValidationError);
+      return;
+    }
+
+    await createNetwork.mutateAsync({ payload: { name: newName.trim(), url: newURL, default: makeDefault } });
     resetForms();
     setShowCreate(false);
     await refetch();
-  }, [createNetwork, newName, newURL, makeDefault, resetForms, refetch]);
+  }, [createNetwork, newName, newURL, makeDefault, resetForms, refetch, validateNetworkName]);
 
   const onUpdate = useCallback(async () => {
     await updateNetwork.mutateAsync({ url: newURL || undefined, newName: newName || undefined, default: makeDefault });
@@ -114,6 +147,49 @@ export function NetworkConfig() {
   const handleMakeDefaultChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setMakeDefault(e.target.checked);
   }, []);
+
+  // Handle URL query parameters for prefilling create network form
+  useEffect(() => {
+    const encodedName = searchParams.get('name');
+    const encodedUrl = searchParams.get('url');
+    const defaultParam = searchParams.get('default');
+
+    // Decode the name parameter if it exists
+    let name = '';
+    if (encodedName) {
+      try {
+        name = decodeURIComponent(encodedName);
+      } catch (error) {
+        console.warn('Failed to decode name parameter:', encodedName, error);
+        name = encodedName; // Fallback to original if decoding fails
+      }
+    }
+
+    // Decode the URL parameter if it exists
+    let url = '';
+    if (encodedUrl) {
+      try {
+        url = decodeURIComponent(encodedUrl);
+      } catch (error) {
+        console.warn('Failed to decode URL parameter:', encodedUrl, error);
+        url = encodedUrl; // Fallback to original if decoding fails
+      }
+    }
+
+    // If we have query parameters for creating a network
+    if (name && url) {
+      // Prefill the form fields
+      setNewName(name);
+      setNewURL(url);
+      if (defaultParam === 'true') setMakeDefault(true);
+      
+      // Open the create modal
+      setShowCreate(true);
+      
+      // Clear the query parameters to prevent re-triggering
+      setSearchParams({});
+    }
+  }, [searchParams, setSearchParams]);
 
   const SimpleModal = useCallback(({ show, onClose, title, children, footer }:
      { show: boolean; onClose: () => void; title: string; children: React.ReactNode; footer: React.ReactNode }) => {
@@ -395,10 +471,16 @@ export function NetworkConfig() {
                     name="create-network-name"
                     value={newName}
                     onChange={handleNameChange}
-                    customClass="bg-tertiary/20 border border-tertiary/30 rounded-lg p-3 w-full"
+                    customClass={`bg-tertiary/20 border rounded-lg p-3 w-full ${
+                      nameError ? 'border-red-500' : 'border-tertiary/30'
+                    }`}
                     placeholder="e.g., mainnet, testnet, custom-network"
                   />
-                  <p className="text-xs text-neutral mt-1">Choose a descriptive name for this network</p>
+                  {nameError ? (
+                    <p className="text-xs text-red-500 mt-1">{nameError}</p>
+                  ) : (
+                    <p className="text-xs text-neutral mt-1">Choose a descriptive name for this network</p>
+                  )}
                 </div>
 
                 <div>
@@ -439,7 +521,7 @@ export function NetworkConfig() {
               </Button>
               <Button
                 onClick={onCreate}
-                disabled={!newName || !newURL}
+                disabled={!newName || !newURL || !!nameError}
                 className="px-6 py-2 bg-c-primary hover:bg-c-primary/80 font-medium disabled:opacity-50"
               >
                 <FiPlus className="w-4 h-4 mr-2" />

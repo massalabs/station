@@ -1,9 +1,11 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path"
+	"strings"
 	"sync"
 
 	"github.com/massalabs/station/pkg/logger"
@@ -19,6 +21,11 @@ const (
 	buildnetChainID   = 77658366
 	permissionUrwGrOr = 0o644
 	configDirName     = "massa-station"
+)
+
+var (
+	// ErrNetworkAlreadyExists is returned when trying to add a network with a name that already exists
+	ErrNetworkAlreadyExists = errors.New("network already exists")
 )
 
 // MSConfigManager represents a manager for network configurations.
@@ -280,8 +287,12 @@ func (n *MSConfigManager) AddNetwork(name, url string, makeDefault bool) error {
 		cfg.Networks = map[string]RPCConfigItem{}
 	}
 
-	if _, exists := cfg.Networks[name]; exists {
-		return fmt.Errorf("network already exists: %s", name)
+	// Check for case-insensitive duplicate names
+	nameLower := strings.ToLower(strings.TrimSpace(name))
+	for existingName := range cfg.Networks {
+		if strings.ToLower(strings.TrimSpace(existingName)) == nameLower {
+			return fmt.Errorf("%w: %s", ErrNetworkAlreadyExists, name)
+		}
 	}
 
 	// If default requested, clear defaults on others
@@ -350,8 +361,12 @@ func (n *MSConfigManager) EditNetwork(currentName string, newURL *string, makeDe
 
 	targetName := currentName
 	if newName != nil && *newName != "" && *newName != currentName {
-		if _, nameTaken := cfg.Networks[*newName]; nameTaken {
-			return fmt.Errorf("a network with the new name already exists: %s", *newName)
+		// Check for case-insensitive duplicate names
+		newNameLower := strings.ToLower(strings.TrimSpace(*newName))
+		for existingName := range cfg.Networks {
+			if strings.ToLower(strings.TrimSpace(existingName)) == newNameLower {
+				return fmt.Errorf("%w: %s", ErrNetworkAlreadyExists, *newName)
+			}
 		}
 		targetName = *newName
 	}
