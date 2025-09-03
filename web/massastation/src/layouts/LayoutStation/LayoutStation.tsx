@@ -89,6 +89,9 @@ export function LayoutStation(props: LayoutStationProps) {
     item: nfo.status === 'down'
       ? `${nfo.name} (Offline)`
       : nfo.name,
+    title: nfo.status === 'down'
+      ? `${nfo.name} (Offline) - ${nfo.url}`
+      : `${nfo.name} - ${nfo.url}`,
     onClick: () => {
       if (nfo.status !== 'down') {
         setTargetNetwork(nfo.name);

@@ -347,12 +347,6 @@ export function NetworkConfig() {
                     setShowDelete(false);
                   }}
                 >
-                  {isCurrentNetwork && (
-                    <div className="absolute -top-2 -right-2 bg-c-primary text-primary text-xs
-                                  font-bold px-2 py-1 rounded-full">
-                      ACTIVE
-                    </div>
-                  )}
 
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
