@@ -70,8 +70,8 @@
         "title": "DeWeb Uploader",
         "description": "Upload your websites and decentralized applications directly to the Massa blockchain. Host both front-end and back-end components on-chain using familiar web technologies.",
         "features": {
-          "feature1": "HTML, CSS, JavaScript support",
-          "feature2": "Smart contract deployment",
+          "feature1": "Website hosting",
+          "feature2": "HTML, CSS, JavaScript support",
           "feature3": "One-time storage fees",
           "feature4": "Censorship-resistant hosting"
         },
