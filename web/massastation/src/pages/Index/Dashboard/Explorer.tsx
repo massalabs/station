@@ -1,25 +1,32 @@
 import explorer from '../../../assets/dashboard/Explorer.svg';
 import { RedirectTile } from '@massalabs/react-ui-kit';
-import { FiSearch } from 'react-icons/fi';
 import { motion } from 'framer-motion';
-import Intl from '@/i18n/i18n';
 
 export function Explorer() {
   return (
     <motion.div className="h-full" whileHover={{ scale: 1.03 }}>
       <RedirectTile
         url="https://explorer.massa.net/"
-        className="bg-brand rounded-t-md rounded-b-lg p-0 hover:bg-[#2EB688] hover:cursor-pointer h-full"
+        className="bg-brand hover:bg-brand/90 rounded-lg border border-brand h-full relative overflow-hidden"
       >
-        <div className="flex flex-col justify-end h-full">
-          <div className="flex items-center gap-2 p-4 ml-4 h-8 bg-secondary w-48 rounded-t-md">
-            <img width={20} height={20} src={explorer} alt="Massa Explorer" />
-            <p className="mas-body2">{Intl.t('modules.explorer')}</p>
-          </div>
-          <div className="bg-secondary h-[50%] w-full rounded-b-md p-4">
-            <div className="flex items-center justify-around p-2 bg-primary h-full rounded-md">
-              <p className="mas-caption">{Intl.t('dashboard.explorer-desc')}</p>
-              <FiSearch size={16} />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand/90 to-brand"></div>
+        <div className="relative z-10 h-full p-8">
+          <div className="flex flex-col h-full justify-between gap-6">
+            <motion.img
+              src={explorer}
+              alt="Massa Explorer"
+              className="w-14 h-14"
+              whileHover={{ 
+                scale: 1.1,
+                rotate: 5,
+                transition: { duration: 0.3 }
+              }}
+            />
+            <div className="flex items-end justify-between">
+              <div className="text-c-default font-bold text-4xl leading-tight">
+                <div>Massa</div>
+                <div>Explorer</div>
+              </div>
             </div>
           </div>
         </div>

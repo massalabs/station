@@ -250,18 +250,20 @@ export function NetworkConfig() {
             <div className="bg-secondary rounded-xl p-6 border border-tertiary/10
                           hover:border-c-primary/30 transition-colors">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-green-500/10 rounded-lg">
+                <div className={`p-2 rounded-lg ${
+                  currentInfo?.status === 'up' ? 'bg-brand/10' : 'bg-s-error/10'
+                }`}>
                   {currentInfo?.status === 'up' ? (
-                    <FiCheckCircle className="w-5 h-5 text-green-500" />
+                    <FiCheckCircle className="w-5 h-5 text-brand" />
                   ) : (
-                    <FiAlertTriangle className="w-5 h-5 text-red-500" />
+                    <FiAlertTriangle className="w-5 h-5 text-s-error" />
                   )}
                 </div>
                 <span className="text-sm font-medium text-neutral">Network Status</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className={`text-lg font-semibold ${
-                  currentInfo?.status === 'up' ? 'text-green-500' : 'text-red-500'
+                  currentInfo?.status === 'up' ? 'text-brand' : 'text-s-error'
                 }`}>
                   {currentInfo?.status === 'up'
                     ? 'Online'
@@ -275,8 +277,8 @@ export function NetworkConfig() {
             <div className="bg-secondary rounded-xl p-6 border border-tertiary/10
                           hover:border-c-primary/30 transition-colors">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-blue-500/10 rounded-lg">
-                  <FiLink className="w-5 h-5 text-blue-500" />
+                <div className="p-2 bg-s-info-1/10 rounded-lg">
+                  <FiLink className="w-5 h-5 text-s-info-1" />
                 </div>
                 <span className="text-sm font-medium text-neutral">RPC Endpoint</span>
               </div>
@@ -288,8 +290,8 @@ export function NetworkConfig() {
             <div className="bg-secondary rounded-xl p-6 border border-tertiary/10
                           hover:border-c-primary/30 transition-colors">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-purple-500/10 rounded-lg">
-                  <FiGlobe className="w-5 h-5 text-purple-500" />
+                <div className="p-2 bg-brand/10 rounded-lg">
+                  <FiGlobe className="w-5 h-5 text-brand" />
                 </div>
                 <span className="text-sm font-medium text-neutral">Network Name</span>
               </div>
@@ -301,8 +303,8 @@ export function NetworkConfig() {
             <div className="bg-secondary rounded-xl p-6 border border-tertiary/10
                           hover:border-c-primary/30 transition-colors">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-orange-500/10 rounded-lg">
-                  <FiHash className="w-5 h-5 text-orange-500" />
+                <div className="p-2 bg-s-warning/10 rounded-lg">
+                  <FiHash className="w-5 h-5 text-s-warning" />
                 </div>
                 <span className="text-sm font-medium text-neutral">Chain ID</span>
               </div>
@@ -310,89 +312,6 @@ export function NetworkConfig() {
                 {currentInfo?.chainId || '-'}
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Available Networks Section */}
-        <div className="bg-secondary/50 backdrop-blur-sm rounded-2xl border border-tertiary/20 p-8">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <FiGlobe className="w-6 h-6 text-c-primary" />
-              <h2 className="text-xl font-semibold">Available Networks</h2>
-            </div>
-            <div className="text-sm text-neutral">
-              {networks.length} network{networks.length !== 1 ? 's' : ''} configured
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {networks.map((net) => {
-              const isActive = selectedNetwork === net.name;
-              const isCurrentNetwork = data?.currentNetwork === net.name;
-              return (
-                <div
-                  key={net.name}
-                  className={`
-                    relative bg-secondary rounded-xl p-6 cursor-pointer border-2 transition-all
-                    duration-200 hover:scale-[1.02] hover:shadow-lg
-                    ${isActive
-                    ? 'border-c-primary shadow-lg shadow-c-primary/20'
-                    : 'border-tertiary/10 hover:border-c-primary/40'
-                }
-                    ${isCurrentNetwork ? 'ring-2 ring-c-primary/30' : ''}
-                  `}
-                  onClick={() => {
-                    setSelectedNetwork(net.name);
-                    setShowEdit(false);
-                    setShowDelete(false);
-                  }}
-                >
-
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-c-primary/10 rounded-lg">
-                        <FiGlobe className="w-5 h-5 text-c-primary" />
-                      </div>
-                      <h3 className="text-lg font-bold text-f-primary">{net.name}</h3>
-                    </div>
-                    <div className={`
-                      flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium
-                      ${net.status === 'up'
-                      ? 'bg-green-500/10 text-green-500'
-                      : 'bg-red-500/10 text-red-500'
-                }
-                    `}>
-                      {net.status === 'up' ? (
-                        <FiCheckCircle className="w-3 h-3" />
-                      ) : (
-                        <FiAlertTriangle className="w-3 h-3" />
-                      )}
-                      <span>{net.status === 'up' ? 'Online' : 'Offline'}</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div>
-                      <div className="text-xs font-medium text-neutral mb-1">RPC Endpoint</div>
-                      <div className="text-sm text-f-primary break-all font-mono bg-tertiary/20 p-2 rounded-lg">
-                        {net.url}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-xs font-medium text-neutral">Chain ID</div>
-                        <div className="text-sm font-bold text-f-primary font-mono">{net.chainId}</div>
-                      </div>
-                      <div>
-                        <div className="text-xs font-medium text-neutral">Version</div>
-                        <div className="text-sm font-bold text-f-primary">{net.version}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
           </div>
         </div>
 
@@ -444,6 +363,89 @@ export function NetworkConfig() {
           )}
         </div>
 
+        {/* Available Networks Section */}
+        <div className="bg-secondary/50 backdrop-blur-sm rounded-2xl border border-tertiary/20 p-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <FiGlobe className="w-6 h-6 text-c-primary" />
+              <h2 className="text-xl font-semibold">Available Networks</h2>
+            </div>
+            <div className="text-sm text-neutral">
+              {networks.length} network{networks.length !== 1 ? 's' : ''} configured
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {networks.map((net) => {
+              const isActive = selectedNetwork === net.name;
+              const isCurrentNetwork = data?.currentNetwork === net.name;
+              return (
+                <div
+                  key={net.name}
+                  className={`
+                    relative bg-secondary rounded-xl p-6 cursor-pointer border-2 transition-all
+                    duration-200 hover:scale-[1.02] hover:shadow-lg
+                    ${isActive
+                    ? 'border-c-primary shadow-lg shadow-c-primary/20'
+                    : 'border-tertiary/10 hover:border-c-primary/40'
+                }
+                    ${isCurrentNetwork ? 'ring-2 ring-c-primary/30' : ''}
+                  `}
+                  onClick={() => {
+                    setSelectedNetwork(net.name);
+                    setShowEdit(false);
+                    setShowDelete(false);
+                  }}
+                >
+
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-c-primary/10 rounded-lg">
+                        <FiGlobe className="w-5 h-5 text-c-primary" />
+                      </div>
+                      <h3 className="text-lg font-bold text-f-primary">{net.name}</h3>
+                    </div>
+                    <div className={`
+                      flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium
+                      ${net.status === 'up'
+                      ? 'bg-brand/10 text-brand'
+                      : 'bg-s-error/10 text-s-error'
+                }
+                    `}>
+                      {net.status === 'up' ? (
+                        <FiCheckCircle className="w-3 h-3" />
+                      ) : (
+                        <FiAlertTriangle className="w-3 h-3" />
+                      )}
+                      <span>{net.status === 'up' ? 'Online' : 'Offline'}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div>
+                      <div className="text-xs font-medium text-neutral mb-1">RPC Endpoint</div>
+                      <div className="text-sm text-f-primary break-all font-mono bg-tertiary/20 p-2 rounded-lg">
+                        {net.url}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-xs font-medium text-neutral">Chain ID</div>
+                        <div className="text-sm font-bold text-f-primary font-mono">{net.chainId}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-medium text-neutral">Version</div>
+                        <div className="text-sm font-bold text-f-primary">{net.version}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Modals */}
         <SimpleModal
           show={showCreate}
@@ -465,13 +467,13 @@ export function NetworkConfig() {
                     name="create-network-name"
                     value={newName}
                     onChange={handleNameChange}
-                    customClass={`bg-tertiary/20 border rounded-lg p-3 w-full ${
-                      nameError ? 'border-red-500' : 'border-tertiary/30'
+                    customClass={`bg-tertiary/20 border rounded-lg p-3 w-full placeholder:text-neutral/60 ${
+                      nameError ? 'border-s-error' : 'border-tertiary/30'
                     }`}
-                    placeholder="e.g., mainnet, testnet, custom-network"
+                    placeholder="e.g., mainnet, buildnet, custom-network"
                   />
                   {nameError ? (
-                    <p className="text-xs text-red-500 mt-1">{nameError}</p>
+                    <p className="text-xs text-s-error mt-1">{nameError}</p>
                   ) : (
                     <p className="text-xs text-neutral mt-1">Choose a descriptive name for this network</p>
                   )}
@@ -485,7 +487,8 @@ export function NetworkConfig() {
                     name="create-network-url"
                     value={newURL}
                     onChange={handleURLChange}
-                    customClass="bg-tertiary/20 border border-tertiary/30 rounded-lg p-3 w-full font-mono text-sm"
+                    customClass="bg-tertiary/20 border border-tertiary/30 rounded-lg p-3 w-full 
+                      font-mono text-sm placeholder:text-neutral/60"
                     placeholder="https://api.example.com/rpc"
                   />
                   <p className="text-xs text-neutral mt-1">The HTTP/HTTPS endpoint for blockchain RPC calls</p>
@@ -549,7 +552,8 @@ export function NetworkConfig() {
                     name="edit-network-name"
                     value={newName}
                     onChange={handleNameChange}
-                    customClass="bg-tertiary/20 border border-tertiary/30 rounded-lg p-3 w-full"
+                    customClass="bg-tertiary/20 border border-tertiary/30 rounded-lg p-3 w-full 
+                      placeholder:text-neutral/60"
                     placeholder={`Current: ${selectedNetwork}`}
                   />
                   <p className="text-xs text-neutral mt-1">Leave empty to keep current name</p>
@@ -563,7 +567,8 @@ export function NetworkConfig() {
                     name="edit-network-url"
                     value={newURL}
                     onChange={handleURLChange}
-                    customClass="bg-tertiary/20 border border-tertiary/30 rounded-lg p-3 w-full font-mono text-sm"
+                    customClass="bg-tertiary/20 border border-tertiary/30 rounded-lg p-3 w-full 
+                      font-mono text-sm placeholder:text-neutral/60"
                     placeholder="Enter new RPC URL or leave empty"
                   />
                   <p className="text-xs text-neutral mt-1">Leave empty to keep current endpoint</p>
@@ -609,16 +614,16 @@ export function NetworkConfig() {
           title="Remove Network Configuration"
           children={
             <div className="space-y-6">
-              <div className="p-6 bg-red-500/10 rounded-xl border border-red-500/20">
+              <div className="p-6 bg-s-warning/10 rounded-xl border border-s-warning/20">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2 bg-red-500/20 rounded-lg">
-                    <FiAlertTriangle className="w-6 h-6 text-red-500" />
+                  <div className="p-2 bg-s-warning/20 rounded-lg">
+                    <FiAlertTriangle className="w-6 h-6 text-s-warning" />
                   </div>
-                  <h4 className="text-lg font-bold text-red-500">Permanent Deletion Warning</h4>
+                  <h4 className="text-lg font-bold text-s-warning">Permanent Deletion Warning</h4>
                 </div>
                 <p className="text-sm text-f-primary leading-relaxed">
                 You are about to permanently remove the network configuration for{' '}
-                  <span className="font-bold text-red-500">"{selectedNetwork}"</span>.
+                  <span className="font-bold text-s-warning">"{selectedNetwork}"</span>.
                 </p>
               </div>
 
@@ -629,7 +634,6 @@ export function NetworkConfig() {
                 <ul className="list-disc list-inside space-y-1 text-sm text-neutral ml-4">
                   <li>Remove the network from your available networks list</li>
                   <li>Delete all stored configuration for this network</li>
-                  <li>Cannot be undone without re-adding the network manually</li>
                 </ul>
               </div>
 
@@ -650,7 +654,7 @@ export function NetworkConfig() {
                 variant="danger"
                 onClick={onDelete}
                 disabled={!selectedNetwork}
-                className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white font-medium disabled:opacity-50"
+                className="px-6 py-2 bg-s-warning hover:bg-s-warning/80 text-white font-medium disabled:opacity-50"
               >
                 <FiTrash2 className="w-4 h-4 mr-2" />
               Delete Permanently

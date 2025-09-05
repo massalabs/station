@@ -1,6 +1,13 @@
 import { PluginExecuteRequest } from '@/pages/Store/StationSection/StationPlugin';
 import { usePost } from '../api';
 
+
+export const enum PluginCommand {
+  Start = 'Start',
+  Stop = 'Stop',
+  Update = 'Update',
+}
+
 export function useUpdatePlugin(id: string | undefined) {
   const {
     mutate: mutateExecute,
@@ -8,7 +15,7 @@ export function useUpdatePlugin(id: string | undefined) {
     isLoading: isExecuteLoading,
   } = usePost<PluginExecuteRequest>(`plugin-manager/${id}/execute`);
 
-  function updatePluginState(command: string) {
+  function updatePluginState(command: PluginCommand) {
     if (isExecuteLoading) return;
     const payload = { command } as PluginExecuteRequest;
     mutateExecute({ payload });

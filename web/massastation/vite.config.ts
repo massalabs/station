@@ -22,6 +22,11 @@ export default ({ mode }) => {
       alias: [
         { find: '@', replacement: path.resolve(__dirname, 'src') },
         { find: '@/shared', replacement: path.resolve(__dirname, '../shared') },
+        // // Local UI Kit development
+        // { 
+        //   find: '@massalabs/react-ui-kit', 
+        //   replacement: path.resolve(__dirname, '../../../ui-kit') 
+        // },
       ],
     },
     server: {

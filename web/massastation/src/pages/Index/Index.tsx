@@ -1,13 +1,11 @@
 import { Button } from '@massalabs/react-ui-kit';
 import { FiCodepen, FiGlobe } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import { MassaPluginModel, MassaStoreModel } from '@/models';
 import Intl from '@/i18n/i18n';
 import { routeFor } from '@/utils/utils';
-import { usePost, useResource } from '../../custom/api';
+import { useResource } from '../../custom/api';
 import { UseQueryResult } from '@tanstack/react-query';
-import { MASSA_WALLET } from '@/const';
 import { DashboardStation } from './DashboardStation';
 
 export function Index() {
@@ -31,47 +29,8 @@ function NestedIndex({
   plugins: UseQueryResult<MassaPluginModel[]>;
 }) {
   const navigate = useNavigate();
-  const [pluginWalletIsInstalled, setPluginWalletIsInstalled] = useState(false);
-  const [urlPlugin, setUrlPlugin] = useState<string | undefined>(undefined);
-
   const { data: massaPlugins } = plugins;
-
   const availablePlugins = store.data;
-  const {
-    mutate: installPlugin,
-    isSuccess: installSuccess,
-    isError: installError,
-    isLoading,
-  } = usePost<null>('plugin-manager');
-
-  useEffect(() => {
-    const isWalletInstalled = massaPlugins?.some(
-      (plugin: MassaPluginModel) => plugin.name === MASSA_WALLET,
-    );
-    if (isWalletInstalled) {
-      setPluginWalletIsInstalled(true);
-    } else {
-      const storeWalletPlugin = availablePlugins?.find(
-        (plugin: MassaStoreModel) => plugin.name === MASSA_WALLET,
-      );
-      setUrlPlugin(storeWalletPlugin?.file.url);
-    }
-  }, [plugins, availablePlugins, massaPlugins]);
-
-  useEffect(() => {
-    // we should check that installed plugin is actually the wallet
-    if (installSuccess) {
-      setPluginWalletIsInstalled(true);
-    }
-    if (installError) {
-      setPluginWalletIsInstalled(false);
-    }
-  }, [installSuccess, installError]);
-
-  function handleInstallPlugin(url: string) {
-    const params = { source: url };
-    installPlugin({ params });
-  }
 
   return (
     <>
@@ -80,8 +39,9 @@ function NestedIndex({
         <div className="w-fit max-w-[1760px] ">
           <div className="flex gap-8 pb-10">
             <Button
+              variant="primary"
               preIcon={<FiGlobe />}
-              customClass="w-96"
+              customClass="w-96 bg-c-default text-brand border border-c-default hover:bg-c-hover rounded-lg"
               onClick={() => navigate(routeFor('deweb'))}
             >
               <div className="flex items-center mas-buttons">
@@ -89,9 +49,9 @@ function NestedIndex({
               </div>
             </Button>
             <Button
-              variant="secondary"
+              variant="primary"
               preIcon={<FiCodepen />}
-              customClass="w-96"
+              customClass="w-96 bg-c-default text-brand border border-c-default hover:bg-c-hover rounded-lg"
               onClick={() => navigate(routeFor('store'))}
             >
               <div className="flex items-center mas-buttons">
@@ -101,10 +61,7 @@ function NestedIndex({
           </div>
           <DashboardStation
             massaPlugins={massaPlugins}
-            pluginWalletIsInstalled={pluginWalletIsInstalled}
-            urlPlugin={urlPlugin}
-            isLoading={isLoading}
-            handleInstallPlugin={handleInstallPlugin}
+            availablePlugins={availablePlugins}
           />
         </div>
       </div>

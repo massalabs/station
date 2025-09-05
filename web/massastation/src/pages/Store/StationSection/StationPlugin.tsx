@@ -18,11 +18,9 @@ import {
 import {
   massalabsNomination,
   NODE_MANAGER,
-  PLUGIN_START,
-  PLUGIN_STOP,
-  PLUGIN_UPDATE,
-  pluginList,
 } from '@/const';
+import { PluginCommand } from '@/custom/hooks/useUpdatePlugin';
+import { PLUGIN_LIST } from '@/pages/Index/DashboardStation';
 import Intl from '@/i18n/i18n';
 
 import { MassaPluginModel, PluginStatus } from '@/models';
@@ -82,7 +80,7 @@ export function StationPlugin({
     title: name,
     subtitle: author,
     tag:
-      pluginList.includes(name) && name === NODE_MANAGER ? (
+      PLUGIN_LIST.includes(name) && name === NODE_MANAGER ? (
         <Tag type="warning">{Intl.t('store.beta')}</Tag>
       ) : null,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,
@@ -95,7 +93,7 @@ export function StationPlugin({
         ...pluginArgs,
         topAction: (
           <Button
-            onClick={(e) => updatePluginState(e, PLUGIN_START)}
+            onClick={(e) => updatePluginState(e, PluginCommand.Start)}
             customClass="bg-primary text-tertiary"
             variant="toggle"
           >
@@ -117,7 +115,7 @@ export function StationPlugin({
         ...pluginArgs,
         topAction: (
           <Button
-            onClick={(e) => updatePluginState(e, PLUGIN_START)}
+            onClick={(e) => updatePluginState(e, PluginCommand.Start)}
             customClass="bg-primary text-tertiary"
             variant="toggle"
           >
@@ -145,7 +143,7 @@ export function StationPlugin({
         ...pluginArgs,
         topAction: (
           <Button
-            onClick={(e) => updatePluginState(e, PLUGIN_STOP)}
+            onClick={(e) => updatePluginState(e, PluginCommand.Stop)}
             variant="toggle"
           >
             on
@@ -159,7 +157,7 @@ export function StationPlugin({
               <Button
                 variant="icon"
                 hoverText={Intl.t('store.update')}
-                onClick={(e) => updatePluginState(e, PLUGIN_UPDATE)}
+                onClick={(e) => updatePluginState(e, PluginCommand.Update)}
                 disabled={isExecuteLoading}
               >
                 <FiRefreshCw className="text-s-warning" />
