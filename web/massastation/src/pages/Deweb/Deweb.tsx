@@ -99,14 +99,10 @@ function DeWebComponent({ title, description, button, url, icon, features, topic
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-300
-                           bg-neutral-100 hover:bg-neutral-200
-                           dark:bg-neutral-200 dark:hover:bg-neutral-300
-                           border border-c-primary/60 dark:border-c-primary/80
-                           hover:shadow-lg hover:shadow-c-primary/20
-                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-c-primary/50 dark:focus-visible:ring-white/50"
-                style={{
-                  color: 'rgb(59 130 246)'
-                }}
+                           bg-transparent text-brand border border-brand
+                           hover:bg-brand/10
+                           hover:shadow-lg hover:shadow-brand/20
+                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
                 onClick={(e) => e.stopPropagation()}
               >
                 {button}
@@ -341,11 +337,11 @@ export function Deweb() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-c-primary/20 to-c-primary/20 rounded-full blur-3xl scale-150"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-brand/20 to-brand/20 rounded-full blur-3xl scale-150"></div>
 
-              {/* DeWeb logo with green gradient for both light and dark modes */}
+              {/* DeWeb logo with brand color gradient */}
               <div
-                className={`relative p-8 bg-gradient-to-br from-primary/90 to-primary/95 rounded-3xl backdrop-blur-sm border border-c-primary/30 items-center justify-center flex`}
+                className={`relative p-8 bg-gradient-to-br from-brand/90 to-brand/95 rounded-3xl backdrop-blur-sm border border-brand/30 items-center justify-center flex`}
                 style={{
                   WebkitMaskImage: `url(${DeWebLogo})`,
                   maskImage: `url(${DeWebLogo})`,
@@ -357,8 +353,8 @@ export function Deweb() {
                   maskRepeat: 'no-repeat',
                   width: '200px',
                   height: '80px',
-                  background: 'linear-gradient(90deg, rgb(68 239 166) 0%, rgb(31 55 55) 100%)',
-                  filter: 'drop-shadow(0 0 8px rgba(173,197,255,0.4)) drop-shadow(0 0 16px rgba(173,197,255,0.2))'
+                  background: 'linear-gradient(90deg, rgb(0 254 109) 0%, rgb(0 254 109) 100%)',
+                  filter: 'drop-shadow(0 0 8px rgba(0,254,109,0.4)) drop-shadow(0 0 16px rgba(0,254,109,0.2))'
                 }}
               />
             </div>

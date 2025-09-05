@@ -136,14 +136,6 @@
       }
     }
   },
-  "dashboard": {
-    "bridge-desc": "Bridge ERC-20 tokens from EVM chains to Massa and vice versa!",
-    "explorer-desc": "Search through real-time and historical records on Massa blockchain.",
-    "foundation-desc": "Learn about Massa ecosystem and initiatives.",
-    "massalabs-desc": "Unique Lab supporting Massa ecosystem and creating innovative solutions.",
-    "purrfect-desc": "Create, buy & sell NFTs on the Massa blockchain.",
-    "dusa-desc": "Advanced, customizable and fully decentralized trading protocol."
-  },
   "modules": {
     "bridge": "Massa Bridge",
     "explorer": "Massa Explorer",
@@ -153,7 +145,6 @@
     "dusa": "Dusa",
     "massa-wallet": {
       "title": "Massa Wallet",
-      "desc": "Official Massa Wallet.",
       "crash": "{title} can't be opened. Reinstall it from the Module store.",
       "installing": "{title} installation",
       "launch": "Launch",
@@ -161,7 +152,7 @@
       "update": "Update",
       "updating": "Updating...",
       "click": "Click here",
-      "no-update": " to launch it without updating."
+      "no-update": "Launch without updating."
     }
   }
 }

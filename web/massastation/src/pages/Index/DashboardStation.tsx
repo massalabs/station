@@ -1,113 +1,161 @@
-import { Foundation } from './Dashboard/Foundation';
 import { Bridge } from './Dashboard/Bridge';
-import { MassaLabs } from './Dashboard/Massalabs';
+import { Massa } from './Dashboard/Massa';
 import { Explorer } from './Dashboard/Explorer';
-import { Purrfect } from './Dashboard/Purrfect';
-import { Dusa } from './Dashboard/Dusa';
-import { MASSA_WALLET, PLUGIN_UPDATE } from '@/const';
-import { MassaPluginModel } from '@/models';
+import { MassaEcosystem } from './Dashboard/MassaEcosystem';
+import { NodeManager } from './Dashboard/NodeManager';
+import { Deweb } from './Dashboard/Deweb';
+import { Syntra } from './Dashboard/Syntra';
+import { MassaGovernance } from './Dashboard/MassaGovernance';
+import { MASSA_WALLET, NODE_MANAGER } from '@/const';
+import { MassaPluginModel, MassaStoreModel } from '@/models';
 import { MassaWallet } from './Dashboard/MassaWallet';
 import { useEffect, useState } from 'react';
-import { useUpdatePlugin } from '@/custom/hooks/useUpdatePlugin';
+
+import { usePluginState } from '@/custom/hooks/usePluginState';
+import { usePost, useRefreshPlugins } from '@/custom/api';
 
 export interface IDashboardStationProps {
   massaPlugins?: MassaPluginModel[] | undefined;
-  pluginWalletIsInstalled: boolean;
-  urlPlugin?: string | undefined;
-  isLoading: boolean;
-  handleInstallPlugin: (url: string) => void;
+  availablePlugins?: MassaStoreModel[] | undefined;
 }
 
-export enum WalletStates {
+export enum PluginStates {
   Active = 'Active',
   Inactive = 'Inactive',
   Updateable = 'Updateable',
 }
 
+export const PLUGIN_LIST = [MASSA_WALLET, NODE_MANAGER];
+
 export function DashboardStation(props: IDashboardStationProps) {
-  let {
-    pluginWalletIsInstalled,
-    urlPlugin,
-    isLoading,
-    handleInstallPlugin,
-    massaPlugins,
-  } = props;
+  const { massaPlugins, availablePlugins } = props;
+  const { refreshInstalledPlugins } = useRefreshPlugins();
 
-  const id = massaPlugins?.find(
-    (plugin: MassaPluginModel) => plugin.name === MASSA_WALLET,
-  )?.id;
+  // Plugin installation logic
+  const {
+    mutate: installPlugin,
+    isSuccess: installSuccess,
+    isError: installError,
+    isLoading: isInstalling,
+  } = usePost<null>('plugin-manager');
 
-  const isUpdatable = massaPlugins?.find(
-    (plugin: MassaPluginModel) => plugin.name === MASSA_WALLET,
-  )?.updatable;
+  // Plugin installation states
+  const [pluginsInstalled, setPluginsInstalled] = useState<Record<string, MassaPluginModel | undefined>>({});
+  const [installingPlugin, setInstallingPlugin] = useState<string | null>(null);
 
-  const [walletState, setWalletState] = useState<WalletStates>();
-
-  const { isExecuteSuccess, isExecuteLoading, updatePluginState } =
-    useUpdatePlugin(id);
-
+  const installUrl = (pluginName: string) => 
+    availablePlugins?.find((plugin: MassaStoreModel) => plugin.name === pluginName)?.file.url;
+  
+  // Initialize plugin states
   useEffect(() => {
-    if (pluginWalletIsInstalled && !isUpdatable) {
-      setWalletState(WalletStates.Active);
-    } else if (pluginWalletIsInstalled && isUpdatable) {
-      setWalletState(WalletStates.Updateable);
-    } else {
-      setWalletState(WalletStates.Inactive);
-    }
-  }, [isUpdatable, pluginWalletIsInstalled]);
+    const installed: Record<string, MassaPluginModel | undefined> = {};
 
+    // Check which plugins are installed
+    PLUGIN_LIST.forEach(pluginName => {
+      installed[pluginName] = massaPlugins?.find(
+        (plugin: MassaPluginModel) => plugin.name === pluginName,
+      );
+    });
+
+    setPluginsInstalled(installed);
+  }, [massaPlugins, availablePlugins]);
+
+  // Handle installation success/error
   useEffect(() => {
-    if (isExecuteSuccess) {
-      setWalletState(WalletStates.Active);
+    if (installSuccess && installingPlugin) {
+      // Invalidate the plugin-manager query to refresh massaPlugins
+      refreshInstalledPlugins();
+      
+      // Mark only the specific plugin that was being installed as installed
+      setPluginsInstalled(prev => ({
+        ...prev,
+        [installingPlugin]: massaPlugins?.find(
+          (plugin: MassaPluginModel) => plugin.name === installingPlugin,
+        ),
+      }));
+      setInstallingPlugin(null);
     }
-  }, [isExecuteSuccess]);
+    if (installError) {
+      setInstallingPlugin(null);
+    }
+  }, [installSuccess, installError, installingPlugin, refreshInstalledPlugins, massaPlugins]);
+
+  function handleInstallPlugin(url: string, pluginName?: string) {
+    // Track which plugin is being installed
+    if (pluginName) {
+      setInstallingPlugin(pluginName);
+    }
+    const params = { source: url };
+    installPlugin({ params });
+  }
+
+  // Plugin states
+  const walletPlugin = usePluginState(pluginsInstalled[MASSA_WALLET]);
+  const nodeManagerPlugin = usePluginState(pluginsInstalled[NODE_MANAGER]);
 
   return (
     <div
-      className="grid lg:grid-cols-10  grid-rows-3 gap-4 h-fit"
+      className="grid lg:grid-cols-13  grid-rows-2 gap-4 h-fit"
       data-testid="dashboard-station"
     >
-      <div className="col-start-1 col-span-2 row-span-3">
+      <div className="col-start-1 col-span-2 row-start-1 row-span-2">
         <MassaWallet
           key="wallet"
-          state={walletState}
-          status={
-            massaPlugins?.find(
-              (plugin: MassaPluginModel) => plugin.name === MASSA_WALLET,
-            )?.status
-          }
-          isUpdating={isExecuteLoading}
-          isLoading={isLoading}
-          title="Massa Wallet"
+          state={walletPlugin.state}
+          status={walletPlugin.plugin?.status}
+          isUpdating={walletPlugin.isUpdating}
+          isLoading={isInstalling}
+          title={MASSA_WALLET}
           onClickActive={() =>
-            window.open(
-              '/plugin/massa-labs/massa-wallet/web-app/index',
-              '_blank',
-            )
+            window.open(pluginsInstalled[MASSA_WALLET]?.home, '_blank')
           }
           onClickInactive={() =>
-            urlPlugin ? handleInstallPlugin(urlPlugin) : null
+            installUrl(MASSA_WALLET)
+              ? handleInstallPlugin(installUrl(MASSA_WALLET)!, MASSA_WALLET)
+              : null
           }
-          onUpdateClick={() => updatePluginState(PLUGIN_UPDATE)}
+          onUpdateClick={walletPlugin.updatePlugin}
         />
       </div>
-      <div className="col-start-3 col-span-2 row-start-1 row-span-2">
-        <Foundation />
-      </div>
-      <div className="col-start-5 col-span-2 row-start-1 row-span-2">
+      <div className="col-start-3 col-span-2 row-start-2 row-span-1">
         <Bridge />
       </div>
-      <div className="col-start-7 col-span-4 row-start-1 row-span-1">
-        <MassaLabs />
+      <div className="col-start-9 col-span-2 row-start-1 row-span-2">
+        <Massa />
       </div>
-      <div className="col-start-3 col-span-4 row-start-3 row-span-1">
+      <div className="col-start-7 col-span-2 row-start-2 row-span-1">
         <Explorer />
       </div>
-      <div className="col-start-7 col-span-2 row-start-2 row-span-2">
-        <Purrfect />
+      <div className="col-start-3 col-span-2 row-start-1 row-span-1">
+        <MassaEcosystem />
       </div>
-      <div className="col-start-9 col-span-2 row-start-2 row-span-2">
-        <Dusa />
+      <div className="col-start-5 col-span-2 row-start-2 row-span-1">
+        <NodeManager
+          key="node-manager"
+          state={nodeManagerPlugin.state}
+          status={nodeManagerPlugin.plugin?.status}
+          isUpdating={nodeManagerPlugin.isUpdating}
+          isLoading={isInstalling}
+          title={NODE_MANAGER}
+          onClickActive={() =>
+            window.open(pluginsInstalled[NODE_MANAGER]?.home, '_blank')
+          }
+          onClickInactive={() =>
+            installUrl(NODE_MANAGER)
+              ? handleInstallPlugin(installUrl(NODE_MANAGER)!, NODE_MANAGER)
+              : console.log('No install URL for Node Manager')
+          }
+          onUpdateClick={nodeManagerPlugin.updatePlugin}
+        />
+      </div>
+      <div className="col-start-5 col-span-4 row-start-1 row-span-1">
+        <Deweb />
+      </div>
+      <div className="col-start-11 col-span-2 row-start-2 row-span-1">
+        <Syntra />
+      </div>
+      <div className="col-start-11 col-span-2 row-start-1 row-span-1">
+        <MassaGovernance />
       </div>
     </div>
   );
