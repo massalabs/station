@@ -21,6 +21,8 @@ interface LayoutStationProps {
 type SwitchNetworkResponse = NetworkModel; // server returns NetworkManagerItem shape
 type SwitchNetworkBody = Record<string, never>; // no body expected
 
+export const DEFAULT_THEME = 'theme-dark-v2';
+
 export function LayoutStation(props: LayoutStationProps) {
   const { children, navigator, onSetTheme, storedTheme } = props;
 
@@ -29,7 +31,7 @@ export function LayoutStation(props: LayoutStationProps) {
   );
 
   const [selectedTheme, setSelectedTheme] = useState<Theme>(
-    storedTheme || 'theme-dark',
+    storedTheme || DEFAULT_THEME,
   );
 
   function handleSetTheme(theme: Theme) {
@@ -127,6 +129,7 @@ export function LayoutStation(props: LayoutStationProps) {
           <ThemeMode
             onSetTheme={handleSetTheme}
             storageKey={THEME_STORAGE_KEY}
+            useV2Toggle={true}
           />
         </div>
       </div>
@@ -138,5 +141,5 @@ export function LayoutStation(props: LayoutStationProps) {
 function DisplayVersion({ ...props }) {
   const { version } = props;
 
-  return <p className="text-info ml-4 mas-body">{version}</p>;
+  return <p className="text-brand ml-4 mas-body font-normal">{version}</p>;
 }
