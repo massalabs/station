@@ -81,12 +81,9 @@ export function Base() {
           w-10 h-10 rounded-lg flex items-center justify-center transition-all
           ${!STEP.previous 
           ? 'bg-c-disabled-1 border-c-disabled-1 opacity-50 cursor-not-allowed' 
-          : 'border border-tertiary hover:opacity-80'
+          : 'bg-c-default border-c-default hover:opacity-80'
     }
         `}
-        style={{
-          backgroundColor: !STEP.previous ? 'var(--color-c-disabled-1)' : 'var(--color-primary)',
-        }}
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
           <path 
