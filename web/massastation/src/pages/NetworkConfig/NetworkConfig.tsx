@@ -203,7 +203,7 @@ export function NetworkConfig() {
             <div className="p-2 bg-c-primary/10 rounded-lg">
               <FiSettings className="w-6 h-6 text-c-primary" />
             </div>
-            <h3 className="text-xl font-bold text-f-primary">{title}</h3>
+            <h3 className="text-xl font-bold text-f-primary cursor-default">{title}</h3>
           </div>
           <div className="mb-8">{children}</div>
           <div className="flex gap-3 justify-end">{footer}</div>
@@ -221,10 +221,10 @@ export function NetworkConfig() {
             <FiSettings className="w-10 h-10 text-c-primary" />
           </div>
           <div className="flex flex-col justify-center">
-            <h1 className="text-4xl font-bold text-f-primary">
+            <h1 className="text-4xl font-bold text-f-primary cursor-default">
               Massa Station Network Configuration
             </h1>
-            <p className="text-neutral mt-2">Manage your blockchain network connections</p>
+            <p className="text-neutral mt-2 cursor-default">Manage your blockchain network connections</p>
           </div>
         </div>
 
@@ -232,7 +232,7 @@ export function NetworkConfig() {
         <div className="bg-secondary/50 backdrop-blur-sm rounded-2xl border border-tertiary/20 p-8">
           <div className="flex items-center gap-3 mb-6">
             <FiGlobe className="w-6 h-6 text-c-primary" />
-            <h2 className="text-xl font-semibold">Active Network</h2>
+            <h2 className="text-xl font-semibold cursor-default">Active Network</h2>
           </div>
 
           <div className="bg-secondary rounded-xl p-6 mb-6 border border-tertiary/10">
@@ -241,7 +241,9 @@ export function NetworkConfig() {
                 <FiGlobe className="w-6 h-6 text-c-primary" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-f-primary">{data?.currentNetwork || 'No Network'}</h3>
+                <h3 className="text-2xl font-bold text-f-primary cursor-default">
+                  {data?.currentNetwork || 'No Network'}
+                </h3>
               </div>
             </div>
           </div>
@@ -259,10 +261,10 @@ export function NetworkConfig() {
                     <FiAlertTriangle className="w-5 h-5 text-s-error" />
                   )}
                 </div>
-                <span className="text-sm font-medium text-neutral">Network Status</span>
+                <span className="text-sm font-medium text-neutral cursor-default">Network Status</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className={`text-lg font-semibold ${
+                <span className={`text-lg font-semibold cursor-default ${
                   currentInfo?.status === 'up' ? 'text-brand' : 'text-s-error'
                 }`}>
                   {currentInfo?.status === 'up'
@@ -280,9 +282,9 @@ export function NetworkConfig() {
                 <div className="p-2 bg-s-info-1/10 rounded-lg">
                   <FiLink className="w-5 h-5 text-s-info-1" />
                 </div>
-                <span className="text-sm font-medium text-neutral">RPC Endpoint</span>
+                <span className="text-sm font-medium text-neutral cursor-default">RPC Endpoint</span>
               </div>
-              <div className="text-sm text-f-primary break-all font-mono bg-tertiary/30 p-2 rounded-lg">
+              <div className="text-sm text-f-primary break-all font-mono bg-tertiary/30 p-2 rounded-lg cursor-default">
                 {currentInfo?.url || 'Not configured'}
               </div>
             </div>
@@ -293,9 +295,9 @@ export function NetworkConfig() {
                 <div className="p-2 bg-brand/10 rounded-lg">
                   <FiGlobe className="w-5 h-5 text-brand" />
                 </div>
-                <span className="text-sm font-medium text-neutral">Network Name</span>
+                <span className="text-sm font-medium text-neutral cursor-default">Network Name</span>
               </div>
-              <div className="text-lg font-semibold text-f-primary">
+              <div className="text-lg font-semibold text-f-primary cursor-default">
                 {data?.currentNetwork || '-'}
               </div>
             </div>
@@ -306,9 +308,9 @@ export function NetworkConfig() {
                 <div className="p-2 bg-s-warning/10 rounded-lg">
                   <FiHash className="w-5 h-5 text-s-warning" />
                 </div>
-                <span className="text-sm font-medium text-neutral">Chain ID</span>
+                <span className="text-sm font-medium text-neutral cursor-default">Chain ID</span>
               </div>
-              <div className="text-lg font-semibold text-f-primary font-mono">
+              <div className="text-lg font-semibold text-f-primary font-mono cursor-default">
                 {currentInfo?.chainId || '-'}
               </div>
             </div>
@@ -319,7 +321,7 @@ export function NetworkConfig() {
         <div className="bg-secondary/50 backdrop-blur-sm rounded-2xl border border-tertiary/20 p-8">
           <div className="flex items-center gap-3 mb-6">
             <FiSettings className="w-6 h-6 text-c-primary" />
-            <h2 className="text-xl font-semibold">Network Actions</h2>
+            <h2 className="text-xl font-semibold cursor-default">Network Actions</h2>
           </div>
 
           <div className="flex flex-wrap gap-4">
@@ -355,7 +357,7 @@ export function NetworkConfig() {
 
           {selectedNetwork && (
             <div className="mt-4 p-4 bg-white/10 rounded-xl border border-white/20">
-              <p className="text-sm text-white">
+              <p className="text-sm text-white cursor-default">
                 <span className="font-semibold">{selectedNetwork}</span> is selected.{' '}
                 Choose an action above to modify this network configuration.
               </p>
@@ -368,9 +370,9 @@ export function NetworkConfig() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <FiGlobe className="w-6 h-6 text-c-primary" />
-              <h2 className="text-xl font-semibold">Available Networks</h2>
+              <h2 className="text-xl font-semibold cursor-default">Available Networks</h2>
             </div>
-            <div className="text-sm text-neutral">
+            <div className="text-sm text-neutral cursor-default">
               {networks.length} network{networks.length !== 1 ? 's' : ''} configured
             </div>
           </div>
@@ -403,12 +405,12 @@ export function NetworkConfig() {
                       <div className="p-2 bg-c-primary/10 rounded-lg">
                         <FiGlobe className="w-5 h-5 text-c-primary" />
                       </div>
-                      <h3 className="text-lg font-bold text-f-primary">{net.name}</h3>
+                      <h3 className="text-lg font-bold text-f-primary cursor-default">{net.name}</h3>
                     </div>
                     <div className={`
                       flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium
                       ${net.status === 'up'
-                      ? 'bg-brand/10 text-brand'
+                      ? 'bg-brand/10 text-green-600'
                       : 'bg-s-error/10 text-s-error'
                 }
                     `}>
@@ -417,13 +419,13 @@ export function NetworkConfig() {
                       ) : (
                         <FiAlertTriangle className="w-3 h-3" />
                       )}
-                      <span>{net.status === 'up' ? 'Online' : 'Offline'}</span>
+                      <span className="cursor-default">{net.status === 'up' ? 'Up' : 'Offline'}</span>
                     </div>
                   </div>
 
                   <div className="space-y-3">
                     <div>
-                      <div className="text-xs font-medium text-neutral mb-1">RPC Endpoint</div>
+                      <div className="text-xs font-medium text-neutral mb-1 cursor-default">RPC Endpoint</div>
                       <div className="text-sm text-f-primary break-all font-mono bg-tertiary/20 p-2 rounded-lg">
                         {net.url}
                       </div>

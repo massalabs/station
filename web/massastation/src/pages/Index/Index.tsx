@@ -35,7 +35,7 @@ function NestedIndex({
   return (
     <>
       <div className="bg-primary text-f-primary pt-24">
-        <h1 className="mas-banner mb-10"> {Intl.t('index.title-banner')}</h1>
+        <h1 className="mas-banner mb-10 cursor-default"> {Intl.t('index.title-banner')}</h1>
         <div className="w-fit max-w-[1760px] ">
           <div className="flex gap-8 pb-10">
             <Button

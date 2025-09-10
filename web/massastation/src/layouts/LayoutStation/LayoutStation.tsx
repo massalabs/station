@@ -141,5 +141,5 @@ export function LayoutStation(props: LayoutStationProps) {
 function DisplayVersion({ ...props }) {
   const { version } = props;
 
-  return <p className="text-brand ml-4 mas-body font-normal">{version}</p>;
+  return <p className="text-brand ml-4 mas-body font-normal cursor-default">{version}</p>;
 }

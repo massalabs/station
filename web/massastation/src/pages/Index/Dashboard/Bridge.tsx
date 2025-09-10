@@ -22,7 +22,7 @@ export function Bridge() {
                 transition: { duration: 0.3 }
               }}
             />
-            <div className="text-brand font-bold text-4xl leading-tight">
+            <div className="text-brand font-bold text-4xl leading-tight cursor-default">
               <div>Massa</div>
               <div>Bridge</div>
             </div>

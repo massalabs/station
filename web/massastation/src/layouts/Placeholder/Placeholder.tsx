@@ -13,7 +13,7 @@ function Placeholder(props: IPlaceholder) {
       p-10 gap-10 relative bg-secondary rounded-lg"
     >
       {icon}
-      <h1 className="mas-banner text-center">
+      <h1 className="mas-banner text-center cursor-default">
         {Intl.t('placeholder.teaser-banner')}
       </h1>
       <p className="mas-buttons text-center">{message}</p>

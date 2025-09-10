@@ -36,7 +36,7 @@ function StationSection({
               ))}
             </div>
           ) : (
-            <div className="mas-body2 mb-4 text-neutral">
+            <div className="mas-body2 mb-4 text-neutral cursor-default">
               {Intl.t('store.mystation.browse')}
             </div>
           )}

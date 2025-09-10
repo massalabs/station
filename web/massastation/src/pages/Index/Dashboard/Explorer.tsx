@@ -23,7 +23,7 @@ export function Explorer() {
               }}
             />
             <div className="flex items-end justify-between">
-              <div className="text-c-default font-bold text-4xl leading-tight">
+              <div className="text-c-default font-bold text-4xl leading-tight cursor-default">
                 <div>Massa</div>
                 <div>Explorer</div>
               </div>

@@ -42,7 +42,7 @@ function StoreSection({
   return (
     <>
       {isLoading ? (
-        <div className="mas-body mb-4 text-neutral">
+        <div className="mas-body mb-4 text-neutral cursor-default">
           {Intl.t('store.loading')}
         </div>
       ) : plugins && plugins.length ? (

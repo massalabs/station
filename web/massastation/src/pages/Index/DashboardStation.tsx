@@ -6,6 +6,7 @@ import { NodeManager } from './Dashboard/NodeManager';
 import { Deweb } from './Dashboard/Deweb';
 import { Syntra } from './Dashboard/Syntra';
 import { MassaGovernance } from './Dashboard/MassaGovernance';
+import { BuyMas } from './Dashboard/BuyMas';
 import { MASSA_WALLET, NODE_MANAGER } from '@/const';
 import { MassaPluginModel, MassaStoreModel } from '@/models';
 import { MassaWallet } from './Dashboard/MassaWallet';
@@ -95,10 +96,10 @@ export function DashboardStation(props: IDashboardStationProps) {
 
   return (
     <div
-      className="grid lg:grid-cols-13  grid-rows-2 gap-4 h-fit"
+      className="grid lg:grid-cols-15  grid-rows-2 gap-4 h-fit"
       data-testid="dashboard-station"
     >
-      <div className="col-start-1 col-span-2 row-start-1 row-span-2">
+      <div className="col-start-1 col-span-2 row-start-1 row-span-1">
         <MassaWallet
           key="wallet"
           state={walletPlugin.state}
@@ -116,6 +117,9 @@ export function DashboardStation(props: IDashboardStationProps) {
           }
           onUpdateClick={walletPlugin.updatePlugin}
         />
+      </div>
+      <div className="col-start-1 col-span-2 row-start-2 row-span-1">
+        <BuyMas />
       </div>
       <div className="col-start-3 col-span-2 row-start-2 row-span-1">
         <Bridge />

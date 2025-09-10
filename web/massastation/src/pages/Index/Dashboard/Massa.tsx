@@ -1,6 +1,7 @@
 import { RedirectTile } from '@massalabs/react-ui-kit';
 import massaGreen from '../../../assets/dashboard/Massa_green.svg';
 import { motion } from 'framer-motion';
+import Intl from '@/i18n/i18n';
 
 export function Massa() {
   return (
@@ -20,9 +21,12 @@ export function Massa() {
               transition: { duration: 0.3 }
             }}
           />
-          <div className="text-brand font-bold text-2xl leading-tight text-center">
+          <div className="text-brand font-bold text-2xl leading-tight text-center cursor-default">
             MASSA
           </div>
+          <p className="text-center text-f-primary font-medium text-sm cursor-default">
+            {Intl.t('modules.massa.baseline')}
+          </p>
         </div>
       </RedirectTile>
     </motion.div>
