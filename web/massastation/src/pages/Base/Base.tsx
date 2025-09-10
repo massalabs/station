@@ -96,30 +96,84 @@ export function Base() {
         </svg>
       </button>
 
-      {/* Center Section: Active Page Icon + Stepper */}
+      {/* Center Section: Icon Stepper */}
       <div className="flex items-center gap-3">
-        {/* Active Page Icon */}
-        <div className="flex items-center justify-center" style={{ width: '32px', height: '32px' }}>
-          {activePage === PAGES.INDEX && <FiHome className="text-brand" size={24} />}
-          {activePage === PAGES.STORE && <FiCodepen className="text-brand" size={24} />}
-          {activePage === PAGES.CONFIG && <FiSettings className="text-brand" size={24} />}
-          {activePage === PAGES.DEWEB && <FiGlobe className="text-brand" size={24} />}
-        </div>
-
-        {/* Stepper Dots */}
-        <div className="flex items-center gap-1">
-          {steps.map((_, index) => (
-            <div
-              key={index}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                index === currentStepIndex
-                  ? 'bg-white'
-                  : index < currentStepIndex
-                  ? 'bg-brand'
-                  : 'bg-c-disabled-1'
-              }`}
-            />
-          ))}
+        {/* Icon Stepper */}
+        <div className="flex items-center gap-3">
+          {steps.map((step, index) => {
+            const isActive = index === currentStepIndex;
+            const isCompleted = index < currentStepIndex;
+            const iconSize = isActive ? 24 : 16;
+            
+            const handleStepClick = () => {
+              setActivePage(step);
+              navigate(step);
+            };
+            
+            return (
+              <button
+                key={index}
+                onClick={handleStepClick}
+                className="flex items-center justify-center transition-all duration-300 rounded-lg 
+                  hover:bg-opacity-10 hover:bg-white focus:outline-none focus:ring-2 
+                  focus:ring-brand focus:ring-opacity-50"
+                style={{ 
+                  width: isActive ? '32px' : '20px', 
+                  height: isActive ? '32px' : '20px' 
+                }}
+                title={`Go to ${step.charAt(0).toUpperCase() + step.slice(1)} page`}
+              >
+                {step === PAGES.INDEX && (
+                  <FiHome 
+                    className={`transition-all duration-300 ${
+                      isActive 
+                        ? 'text-brand' 
+                        : isCompleted 
+                        ? 'text-brand' 
+                        : 'text-c-disabled-1'
+                    }`} 
+                    size={iconSize} 
+                  />
+                )}
+                {step === PAGES.STORE && (
+                  <FiCodepen 
+                    className={`transition-all duration-300 ${
+                      isActive 
+                        ? 'text-brand' 
+                        : isCompleted 
+                        ? 'text-brand' 
+                        : 'text-c-disabled-1'
+                    }`} 
+                    size={iconSize} 
+                  />
+                )}
+                {step === PAGES.CONFIG && (
+                  <FiSettings 
+                    className={`transition-all duration-300 ${
+                      isActive 
+                        ? 'text-brand' 
+                        : isCompleted 
+                        ? 'text-brand' 
+                        : 'text-c-disabled-1'
+                    }`} 
+                    size={iconSize} 
+                  />
+                )}
+                {step === PAGES.DEWEB && (
+                  <FiGlobe 
+                    className={`transition-all duration-300 ${
+                      isActive 
+                        ? 'text-brand' 
+                        : isCompleted 
+                        ? 'text-brand' 
+                        : 'text-c-disabled-1'
+                    }`} 
+                    size={iconSize} 
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 

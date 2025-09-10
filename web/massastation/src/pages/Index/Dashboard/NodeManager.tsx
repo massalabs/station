@@ -35,24 +35,22 @@ export function ActiveNodeManager(props: NodeManagerPluginProps) {
     <>
       <div className="w-full h-full rounded-t-md relative overflow-hidden bg-brand">
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
-        <div className="relative z-10 p-6 h-full flex items-start">
-          <motion.img
-            initial={false}
-            animate={{
-              rotate: isHovered ? 180 : 0,
-              transition: { duration: 0.36 },
-            }}
-            src={nodeManager}
-            alt="Node Manager"
-            className="w-12 h-12"
-          />
-        </div>
+        <motion.img
+          initial={false}
+          animate={{
+            rotate: isHovered ? 180 : 0,
+            transition: { duration: 0.36 },
+          }}
+          src={nodeManager}
+          alt="Node Manager"
+          className="w-full h-full p-4 brightness-0 invert"
+        />
       </div>
       <div
         className="w-full h-full text-primary bg-secondary flex flex-col 
         justify-end items-start p-4 rounded-b-md"
       >
-        <div className="mas-subtitle text-left text-brand font-semibold mb-4">
+        <div className="mas-subtitle text-left text-brand font-semibold mb-4 cursor-default">
           <div>Node</div>
           <div>Manager</div>
         </div>
@@ -86,7 +84,7 @@ export function UpdateNodeManager(props: NodeManagerPluginProps) {
             }}
             src={nodeManager}
             alt="Node Manager"
-            className="w-12 h-12"
+            className="w-12 h-12 brightness-0 invert"
           />
         </div>
       </div>
@@ -94,7 +92,7 @@ export function UpdateNodeManager(props: NodeManagerPluginProps) {
         className="w-full h-full text-primary bg-secondary flex flex-col 
         justify-end items-start p-4 rounded-b-md"
       >
-        <div className="mas-subtitle text-left text-brand font-semibold mb-4">
+        <div className="mas-subtitle text-left text-brand font-semibold mb-4 cursor-default">
           <div>Node</div>
           <div>Manager</div>
         </div>
@@ -107,7 +105,7 @@ export function UpdateNodeManager(props: NodeManagerPluginProps) {
               {isUpdating ? 'Updating...' : 'Update'}
             </div>
           </Button>
-          <div className="text-orange-400 px-4 mas-caption font-medium">
+          <div className="text-orange-400 px-4 mas-caption font-medium cursor-default">
             <a
               className="underline"
               href="/plugin/massa-labs/node-manager/web-app/index"
@@ -123,33 +121,39 @@ export function UpdateNodeManager(props: NodeManagerPluginProps) {
 }
 
 export function InactiveNodeManager(props: NodeManagerPluginProps) {
-  const { title, onClickInactive, isHovered } = props;
+  const { onClickInactive, isHovered } = props;
 
   return (
     <>
       <div className="w-full h-full rounded-t-md bg-neutral border-2 border-dashed 
         border-neutral/50 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-neutral/10 to-transparent"></div>
-        <motion.img
-          initial={false}
-          animate={{
-            rotate: isHovered ? 180 : 0,
-            opacity: isHovered ? 1.0 : 0.8,
-            scale: isHovered ? 1.1 : 1,
-            transition: { duration: 0.36 },
-          }}
-          src={nodeManager}
-          alt="Node Manager"
-          className="w-full h-full p-6 relative z-10 grayscale brightness-50 contrast-150"
-        />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center p-4">
+          <motion.img
+            initial={false}
+            animate={{
+              rotate: isHovered ? 180 : 0,
+              opacity: isHovered ? 1.0 : 0.8,
+              scale: isHovered ? 1.1 : 1,
+              transition: { duration: 0.36 },
+            }}
+            src={nodeManager}
+            alt="Node Manager"
+            className="w-16 h-16 mb-3 grayscale brightness-50 contrast-150"
+          />
+          <p className="text-center text-primary font-medium text-xs cursor-default">
+            {Intl.t('modules.node-manager.baseline')}
+          </p>
+        </div>
       </div>
       <div className="w-full h-full text-primary bg-secondary border-2 border-neutral/20 
-        flex flex-col justify-end items-center rounded-b-md relative p-4">
+        flex flex-col justify-end items-start rounded-b-md relative p-4">
         <div className="absolute inset-0 bg-gradient-to-t from-neutral/5 to-transparent rounded-b-md"></div>
-        <div className="w-full px-4 py-2 mas-buttons lg:h-14 flex items-center justify-center relative z-10 mb-4">
-          <p className="text-center text-c-primary font-medium">{`${title} is not installed`}</p>
+        <div className="mas-subtitle text-left text-brand font-semibold mb-4 relative z-10 cursor-default">
+          <div>Node</div>
+          <div>Manager</div>
         </div>
-        <div className="w-full px-4 py-2 relative z-10">
+        <div className="w-full relative z-10">
           <Button 
             variant="primary"
             customClass="bg-c-default hover:bg-c-hover text-c-primary border-c-default font-semibold w-full"
@@ -179,13 +183,13 @@ export function CrashedNodeManager(props: NodeManagerPluginProps) {
             }}
             src={nodeManager}
             alt="Node Manager"
-            className="w-12 h-12"
+            className="w-12 h-12 brightness-0 invert"
           />
         </div>
       </div>
       <div className="w-full h-full py-6 text-primary bg-secondary flex flex-col items-center rounded-b-md">
         <div className="w-4/5 px-4 py-2 mas-buttons lg:h-14 flex items-center justify-center">
-          <p className="text-center text-red-400 font-medium">
+          <p className="text-center text-red-400 font-medium cursor-default">
             {title} has crashed. Please restart or reinstall.
           </p>
         </div>
@@ -210,13 +214,13 @@ export function LoadingNodeManager(props: NodeManagerPluginProps) {
             }}
             src={nodeManager}
             alt="Node Manager"
-            className="w-12 h-12"
+            className="w-12 h-12 brightness-0 invert"
           />
         </div>
       </div>
       <div className="w-full text-primary bg-secondary flex flex-col items-center gap-4 py-4 rounded-b-md">
         <div className="w-4/5 mas-buttons flex items-center justify-center">
-          <p className="text-center text-f-primary font-medium">
+          <p className="text-center text-f-primary font-medium cursor-default">
             Installing {title}...
           </p>
         </div>

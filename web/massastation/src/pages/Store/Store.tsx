@@ -10,15 +10,15 @@ export function Store() {
   return (
     <>
       <div className="bg-primary text-f-primary pt-24">
-        <h1 className="mas-banner mb-10"> {Intl.t('store.modules-banner')}</h1>
+        <h1 className="mas-banner mb-10 cursor-default"> {Intl.t('store.modules-banner')}</h1>
         <div className="overflow-auto h-[65vh]">
-          <div className="mas-body mb-3 text-neutral">
+          <div className="mas-body mb-3 text-neutral cursor-default">
             {Intl.t('store.mystation-banner')}
           </div>
           <div className="mb-10">
             <StationSection getPlugins={getPlugins} />
           </div>
-          <div className="mas-body mb-3 text-neutral">
+          <div className="mas-body mb-3 text-neutral cursor-default">
             {Intl.t('store.store-banner')}
           </div>
           <StoreSection getPlugins={getPlugins} />

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { RedirectTile } from '@massalabs/react-ui-kit';
 import { routeFor } from '@/utils/utils';
 import dewebLogo from '@/assets/dashboard/deweb.svg';
+import Intl from '@/i18n/i18n';
 
 
 export function Deweb() {
@@ -17,7 +18,7 @@ export function Deweb() {
       >
         <div className="w-full h-full rounded-md bg-c-default relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-c-default/80 to-c-default"></div>
-          <div className="relative z-10 h-full p-6 flex items-center justify-center">
+          <div className="relative z-10 h-full p-6 flex flex-col items-center justify-center">
             <motion.img
               initial={false}
               animate={{
@@ -27,10 +28,13 @@ export function Deweb() {
               }}
               src={dewebLogo}
               alt="Deweb"
-              className="max-w-full max-h-full object-contain"
+              className="max-w-full max-h-3/4 object-contain mb-4"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
             />
+            <p className="text-center text-white font-medium text-sm cursor-default">
+              {Intl.t('modules.deweb.baseline')}
+            </p>
           </div>
         </div>
       </RedirectTile>

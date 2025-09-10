@@ -1,5 +1,6 @@
 import { RedirectTile } from '@massalabs/react-ui-kit';
 import { motion } from 'framer-motion';
+import Intl from '@/i18n/i18n';
 
 export function MassaGovernance() {
   return (
@@ -9,11 +10,14 @@ export function MassaGovernance() {
         className="rounded-lg h-full relative overflow-hidden bg-brand"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-brand/80 to-brand"></div>
-        <div className="relative z-10 h-full p-8 flex items-end justify-start">
-          <div className="text-c-default font-bold text-4xl leading-tight text-left">
+        <div className="relative z-10 h-full p-8 flex flex-col justify-between">
+          <div className="text-c-default font-bold text-4xl leading-tight text-left cursor-default">
             <div>Massa</div>
             <div>Governance</div>
           </div>
+          <p className="text-c-default font-medium text-sm text-left cursor-default">
+            {Intl.t('modules.massa-governance.baseline')}
+          </p>
         </div>
       </RedirectTile>
     </motion.div>

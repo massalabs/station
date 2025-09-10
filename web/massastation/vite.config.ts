@@ -29,6 +29,9 @@ export default ({ mode }) => {
         // },
       ],
     },
+    optimizeDeps: {
+      include: ['@faker-js/faker'],
+    },
     server: {
       fs: {
         // to allow server ui kit asset like font files

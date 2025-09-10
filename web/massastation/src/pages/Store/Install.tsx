@@ -69,19 +69,19 @@ function Install({
                       bg-primary border-dashed border-2 border-c-default
                       "
           >
-            <div className="mas-body text-neutral mb-6">
+            <div className="mas-body text-neutral mb-6 cursor-default">
               {Intl.t('store.sidepanel.banner')}
             </div>
-            <div className="mas-body2 text-neutral mb-6">
+            <div className="mas-body2 text-neutral mb-6 cursor-default">
               {Intl.t('store.sidepanel.description', {
                 url: 'https://docs.massa.net/docs/massaStation/guidelines',
               })}
             </div>
             <div className="bg-secondary p-4">
-              <div className="mas-menu-active text-neutral mb-3">
+              <div className="mas-menu-active text-neutral mb-3 cursor-default">
                 {Intl.t('store.sidepanel.title')}
               </div>
-              <div className="mas-caption text-neutral mb-3">
+              <div className="mas-caption text-neutral mb-3 cursor-default">
                 {Intl.t('store.sidepanel.subtitle')}
               </div>
               <>

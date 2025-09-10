@@ -13,6 +13,7 @@
     "prepare": "cd ../.. && husky install web/massastation/.husky"
   },
   "dependencies": {
+    "@massalabs/massa-web3": "^5.2.1-dev",
     "@massalabs/react-ui-kit": "^1.1.1-dev",
     "@tanstack/react-query": "^4.29.5",
     "axios": "^1.4.0",
@@ -26,7 +27,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.21.4",
     "@babel/preset-react": "^7.18.6",
-    "@faker-js/faker": "^8.0.0",
+    "@faker-js/faker": "^8.4.1",
     "@massalabs/eslint-config": "^0.0.9",
     "@massalabs/prettier-config-as": "^0.0.2",
     "@tanstack/eslint-plugin-query": "^4.29.4",

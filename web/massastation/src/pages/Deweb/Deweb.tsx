@@ -10,6 +10,9 @@ import {
   FiArrowRight
 } from 'react-icons/fi';
 import DeWebLogo from '@/assets/dashboard/deweb.svg';
+import { routeFor } from '@/utils/utils';
+import { PAGES } from '@/const/pages/pages';
+// import { useResolveDeweb } from '@/hooks/useResolveDeweb';
 
 interface DeWebComponentProps {
   title: string;
@@ -47,8 +50,8 @@ function DeWebComponent({ title, description, button, url, icon, features, topic
             </div>
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="mas-subtitle text-neutral mb-3 group-hover:text-c-primary transition-colors duration-300">{title}</h3>
-            <p className="mas-body2 text-neutral/80 leading-relaxed mb-6">{description}</p>
+            <h3 className="mas-subtitle text-neutral mb-3 group-hover:text-c-primary transition-colors duration-300 cursor-default">{title}</h3>
+            <p className="mas-body2 text-neutral/80 leading-relaxed mb-6 cursor-default">{description}</p>
 
             {features && (
               <div className="mb-6">
@@ -62,7 +65,7 @@ function DeWebComponent({ title, description, button, url, icon, features, topic
                       transition={{ delay: index * 0.1 }}
                     >
                       <div className="w-2 h-2 bg-gradient-to-r from-c-primary to-c-primary/80 rounded-full flex-shrink-0 group-hover:scale-125 transition-transform duration-300"></div>
-                      <span className="group-hover:text-neutral transition-colors duration-300">{feature}</span>
+                      <span className="group-hover:text-neutral transition-colors duration-300 cursor-default">{feature}</span>
                     </motion.li>
                   ))}
                 </ul>
@@ -71,7 +74,7 @@ function DeWebComponent({ title, description, button, url, icon, features, topic
 
             {topics && (
               <div className="mb-6">
-                <p className="text-sm text-neutral/70 mb-3 font-medium">Key Topics:</p>
+                <p className="text-sm text-neutral/70 mb-3 font-medium cursor-default">Key Topics:</p>
                 <div className="flex flex-wrap gap-2">
                   {topics.map((topic, index) => (
                     <motion.span
@@ -138,8 +141,8 @@ function BenefitCard({ title, description }: { title: string; description: strin
             <div className="w-6 h-6 bg-gradient-to-r from-c-primary to-c-primary/80 rounded-full"></div>
           </div>
           <div className="flex-1">
-            <h4 className="mas-menu-active text-neutral mb-3 group-hover:text-c-primary transition-colors duration-300">{title}</h4>
-            <p className="mas-body2 text-neutral/80 leading-relaxed group-hover:text-neutral/90 transition-colors duration-300">{description}</p>
+            <h4 className="mas-menu-active text-neutral mb-3 group-hover:text-c-primary transition-colors duration-300 cursor-default">{title}</h4>
+            <p className="mas-body2 text-neutral/80 leading-relaxed group-hover:text-neutral/90 transition-colors duration-300 cursor-default">{description}</p>
           </div>
         </div>
       </div>
@@ -168,8 +171,8 @@ function GetStartedSection({ title, description, options }: { title: string; des
 
       <div className="relative z-10">
         <div className="text-center mb-8">
-          <h3 className="mas-subtitle text-neutral mb-3 group-hover:text-c-primary transition-colors duration-300">{title}</h3>
-          <p className="mas-body2 text-neutral/80 leading-relaxed group-hover:text-neutral/90 transition-colors duration-300">{description}</p>
+          <h3 className="mas-subtitle text-neutral mb-3 group-hover:text-c-primary transition-colors duration-300 cursor-default">{title}</h3>
+          <p className="mas-body2 text-neutral/80 leading-relaxed group-hover:text-neutral/90 transition-colors duration-300 cursor-default">{description}</p>
         </div>
 
         <div className="space-y-4">
@@ -194,7 +197,7 @@ function GetStartedSection({ title, description, options }: { title: string; des
               <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-c-primary/20 to-c-primary/10 rounded-xl flex items-center justify-center group-hover/item:from-c-primary/30 group-hover/item:to-c-primary/20 transition-all duration-300">
                 <FiArrowRight size={16} className="text-c-primary group-hover/item:translate-x-1 transition-transform duration-300" />
               </div>
-              <p className="text-sm text-neutral/90 leading-relaxed group-hover/item:text-neutral transition-colors duration-300 flex-1">{option.text}</p>
+              <p className="text-sm text-neutral/90 leading-relaxed group-hover/item:text-neutral transition-colors duration-300 flex-1 cursor-default">{option.text}</p>
               {!option.url.startsWith('/') && (
                 <div className="flex-shrink-0 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300">
                   <FiExternalLink size={14} className="text-c-primary/70" />
@@ -212,6 +215,31 @@ function GetStartedSection({ title, description, options }: { title: string; des
 }
 
 export function Deweb() {
+  /**
+   * TODO: Enable dynamic URL resolution when resolveDeweb function is fixed
+   * 
+   * Uncomment the lines below to enable dynamic DeWeb URL resolution:
+   * 1. Uncomment the useResolveDeweb import at the top
+   * 2. Uncomment all the useResolveDeweb hook calls below
+   * 3. Replace static i18n URLs with resolved URLs in the component objects
+   * 4. Update the loading state condition to use isLoadingAnyUrl
+   */
+   
+  // const mnsUrl = useResolveDeweb(Intl.t('deweb.components.mns.url'));
+  // const explorerUrl = useResolveDeweb(Intl.t('deweb.components.explorer.url'));
+  // const uploaderUrl = useResolveDeweb(Intl.t('deweb.components.uploader.url'));
+  // const documentationUrl = useResolveDeweb(Intl.t('deweb.components.documentation.url'));
+  // const dewebSearch = useResolveDeweb(Intl.t('deweb.get-started.users.urls.search'));
+  // const dewebExplore = useResolveDeweb(Intl.t('deweb.get-started.users.urls.explore'));
+  // const mnsDevUrl = useResolveDeweb(Intl.t('deweb.get-started.developers.urls.mns'));
+  // const dewebCliDocs = useResolveDeweb(Intl.t('deweb.get-started.developers.urls.cli_docs'));
+  // const helloDappDocs = useResolveDeweb(Intl.t('deweb.get-started.developers.urls.hello_dapp'));
+
+  // // Check if any URL is still loading
+  // const isLoadingAnyUrl = mnsUrl.isLoading || explorerUrl.isLoading || uploaderUrl.isLoading || 
+  //                         documentationUrl.isLoading || dewebSearch.isLoading || dewebExplore.isLoading || 
+  //                         mnsDevUrl.isLoading || dewebCliDocs.isLoading || helloDappDocs.isLoading;
+
   // Define the data structure with proper typing
   const dewebComponents: DeWebComponentProps[] = [
     {
@@ -219,6 +247,7 @@ export function Deweb() {
       description: Intl.t('deweb.components.mns.description'),
       button: Intl.t('deweb.components.mns.button'),
       url: Intl.t('deweb.components.mns.url'),
+      // url: mnsUrl.resolvedUrl,
       icon: <FiGlobe size={24} />,
       features: [
         Intl.t('deweb.components.mns.features.feature1'),
@@ -231,6 +260,7 @@ export function Deweb() {
       description: Intl.t('deweb.components.explorer.description'),
       button: Intl.t('deweb.components.explorer.button'),
       url: Intl.t('deweb.components.explorer.url'),
+      // url: explorerUrl.resolvedUrl,
       icon: <FiSearch size={24} />
     },
     {
@@ -238,6 +268,7 @@ export function Deweb() {
       description: Intl.t('deweb.components.uploader.description'),
       button: Intl.t('deweb.components.uploader.button'),
       url: Intl.t('deweb.components.uploader.url'),
+      // url: uploaderUrl.resolvedUrl,
       icon: <FiUpload size={24} />,
       features: [
         Intl.t('deweb.components.uploader.features.feature1'),
@@ -251,6 +282,7 @@ export function Deweb() {
       description: Intl.t('deweb.components.documentation.description'),
       button: Intl.t('deweb.components.documentation.button'),
       url: Intl.t('deweb.components.documentation.url'),
+      // url: documentationUrl.resolvedUrl,
       icon: <FiBookOpen size={24} />,
       topics: [
         Intl.t('deweb.components.documentation.topics.topic1'),
@@ -283,34 +315,40 @@ export function Deweb() {
   const userOptions: GetStartedOption[] = [
     {
       text: Intl.t('deweb.get-started.users.options.option0'),
-      url: '/store'
+      url: routeFor(PAGES.STORE)
     },
     {
       text: Intl.t('deweb.get-started.users.options.option1'),
-      url: 'https://deweb.massa.network/search'
+      url: Intl.t('deweb.get-started.users.urls.search')
+      // url: dewebSearch.resolvedUrl
     },
     {
       text: Intl.t('deweb.get-started.users.options.option2'),
-      url: 'https://deweb.massa.network/explore'
+      url: Intl.t('deweb.get-started.users.urls.explore')
+      // url: dewebExplore.resolvedUrl
     }
   ];
 
   const developerOptions: GetStartedOption[] = [
     {
       text: Intl.t('deweb.get-started.developers.options.option0'),
-      url: 'https://mns.massa.network'
+      url: Intl.t('deweb.get-started.developers.urls.mns')
+      // url: mnsDevUrl.resolvedUrl
     },
     {
       text: Intl.t('deweb.get-started.developers.options.option1'),
-      url: 'https://docs.massa.network/docs/deweb/cli/overview'
+      url: Intl.t('deweb.get-started.developers.urls.cli_docs')
+      // url: dewebCliDocs.resolvedUrl
     },
     {
       text: Intl.t('deweb.get-started.developers.options.option2'),
-      url: 'https://docs.massa.network/docs/build/hello-world-dapp'
+      url: Intl.t('deweb.get-started.developers.urls.hello_dapp')
+      // url: helloDappDocs.resolvedUrl
     },
     {
       text: Intl.t('deweb.get-started.developers.options.option3'),
-      url: 'https://docs.massa.network/docs/build/hello-world-dapp'
+      url: Intl.t('deweb.get-started.developers.urls.hello_dapp')
+      // url: helloDappDocs.resolvedUrl
     }
   ];
 
@@ -361,7 +399,7 @@ export function Deweb() {
           </motion.div>
 
           <motion.h1
-            className="mas-h1 text-neutral mb-6 bg-gradient-to-r from-neutral via-neutral to-neutral/80 bg-clip-text text-transparent"
+            className="mas-h1 text-neutral mb-6 bg-gradient-to-r from-neutral via-neutral to-neutral/80 bg-clip-text text-transparent cursor-default"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -370,7 +408,7 @@ export function Deweb() {
           </motion.h1>
 
           <motion.p
-            className="mas-h2 text-neutral/90 mb-8"
+            className="mas-h2 text-neutral/90 mb-8 cursor-default"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
@@ -379,7 +417,7 @@ export function Deweb() {
           </motion.p>
 
           <motion.p
-            className="mas-body text-neutral/80 max-w-4xl mx-auto leading-relaxed"
+            className="mas-body text-neutral/80 max-w-4xl mx-auto leading-relaxed cursor-default"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
@@ -408,7 +446,7 @@ export function Deweb() {
 
             <div className="text-center">
               <motion.h2
-                className="mas-h2 text-neutral mb-6 bg-gradient-to-r from-neutral via-c-primary/80 to-neutral bg-clip-text text-transparent"
+                className="mas-h2 text-neutral mb-6 bg-gradient-to-r from-neutral via-c-primary/80 to-neutral bg-clip-text text-transparent cursor-default"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
@@ -416,7 +454,7 @@ export function Deweb() {
                 {Intl.t('deweb.vision.title')}
               </motion.h2>
               <motion.p
-                className="mas-body text-neutral/80 text-center leading-relaxed text-lg"
+                className="mas-body text-neutral/80 text-center leading-relaxed text-lg cursor-default"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
@@ -445,10 +483,10 @@ export function Deweb() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
           >
-            <h2 className="mas-h2 text-neutral mb-6 bg-gradient-to-r from-neutral via-c-primary/80 to-neutral bg-clip-text text-transparent">
+            <h2 className="mas-h2 text-neutral mb-6 bg-gradient-to-r from-neutral via-c-primary/80 to-neutral bg-clip-text text-transparent cursor-default">
               {Intl.t('deweb.components.title')}
             </h2>
-            <p className="mas-body text-neutral/80 max-w-3xl mx-auto leading-relaxed mb-6">
+            <p className="mas-body text-neutral/80 max-w-3xl mx-auto leading-relaxed mb-6 cursor-default">
               {Intl.t('deweb.components.description')}
             </p>
           </motion.div>
@@ -482,7 +520,7 @@ export function Deweb() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.7 }}
           >
-            <h2 className="mas-h2 text-neutral mb-6 bg-gradient-to-r from-neutral via-c-primary/80 to-neutral bg-clip-text text-transparent">
+            <h2 className="mas-h2 text-neutral mb-6 bg-gradient-to-r from-neutral via-c-primary/80 to-neutral bg-clip-text text-transparent cursor-default">
               {Intl.t('deweb.benefits.title')}
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-c-primary to-c-primary/60 mx-auto rounded-full"></div>
@@ -517,10 +555,10 @@ export function Deweb() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.9 }}
           >
-            <h2 className="mas-h2 text-neutral mb-6 bg-gradient-to-r from-neutral via-c-primary/80 to-neutral bg-clip-text text-transparent">
+            <h2 className="mas-h2 text-neutral mb-6 bg-gradient-to-r from-neutral via-c-primary/80 to-neutral bg-clip-text text-transparent cursor-default">
               {Intl.t('deweb.get-started.title')}
             </h2>
-            <p className="mas-body text-neutral/80 max-w-3xl mx-auto leading-relaxed mb-6">
+            <p className="mas-body text-neutral/80 max-w-3xl mx-auto leading-relaxed mb-6 cursor-default">
               {Intl.t('deweb.get-started.description')}
             </p>
           </motion.div>
