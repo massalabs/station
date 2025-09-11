@@ -18,7 +18,7 @@ jobs:
       - name: installing Linux dependencies
         run: |
           sudo apt update
-          sudo apt install libnss3-tools libwebkit2gtk-4.1-0 xvfb
+          sudo apt install xvfb
       - name: Checkout project directory
         uses: actions/checkout@v4
       - name: Install RobotFramework tests dependencies
@@ -34,7 +34,7 @@ jobs:
           MASSASTATION_DIR=/usr/local/share/massastation
           sudo mkdir -p $MASSASTATION_DIR
           sudo touch $MASSASTATION_DIR/agreed_to_terms_and_conditions
-          sudo  dpkg -i *.deb
+          sudo  apt install ./massastation_*.deb
       - name: Create wallet from secret
         run: |
           WALLET_CONFIG_DIR=$HOME/.config/massa-station-wallet
