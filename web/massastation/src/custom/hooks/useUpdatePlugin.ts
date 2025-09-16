@@ -3,9 +3,10 @@ import { usePost } from '../api';
 
 
 export const enum PluginCommand {
-  Start = 'Start',
-  Stop = 'Stop',
-  Update = 'Update',
+  Start = 'start',
+  Stop = 'stop',
+  Update = 'update',
+  Restart = 'restart',
 }
 
 export function useUpdatePlugin(id: string | undefined) {
