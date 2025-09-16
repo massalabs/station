@@ -23,10 +23,8 @@ const (
 	configDirName     = "massa-station"
 )
 
-var (
-	// ErrNetworkAlreadyExists is returned when trying to add a network with a name that already exists
-	ErrNetworkAlreadyExists = errors.New("network already exists")
-)
+// ErrNetworkAlreadyExists is returned when trying to add a network with a name that already exists
+var ErrNetworkAlreadyExists = errors.New("network already exists")
 
 // MSConfigManager represents a manager for network configurations.
 type MSConfigManager struct {

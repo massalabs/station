@@ -81,20 +81,44 @@ func TestCertStore_AddCertificate(t *testing.T) {
 			wantErr: otherError,
 		},
 		{
-			name:    "error when CertAddCertificateContextToStore fails",
+			name:    "error when CertAddCertificateContextToStore fails with non-exists error",
 			handler: windows.Handle(1),
 			setupMock: func() {
 				mockAPI.EXPECT().CertCreateCertificateContext(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockCertContext, nil)
-				mockAPI.EXPECT().CertAddCertificateContextToStore(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(ErrCertAlreadyExists)
+				mockAPI.EXPECT().CertAddCertificateContextToStore(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(otherError)
 			},
-			wantErr: ErrCertAlreadyExists,
+			wantErr: otherError,
+		},
+		{
+			name:    "success when certificate already exists - replace existing",
+			handler: windows.Handle(1),
+			setupMock: func() {
+				mockAPI.EXPECT().CertCreateCertificateContext(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockCertContext, nil)
+				// First call fails with ErrCertAlreadyExists
+				mockAPI.EXPECT().CertAddCertificateContextToStore(gomock.Any(), gomock.Any(), gomock.Eq(uint32(1)), gomock.Any()).Return(ErrCertAlreadyExists)
+				// Second call with replace flag succeeds
+				mockAPI.EXPECT().CertAddCertificateContextToStore(gomock.Any(), gomock.Any(), gomock.Eq(uint32(3)), gomock.Any()).Return(nil)
+			},
+			wantErr: nil,
+		},
+		{
+			name:    "error when certificate already exists and replace also fails",
+			handler: windows.Handle(1),
+			setupMock: func() {
+				mockAPI.EXPECT().CertCreateCertificateContext(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockCertContext, nil)
+				// First call fails with ErrCertAlreadyExists
+				mockAPI.EXPECT().CertAddCertificateContextToStore(gomock.Any(), gomock.Any(), gomock.Eq(uint32(1)), gomock.Any()).Return(ErrCertAlreadyExists)
+				// Second call with replace flag also fails
+				mockAPI.EXPECT().CertAddCertificateContextToStore(gomock.Any(), gomock.Any(), gomock.Eq(uint32(3)), gomock.Any()).Return(otherError)
+			},
+			wantErr: otherError,
 		},
 		{
 			name:    "success case",
 			handler: windows.Handle(1),
 			setupMock: func() {
 				mockAPI.EXPECT().CertCreateCertificateContext(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockCertContext, nil)
-				mockAPI.EXPECT().CertAddCertificateContextToStore(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
+				mockAPI.EXPECT().CertAddCertificateContextToStore(gomock.Any(), gomock.Any(), gomock.Eq(uint32(1)), gomock.Any()).Return(nil)
 			},
 			wantErr: nil,
 		},
