@@ -156,6 +156,7 @@ func (s *CertStore) AddCertificate(cert *x509.Certificate) error {
 		return err
 	}
 
+	// First try to add as new certificate
 	err = s.winAPI.CertAddCertificateContextToStore(
 		s.handler,
 		certContextPtr,
@@ -163,7 +164,21 @@ func (s *CertStore) AddCertificate(cert *x509.Certificate) error {
 		nil,
 	)
 	if err != nil {
-		return interpretError(err)
+		interpretedErr := interpretError(err)
+		// If certificate already exists (possibly expired), replace it
+		if errors.Is(interpretedErr, ErrCertAlreadyExists) {
+			err = s.winAPI.CertAddCertificateContextToStore(
+				s.handler,
+				certContextPtr,
+				windows.CERT_STORE_ADD_REPLACE_EXISTING,
+				nil,
+			)
+			if err != nil {
+				return interpretError(err)
+			}
+		} else {
+			return interpretedErr
+		}
 	}
 
 	return nil
