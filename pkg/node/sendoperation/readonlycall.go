@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	PercentageGasLimit = 10
+	PercentageGasLimit = 0
 )
 
 func addXPercentage(x uint64) uint64 {
