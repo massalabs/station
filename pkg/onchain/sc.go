@@ -37,15 +37,12 @@ func CallFunction(
 ) (*OperationWithEventResponse, error) {
 	client := node.NewClient(networkInfos.NodeURL)
 
-	// Calibrate max_gas
-	if maxGas == 0 {
-		estimatedGasCost, err := sendOperation.EstimateGasCostCallSC(nickname, addr, function, parameter, coins, fee, client)
-		if err != nil {
-			return nil, fmt.Errorf("estimating Call SC gas cost for function '%s' at '%s': %w", function, addr, err)
-		}
-
-		maxGas = estimatedGasCost
+	estimatedGasCost, err := sendOperation.EstimateGasCostCallSC(nickname, addr, function, parameter, coins, fee, client)
+	if err != nil {
+		return nil, fmt.Errorf("estimating Call SC gas cost for function '%s' at '%s': %w", function, addr, err)
 	}
+
+	maxGas = estimatedGasCost
 
 	// Create the operation
 	callSC, err := callsc.New(addr, function, parameter,
