@@ -47,7 +47,7 @@ export function NetworkConfig() {
     `${URL.PATH_NETWORKS}/${selectedNetwork}`,
   );
 
-  const [ setCurrentNetwork, setAvailableNetworks] = useNetworkStore((state) => [
+  const [setCurrentNetwork, setAvailableNetworks] = useNetworkStore((state) => [
     state.setCurrentNetwork,
     state.setAvailableNetworks,
   ]);
