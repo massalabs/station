@@ -15,7 +15,6 @@ export default ({ mode }) => {
       outDir: '../../int/api/dist/massastation',
       emptyOutDir: true,
       manifest: true,
-      sourcemap: true,
       assetsDir: './', // put the assets next to the index.html file
     },
     resolve: {
