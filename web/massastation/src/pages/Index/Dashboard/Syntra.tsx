@@ -1,13 +1,28 @@
-import { RedirectTile } from '@massalabs/react-ui-kit';
+import { RedirectTile, useResolveDeweb } from '@massalabs/react-ui-kit';
 import { motion } from 'framer-motion';
 import syntra from '@/assets/dashboard/Syntra.svg';
 import Intl from '@/i18n/i18n';
+import { Spinner } from '@massalabs/react-ui-kit';
+import { useNetworkStore } from '@/store/store';
 
 export function Syntra() {
+  const [getChainId] = useNetworkStore((state) => [state.getChainId]);
+  const syntraUrl = useResolveDeweb('https://syntra.massa.network/', getChainId());
+  
+  if (syntraUrl.isLoading) {
+    return (
+      <motion.div className="h-full" whileHover={{ scale: 1.03 }}>
+        <div className="rounded-lg h-full relative overflow-hidden bg-c-default flex items-center justify-center">
+          <Spinner />
+        </div>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div className="h-full" whileHover={{ scale: 1.03 }}>
       <RedirectTile
-        url="https://syntra.massa.network"
+        url={syntraUrl.resolvedUrl}
         className="rounded-lg h-full relative overflow-hidden bg-c-default"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-c-default/80 to-c-default"></div>

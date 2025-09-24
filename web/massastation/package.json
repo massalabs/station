@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --mode dev",
-    "build": "tsc && vite build --mode prod",
+    "build": " tsc && NODE_OPTIONS=--max-old-space-size=4096 vite build --mode prod",
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@massalabs/massa-web3": "^5.2.1-dev",
-    "@massalabs/react-ui-kit": "^1.1.1-dev",
+    "@massalabs/react-ui-kit": "^1.2.1-dev",
     "@tanstack/react-query": "^4.29.5",
     "axios": "^1.4.0",
     "dot-object": "^2.1.5",

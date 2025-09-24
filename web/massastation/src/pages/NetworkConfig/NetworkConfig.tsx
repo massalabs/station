@@ -18,6 +18,7 @@ import { usePost } from '@/custom/api/usePost';
 import { usePut } from '@/custom/api/usePut';
 import { useDelete } from '@/custom/api/useDelete';
 import type { NetworkModel } from '@/models/NetworkModel';
+import { useNetworkStore } from '@/store/store';
 
 type CreateNetworkBody = { name: string; url: string; default?: boolean };
 type UpdateNetworkBody = { url?: string; default?: boolean; newName?: string };
@@ -45,6 +46,17 @@ export function NetworkConfig() {
   const deleteNetwork = useDelete<NetworkModel>(
     `${URL.PATH_NETWORKS}/${selectedNetwork}`,
   );
+
+  const [ setCurrentNetwork, setAvailableNetworks] = useNetworkStore((state) => [
+    state.setCurrentNetwork,
+    state.setAvailableNetworks,
+  ]);
+
+  // Sync store when API data changes
+  useEffect(() => {
+    if (data?.availableNetworkInfos) setAvailableNetworks(data.availableNetworkInfos);
+    if (data?.currentNetwork) setCurrentNetwork(data.currentNetwork);
+  }, [data, setAvailableNetworks, setCurrentNetwork]);
 
   const networks = useMemo(() => data?.availableNetworkInfos || [], [data?.availableNetworkInfos]);
   const currentInfo = useMemo(

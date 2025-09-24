@@ -45,16 +45,19 @@ export function LayoutStation(props: LayoutStationProps) {
   const { data: network, isSuccess: isSuccessNetwork } =
     useResource<NetworkModel>(URL.PATH_NETWORKS);
 
-  const [currentNetwork, setCurrentNetwork] = useNetworkStore((state) => [
+  const [currentNetwork, setCurrentNetwork, setAvailableNetworks] = useNetworkStore((state) => [
     state.currentNetwork,
     state.setCurrentNetwork,
+    state.setAvailableNetworks,
   ]);
 
   useEffect(() => {
     if (isSuccessNetwork) {
       if (network.currentNetwork) setCurrentNetwork(network.currentNetwork);
+      if (network.availableNetworkInfos) setAvailableNetworks(network.availableNetworkInfos);
+      
     }
-  }, [isSuccessNetwork, network, setCurrentNetwork]);
+  }, [isSuccessNetwork, network, setCurrentNetwork, setAvailableNetworks]);
 
   const infos = network?.availableNetworkInfos || [];
 
