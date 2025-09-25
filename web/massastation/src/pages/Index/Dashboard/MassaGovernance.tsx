@@ -5,8 +5,8 @@ import { Spinner } from '@massalabs/react-ui-kit';
 import { useNetworkStore } from '@/store/store';
 
 export function MassaGovernance() {
-  const [getChainId] = useNetworkStore((state) => [state.getChainId]);
-  const governanceUrl = useResolveDeweb('https://mip.massa.network/', getChainId());
+  const {getChainId} = useNetworkStore();
+  const governanceUrl = useResolveDeweb('http://mip', getChainId());
 
   if (governanceUrl.isLoading) {
     return (

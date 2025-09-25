@@ -251,7 +251,7 @@ export function Deweb() {
   
   const navigate = useNavigate();
 
-  const [getChainId] = useNetworkStore((state) => [state.getChainId]);
+  const {getChainId} = useNetworkStore();
   const chainid = getChainId();
 
   const mnsUrl = useResolveDeweb(Intl.t('deweb.components.mns.url'), chainid);

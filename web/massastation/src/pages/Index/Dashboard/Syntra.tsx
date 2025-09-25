@@ -6,8 +6,8 @@ import { Spinner } from '@massalabs/react-ui-kit';
 import { useNetworkStore } from '@/store/store';
 
 export function Syntra() {
-  const [getChainId] = useNetworkStore((state) => [state.getChainId]);
-  const syntraUrl = useResolveDeweb('https://syntra.massa.network/', getChainId());
+  const {getChainId} = useNetworkStore();
+  const syntraUrl = useResolveDeweb('https://syntra.massa/', getChainId());
   
   if (syntraUrl.isLoading) {
     return (

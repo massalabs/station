@@ -47,10 +47,7 @@ export function NetworkConfig() {
     `${URL.PATH_NETWORKS}/${selectedNetwork}`,
   );
 
-  const [setCurrentNetwork, setAvailableNetworks] = useNetworkStore((state) => [
-    state.setCurrentNetwork,
-    state.setAvailableNetworks,
-  ]);
+  const {setCurrentNetwork, setAvailableNetworks} = useNetworkStore();
 
   // Sync store when API data changes
   useEffect(() => {
