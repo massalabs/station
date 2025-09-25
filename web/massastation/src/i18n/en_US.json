@@ -128,6 +128,7 @@
           "explore": "https://deweb.massa.network/explore"
         }
       },
+      "mnsProviderResolveError": "Failed to convert link to a valid DeWeb provider URL",
       "developers": {
         "title": "For Developers",
         "description": "Build and deploy your projects directly on the Massa blockchain.",

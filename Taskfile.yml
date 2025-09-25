@@ -76,10 +76,18 @@ tasks:
       BIN_EXT: '{{if eq .OS "windows"}}.exe{{end}}'
     env:
       LOG_LEVEL: DEBUG
+  
+
+  build-frontend:
+    desc: Builds the frontend
+    dir: web/massastation
+    cmds:
+      - cmd: npm run build
 
   build:
     desc: Builds MassaStation
     cmds:
+      - task: build-frontend
       - task: linux:int-build
       - task: darwin:int-build
       - task: windows:int-build

@@ -1,12 +1,27 @@
-import { RedirectTile } from '@massalabs/react-ui-kit';
+import { RedirectTile, useResolveDeweb } from '@massalabs/react-ui-kit';
 import { motion } from 'framer-motion';
 import Intl from '@/i18n/i18n';
+import { Spinner } from '@massalabs/react-ui-kit';
+import { useNetworkStore } from '@/store/store';
 
 export function MassaGovernance() {
+  const {getChainId} = useNetworkStore();
+  const governanceUrl = useResolveDeweb('http://mip', getChainId());
+
+  if (governanceUrl.isLoading) {
+    return (
+      <motion.div className="h-full" whileHover={{ scale: 1.03 }}>
+        <div className="rounded-lg h-full relative overflow-hidden bg-brand flex items-center justify-center">
+          <Spinner />
+        </div>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div className="h-full" whileHover={{ scale: 1.03 }}>
       <RedirectTile
-        url="https://mip.massa.network/"
+        url={governanceUrl.resolvedUrl}
         className="rounded-lg h-full relative overflow-hidden bg-brand"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-brand/80 to-brand"></div>
