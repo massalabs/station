@@ -45,10 +45,6 @@ Here is how to use it in your plugin:
     pluginKit.RegisterPlugin(listener)
 ```
 
-For development purpose, you can run the plugin in standalone mode by setting the `STANDALONE` environment variable to 1:   `STANDALONE=1`
-In this case it will not try to register with MassaStation.
-
-
 ##### test
 You can install your plugin manually to test it using MassaStation:
 
