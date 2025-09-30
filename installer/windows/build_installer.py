@@ -433,7 +433,7 @@ if __name__ == "__main__":
         print("Getting version from git tags")
         try:
             VERSION = subprocess.run(
-                ["git", "describe", "--tags", "--abbrev=0"],
+                ["git", "describe", "--tags", "--abbrev=0", "--match", "v[0-9]*"],
                 check=True,
                 capture_output=True,
                 text=True,
