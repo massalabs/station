@@ -24,10 +24,6 @@ type registerBody struct {
 }
 
 func RegisterPlugin(listener net.Listener) error {
-	if os.Getenv(StandaloneEnvVar) == "1" {
-		return nil
-	}
-
 	minimumNumberOfCLIArgument := 2
 
 	if len(os.Args) >= minimumNumberOfCLIArgument {
