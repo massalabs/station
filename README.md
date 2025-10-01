@@ -16,25 +16,46 @@ If you're interested in contributing to MassaStation, please make sure to read o
 
 ## Going further
 
-### Modules (plugins)
+### Plugins
 
-MassaStation is a module manager. It enables everyone to use, create and enjoy different modules to activate features to the Massa blockchain.
+MassaStation is a plugin manager. It enables everyone to use, create and enjoy different plugins to activate features to the Massa blockchain.
 
-#### Install a module
+#### Install a plugin
 
-You can install modules that were validated by Massa Labs from the [Module Store](https://station.massa/web/store).
+You can install plugins that were validated by Massa Labs from the [Plugin Store](https://station.massa/web/store).
 
-The module will be automatically installed and activated after a few seconds directly in your Station. Browse MassaStation store to find the module you need.
+The plugin will be automatically installed and activated after a few seconds directly in your Station. Browse MassaStation store to find the plugin you need.
 
-#### Create a module
+#### Create a Plugin
 
-If you are working on a module, you can install it manually to test it using MassaStation:
+##### development
+If you are working on a plugin, you can use logic from [plugin-kit](./plugin-kit/) go module.  
+It provides code logic for your plugin to register it-self to Massa Station plugin manager.
+Here is how to use it in your plugin:
 
-1. Get the `.zip` file download URL of the module you want to install. Make sure this URL matches the version of MassaStation you are using, your computer OS and architecture.
-2. Paste the URL in the `Install a plugin` field of the [module manager page](https://station.massa/web/store).
+```golang
+	pluginKit "github.com/massalabs/station/plugin-kit"
+    ...
+
+    listener, err := server.HTTPListener()
+	if err != nil {
+		panic(err)
+	}
+
+    pluginKit.RegisterPlugin(listener)
+```
+
+##### test
+You can install your plugin manually to test it using MassaStation:
+
+1. Get the `.zip` file download URL of the plugin you want to install. Make sure this URL matches the version of MassaStation you are using, your computer OS and architecture.
+2. Paste the URL in the `Install a plugin` field of the [plugin manager page](https://station.massa/web/store).
 3. Click on the `Install` button.
 
-> **Note:** A complete guide on how to create a module is available [here](https://docs.massa.net/docs/massaStation/guidelines)
+
+> **Note:** A complete guide on how to create a plugin is available [here](https://docs.massa.net/docs/massaStation/guidelines)
+
+
 
 ## License
 Please make sure to read our [Software License](./LICENSE.md)

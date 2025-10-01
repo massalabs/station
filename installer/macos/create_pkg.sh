@@ -110,7 +110,7 @@ if [ ! -z "$VERSION" ]; then
     # Remove the `v` prefix from the version.
     PKGVERSION=$VERSION
 else # If $VERSION is not set, use the latest git tag followed by `-dev`
-    PKGVERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')-dev
+    PKGVERSION=$(git describe --tags --abbrev=0 --match 'v[0-9]*' | sed 's/^v//')-dev
 fi
 
 main

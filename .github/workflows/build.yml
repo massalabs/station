@@ -41,7 +41,7 @@ jobs:
       - name: Set Version
         if: ${{ env.VERSION == '' }}
         run: |
-          export VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')-dev
+          export VERSION=$(git describe --tags --abbrev=0 --match 'v[0-9]*' | sed 's/^v//')-dev
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: installing dependencies
         uses: ./.github/actions/install
@@ -106,7 +106,7 @@ jobs:
       - name: Set Version
         if: ${{ env.VERSION == '' }}
         run: |
-          export VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')-dev
+          export VERSION=$(git describe --tags --abbrev=0 --match 'v[0-9]*' | sed 's/^v//')-dev
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Sync clock
         run: sudo sntp -sS time.windows.com # https://github.com/actions/runner/issues/2996#issuecomment-1833103110
@@ -156,7 +156,7 @@ jobs:
         if: ${{ env.VERSION == '' }}
         shell: bash
         run: |
-          export VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
+          export VERSION=$(git describe --tags --abbrev=0 --match 'v[0-9]*' | sed 's/^v//')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Setup Python
         uses: actions/setup-python@v4
