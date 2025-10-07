@@ -243,8 +243,9 @@ func getConfigFilePath() (string, error) {
 	return filePath, nil
 }
 
-// saveConfig writes the provided configuration to disk
-func saveConfig(cfg *ConfigFile) error {
+// saveConfigUnsafe writes the provided configuration to disk
+// Should be called inside a function that already holds the lock
+func saveConfigUnsafe(cfg *ConfigFile) error {
 	if cfg == nil {
 		return fmt.Errorf("config is nil")
 	}
@@ -264,6 +265,13 @@ func saveConfig(cfg *ConfigFile) error {
 	}
 
 	return nil
+}
+
+// SaveConfig saves the configuration to disk
+func (n *MSConfigManager) SaveConfig(cfg *ConfigFile) error {
+	n.configMutex.Lock()
+	defer n.configMutex.Unlock()
+	return saveConfigUnsafe(cfg)
 }
 
 // AddNetwork adds a new network to both memory and persistent configuration
@@ -306,7 +314,7 @@ func (n *MSConfigManager) AddNetwork(name, url string, makeDefault bool) error {
 		cfg.Networks[name] = RPCConfigItem{URL: url, Default: boolPtr(true)}
 	}
 
-	if err := saveConfig(cfg); err != nil {
+	if err := saveConfigUnsafe(cfg); err != nil {
 		return err
 	}
 
@@ -396,7 +404,7 @@ func (n *MSConfigManager) EditNetwork(currentName string, newURL *string, makeDe
 		cfg.Networks[currentName] = item
 	}
 
-	if err := saveConfig(cfg); err != nil {
+	if err := saveConfigUnsafe(cfg); err != nil {
 		return err
 	}
 
@@ -497,7 +505,7 @@ func (n *MSConfigManager) DeleteNetwork(name string) error {
 		}
 	}
 
-	if err := saveConfig(cfg); err != nil {
+	if err := saveConfigUnsafe(cfg); err != nil {
 		return err
 	}
 

@@ -103,6 +103,11 @@ func main() {
 			logger.Fatalf("while running all plugins: %w", err)
 		}
 
+		// This function is used to install the wallet and deweb plugins the first time station is started
+		if err := stationFirstRunSetup(configManager, pluginManager); err != nil {
+			logger.Fatalf("while running station first run setup: %w", err)
+		}
+
 		utils.OpenURL(&stationGUI, "https://"+config.MassaStationURL)
 	})
 

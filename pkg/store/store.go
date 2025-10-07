@@ -33,6 +33,57 @@ type Plugin struct {
 	IsCompatible        bool   `json:"-"`
 }
 
+//nolint:varnamelen
+func (plugin *Plugin) GetDLChecksumAndOs() (string, string, string, error) {
+	pluginURL := ""
+	os := runtime.GOOS
+	checksum := ""
+
+	switch os {
+	case "linux":
+		pluginURL = plugin.Assets.Linux.URL
+		checksum = plugin.Assets.Linux.Checksum
+	case "darwin":
+		switch arch := runtime.GOARCH; arch {
+		case "amd64":
+			pluginURL = plugin.Assets.MacosAmd64.URL
+			checksum = plugin.Assets.MacosAmd64.Checksum
+		case "arm64":
+			pluginURL = plugin.Assets.MacosArm64.URL
+			checksum = plugin.Assets.MacosArm64.Checksum
+		default:
+			return pluginURL, os, checksum, fmt.Errorf("unsupported OS '%s' and arch '%s'", os, arch)
+		}
+	case "windows":
+		pluginURL = plugin.Assets.Windows.URL
+		checksum = plugin.Assets.Windows.Checksum
+	default:
+		return pluginURL, os, checksum, fmt.Errorf("unsupported OS '%s'", os)
+	}
+
+	return pluginURL, os, checksum, nil
+}
+
+func (plugin *Plugin) IsPluginCompatible() (bool, error) {
+	if config.Version == "dev" {
+		return true, nil
+	}
+
+	config.Version = strings.TrimSuffix(config.Version, "-dev")
+
+	massaStationVersion, err := version.NewVersion(config.Version)
+	if err != nil {
+		return false, fmt.Errorf("while parsing MassaStation version: %w", err)
+	}
+
+	pluginMassaStationVersionConstraint, err := version.NewConstraint(plugin.MassaStationVersion)
+	if err != nil {
+		return false, fmt.Errorf("while parsing MassaStation version: %w", err)
+	}
+
+	return pluginMassaStationVersionConstraint.Check(massaStationVersion), nil
+}
+
 type File struct {
 	URL      string `json:"url"`
 	Checksum string `json:"checksum"`
@@ -105,37 +156,6 @@ func (s *Store) FetchPluginList() error {
 	return nil
 }
 
-//nolint:varnamelen
-func (plugin *Plugin) GetDLChecksumAndOs() (string, string, string, error) {
-	pluginURL := ""
-	os := runtime.GOOS
-	checksum := ""
-
-	switch os {
-	case "linux":
-		pluginURL = plugin.Assets.Linux.URL
-		checksum = plugin.Assets.Linux.Checksum
-	case "darwin":
-		switch arch := runtime.GOARCH; arch {
-		case "amd64":
-			pluginURL = plugin.Assets.MacosAmd64.URL
-			checksum = plugin.Assets.MacosAmd64.Checksum
-		case "arm64":
-			pluginURL = plugin.Assets.MacosArm64.URL
-			checksum = plugin.Assets.MacosArm64.Checksum
-		default:
-			return pluginURL, os, checksum, fmt.Errorf("unsupported OS '%s' and arch '%s'", os, arch)
-		}
-	case "windows":
-		pluginURL = plugin.Assets.Windows.URL
-		checksum = plugin.Assets.Windows.Checksum
-	default:
-		return pluginURL, os, checksum, fmt.Errorf("unsupported OS '%s'", os)
-	}
-
-	return pluginURL, os, checksum, nil
-}
-
 func (s *Store) FetchStorePeriodically() {
 	intervalMinutes := 10
 
@@ -186,24 +206,4 @@ func (s *Store) FindPluginByName(name string) *Plugin {
 	}
 
 	return nil
-}
-
-func (plugin *Plugin) IsPluginCompatible() (bool, error) {
-	if config.Version == "dev" {
-		return true, nil
-	}
-
-	config.Version = strings.TrimSuffix(config.Version, "-dev")
-
-	massaStationVersion, err := version.NewVersion(config.Version)
-	if err != nil {
-		return false, fmt.Errorf("while parsing MassaStation version: %w", err)
-	}
-
-	pluginMassaStationVersionConstraint, err := version.NewConstraint(plugin.MassaStationVersion)
-	if err != nil {
-		return false, fmt.Errorf("while parsing MassaStation version: %w", err)
-	}
-
-	return pluginMassaStationVersionConstraint.Check(massaStationVersion), nil
 }
