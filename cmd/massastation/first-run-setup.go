@@ -30,7 +30,7 @@ func stationFirstRunSetup(configManager *config.MSConfigManager, pluginManager *
 	}
 
 	/* set the setup done to true to avoid running the setup again
-	Following step of the funciton are not blocking and there is no problem if they fail
+	Following step of the function are not blocking and there is no problem if they fail
 	*/
 	cfg.StationFirstRunSetupDone = true
 	if err := configManager.SaveConfig(cfg); err != nil {
