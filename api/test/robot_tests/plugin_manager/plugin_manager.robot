@@ -8,6 +8,7 @@ Resource            variables.resource
 Resource            ../variables.resource
 
 Suite Setup         Suite Setup
+Suite Teardown      Delete all plugins
 
 *** Variables ***
 ${HELLO_WORLD_PLUGIN_VERSION}       v0.0.8
