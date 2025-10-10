@@ -26,7 +26,8 @@ Delete Wallet Plugin
     ${pluginId}=    Get Plugin ID From Author and Name    massalabs    wallet
     IF    "${pluginId}" != "${EMPTY}"
         Log To Console    Deleting plugin with ID ${pluginId}
-        ${response}=    DELETE    ${API_URL}/plugin-manager/${pluginId}
+        ${headers}=    Create Dictionary    Origin=http://localhost
+        ${response}=    DELETE    ${API_URL}/plugin-manager/${pluginId}    headers=${headers}
         Sleep    1 seconds    # Wait for the plugin to be deleted
     END
 
@@ -34,9 +35,11 @@ Install Wallet Plugin
     Log To Console    Installing Massa Wallet Plugin
     ${source}=    Set Variable
     ...    https://massa-station-assets.s3.eu-west-3.amazonaws.com/plugins/wallet/${WALLET_PLUGIN_VERSION}/wallet-plugin_${OS}-${ARCH}.zip
+    ${headers}=    Create Dictionary    Origin=http://localhost
     ${response}=    POST
     ...    ${API_URL}/plugin-manager
     ...    params=source=${source}
+    ...    headers=${headers}
     ...    expected_status=${STATUS_NO_CONTENT}
     Sleep    1 seconds    # Wait for the plugin to be registered
 

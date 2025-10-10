@@ -11,7 +11,7 @@ Suite Setup         Suite Setup
 Suite Teardown      Delete all plugins
 
 *** Variables ***
-${HELLO_WORLD_PLUGIN_VERSION}       v0.0.8
+${HELLO_WORLD_PLUGIN_VERSION}       v0.0.11
 
 *** Test Cases ***
 GET /plugin-manager with no plugins
@@ -23,9 +23,11 @@ GET /plugin-manager with no plugins
 POST /plugin-manager?source={{pluginSource}}
     ${source}=    Set Variable
     ...    https://github.com/massalabs/station-massa-hello-world/releases/download/${HELLO_WORLD_PLUGIN_VERSION}/station-massa-hello-world_${OS}-${ARCH}.zip
+    ${headers}=    Create Dictionary    Origin=http://localhost
     ${response}=    POST
     ...    ${API_URL}/plugin-manager
     ...    params=source=${source}
+    ...    headers=${headers}
     ...    expected_status=${STATUS_NO_CONTENT}
     Sleep    1 seconds    # Wait for the plugin to be registered
 
@@ -45,16 +47,20 @@ GET /plugin-manager/{id}
 POST /plugin-manager/{id}/execute with stop command
     ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
     ${data}=    Create Dictionary    command=stop
+    ${headers}=    Create Dictionary    Origin=http://localhost
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/${id}/execute
+    ...    headers=${headers}
     ...    expected_status=${STATUS_NO_CONTENT}
     ...    json=${data}
 
 POST /plugin-manager/{id}/execute with start command
     ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
     ${data}=    Create Dictionary    command=start
+    ${headers}=    Create Dictionary    Origin=http://localhost
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/${id}/execute
+    ...    headers=${headers}
     ...    expected_status=${STATUS_NO_CONTENT}
     ...    json=${data}
     Sleep    1 seconds    # Wait for the plugin to be started
@@ -62,8 +68,10 @@ POST /plugin-manager/{id}/execute with start command
 POST /plugin-manager/{id}/execute with restart command
     ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
     ${data}=    Create Dictionary    command=restart
+    ${headers}=    Create Dictionary    Origin=http://localhost
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/${id}/execute
+    ...    headers=${headers}
     ...    expected_status=${STATUS_NO_CONTENT}
     ...    json=${data}
     Sleep    1 seconds    # Wait for the plugin to be restarted
@@ -100,8 +108,10 @@ GET /plugin/{author}/{name}/
 POST /plugins-manager/{id}/execute already started
     ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
     ${data}=    Create Dictionary    command=start
+    ${headers}=    Create Dictionary    Origin=http://localhost
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/${id}/execute
+    ...    headers=${headers}
     ...    expected_status=${STATUS_BAD_REQUEST}
     ...    json=${data}
 
@@ -121,23 +131,28 @@ GET /plugin/${author}/${name} with invalid author and name
 
 POST /plugin-manager/{id}/execute with invalid id
     ${data}=    Create Dictionary    command=start
+    ${headers}=    Create Dictionary    Origin=http://localhost
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/invalid/execute
+    ...    headers=${headers}
     ...    expected_status=${STATUS_NOT_FOUND}
     ...    json=${data}
     Should Be Equal As Strings    ${response.json()['code']}    Plugin-0001
     Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching correlationID invalid
 
 DELETE /plugin-manager/{id} with invalid id
-    ${response}=    DELETE    ${API_URL}/plugin-manager/3829029    expected_status=${STATUS_INTERNAL_SERVER_ERROR}
+    ${headers}=    Create Dictionary    Origin=http://localhost
+    ${response}=    DELETE    ${API_URL}/plugin-manager/3829029    headers=${headers}    expected_status=${STATUS_INTERNAL_SERVER_ERROR}
     Should Be Equal As Strings
     ...    ${response.json()['message']}
     ...    getting plugin 3829029: no plugin matching correlationID 3829029
 
 POST /plugin-manager/{id}/execute with invalid body
     ${data}=    Create Dictionary    command=test
+    ${headers}=    Create Dictionary    Origin=http://localhost
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/invalid/execute
+    ...    headers=${headers}
     ...    expected_status=${STATUS_UNPROCESSABLE_ENTITY}
     ...    json=${data}
     Should Be Equal As Strings    ${response.json()['code']}    606
@@ -155,8 +170,10 @@ POST /plugin-manager/register with invalid id
     ...    home=sunt
     ...    api_spec=culpa enim sint aliqua
     ...    url=oluptate
+    ${headers}=    Create Dictionary    Origin=http://localhost
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/register
+    ...    headers=${headers}
     ...    expected_status=${STATUS_NOT_FOUND}
     ...    json=${data}
 
@@ -172,8 +189,10 @@ POST /plugin-manager/register with invalid body
     ...    logo=id et sunt irure,
     ...    home=sunt
     ...    api_spec=culpa enim sint aliqua
+    ${headers}=    Create Dictionary    Origin=http://localhost
     ${response}=    POST
     ...    ${API_URL}/plugin-manager/register
+    ...    headers=${headers}
     ...    expected_status=${STATUS_UNPROCESSABLE_ENTITY}
     ...    json=${data}
     Should Be Equal As Strings    ${response.json()['code']}    602

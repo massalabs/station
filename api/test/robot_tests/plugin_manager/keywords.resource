@@ -16,7 +16,8 @@ Delete all plugins
     Log To Console    Deleting all plugins
     ${response}=    GET    ${API_URL}/plugin-manager
     FOR    ${element}    IN    @{response.json()}
-        ${response}=    DELETE    ${API_URL}/plugin-manager/${element['id']}
+        ${headers}=    Create Dictionary    Origin=http://localhost
+        ${response}=    DELETE    ${API_URL}/plugin-manager/${element['id']}    headers=${headers}
         Status Should Be    ${STATUS_NO_CONTENT}
     END
 
@@ -25,5 +26,9 @@ Delete Hello World Plugin
     Log To Console    Deleting Hello World Plugin
     ${pluginId}=    Get Plugin ID From Author and Name    massalabs    hello-world
     IF    "${pluginId}" != "${EMPTY}"
-        ${response}=    DELETE    ${API_URL}/plugin-manager/${pluginId}
+        ${headers}=    Create Dictionary    Origin=http://localhost
+        ${response}=    DELETE    ${API_URL}/plugin-manager/${pluginId}    headers=${headers}
     END
+
+Suite Cleanup
+    Delete all plugins
