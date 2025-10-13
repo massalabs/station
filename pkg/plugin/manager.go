@@ -290,10 +290,6 @@ func (m *Manager) Update(correlationID string) error {
 		return fmt.Errorf("plugin %s is not updatable", plgn.info.Name)
 	}
 
-	if err != nil {
-		return fmt.Errorf("while fetching store list: %w", err)
-	}
-
 	pluginInStore := store.StoreInstance.FindPluginByName(plgn.info.Name)
 
 	url, _, _, err := pluginInStore.GetDLChecksumAndOs()
