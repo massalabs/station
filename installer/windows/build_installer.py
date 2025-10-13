@@ -17,7 +17,8 @@ BUILD_DIR = "buildmsi"
 # Metadata
 MANUFACTURER = "MassaLabs"
 PRODUCT_NAME = "MassaStation"
-VERSION = "0.0.0"
+DEFAULT_VERSION = "0.0.0"
+version = DEFAULT_VERSION
 
 # Binaries to be included in the installer
 MASSASTATION_BINARY = "massastation.exe"
@@ -73,7 +74,7 @@ def build_massastation():
         "go",
         "build", 
         "-ldflags",
-        f"-X github.com/massalabs/station/int/config.Version=v{VERSION}",
+        f"-X github.com/massalabs/station/int/config.Version=v{version}",
         "-o",
         "massastation.exe",
         "../cmd/massastation/"
@@ -118,7 +119,7 @@ def create_wxs_file():
     This file contains the list of files to be included in the installer, as well as
     the UI configuration, and the custom actions to be executed.
     """
-    installer_logfile = f"$env:Temp\\MASSASTATION_INSTALLER_{VERSION}.log"
+    installer_logfile = f"$env:Temp\\MASSASTATION_INSTALLER_{version}.log"
 
     wxs_content = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
@@ -127,7 +128,7 @@ def create_wxs_file():
         UpgradeCode="966ecd3d-a30f-4909-a0b4-0df045930e7d"
         Name="{PRODUCT_NAME}"
         Language="1033"
-        Version="{VERSION}"
+        Version="{version}"
         Manufacturer="{MANUFACTURER}"
     >
         <Package
@@ -375,7 +376,7 @@ def build_installer():
                 "WixUtilExtension",
                 "-sval",
                 "-out",
-                f"massastation_{VERSION}_amd64.msi",
+                f"massastation_{version}_amd64.msi",
                 os.path.join(BUILD_DIR, "config.wixobj"),
             ],
             check=True,
@@ -386,7 +387,7 @@ def build_installer():
     except err:
         print(err)
         sys.exit(1)
-    print(f"Installer built successfully: massastation_{VERSION}_amd64.msi")
+    print(f"Installer built successfully: massastation_{version}_amd64.msi")
 
 
 def install_dependencies():
@@ -427,12 +428,12 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    # Get $VERSION from environment variable
-    VERSION = os.environ.get("VERSION")
-    if VERSION is None or VERSION == "":
+    # Get version from VERSION environment variable
+    version_env = os.environ.get("VERSION")
+    if version_env is None or version_env == "":
         print("Getting version from git tags")
         try:
-            VERSION = subprocess.run(
+            version = subprocess.run(
                 ["git", "describe", "--tags", "--abbrev=0", "--match", "v[0-9]*"],
                 check=True,
                 capture_output=True,
@@ -444,6 +445,8 @@ if __name__ == "__main__":
         except Exception as gitErr:
             print("Error getting version: ", gitErr)
             sys.exit(1)
+    else:
+        version = version_env
 
     if not sys.platform.startswith("win"):
         if not args.force_build:
