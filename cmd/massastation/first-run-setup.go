@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"strings"
+	"path/filepath"
 
 	"github.com/massalabs/station/int/config"
 	"github.com/massalabs/station/pkg/logger"
@@ -11,9 +11,11 @@ import (
 )
 
 const (
-	walletPluginName = "Massa Wallet"
-	dewebPluginName  = "Local DeWeb Provider"
-	pluginAuthor     = "Massa Labs"
+	walletPluginName   = "Massa Wallet"
+	dewebPluginName    = "Local DeWeb Provider"
+	walletPluginFolder = "wallet-plugin"
+	dewebPluginFolder  = "deweb-plugin"
+	pluginAuthor       = "Massa Labs"
 )
 
 // stationFirstRunSetup process some setup task the first time station is started
@@ -40,10 +42,15 @@ func stationFirstRunSetup(configManager *config.MSConfigManager, pluginManager *
 		if err != nil {
 			return fmt.Errorf("could not get plugin %s, got error: %s", pluginId, err)
 		}
-		if plugin != nil && strings.Contains(plugin.Path, "wallet") {
+		if plugin == nil {
+			return fmt.Errorf("got no error while retrieving the plugin %s but returned a nil plugin", pluginId)
+		}
+
+		currentPluginFolder := filepath.Base(plugin.Path)
+		if currentPluginFolder == walletPluginFolder {
 			walletInstalled = true
 		}
-		if plugin != nil && strings.Contains(plugin.Path, "deweb") {
+		if currentPluginFolder == dewebPluginFolder {
 			dewebInstalled = true
 		}
 	}
