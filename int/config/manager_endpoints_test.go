@@ -31,7 +31,7 @@ func newTestManagerFromDefaults(t *testing.T) *MSConfigManager {
 	t.Helper()
 
 	// Save DefaultConfig to persistent storage for consistency
-	err := saveConfig(&DefaultConfig)
+	err := saveConfigUnsafe(&DefaultConfig)
 	if err != nil {
 		t.Fatalf("Failed to save default config: %v", err)
 	}
@@ -219,7 +219,7 @@ func TestDeleteNetwork_LastRemainingFails(t *testing.T) {
 	cfg.Networks = map[string]RPCConfigItem{
 		"onlyone": {URL: "http://localhost:19000/api", Default: boolPtr(true)},
 	}
-	require.NoError(t, saveConfig(cfg))
+	require.NoError(t, saveConfigUnsafe(cfg))
 
 	// In-memory manager with a single network
 	mgr := &MSConfigManager{

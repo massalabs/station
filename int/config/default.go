@@ -14,10 +14,12 @@ type RPCConfigItem struct {
 }
 
 type ConfigFile struct {
-	Networks map[string]RPCConfigItem `yaml:"Networks"`
+	StationFirstRunSetupDone bool                     `yaml:"StationFirstRunSetupDone"`
+	Networks                 map[string]RPCConfigItem `yaml:"Networks"`
 }
 
 var DefaultConfig = ConfigFile{
+	StationFirstRunSetupDone: false,
 	Networks: map[string]RPCConfigItem{
 		"mainnet": {
 			URL:     "https://mainnet.massa.net/api/v2",

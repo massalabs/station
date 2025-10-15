@@ -6,7 +6,7 @@ tasks:
     internal: true
     cmds:
       - cmd: echo Building MassaStation for {{.OS | default OS}}/{{.ARCH | default ARCH}}
-      - cmd: go build {{.BUILD_FLAGS}} -o {{.BIN_DIR}}/{{.APP_NAME}}{{.BIN_EXT}} ./cmd/massastation/main.go
+      - cmd: go build {{.BUILD_FLAGS}} -o {{.BIN_DIR}}/{{.APP_NAME}}{{.BIN_EXT}} ./cmd/massastation
     vars:
       # We need this check for nil and empty string because a simple check for empty string doesn't work as expected
       VERSION_FLAG: '{{if ne .VERSION nil}}{{if ne .VERSION ""}}-X github.com/massalabs/station/int/config.Version=v{{.VERSION}}{{end}}{{end}}'
