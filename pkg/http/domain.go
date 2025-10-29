@@ -52,7 +52,7 @@ func ExtractHostname(origin string) string {
 	return parsed.Hostname()
 }
 
-// isSimpleHostname checks if a string looks like a simple hostname
+// IsSimpleHostname checks if a string looks like a simple hostname
 // (contains only valid hostname characters and no suspicious patterns)
 func IsSimpleHostname(s string) bool {
 	if s == "" {
