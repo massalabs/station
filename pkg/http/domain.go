@@ -24,7 +24,7 @@ func GetRequestOrigin(r *http.Request) string {
 	return "unknown"
 }
 
-// extractHostname safely extracts the hostname from a URL string
+// ExtractHostname safely extracts the hostname from a URL string
 func ExtractHostname(origin string) string {
 	if origin == "" {
 		return ""
