@@ -61,7 +61,8 @@ jobs:
         if: matrix.target != 'windows'
         shell: bash
         run: |
-          task package
+          task package OS=${{ matrix.target }}
+          ls -alh 
       - name: Rename binary for ${{ matrix.target }} on ${{ matrix.arch }}
         shell: bash
         run: |
@@ -81,9 +82,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: massastation_${{ matrix.target }}_${{ matrix.arch }}_package
-          path: |
-            MassaStation.app
-            MassaStation.tar.xz
+          path: ${{ matrix.target == 'darwin' && 'MassaStation.app' || 'MassaStation.tar.xz' }}
           if-no-files-found: error
           retention-days: 1
 
