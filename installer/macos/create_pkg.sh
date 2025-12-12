@@ -74,7 +74,6 @@ package() {
 }
 
 main() {
-    ls -alh
     # build massastation only if the .app is not present
     test -d $MASSASTATION_APPLICATION_NAME || build_massastation
 

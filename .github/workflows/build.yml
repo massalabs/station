@@ -17,14 +17,14 @@ jobs:
     strategy:
       matrix:
         include:
-          # - os: ubuntu-24.04
-          #   arch: amd64
-          #   target: windows
-          #   cc: x86_64-w64-mingw32-gcc
-          #   ext: .exe
-          # - os: ubuntu-24.04
-          #   arch: amd64
-          #   target: linux
+          - os: ubuntu-24.04
+            arch: amd64
+            target: windows
+            cc: x86_64-w64-mingw32-gcc
+            ext: .exe
+          - os: ubuntu-24.04
+            arch: amd64
+            target: linux
           - os: macos-15
             arch: amd64
             target: darwin
@@ -62,8 +62,6 @@ jobs:
         shell: bash
         run: |
           task package OS=${{ matrix.target }}
-          ls -alh 
-          ls -alh MassaStation.app
       - name: Rename binary for ${{ matrix.target }} on ${{ matrix.arch }}
         shell: bash
         run: |
@@ -80,6 +78,7 @@ jobs:
       - name: Prepare macOS app bundle for upload
         if: matrix.target == 'darwin'
         shell: bash
+        # The actions/upload-artifact only import content of a folder, so we need to create a temporary folder to upload MassaStation.app
         run: |
           mkdir -p package_output
           cp -R MassaStation.app package_output/
@@ -128,8 +127,6 @@ jobs:
         with:
           name: massastation_darwin_${{ matrix.arch }}_package
           path: installer
-      - name: List installer directory
-        run: ls -alh
       - name: Import Code Signing Certificates
         uses: apple-actions/import-codesign-certs@v2
         with:
