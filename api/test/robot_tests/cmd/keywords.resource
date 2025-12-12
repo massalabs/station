@@ -14,14 +14,7 @@ Suite Setup
     Basic Suite Setup
     Switch To Buildnet
     Init SC build environment
-    #${GITHUB_ACTIONS}    Get Environment Variable    GITHUB_ACTIONS    false
-    #IF    "${GITHUB_ACTIONS}" == "true"
-    #    Log To Console    We are in the CI
-    #    Delete Wallet Plugin
-    #    Install Wallet Plugin
-    #ELSE
     Install Wallet Plugin
-    #END
 
 Delete Wallet Plugin
     Log To Console    Attempt to delete Massa Wallet Plugin if exist
