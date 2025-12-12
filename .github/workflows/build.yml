@@ -17,14 +17,14 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-24.04
-            arch: amd64
-            target: windows
-            cc: x86_64-w64-mingw32-gcc
-            ext: .exe
-          - os: ubuntu-24.04
-            arch: amd64
-            target: linux
+          # - os: ubuntu-24.04
+          #   arch: amd64
+          #   target: windows
+          #   cc: x86_64-w64-mingw32-gcc
+          #   ext: .exe
+          # - os: ubuntu-24.04
+          #   arch: amd64
+          #   target: linux
           - os: macos-15
             arch: amd64
             target: darwin
@@ -122,7 +122,7 @@ jobs:
           name: massastation_darwin_${{ matrix.arch }}_package
           path: installer
       - name: List installer directory
-        run: ls -alh installer
+        run: ls -alh
       - name: Import Code Signing Certificates
         uses: apple-actions/import-codesign-certs@v2
         with:
