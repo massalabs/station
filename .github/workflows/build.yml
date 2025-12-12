@@ -76,15 +76,20 @@ jobs:
             massastation_${{ matrix.target }}_${{ matrix.arch }}.exe
           if-no-files-found: error
           retention-days: 7
-      - name: Upload Package
-        # We don't need to upload package for windows since we do not package for windows.
-        if: matrix.target != 'windows'
+      - name: Upload Package (macOS)
+        if: matrix.target == 'darwin'
         uses: actions/upload-artifact@v4
         with:
           name: massastation_${{ matrix.target }}_${{ matrix.arch }}_package
-          path: |
-            MassaStation.app
-            MassaStation.tar.xz
+          path: MassaStation.app/
+          if-no-files-found: error
+          retention-days: 1
+      - name: Upload Package (Linux)
+        if: matrix.target == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: massastation_${{ matrix.target }}_${{ matrix.arch }}_package
+          path: MassaStation.tar.xz
           if-no-files-found: error
           retention-days: 1
 
