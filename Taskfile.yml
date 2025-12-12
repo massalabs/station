@@ -19,7 +19,7 @@ tasks:
       - cmd: go install github.com/go-swagger/go-swagger/cmd/swagger@latest
       - cmd: go install golang.org/x/tools/cmd/stringer@latest
       - cmd: go install go.uber.org/mock/mockgen@v0.2.0
-      - cmd: go install fyne.io/fyne/v2/cmd/fyne@latest
+      - cmd: go install fyne.io/tools/cmd/fyne@latest
 
   install-dev:
     desc: Installs development dependencies (fmt, lint, etc.)
@@ -102,7 +102,8 @@ tasks:
     desc: Packages MassaStation using fyne
     platforms: [linux, darwin]
     cmds:
-      - cmd: fyne package -name MassaStation -icon ./int/systray/embedded/logo.png -appID net.massalabs.massastation -exe massastation
+      - cmd: fyne package -name MassaStation -icon ../../int/systray/embedded/logo.png --app-id net.massalabs.massastation -src ./cmd/massastation
+        platforms: [linux]
 
   generate-dirs:
     desc: Generates required directories for MassaStation

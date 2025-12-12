@@ -30,7 +30,7 @@ Install Wallet Plugin
     Log To Console    Attempt to install Massa Wallet Plugin if not already installed
     ${pluginId}=    Get Plugin ID From Author and Name    massalabs    wallet
     IF      "${pluginId}" == "${EMPTY}"
-        Log To Console    Installing Massa Wallet Plugin with ID ${pluginId}
+        Log To Console    Installing Massa Wallet Plugin because it does not exist yet
         ${source}=    Set Variable
         ...    https://massa-station-assets.s3.eu-west-3.amazonaws.com/plugins/wallet/${WALLET_PLUGIN_VERSION}/wallet-plugin_${OS}-${ARCH}.zip
         ${headers}=    Create Dictionary    Origin=http://localhost

@@ -29,6 +29,3 @@ Delete Hello World Plugin
         ${headers}=    Create Dictionary    Origin=http://localhost
         ${response}=    DELETE    ${API_URL}/plugin-manager/${pluginId}    headers=${headers}
     END
-
-Suite Cleanup
-    Delete all plugins

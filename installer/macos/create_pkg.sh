@@ -37,7 +37,7 @@ fatal() {
 
 # Install dependencies required to build the MassaStation binary.
 install_massastation_build_dependencies() {
-    go install fyne.io/fyne/v2/cmd/fyne@latest
+    go install fyne.io/tools/cmd/fyne@latest
     go install github.com/go-swagger/go-swagger/cmd/swagger@latest
     go install golang.org/x/tools/cmd/stringer@latest
 }
@@ -50,7 +50,7 @@ build_massastation() {
     export GOARCH=$ARCH
     export CGO_ENABLED=1
     # -icon is based on the path of the -src flag.
-    fyne package -icon ../../int/systray/embedded/logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_APPLICATION_NAME"
+    fyne package -icon ../../int/systray/embedded/logo.png -name MassaStation --app-id com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_APPLICATION_NAME"
     chmod +x $MASSASTATION_APPLICATION_NAME || fatal "failed to chmod $MASSASTATION_APPLICATION_NAME"
 }
 

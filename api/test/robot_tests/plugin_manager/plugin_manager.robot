@@ -8,7 +8,6 @@ Resource            variables.resource
 Resource            ../variables.resource
 
 Suite Setup         Suite Setup
-Suite Teardown      Delete all plugins
 
 *** Variables ***
 ${HELLO_WORLD_PLUGIN_VERSION}       v0.0.11
@@ -264,7 +263,7 @@ DELETE /plugin-manager/{id} with not allowed origin header
 
 DELETE /plugin-manager/{id} hello-world plugin
     ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
-    ${headers}=    Create Dictionary    Origin=station.massa
+    ${headers}=    Create Dictionary    Origin=http://station.massa
     ${response}=    DELETE    ${API_URL}/plugin-manager/${id}    headers=${headers}    expected_status=${STATUS_NO_CONTENT}
     ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
     Should Be Equal As Strings      ${id}       ${EMPTY}
