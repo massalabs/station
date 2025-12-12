@@ -20,7 +20,7 @@ const _Status_name = "StartingUpDownShuttingDownCrashed"
 var _Status_index = [...]uint8{0, 8, 10, 14, 26, 33}
 
 func (i Status) String() string {
-	idx := int(i) - 0
+	idx := int(i)
 	if i < 0 || idx >= len(_Status_index)-1 {
 		return "Status(" + strconv.FormatInt(int64(i), 10) + ")"
 	}

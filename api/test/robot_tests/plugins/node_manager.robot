@@ -10,12 +10,9 @@ Suite Setup         Basic Suite Setup
 *** Variables ***
 ${NODE_MANAGER_PLUGIN_VERSION}       v0.4.3
 
-
-    
-
 *** Test Cases ***
 Install node manager plugin
-    Log To Console    Installing Node manager Plugin
+    Log To Console    Installing Node Manager Plugin
     ${source}=    Set Variable
     ...    https://massa-station-assets.s3.eu-west-3.amazonaws.com/plugins/node-manager/${NODE_MANAGER_PLUGIN_VERSION}/node-manager-plugin_${OS}-${ARCH}.zip
     ${headers}=    Create Dictionary    Origin=http://localhost
