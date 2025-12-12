@@ -63,6 +63,7 @@ jobs:
         run: |
           task package OS=${{ matrix.target }}
           ls -alh 
+          ls -alh MassaStation.app
       - name: Rename binary for ${{ matrix.target }} on ${{ matrix.arch }}
         shell: bash
         run: |
@@ -76,12 +77,18 @@ jobs:
             massastation_${{ matrix.target }}_${{ matrix.arch }}.exe
           if-no-files-found: error
           retention-days: 7
+      - name: Prepare macOS app bundle for upload
+        if: matrix.target == 'darwin'
+        shell: bash
+        run: |
+          mkdir -p package_output
+          cp -R MassaStation.app package_output/
       - name: Upload Package (macOS)
         if: matrix.target == 'darwin'
         uses: actions/upload-artifact@v4
         with:
           name: massastation_${{ matrix.target }}_${{ matrix.arch }}_package
-          path: MassaStation.app/
+          path: package_output/
           if-no-files-found: error
           retention-days: 1
       - name: Upload Package (Linux)
