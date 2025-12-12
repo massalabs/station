@@ -12,7 +12,7 @@ func checksum(input []byte) (cksum [4]byte) {
 	h2 := sha256.Sum256(h[:])
 	copy(cksum[:], h2[:4])
 
-	return
+	return cksum
 }
 
 const checkHeaderLength = 4
@@ -45,7 +45,7 @@ func CheckDecode(input string) (result []byte, err error) {
 	payload := decoded[:len(decoded)-4]
 	result = append(result, payload...)
 
-	return
+	return result, err
 }
 
 // VersionedCheckEncode encodes a byte array  and a version to base58 with a checksum.

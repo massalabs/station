@@ -8,7 +8,7 @@ Resource            ../variables.resource
 Suite Setup         Basic Suite Setup
 
 *** Variables ***
-${NODE_MANAGER_PLUGIN_VERSION}       v0.2.2
+${NODE_MANAGER_PLUGIN_VERSION}       v0.4.3
 
 
     

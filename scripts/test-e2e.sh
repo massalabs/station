@@ -13,5 +13,7 @@ task generate
 task build
 task run &
 
+# Wait for the station to be ready
+sleep 3
 cd api/test
 robot robot_tests

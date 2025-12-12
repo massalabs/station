@@ -31,6 +31,25 @@ POST /plugin-manager?source={{pluginSource}}
     ...    expected_status=${STATUS_NO_CONTENT}
     Sleep    1 seconds    # Wait for the plugin to be registered
 
+POST /plugin-manager?source={{pluginSource}} should fail when Origin not provided
+    ${source}=    Set Variable
+    ...    https://github.com/massalabs/station-massa-hello-world/releases/download/${HELLO_WORLD_PLUGIN_VERSION}/station-massa-hello-world_${OS}-${ARCH}.zip
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager
+    ...    params=source=${source}
+    ...    expected_status=${STATUS_FORBIDDEN}
+
+POST /plugin-manager?source={{pluginSource}} should fail when Origin not allowed
+    ${source}=    Set Variable
+    ...    https://github.com/massalabs/station-massa-hello-world/releases/download/${HELLO_WORLD_PLUGIN_VERSION}/station-massa-hello-world_${OS}-${ARCH}.zip
+    ${headers}=    Create Dictionary    Origin=http://malicious.example.com
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager
+    ...    params=source=${source}
+    ...    headers=${headers}
+    ...    expected_status=${STATUS_FORBIDDEN}
+
+
 GET /plugin-manager with one plugin
     ${response}=    GET    ${API_URL}/plugin-manager
     Status Should Be    ${STATUS_OK}
@@ -53,6 +72,29 @@ POST /plugin-manager/{id}/execute with stop command
     ...    headers=${headers}
     ...    expected_status=${STATUS_NO_CONTENT}
     ...    json=${data}
+
+POST /plugin-manager/{id}/execute should fail when Origin not allowed
+    ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
+    ${data}=    Create Dictionary    command=stop
+    ${headers}=    Create Dictionary    Origin=http://malicious.example.com
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager/${id}/execute
+    ...    headers=${headers}
+    ...    expected_status=${STATUS_FORBIDDEN}
+    ...    json=${data}
+    ${data}=    Create Dictionary    command=start
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager/${id}/execute
+    ...    headers=${headers}
+    ...    expected_status=${STATUS_FORBIDDEN}
+    ...    json=${data}
+    ${data}=    Create Dictionary    command=restart
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager/${id}/execute
+    ...    headers=${headers}
+    ...    expected_status=${STATUS_FORBIDDEN}
+    ...    json=${data}
+
 
 POST /plugin-manager/{id}/execute with start command
     ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
@@ -140,13 +182,6 @@ POST /plugin-manager/{id}/execute with invalid id
     Should Be Equal As Strings    ${response.json()['code']}    Plugin-0001
     Should Be Equal As Strings    ${response.json()['message']}    get plugin error: no plugin matching correlationID invalid
 
-DELETE /plugin-manager/{id} with invalid id
-    ${headers}=    Create Dictionary    Origin=http://localhost
-    ${response}=    DELETE    ${API_URL}/plugin-manager/3829029    headers=${headers}    expected_status=${STATUS_INTERNAL_SERVER_ERROR}
-    Should Be Equal As Strings
-    ...    ${response.json()['message']}
-    ...    getting plugin 3829029: no plugin matching correlationID 3829029
-
 POST /plugin-manager/{id}/execute with invalid body
     ${data}=    Create Dictionary    command=test
     ${headers}=    Create Dictionary    Origin=http://localhost
@@ -197,3 +232,39 @@ POST /plugin-manager/register with invalid body
     ...    json=${data}
     Should Be Equal As Strings    ${response.json()['code']}    602
     Should Be Equal As Strings    ${response.json()['message']}    body.url in body is required
+
+POST /plugin-manager/register with not allowed origin header
+    ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
+    ${data}=    Create Dictionary
+    ...    id=
+    ...    url=http://localhost:1234
+    ${headers}=    Create Dictionary    Origin=http://malicious.example.com
+    ${response}=    POST
+    ...    ${API_URL}/plugin-manager/register
+    ...    headers=${headers}
+    ...    expected_status=${STATUS_FORBIDDEN}
+    ...    json=${data}
+    ${response_str}=    Convert To String    ${response.content}
+    Should Contain    ${response_str}    Forbidden: Operations restricted to authorized domains
+
+
+DELETE /plugin-manager/{id} with invalid id
+    ${headers}=    Create Dictionary    Origin=http://localhost
+    ${response}=    DELETE    ${API_URL}/plugin-manager/3829029    headers=${headers}    expected_status=${STATUS_INTERNAL_SERVER_ERROR}
+    Should Be Equal As Strings
+    ...    ${response.json()['message']}
+    ...    getting plugin 3829029: no plugin matching correlationID 3829029
+
+DELETE /plugin-manager/{id} with not allowed origin header
+    ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
+    ${headers}=    Create Dictionary    Origin=http://malicious.example.com
+    ${response}=    DELETE    ${API_URL}/plugin-manager/${id}    headers=${headers}    expected_status=${STATUS_FORBIDDEN}
+    ${response_str}=    Convert To String    ${response.content}
+    Should Contain    ${response_str}    Forbidden: Operations restricted to authorized domains
+
+DELETE /plugin-manager/{id} hello-world plugin
+    ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
+    ${headers}=    Create Dictionary    Origin=station.massa
+    ${response}=    DELETE    ${API_URL}/plugin-manager/${id}    headers=${headers}    expected_status=${STATUS_NO_CONTENT}
+    ${id}=    Get Plugin ID From Author and Name    massa-labs    hello-world
+    Should Be Equal As Strings      ${id}       ${EMPTY}
