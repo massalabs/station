@@ -7,8 +7,7 @@ import { Deweb } from './Dashboard/Deweb';
 import { Syntra } from './Dashboard/Syntra';
 import { MassaGovernance } from './Dashboard/MassaGovernance';
 import { BuyMas } from './Dashboard/BuyMas';
-import { MASSA_WALLET, NODE_MANAGER } from '@/const';
-import { MassaPluginModel, MassaStoreModel, MassaLabsPlugins } from '@/models';
+import { MassaLabsPlugins, MassaPluginModel, MassaStoreModel } from '@/models';
 import { MassaWallet } from './Dashboard/MassaWallet';
 import { usePluginState } from '@/custom/hooks/usePluginState';
 
@@ -49,7 +48,7 @@ export function DashboardStation(props: IDashboardStationProps) {
           status={walletPlugin.plugin?.status}
           isUpdating={walletPlugin.isUpdating}
           isLoading={walletPlugin.isInstalling}
-          title={MASSA_WALLET}
+          title={MassaLabsPlugins.MassaWallet}
           onClickActive={() =>
             walletPlugin.plugin &&
             window.open(walletPlugin.plugin.home, '_blank')
@@ -80,7 +79,7 @@ export function DashboardStation(props: IDashboardStationProps) {
           status={nodeManagerPlugin.plugin?.status}
           isUpdating={nodeManagerPlugin.isUpdating}
           isLoading={nodeManagerPlugin.isInstalling}
-          title={NODE_MANAGER}
+          title={MassaLabsPlugins.NodeManager}
           onClickActive={() =>
             nodeManagerPlugin.plugin &&
             window.open(nodeManagerPlugin.plugin.home, '_blank')
