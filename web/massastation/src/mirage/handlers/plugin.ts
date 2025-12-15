@@ -48,7 +48,7 @@ export function routesForPlugins(server: Server) {
       return new Response(400, {}, { code: '400', error: 'Missing source URL' });
     }
 
-    const sourcePath = sourceURL.split('?').pop();
+    const sourcePath = sourceURL.split('?')[0];
 
     const storePlugin = schema.findBy(
       'store',
