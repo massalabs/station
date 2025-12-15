@@ -41,11 +41,18 @@ export function routesForPlugins(server: Server) {
   });
 
   server.post('plugin-manager', (schema: AppSchema, request) => {
-    const sourceURL = request.queryParams.source;
+    const sourceParam = request.queryParams.source;
+    const sourceURL = Array.isArray(sourceParam) ? sourceParam[0] : sourceParam;
+
+    if (!sourceURL) {
+      return new Response(400, {}, { code: '400', error: 'Missing source URL' });
+    }
+
+    const sourcePath = sourceURL.split('?').pop();
 
     const storePlugin = schema.findBy(
       'store',
-      (store) => store.file.url === sourceURL.split('?').pop(),
+      (store) => store.file.url === sourcePath,
     );
     const newPlugin = {
       id: faker.number.int().toString(),
