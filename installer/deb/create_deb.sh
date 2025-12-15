@@ -20,7 +20,7 @@ fatal() {
 # Install dependencies required to build the MassaStation binary.
 install_massastation_build_dependencies() {
     sudo apt-get install libgl1-mesa-dev xorg-dev -y || fatal "failed to install libgl1-mesa-dev xorg-dev"
-    go install fyne.io/fyne/v2/cmd/fyne@latest || fatal "failed to install fyne.io/fyne/v2/cmd/fyne@latest"
+    go install fyne.io/tools/cmd/fyne@latest || fatal "failed to install fyne.io/tools/cmd/fyne@latest"
     go install github.com/go-swagger/go-swagger/cmd/swagger@latest || fatal "failed to install github.com/go-swagger/go-swagger/cmd/swagger@latest"
     go install golang.org/x/tools/cmd/stringer@latest || fatal "failed to install golang.org/x/tools/cmd/stringer@latest"
 }
@@ -33,7 +33,7 @@ build_massastation() {
     export GOARCH=$ARCH
     export CGO_ENABLED=1
     # -icon is based on the path of the -src flag.
-    fyne package -icon ../../int/systray/embedded/logo.png -name MassaStation -appID com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_BINARY_NAME"
+    fyne package -icon ../../int/systray/embedded/logo.png -name MassaStation --app-id com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_BINARY_NAME"
 }
 
 # Delete the build directory if it exists.
@@ -72,10 +72,10 @@ main() {
     chmod +x $BUILD_DIR/usr/bin/$MASSASTATION_BINARY_NAME || fatal "failed to make $MASSASTATION_BINARY_NAME executable"
 
     mkdir -p $BUILD_DIR/usr/share/applications || fatal "failed to create $BUILD_DIR/usr/share/applications"
-    cp $TMP_DIR/usr/local/share/applications/MassaStation.desktop $BUILD_DIR/usr/share/applications || fatal "failed to copy MassaStation.desktop to $BUILD_DIR/usr/share/applications"
+    cp $TMP_DIR/usr/local/share/applications/net.massalabs.massastation.desktop $BUILD_DIR/usr/share/applications || fatal "failed to copy net.massalabs.massastation.desktop to $BUILD_DIR/usr/share/applications"
 
     mkdir -p $BUILD_DIR/usr/share/pixmaps || fatal "failed to create $BUILD_DIR/usr/share/pixmaps"
-    cp $TMP_DIR/usr/local/share/pixmaps/MassaStation.png $BUILD_DIR/usr/share/pixmaps || fatal "failed to copy MassaStation.png to $BUILD_DIR/usr/share/pixmaps"
+    cp $TMP_DIR/usr/local/share/pixmaps/net.massalabs.massastation.png $BUILD_DIR/usr/share/pixmaps || fatal "failed to copy net.massalabs.massastation.png to $BUILD_DIR/usr/share/pixmaps"
 
     mkdir -p $BUILD_DIR/usr/share/doc/massastation || fatal "failed to create $BUILD_DIR/usr/share/doc/massastation"
     cp common/MassaStation_ToS.txt $BUILD_DIR/usr/share/doc/massastation/terms-and-conditions.txt || fatal "failed to copy MassaStation_ToS.txt to $BUILD_DIR/usr/share/doc/massastation/terms-and-conditions.txt"

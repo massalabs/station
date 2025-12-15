@@ -17,7 +17,7 @@ func U64ToBytes(nb uint64) (bytes []byte) {
 	bytes = make([]byte, BytesPerUint64)
 	binary.LittleEndian.PutUint64(bytes, nb)
 
-	return
+	return bytes
 }
 
 // Encode uint32 to byte array.
@@ -26,7 +26,7 @@ func U32ToBytes(nb int) (bytes []byte) {
 	bytes = make([]byte, BytesPerUint32)
 	binary.LittleEndian.PutUint32(bytes, u32)
 
-	return
+	return bytes
 }
 
 // Encode int32 to byte array.
@@ -35,7 +35,7 @@ func I32ToBytes(nb int) (bytes []byte) {
 	bytes = make([]byte, BytesPerUint32)
 	binary.LittleEndian.PutUint32(bytes, uint32(i32))
 
-	return
+	return bytes
 }
 
 func ToBytes(str string) []byte {

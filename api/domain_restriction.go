@@ -29,7 +29,7 @@ func DomainRestrictionMiddleware(handler http.Handler) http.Handler {
 }
 
 func IsRestrictedPath(path string) bool {
-	restrictedPaths := []string{"/network"}
+	restrictedPaths := []string{"/network", "/plugin-manager"}
 	for _, restrictedPath := range restrictedPaths {
 		if strings.HasPrefix(path, restrictedPath) {
 			return true

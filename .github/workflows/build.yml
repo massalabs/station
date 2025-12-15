@@ -25,10 +25,10 @@ jobs:
           - os: ubuntu-24.04
             arch: amd64
             target: linux
-          - os: macos-13
+          - os: macos-15
             arch: amd64
             target: darwin
-          - os: macos-13
+          - os: macos-15
             arch: arm64
             target: darwin
 
@@ -61,7 +61,7 @@ jobs:
         if: matrix.target != 'windows'
         shell: bash
         run: |
-          task package
+          task package OS=${{ matrix.target }}
       - name: Rename binary for ${{ matrix.target }} on ${{ matrix.arch }}
         shell: bash
         run: |
@@ -75,15 +75,27 @@ jobs:
             massastation_${{ matrix.target }}_${{ matrix.arch }}.exe
           if-no-files-found: error
           retention-days: 7
-      - name: Upload Package
-        # We don't need to upload package for windows since we do not package for windows.
-        if: matrix.target != 'windows'
+      - name: Prepare macOS app bundle for upload
+        if: matrix.target == 'darwin'
+        shell: bash
+        # The actions/upload-artifact only import content of a folder, so we need to create a temporary folder to upload MassaStation.app
+        run: |
+          mkdir -p package_output
+          cp -R MassaStation.app package_output/
+      - name: Upload Package (macOS)
+        if: matrix.target == 'darwin'
         uses: actions/upload-artifact@v4
         with:
           name: massastation_${{ matrix.target }}_${{ matrix.arch }}_package
-          path: |
-            MassaStation.app
-            MassaStation.tar.xz
+          path: package_output/
+          if-no-files-found: error
+          retention-days: 1
+      - name: Upload Package (Linux)
+        if: matrix.target == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: massastation_${{ matrix.target }}_${{ matrix.arch }}_package
+          path: MassaStation.tar.xz
           if-no-files-found: error
           retention-days: 1
 
@@ -97,7 +109,7 @@ jobs:
       matrix:
         arch: [amd64, arm64]
 
-    runs-on: macos-13
+    runs-on: macos-15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
