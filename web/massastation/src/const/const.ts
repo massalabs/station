@@ -1,7 +1,3 @@
-export const MASSA_WALLET = 'Massa Wallet';
-
-export const NODE_MANAGER = 'Node Manager';
-
 export const massastationName = 'MassaStation';
 
 // We store each possible variation of the massas's name in the array

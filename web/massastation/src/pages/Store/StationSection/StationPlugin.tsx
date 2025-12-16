@@ -17,10 +17,9 @@ import {
 } from 'react-icons/fi';
 import {
   massalabsNomination,
-  NODE_MANAGER,
 } from '@/const';
 import { PluginCommand } from '@/custom/hooks/useUpdatePlugin';
-import { PLUGIN_LIST } from '@/pages/Index/DashboardStation';
+import { MassaLabsPlugins } from '@/models';
 import Intl from '@/i18n/i18n';
 
 import { MassaPluginModel, PluginStatus } from '@/models';
@@ -80,7 +79,7 @@ export function StationPlugin({
     title: name,
     subtitle: author,
     tag:
-      PLUGIN_LIST.includes(name) && name === NODE_MANAGER ? (
+      name === MassaLabsPlugins.NodeManager ? (
         <Tag type="warning">{Intl.t('store.beta')}</Tag>
       ) : null,
     subtitleIcon: massalabsNomination.includes(author) ? <Certificate /> : null,

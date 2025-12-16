@@ -37,7 +37,7 @@ fatal() {
 
 # Install dependencies required to build the MassaStation binary.
 install_massastation_build_dependencies() {
-    go install fyne.io/tools/cmd/fyne@latest
+    go install fyne.io/tools/cmd/fyne@v1.7.0
     go install github.com/go-swagger/go-swagger/cmd/swagger@latest
     go install golang.org/x/tools/cmd/stringer@latest
 }

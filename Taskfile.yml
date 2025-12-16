@@ -19,7 +19,7 @@ tasks:
       - cmd: go install github.com/go-swagger/go-swagger/cmd/swagger@latest
       - cmd: go install golang.org/x/tools/cmd/stringer@latest
       - cmd: go install go.uber.org/mock/mockgen@v0.2.0
-      - cmd: go install fyne.io/tools/cmd/fyne@latest
+      - cmd: go install fyne.io/tools/cmd/fyne@v1.7.0
 
   install-dev:
     desc: Installs development dependencies (fmt, lint, etc.)
@@ -27,6 +27,7 @@ tasks:
       - cmd: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.3.1
       - cmd: go install github.com/daixiang0/gci@latest
       - cmd: go install mvdan.cc/gofumpt@latest
+      - cmd: go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
       - task: install-dev-win
 
   install-dev-win:
@@ -67,6 +68,12 @@ tasks:
     dir: web/massastation
     cmds:
       - cmd: npm run fmt
+
+  audit-dependencies:
+    desc: Audits dependencies
+    cmds:
+      - cmd: govulncheck -show verbose ./...
+      - cmd: cd web/massastation && npm audit 2>&1 || true # ignore errors
 
   run:
     desc: Runs MassaStation in DEBUG mode
