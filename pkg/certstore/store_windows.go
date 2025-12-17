@@ -1,5 +1,4 @@
 //go:build windows
-// +build windows
 
 // This package provides a collection of operations to manage system certificate stores on Windows.
 //
