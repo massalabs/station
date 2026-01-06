@@ -26,11 +26,16 @@ const (
 // ErrNetworkAlreadyExists is returned when trying to add a network with a name that already exists
 var ErrNetworkAlreadyExists = errors.New("network already exists")
 
+// NetworkChangeCallback is a function type called when the network changes.
+type NetworkChangeCallback func()
+
 // MSConfigManager represents a manager for network configurations.
 type MSConfigManager struct {
-	Network     NetworkConfig
-	configMutex sync.RWMutex
-	stopRefresh func()
+	Network            NetworkConfig
+	configMutex        sync.RWMutex
+	stopRefresh        func()
+	onNetworkChange    NetworkChangeCallback
+	networkChangeMutex sync.RWMutex
 }
 
 // NetworkManager is an alias for backward compatibility
@@ -130,7 +135,14 @@ func newMSConfigManager() (*MSConfigManager, error) {
 }
 
 func (n *MSConfigManager) CurrentNetwork() *RPCInfos {
-	return n.Network.currentNetwork
+	n.configMutex.RLock()
+	defer n.configMutex.RUnlock()
+	if n.Network.currentNetwork == nil {
+		return nil
+	}
+	// Return a copy to avoid data races when caller accesses fields after lock release
+	networkCopy := *n.Network.currentNetwork
+	return &networkCopy
 }
 
 // Networks returns a slice of available network names (for backward compatibility)
@@ -145,12 +157,28 @@ func (n *MSConfigManager) Networks() *[]string {
 	return &options
 }
 
+// GetNetworkInfos returns a thread-safe copy of all network configurations.
+func (n *MSConfigManager) GetNetworkInfos() []RPCInfos {
+	n.configMutex.RLock()
+	defer n.configMutex.RUnlock()
+
+	networks := make([]RPCInfos, len(n.Network.Networks))
+	copy(networks, n.Network.Networks)
+	return networks
+}
+
+// SetNetworkChangeCallback sets a callback function that will be called whenever the network changes.
+func (n *MSConfigManager) SetNetworkChangeCallback(callback NetworkChangeCallback) {
+	n.networkChangeMutex.Lock()
+	defer n.networkChangeMutex.Unlock()
+	n.onNetworkChange = callback
+}
+
 // SwitchNetwork switches the current network configuration to the specified network.
 // rpcName: The name of the network configuration to switch to.
 // Returns any error encountered during the switch operation.
 func (n *MSConfigManager) SwitchNetwork(rpcName string) error {
 	n.configMutex.Lock()
-	defer n.configMutex.Unlock()
 
 	// Find the network with the specified name
 	var targetNetwork *RPCInfos
@@ -162,6 +190,7 @@ func (n *MSConfigManager) SwitchNetwork(rpcName string) error {
 	}
 
 	if targetNetwork == nil {
+		n.configMutex.Unlock()
 		return fmt.Errorf("unknown network: %s", rpcName)
 	}
 
@@ -169,6 +198,16 @@ func (n *MSConfigManager) SwitchNetwork(rpcName string) error {
 	n.Network.currentNetwork = targetNetwork
 
 	logger.Debugf("Switched to network: %s", rpcName)
+
+	n.configMutex.Unlock()
+
+	// Call the network change callback if set
+	n.networkChangeMutex.RLock()
+	callback := n.onNetworkChange
+	n.networkChangeMutex.RUnlock()
+	if callback != nil {
+		callback()
+	}
 
 	return nil
 }
@@ -277,15 +316,16 @@ func (n *MSConfigManager) SaveConfig(cfg *ConfigFile) error {
 // AddNetwork adds a new network to both memory and persistent configuration
 func (n *MSConfigManager) AddNetwork(name, url string, makeDefault bool) error {
 	n.configMutex.Lock()
-	defer n.configMutex.Unlock()
 
 	if name == "" || url == "" {
+		n.configMutex.Unlock()
 		return fmt.Errorf("name and url are required")
 	}
 
 	// Load current persisted configuration
 	cfg, err := LoadConfig()
 	if err != nil {
+		n.configMutex.Unlock()
 		return fmt.Errorf("load config: %w", err)
 	}
 
@@ -297,6 +337,7 @@ func (n *MSConfigManager) AddNetwork(name, url string, makeDefault bool) error {
 	nameLower := strings.ToLower(strings.TrimSpace(name))
 	for existingName := range cfg.Networks {
 		if strings.ToLower(strings.TrimSpace(existingName)) == nameLower {
+			n.configMutex.Unlock()
 			return fmt.Errorf("%w: %s", ErrNetworkAlreadyExists, name)
 		}
 	}
@@ -315,6 +356,7 @@ func (n *MSConfigManager) AddNetwork(name, url string, makeDefault bool) error {
 	}
 
 	if err := saveConfigUnsafe(cfg); err != nil {
+		n.configMutex.Unlock()
 		return err
 	}
 
@@ -334,8 +376,22 @@ func (n *MSConfigManager) AddNetwork(name, url string, makeDefault bool) error {
 	}
 	n.Network.Networks = append(n.Network.Networks, newNet)
 
+	networkChanged := false
 	if makeDefault {
 		n.Network.currentNetwork = &n.Network.Networks[len(n.Network.Networks)-1]
+		networkChanged = true
+	}
+
+	n.configMutex.Unlock()
+
+	// Call the network change callback if set
+	if networkChanged {
+		n.networkChangeMutex.RLock()
+		callback := n.onNetworkChange
+		n.networkChangeMutex.RUnlock()
+		if callback != nil {
+			callback()
+		}
 	}
 
 	return nil
@@ -346,22 +402,25 @@ func (n *MSConfigManager) AddNetwork(name, url string, makeDefault bool) error {
 // and the current network is switched in memory as well.
 func (n *MSConfigManager) EditNetwork(currentName string, newURL *string, makeDefault *bool, newName *string) error {
 	n.configMutex.Lock()
-	defer n.configMutex.Unlock()
 
 	if currentName == "" {
+		n.configMutex.Unlock()
 		return fmt.Errorf("currentName is required")
 	}
 
 	cfg, err := LoadConfig()
 	if err != nil {
+		n.configMutex.Unlock()
 		return fmt.Errorf("load config: %w", err)
 	}
 	if cfg.Networks == nil {
+		n.configMutex.Unlock()
 		return fmt.Errorf("no networks configured")
 	}
 
 	item, exists := cfg.Networks[currentName]
 	if !exists {
+		n.configMutex.Unlock()
 		return fmt.Errorf("unknown network: %s", currentName)
 	}
 
@@ -371,6 +430,7 @@ func (n *MSConfigManager) EditNetwork(currentName string, newURL *string, makeDe
 		newNameLower := strings.ToLower(strings.TrimSpace(*newName))
 		for existingName := range cfg.Networks {
 			if strings.ToLower(strings.TrimSpace(existingName)) == newNameLower {
+				n.configMutex.Unlock()
 				return fmt.Errorf("%w: %s", ErrNetworkAlreadyExists, *newName)
 			}
 		}
@@ -405,6 +465,7 @@ func (n *MSConfigManager) EditNetwork(currentName string, newURL *string, makeDe
 	}
 
 	if err := saveConfigUnsafe(cfg); err != nil {
+		n.configMutex.Unlock()
 		return err
 	}
 
@@ -450,10 +511,25 @@ func (n *MSConfigManager) EditNetwork(currentName string, newURL *string, makeDe
 	}
 
 	// Switch current network if default requested or if current was renamed
+	networkChanged := false
 	if makeDefault != nil && *makeDefault {
 		n.Network.currentNetwork = &n.Network.Networks[targetIdx]
+		networkChanged = true
 	} else if n.Network.currentNetwork != nil && n.Network.currentNetwork.Name == currentName && targetName != currentName {
 		n.Network.currentNetwork = &n.Network.Networks[targetIdx]
+		networkChanged = true
+	}
+
+	n.configMutex.Unlock()
+
+	// Call the network change callback if set
+	if networkChanged {
+		n.networkChangeMutex.RLock()
+		callback := n.onNetworkChange
+		n.networkChangeMutex.RUnlock()
+		if callback != nil {
+			callback()
+		}
 	}
 
 	return nil
