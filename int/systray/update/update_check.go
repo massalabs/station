@@ -125,6 +125,12 @@ func StartUpdateCheck(app *fyne.App, systrayMenu *fyne.Menu) {
 		return
 	}
 
+	// If systrayMenu is nil (e.g., desktop interface assertion failed), skip update checks.
+	if systrayMenu == nil {
+		logger.Debug("Systray menu is nil, skipping update checks")
+		return
+	}
+
 	// We check for updates on startup.
 	updateCheck(app, systrayMenu)
 

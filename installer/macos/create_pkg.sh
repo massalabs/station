@@ -49,8 +49,7 @@ build_massastation() {
     go generate ../... || fatal "go generate failed for $MASSASTATION_APPLICATION_NAME"
     export GOARCH=$ARCH
     export CGO_ENABLED=1
-    # -icon is based on the path of the -src flag.
-    fyne package -icon ../../int/systray/embedded/logo.png -name MassaStation --app-id com.massalabs.massastation -src ../cmd/massastation || fatal "fyne package failed for $MASSASTATION_APPLICATION_NAME"
+    fyne package -src ../cmd/massastation -icon ../../int/systray/embedded/logo.png || fatal "fyne package failed for $MASSASTATION_APPLICATION_NAME"
     chmod +x $MASSASTATION_APPLICATION_NAME || fatal "failed to chmod $MASSASTATION_APPLICATION_NAME"
 }
 
