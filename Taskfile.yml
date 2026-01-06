@@ -109,7 +109,7 @@ tasks:
     desc: Packages MassaStation using fyne
     platforms: [linux, darwin]
     cmds:
-      - cmd: fyne package -name MassaStation -icon ../../int/systray/embedded/logo.png --app-id net.massalabs.massastation -src ./cmd/massastation {{if .OS}}--os {{.OS}}{{end}}
+      - cmd: fyne package -src ./cmd/massastation -icon ../../int/systray/embedded/logo.png {{if .OS}}--os {{.OS}}{{end}}
 
   generate-dirs:
     desc: Generates required directories for MassaStation

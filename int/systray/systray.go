@@ -11,36 +11,26 @@ import (
 
 func MakeGUI() (fyne.App, *fyne.Menu) {
 	stationGUI := app.New()
-	menu := fyne.NewMenu("MassaStation")
 
 	if desk, ok := stationGUI.(fyneDesktop.App); ok {
 		icon := fyne.NewStaticResource("logo", embedded.Logo)
-		titleMenu := fyne.NewMenuItem("MassaStation", nil)
+
 		homeShortCutMenu := fyne.NewMenuItem("Open MassaStation", nil)
-		testMenu := fyne.NewMenuItem("Test", nil)
-
-		titleMenu.Disabled = true
-		titleMenu.Icon = icon
-
-		testMenu.Action = func() {
-			notification := fyne.NewNotification("Test notification", "This is a test notification from MassaStation")
-			stationGUI.SendNotification(notification)
-		}
-
 		homeShortCutMenu.Action = func() {
 			utils.OpenURL(&stationGUI, "https://"+config.MassaStationURL)
 		}
 
-		menu.Items = append(menu.Items,
-			titleMenu,
+		menu := fyne.NewMenu(
+			"MassaStation",
 			fyne.NewMenuItemSeparator(),
 			homeShortCutMenu,
-			// testMenu,
 		)
 
 		desk.SetSystemTrayIcon(icon)
 		desk.SetSystemTrayMenu(menu)
+
+		return stationGUI, menu
 	}
 
-	return stationGUI, menu
+	return stationGUI, nil
 }
