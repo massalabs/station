@@ -23,6 +23,8 @@ type SwitchNetworkBody = Record<string, never>; // no body expected
 
 export const DEFAULT_THEME = 'theme-dark-v2';
 
+export const NETWORK_REFRESH_INTERVAL = 3000;
+
 export function LayoutStation(props: LayoutStationProps) {
   const { children, navigator, onSetTheme, storedTheme } = props;
 
@@ -42,8 +44,11 @@ export function LayoutStation(props: LayoutStationProps) {
 
   const navigate = useNavigate();
 
+  // Poll network endpoint every 3 seconds to detect changes from systray
   const { data: network, isSuccess: isSuccessNetwork } =
-    useResource<NetworkModel>(URL.PATH_NETWORKS);
+    useResource<NetworkModel>(URL.PATH_NETWORKS, {
+      refetchInterval: NETWORK_REFRESH_INTERVAL,
+    });
 
   const {currentNetwork, setCurrentNetwork, setAvailableNetworks} = useNetworkStore();
 

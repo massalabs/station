@@ -81,12 +81,12 @@ func main() {
 
 	pluginManager := plugin.NewManager(configDir)
 
-	stationGUI, systrayMenu := systray.MakeGUI()
 	// Create shared config manager once and inject into server
 	configManager, err := config.GetConfigManager()
 	if err != nil {
 		logger.Fatalf("Failed to initialize config manager: %s", err.Error())
 	}
+	stationGUI, systrayMenu := systray.New()
 	server := api.NewServer(serverFlags, configManager)
 
 	update.StartUpdateCheck(&stationGUI, systrayMenu)
