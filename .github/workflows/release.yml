@@ -57,7 +57,6 @@ jobs:
           prerelease: ${{ inputs.release-as-prerelease }}
           generate_release_notes: ${{ inputs.generate-release-notes }}
           files: |
-            ./massastation_*_bin/massastation_*
             ./massastation_installer_*/massastation_*.msi
             ./massastation_installer_*/massastation_*.pkg
             ./massastation_installer_*/massastation_*.deb
