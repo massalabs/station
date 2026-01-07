@@ -376,22 +376,19 @@ func (n *MSConfigManager) AddNetwork(name, url string, makeDefault bool) error {
 	}
 	n.Network.Networks = append(n.Network.Networks, newNet)
 
-	networkChanged := false
 	if makeDefault {
 		n.Network.currentNetwork = &n.Network.Networks[len(n.Network.Networks)-1]
-		networkChanged = true
 	}
 
 	n.configMutex.Unlock()
 
 	// Call the network change callback if set
-	if networkChanged {
-		n.networkChangeMutex.RLock()
-		callback := n.onNetworkChange
-		n.networkChangeMutex.RUnlock()
-		if callback != nil {
-			callback()
-		}
+	// Always call callback when a network is added (even if not default) to refresh systray menu
+	n.networkChangeMutex.RLock()
+	callback := n.onNetworkChange
+	n.networkChangeMutex.RUnlock()
+	if callback != nil {
+		callback()
 	}
 
 	return nil
@@ -511,25 +508,21 @@ func (n *MSConfigManager) EditNetwork(currentName string, newURL *string, makeDe
 	}
 
 	// Switch current network if default requested or if current was renamed
-	networkChanged := false
 	if makeDefault != nil && *makeDefault {
 		n.Network.currentNetwork = &n.Network.Networks[targetIdx]
-		networkChanged = true
 	} else if n.Network.currentNetwork != nil && n.Network.currentNetwork.Name == currentName && targetName != currentName {
 		n.Network.currentNetwork = &n.Network.Networks[targetIdx]
-		networkChanged = true
 	}
 
 	n.configMutex.Unlock()
 
 	// Call the network change callback if set
-	if networkChanged {
-		n.networkChangeMutex.RLock()
-		callback := n.onNetworkChange
-		n.networkChangeMutex.RUnlock()
-		if callback != nil {
-			callback()
-		}
+	// Always call callback when a network is edited to refresh systray menu
+	n.networkChangeMutex.RLock()
+	callback := n.onNetworkChange
+	n.networkChangeMutex.RUnlock()
+	if callback != nil {
+		callback()
 	}
 
 	return nil
@@ -538,27 +531,32 @@ func (n *MSConfigManager) EditNetwork(currentName string, newURL *string, makeDe
 // DeleteNetwork removes a network from both memory and persistent configuration
 func (n *MSConfigManager) DeleteNetwork(name string) error {
 	n.configMutex.Lock()
-	defer n.configMutex.Unlock()
 
 	if name == "" {
+		n.configMutex.Unlock()
 		return fmt.Errorf("name is required")
 	}
 
 	cfg, err := LoadConfig()
 	if err != nil {
+		n.configMutex.Unlock()
 		return fmt.Errorf("load config: %w", err)
 	}
 	if cfg.Networks == nil {
+		n.configMutex.Unlock()
 		return fmt.Errorf("no networks configured")
 	}
 	if _, exists := cfg.Networks[name]; !exists {
+		n.configMutex.Unlock()
 		return fmt.Errorf("unknown network: %s", name)
 	}
 	if len(cfg.Networks) == 1 {
+		n.configMutex.Unlock()
 		return fmt.Errorf("cannot delete the last remaining network")
 	}
 
 	if len(n.Network.Networks) <= 1 {
+		n.configMutex.Unlock()
 		return fmt.Errorf("cannot delete the last remaining network")
 	}
 
@@ -582,6 +580,7 @@ func (n *MSConfigManager) DeleteNetwork(name string) error {
 	}
 
 	if err := saveConfigUnsafe(cfg); err != nil {
+		n.configMutex.Unlock()
 		return err
 	}
 
@@ -600,9 +599,21 @@ func (n *MSConfigManager) DeleteNetwork(name string) error {
 	// If current was deleted, switch to the first remaining network
 	if deletingCurrent {
 		if len(n.Network.Networks) == 0 {
+			n.configMutex.Unlock()
 			return fmt.Errorf("no remaining networks after deletion")
 		}
 		n.Network.currentNetwork = &n.Network.Networks[0]
+	}
+
+	n.configMutex.Unlock()
+
+	// Call the network change callback if set
+	// Always call callback when a network is deleted to refresh systray menu
+	n.networkChangeMutex.RLock()
+	callback := n.onNetworkChange
+	n.networkChangeMutex.RUnlock()
+	if callback != nil {
+		callback()
 	}
 
 	return nil
