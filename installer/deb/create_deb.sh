@@ -8,7 +8,7 @@ BUILD_DIR=builddeb
 TMP_DIR=tmpdeb
 PKGVERSION=0.0.0-dev
 
-MASSASTATION_ARCHIVE_NAME=massastation.tar.xz
+MASSASTATION_ARCHIVE_NAME=MassaStation.tar.xz
 MASSASTATION_BINARY_NAME=massastation
 
 # Print error message to stderr and exit with code 1.
@@ -36,7 +36,7 @@ build_massastation() {
     go generate ../... || fatal "go generate failed for $MASSASTATION_BINARY_NAME"
     export GOARCH=$ARCH
     export CGO_ENABLED=1
-    fyne package -src ../cmd/massastation -icon ../../int/systray/embedded/logo.png || fatal "fyne package failed for $MASSASTATION_BINARY_NAME"
+    fyne package -src ../cmd/massastation -icon ../../int/systray/embedded/logo.png -name MassaStation --app-id com.massalabs.massastation || fatal "fyne package failed for $MASSASTATION_BINARY_NAME"
 }
 
 # Delete the build directory if it exists.
@@ -67,21 +67,18 @@ main() {
 
     mkdir -p $BUILD_DIR/usr/bin || fatal "failed to create $BUILD_DIR/usr/bin"
 
-    # Find and copy the binary
-    BINARY_PATH=$(find $TMP_DIR -type f -name "$MASSASTATION_BINARY_NAME" -o -name "massastation_*" | head -1)
-    [ -z "$BINARY_PATH" ] && fatal "failed to find $MASSASTATION_BINARY_NAME binary in $TMP_DIR"
-    cp "$BINARY_PATH" $BUILD_DIR/usr/bin/$MASSASTATION_BINARY_NAME || fatal "failed to copy $MASSASTATION_BINARY_NAME to $BUILD_DIR/usr/bin"
+    # Check if the binary isn't named massastation. If it isn't, rename it to massastation.
+    if [ ! -f $TMP_DIR/usr/local/bin/$MASSASTATION_BINARY_NAME ]; then
+        mv $TMP_DIR/usr/local/bin/massastation_* $TMP_DIR/usr/local/bin/$MASSASTATION_BINARY_NAME || fatal "failed to rename binary to $MASSASTATION_BINARY_NAME"
+    fi
+    cp $TMP_DIR/usr/local/bin/$MASSASTATION_BINARY_NAME $BUILD_DIR/usr/bin || fatal "failed to copy $MASSASTATION_BINARY_NAME to $BUILD_DIR/usr/bin"
     chmod +x $BUILD_DIR/usr/bin/$MASSASTATION_BINARY_NAME || fatal "failed to make $MASSASTATION_BINARY_NAME executable"
 
     mkdir -p $BUILD_DIR/usr/share/applications || fatal "failed to create $BUILD_DIR/usr/share/applications"
-    DESKTOP_PATH=$(find $TMP_DIR -type f -name "*.desktop" | head -1)
-    [ -z "$DESKTOP_PATH" ] && fatal "failed to find .desktop file in $TMP_DIR"
-    cp "$DESKTOP_PATH" $BUILD_DIR/usr/share/applications/net.massalabs.massastation.desktop || fatal "failed to copy .desktop file to $BUILD_DIR/usr/share/applications"
+    cp $TMP_DIR/usr/local/share/applications/net.massalabs.massastation.desktop $BUILD_DIR/usr/share/applications || fatal "failed to copy net.massalabs.massastation.desktop to $BUILD_DIR/usr/share/applications"
 
     mkdir -p $BUILD_DIR/usr/share/pixmaps || fatal "failed to create $BUILD_DIR/usr/share/pixmaps"
-    ICON_PATH=$(find $TMP_DIR -type f -name "*.png" | head -1)
-    [ -z "$ICON_PATH" ] && fatal "failed to find .png icon in $TMP_DIR"
-    cp "$ICON_PATH" $BUILD_DIR/usr/share/pixmaps/net.massalabs.massastation.png || fatal "failed to copy icon to $BUILD_DIR/usr/share/pixmaps"
+    cp $TMP_DIR/usr/local/share/pixmaps/net.massalabs.massastation.png $BUILD_DIR/usr/share/pixmaps || fatal "failed to copy net.massalabs.massastation.png to $BUILD_DIR/usr/share/pixmaps"
 
     mkdir -p $BUILD_DIR/usr/share/doc/massastation || fatal "failed to create $BUILD_DIR/usr/share/doc/massastation"
     cp common/MassaStation_ToS.txt $BUILD_DIR/usr/share/doc/massastation/terms-and-conditions.txt || fatal "failed to copy MassaStation_ToS.txt to $BUILD_DIR/usr/share/doc/massastation/terms-and-conditions.txt"
