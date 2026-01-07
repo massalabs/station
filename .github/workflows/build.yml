@@ -95,7 +95,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: massastation_${{ matrix.target }}_${{ matrix.arch }}_package
-          path: massastation.tar.xz
+          path: MassaStation.tar.xz
           if-no-files-found: error
           retention-days: 1
 
