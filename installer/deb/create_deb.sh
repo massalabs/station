@@ -17,28 +17,6 @@ fatal() {
     exit 1
 }
 
-# Install dependencies required to build the MassaStation binary.
-install_massastation_build_dependencies() {
-    sudo apt-get update || fatal "failed to update apt"
-    sudo apt-get install -y --fix-missing libgl1-mesa-dev xorg-dev || fatal "failed to install libgl1-mesa-dev xorg-dev"
-    go install fyne.io/tools/cmd/fyne@v1.7.0 || fatal "failed to install fyne.io/tools/cmd/fyne@v1.7.0"
-    go install github.com/go-swagger/go-swagger/cmd/swagger@latest || fatal "failed to install github.com/go-swagger/go-swagger/cmd/swagger@latest"
-    go install golang.org/x/tools/cmd/stringer@latest || fatal "failed to install golang.org/x/tools/cmd/stringer@latest"
-}
-
-# Build MassaStation from source.
-build_massastation() {
-    install_massastation_build_dependencies
-
-    # Ensure go install binaries are in PATH
-    export PATH="$PATH:$(go env GOPATH)/bin"
-
-    go generate ../... || fatal "go generate failed for $MASSASTATION_BINARY_NAME"
-    export GOARCH=$ARCH
-    export CGO_ENABLED=1
-    fyne package -src ../cmd/massastation -icon ../../int/systray/embedded/logo.png -name MassaStation --app-id com.massalabs.massastation || fatal "fyne package failed for $MASSASTATION_BINARY_NAME"
-}
-
 # Delete the build directory if it exists.
 clean() {
     if [ -d $BUILD_DIR ]; then
@@ -60,7 +38,7 @@ main() {
 
     install_dependencies
 
-    test -f $MASSASTATION_ARCHIVE_NAME || build_massastation
+    test -f $MASSASTATION_ARCHIVE_NAME || fatal "$MASSASTATION_ARCHIVE_NAME not found"
 
     mkdir -p $TMP_DIR || fatal "failed to create $TMP_DIR"
     tar -xf $MASSASTATION_ARCHIVE_NAME -C $TMP_DIR || fatal "failed to extract $MASSASTATION_ARCHIVE_NAME to $TMP_DIR"

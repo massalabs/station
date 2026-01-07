@@ -35,24 +35,6 @@ fatal() {
     exit 1
 }
 
-# Install dependencies required to build the MassaStation binary.
-install_massastation_build_dependencies() {
-    go install fyne.io/tools/cmd/fyne@v1.7.0
-    go install github.com/go-swagger/go-swagger/cmd/swagger@latest
-    go install golang.org/x/tools/cmd/stringer@latest
-}
-
-# Build MassaStation from source.
-build_massastation() {
-    install_massastation_build_dependencies
-
-    go generate ../... || fatal "go generate failed for $MASSASTATION_APPLICATION_NAME"
-    export GOARCH=$ARCH
-    export CGO_ENABLED=1
-    fyne package -src ../cmd/massastation -icon ../../int/systray/embedded/logo.png -name MassaStation --app-id com.massalabs.massastation || fatal "fyne package failed for $MASSASTATION_APPLICATION_NAME"
-    chmod +x $MASSASTATION_APPLICATION_NAME || fatal "failed to chmod $MASSASTATION_APPLICATION_NAME"
-}
-
 # Build the package using pkgbuild.
 package() {
     # sign the application if we have a developer id
@@ -73,8 +55,8 @@ package() {
 }
 
 main() {
-    # build massastation only if the .app is not present
-    test -d $MASSASTATION_APPLICATION_NAME || build_massastation
+
+    test -d $MASSASTATION_APPLICATION_NAME || fatal "$MASSASTATION_APPLICATION_NAME not found"
 
     if [ ! -d macos/resources ]; then
         mkdir macos/resources || fatal "failed to create resources directory"
