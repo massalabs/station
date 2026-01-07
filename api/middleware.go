@@ -18,7 +18,10 @@ func TopMiddleware(handler http.Handler) http.Handler {
 
 	//nolint:varnamelen
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logger.Infof("[%s %s]", r.Method, r.URL.Path)
+		// Log only non-GET requests to reduce noise from frequent polling.
+		if r.Method != http.MethodGet {
+			logger.Debugf("[%s %s]", r.Method, r.URL.Path)
+		}
 
 		// Goes through all local interceptors.
 		req := RedirectToDefaultResourceInterceptor(
