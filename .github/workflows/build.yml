@@ -55,7 +55,7 @@ jobs:
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch }}
         shell: bash
         run: |
-          task ${{ matrix.target }}:build VERSION=${{ env.VERSION }} ARCH=${{ matrix.arch }} PRODUCTION=${{ inputs.tag_name != '' }} BIN_DIR="."
+          task ${{ matrix.target }}:build VERSION=${{ env.VERSION }} ARCH=${{ matrix.arch }} PRODUCTION=${{ inputs.tag_name != '' }}
       - name: Package binary for ${{ matrix.target }} on ${{ matrix.arch}}
         # We don't need to package for windows since Fyne package generates a similar .exe as go build.
         if: matrix.target != 'windows'
@@ -65,7 +65,7 @@ jobs:
       - name: Rename binary for ${{ matrix.target }} on ${{ matrix.arch }}
         shell: bash
         run: |
-          mv ./massastation${{ matrix.ext }} massastation_${{ matrix.target }}_${{ matrix.arch }}${{ matrix.ext }}
+          mv ./build/massastation/massastation${{ matrix.ext }} massastation_${{ matrix.target }}_${{ matrix.arch }}${{ matrix.ext }}
       - name: Upload MassaStation Binary
         uses: actions/upload-artifact@v4
         with:
