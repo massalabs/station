@@ -123,16 +123,20 @@ func writeCA(
 		return fmt.Errorf("failed to marshal private key: %w", err)
 	}
 
-	permissionUrwGrOr := 0o644
+	// The private key must never be world-readable: a local attacker who can read
+	// it can forge certificates for any site trusted via this CA (HTTPS MITM).
+	keyPermissionUrw := 0o600
+	// The certificate is public material and may stay world-readable.
+	certPermissionUrwGrOr := 0o644
 
 	err = os.WriteFile(filepath.Join(path, certificateAuthorityKeyFileName), pem.EncodeToMemory(
-		&pem.Block{Type: "PRIVATE KEY", Bytes: privDER}), fs.FileMode(permissionUrwGrOr))
+		&pem.Block{Type: "PRIVATE KEY", Bytes: privDER}), fs.FileMode(keyPermissionUrw))
 	if err != nil {
 		return fmt.Errorf("failed to write private key: %w", err)
 	}
 
 	err = os.WriteFile(filepath.Join(path, certificateAuthorityFileName), pem.EncodeToMemory(
-		&pem.Block{Type: "CERTIFICATE", Bytes: cert}), fs.FileMode(permissionUrwGrOr))
+		&pem.Block{Type: "CERTIFICATE", Bytes: cert}), fs.FileMode(certPermissionUrwGrOr))
 	if err != nil {
 		return fmt.Errorf("failed to write certificate: %w", err)
 	}

@@ -198,7 +198,7 @@ func prepareAppDirectory(binPath, pluginPath, pluginName string) error {
 		}
 	}
 
-	err := os.MkdirAll(appPath, os.ModePerm)
+	err := os.MkdirAll(appPath, 0o755)
 	if err != nil {
 		return fmt.Errorf("creating the plugin .app directory at %s: %w", appPath, err)
 	}

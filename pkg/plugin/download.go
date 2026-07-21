@@ -100,7 +100,7 @@ func (m *Manager) downloadPlugin(url string, isNew bool) (string, error) {
 	if isNew {
 		_, err = os.Stat(pluginPath)
 		if os.IsNotExist(err) {
-			err := os.MkdirAll(pluginPath, os.ModePerm)
+			err := os.MkdirAll(pluginPath, 0o755)
 			if err != nil {
 				return "", fmt.Errorf("creating plugin directory %s: %w", pluginPath, err)
 			}
