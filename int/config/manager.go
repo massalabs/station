@@ -222,7 +222,7 @@ func configDirPath() (string, error) {
 
 	// create the directory if it doesn't exist
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		err = os.MkdirAll(path, os.ModePerm)
+		err = os.MkdirAll(path, 0o755)
 		if err != nil {
 			return "", fmt.Errorf("creating account directory '%s': %w", path, err)
 		}

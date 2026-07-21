@@ -38,7 +38,7 @@ func fsDirectory(configDir string) (string, error) {
 	_, err := os.Stat(cacheDir)
 
 	if os.IsNotExist(err) {
-		err := os.MkdirAll(cacheDir, os.ModePerm)
+		err := os.MkdirAll(cacheDir, 0o755)
 		if err != nil {
 			return "", fmt.Errorf("error creating folder: %w", err)
 		}

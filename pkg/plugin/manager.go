@@ -22,7 +22,7 @@ func Directory(configDir string) string {
 	_, err := os.Stat(pluginsDir)
 
 	if os.IsNotExist(err) {
-		err := os.MkdirAll(pluginsDir, os.ModePerm)
+		err := os.MkdirAll(pluginsDir, 0o755)
 		if err != nil {
 			panic(fmt.Errorf("getting plugins directory: creating folder: %w", err))
 		}

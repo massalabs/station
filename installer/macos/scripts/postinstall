@@ -15,14 +15,34 @@ fatal() {
     exit 1
 }
 
-mkdir -m 777 -p $MASSASTATION_CONFIG_DIR || fatal "config directory creation failed."
-mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/plugins || fatal "plugins directory creation failed."
-mkdir -m 777 -p $MASSASTATION_CONFIG_DIR/logs || fatal "logs directory creation failed."
-mkdir -m 777 -p $MASSASTATION_CERT_DIR || fatal "certs directory creation failed."
+# Determine the logged-in user that will actually run MassaStation. The
+# directories below are written to at runtime by that user (plugins, logs,
+# generated CA key), so we make them owned by that user with 0755 instead of
+# world-writable (0777). World-writable directories on a multi-user host let
+# any local user plant plugin binaries that Station executes as the victim
+# (cross-user RCE), and expose the world-readable CA key (HTTPS MITM).
+INSTALL_USER=$(stat -f "%Su" /dev/console 2>/dev/null || true)
+if [ -z "$INSTALL_USER" ] || [ "$INSTALL_USER" = "root" ]; then
+    fatal "unable to determine the logged-in user; MassaStation directories cannot be owned safely."
+fi
+
+mkdir -m 755 -p $MASSASTATION_CONFIG_DIR || fatal "config directory creation failed."
+mkdir -m 755 -p $MASSASTATION_CONFIG_DIR/plugins || fatal "plugins directory creation failed."
+mkdir -m 755 -p $MASSASTATION_CONFIG_DIR/logs || fatal "logs directory creation failed."
+mkdir -m 755 -p $MASSASTATION_CERT_DIR || fatal "certs directory creation failed."
+
+# Hand ownership to the runtime user so Station can write without 0777.
+chown -R "$INSTALL_USER" $MASSASTATION_CONFIG_DIR || fatal "failed to set ownership of config directory."
+chown -R "$INSTALL_USER" $MASSASTATION_CERT_DIR || fatal "failed to set ownership of certs directory."
 
 # If station.massa is not resolved, we add its redirection to /etc/hosts.
 ping -c 1 -t 1 station.massa >/dev/null 2>&1 || echo "127.0.0.1 station.massa" >>/etc/hosts || fatal "failed to set station.massa redirection to localhost."
 
 mv ./uninstall.sh $MASSASTATION_CONFIG_DIR || fatal "uninstall script move failed."
 
+# --repair must run as root so the CA can be added to the System keychain.
+# It generates the CA key (0600) owned by root, so re-assign ownership of the
+# certs directory to the runtime user afterwards; otherwise Station (running as
+# that user) could not read its own CA key to serve HTTPS.
 LOG_LEVEL=DEBUG $2/MassaStation.app/Contents/MacOS/massastation --repair || fatal "failed to repair MassaStation"
+chown -R "$INSTALL_USER" $MASSASTATION_CERT_DIR || fatal "failed to reassign ownership of certs directory."
