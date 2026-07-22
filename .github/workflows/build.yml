@@ -35,7 +35,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Fetch all git tags
         run: git fetch --prune --unshallow --tags
       - name: Set Version
@@ -67,7 +67,7 @@ jobs:
         run: |
           mv ./build/massastation/massastation${{ matrix.ext }} massastation_${{ matrix.target }}_${{ matrix.arch }}${{ matrix.ext }}
       - name: Upload MassaStation Binary
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: massastation_${{ matrix.target }}_${{ matrix.arch }}_bin
           path: |
@@ -84,7 +84,7 @@ jobs:
           cp -R MassaStation.app package_output/
       - name: Upload Package (macOS)
         if: matrix.target == 'darwin'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: massastation_${{ matrix.target }}_${{ matrix.arch }}_package
           path: package_output/
@@ -92,7 +92,7 @@ jobs:
           retention-days: 1
       - name: Upload Package (Linux)
         if: matrix.target == 'linux'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: massastation_${{ matrix.target }}_${{ matrix.arch }}_package
           path: MassaStation.tar.xz
@@ -112,7 +112,7 @@ jobs:
     runs-on: macos-15
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Fetch all git tags
         run: git fetch --prune --unshallow --tags
       - name: Set Version
@@ -123,12 +123,12 @@ jobs:
       - name: Sync clock
         run: sudo sntp -sS time.windows.com # https://github.com/actions/runner/issues/2996#issuecomment-1833103110
       - name: Download MassaStation Package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: massastation_darwin_${{ matrix.arch }}_package
           path: installer
       - name: Import Code Signing Certificates
-        uses: apple-actions/import-codesign-certs@v2
+        uses: apple-actions/import-codesign-certs@v3
         with:
           p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_P12_BASE64 }}
           p12-password: ${{ secrets.APPLE_CERTIFICATE_P12_PASSWORD }}
@@ -142,7 +142,7 @@ jobs:
           xcrun notarytool submit massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg --wait --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.APPLE_APP_PASSWORD }} --team-id ${{ secrets.APPLE_TEAM_ID }}
           xcrun stapler staple massastation_${{ env.VERSION }}_${{ matrix.arch }}.pkg
       - name: Upload Package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: massastation_installer_darwin_${{ matrix.arch }}
           path: "installer/massastation_*.pkg"
@@ -161,7 +161,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Fetch all git tags
         run: git fetch --prune --unshallow --tags
       - name: Set Version
@@ -171,11 +171,11 @@ jobs:
           export VERSION=$(git describe --tags --abbrev=0 --match 'v[0-9]*' | sed 's/^v//')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: 3.11
       - name: Download MassaStation
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: massastation_windows_amd64_bin
       - name: Rename MassaStation binary
@@ -194,7 +194,7 @@ jobs:
           SM_CERT_FINGERPRINT: ${{ secrets.SM_CERT_FINGERPRINT }}
           SM_HOST: ${{ secrets.SM_HOST }}
       - name: Upload Installer
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: massastation_installer_windows_amd64
           path: "installer/*.msi"
@@ -211,11 +211,11 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Fetch all git tags
         run: git fetch --prune --unshallow --tags
       - name: Download MassaStation Package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: massastation_linux_amd64_package
           path: installer
@@ -224,7 +224,7 @@ jobs:
         env:
           VERSION: ${{ env.VERSION }}
       - name: Upload Package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: massastation_installer_deb_amd64
           path: "installer/*.deb"

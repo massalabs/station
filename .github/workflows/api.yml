@@ -20,13 +20,13 @@ jobs:
           sudo apt update
           sudo apt install xvfb
       - name: Checkout project directory
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Install RobotFramework tests dependencies
         working-directory: api/test
         run: |
           pip install -r requirements.txt
       - name: Download MassaStation .deb package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: massastation_installer_deb_amd64
       - name: Install MassaStation .deb package
