@@ -9,13 +9,13 @@ jobs:
       matrix:
         os: ["windows-latest", "ubuntu-latest", "macos-15"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: installing dependencies
         uses: ./.github/actions/install
         with:
           os: ${{ matrix.os }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: task test-coverage
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           files: coverage.coverprofile
