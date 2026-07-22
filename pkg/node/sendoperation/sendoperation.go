@@ -18,7 +18,7 @@ import (
 const (
 	MaxGasAllowedExecuteSC     = 3_980_167_295
 	MaxGasAllowedCallSC        = 4_294_167_295
-	DefaultExpiryInSlot        = 3
+	DefaultExpiryInSlot        = 5
 	DefaultFee                 = 0
 	accountCreationStorageCost = 1_000_000
 	StorageCostPerByte         = 100_000
