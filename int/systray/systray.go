@@ -93,6 +93,7 @@ func (n *networkMenuRefresher) refreshNetworkMenu() {
 // New creates the GUI and returns the systray menu.
 func New() (fyne.App, *fyne.Menu) {
 	stationGUI := app.New()
+	stationGUI.Settings().SetTheme(newStationTheme())
 
 	if desk, ok := stationGUI.(fyneDesktop.App); ok {
 		icon := fyne.NewStaticResource("logo", embedded.Logo)
@@ -162,7 +163,7 @@ func New() (fyne.App, *fyne.Menu) {
 
 		homeShortCutMenu := fyne.NewMenuItem("Open MassaStation", nil)
 		homeShortCutMenu.Action = func() {
-			utils.OpenURL(&stationGUI, "https://"+config.MassaStationURL)
+			utils.OpenURL(&stationGUI, config.StationURL())
 		}
 
 		// Build the top-level systray menu in an idiomatic Fyne way.

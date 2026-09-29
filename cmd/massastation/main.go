@@ -108,7 +108,8 @@ func main() {
 			logger.Fatalf("while running station first run setup: %w", err)
 		}
 
-		utils.OpenURL(&stationGUI, "https://"+config.MassaStationURL)
+		utils.OpenURL(&stationGUI, config.StationURL())
+		systray.StartHTTPSCheck(&stationGUI, systrayMenu)
 	})
 
 	stationGUI.Run()
