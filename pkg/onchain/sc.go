@@ -104,7 +104,7 @@ func CallFunctionSuccess(
 
 // DeploySC deploys a smart contract on the blockchain.
 // The smart contract is deployed with the given account nickname.
-
+// If maxGas is 0, it is estimated with a read-only execution.
 func DeploySC(
 	networkInfos *config.RPCInfos,
 	nickname string,
@@ -130,6 +130,23 @@ func DeploySC(
 	dataStore, err := populateDatastore(contract)
 	if err != nil {
 		return nil, nil, fmt.Errorf("populating datastore: %w", err)
+	}
+
+	// Calibrate max_gas
+	if maxGas == 0 {
+		estimatedGasCost, err := sendOperation.EstimateGasCostExecuteSC(
+			nickname,
+			deployerByteCode,
+			dataStore,
+			maxCoins,
+			fees,
+			client,
+		)
+		if err != nil {
+			return nil, nil, fmt.Errorf("estimating deploy SC gas cost: %w", err)
+		}
+
+		maxGas = min(estimatedGasCost, sendOperation.MaxGasAllowedExecuteSC)
 	}
 
 	exeSCOperation := executesc.New(

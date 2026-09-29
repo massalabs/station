@@ -86,7 +86,7 @@ func (d *deploySC) Handle(params operations.CmdDeploySCParams) middleware.Respon
 				})
 	}
 
-	maxGas := uint64(sendoperation.MaxGasAllowedExecuteSC)
+	maxGas := uint64(0) // estimated by onchain.DeploySC
 
 	if string(params.Body.MaxGas) != "" {
 		parsedMaxGas, err := strconv.ParseUint(string(params.Body.MaxGas), 10, 64)
