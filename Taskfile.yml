@@ -108,8 +108,11 @@ tasks:
   package:
     desc: Packages MassaStation using fyne
     platforms: [linux, darwin]
+    vars:
+      # fyne only accepts x.y.z versions: drop any suffix such as -dev.
+      APP_VERSION: '{{regexFind "^[0-9]+(\\.[0-9]+){0,2}" (.VERSION | default "")}}'
     cmds:
-      - cmd: fyne package -name MassaStation -exe build/massastation/massastation -icon ./int/systray/embedded/logo.png --app-id net.massalabs.massastation {{if .OS}}--os {{.OS}}{{end}}
+      - cmd: fyne package -name MassaStation -exe build/massastation/massastation -icon ./int/systray/embedded/logo.png --app-id net.massalabs.massastation {{if .OS}}--os {{.OS}}{{end}} {{if .APP_VERSION}}--app-version {{.APP_VERSION}}{{end}} {{if .APP_BUILD}}--app-build {{.APP_BUILD}}{{end}}
 
   generate-dirs:
     desc: Generates required directories for MassaStation

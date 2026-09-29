@@ -73,6 +73,10 @@ main() {
 
     chmod +x $MASSASTATION_APPLICATION_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME || fatal "failed to chmod $MASSASTATION_APPLICATION_NAME/Contents/MacOS/$MASSASTATION_BINARY_NAME"
 
+    # fyne package only accepts x.y.z versions: set the full version (e.g. with the -dev suffix) displayed by macOS.
+    # This must be done before signing, as the signature covers Info.plist.
+    /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $PKGVERSION" $MASSASTATION_APPLICATION_NAME/Contents/Info.plist || fatal "failed to set the application version"
+
     package
 }
 
