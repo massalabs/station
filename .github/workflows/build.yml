@@ -61,7 +61,7 @@ jobs:
         if: matrix.target != 'windows'
         shell: bash
         run: |
-          task package OS=${{ matrix.target }}
+          task package OS=${{ matrix.target }} VERSION=${{ env.VERSION }} APP_BUILD=${{ github.run_number }}
       - name: Rename binary for ${{ matrix.target }} on ${{ matrix.arch }}
         shell: bash
         run: |
