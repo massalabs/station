@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync/atomic"
 	"time"
 
 	"github.com/massalabs/station/int/configuration"
@@ -18,6 +19,40 @@ import (
 
 // failureConsequence is the consequence of a failure to add the CA to NSS.
 const failureConsequence = "Station will only work using http, or you will have to add the CA to your browser manually."
+
+// httpsTrusted reports whether the operating system trusts the certificates served by MassaStation.
+//
+//nolint:gochecknoglobals // Set at startup by Check and updated by RetryCertificateTrust.
+var httpsTrusted atomic.Bool
+
+// IsHTTPSTrusted returns true if the operating system trusts the certificates served by MassaStation.
+func IsHTTPSTrusted() bool {
+	return httpsTrusted.Load()
+}
+
+// StationURL returns the URL of MassaStation: https if its certificates are trusted, http otherwise,
+// to avoid opening a page the browser would reject.
+func StationURL() string {
+	if IsHTTPSTrusted() {
+		return "https://" + MassaStationURL
+	}
+
+	return "http://" + MassaStationURL
+}
+
+// RetryCertificateTrust retries to have the operating system trust the MassaStation CA,
+// e.g. after the user dismissed the authorization prompt at startup.
+func RetryCertificateTrust() error {
+	caRootPath, err := configuration.CertPath()
+	if err != nil {
+		return fmt.Errorf("failed to get CA path: %w", err)
+	}
+
+	err = checkCertificate(filepath.Join(caRootPath, configuration.CertificateAuthorityFileName), caRootPath)
+	httpsTrusted.Store(err == nil)
+
+	return err
+}
 
 // Check performs a check on the configuration.
 func Check() error {
@@ -39,6 +74,8 @@ func Check() error {
 
 	// Check certificate in system store
 	err = checkCertificate(certPath, caRootPath)
+	httpsTrusted.Store(err == nil)
+
 	if err != nil {
 		resultErr = caNonBlockingError("Error while checking certificate", err)
 	}
