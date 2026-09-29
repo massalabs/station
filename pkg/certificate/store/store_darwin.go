@@ -4,73 +4,92 @@ package store
 
 import (
 	"bytes"
+	"crypto/sha1" //nolint:gosec // SHA-1 is how the keychain identifies certificates, not used for security.
 	"crypto/x509"
-	_ "embed"
-	"encoding/asn1"
+	"encoding/hex"
 	"encoding/pem"
 	"errors"
 	"fmt"
 	"io/fs"
 	"os"
 	"os/exec"
+	"strings"
 
-	"github.com/massalabs/station/pkg/runner"
-	"howett.net/plist"
+	"github.com/massalabs/station/pkg/logger"
 )
-
-var _ runner.Runner = &SecurityRunner{}
 
 const (
 	permissionUrwGrOr = 0o644
-	permissionUrw     = 0o600
 
-	trustSettingsFile = "trust-settings.plist"
-	trustedCertFile   = "trusted-cert"
+	systemKeychain  = "/Library/Keychains/System.keychain"
+	trustedCertFile = "trusted-cert"
 )
 
-//go:embed trust_darwin.plist
-var trustSettingsData []byte
-
-// SecurityRunner encapsulates security commands.
-type SecurityRunner struct {
-	runner.CommandRunner
-}
-
-// NewSecurityRunner returns a new SecurityRunner.
-// It returns an error if the security binary is not found.
-func NewSecurityRunner() (*SecurityRunner, error) {
-	bin, err := exec.LookPath("security")
-	if err != nil {
-		return nil, fmt.Errorf("failed to find security binary: %w", err)
-	}
-
-	return &SecurityRunner{runner.CommandRunner{BinaryPath: bin}}, nil
-}
-
+// Add trusts the certificate as a root CA for TLS.
+// Certificates with the same subject (e.g. a previous, expired CA) are removed first so that
+// a renewed CA does not coexist with stale ones.
+//
+// When running as root (installer), the certificate is added to the system keychain with admin trust settings.
+// Otherwise (e.g. CA renewal at runtime), it is added to the user's default (login) keychain with user
+// trust settings: changing admin trust settings requires an interactive authorization that elevated
+// non-interactive processes cannot get, whereas the user domain triggers the standard macOS password prompt.
 func Add(cert *x509.Certificate) error {
-	security, err := NewSecurityRunner()
+	certFile, err := os.CreateTemp("", trustedCertFile)
 	if err != nil {
-		return fmt.Errorf("failed to instantiate the certutil runner: %w", err)
+		return fmt.Errorf("failed to create temporary file: %w", err)
 	}
 
-	err = addTrustedCert(cert, security)
+	defer func() {
+		_ = certFile.Close()
+		_ = os.Remove(certFile.Name())
+	}()
+
+	err = os.WriteFile(certFile.Name(), pem.EncodeToMemory(
+		&pem.Block{Type: "CERTIFICATE", Bytes: cert.Raw}), fs.FileMode(permissionUrwGrOr))
 	if err != nil {
-		return fmt.Errorf("failed to add the certificate to the system keychain: %w", err)
+		return fmt.Errorf("failed to write certificate: %w", err)
 	}
 
-	plistRoot, err := exportTrustSettingsContent(security)
-	if err != nil {
-		return fmt.Errorf("failed to export trust settings: %w", err)
+	// Explicit ssl and basic policies with trustRoot result.
+	// The keychain must always be given: without it, only the trust settings are recorded and the certificate
+	// is not imported, so clients receiving only the leaf certificate cannot build the chain to the CA.
+	addArgs := []string{"add-trusted-cert", "-r", "trustRoot", "-p", "ssl", "-p", "basic"}
+	deleteArgs := []string{}
+
+	var keychain string
+
+	if os.Geteuid() == 0 {
+		keychain = systemKeychain
+		// Also remove the admin trust settings of the stale certificates.
+		deleteArgs = append(deleteArgs, "-t")
+		addArgs = append(addArgs, "-d")
+	} else {
+		keychain, err = defaultKeychain()
+		if err != nil {
+			return err
+		}
 	}
 
-	err = updateTrustSettings(plistRoot, cert)
+	addArgs = append(addArgs, "-k", keychain)
+
+	staleHashes, err := findStaleCertificates(cert, keychain)
 	if err != nil {
-		return fmt.Errorf("failed to update trust settings: %w", err)
+		// Not blocking: the new certificate can still be trusted.
+		logger.Warnf("failed to look for stale certificates in the keychain: %s", err)
 	}
 
-	returnValue := importTrustSettings(plistRoot, security)
-	if returnValue != nil {
-		return fmt.Errorf("failed to re-import trust settings: %w", err)
+	for _, hash := range staleHashes {
+		args := append([]string{"delete-certificate", "-Z", hash}, deleteArgs...)
+
+		err = runSecurity(append(args, keychain)...)
+		if err != nil {
+			logger.Warnf("failed to remove stale certificate %s from the keychain: %s", hash, err)
+		}
+	}
+
+	err = runSecurity(append(addArgs, certFile.Name())...)
+	if err != nil {
+		return fmt.Errorf("failed to add the certificate to the keychain: %w", err)
 	}
 
 	return nil
@@ -80,142 +99,58 @@ func Delete(_ *x509.Certificate) error {
 	return errors.New("not implemented")
 }
 
-// addTrustedCert adds the certificate to the system keychain.
-func addTrustedCert(cert *x509.Certificate, security *SecurityRunner) error {
-	trustedCertFile, err := os.CreateTemp("", trustedCertFile)
+// defaultKeychain returns the path of the user's default (login) keychain.
+func defaultKeychain() (string, error) {
+	out, err := exec.Command("security", "default-keychain").Output()
 	if err != nil {
-		return fmt.Errorf("failed to create temporary file: %w", err)
-	}
-	defer func() {
-		_ = trustedCertFile.Close()
-	}()
-
-	err = os.WriteFile(trustedCertFile.Name(), pem.EncodeToMemory(
-		&pem.Block{Type: "CERTIFICATE", Bytes: cert.Raw}), fs.FileMode(permissionUrwGrOr))
-	if err != nil {
-		return fmt.Errorf("failed to write certificate: %w", err)
+		return "", fmt.Errorf("failed to get the default keychain: %w", err)
 	}
 
-	err = security.Run(
-		"add-trusted-cert", "-d", "-k", "/Library/Keychains/System.keychain", trustedCertFile.Name(),
-	)
+	keychain := strings.Trim(strings.TrimSpace(string(out)), `"`)
+	if keychain == "" {
+		return "", errors.New("no default keychain")
+	}
+
+	return keychain, nil
+}
+
+// findStaleCertificates returns the SHA-1 hashes of the certificates of the given keychain
+// having the same subject as the given certificate but being a different certificate.
+func findStaleCertificates(cert *x509.Certificate, keychain string) ([]string, error) {
+	//nolint:gosec // arguments are not user controlled.
+	out, err := exec.Command(
+		"security", "find-certificate", "-a", "-c", cert.Subject.CommonName, "-p", keychain,
+	).Output()
 	if err != nil {
-		return fmt.Errorf("failed to add the certificate to the system keychain: %w", err)
+		// security exits with an error when no certificate matches.
+		return nil, nil
+	}
+
+	var hashes []string
+
+	for block, rest := pem.Decode(out); block != nil; block, rest = pem.Decode(rest) {
+		existing, err := x509.ParseCertificate(block.Bytes)
+		if err != nil {
+			continue
+		}
+
+		if !bytes.Equal(existing.RawSubject, cert.RawSubject) || bytes.Equal(existing.Raw, cert.Raw) {
+			continue
+		}
+
+		sum := sha1.Sum(existing.Raw) //nolint:gosec
+		hashes = append(hashes, strings.ToUpper(hex.EncodeToString(sum[:])))
+	}
+
+	return hashes, nil
+}
+
+// runSecurity runs the security command with the given arguments.
+func runSecurity(args ...string) error {
+	out, err := exec.Command("security", args...).CombinedOutput() //nolint:gosec // arguments are not user controlled.
+	if err != nil {
+		return fmt.Errorf("security %s: %s: %w", args[0], strings.TrimSpace(string(out)), err)
 	}
 
 	return nil
-}
-
-// exportTrustSettingsContent exports the trust settings to a temporary file.
-func exportTrustSettingsContent(security *SecurityRunner) (map[string]interface{}, error) {
-	plistFile, err := os.CreateTemp("", trustSettingsFile)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create temporary trust-settings file: %w", err)
-	}
-	defer func() {
-		_ = plistFile.Close()
-	}()
-
-	err = security.Run("trust-settings-export", "-d", plistFile.Name())
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshall plistData: %w", err)
-	}
-
-	plistData, err := os.ReadFile(plistFile.Name())
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshall plistData: %w", err)
-	}
-
-	var plistRoot map[string]interface{}
-
-	_, err = plist.Unmarshal(plistData, &plistRoot)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshall plistData: %w", err)
-	}
-
-	return plistRoot, nil
-}
-
-// importTrustSettings imports the trust settings from a temporary file.
-func importTrustSettings(plistRoot map[string]interface{}, security *SecurityRunner) error {
-	updatedPlistData, err := plist.MarshalIndent(plistRoot, plist.XMLFormat, "\t")
-	if err != nil {
-		return fmt.Errorf("failed to marshal trust settings: %w", err)
-	}
-
-	err = os.WriteFile(trustSettingsFile, updatedPlistData, fs.FileMode(permissionUrw))
-	if err != nil {
-		return fmt.Errorf("failed to write trust settings: %w", err)
-	}
-
-	err = security.Run("trust-settings-import", "-d", trustSettingsFile)
-	if err != nil {
-		return errors.New("failed to re-import settings")
-	}
-
-	return nil
-}
-
-// updateTrustSettings updates the trust settings with the certificate.
-func updateTrustSettings(plistRoot map[string]interface{}, cert *x509.Certificate) error {
-	if trustVersion, ok := plistRoot["trustVersion"].(uint64); ok && trustVersion != 1 {
-		return fmt.Errorf("unsupported trust settings version: %d", trustVersion)
-	}
-
-	rootSubjectASN1, err := asn1.Marshal(cert.Subject.ToRDNSequence())
-	if err != nil {
-		return fmt.Errorf("failed to marshal cert root subject: %w", err)
-	}
-
-	trustSettings, err := createCertTrustSettings()
-	if err != nil {
-		return fmt.Errorf("failed to create trust settings: %w", err)
-	}
-
-	trustList, ok := plistRoot["trustList"].(map[string]interface{})
-	if !ok {
-		return errors.New("failed to get trust list")
-	}
-
-	incorporateTrustList(trustList, rootSubjectASN1, trustSettings)
-
-	return nil
-}
-
-func incorporateTrustList(trustList map[string]interface{}, rootSubjectASN1 []byte, trustSettings []interface{}) {
-	for key := range trustList {
-		entry, entryOk := trustList[key].(map[string]interface{})
-		if !entryOk {
-			continue
-		}
-
-		if _, ok := entry["issuerName"]; !ok {
-			continue
-		}
-
-		issuerName, issuerNameOk := entry["issuerName"].([]byte)
-		if !issuerNameOk {
-			continue
-		}
-
-		if !bytes.Equal(rootSubjectASN1, issuerName) {
-			continue
-		}
-
-		entry["trustSettings"] = trustSettings
-
-		break
-	}
-}
-
-// createCertTrustSettings creates the trust settings for the certificate.
-func createCertTrustSettings() ([]interface{}, error) {
-	var trustSettings []interface{}
-
-	_, err := plist.Unmarshal(trustSettingsData, &trustSettings)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal trust settings: %w", err)
-	}
-
-	return trustSettings, nil
 }

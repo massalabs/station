@@ -3,7 +3,6 @@ package sni
 import (
 	"crypto/rand"
 	"crypto/rsa"
-	"crypto/sha256"
 	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
@@ -21,49 +20,48 @@ import (
 var ErrInvalidArgument = errors.New("invalid argument")
 
 const (
-	privateKeySizeInBits = 2048
-	loggerPrefix         = "SNI -"
+	privateKeySizeInBits   = 2048
+	serialNumberSizeInBits = 128
+	loggerPrefix           = "SNI -"
 )
 
-// hashServerName returns a unique identifier for the server, hashing the server's name with the current time stamp.
-// The function returns an error if the server name is empty.
-func hashServerName(serverName string) ([]byte, error) {
-	if len(serverName) == 0 {
-		return nil, fmt.Errorf("%w: server name is empty", ErrInvalidArgument)
-	}
-
-	now, err := time.Now().MarshalBinary()
+// randomSerialNumber returns a random 128-bit serial number.
+// RFC 5280 limits serial numbers to 20 octets: longer ones are rejected by some verifiers (e.g. macOS).
+func randomSerialNumber() (*big.Int, error) {
+	serialNumber, err := rand.Int(rand.Reader, new(big.Int).Lsh(big.NewInt(1), serialNumberSizeInBits))
 	if err != nil {
-		return nil, fmt.Errorf("unable to marshal current time: %w", err)
+		return nil, fmt.Errorf("unable to generate serial number: %w", err)
 	}
 
-	return sha256.New().Sum(append([]byte(serverName), now...)), nil
+	return serialNumber, nil
 }
 
-// createCertificateTemplate builds a x509 certificate template using the server name and a unique ID.
-// DNSNames is set to the given server name, the serial number is set to the unique site name id,
-// NotBefore is set to the current time, NotAfter is set to 1 day after the current time,
-// and the organization is set to "station dynamically generated".
+// createCertificateTemplate builds a x509 certificate template using the server name and a serial number.
+// DNSNames is set to the given server name, NotBefore is set to the current time,
+// NotAfter is set to 1 day after the current time, the organization is set to "station dynamically generated",
+// and the certificate is restricted to TLS server authentication.
 //
-// The function returns an error if the server name or the unique site name id are empty.
-func createCertificateTemplate(serverName string, uniqueSiteNameID []byte) (*x509.Certificate, error) {
+// The function returns an error if the server name is empty or the serial number is nil.
+func createCertificateTemplate(serverName string, serialNumber *big.Int) (*x509.Certificate, error) {
 	if len(serverName) == 0 {
 		return nil, fmt.Errorf("%w: server name is empty", ErrInvalidArgument)
 	}
 
-	if len(uniqueSiteNameID) == 0 {
-		return nil, fmt.Errorf("%w: unique site name id is empty", ErrInvalidArgument)
+	if serialNumber == nil {
+		return nil, fmt.Errorf("%w: serial number is nil", ErrInvalidArgument)
 	}
 
 	template := &x509.Certificate{
-		SerialNumber: new(big.Int).SetBytes(uniqueSiteNameID),
+		SerialNumber: serialNumber,
 		Subject: pkix.Name{
 			CommonName:   serverName,
 			Organization: []string{"station dynamically generated"},
 		},
-		NotBefore: time.Now(),
-		NotAfter:  time.Now().AddDate(0, 0, 1),
-		DNSNames:  []string{serverName},
+		NotBefore:   time.Now(),
+		NotAfter:    time.Now().AddDate(0, 0, 1),
+		DNSNames:    []string{serverName},
+		KeyUsage:    x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment,
+		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
 	}
 
 	return template, nil
@@ -71,7 +69,7 @@ func createCertificateTemplate(serverName string, uniqueSiteNameID []byte) (*x50
 
 // generateSignedCertificate creates a certificate and then signs it using the provided Certificate Authority (CA).
 // It uses root certificate and private key from the default location.
-// It uses hashServerName and createCertificateTemplate to ensure uniqueness and proper formatting of the certificate.
+// It uses randomSerialNumber and createCertificateTemplate to ensure uniqueness and proper formatting of the certificate.
 func generateSignedCertificate(serverName, caPath string) ([]byte, *rsa.PrivateKey, error) {
 	privateKey, err := rsa.GenerateKey(rand.Reader, privateKeySizeInBits)
 	if err != nil {
@@ -88,12 +86,12 @@ func generateSignedCertificate(serverName, caPath string) ([]byte, *rsa.PrivateK
 		return nil, nil, fmt.Errorf("unable to load CA private key: %w", err)
 	}
 
-	uniqueSiteNameID, err := hashServerName(serverName)
+	serialNumber, err := randomSerialNumber()
 	if err != nil {
 		return nil, nil, err
 	}
 
-	template, err := createCertificateTemplate(serverName, uniqueSiteNameID)
+	template, err := createCertificateTemplate(serverName, serialNumber)
 	if err != nil {
 		return nil, nil, err
 	}
