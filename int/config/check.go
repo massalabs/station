@@ -1,6 +1,7 @@
 package config
 
 import (
+	"crypto/tls"
 	"crypto/x509"
 	"fmt"
 	"os"
@@ -8,6 +9,7 @@ import (
 	"time"
 
 	"github.com/massalabs/station/int/configuration"
+	"github.com/massalabs/station/int/sni"
 	"github.com/massalabs/station/pkg/certificate"
 	"github.com/massalabs/station/pkg/certificate/store"
 	"github.com/massalabs/station/pkg/logger"
@@ -36,7 +38,7 @@ func Check() error {
 	}
 
 	// Check certificate in system store
-	err = checkCertificate(certPath)
+	err = checkCertificate(certPath, caRootPath)
 	if err != nil {
 		resultErr = caNonBlockingError("Error while checking certificate", err)
 	}
@@ -114,7 +116,7 @@ func caNonBlockingError(context string, err error) error {
 }
 
 // checkCertificate checks the certificate configuration.
-func checkCertificate(certPath string) error {
+func checkCertificate(certPath, caRootPath string) error {
 	// Load certificate
 	certCA, err := loadCertificate(certPath)
 	if err != nil {
@@ -122,7 +124,7 @@ func checkCertificate(certPath string) error {
 	}
 
 	// Check if certificate is trusted by the operating system
-	return ensureCertificateInSystemStore(certCA)
+	return ensureCertificateInSystemStore(certCA, caRootPath)
 }
 
 // loadCertificate loads a certificate.
@@ -136,16 +138,38 @@ func loadCertificate(certPath string) (*x509.Certificate, error) {
 }
 
 // ensureCertificateInSystemStore ensures the certificate is trusted by the operating system.
-func ensureCertificateInSystemStore(certCA *x509.Certificate) error {
-	// Check if certificate is already trusted by the OS
-	//nolint:exhaustruct // We don't care about checking specific attributes
-	_, err := certCA.Verify(x509.VerifyOptions{})
+func ensureCertificateInSystemStore(certCA *x509.Certificate, caRootPath string) error {
+	err := verifyServedCertificate(caRootPath)
 	if err != nil {
-		logger.Debug("Certificate is not trusted by the operating system, adding to store")
+		logger.Debugf("Certificate is not trusted by the operating system (%s), adding to store", err)
 		return addCertificateToSystemStore(certCA)
 	}
 
 	logger.Debug("Certificate is already trusted by the operating system")
+	return nil
+}
+
+// verifyServedCertificate verifies, as a browser would, a certificate issued by the CA for MassaStation.
+// Verifying the CA certificate itself is not enough: it succeeds when the CA is trusted but not present in
+// a keychain, while clients only receive the leaf certificate and need to find the CA to build the chain.
+func verifyServedCertificate(caRootPath string) error {
+	//nolint:exhaustruct // Only the server name is needed to generate the certificate.
+	tlsCert, err := sni.GenerateTLS(&tls.ClientHelloInfo{ServerName: MassaStationURL}, caRootPath)
+	if err != nil {
+		return fmt.Errorf("failed to generate a certificate for %s: %w", MassaStationURL, err)
+	}
+
+	leaf, err := x509.ParseCertificate(tlsCert.Certificate[0])
+	if err != nil {
+		return fmt.Errorf("failed to parse the certificate for %s: %w", MassaStationURL, err)
+	}
+
+	//nolint:exhaustruct // We don't care about checking specific attributes
+	_, err = leaf.Verify(x509.VerifyOptions{DNSName: MassaStationURL})
+	if err != nil {
+		return fmt.Errorf("failed to verify the certificate for %s: %w", MassaStationURL, err)
+	}
+
 	return nil
 }
 

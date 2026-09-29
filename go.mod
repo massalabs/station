@@ -25,7 +25,6 @@ require (
 	go.uber.org/zap v1.24.0
 	golang.org/x/sys v0.31.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
-	howett.net/plist v1.0.0
 )
 
 require (

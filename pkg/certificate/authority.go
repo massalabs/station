@@ -129,10 +129,19 @@ func writeCA(
 	// The certificate is public material and may stay world-readable.
 	certPermissionUrwGrOr := 0o644
 
-	err = os.WriteFile(filepath.Join(path, certificateAuthorityKeyFileName), pem.EncodeToMemory(
+	keyPath := filepath.Join(path, certificateAuthorityKeyFileName)
+
+	err = os.WriteFile(keyPath, pem.EncodeToMemory(
 		&pem.Block{Type: "PRIVATE KEY", Bytes: privDER}), fs.FileMode(keyPermissionUrw))
 	if err != nil {
 		return fmt.Errorf("failed to write private key: %w", err)
+	}
+
+	// os.WriteFile only applies the permission when creating the file: enforce it when
+	// overwriting an existing key (e.g. CA renewal of an install made with looser permissions).
+	err = os.Chmod(keyPath, fs.FileMode(keyPermissionUrw))
+	if err != nil {
+		return fmt.Errorf("failed to set private key permissions: %w", err)
 	}
 
 	err = os.WriteFile(filepath.Join(path, certificateAuthorityFileName), pem.EncodeToMemory(
