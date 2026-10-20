@@ -21,7 +21,7 @@
     "framer-motion": "^11.1.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.30.6",
+    "react-router-dom": "^7.18.4",
     "zustand": "^4.3.8"
   },
   "devDependencies": {
