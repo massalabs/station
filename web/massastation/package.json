@@ -16,7 +16,7 @@
     "@massalabs/massa-web3": "^5.2.1-dev",
     "@massalabs/react-ui-kit": "^1.2.1-dev",
     "@tanstack/react-query": "^4.29.5",
-    "axios": "^1.4.0",
+    "axios": "^1.20.0",
     "dot-object": "^2.1.5",
     "framer-motion": "^11.1.5",
     "react": "^18.2.0",
