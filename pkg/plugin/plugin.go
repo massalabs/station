@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
@@ -386,11 +385,15 @@ func (p *Plugin) SetInformation(parsedURL *url.URL) error {
 }
 
 func (p *Plugin) InitReverseProxy() {
-	p.reverseProxy = httputil.NewSingleHostReverseProxy(p.info.URL)
+	target := p.info.URL
 
-	originalDirector := p.reverseProxy.Director
-	p.reverseProxy.Director = func(req *http.Request) {
-		originalDirector(req)
-		modifyRequest(req)
+	p.reverseProxy = &httputil.ReverseProxy{
+		Rewrite: func(proxyReq *httputil.ProxyRequest) {
+			proxyReq.SetURL(target)
+			// Keep the inbound Host header and X-Forwarded-For, as the former Director-based proxy did.
+			proxyReq.Out.Host = proxyReq.In.Host
+			proxyReq.SetXForwarded()
+			modifyRequest(proxyReq.Out)
+		},
 	}
 }
