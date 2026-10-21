@@ -16,6 +16,9 @@ jobs:
           os: ${{ matrix.os }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: task test-coverage
+      - name: test plugin-kit
+        run: go test ./...
+        working-directory: plugin-kit
       - uses: codecov/codecov-action@v5
         with:
           files: coverage.coverprofile

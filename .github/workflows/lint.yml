@@ -16,6 +16,12 @@ jobs:
         with:
           version: v2.12.2
           args: --timeout=3m
+      - name: golangci-lint plugin-kit
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.12.2
+          args: --timeout=3m
+          working-directory: plugin-kit
 
   installer-lint:
     runs-on: ubuntu-24.04
