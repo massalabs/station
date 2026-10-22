@@ -4,6 +4,10 @@
     <license file="MassaStation_ToS.rtf" />
 
     <options customize="never" hostArchitectures="x86_64,arm64" />
+    <!-- Binaries built with Go 1.27 require macOS 13 Ventura. -->
+    <allowed-os-versions>
+        <os-version min="13.0" />
+    </allowed-os-versions>
     <choices-outline>
         <line choice="install-massa-station"/>
     </choices-outline>

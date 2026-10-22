@@ -77,6 +77,9 @@ main() {
     # This must be done before signing, as the signature covers Info.plist.
     /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $PKGVERSION" $MASSASTATION_APPLICATION_NAME/Contents/Info.plist || fatal "failed to set the application version"
 
+    # fyne package sets macOS 10.11 as minimum, but binaries built with Go 1.27 require macOS 13 Ventura.
+    /usr/libexec/PlistBuddy -c "Set :LSMinimumSystemVersion 13.0" $MASSASTATION_APPLICATION_NAME/Contents/Info.plist || fatal "failed to set the minimum macOS version"
+
     package
 }
 
