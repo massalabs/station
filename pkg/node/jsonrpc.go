@@ -26,7 +26,8 @@ func (t *withLoggingRoundTripper) RoundTrip(request *http.Request) (*http.Respon
 
 	response, err := http.DefaultTransport.RoundTrip(request)
 	if err != nil {
-		return nil, fmt.Errorf("sending http request '%+v': %w", request, err)
+		// Not wrapped: http.Client already prefixes the error with the request method and URL.
+		return nil, err //nolint:wrapcheck
 	}
 
 	if t.isEnabled {
