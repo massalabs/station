@@ -3,4 +3,5 @@ export const URL = {
   WALLET_ACCOUNTS: 'accounts',
   PATH_NETWORKS: 'network',
   VERSION: 'version',
+  LOGS: 'logs',
 };

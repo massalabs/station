@@ -7,6 +7,7 @@ import (
 	"github.com/massalabs/station/api/swagger/server/restapi"
 	"github.com/massalabs/station/api/swagger/server/restapi/operations"
 	"github.com/massalabs/station/int/api/cmd"
+	"github.com/massalabs/station/int/api/logs"
 	"github.com/massalabs/station/int/api/massa"
 	"github.com/massalabs/station/int/api/myplugin"
 	"github.com/massalabs/station/int/api/network"
@@ -41,6 +42,7 @@ func initLocalAPI(
 	localAPI.GetNodeHandler = massa.NewGetNodeHandler(configManager)
 
 	localAPI.GetMassaStationVersionHandler = operations.GetMassaStationVersionHandlerFunc(version.Handle)
+	localAPI.GetMassaStationLogsHandler = logs.NewGetLogsHandler(logger.Path(), logger.StartTime())
 
 	localAPI.CmdDeploySCHandler = cmd.NewDeploySCHandler(configManager)
 	localAPI.CmdReadOnlyExecuteSCHandler = cmd.NewReadOnlyExecuteSCHandler(configManager)

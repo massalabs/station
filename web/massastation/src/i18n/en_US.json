@@ -183,5 +183,23 @@
     "buy-mas": {
       "baseline": "The token that fuels the Massa ecosystem"
     }
+  },
+  "logs": {
+    "header-button": "Logs",
+    "title": "Massa Station Logs",
+    "subtitle": "Check what Massa Station is doing and share its logs when reporting an issue",
+    "search": "Filter logs",
+    "refresh": "Refresh",
+    "copy": "Copy",
+    "download": "Download full logs",
+    "copied": "Logs copied to clipboard",
+    "copy-error": "Failed to copy logs to clipboard",
+    "download-error": "Failed to download logs",
+    "load-error": "Failed to load logs",
+    "loading": "Loading logs...",
+    "empty": "No logs since Massa Station started",
+    "no-match": "No log line matches your filter",
+    "session-info": "Showing logs since Massa Station started. The full logs download also includes previous sessions.",
+    "tail-info": "Showing the last {lines} lines since Massa Station started. The full logs download also includes earlier lines and previous sessions."
   }
 }

@@ -3,6 +3,7 @@ package logger
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -18,6 +19,18 @@ const (
 // Logger holds the logger instance.
 type Logger struct {
 	*zap.SugaredLogger
+	path      string
+	startTime time.Time
+}
+
+// Path returns the path of the file the logger writes to.
+func (l *Logger) Path() string {
+	return l.path
+}
+
+// StartTime returns when the logger was created, i.e. the start of the current logging session.
+func (l *Logger) StartTime() time.Time {
+	return l.startTime
 }
 
 // Close closes the logger.
@@ -77,5 +90,5 @@ func New(path string) (*Logger, error) {
 	// Create the logger.
 	logger := zap.New(core, zap.AddStacktrace(zapcore.ErrorLevel))
 
-	return &Logger{SugaredLogger: logger.Sugar()}, nil
+	return &Logger{SugaredLogger: logger.Sugar(), path: path, startTime: time.Now()}, nil
 }
