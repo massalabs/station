@@ -94,9 +94,20 @@ func refreshNetworks(configManager *MSConfigManager) {
 func refreshNetworkInfo(network *RPCInfos) {
 	version, chainID, err := fetchRPCInfos(network.NodeURL)
 	if err != nil {
-		logger.Warnf("Failed to refresh network %s: %v", network.Name, err)
+		// Only warn when the network goes down, not at every refresh while it stays down.
+		if network.status == NetworkStatusDown {
+			logger.Debugf("Network %s still down: %v", network.Name, err)
+		} else {
+			logger.Warnf("Network %s is down: %v", network.Name, err)
+		}
+
 		network.status = NetworkStatusDown
+
 		return
+	}
+
+	if network.status == NetworkStatusDown {
+		logger.Infof("Network %s is back up", network.Name)
 	}
 
 	network.Version = version
