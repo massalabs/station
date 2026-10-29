@@ -114,6 +114,22 @@ func TestDomainRestrictionMiddleware(t *testing.T) {
 			shouldBlock:    false,
 		},
 		{
+			name:           "GET /logs from external site - should block",
+			method:         "GET",
+			path:           "/logs",
+			origin:         "https://malicious-site.com",
+			expectedStatus: http.StatusForbidden,
+			shouldBlock:    true,
+		},
+		{
+			name:           "GET /logs from station.massa - should pass through",
+			method:         "GET",
+			path:           "/logs",
+			origin:         "https://station.massa",
+			expectedStatus: http.StatusOK,
+			shouldBlock:    false,
+		},
+		{
 			name:           "GET /network with no headers - should pass through",
 			method:         "GET",
 			path:           "/network",

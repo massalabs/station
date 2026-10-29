@@ -6,9 +6,11 @@ import { NetworkModel } from '../../models';
 import { useNetworkStore } from '../../store/store';
 
 import { ThemeMode, StationLogo, Dropdown, Theme, toast } from '@massalabs/react-ui-kit';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { FiFileText } from 'react-icons/fi';
 import Intl from '@/i18n/i18n';
 import { THEME_STORAGE_KEY } from '@/const';
+import { PAGES } from '@/const/pages/pages';
 
 interface LayoutStationProps {
   children?: ReactNode;
@@ -43,6 +45,8 @@ export function LayoutStation(props: LayoutStationProps) {
   }
 
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isLogsPage = pathname.split('/').pop() === PAGES.LOGS;
 
   // Poll network endpoint every 3 seconds to detect changes from systray
   const { data: network, isSuccess: isSuccessNetwork } =
@@ -130,6 +134,16 @@ export function LayoutStation(props: LayoutStationProps) {
               select={currentNetwork ? infos.findIndex((n) => n.name === currentNetwork) : 0}
             />
           </div>
+          <button
+            onClick={() => navigate(PAGES.LOGS)}
+            title={Intl.t('logs.header-button')}
+            aria-label={Intl.t('logs.header-button')}
+            className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all
+              hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-brand focus:ring-opacity-50
+              ${isLogsPage ? 'text-brand' : 'text-f-primary'}`}
+          >
+            <FiFileText size={20} />
+          </button>
           <ThemeMode
             onSetTheme={handleSetTheme}
             storageKey={THEME_STORAGE_KEY}

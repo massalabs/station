@@ -1000,6 +1000,33 @@ paths:
           schema:
             $ref: "#/definitions/Version"
 
+  /logs:
+    get:
+      description: Get MassaStation logs, stripped of terminal color codes.
+      operationId: GetMassaStationLogs
+      produces:
+        - text/plain
+      parameters:
+        - in: query
+          name: lines
+          type: integer
+          minimum: 1
+          description: Only return the last given number of lines. Returns the whole log file if omitted.
+        - in: query
+          name: currentSession
+          type: boolean
+          default: false
+          description: Only return logs written since MassaStation started.
+      responses:
+        "200":
+          description: MassaStation logs retrieved.
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
+
 definitions:
   Version:
     description: Current Massa Station version.

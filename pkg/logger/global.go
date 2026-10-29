@@ -1,5 +1,7 @@
 package logger
 
+import "time"
+
 const notInitializedMessage = "global logger not initialized"
 
 // Initialize the logger at package level.
@@ -16,6 +18,26 @@ func InitializeGlobal(path string) error {
 	logger, err = New(path)
 
 	return err
+}
+
+// Path returns the path of the file the global logger writes to.
+// Note: The global logger must be initialized before calling this function, otherwise it will panic.
+func Path() string {
+	if logger == nil {
+		panic(notInitializedMessage)
+	}
+
+	return logger.Path()
+}
+
+// StartTime returns when the global logger was created, i.e. the start of the current logging session.
+// Note: The global logger must be initialized before calling this function, otherwise it will panic.
+func StartTime() time.Time {
+	if logger == nil {
+		panic(notInitializedMessage)
+	}
+
+	return logger.StartTime()
 }
 
 // Debug logs a message at the debug level.

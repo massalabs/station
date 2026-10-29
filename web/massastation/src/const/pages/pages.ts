@@ -3,4 +3,5 @@ export const PAGES = {
   STORE: 'store',
   DEWEB: 'deweb',
   CONFIG: 'config',
+  LOGS: 'logs',
 };

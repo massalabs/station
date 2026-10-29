@@ -31,6 +31,11 @@ const navigatorSteps: INavigatorSteps = {
     previous: PAGES.CONFIG,
     next: null,
   },
+  // reached from the header, not part of the stepper
+  logs: {
+    previous: null,
+    next: null,
+  },
 };
 
 export function Base() {
@@ -47,7 +52,7 @@ export function Base() {
     // Remove .html extension if present
     const cleanPage = lastSegment.replace(/\.html$/, '') || 'index';
     // Map to valid pages or default to index
-    const validPages = ['index', 'store', 'config', 'deweb'];
+    const validPages = ['index', 'store', 'config', 'deweb', 'logs'];
     return validPages.includes(cleanPage) ? cleanPage : 'index';
   })();
   const [activePage, setActivePage] = useState(currentPage);
