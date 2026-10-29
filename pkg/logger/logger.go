@@ -29,6 +29,7 @@ type Logger struct {
 	*zap.SugaredLogger
 	path      string
 	startTime time.Time
+	file      io.Closer
 }
 
 // Path returns the path of the file the logger writes to.
@@ -54,6 +55,11 @@ func (l *Logger) Close() error {
 	}
 
 	l.SugaredLogger = nil
+
+	err = l.file.Close()
+	if err != nil {
+		return fmt.Errorf("close log file: %w", err)
+	}
 
 	return nil
 }
@@ -98,5 +104,5 @@ func New(path string) (*Logger, error) {
 	// Create the logger.
 	logger := zap.New(core, zap.AddStacktrace(zapcore.ErrorLevel))
 
-	return &Logger{SugaredLogger: logger.Sugar(), path: path, startTime: time.Now()}, nil
+	return &Logger{SugaredLogger: logger.Sugar(), path: path, startTime: time.Now(), file: rotator}, nil
 }
