@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"time"
 
@@ -15,6 +16,13 @@ const (
 	maxBackups     = 5
 	maxAge         = 60 // days
 )
+
+// unsyncedWriter hides the Sync method of the wrapped writer from zapcore.AddSync.
+// Syncing stdout is useless (it is not buffered) and fails when stdout is a pipe or a terminal
+// (e.g. "sync /dev/stdout: bad file descriptor" for plugins whose output is piped to MassaStation).
+type unsyncedWriter struct {
+	io.Writer
+}
 
 // Logger holds the logger instance.
 type Logger struct {
@@ -80,7 +88,7 @@ func New(path string) (*Logger, error) {
 
 	// Create the log core.
 	fileWriteSyncer := zapcore.AddSync(rotator)
-	consoleWriteSyncer := zapcore.AddSync(os.Stdout)
+	consoleWriteSyncer := zapcore.AddSync(unsyncedWriter{os.Stdout})
 	core := zapcore.NewCore(
 		zapcore.NewConsoleEncoder(encoderConfig),
 		zapcore.NewMultiWriteSyncer(fileWriteSyncer, consoleWriteSyncer),
