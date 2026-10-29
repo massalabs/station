@@ -1,6 +1,7 @@
 package systray
 
 import (
+	"runtime"
 	"sync/atomic"
 
 	"fyne.io/fyne/v2"
@@ -34,8 +35,11 @@ type httpsEnabler struct {
 //
 // A dialog is used rather than a notification: on macOS, notifications may be silently dropped
 // (not permitted, unbundled binary...).
+//
+// On Linux, nothing is done: trusting the certificate relies on NSS databases and needs no user authorization,
+// so retrying would fail the same way it did at startup.
 func StartHTTPSCheck(app *fyne.App, systrayMenu *fyne.Menu) {
-	if config.IsHTTPSTrusted() {
+	if config.IsHTTPSTrusted() || runtime.GOOS == "linux" {
 		return
 	}
 
