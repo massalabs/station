@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sync/atomic"
 	"time"
 
@@ -48,10 +49,33 @@ func RetryCertificateTrust() error {
 		return fmt.Errorf("failed to get CA path: %w", err)
 	}
 
-	err = checkCertificate(filepath.Join(caRootPath, configuration.CertificateAuthorityFileName), caRootPath)
-	httpsTrusted.Store(err == nil)
+	certPath := filepath.Join(caRootPath, configuration.CertificateAuthorityFileName)
+
+	err = checkCertificate(certPath, caRootPath)
+	if err == nil {
+		httpsTrusted.Store(true)
+		return nil
+	}
+
+	nssTrusted, nssErr := checkNSS(certPath, false)
+	if nssErr != nil {
+		logger.Warnf("Error while checking NSS: %s", nssErr)
+	}
+
+	httpsTrusted.Store(trustedByBrowsers(err, nssTrusted))
+
+	if IsHTTPSTrusted() {
+		return nil
+	}
 
 	return err
+}
+
+// trustedByBrowsers reports whether browsers trust the certificates served by MassaStation,
+// given the result of the system store check and whether the CA is known by NSS databases.
+// On Linux, there is no system store support but browsers rely on NSS databases.
+func trustedByBrowsers(systemStoreErr error, nssTrusted bool) bool {
+	return systemStoreErr == nil || (runtime.GOOS == "linux" && nssTrusted)
 }
 
 // Check performs a check on the configuration.
@@ -73,18 +97,18 @@ func Check() error {
 	}
 
 	// Check certificate in system store
-	err = checkCertificate(certPath, caRootPath)
-	httpsTrusted.Store(err == nil)
-
-	if err != nil {
-		resultErr = caNonBlockingError("Error while checking certificate", err)
+	systemStoreErr := checkCertificate(certPath, caRootPath)
+	if systemStoreErr != nil {
+		resultErr = caNonBlockingError("Error while checking certificate", systemStoreErr)
 	}
 
 	// Check NSS configuration
-	err = checkNSS(certPath, isBrandNewCA)
+	nssTrusted, err := checkNSS(certPath, isBrandNewCA)
 	if err != nil {
 		resultErr = caNonBlockingError("Error while checking NSS", err)
 	}
+
+	httpsTrusted.Store(trustedByBrowsers(systemStoreErr, nssTrusted))
 
 	return resultErr
 }
@@ -232,16 +256,16 @@ func (m *NSSManagerLogger) Errorf(msg string, args ...interface{}) {
 	logger.Errorf(msg, args...)
 }
 
-// checkNSS checks the NSS configuration.
-func checkNSS(certPath string, isBrandNewCA bool) error {
+// checkNSS checks the NSS configuration. It returns true if the CA is known by all local NSS databases.
+func checkNSS(certPath string, isBrandNewCA bool) (bool, error) {
 	runner, err := nss.NewCertUtilRunner()
 	if err != nil {
-		return fmt.Errorf("failed to instantiate the certutil runner: %w", err)
+		return false, fmt.Errorf("failed to instantiate the certutil runner: %w", err)
 	}
 
 	service, err := nss.NewCertUtilService(runner)
 	if err != nil {
-		return fmt.Errorf("failed to instantiate the certutil service: %w", err)
+		return false, fmt.Errorf("failed to instantiate the certutil service: %w", err)
 	}
 
 	loggerInstance := &NSSManagerLogger{}
@@ -249,7 +273,7 @@ func checkNSS(certPath string, isBrandNewCA bool) error {
 
 	err = manager.AppendDefaultNSSDatabasePaths()
 	if err != nil {
-		return fmt.Errorf("failed to append default NSS database paths: %w", err)
+		return false, fmt.Errorf("failed to append default NSS database paths: %w", err)
 	}
 
 	if isBrandNewCA {
@@ -271,12 +295,14 @@ func checkNSS(certPath string, isBrandNewCA bool) error {
 		if err != nil {
 			//nolint:errcheck
 			caNonBlockingError("failed to add the CA to NSS", err)
-		} else {
-			logger.Debug("the CA was added to NSS.")
+
+			return false, nil
 		}
+
+		logger.Debug("the CA was added to NSS.")
 	} else {
 		logger.Debug("the CA is known by all local NSS databases.")
 	}
 
-	return nil
+	return true, nil
 }
