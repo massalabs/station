@@ -8,6 +8,32 @@
 
 To install MassaStation, please follow the instructions available in the [Installation Guide](https://docs.massa.net/docs/massastation/install).
 
+## Troubleshooting
+
+### MassaStation is served over http on Linux
+
+At startup, MassaStation adds its certificate authority (CA) to the browsers' NSS databases using `certutil`. MassaStation is served over https only when the CA is known by all of these databases:
+
+- `~/.pki/nssdb` (Chrome, Chromium, Brave, Edge)
+- `~/snap/chromium/current/.pki/nssdb` (Chromium snap)
+- `~/.mozilla/firefox/*` (Firefox profiles)
+- `~/snap/firefox/common/.mozilla/firefox/*` (Firefox snap)
+- `/etc/pki/nssdb` (system-wide database)
+
+If MassaStation is still served over http:
+
+1. **The browser was never opened before MassaStation started**: its database does not exist yet. Open the browser once, then restart MassaStation.
+2. **`certutil` is not installed**: install it (`sudo apt install libnss3-tools` on Debian/Ubuntu, `nss-tools` on Fedora/Arch), then restart MassaStation.
+3. **The browser profile is in another location** (e.g. Flatpak browsers in `~/.var/app/`): import the CA manually, then restart MassaStation.
+   - Firefox: _Settings_ → _Privacy & Security_ → _Certificates_ → _View Certificates_ → _Authorities_ → _Import_ `/etc/massastation/certs/rootCA.pem`, and check _Trust this CA to identify websites_.
+   - Chromium-based browsers:
+
+     ```shell
+     certutil -d sql:$HOME/.pki/nssdb -A -t "C,," -n massaStation -i /etc/massastation/certs/rootCA.pem
+     ```
+
+If the issue persists, check the MassaStation logs (with debug enabled): they tell, for each NSS database, whether the CA is known and why adding it failed.
+
 ## Contributing
 
 We welcome contributions of all kinds, from bug reports to feature requests and code contributions.
