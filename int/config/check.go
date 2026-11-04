@@ -3,6 +3,7 @@ package config
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -20,6 +21,10 @@ import (
 
 // failureConsequence is the consequence of a failure to add the CA to NSS.
 const failureConsequence = "Station will only work using http, or you will have to add the CA to your browser manually."
+
+// errNoSystemStore is returned by checkCertificate on Linux, where there is no operating system store support:
+// browsers rely on NSS databases instead.
+var errNoSystemStore = errors.New("no operating system store support on Linux, browsers rely on NSS databases")
 
 // httpsTrusted reports whether the operating system trusts the certificates served by MassaStation.
 //
@@ -98,7 +103,9 @@ func Check() error {
 
 	// Check certificate in system store
 	systemStoreErr := checkCertificate(certPath, caRootPath)
-	if systemStoreErr != nil {
+	if errors.Is(systemStoreErr, errNoSystemStore) {
+		logger.Debugf("Skipping the operating system store check: %s", systemStoreErr)
+	} else if systemStoreErr != nil {
 		resultErr = caNonBlockingError("Error while checking certificate", systemStoreErr)
 	}
 
@@ -178,6 +185,10 @@ func caNonBlockingError(context string, err error) error {
 
 // checkCertificate checks the certificate configuration.
 func checkCertificate(certPath, caRootPath string) error {
+	if runtime.GOOS == "linux" {
+		return errNoSystemStore
+	}
+
 	// Load certificate
 	certCA, err := loadCertificate(certPath)
 	if err != nil {
